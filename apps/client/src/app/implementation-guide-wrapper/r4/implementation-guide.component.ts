@@ -65,7 +65,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     terminology: true,
     example: true
   };
-  public filterGroup: GroupFilterObject = {};
+  public filterGroups = [];
+  public filterGroupsUnspecified = true;
   public filterResourceQuery: string;
   public igNotFound = false;
   public selectedPage: PageDefinition;
@@ -122,33 +123,42 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         }
 
         const parsedReference = parseReference(resource.reference.reference);
+        const isProfile = Globals.profileTypes.indexOf(parsedReference.resourceType) >= 0;
+        const isTerminology = terminologyTypes.indexOf(parsedReference.resourceType) >= 0;
+        const isExample = Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0;
+        const resourceTypeValid = [];
 
-        if (this.filterResourceType.profile && Globals.profileTypes.indexOf(parsedReference.resourceType) >= 0) {
-          return true;
+        if (this.filterResourceType.profile) {
+          resourceTypeValid.push(isProfile);
         }
 
-        if (this.filterResourceType.terminology && terminologyTypes.indexOf(parsedReference.resourceType) >= 0) {
-          return true;
+        if (this.filterResourceType.terminology) {
+          resourceTypeValid.push(isTerminology);
         }
 
-        return (this.filterResourceType.example && Globals.profileTypes.concat(terminologyTypes).indexOf(parsedReference.resourceType) < 0) ||
-          (this.filterGroup && this.filterGroup.hasOwnProperty(resource.groupingId) && this.filterGroup[resource.groupingId]);
-      })
-      .filter((resource: ImplementationGuideResourceComponent) => {
-        if (!this.filterResourceQuery) {
-          return true;
+        if (this.filterResourceType.example) {
+          resourceTypeValid.push(isExample);
         }
 
-        const reference = resource.reference && resource.reference.reference ?
-          resource.reference.reference.toLowerCase().trim() :
-          '';
-        /*
-        const name = resource.name ?
-          resource.name.toLowerCase().trim() :
-          '';
-         */
+        if (resourceTypeValid.length > 0 && resourceTypeValid.indexOf(true) < 0) {
+          return false;
+        }
 
-        return reference.indexOf(this.filterResourceQuery.toLowerCase().trim()) >= 0;
+        if (!this.filterGroupsAll) {
+          if (!resource.groupingId && !this.filterGroupsUnspecified) {
+            return false;
+          }
+
+          if (resource.groupingId && this.filterGroups.indexOf(resource.groupingId) < 0) {
+            return false;
+          }
+        }
+
+        if (this.filterResourceQuery && resource.reference.reference.toLowerCase().trim().indexOf(this.filterResourceQuery.toLowerCase().trim()) === -1) {
+          return false;
+        }
+
+        return true;
       });
   }
 
@@ -167,15 +177,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public get isFilterResourceTypeAll() {
-    let check = true;
-
-    if (this.filterGroup && this.implementationGuide.definition && this.implementationGuide.definition.grouping) {
-      this.implementationGuide.definition.grouping.forEach((group) => {
-        check = check && this.filterGroup[group.id];
-      });
-    }
-
-    return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example && check;
+    return this.filterResourceType.profile && this.filterResourceType.terminology && this.filterResourceType.example;
   }
 
   public addDependencies() {
@@ -231,7 +233,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       name: 'New Group'
     });
 
-    this.filterGroup[newId] = true;
+    this.filterGroups.push(newId);
   }
 
   public moveGroupUp(group: ImplementationGuideGroupingComponent) {
@@ -277,8 +279,16 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.componentInstance.group = group;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
     modalRef.result.then((result: ImplementationGuideGroupingComponent) => {
-      this.filterGroup[result.id] = this.filterGroup[originalId];
-      delete this.filterGroup[originalId];
+      // Make sure the group is selected in the filter
+      if (this.filterGroups.indexOf(originalId) >= 0) {
+        // The group id may have changed. Remove it from the list if it exists.
+        this.filterGroups.splice(this.filterGroups.indexOf(originalId), 1);
+      }
+      // Always add the new group id to the list
+      if (this.filterGroups.indexOf(result.id) < 0) {
+        this.filterGroups.push(result.id);
+      }
+
       this.igChanging.emit(true);
     });
   }
@@ -294,7 +304,10 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     const index = this.implementationGuide.definition.grouping.indexOf(group);
     this.implementationGuide.definition.grouping.splice(index, 1);
-    delete this.filterGroup[group.id];
+
+    if (this.filterGroups.indexOf(group.id) >= 0) {
+      this.filterGroups.splice(this.filterGroups.indexOf(group.id), 1);
+    }
   }
 
   public moveResource(resource: ImplementationGuideResourceComponent, direction: 'up' | 'down') {
@@ -400,8 +413,35 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     });
   }
 
-  public toggleFilterGroup(type: string) {
-    this.filterGroup[type] = !this.filterGroup[type];
+  public get filterGroupsAll() {
+    return this.filterGroupsUnspecified &&
+      (this.implementationGuide.definition && this.implementationGuide.definition.grouping ?
+        this.filterGroups.length === this.implementationGuide.definition.grouping.length :
+        true);
+  }
+
+  public set filterGroupsAll(allIncluded: boolean) {
+    if (!allIncluded && this.filterGroupsAll) {
+      this.filterGroups = [];
+      this.filterGroupsUnspecified = false;
+    } else if (allIncluded) {
+      if (this.implementationGuide.definition && this.implementationGuide.definition.grouping) {
+        this.filterGroups = this.implementationGuide.definition.grouping.map(g => g.id);
+      } else {
+        this.filterGroups = [];
+      }
+      this.filterGroupsUnspecified = true;
+    }
+  }
+
+  public toggleFilterGroup(groupId: string) {
+    const filterIndex = this.filterGroups.indexOf(groupId);
+
+    if (filterIndex >= 0) {
+      this.filterGroups.splice(filterIndex, 1);
+    } else {
+      this.filterGroups.push(groupId);
+    }
   }
 
   public toggleFilterResourceType(type: string) {
@@ -410,11 +450,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         this.filterResourceType.profile = true;
         this.filterResourceType.terminology = true;
         this.filterResourceType.example = true;
-        if (this.filterGroup && this.implementationGuide.definition.grouping) {
-          this.implementationGuide.definition.grouping.forEach((group) => {
-            this.filterGroup[group.id] = true;
-          });
-        }
         break;
       case 'profile':
         this.filterResourceType.profile = !this.filterResourceType.profile;
@@ -491,7 +526,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       if (this.fileService.file) {
         this.implementationGuide = new ImplementationGuide(this.fileService.file.resource);
         this.igChanging.emit(false);
-        this.initPages();
+        this.initPagesAndGroups();
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -511,33 +546,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
           this.implementationGuide = new ImplementationGuide(results);
           this.igChanging.emit(false);
-          this.initPages();
+          this.initPagesAndGroups();
         }, (err) => {
           this.igNotFound = err.status === 404;
           this.message = getErrorString(err);
         });
-    }
-  }
-
-  public toggleResources(hasResources: boolean) {
-    if (!hasResources && this.implementationGuide.definition && this.implementationGuide.definition.resource) {
-      delete this.implementationGuide.definition.resource;
-    } else if (hasResources) {
-      if (!this.implementationGuide.definition) {
-        this.implementationGuide.definition = new ImplementationGuideDefinitionComponent();
-      }
-
-      if (!this.implementationGuide.definition.resource) {
-        this.implementationGuide.definition.resource = [];
-      }
-
-      if (this.implementationGuide.definition.resource.length === 0) {
-        const newResource = new ImplementationGuideResourceComponent();
-        newResource.reference = new ResourceReference();
-        newResource.reference.reference = '';
-        newResource.reference.display = '';
-        this.implementationGuide.definition.resource.push(newResource);
-      }
     }
   }
 
@@ -556,7 +569,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       this.removePage(foundPageDef);
     }
 
-    this.initPages();
+    this.initPagesAndGroups();
   }
 
   public editPage(pageDef: PageDefinition) {
@@ -574,7 +587,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     modalRef.result.then((page: ImplementationGuidePageComponent) => {
       Object.assign(pageDef.page, page);
-      this.initPages();
+      this.initPagesAndGroups();
       this.igChanging.emit(true);
     });
 
@@ -615,7 +628,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     pageDef.page.page.push(newPage);
 
-    this.initPages();
+    this.initPagesAndGroups();
   }
 
   public removePage(pageDef: PageDefinition) {
@@ -649,7 +662,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       }
     }
 
-    this.initPages();
+    this.initPagesAndGroups();
     this.igChanging.emit(true);
   }
 
@@ -666,7 +679,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const index = pageDef.parent.page.indexOf(pageDef.page);
     pageDef.parent.page.splice(index, 1);
     pageDef.parent.page.splice(index - 1, 0, pageDef.page);
-    this.initPages();
+    this.initPagesAndGroups();
     this.igChanging.emit(true);
   }
 
@@ -683,7 +696,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const index = pageDef.parent.page.indexOf(pageDef.page);
     pageDef.parent.page.splice(index, 1);
     pageDef.parent.page.splice(index + 1, 0, pageDef.page);
-    this.initPages();
+    this.initPagesAndGroups();
     this.igChanging.emit(true);
   }
 
@@ -709,7 +722,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const parentIndex = grandParentPage.page.indexOf(parentPage);
     grandParentPage.page.splice(parentIndex + 1, 0, pageDef.page);
 
-    this.initPages();
+    this.initPagesAndGroups();
     this.igChanging.emit(true);
   }
 
@@ -732,7 +745,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     newParentPage.page = newParentPage.page || [];
     newParentPage.page.push(pageDef.page);
 
-    this.initPages();
+    this.initPagesAndGroups();
     this.igChanging.emit(true);
   }
 
@@ -870,11 +883,15 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
   }
 
-  private initPages() {
+  private initPagesAndGroups() {
     this.pages = [];
 
     if (this.implementationGuide.definition) {
       this.initPage(this.implementationGuide.definition.page);
+
+      if (this.implementationGuide.definition.grouping) {
+        this.filterGroups = this.implementationGuide.definition.grouping.map(g => g.id);
+      }
     }
 
     // Since the PageDefinitions have changed, we need to reset the selected page

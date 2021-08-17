@@ -337,17 +337,20 @@
           <table class="table table-striped">
             <thead>
             <tr>
-              <td colspan="4">
+              <td colspan="5">
                 <div class="row filter-row">
                   <div class="col-md-6 checkboxes">
                     <label>
-                      <input type="checkbox" [ngModel]="isFilterResourceTypeAll" (click)="toggleFilterResourceType('all')"> All
+                      <input type="checkbox" [ngModel]="isFilterResourceTypeAll"
+                             (click)="toggleFilterResourceType('all')"> All
                     </label>
                     <label>
-                      <input type="checkbox" [ngModel]="filterResourceType.profile" (click)="toggleFilterResourceType('profile')"> Profiles
+                      <input type="checkbox" [ngModel]="filterResourceType.profile"
+                             (click)="toggleFilterResourceType('profile')"> Profiles
                     </label>
                     <label>
-                      <input type="checkbox" [ngModel]="filterResourceType.terminology" (click)="toggleFilterResourceType('terminology')"> Terminology
+                      <input type="checkbox" [ngModel]="filterResourceType.terminology"
+                             (click)="toggleFilterResourceType('terminology')"> Terminology
                     </label>
                     <label>
                       <input type="checkbox" [ngModel]="filterResourceType.example" (click)="toggleFilterResourceType('example')"> Examples
@@ -358,13 +361,13 @@
                   </div>
                   <div class="col-md-6 checkboxes">
                     <label>
-                      <input type="checkbox" [ngModel]="isFilterResourceGroupAll" (click)="toggleFilterGroup('all')"> All
+                      <input type="checkbox" [(ngModel)]="filterGroupsAll"> All
                     </label>
                     <label *ngFor="let group of implementationGuide.definition?.grouping || 0">
                       <input (click)="toggleFilterGroup(group.id)" [ngModel]="filterGroups.indexOf(group.id) >= 0" type="checkbox"> {{group.name}}
                     </label>
                     <label>
-                      <input type="checkbox" [(ngModel)]="filterGroupUnspecified"> Unspecified
+                      <input type="checkbox" [(ngModel)]="filterGroupsUnspecified"> Unspecified
                     </label>
                   </div>
                 </div>
