@@ -1,20 +1,29 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import {ImplementationGuideService} from "../shared/implementation-guide.service";
 import {IImplementationGuide} from "../../../../../libs/tof-lib/src/lib/fhirInterfaces";
-import {ImplementationGuide as R4ImplementationGuide} from "../../../../../libs/tof-lib/src/lib/r4/fhir";
+import {
+  ImplementationGuide,
+  ImplementationGuide as R4ImplementationGuide
+} from "../../../../../libs/tof-lib/src/lib/r4/fhir";
 import {FhirService} from "../shared/fhir.service";
 import {ConfigService} from "../shared/config.service";
 import {ImplementationGuide as STU3ImplementationGuide} from "../../../../../libs/tof-lib/src/lib/stu3/fhir";
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {Router} from '@angular/router';
+import {getErrorString} from "../../../../../libs/tof-lib/src/lib/helper";
+import {PackageListModel} from "../../../../../libs/tof-lib/src/lib/package-list-model";
+import {identifyRelease} from "../../../../../libs/tof-lib/src/lib/fhirHelper";
 
 @Component({
   templateUrl: './new-project.component.html',
   styleUrls: ['./new-project.component.css']
 })
 export class NewProjectComponent implements OnInit {
+  public message: string;
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
   public step = 1;
-  public isHL7 = false;
-  public isFHIR = false;
+  public isHL7 = true;
+  public isFHIR = true;
   public jurisdictionCodes;
   public selectedJurisdiction;
   public projectCode: string;
@@ -23,26 +32,86 @@ export class NewProjectComponent implements OnInit {
   public igUrl: string
   public igName: string;
   public igTitle: string;
-  public igVersion: string;
+  public igId: string;
+  public fhirVersion: string;
+  public Globals = Globals;
+  public hl7WorkGroup: string;
 
 
   constructor(private igService: ImplementationGuideService,
               private fhirService: FhirService,
-              private configService: ConfigService) {
+              private configService: ConfigService,
+              private router: Router) {
   }
 
   done() {
     let ig: IImplementationGuide;
+    const packageList = new PackageListModel();
+    packageList.title = this.igTitle;
+    packageList["package-id"] = this.packageId;
+    packageList.canonical = this.canonicalURL;
+    packageList.list = [];
+    packageList.list.push({
+      status: 'ci-build',
+      version: 'current',
+      path: this.igUrl,
+      desc: 'tbd',
+      fhirversion: this.fhirVersion
+    });
 
-    // Create the implementation guide based on the FHIR server we're connected to
     if (this.configService.isFhirR4) {
       ig = new R4ImplementationGuide();
     } else if (this.configService.isFhirSTU3) {
       ig = new STU3ImplementationGuide();
+    } else {
+      throw new Error('Unexpected FHIR version');
     }
 
-    // TODO: Populate the implementation guide based on the fields entered by the user
+    // TODO: Add "Back" button to allow user to change their decisions
+
+    // TODO: set id to <project-code-with-dashes-instead-of-dots>
+    this.igId = this.projectCode.replace(/\./g, '-');
+    ig.url = this.igUrl;
+    ig.version = this.fhirVersion;
+    ig.name = this.igName;
+    const wg = Globals.hl7WorkGroups.find(w => w.url === this.hl7WorkGroup);
+    const wgName = wg ? `HL7 International - ${wg.name}` : 'HL7 International Working Group';
+    ig.contact = [{
+      name: wgName,
+      telecom: [{
+        system: 'url',
+        value: "http://www.hl7.org/Special/committees/",
+      }],
+    }];
+
+    // Create the implementation guide based on the FHIR server we're connected to
+    if (this.configService.isFhirR4) {
+      if (this.isHL7) {
+        //no option for Family, Project Code, Canonical URL in R4 IG Class
+        // TODO: set id to <project-code-with-dashes-instead-of-dots>
+        (<R4ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+        (<R4ImplementationGuide>ig).packageId = this.packageId;
+        (<R4ImplementationGuide>ig).title = this.igTitle;
+      }
+    } else if (this.configService.isFhirSTU3) {
+      if (this.isHL7) {
+        (<STU3ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+
+      }
+    }
+
+    PackageListModel.setPackageList(ig, packageList, identifyRelease(this.configService.fhirConformanceVersion));
+
+    this.igService.saveImplementationGuide(ig)
+      .subscribe((implementationGuide: ImplementationGuide) => {
+        this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
+      }, (err) => {
+        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
+      });
+
+
   }
+
 
   nextStep() {
     if (this.step === 3 && this.isHL7) {
@@ -51,6 +120,12 @@ export class NewProjectComponent implements OnInit {
       this.done();
     } else {
       this.step++;
+    }
+  }
+
+  previousStep() {
+    while (this.step >= 2) {
+      this.step--;
     }
   }
 
@@ -77,7 +152,7 @@ export class NewProjectComponent implements OnInit {
   }
 
   getFhirVersion() {
-    this.igVersion = this.configService.fhirConformanceVersion;
+    this.fhirVersion = this.configService.fhirConformanceVersion;
   }
 
   ngOnInit() {

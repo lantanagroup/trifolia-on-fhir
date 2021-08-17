@@ -12,13 +12,13 @@
   <button type="button" class="btn btn-primary" (click)="nextStep()">Next</button>
 </div>
 <div *ngIf="showHL7Step2">
-  Step 2 Hl7
+  Step 2 HL7
 
   <div class="form-group">
     <label>Family</label>
     <select class="form-control family" [(ngModel)]="isFHIR" (change)="packageIdCriteriaChanged()">
-      <option [ngValue]="true">FHIR</option>
       <option [ngValue]="false">CDA</option>
+      <option [ngValue]="true">FHIR</option>
     </select>
   </div>
 
@@ -46,14 +46,14 @@
 
   <div class="form-group">
     <label>IG URL: </label>
-    <input type="text" class="form-control standard" [(ngModel)]="igUrl"/>
+    <input type="text" class="form-control extended" [(ngModel)]="igUrl"/>
   </div>
 
   <div class="form-group">
     <label>FHIR Version: </label>
-    <input type="text" class="form-control standard" [ngModel]="igVersion" readonly="readonly"/>
+    <input type="text" class="form-control standard" [ngModel]="fhirVersion" readonly="readonly"/>
   </div>
-
+  <button type="button" class="btn btn-secondary" (click)="previousStep()">Back</button>
   <button type="button" class="btn btn-primary" (click)="nextStep()">Next</button>
 </div>
 
@@ -61,14 +61,23 @@
   Step HL7 3
   <div class="form-group">
     <label>IG Title: </label>
-    <input type="text" class="form-control" (change)="igNameChanged()" [(ngModel)]="igTitle"/>
+    <input type="text" class="form-control standard" (change)="igNameChanged()" [(ngModel)]="igTitle"/>
   </div>
 
   <div class="form-group">
     <label>IG Name: </label>
-    <input type="text" class="form-control" [(ngModel)]="igName"/>
+    <input type="text" class="form-control standard" [(ngModel)]="igName"/>
   </div>
 
+  <div class="form-group">
+    <label>HL7 Work Group</label>
+    <select class="form-control long" [(ngModel)]="hl7WorkGroup" (change)="igChanging.emit(true)"
+            [class.is-invalid]="!hl7WorkGroup">
+      <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
+      <option [ngValue]="undefined">Unspecified</option>
+    </select>
+  </div>
+  <button type="button" class="btn btn-secondary" (click)="previousStep()">Back</button>
   <button type="button" class="btn btn-primary" (click)="nextStep()">Finish</button>
 </div>
 <div *ngIf="showPrivateStep2">
@@ -80,9 +89,30 @@
   </div>
 
   <div class="form-group">
-    <label>ID</label>
+    <label>ID: </label>
     <input type="text" class="form-control" [(ngModel)]="projectCode"/>
   </div>
 
-  <button type="button" class="btn btn-primary" (click)="nextStep()">Next</button>
+  <div class="form-group">
+    <label>IG URL: </label>
+    <input type="text" class="form-control extended" [(ngModel)]="igUrl"/>
+  </div>
+
+  <div class="form-group">
+    <label>Title: </label>
+    <input type="text" class="form-control standard" (change)="igNameChanged()" [(ngModel)]="igTitle"/>
+  </div>
+
+  <div class="form-group">
+    <label>Name: </label>
+    <input type="text" class="form-control standard" [(ngModel)]="igName"/>
+  </div>
+
+  <div class="form-group">
+    <label>FHIR Version: </label>
+    <input type="text" class="form-control standard" [ngModel]="fhirVersion" readonly="readonly"/>
+  </div>
+
+  <button type="button" class="btn btn-secondary" (click)="previousStep()">Back</button>
+  <button type="button" class="btn btn-primary" (click)="nextStep()">Finish</button>
 </div>

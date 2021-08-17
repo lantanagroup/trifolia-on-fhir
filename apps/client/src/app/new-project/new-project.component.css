@@ -9,3 +9,11 @@ select.family {
 input.standard {
   width: 250px;
 }
+
+input.long {
+  width: 400px;
+}
+
+input.extended {
+  width: 600px;
+}

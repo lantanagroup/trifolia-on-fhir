@@ -1,13 +1,19 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {ImplementationGuide as STU3ImplementationGuide, OperationOutcome as STU3OperationOutcome} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide, OperationOutcome as R4OperationOutcome} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {
+  ImplementationGuide as STU3ImplementationGuide,
+  OperationOutcome as STU3OperationOutcome
+} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  ImplementationGuide as R4ImplementationGuide,
+  OperationOutcome as R4OperationOutcome
+} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './config.service';
 import {Router} from '@angular/router';
 import {SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
-import {IBundle} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
 
 export class PublishedGuideModel {
@@ -96,7 +102,7 @@ export class ImplementationGuideService {
     return this.http.get<STU3ImplementationGuide | STU3OperationOutcome | R4ImplementationGuide | R4OperationOutcome>(`/api/implementationGuide/${id}`);
   }
 
-  public saveImplementationGuide(implementationGuide: STU3ImplementationGuide | R4ImplementationGuide) {
+  public saveImplementationGuide(implementationGuide: IImplementationGuide) {
     if (implementationGuide.id) {
       return this.http.put(`/api/implementationGuide/${implementationGuide.id}`, implementationGuide);
     } else {
