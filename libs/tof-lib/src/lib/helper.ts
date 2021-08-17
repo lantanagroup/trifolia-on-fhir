@@ -371,13 +371,24 @@ export function createTableFromArray(headers, data): string {
   return output;
 }
 
+export function getAliasName(names: IHumanName[]) {
+  if (!names || !names.length) return;
+
+  const alias = names.find(n => n.use === 'anonymous');
+
+  if (alias && alias.text) {
+    return alias.text;
+  }
+}
+
  export function getDisplayName(name: string | IHumanName | IHumanName[]): string {
   if (!name) {
     return;
   }
 
   if (name instanceof Array && name.length > 0) {
-    return getDisplayName(name[0]);
+    const official = name.find(n => !n.use || n.use === 'official');
+    return getDisplayName(official);
   }
 
   if (typeof name === 'string') {
@@ -400,6 +411,35 @@ export function createTableFromArray(headers, data): string {
   return display;
 }
 
+export function getIdentifierSource(identifier: IIdentifier | IIdentifier[]) {
+  if (!identifier) return;
+
+  if (identifier instanceof Array) {
+    return getIdentifierSource(identifier.find(i => i.system === 'https://trifolia-fhir.lantanagroup.com'));
+  }
+
+  if (!identifier.value) return;
+
+  const parts = identifier.value.split('|');
+
+  if (parts.length === 2) {
+    switch (parts[0]) {
+      case 'waad':
+        return 'User/Pass';
+      case 'google-oauth2':
+        return 'Google';
+      case 'windowslive':
+        return 'Microsoft';
+      case 'github':
+        return 'GitHub';
+      case 'facebook':
+        return 'Facebook';
+      default:
+        return parts[0];
+    }
+  }
+}
+
 export function getDisplayIdentifier(identifier: IIdentifier | IIdentifier[], ignoreSystem = false) {
   if (!identifier) {
     return '';
@@ -410,11 +450,19 @@ export function getDisplayIdentifier(identifier: IIdentifier | IIdentifier[], ig
   }
 
   const obj = <IIdentifier> identifier;
+  let value = obj.value;
 
-  if (!ignoreSystem && obj.system && obj.value) {
-    return `${obj.value} (${obj.system})`;
-  } else if (obj.value) {
-    return obj.value;
+  if (value) {
+    const parts = value.split('|');
+    if (parts.length === 2) {
+      value = parts[1];
+    }
+  }
+
+  if (!ignoreSystem && obj.system && value) {
+    return `${value} (${obj.system})`;
+  } else if (value) {
+    return value;
   } else if (!ignoreSystem && obj.system) {
     return obj.system;
   }

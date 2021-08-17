@@ -9,7 +9,7 @@ import {
   addPermission,
   ensureSecurity, getErrorString,
   getHumanNameDisplay,
-  getHumanNamesDisplay,
+  getHumanNamesDisplay, getIdentifierSource,
   getMetaSecurity,
   getPractitionerEmail,
   groupBy,
@@ -63,15 +63,17 @@ export class ResourcePermissionsComponent implements OnInit {
   public searchGroupsCriteria: string;
   public searchUsersCriteria: string;
   public message: string;
-  public Globals = Globals;
-  public getHumanNamesDisplay = getHumanNamesDisplay;
-  public getPractitionerEmail = getPractitionerEmail;
   public resourceTypes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
   public copyResourceType: string;
   public copyResource: DomainResource;
   public isSearchingGroups = false;
 
   private currentUser: Practitioner;
+
+  public Globals = Globals;
+  public getHumanNamesDisplay = getHumanNamesDisplay;
+  public getPractitionerEmail = getPractitionerEmail;
+  public getIdentifierSource = getIdentifierSource;
 
   constructor(
     public configService: ConfigService,
@@ -115,31 +117,6 @@ export class ResourcePermissionsComponent implements OnInit {
         return valueParts[1];
       } else {
         return tofIdentifier.value;
-      }
-    }
-  }
-
-  getIdentifierSource(user: IPractitioner) {
-    const tofIdentifier = (user.identifier || []).find(next => next.system === 'https://trifolia-fhir.lantanagroup.com');
-
-    if (tofIdentifier && tofIdentifier.value) {
-      const valueParts = tofIdentifier.value.split('|');
-
-      if (valueParts && valueParts.length > 1) {
-        switch (valueParts[0]) {
-          case 'waad':
-            return 'User/Pass';
-          case 'google-oauth2':
-            return 'Google';
-          case 'windowslive':
-            return 'Microsoft';
-          case 'github':
-            return 'GitHub';
-          case 'facebook':
-            return 'Facebook';
-          default:
-            return valueParts[0];
-        }
       }
     }
   }

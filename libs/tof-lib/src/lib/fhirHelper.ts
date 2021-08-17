@@ -78,7 +78,10 @@ export function buildUrl(base: string, resourceType?: string, id?: string, opera
         }
       } else {
         const value = params[key];
-        paramArray.push(`${key}=${encodeURIComponent(value)}`);
+
+        if (value) {
+          paramArray.push(`${key}=${encodeURIComponent(value)}`);
+        }
       }
     });
 

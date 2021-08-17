@@ -176,7 +176,7 @@
           <tr *ngFor="let u of foundUsers">
             <td title="{{getIdentifierDisplay(u)}}">
               <span>{{u.id}}</span>
-              <span *ngIf="getIdentifierSource(u)"> - {{getIdentifierSource(u)}}</span>
+              <span *ngIf="getIdentifierSource(u.identifier)"> - {{getIdentifierSource(u.identifier)}}</span>
             </td>
             <td>
               {{getHumanNamesDisplay(u.name)}}
