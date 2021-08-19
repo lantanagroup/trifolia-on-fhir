@@ -144,9 +144,9 @@ export class AuthService {
         path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/implementation-guide/open`;
       }
 
-      if (path && path !== '/' && path !== '/logout' && path !== '/login') {
+      if (path && path !== '/' && path !== '/logout' && path !== '/login' && !path.endsWith('/home')) {
         this.router.navigate([path]);
-      } else if (window.location.pathname === '/') {
+      } else if (window.location.pathname === '/' || path.endsWith('/home')) {
         this.router.navigate([this.configService.fhirServer, 'implementation-guide', 'open']);
       }
 
