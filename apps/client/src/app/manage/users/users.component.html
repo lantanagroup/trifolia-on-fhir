@@ -8,25 +8,42 @@
         <tr>
           <th>Id</th>
           <th>Identifier</th>
+          <th>Source</th>
           <th>Name</th>
+          <th>Alias</th>
           <th class="actions-column-1">
             <div class="pull-right">
               <button type="button" class="btn btn-primary" (click)="refreshUsers()">Refresh</button>
             </div>
           </th>
         </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>
+            <input type="text" class="form-control" placeholder="Search by name" [(ngModel)]="searchUsersName" (change)="usersCriteriaChanged()" />
+          </td>
+          <td>&nbsp;</td>
+        </tr>
         </thead>
         <tbody>
         <tr *ngFor="let u of users">
           <td>{{u.id}}</td>
           <td>{{getDisplayIdentifier(u.identifier)}}</td>
+          <td>{{getIdentifierSource(u.identifier)}}</td>
           <td>{{getDisplayName(u.name)}}</td>
-          <td></td>
+          <td>{{getAliasName(u.name)}}</td>
+          <td>
+            <div class="pull-right">
+              <button type="button" class="btn btn-primary" (click)="mergeUser(u)">Merge</button>
+            </div>
+          </td>
         </tr>
         </tbody>
         <tfoot>
         <tr>
-          <th colspan="4">Showing 10 of {{totalUsers}} users.</th>
+          <th colspan="5">Showing 10 of {{totalUsers}} users.</th>
         </tr>
         </tfoot>
       </table>
