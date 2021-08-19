@@ -67,9 +67,7 @@ export class NewProjectComponent implements OnInit {
       throw new Error('Unexpected FHIR version');
     }
 
-    // TODO: Add "Back" button to allow user to change their decisions
 
-    // TODO: set id to <project-code-with-dashes-instead-of-dots>
     this.igId = this.projectCode.replace(/\./g, '-');
     ig.url = this.igUrl;
     ig.version = this.fhirVersion;
@@ -96,7 +94,6 @@ export class NewProjectComponent implements OnInit {
     } else if (this.configService.isFhirSTU3) {
       if (this.isHL7) {
         (<STU3ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
-
       }
     }
 
@@ -124,8 +121,8 @@ export class NewProjectComponent implements OnInit {
   }
 
   previousStep() {
-    while (this.step >= 2) {
-      this.step--;
+    if (this.step >= 2) {
+      this.step = this.step - 1;
     }
   }
 
@@ -148,7 +145,7 @@ export class NewProjectComponent implements OnInit {
   }
 
   igNameChanged() {
-    this.igName = this.igTitle.split(" ").join("");
+    this.igName = this.igTitle.replace(/[^a-zA-Z0-9]/g, '');
   }
 
   getFhirVersion() {
