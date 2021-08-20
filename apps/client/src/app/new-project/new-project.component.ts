@@ -153,7 +153,11 @@ export class NewProjectComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
+    if (this.configService.isFhirR4) {
+      this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
+    } else if (this.configService.isFhirSTU3) {
+      this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/jurisdiction');
+    }
     this.jurisdictionCodes.splice(0, 0, {
       system: 'http://unstats.un.org/unsd/methods/m49/m49.htm',
       code: 'UV',

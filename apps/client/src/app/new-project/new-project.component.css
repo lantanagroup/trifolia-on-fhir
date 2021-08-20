@@ -17,3 +17,7 @@ input.long {
 input.extended {
   width: 600px;
 }
+
+button.back {
+  margin-right: 10px;
+}

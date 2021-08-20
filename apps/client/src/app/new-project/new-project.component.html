@@ -24,14 +24,17 @@
 
   <div class="form-group">
     <label>Realm</label>
-    <select class="form-control realm" [(ngModel)]="selectedJurisdiction" (change)="packageIdCriteriaChanged()">
+    <select class="form-control realm" [(ngModel)]="selectedJurisdiction" (change)="packageIdCriteriaChanged()" [class.is-invalid]="!selectedJurisdiction">
+      <option [ngValue]="undefined">Unspecified</option>
       <option *ngFor="let jc of jurisdictionCodes" [ngValue]="jc">{{jc.display}} ({{jc.code}})</option>
     </select>
+    <div class="help-block" *ngIf="!selectedJurisdiction">Realm is required</div>
   </div>
 
   <div class="form-group">
     <label>Project Code</label>
-    <input type="text" class="form-control standard" [(ngModel)]="projectCode" (change)="packageIdCriteriaChanged()"/>
+    <input type="text" class="form-control standard" [(ngModel)]="projectCode" (change)="packageIdCriteriaChanged()" [class.is-invalid]="!projectCode"/>
+    <div class="help-block" *ngIf="!projectCode">Project Code is required</div>
   </div>
 
   <div class="form-group">
@@ -53,8 +56,8 @@
     <label>FHIR Version: </label>
     <input type="text" class="form-control standard" [ngModel]="fhirVersion" readonly="readonly"/>
   </div>
-  <button type="button" class="btn btn-secondary" (click)="previousStep()">Back</button>
-  <button type="button" class="btn btn-primary" (click)="nextStep()">Next</button>
+  <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
+  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!selectedJurisdiction || !projectCode">Next</button>
 </div>
 
 <div *ngIf="showHL7Step3">
@@ -77,8 +80,8 @@
       <option [ngValue]="undefined">Unspecified</option>
     </select>
   </div>
-  <button type="button" class="btn btn-secondary" (click)="previousStep()">Back</button>
-  <button type="button" class="btn btn-primary" (click)="nextStep()">Finish</button>
+  <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
+  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!hl7WorkGroup">Finish</button>
 </div>
 <div *ngIf="showPrivateStep2">
   Step Private 2
@@ -113,6 +116,6 @@
     <input type="text" class="form-control standard" [ngModel]="fhirVersion" readonly="readonly"/>
   </div>
 
-  <button type="button" class="btn btn-secondary" (click)="previousStep()">Back</button>
+  <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
   <button type="button" class="btn btn-primary" (click)="nextStep()">Finish</button>
 </div>
