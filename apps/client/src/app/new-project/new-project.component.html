@@ -33,7 +33,7 @@
 
   <div class="form-group">
     <label>Project Code</label>
-    <input type="text" class="form-control standard" [(ngModel)]="projectCode" (change)="packageIdCriteriaChanged()" [class.is-invalid]="!projectCode"/>
+    <input type="text" class="form-control standard" [(ngModel)]="projectCode" (change)="packageIdCriteriaChanged();" [class.is-invalid]="!projectCode"/>
     <div class="help-block" *ngIf="!projectCode">Project Code is required</div>
   </div>
 

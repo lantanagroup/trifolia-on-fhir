@@ -13,6 +13,7 @@ import {Router} from '@angular/router';
 import {getErrorString} from "../../../../../libs/tof-lib/src/lib/helper";
 import {PackageListModel} from "../../../../../libs/tof-lib/src/lib/package-list-model";
 import {identifyRelease} from "../../../../../libs/tof-lib/src/lib/fhirHelper";
+import {Extension as STU3Extension} from "../../../../../libs/tof-lib/src/lib/stu3/fhir"
 
 @Component({
   templateUrl: './new-project.component.html',
@@ -94,6 +95,11 @@ export class NewProjectComponent implements OnInit {
     } else if (this.configService.isFhirSTU3) {
       if (this.isHL7) {
         (<STU3ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+        const packageIdExt = new STU3Extension();
+        packageIdExt.url = Globals.extensionUrls['extension-ig-package-id'];
+        packageIdExt.valueString = this.packageId;
+        ig.extension = ig.extension || [];
+        ig.extension.push(packageIdExt);
       }
     }
 
@@ -108,7 +114,6 @@ export class NewProjectComponent implements OnInit {
 
 
   }
-
 
   nextStep() {
     if (this.step === 3 && this.isHL7) {

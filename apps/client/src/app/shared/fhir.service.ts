@@ -55,7 +55,7 @@ export class FhirService {
   public fhir: Fhir;
   public loaded: boolean;
   public profiles: StructureDefinition[] = [];
-  public valueSets: ValueSet[] = [];
+  public valueSets: (ValueSet | CodeSystem)[] = [];
   private customValidator: CustomValidator;
 
   constructor(
@@ -141,6 +141,7 @@ export class FhirService {
           this.fhir = new Fhir(parser);
 
           this.valueSets = (<Bundle>allAssets[1]).entry.map((entry) => <ValueSet> entry.resource);
+          this.valueSets.push(<CodeSystem>allAssets[0]);
           this.profiles = (<Bundle>allAssets[2]).entry
             .concat((<Bundle>allAssets[3]).entry)
             .map((entry) => <StructureDefinition> entry.resource);
@@ -217,7 +218,7 @@ export class FhirService {
 
   public getValueSetCodes(valueSetUrl: string): Coding[] {
     let codes: Coding[] = [];
-    const foundValueSet = this.valueSets
+    const foundValueSet = <ValueSet> this.valueSets
       .filter((item) => item.resourceType === 'ValueSet')
       .find((valueSet) => valueSet.url === valueSetUrl);
 
