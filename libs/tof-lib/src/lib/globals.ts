@@ -181,7 +181,7 @@ export class Globals {
     'vsac.apikey': 'To find your API KEY, login to <a href="https://uts.nlm.nih.gov/uts/" target="_new">UMLS Terminology Services</a>, select "Visit Your Profile" under "UTF Profile" (on the right), and copy/paste the value from the "API KEY" field.'
   };
 
-  static readonly igParameters = ['apply', 'copyrightyear', 'expansion-parameter', 'generate-json', 'generate-turtle', 'generate-xml', 'html-template', 'path-pages', 'path-resource', 'path-tx-cache', 'releaselabel', 'rule-broken-links', 'jira-code'];
+  static readonly igParameters = ['apply', 'copyrightyear', 'expansion-parameter', 'generate-json', 'generate-turtle', 'generate-xml', 'html-template', 'path-pages', 'path-resource', 'path-tx-cache', 'releaselabel', 'rule-broken-links', 'jira-code', 'path-expansion-params'];
 
   static readonly hl7WorkGroups = [
     { name: 'Administrative Steering Division', url: 'http://www.hl7.org/Special/committees/ssdsd' },

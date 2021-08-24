@@ -100,6 +100,8 @@ import {CustomMenuComponent} from './implementation-guide-wrapper/custom-menu/cu
 import {SecurityServicesComponent} from './capability-statement-wrapper/security-services/security-services.component';
 import {PublishingTemplateComponent} from './implementation-guide-wrapper/publishing-template/publishing-template.component';
 import {NewProjectComponent} from "./new-project/new-project.component";
+import { MergeUserModalComponent } from './manage/merge-user-modal/merge-user-modal.component';
+
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -276,7 +278,8 @@ const authModuleConfig: OAuthModuleConfig = {
     ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
     QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
     MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, STU3PageComponent, R4PageComponent
+    GroupModalComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, STU3PageComponent, R4PageComponent,
+    MergeUserModalComponent
   ],
   declarations: [
     AppComponent, ImplementationGuidesComponent,
@@ -293,7 +296,8 @@ const authModuleConfig: OAuthModuleConfig = {
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
     GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
-    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, NewProjectComponent
+    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, NewProjectComponent, MergeUserModalComponent
+
   ],
   imports: [
     RouterModule.forRoot(
