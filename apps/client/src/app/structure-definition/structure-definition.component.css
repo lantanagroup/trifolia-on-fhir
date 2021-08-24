@@ -19,7 +19,7 @@ div.elements > .element span.action {
 
 @media (max-width: 1024px) {
   div.element-definition {
-    top: 0px;
+    top: 0;
     height: 100%;
     left: 6px;
     width: auto !important;
@@ -43,8 +43,10 @@ div.element-definition {
   position: absolute;
   width: 33%;
   right: 23px;
-  top: 0px;
+  top: 0;
   height: 100%;
+  resize: horizontal;
+  overflow: auto;
 }
 
 tr.selected > td {
@@ -93,10 +95,11 @@ tr.constrained {
 div.element-definition > div.card-body {
   height: 100%;
   overflow-y: auto;
+
 }
 
 div.element-definition .card-body {
-  padding: 0px;
+  padding: 0;
   margin-top: -1px;
 }
 

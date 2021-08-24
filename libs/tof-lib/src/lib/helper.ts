@@ -1,8 +1,6 @@
-import {Coding, DomainResource, HumanName as STU3HumanName, Meta, Practitioner} from './stu3/fhir';
-import {HumanName as R4HumanName} from './r4/fhir';
 import {ResourceSecurityModel} from './resource-security-model';
 import {Globals} from './globals';
-import {Identifier} from './r4/fhir';
+import {ICoding, IDomainResource, IHumanName, IIdentifier, IMeta, IPractitioner} from './fhirInterfaces';
 
 export class ParsedUrlModel {
   public resourceType: string;
@@ -124,7 +122,7 @@ export function groupBy<T>(items: T[], callback: (next: T) => any): { [key: stri
   return groups;
 }
 
-export function getResourceSecurity(resource: DomainResource): ResourceSecurityModel[] {
+export function getResourceSecurity(resource: IDomainResource): ResourceSecurityModel[] {
   if (resource && resource.meta && resource.meta.security) {
     return resource.meta.security
       .filter((security) => security.system === Globals.securitySystem)
@@ -149,25 +147,40 @@ export function getResourceSecurity(resource: DomainResource): ResourceSecurityM
   return [];
 }
 
-export function getHumanNameDisplay(humanName: STU3HumanName | R4HumanName) {
+export function getHumanNameDisplay(humanName: IHumanName) {
+  if (!humanName) return;
+
   if (humanName.family && humanName.given && humanName.given.length > 0) {
     return humanName.family + ', ' + humanName.given[0];
   } else if (humanName.family) {
     return humanName.family;
   } else if (humanName.given && humanName.given.length > 0) {
     return humanName.given[0];
+  } else if (humanName.text) {
+    return humanName.text;
   }
 }
 
-export function getHumanNamesDisplay(humanNames: (STU3HumanName | R4HumanName)[]) {
+export function getHumanNamesDisplay(humanNames: IHumanName[]) {
   if (!humanNames || humanNames.length === 0) {
     return 'Unspecified';
   } else {
-    return getHumanNameDisplay(humanNames[0]);
+    const officialName = humanNames.find(n => n.use === 'official' || !n.use);
+    const aliasName = humanNames.find(n => n.use === 'anonymous');
+    const official = getHumanNameDisplay(officialName);
+    const alias = getHumanNameDisplay(aliasName);
+
+    if (official && alias) {
+      return official + ' - ' + alias;
+    } else if (official && !alias) {
+      return official;
+    } else if (alias) {
+      return alias;
+    }
   }
 }
 
-export function ensureSecurity(meta: Meta) {
+export function ensureSecurity(meta: IMeta) {
   if (!meta) {
     return;
   }
@@ -183,7 +196,7 @@ export interface SecurityPermission {
   id?: string;
 }
 
-export function parsePermissions(meta: Meta): SecurityPermission[] {
+export function parsePermissions(meta: IMeta): SecurityPermission[] {
   return (meta.security || [])
     .filter((security) => {
       return security.system === Globals.securitySystem && security.code;
@@ -206,7 +219,7 @@ export function parsePermissions(meta: Meta): SecurityPermission[] {
     });
 }
 
-export function findPermission(meta: Meta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
+export function findPermission(meta: IMeta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
   if (!meta) {
     return false;
   }
@@ -227,7 +240,7 @@ export function findPermission(meta: Meta, type: 'user'|'group'|'everyone', perm
   });
 }
 
-export function addPermission(meta: Meta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
+export function addPermission(meta: IMeta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
   ensureSecurity(meta);
   const delim = Globals.securityDelim;
 
@@ -237,7 +250,7 @@ export function addPermission(meta: Meta, type: 'user'|'group'|'everyone', permi
   }
 
   const securityValue = type === 'everyone' ? `${type}${delim}${permission}` : `${type}${delim}${id}${delim}${permission}`;
-  let found: Coding;
+  let found: ICoding;
 
   if (meta && meta.security) {
     found = meta.security.find((security) => security.system === Globals.securitySystem && security.code === securityValue);
@@ -255,7 +268,7 @@ export function addPermission(meta: Meta, type: 'user'|'group'|'everyone', permi
   return false;
 }
 
-export function removePermission(meta: Meta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
+export function removePermission(meta: IMeta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
   const delim = Globals.securityDelim;
 
   // Assume that if we're removing read permission, they shouldn't have write permission either
@@ -264,7 +277,7 @@ export function removePermission(meta: Meta, type: 'user'|'group'|'everyone', pe
   }
 
   const securityValue = type === 'everyone' ? `${type}${delim}${permission}` : `${type}${delim}${id}${delim}${permission}`;
-  let found: Coding;
+  let found: ICoding;
 
   if (meta && meta.security) {
     found = meta.security.find((security) => security.system === Globals.securitySystem && security.code === securityValue);
@@ -280,7 +293,7 @@ export function removePermission(meta: Meta, type: 'user'|'group'|'everyone', pe
 }
 
 
-export function getMetaSecurity(meta: Meta): ResourceSecurityModel[] {
+export function getMetaSecurity(meta: IMeta): ResourceSecurityModel[] {
   if (meta && meta.security) {
     return meta.security
       .filter((security) => {
@@ -312,7 +325,7 @@ export function getMetaSecurity(meta: Meta): ResourceSecurityModel[] {
   return [];
 }
 
-export function getPractitionerEmail(practitioner: Practitioner) {
+export function getPractitionerEmail(practitioner: IPractitioner) {
   const foundEmail = (practitioner.telecom || []).find((telecom) => telecom.system === 'email');
 
   if (foundEmail && foundEmail.value) {
@@ -358,20 +371,31 @@ export function createTableFromArray(headers, data): string {
   return output;
 }
 
- export function getDisplayName(name: string | STU3HumanName | Array<STU3HumanName> | R4HumanName | Array<R4HumanName>): string {
+export function getAliasName(names: IHumanName[]) {
+  if (!names || !names.length) return;
+
+  const alias = names.find(n => n.use === 'anonymous');
+
+  if (alias && alias.text) {
+    return alias.text;
+  }
+}
+
+ export function getDisplayName(name: string | IHumanName | IHumanName[]): string {
   if (!name) {
     return;
   }
 
   if (name instanceof Array && name.length > 0) {
-    return getDisplayName(name[0]);
+    const official = name.find(n => !n.use || n.use === 'official');
+    return getDisplayName(official);
   }
 
   if (typeof name === 'string') {
     return <string>name;
   }
 
-  const humanName = <STU3HumanName | R4HumanName> name;
+  const humanName = name as IHumanName;
   let display = humanName.family;
 
   if (humanName.given) {
@@ -387,7 +411,36 @@ export function createTableFromArray(headers, data): string {
   return display;
 }
 
-export function getDisplayIdentifier(identifier: Identifier | Array<Identifier>, ignoreSystem = false) {
+export function getIdentifierSource(identifier: IIdentifier | IIdentifier[]) {
+  if (!identifier) return;
+
+  if (identifier instanceof Array) {
+    return getIdentifierSource(identifier.find(i => i.system === 'https://trifolia-fhir.lantanagroup.com'));
+  }
+
+  if (!identifier.value) return;
+
+  const parts = identifier.value.split('|');
+
+  if (parts.length === 2) {
+    switch (parts[0]) {
+      case 'waad':
+        return 'User/Pass';
+      case 'google-oauth2':
+        return 'Google';
+      case 'windowslive':
+        return 'Microsoft';
+      case 'github':
+        return 'GitHub';
+      case 'facebook':
+        return 'Facebook';
+      default:
+        return parts[0];
+    }
+  }
+}
+
+export function getDisplayIdentifier(identifier: IIdentifier | IIdentifier[], ignoreSystem = false) {
   if (!identifier) {
     return '';
   }
@@ -396,12 +449,20 @@ export function getDisplayIdentifier(identifier: Identifier | Array<Identifier>,
     return getDisplayIdentifier(identifier[0], ignoreSystem);
   }
 
-  const obj = <Identifier> identifier;
+  const obj = <IIdentifier> identifier;
+  let value = obj.value;
 
-  if (!ignoreSystem && obj.system && obj.value) {
-    return `${obj.value} (${obj.system})`;
-  } else if (obj.value) {
-    return obj.value;
+  if (value) {
+    const parts = value.split('|');
+    if (parts.length === 2) {
+      value = parts[1];
+    }
+  }
+
+  if (!ignoreSystem && obj.system && value) {
+    return `${value} (${obj.system})`;
+  } else if (value) {
+    return value;
   } else if (!ignoreSystem && obj.system) {
     return obj.system;
   }

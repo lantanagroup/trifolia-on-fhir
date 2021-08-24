@@ -42,6 +42,19 @@ export class ChangeResourceIdModalComponent implements OnInit {
       });
   }
 
+  get newIdBinding() {
+    return this.newId;
+  }
+
+  set newIdBinding(value: string) {
+    const changed = this.newId !== value;
+    this.newId = value;
+
+    if (changed) {
+      this.idChangedEvent.next();
+    }
+  }
+
   public ok() {
     const newId = this.newId;
     this.fhirService.changeResourceId(this.resourceType, this.originalId, newId)

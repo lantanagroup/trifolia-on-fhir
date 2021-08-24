@@ -14,7 +14,7 @@ import {
   IEntityComponent,
   IExtension,
   IHumanName,
-  IImplementationGuide,
+  IImplementationGuide, IMeta,
   INetworkComponent, IOperationOutcome,
   IPractitioner, IResourceReference,
   IStructureDefinition,
@@ -132,7 +132,7 @@ export class Coding extends Element {
 
 }
 
-export class Meta extends Element {
+export class Meta extends Element implements IMeta {
   public versionId?: string;
   public lastUpdated?: string;
   public source?: string;

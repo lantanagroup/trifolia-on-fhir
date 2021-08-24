@@ -1,5 +1,5 @@
 import {BaseController} from './base.controller';
-import {Body, Controller, Get, Header, HttpService, Param, Post, Query, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Header, HttpService, Param, ParseIntPipe, Post, Query, Req, UseGuards} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {ISocketConnection} from './models/socket-connection';
 import {AuthGuard} from '@nestjs/passport';
@@ -14,6 +14,8 @@ import {UserModel} from '../../../../libs/tof-lib/src/lib/user-model';
 import {getDisplayIdentifier, getDisplayName} from '../../../../libs/tof-lib/src/lib/helper';
 import {ExportService} from './export.service';
 import {QueueInfo} from '../../../../libs/tof-lib/src/lib/queue-info';
+import {IAuditEvent, IBundle, IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {TofLogger} from './tof-logger';
 
 interface MessageRequest {
   message: string;
@@ -24,6 +26,8 @@ interface MessageRequest {
 @ApiTags('Manage')
 @ApiOAuth2([])
 export class ManageController extends BaseController {
+  protected readonly logger = new TofLogger(ManageController.name);
+
   constructor(
     protected httpService: HttpService,
     protected configService: ConfigService,
@@ -70,22 +74,109 @@ export class ManageController extends BaseController {
     return response;
   }
 
+  private async getAllAudits(url: string) {
+    const response = await this.httpService.get<IBundle>(url).toPromise();
+    const bundle = response.data;
+    const nextUrl = (bundle.link || []).find(l => l.relation === 'next');
+
+    if (nextUrl && nextUrl.url) {
+      const nextBundle = await this.getAllAudits(nextUrl.url);
+      bundle.entry = bundle.entry.concat(nextBundle.entry);
+      bundle.total = bundle.entry.length;
+    }
+
+    return bundle;
+  }
+
+  private async changeAuditAgent(fhirServerBase: string, auditsBundle: IBundle, newAgent: IPractitioner) {
+    if (!auditsBundle || !auditsBundle.entry || auditsBundle.entry.length === 0) return;
+
+    const transactionBundle = {
+      resourceType: 'Bundle',
+      type: 'transaction',
+      entry: auditsBundle.entry.map(e => {
+        const auditEvent = <any> e.resource;
+
+        if (auditEvent.agent[0].who) {
+          auditEvent.agent[0] = {
+            who: {
+              reference: `Practitioner/${newAgent.id}`
+            }
+          };
+        } else if (auditEvent.agent[0].reference) {
+          auditEvent.agent[0] = {
+            reference: {
+              reference: `Practitioner/${newAgent.id}`
+            }
+          };
+        }
+
+        return {
+          request: {
+            method: 'PUT',
+            url: `AuditEvent/${e.resource.id}`,
+          },
+          resource: auditEvent
+        };
+      })
+    };
+
+    const transactionResults = await this.httpService.post<IBundle>(fhirServerBase, transactionBundle).toPromise();
+    const responseBundle = transactionResults.data;
+    const foundError = (responseBundle.entry || []).find(e => e.response && e.response.status && !e.response.status.startsWith('200'));
+
+    if (foundError) {
+      throw new Error('Not all audit events successfully updated');
+    }
+  }
+
+  @Post('user/:sourceUserId/([\$])merge/:targetUserId')
+  async mergeUser(@Param('sourceUserId') sourceUserId: string, @Param('targetUserId') targetUserId: string, @FhirServerBase() fhirServerBase: string, @User() user: ITofUser) {
+    this.assertAdmin(user);
+
+    const sourceUserResponse = await this.httpService.get<IPractitioner>(buildUrl(fhirServerBase, 'Practitioner', sourceUserId)).toPromise();
+    const targetUserResponse = await this.httpService.get<IPractitioner>(buildUrl(fhirServerBase, 'Practitioner', targetUserId)).toPromise();
+    const targetUser = targetUserResponse.data;
+
+    const allAudits = await this.getAllAudits(buildUrl(fhirServerBase, 'AuditEvent', null, null, {
+      _count: 100,
+      agent: `Practitioner/${sourceUserId}`
+    }));
+
+    await this.changeAuditAgent(fhirServerBase, allAudits, targetUser);
+    const deleteResults = await this.httpService.delete(buildUrl(fhirServerBase, 'Practitioner', sourceUserId)).toPromise();
+
+    this.logger.log(`Successfully merged user ${sourceUserId} into ${targetUserId}`);
+  }
+
   @Get('user')
-  async getUsers(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query('count') count = 10, @Query('page') page = 1): Promise<{ total: number, users: UserModel[] }> {
+  async getUsers(
+    @User() user: ITofUser,
+    @FhirServerBase() fhirServerBase: string,
+    @Query('name') searchName,
+    @Query('count', ParseIntPipe) count = 10,
+    @Query('page') page = 1): Promise<{ total: number, hasMore: boolean, users: UserModel[] }> {
     this.assertAdmin(user);
 
     const params = {
       _count: count,
       _getpagesoffset: (page - 1) * count,
-      _summary: true
+      _summary: true,
+      name: undefined
     };
+
+    if (searchName) {
+      params.name = searchName;
+    }
 
     const url = buildUrl(fhirServerBase, 'Practitioner', null, null, params);
     const results = await this.httpService.get(url).toPromise();
     const bundle = <Bundle> results.data;
+    const nextUrl = (bundle.link || []).find(l => l.relation === 'next');
 
-    return {
+    const res = {
       total: bundle.total,
+      hasMore: !!nextUrl,
       users: (bundle.entry || []).map(entry => {
         const practitioner = <STU3Practitioner | R4Practitioner> entry.resource;
 
@@ -96,6 +187,8 @@ export class ManageController extends BaseController {
         };
       })
     };
+
+    return res;
   }
 
   @Get('user/active')

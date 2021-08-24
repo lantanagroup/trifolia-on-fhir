@@ -11,8 +11,8 @@
 </div>
 
 <div class="input-group">
-  <input (ngModelChange)="idTextChanged($event)" [ngModel]="idText" class="form-control" placeholder="Search ID" type="text" />
   <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
+  <input (ngModelChange)="idTextChanged($event)" [ngModel]="idText" class="form-control" placeholder="Search ID" type="text" />
   <input type="text" class="form-control" [ngModel]="titleText" (ngModelChange)="titleTextChanged($event)" placeholder="Search title" />
   <div class="input-group-append">
     <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">

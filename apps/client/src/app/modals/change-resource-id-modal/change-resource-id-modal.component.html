@@ -10,9 +10,9 @@
 
   <div class="form-group">
     <label>New ID</label>
-    <input type="text" class="form-control" [(ngModel)]="newId" (change)="idChangedEvent.next()" [class.is-invalid]="!isIdUnique || !idIsValid || (newId !== originalId && newId.toLowerCase() === originalId.toLowerCase())"/>
+    <input type="text" class="form-control" [(ngModel)]="newIdBinding" [class.is-invalid]="!isIdUnique || !idIsValid || (newId !== originalId && newId.toLowerCase() === originalId.toLowerCase())"/>
     <span class="help-block" *ngIf="!idIsValid || (newId !== originalId && newId.toLowerCase() === originalId.toLowerCase())">ID is required, and must not contain any spaces or special characters. Also, the newID entered must include different characters from the old ID.  Capitalizing/lower casing a character does not count</span>
-    <div class="help-block" *ngIf="!isIdUnique">The specified ID already exists.</div>
+    <div class="help-block" *ngIf="!isIdUnique && newId !== originalId">The specified ID already exists.</div>
   </div>
 </div>
 <div class="modal-footer">

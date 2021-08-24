@@ -27,10 +27,10 @@ import {
   setJiraSpecValue
 } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {IBundle, IExtension, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
 import {FhirInstances, unzip} from '../helper';
-import {escapeForXml, getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
@@ -38,6 +38,7 @@ import * as vkbeautify from 'vkbeautify';
 import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 import {ConfigService} from '../config.service';
 import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
+import JSZip from 'jszip';
 
 export class HtmlExporter {
   public queuedAt: Date;
@@ -315,7 +316,7 @@ export class HtmlExporter {
 
   public async export(format: Formats, includeIgPublisherJar: boolean,
                       version: string, templateType = 'official', template = 'hl7.fhir.template',
-                      templateVersion = 'current', useTerminologyServer?: boolean): Promise<void> {
+                      templateVersion = 'current', zipper: JSZip, useTerminologyServer?: boolean): Promise<void> {
     if (!this.configService.fhir.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
@@ -348,7 +349,8 @@ export class HtmlExporter {
       this.logger.log('Implementation guide has a package-list.json file defined. Including it in export.');
 
       const packageListPath = path.join(this.rootPath, 'package-list.json');
-      fs.writeFileSync(packageListPath, JSON.stringify(packageList, null, '\t'));
+
+      zipper.file(packageListPath, JSON.stringify(packageList, null, '\t'));
 
       PackageListModel.removePackageList(this.implementationGuide);
     }
