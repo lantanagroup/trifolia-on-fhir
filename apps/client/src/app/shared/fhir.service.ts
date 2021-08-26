@@ -29,7 +29,7 @@ import {CustomR4Validator} from './validation/custom-R4-validator';
 import * as vkbeautify from 'vkbeautify';
 import {forkJoin} from 'rxjs/internal/observable/forkJoin';
 import {publishReplay, refCount} from 'rxjs/operators';
-import {IBundle} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, ICoding} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 export interface IResourceGithubDetails {
@@ -57,6 +57,7 @@ export class FhirService {
   public profiles: StructureDefinition[] = [];
   public valueSets: (ValueSet | CodeSystem)[] = [];
   private customValidator: CustomValidator;
+  private validCodes: string[] = ['ignore-warnings', 'custom-menu', 'jira-spec', 'package-list'];
 
   constructor(
     private injector: Injector,
@@ -461,7 +462,16 @@ export class FhirService {
     try {
       const results = this.fhir.validate(resource, {
         // inject custom validation into the FHIR module
-        onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData)
+        onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData),
+        beforeCheckCode: (valueSetUrl: string, code: string, system?: string) => {
+          if (system === 'https://trifolia-fhir.lantanagroup.com/security') {
+            return true;
+          } else if (code && this.validCodes.indexOf(code) >= 0) {
+            return true;
+          }
+
+          return null;
+        }
       });
 
       // Remove any messages that are only information
