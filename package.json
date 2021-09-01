@@ -42,7 +42,7 @@
     "@angular/platform-browser-dynamic": "^8.2.14",
     "@angular/router": "^8.2.14",
     "@fortawesome/fontawesome-free": "^5.15.1",
-    "@kolkov/angular-editor": "^0.13.1",
+    "@kolkov/angular-editor": "^0.18.8",
     "@nestjs/common": "^6.11.11",
     "@nestjs/core": "^6.11.11",
     "@nestjs/passport": "^6.2.0",
