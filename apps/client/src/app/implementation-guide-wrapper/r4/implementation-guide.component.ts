@@ -172,8 +172,10 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public isFileNameInvalid(page: PageDefinition): boolean {
-    const regexp: RegExp = /[^A-Za-z0-9_\-]/;
-    return page.page && page.page.fileName && regexp.test(page.page.fileName);
+    if (!page.page || !page.page.fileName) return false;
+    const regexp: RegExp = /[^A-z0-9_\-\.]/;
+    const matches = regexp.exec(page.page.fileName);
+    return matches && matches.length > 0;
   }
 
   public get isFilterResourceTypeAll() {
