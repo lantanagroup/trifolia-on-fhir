@@ -44,11 +44,6 @@ class PageDefinition {
   public level: number;
 }
 
-
-interface GroupFilterObject {
-  [key: string]: boolean
-}
-
 @Component({
   templateUrl: './implementation-guide.component.html',
   styleUrls: ['./implementation-guide.component.css']
@@ -622,7 +617,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       newPage.title = 'Downloads';
       newPage.navMenu = 'Downloads';
       newPage.fileName = 'downloads.md';
-      newPage.contentMarkdown = '**Full Implementation Guide**\\n\\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\\n\\nIn addition there are format specific definitions files.\\n\\n* [XML](definitions.xml.zip)\\n* [JSON](definitions.json.zip)\\n* [TTL](definitions.ttl.zip)\\n\\n**Examples:** all the examples that are used in this Implementation Guide available for download:\\n\\n* [XML](examples.xml.zip)\\n* [JSON](examples.json.zip)\\n* [TTl](examples.ttl.zip)';
+      newPage.contentMarkdown = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
     } else {
       newPage.title = this.getNewPageTitle();
       newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.md';

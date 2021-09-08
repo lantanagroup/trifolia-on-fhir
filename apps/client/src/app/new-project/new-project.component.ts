@@ -144,9 +144,13 @@ export class NewProjectComponent implements OnInit {
   }
 
   packageIdCriteriaChanged() {
-    this.packageId = `hl7.${this.isFHIR ? 'fhir' : 'cda'}.${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'uv'}.${this.projectCode || 'unknown'}`;
-    this.canonicalURL = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'uv'}/${this.projectCode || 'unknown'}`;
-    this.igUrl = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'uv'}/${this.projectCode || 'unknown'}/ImplementationGuide/${this.projectCode || 'unknown'}`;
+    this.packageId = `hl7.${this.isFHIR ? 'fhir' : 'cda'}.${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'us'}.${this.projectCode || 'unknown'}`;
+    this.canonicalURL = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'us'}/${this.projectCode || 'unknown'}`;
+    this.igUrl = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'us'}/${this.projectCode || 'unknown'}/ImplementationGuide/${this.projectCode || 'unknown'}`;
+  }
+
+  igUrlChanged() {
+    this.igUrl = `${this.canonicalURL}/ImplementationGuide/${this.projectCode ? this.projectCode : 'unknown'}`;
   }
 
   igNameChanged() {
@@ -155,6 +159,10 @@ export class NewProjectComponent implements OnInit {
 
   getFhirVersion() {
     this.fhirVersion = this.configService.fhirConformanceVersion;
+  }
+
+  isValidUrl(url: string) {
+    return !!(/https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}/.exec(url));
   }
 
   ngOnInit() {
@@ -168,6 +176,9 @@ export class NewProjectComponent implements OnInit {
       code: 'UV',
       display: 'Universal'
     });
+
+    this.selectedJurisdiction = this.jurisdictionCodes.find(jc => jc.code.toLowerCase() === 'us');
+
 
     this.getFhirVersion();
   }
