@@ -25,7 +25,6 @@
   <div class="form-group">
     <label>Realm</label>
     <select class="form-control realm" [(ngModel)]="selectedJurisdiction" (change)="packageIdCriteriaChanged()" [class.is-invalid]="!selectedJurisdiction">
-      <option [ngValue]="undefined">Unspecified</option>
       <option *ngFor="let jc of jurisdictionCodes" [ngValue]="jc">{{jc.display}} ({{jc.code}})</option>
     </select>
     <div class="help-block" *ngIf="!selectedJurisdiction">Realm is required</div>
@@ -39,17 +38,22 @@
 
   <div class="form-group">
     <label>Package ID</label>
-    <input type="text" class="form-control standard" [(ngModel)]="packageId"/>
+    <input type="text" class="form-control standard" [(ngModel)]="packageId" [class.is-invalid]="!packageId"/>
+    <div class="help-block" *ngIf="!packageId">Package ID is required</div>
   </div>
 
   <div class="form-group">
     <label>Canonical URL: </label>
-    <input type="text" class="form-control extended" [(ngModel)]="canonicalURL"/>
+    <input type="text" class="form-control extended" [(ngModel)]="canonicalURL" [class.is-invalid]="!canonicalURL || !isValidUrl(canonicalURL)"/>
+    <div class="help-block" *ngIf="!canonicalURL">Canonical URL is required</div>
+    <div class="help-block" *ngIf="!isValidUrl(canonicalURL)">IG URL is not formatted correctly</div>
   </div>
 
   <div class="form-group">
     <label>IG URL: </label>
-    <input type="text" class="form-control extended" [(ngModel)]="igUrl"/>
+    <input type="text" class="form-control extended" [(ngModel)]="igUrl" [class.is-invalid]="!igUrl || !isValidUrl(igUrl)" />
+    <div class="help-block" *ngIf="!igUrl">IG URL is required</div>
+    <div class="help-block" *ngIf="!isValidUrl(igUrl)">IG URL is not formatted correctly</div>
   </div>
 
   <div class="form-group">
@@ -64,52 +68,62 @@
   Step HL7 3
   <div class="form-group">
     <label>IG Title: </label>
-    <input type="text" class="form-control standard" (change)="igNameChanged()" [(ngModel)]="igTitle"/>
+    <input type="text" class="form-control standard" [class.is-invalid]="!igTitle" (change)="igNameChanged()" [(ngModel)]="igTitle"/>
+    <div class="help-block" *ngIf="!igTitle">Title is required</div>
   </div>
 
   <div class="form-group">
     <label>IG Name: </label>
-    <input type="text" class="form-control standard" [(ngModel)]="igName"/>
+    <input type="text" class="form-control standard" [(ngModel)]="igName" [class.is-invalid]="!igName" />
+    <div class="help-block" *ngIf="!igName">Name is required</div>
   </div>
 
   <div class="form-group">
     <label>HL7 Work Group</label>
-    <select class="form-control long" [(ngModel)]="hl7WorkGroup" (change)="igChanging.emit(true)"
+    <select class="form-control extended" [(ngModel)]="hl7WorkGroup" (change)="igChanging.emit(true)"
             [class.is-invalid]="!hl7WorkGroup">
       <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
       <option [ngValue]="undefined">Unspecified</option>
     </select>
   </div>
   <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
-  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!hl7WorkGroup">Finish</button>
+  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!hl7WorkGroup || !igTitle || !igName">Finish</button>
 </div>
 <div *ngIf="showPrivateStep2">
   Step Private 2
 
   <div class="form-group">
-    <label>Canonical URL: </label>
-    <input type="text" class="form-control extended" [(ngModel)]="canonicalURL"/>
+    <label>Canonical URL:</label>
+    <input type="text" class="form-control extended" [(ngModel)]="canonicalURL" [class.is-invalid]="!canonicalURL || !isValidUrl(canonicalURL)" (change)="igUrlChanged()" />
+    <div class="help-block" *ngIf="!canonicalURL">Canonical URL is required</div>
+    <div class="help-block" *ngIf="!isValidUrl(canonicalURL)">IG URL is not formatted correctly</div>
   </div>
 
   <div class="form-group">
-    <label>ID: </label>
-    <input type="text" class="form-control standard" [(ngModel)]="projectCode"/>
+    <label>ID:</label>
+    <input type="text" class="form-control standard" [(ngModel)]="projectCode" [class.is-invalid]="!projectCode" (change)="igUrlChanged()"/>
+    <div class="help-block" *ngIf="!projectCode">ID is required</div>
   </div>
 
   <div class="form-group">
-    <label>IG URL: </label>
-    <input type="text" class="form-control extended" [(ngModel)]="igUrl"/>
+    <label>IG URL:</label>
+    <input type="text" class="form-control extended" [(ngModel)]="igUrl" [class.is-invalid]="!igUrl || !isValidUrl(igUrl)" />
+    <div class="help-block" *ngIf="!igUrl">IG URL is required</div>
+    <div class="help-block" *ngIf="!isValidUrl(igUrl)">IG URL is not formatted correctly</div>
   </div>
 
   <div class="form-group">
     <label>Title: </label>
-    <input type="text" class="form-control standard" (change)="igNameChanged()" [(ngModel)]="igTitle"/>
+    <input type="text" class="form-control standard" [class.is-invalid]="!igTitle" (change)="igNameChanged()" [(ngModel)]="igTitle"/>
+    <div class="help-block" *ngIf="!igTitle">Title is required</div>
   </div>
 
   <div class="form-group">
     <label>Name: </label>
-    <input type="text" class="form-control standard" [(ngModel)]="igName"/>
+    <input type="text" class="form-control standard" [(ngModel)]="igName" [class.is-invalid]="!igName" />
+    <div class="help-block" *ngIf="!igName">Name is required</div>
   </div>
+
 
   <div class="form-group">
     <label>FHIR Version: </label>
@@ -117,5 +131,5 @@
   </div>
 
   <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
-  <button type="button" class="btn btn-primary" (click)="nextStep()">Finish</button>
+  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!canonicalURL || !projectCode || !igUrl || !igName || !igTitle">Finish</button>
 </div>
