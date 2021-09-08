@@ -143,14 +143,29 @@ export class NewProjectComponent implements OnInit {
     return !this.isHL7 && this.step === 2;
   }
 
+  setProjectCode(value: string) {
+    this.projectCode = value;
+    this.packageIdCriteriaChanged();
+  }
+
   packageIdCriteriaChanged() {
-    this.packageId = `hl7.${this.isFHIR ? 'fhir' : 'cda'}.${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'us'}.${this.projectCode || 'unknown'}`;
-    this.canonicalURL = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'us'}/${this.projectCode || 'unknown'}`;
+    this.packageId = `hl7.${this.isFHIR ? 'fhir' : 'cda'}.${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}.${this.projectCode || 'unknown'}`;
+    this.canonicalURL = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}/${this.projectCode || 'unknown'}`;
     this.igUrl = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'us'}/${this.projectCode || 'unknown'}/ImplementationGuide/${this.projectCode || 'unknown'}`;
   }
 
+  setIgCanonicalUrl(value: string) {
+    this.canonicalURL = value;
+    this.igUrlChanged();
+  }
+
+  setIgId(value: string) {
+    this.projectCode = value;
+    this.igUrlChanged();
+  }
+
   igUrlChanged() {
-    this.igUrl = `${this.canonicalURL}/ImplementationGuide/${this.projectCode ? this.projectCode : 'unknown'}`;
+    this.igUrl = (this.canonicalURL || '') + (this.canonicalURL && this.canonicalURL.endsWith('/') ? '' : '/') + `ImplementationGuide/${this.projectCode || 'unknown'}`;
   }
 
   igNameChanged() {
@@ -159,6 +174,11 @@ export class NewProjectComponent implements OnInit {
 
   getFhirVersion() {
     this.fhirVersion = this.configService.fhirConformanceVersion;
+  }
+
+  isValidId(id: string) {
+    const results = /^[A-Za-z0-9\-\\.]{1,64}$/.exec(id);
+    return !!results;
   }
 
   isValidUrl(url: string) {
