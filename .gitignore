@@ -10,6 +10,7 @@
 
 # IDEs and editors
 /.idea
+/.idea/vcs.xml
 .project
 .classpath
 .c9/
