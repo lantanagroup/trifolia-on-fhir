@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.1.1.256">
+  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -173,7 +173,7 @@
                         <li>Export/Import</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="GitHubIntegration.html" title="GitHub Integration" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="WalkThrough.html" title="Walk-through" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group" role="group"><a class="btn btn-default" href="GitHubIntegration.html" title="GitHub Integration" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="WalkThrough.html" title="Walk-through" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -184,18 +184,16 @@
 
             <div class="main-content">
                 
-<p></p>
-<p class="rvps2"><span class="rvts76">Validation</span></p>
+<p class="rvps2"><span class="rvts74">Validation</span></p>
 <p class="rvps2"><span class="rvts6">Trifolia-on-FHIR uses three validation methods to provide as much feedback to IG authors as possible:</span></p>
-<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;">
- <li value="1" class="rvps11"><span class="rvts31">Real-time UI Validation</span><br/><span class="rvts32">This validation checks the base FHIR specification requirements (i.e., cardinality, terminology bindings, value set requirements). This validation occurs as each field in ToF is changed to update and render to the user in real-time.&nbsp;</span></li>
- <li value="2" class="rvps11"><span class="rvts31">Pre-publish Validation</span><br/><span class="rvts32">When publishing an implementation guide from the "Publish" screen, the FHIR server's </span><a class="rvts77" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a><a class="rvts79" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank"> </a><span class="rvts32">is executed for each resource in the implementation guide. This is specific to the FHIR server in Trifolia-on-FHIR for this IG (e.g., HAPI, the FHIR server instance default).</span></li>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside;">
+ <li class="rvps11"><span class="rvts29">Real-time UI Validation</span><br/><span class="rvts30">This validation checks the base FHIR specification requirements (i.e., cardinality, terminology bindings, value set requirements). This validation occurs as each field in ToF is changed to update and render to the user in real-time.&nbsp;</span></li>
+ <li class="rvps11"><span class="rvts29">Pre-publish Validation</span><br/><span class="rvts30">When publishing an implementation guide from the "Publish" screen, the FHIR server's </span><a class="rvts75" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a><a class="rvts77" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank"> </a><span class="rvts30">is executed for each resource in the implementation guide. This is specific to the FHIR server in Trifolia-on-FHIR for this IG (e.g., HAPI, the FHIR server instance default).</span></li>
 </ol>
-<p class="rvps11"><span class="rvts32"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts32"> &nbsp; &nbsp; &nbsp;Please see the </span><a class="rvts77" href="FAQ.html">FAQ</a><span class="rvts32"> page, </span><span class="rvts78">Publishing with the FHIR IG Publisher</span><span class="rvts32"> section for examples of errors and steps to resolve.</span></p>
-<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: decimal;">
- <li value="3" class="rvps11"><span class="rvts31">HL7 IG Publisher Validation</span><br/><span class="rvts32">The FHIR IG Publisher executes this validation step automatically </span><span class="rvts78">during </span><span class="rvts32">the publishing process. Validation checks for relationships between all resources and pages within this IG package. This includes all applicable IG resources, profiles, extensions, value sets, etc. FHIR IG Publisher validation also validates HTML links within the package. You cannot execute this validation step &nbsp;externally/independently of the publish process for an entire IG.</span></li>
+<p class="rvps11"><span class="rvts30"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts30"> &nbsp; &nbsp; &nbsp;Please see the </span><a class="rvts75" href="FAQ.html">FAQ</a><span class="rvts30"> page, </span><span class="rvts76">Publishing with the FHIR IG Publisher</span><span class="rvts30"> section for examples of errors and steps to resolve.</span></p>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside;">
+ <li value="3" class="rvps11"><span class="rvts29">HL7 IG Publisher Validation</span><br/><span class="rvts30">The FHIR IG Publisher executes this validation step automatically </span><span class="rvts76">during </span><span class="rvts30">the publishing process. Validation checks for relationships between all resources and pages within this IG package. This includes all applicable IG resources, profiles, extensions, value sets, etc. FHIR IG Publisher validation also validates HTML links within the package. You cannot execute this validation step &nbsp;externally/independently of the publish process for an entire IG.</span><span class="rvts30"></span></li>
 </ol>
-<p></p>
 
             </div>
             
