@@ -169,11 +169,11 @@ export class FhirService {
 
   public getResourceGithubDetails(resource: DomainResource): ResourceGithubDetails {
     const branchExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-      Globals.extensionUrls['r4-github-branch'] :
-      Globals.extensionUrls['stu3-github-branch'];
+      Globals.extensionUrls['github-branch'] :
+      Globals.extensionUrls['github-branch'];
     const pathExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-      Globals.extensionUrls['r4-github-path'] :
-      Globals.extensionUrls['stu3-github-path'];
+      Globals.extensionUrls['github-path'] :
+      Globals.extensionUrls['github-path'];
 
     const branchExtension = (resource.extension || []).find((extension) => extension.url === branchExtensionUrl);
     const pathExtension = (resource.extension || []).find((extension) => extension.url === pathExtensionUrl);
@@ -194,11 +194,11 @@ export class FhirService {
     }
 
     const branchExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-      Globals.extensionUrls['r4-github-branch'] :
-      Globals.extensionUrls['stu3-github-branch'];
+      Globals.extensionUrls['github-branch'] :
+      Globals.extensionUrls['github-branch'];
     const pathExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-      Globals.extensionUrls['r4-github-path'] :
-      Globals.extensionUrls['stu3-github-path'];
+      Globals.extensionUrls['github-path'] :
+      Globals.extensionUrls['github-path'];
 
     let branchExtension = (resource.extension || []).find((extension) => extension.url === branchExtensionUrl);
     let pathExtension = (resource.extension || []).find((extension) => extension.url === pathExtensionUrl);

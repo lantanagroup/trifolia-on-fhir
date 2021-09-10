@@ -30,7 +30,7 @@ const migrateDescription = 'Migrates data in previous versions of ToF to new ver
 const changeIdFormat = 'change-id [directory] [resourceType] [oldId] [newId]';
 const changeIdDescription = 'Changes the ID of a resource in one or more files in a directory';
 
-const changeExtensionUrlFormat = 'change-ext-url [server] [currentUrl] [newUrl]';
+const changeExtensionUrlFormat = 'change-ext-url [server]';
 const changeExtensionUrlDescription = 'Changes the url of an extension';
 
 const argv = Yargs
@@ -40,13 +40,14 @@ const argv = Yargs
         description: 'The FHIR server to change extension urls on',
         required: true
       })
-      .positional('currentUrl', {
-        description: 'The URL of the extension that should be changed and is currently set to',
-        required: true
+      .option('currentUrl', {
+        description: 'The URL of the extension that should be changed and is currently set to'
       })
-      .positional('newUrl', {
-        description: 'The URL that the extension should be changed to',
-        required: true
+      .option('newUrl', {
+        description: 'The URL that the extension should be changed to'
+      })
+      .option('file', {
+        description: 'A comma-separated text file (CSV) that lists "currentUrl" and "newUrl" for each line, allowing multiple extension changes'
       })
       .option('resourceType', {
         type: 'string',
