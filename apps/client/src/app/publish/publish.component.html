@@ -82,16 +82,6 @@
             </select>
           </div>
         </div>
-
-        <div class="col-md-6">
-          <app-fhir-boolean
-            [cookieKey]="Globals.cookieKeys.exportLastDownloadOutput"
-            [parentObject]="options"
-            [required]="true"
-            propertyName="downloadOutput"
-            title="Download after publish?">
-          </app-fhir-boolean>
-        </div>
       </div>
       <div class="alert alert-info">If the Edit IG tab specifies any Publishing Template customizations then further changes can only be made on the Edit IG tab</div>
       <div class="row">
