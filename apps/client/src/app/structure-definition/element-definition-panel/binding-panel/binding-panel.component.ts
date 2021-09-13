@@ -1,17 +1,11 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {
-  ElementDefinition as STU3ElementDefinition,
-  ElementDefinitionBindingComponent,
-  ValueSet
-} from '../../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {
-  ElementDefinition as R4ElementDefinition,
-  ElementDefinitionElementDefinitionBindingComponent
-} from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent, ValueSet} from '../../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ElementDefinition as R4ElementDefinition, ElementDefinitionElementDefinitionBindingComponent} from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Globals} from '../../../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../../../shared/config.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirReferenceModalComponent} from '../../../fhir-edit/reference-modal/reference-modal.component';
+import {IElementDefinition} from '../../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   selector: 'app-element-definition-binding',
@@ -19,7 +13,7 @@ import {FhirReferenceModalComponent} from '../../../fhir-edit/reference-modal/re
   styleUrls: ['./binding-panel.component.css']
 })
 export class BindingPanelComponent implements OnInit {
-  @Input() element: STU3ElementDefinition | R4ElementDefinition;
+  @Input() element: IElementDefinition;
   public Globals = Globals;
   public valueSetChoices = ['Uri', 'Reference'];
   @Output() change: EventEmitter<void> = new EventEmitter<void>();

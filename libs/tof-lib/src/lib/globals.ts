@@ -17,19 +17,15 @@ export class Globals {
 
   static readonly extensionUrls = {
     'resource-meta-source': 'http://hapifhir.io/fhir/StructureDefinition/resource-meta-source',
-    'ig-depends-on-name': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-name',
-    'ig-depends-on-location': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/extension-ig-depends-on-location',
-    'stu3-github-path': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-path',
-    'stu3-github-branch': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/github-branch',
-    'r4-github-path': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/github-path',
-    'r4-github-branch': 'https://trifolia-fhir.lantanagroup.com/r4/StructureDefinition/github-branch',
-    'extension-ig-dependency': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency',
-    'extension-ig-dependency-name': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name',
-    'extension-ig-dependency-version': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version',
-    'extension-ig-dependency-location': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location',
-    'extension-ig-dependency-id': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-id',
-    'extension-ig-package-id': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-ig-package-id',
-    'extension-coding-inactive': 'https://trifolia-fhir.lantanagroup.com/stu3/StructureDefinition/extension-coding-inactive',
+    'github-path': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/github-path',
+    'github-branch': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/github-branch',
+    'extension-ig-dependency': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency',
+    'extension-ig-dependency-name': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-name',
+    'extension-ig-dependency-version': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-version',
+    'extension-ig-dependency-location': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-location',
+    'extension-ig-dependency-id': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-dependency-id',
+    'extension-ig-package-id': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-package-id',
+    'extension-coding-inactive': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-coding-inactive',
     'extension-group-manager': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager',
     'extension-ig-resource-file-path': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-resource-file-path',
     'extension-cs-expectation': 'http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation',
@@ -40,7 +36,7 @@ export class Globals {
     'extension-practitioner-announcements': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements',
     'elementdefinition-profile-element': 'http://hl7.org/fhir/StructureDefinition/elementdefinition-profile-element',
     'extension-ig-package-list': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-package-list',
-    'extension-ig-page-content': 'https://trifolia-on-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
+    'extension-ig-page-content': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
     'extension-ig-page-filename': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-filename',
     'extension-ig-page-reuse-description': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-reuse-description',
     'extension-ig-ignore-warnings': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-ignore-warnings',
@@ -177,10 +173,13 @@ export class Globals {
     'ig.customMenu': 'Set the structure of the main menu of the IG to a customized construction here. This will expect fully formed XML in the future.',
     'ig.publishing.template': 'This is the template that should be used by the FHIR IG publisher. It is used to pre-populate the "Template" field on the "Export" and "Publish" screens.',
     'ig.publishing.template.custom': 'It is suggested that you use the link to "Download ZIP" from a GitHub repository; it is expected that the template be in a ZIP file that is correctly structured/formatted.',
-    'ig.publishing.template.custom.example': 'i.e. https://github.com/lantanagroup/ig-template-base/archive/refs/heads/master.zip'
+    'ig.publishing.template.custom.example': 'i.e. https://github.com/lantanagroup/ig-template-base/archive/refs/heads/master.zip',
+    'ig.definition.resource.description': 'Reason why included in guide. This text will appear in the right column of the the Artifact Index page within the rendered IG',
+    'structureDefinition.description': 'Natural language description of the structure definition. This text will appear on the Profile/StructureDefinition page in the Description field within the top table',
+    'vsac.apikey': 'To find your API KEY, login to <a href="https://uts.nlm.nih.gov/uts/" target="_new">UMLS Terminology Services</a>, select "Visit Your Profile" under "UTF Profile" (on the right), and copy/paste the value from the "API KEY" field.'
   };
 
-  static readonly igParameters = ['apply', 'copyrightyear', 'expansion-parameter', 'generate-json', 'generate-turtle', 'generate-xml', 'html-template', 'path-pages', 'path-resource', 'path-tx-cache', 'releaselabel', 'rule-broken-links'];
+  static readonly igParameters = ['apply', 'copyrightyear', 'expansion-parameter', 'generate-json', 'generate-turtle', 'generate-xml', 'html-template', 'path-pages', 'path-resource', 'path-tx-cache', 'releaselabel', 'rule-broken-links', 'jira-code', 'path-expansion-params'];
 
   static readonly hl7WorkGroups = [
     { name: 'Administrative Steering Division', url: 'http://www.hl7.org/Special/committees/ssdsd' },

@@ -126,8 +126,14 @@
                 </select>
               </div>
 
-              <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version" [required]="true"
-                               (change)="igChanging.emit(true);"></app-fhir-string>
+              <app-fhir-string
+                [parentObject]="implementationGuide"
+                propertyName="version"
+                title="Version"
+                tooltipPath="ImplementationGuide.version"
+                [required]="true"
+                (change)="igChanging.emit(true);">
+              </app-fhir-string>
 
               <div class="form-group">
                 <label>Status

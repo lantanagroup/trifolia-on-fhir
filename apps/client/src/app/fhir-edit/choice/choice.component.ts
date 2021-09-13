@@ -24,6 +24,7 @@ export class FhirChoiceComponent implements OnInit {
   @Input() tooltipPath: string;
   @Input() allowedType: string;
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
+  @Input() disabled = false;
 
   public tooltip: string;
   public contactPointSystemCodes: Coding[] = [];

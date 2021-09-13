@@ -3,7 +3,7 @@ import {Controller, Get, HttpService, Param, Post, Query, Req, Res, UseGuards} f
 import {BundleExporter} from './export/bundle';
 import {ITofRequest} from './models/tof-request';
 import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, joinUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ServerValidationResult} from '../../../../libs/tof-lib/src/lib/server-validation-result';
 import {emptydir, rmdir, zip} from './helper';
 import {ExportOptions} from './models/export-options';
@@ -18,10 +18,12 @@ import * as path from 'path';
 import * as tmp from 'tmp';
 import {MSWordExporter} from './export/msword';
 import {ExportService} from './export.service';
-import {FhirServerVersion, User} from './server.decorators';
+import {FhirServerId, FhirServerVersion, User} from './server.decorators';
 import {HtmlExporter} from './export/html';
 import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import nodemailer from 'nodemailer';
+import JSZip from "jszip";
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
@@ -29,6 +31,7 @@ import {IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfa
 @ApiOAuth2([])
 export class ExportController extends BaseController {
   private readonly logger = new TofLogger(ExportController.name);
+  public jsZipObj = new JSZip();
 
   constructor(protected httpService: HttpService, protected configService: ConfigService, private exportService: ExportService) {
     super(configService, httpService);
@@ -41,7 +44,7 @@ export class ExportController extends BaseController {
       let validationRequests = [];
 
       const validateResource = (resource: DomainResource) => {
-        return new Promise((innerResolve, innerReject) => {
+        return new Promise((innerResolve) => {
           const options: AxiosRequestConfig = {
             url: buildUrl(request.fhirServerBase, resource.resourceType, null, '$validate'),
             method: 'POST',
@@ -176,13 +179,14 @@ export class ExportController extends BaseController {
       implementationGuideId);
 
     try {
-      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType,
-        options.template, options.templateVersion, options.useTerminologyServer);
 
-      if(exporter.bundle && exporter.bundle.entry) {
+      await exporter.export(options.format, options.includeIgPublisherJar, options.version, options.templateType,
+        options.template, options.templateVersion, this.jsZipObj, options.useTerminologyServer);
+
+      if (exporter.bundle && exporter.bundle.entry) {
         exporter.bundle.entry.forEach(e => {
-          if(e.resource.resourceType && e.resource.resourceType === "StructureDefinition"){
-            delete (<IStructureDefinition> e.resource).snapshot;
+          if (e.resource.resourceType && e.resource.resourceType === 'StructureDefinition') {
+            delete (<IStructureDefinition>e.resource).snapshot;
           }
         });
       }
@@ -212,7 +216,7 @@ export class ExportController extends BaseController {
   }
 
   @Get(':implementationGuideId/publish')
-  public async publishImplementationGuide(@Req() request: ITofRequest, @User() user: ITofUser, @Param('implementationGuideId') implementationGuideId) {
+  public async publishImplementationGuide(@Req() request: ITofRequest, @User() user: ITofUser, @FhirServerId() fhirServerId: string, @Param('implementationGuideId') implementationGuideId) {
     const options = new ExportOptions(request.query);
     const exporter: HtmlExporter = await createHtmlExporter(
       this.configService,
@@ -237,7 +241,7 @@ export class ExportController extends BaseController {
       }
 
       if (exportIndex >= this.configService.publish.queueLimit) {
-        exporter.sendSocketMessage('progress', `You are ${exportIndex + 1} in line.`, false);
+        exporter.publishLog('progress', `You are ${exportIndex + 1} in line.`, false);
         setTimeout(() => {
           runPublish();
         }, this.configService.publish.timeOut);
@@ -246,18 +250,19 @@ export class ExportController extends BaseController {
 
       try {
         await exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar, options.version);
+        this.sendNotification(options.notifyMe, user, true, implementationGuideId, fhirServerId);
       } catch (ex) {
         this.logger.error(`Error while executing HtmlExporter.publish: ${ex.message}`);
+        this.sendNotification(options.notifyMe, user, false, implementationGuideId, fhirServerId, exporter.logs);
       } finally {
         const index = this.exportService.exports.indexOf(exporter);
-        if(index >= 0) this.exportService.exports.splice(index, 1);
+        if (index >= 0) this.exportService.exports.splice(index, 1);
       }
     };
 
-
     try {
       await exporter.export(options.format, options.includeIgPublisherJar, options.version,
-        options.templateType, options.template, options.templateVersion, null);
+        options.templateType, options.template, options.templateVersion, this.jsZipObj,null);
 
       runPublish();
 
@@ -275,7 +280,41 @@ export class ExportController extends BaseController {
   public cancel(@Param('packageId') packageId: string) {
     this.logger.log(`User has requested that package id ${packageId} be removed from the queue`);
     const res = this.exportService.cancel(packageId);
-    if(res) this.logger.log(`Exporter with package id ${packageId} has been removed from the queue`);
+    if (res) this.logger.log(`Exporter with package id ${packageId} has been removed from the queue`);
+  }
+
+  private async sendNotification(shouldNotify = false, user: ITofUser, success: boolean, implementationGuideId: string, fhirServerId: string, logs?: string) {
+    // If the user does not have an email...
+    if (!shouldNotify || !user || !user.email) return;
+
+    // If the server is not configured to support mail transport...
+    if (!this.configService.server.mailTransport) return;
+
+    // If the server is not configured with required mail options...
+    if (!this.configService.server.mailOptions || !this.configService.server.mailOptions.from) return;
+
+    try {
+      const transporter = nodemailer.createTransport(this.configService.server.mailTransport);
+      const link = joinUrl(this.configService.server.mailOptions.hostUrl, fhirServerId, implementationGuideId, 'implementation-guide', 'view');
+
+      this.logger.log(`Attempting to send email to ${user.email} indicating the publish of ${implementationGuideId} has completed.`);
+
+      await transporter.sendMail({
+        from: this.configService.server.mailOptions.from,
+        to: user.email,
+        subject: `${this.configService.server.mailOptions.subjectPrefix || 'Trifolia-on-FHIR'}: ${success ? 'Successfully published' : 'Failed to publish'} implementation guide with ID ${implementationGuideId}`,
+        text: success ?
+          `Your implementation guide has successfully published. You can view it here: ${link}.` :
+          `Your implementation guide encountered errors when publishing:\r\n\r\n${logs}`,
+        html: success ?
+          `Your implementation guide has successfully published. You can view it <a href="${link}">here</a>.` :
+          `<p>Your implementation guide encountered errors when publishing:</p><p>${logs.replace(/\r\n/g, '\r\n<br/>')}</p>`
+      });
+
+      this.logger.log(`Successfully sent email.`);
+    } catch (ex) {
+      this.logger.error(`Encountered errors when trying to send notification email: ${ex.message}`);
+    }
   }
 
   private async sendPackageResponse(packageId: string, res: Response) {

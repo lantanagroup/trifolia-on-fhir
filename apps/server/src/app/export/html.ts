@@ -27,10 +27,10 @@ import {
   setJiraSpecValue
 } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {IBundle, IExtension, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
 import {FhirInstances, unzip} from '../helper';
-import {escapeForXml, getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
@@ -38,6 +38,7 @@ import * as vkbeautify from 'vkbeautify';
 import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 import {ConfigService} from '../config.service';
 import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
+import JSZip from 'jszip';
 
 export class HtmlExporter {
   public queuedAt: Date;
@@ -54,6 +55,7 @@ export class HtmlExporter {
   public controlPath: string;
   public igPublisherProcess: ChildProcess;
   public publishing: Promise<void>;
+  public logs: string;
   protected igPublisherLocation: string;
   protected pageInfos: PageInfo[];
 
@@ -172,6 +174,8 @@ export class HtmlExporter {
       throw new MethodNotAllowedException('export() must be executed before publish()');
     }
 
+    this.logs = '';
+
     this.publishing = new Promise(async (resolve, reject) => {
       this.publishStartedAt = new Date();
 
@@ -194,7 +198,7 @@ export class HtmlExporter {
         jarParams.push('-tx', 'N/A');
       }
 
-      this.sendSocketMessage('progress', `Running ${igPublisherVersion} IG Publisher: ${jarParams.join(' ')}`, true);
+      this.publishLog('progress', `Running ${igPublisherVersion} IG Publisher: ${jarParams.join(' ')}`, true);
 
       this.logger.log(`Spawning FHIR IG Publisher Java process at ${process} with params ${jarParams}`);
 
@@ -209,7 +213,7 @@ export class HtmlExporter {
           .replace(this.homedir, 'XXX');
 
         if (message && message.trim().replace(/\./g, '') !== '') {
-          this.sendSocketMessage('progress', message);
+          this.publishLog('progress', message);
         }
       });
 
@@ -221,7 +225,7 @@ export class HtmlExporter {
         }
 
         if (message && message.trim().replace(/\./g, '') !== '') {
-          this.sendSocketMessage('progress', message);
+          this.publishLog('progress', message);
         }
       });
 
@@ -231,28 +235,28 @@ export class HtmlExporter {
         if (this.configService.server.publishStatusPath) {
           this.updatePublishStatuses(false);
         }
-        this.sendSocketMessage('error', message);
-        reject("Error publishing IG");
+        this.publishLog('error', message);
+        reject('Error publishing IG');
       });
 
       this.igPublisherProcess.on('exit', (code) => {
         this.logger.log(`IG Publisher is done executing for ${this.rootPath}`);
 
-        this.sendSocketMessage('progress', 'IG Publisher finished with code ' + code, true);
+        this.publishLog('progress', 'IG Publisher finished with code ' + code, true);
 
         if (code !== 0) {
-          this.sendSocketMessage('progress', 'The HL7 IG Publisher failed. The HL7 IG Publisher tool is not developed as part of Trifolia-on-FHIR; it is developed by HL7. If you are still having issues after having reviewed and addressed ToF errors reported in the log above, go to chat.fhir.org to get more information on how to proceed.', true);
+          this.publishLog('progress', 'The HL7 IG Publisher failed. The HL7 IG Publisher tool is not developed as part of Trifolia-on-FHIR; it is developed by HL7. If you are still having issues after having reviewed and addressed ToF errors reported in the log above, go to chat.fhir.org to get more information on how to proceed.', true);
 
           if (this.configService.server.publishStatusPath) {
             this.updatePublishStatuses(false);
           }
 
-          if (downloadOutput) this.sendSocketMessage('complete', 'Done. You will be prompted to download the package in a moment.');
-          else this.sendSocketMessage('error', 'Done. The IG Publisher failed.');
+          if (downloadOutput) this.publishLog('complete', 'Done. You will be prompted to download the package in a moment.');
+          else this.publishLog('error', 'Done. The IG Publisher failed.');
 
           reject('Return code from IG Publisher is not 0');
         } else {
-          this.sendSocketMessage('progress', 'Copying output to deployment path.', true);
+          this.publishLog('progress', 'Copying output to deployment path.', true);
 
           const generatedPath = path.resolve(this.rootPath, 'generated_output');
           const outputPath = path.resolve(this.rootPath, 'output');
@@ -274,11 +278,11 @@ export class HtmlExporter {
           fs.copy(outputPath, deployDir, (err) => {
             if (err) {
               this.logger.error(err);
-              this.sendSocketMessage('error', 'Error copying contents to deployment path.');
+              this.publishLog('error', 'Error copying contents to deployment path.');
               reject(err);
             } else {
               const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/${this.fhirServerId}/${this.implementationGuideId}/implementation-guide/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
-              this.sendSocketMessage('complete', finalMessage, true);
+              this.publishLog('complete', finalMessage, true);
               resolve();
             }
 
@@ -312,7 +316,7 @@ export class HtmlExporter {
 
   public async export(format: Formats, includeIgPublisherJar: boolean,
                       version: string, templateType = 'official', template = 'hl7.fhir.template',
-                      templateVersion = 'current', useTerminologyServer?: boolean): Promise<void> {
+                      templateVersion = 'current', zipper: JSZip, useTerminologyServer?: boolean): Promise<void> {
     if (!this.configService.fhir.servers) {
       throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
     }
@@ -345,7 +349,8 @@ export class HtmlExporter {
       this.logger.log('Implementation guide has a package-list.json file defined. Including it in export.');
 
       const packageListPath = path.join(this.rootPath, 'package-list.json');
-      fs.writeFileSync(packageListPath, JSON.stringify(packageList, null, '\t'));
+
+      zipper.file(packageListPath, JSON.stringify(packageList, null, '\t'));
 
       PackageListModel.removePackageList(this.implementationGuide);
     }
@@ -386,7 +391,7 @@ export class HtmlExporter {
         const customTemplatePath = path.join(this.rootPath, 'custom-template');
 
         const retrieveTemplateResults = await this.httpService.get(template, { responseType: 'arraybuffer' }).toPromise();
-        this.sendSocketMessage('progress', 'Retrieved custom template from GitHub, extracting to "custom-template" directory.');
+        this.publishLog('progress', 'Retrieved custom template from GitHub, extracting to "custom-template" directory.');
 
         fs.ensureDirSync(customTemplatePath);
 
@@ -402,7 +407,7 @@ export class HtmlExporter {
         controlTemplate = 'custom-template';
         controlTemplateVersion = null;
       } catch (ex) {
-        this.sendSocketMessage('error', `Error retrieving custom template from GitHub: ${getErrorString(ex)}`, true);
+        this.publishLog('error', `Error retrieving custom template from GitHub: ${getErrorString(ex)}`, true);
       }
     }
 
@@ -445,7 +450,9 @@ export class HtmlExporter {
     this.logger.log(`Done creating HTML export for IG ${this.implementationGuideId}`);
   }
 
-  public sendSocketMessage(status: 'error' | 'progress' | 'complete', message, shouldLog?: boolean) {
+  public publishLog(status: 'error' | 'progress' | 'complete', message, shouldLog?: boolean) {
+    this.logs += message + '\r\n';
+
     if (!this.socketId) {
       this.logger.error('Won\'t send socket message for export because the original request did not specify a socketId');
       return;
@@ -676,7 +683,7 @@ export class HtmlExporter {
     })
 
     if (!resourcePath) {
-      this.sendSocketMessage('error', `Could not determine path for resource ${implementationGuideResource.reference.reference}`, true);
+      this.publishLog('error', `Could not determine path for resource ${implementationGuideResource.reference.reference}`, true);
       return;
     }
 

@@ -14,6 +14,8 @@ import {ClientHelper} from '../clientHelper';
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
+import { debounceTime } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   templateUrl: './valueset.component.html',
@@ -26,6 +28,10 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
   public vsNotFound = false;
   public Globals = Globals;
   public ClientHelper = ClientHelper;
+
+  public idChangedEvent = new Subject();
+  public isIdUnique = true;
+  public alreadyInUseIDMessage = '';
 
   private navSubscription: any;
 
@@ -43,6 +49,19 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     super(configService, authService);
 
     this.valueSet = new ValueSet({ meta: this.authService.getDefaultMeta() });
+
+    this.idChangedEvent.pipe(debounceTime(500))
+      .subscribe(async () => {
+        const isIdUnique = await this.fhirService.checkUniqueId(this.valueSet);
+        if(!isIdUnique){
+          this.isIdUnique = false;
+          this.alreadyInUseIDMessage = "ID " +  this.valueSet.id  + " is already used.";
+        }
+        else{
+          this.isIdUnique = true;
+          this.alreadyInUseIDMessage="";
+        }
+      });
   }
 
   public get isNew(): boolean {

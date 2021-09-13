@@ -52,3 +52,7 @@ node_modules_1/
 apps/server/src/config/local.json
 apps/server/src/config/local-*.json
 apps/server/src/assets/ig-publisher/
+
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/shelf/

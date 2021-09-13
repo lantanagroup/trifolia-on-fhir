@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.1.1.256">
+  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -173,7 +173,7 @@
                         <li>Export/Import</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Import.html" title="Import" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Validation.html" title="Validation" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group" role="group"><a class="btn btn-default" href="Import.html" title="Import" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Validation.html" title="Validation" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -184,22 +184,21 @@
 
             <div class="main-content">
                 
-<p></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Authentication</span></span></h2>
 <p class="rvps2"><span class="rvts6">The import and export screens both contain options for GitHub. As soon as the GitHub option is selected in either screen, you are prompted to login with your GitHub credentials. Once logged in, your GitHub authentication token is stored in cookies so that you do not have to login every time you select "GitHub" under the import/export screens.</span></p>
 <p class="rvps2"><span class="rvts6">After you have logged into GitHub, a GitHub icon appears in the top-right corner of the all screens. When clicked, this icon logs you out of GitHub within ToF.</span></p>
 <p class="rvps2"><span class="rvts6">ToF uses a pop-up window to authenticate with GitHub. If your browser blocks the pop-up window, ToF will not be able to authenticate with GitHub and you will receive an error.</span></p>
-<p class="rvps2"><span class="rvts34">NOTE: If you select "Remember Me" when logging into GitHub, and want to change to a different GitHub user, you will need to open github.com in a separate window and logout of your GitHub account, then have ToF forget the GitHub login using the GitHub icon mentioned above. Once this is done, when you attempt to login to GitHub via ToF, it will ask you which account you would like to use with GitHub.</span></p>
+<p class="rvps2"><span class="rvts32">NOTE: If you select "Remember Me" when logging into GitHub, and want to change to a different GitHub user, you will need to open github.com in a separate window and logout of your GitHub account, then have ToF forget the GitHub login using the GitHub icon mentioned above. Once this is done, when you attempt to login to GitHub via ToF, it will ask you which account you would like to use with GitHub.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Work Flow</span></span></h2>
 <p class="rvps2"><span class="rvts6">The work flow within ToF for GitHub is to</span></p>
-<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;">
- <li value="1" class="rvps2"><span class="rvts6">Import resources from a GitHub repository into the selected FHIR server</span></li>
- <li value="2" class="rvps2"><span class="rvts6">Edit the resources using ToF</span></li>
- <li value="3" class="rvps2"><span class="rvts6">Export the resources back to the GitHub repository after they have the desired changes</span></li>
+<ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside;">
+ <li class="rvps2"><span class="rvts6">Import resources from a GitHub repository into the selected FHIR server</span></li>
+ <li class="rvps2"><span class="rvts6">Edit the resources using ToF</span></li>
+ <li class="rvps2"><span class="rvts6">Export the resources back to the GitHub repository after they have the desired changes</span></li>
 </ol>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Extensions</span></span></h2>
 <p class="rvps2"><span class="rvts6">When importing resources, two extensions are added to each resource representing the location within GitHub for where the resource came from. This enables ToF to know where in GItHub to export the resources back to.</span></p>
-<p class="rvps2"><span class="rvts6">If you are exporting </span><span class="rvts34">new</span><span class="rvts6"> resources to GitHub, these extensions will not yet exist and you will need to specify where the resources should be stored during the export (which will create the two extensions on the resource).</span></p>
+<p class="rvps2"><span class="rvts6">If you are exporting </span><span class="rvts32">new</span><span class="rvts6"> resources to GitHub, these extensions will not yet exist and you will need to specify where the resources should be stored during the export (which will create the two extensions on the resource).</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Limitations</span></span></h2>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
  <li class="rvps2"><span class="rvts6">Trifolia only exports the individual resources associated with the implementation guide, and does not include the entire IG Publication package. For example, the "framework" (html templates) folder is not included in the export.</span></li>
@@ -207,8 +206,7 @@
  <li class="rvps2"><span class="rvts6">GitHub does not allow retrieving/updating very large files. For example, if attempting to import/export a large ValueSet resource, GitHub may fail with a "Payload too large" error.</span></li>
 </ul>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Signing Out</span></span></h2>
-<p class="rvps2"><span class="rvts6">When you sign out of GitHub within Trifolia, this clears your GitHub session only within Trifolia. GitHub maintains its own session within your browser. To sign out of GitHub entirely, you will need to go to github.com and click "Sign out".</span></p>
-<p></p>
+<p class="rvps2"><span class="rvts6">When you sign out of GitHub within Trifolia, this clears your GitHub session only within Trifolia. GitHub maintains its own session within your browser. To sign out of GitHub entirely, you will need to go to github.com and click "Sign out".</span><span class="rvts6"></span></p>
 
             </div>
             

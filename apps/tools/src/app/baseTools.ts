@@ -57,10 +57,10 @@ export class BaseTools {
     });
   }
 
-  private getAllResourcesByType(server: string, resourceTypes: string[]): Promise<DomainResource[]> {
+  protected getAllResourcesByType(server: string, resourceTypes: string[]): Promise<DomainResource[]> {
     return new Promise((resolve, reject) => {
       const nextResourceType = resourceTypes.pop();
-      const url = server + (server.endsWith('/') ? '' : '/') + nextResourceType;
+      const url = server + (server.endsWith('/') ? '' : '/') + nextResourceType + '?_count=100';
 
       console.log(`Getting all resources of type ${nextResourceType}`);
 

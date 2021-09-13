@@ -9,7 +9,7 @@ import {
   StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { RecentItemService } from '../../shared/recent-item.service';
 import { FhirService } from '../../shared/fhir.service';
 import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
@@ -21,6 +21,7 @@ import { AuthService } from '../../shared/auth.service';
 import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { FhirReferenceModalComponent, ResourceSelection } from '../../fhir-edit/reference-modal/reference-modal.component';
 import { BaseComponent } from '../../base.component';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   templateUrl: './capability-statement.component.html',
@@ -28,6 +29,10 @@ import { BaseComponent } from '../../base.component';
 })
 export class R4CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   @Input() public capabilityStatement: CapabilityStatement;
+
+  public idChangedEvent = new Subject();
+  public isIdUnique = true;
+  public alreadyInUseIDMessage = '';
 
   public message: string;
   public validation: any;
@@ -53,7 +58,22 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     super(configService, authService);
 
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
+
+    this.idChangedEvent.pipe(debounceTime(500))
+      .subscribe(async () => {
+        const isIdUnique = await this.fhirService.checkUniqueId(this.capabilityStatement);
+        if(!isIdUnique){
+          this.isIdUnique = false;
+          this.alreadyInUseIDMessage = "ID " +  this.capabilityStatement.id  + " is already used.";
+        }
+        else{
+          this.isIdUnique = true;
+          this.alreadyInUseIDMessage="";
+        }
+      });
+
   }
+
 
   getCodes(list: any, resourceIndex) {
     if(list != null) {
@@ -74,6 +94,9 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
   public defaultResource(list: any) {
     if(list != null) {
       const remainingCodes = [];
+      this.codes.filter((coding, index) => { list.indexOf(coding.code)})
+      const result = this.codes.filter(({ id }) => list.includes(id));
+
       this.codes.forEach((coding, index) => {
         const foundCode = list.find((elem) => elem.type === coding.code);
         if (foundCode === undefined) { remainingCodes.push(coding);return;}

@@ -143,14 +143,14 @@ export class ConfigService {
     if (!fhirServer) {
       if (!this.fhirServer) {
         throw new Error('A fhir server must be specified to change the fhir server');
-      } else {
+      } else if (this.fhirConformance) {
         this.fhirServerChanged.emit(this.fhirServer);
         return Promise.resolve();
       }
+    } else {
+      this.fhirServer = fhirServer;
+      localStorage.setItem('fhirServer', this.fhirServer);
     }
-
-    this.fhirServer = fhirServer;
-    localStorage.setItem('fhirServer', this.fhirServer);
 
     // Get the conformance statement from the FHIR server and store it
     return this.http.get('/api/config/fhir').toPromise()

@@ -13,9 +13,10 @@ import {ConfigService} from '../shared/config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {BaseComponent} from '../base.component';
-import {Observable} from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
 import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
+
 
 @Component({
   templateUrl: './new-profile.component.html',
@@ -26,6 +27,9 @@ export class NewProfileComponent extends BaseComponent {
   public message: string;
   public Globals = Globals;
   public selectedType: ILogicalTypeDefinition;
+
+  public isIdUnique = true;
+  public idChangedEvent = new Subject();
 
   constructor(
     public configService: ConfigService,
@@ -40,6 +44,11 @@ export class NewProfileComponent extends BaseComponent {
     this.structureDefinition = this.configService.isFhirR4 ?
       new R4StructureDefinition({ meta: this.authService.getDefaultMeta() }) :
       new STU3StructureDefinition({meta: this.authService.getDefaultMeta()});
+
+    this.idChangedEvent.pipe(debounceTime(500))
+      .subscribe(async () => {
+        this.isIdUnique = await this.fhirService.checkUniqueId(this.structureDefinition);
+      });
   }
 
   public supportedLocalTypeFormatter = (result: ILogicalTypeDefinition) => {
@@ -55,7 +64,8 @@ export class NewProfileComponent extends BaseComponent {
   };
 
   public saveDisabled() {
-    return !this.structureDefinition.url ||
+    return !this.isIdUnique ||
+      !this.structureDefinition.url ||
       !this.structureDefinition.baseDefinition ||
       !this.structureDefinition.name ||
       !this.structureDefinition.type ||
@@ -93,6 +103,7 @@ export class NewProfileComponent extends BaseComponent {
 
     if (lastIndex) {
       this.structureDefinition.id = this.structureDefinition.url.substring(lastIndex + 1);
+      this.idChangedEvent.next();
     }
   }
 }

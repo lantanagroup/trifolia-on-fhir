@@ -146,6 +146,10 @@ body.structure-definition div.sd-main .tab-content > div.tab-pane {
   padding-right: 20px;
 }
 
+.help-block.error {
+  color: red;
+}
+
 ngb-tabset > ul > li > a > button {
   margin-top: -6px;
 }
@@ -785,6 +789,16 @@ simplemde .editor-statusbar {
 .CodeMirror-scroll {
   max-height: 300px;
   min-height: 100px !important;
+}
+
+simplemde.is-invalid > .editor-toolbar {
+  border: 1px solid red;
+  border-bottom: inherit;
+}
+
+simplemde.is-invalid > .CodeMirror-wrap {
+  border: 1px solid red;
+  border-top: 1px solid #ddd;
 }
 
 .bulk-edit .CodeMirror,

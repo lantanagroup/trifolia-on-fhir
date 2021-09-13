@@ -1,39 +1,30 @@
 <h1>Select an implementation guide project</h1>
-<app-tooltip-icon tooltipKey="implementationguide.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon>
+<!--app-tooltip-icon tooltipKey="implementationguide.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon-->
 
-<div class="card" [attr.data-intro]="Globals.introText['browse.search']">
-  <div class="card-header">Search</div>
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="form-group">
-          <label>Name</label>
-          <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name"/>
-        </div>
-      </div>
+<div *ngIf="recentIgs.length > 0">
+  <strong>Recent Projects:</strong>
+  <ul>
+    <li *ngFor="let ri of recentIgs">
+      <a (click)="projectReselected(ri)" routerLink="{{configService.baseSessionUrl}}/{{ri.id}}/home">{{ri.title || ri.name}}</a>
+    </li>
+  </ul>
+</div>
 
-      <div class="col-md-6" *ngIf="configService.isFhirR4">
-        <div class="form-group">
-          <label>Title</label>
-          <input type="text" class="form-control" [ngModel]="titleText" (ngModelChange)="titleTextChanged($event)" placeholder="Search title"/>
-        </div>
-      </div>
-
-      <div class="col-md-12">
-        <div class="btn-group">
-          <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
-            <i class="fa fa-times"></i> Clear
-          </button>
-          <button type="button" class="btn btn-primary" title="Refresh" (click)="getImplementationGuides()">
-            <i class="fa fa-search"></i> Search
-          </button>
-        </div>
-      </div>
-    </div>
+<div class="input-group">
+  <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name" />
+  <input (ngModelChange)="idTextChanged($event)" [ngModel]="idText" class="form-control" placeholder="Search ID" type="text" />
+  <input type="text" class="form-control" [ngModel]="titleText" (ngModelChange)="titleTextChanged($event)" placeholder="Search title" />
+  <div class="input-group-append">
+    <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
+      <i class="fa fa-times"></i> Clear
+    </button>
+    <button type="button" class="btn btn-primary" title="Refresh" (click)="getImplementationGuides()">
+      <i class="fa fa-search"></i> Search
+    </button>
   </div>
 </div>
 
-<br/>
+<br />
 
 <div *ngIf="results && total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
   <ngb-pagination
@@ -72,7 +63,8 @@
 
     <td class="actions-column-1">
       <div class="btn-group pull-right">
-        <a class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/{{ig.data.resource.id}}/home" title="Select this implementation guide project">
+        <a (click)="projectSelected(ig.data.resource)" class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/{{ig.data.resource.id}}/home"
+           title="Select this implementation guide project">
           <i class="fas fa-hand-pointer"></i>
         </a>
       </div>
@@ -97,11 +89,15 @@
   <tr *ngIf="results && total === 0">
     <td colspan="3">No implementation guides! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/implementation-guide/new">here</a>...</td>
   </tr>
-  <tr *ngIf="results && total > 0">
-    <td colspan="3">
-      <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="total" [(page)]="page" [boundaryLinks]="true"
-                      (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
-    </td>
-  </tr>
-  </tfoot>
 </table>
+
+<div *ngIf="results && total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+  <ngb-pagination
+    class="d-flex justify-content-center"
+    [maxSize]="5"
+    [collectionSize]="total"
+    [(page)]="page"
+    [boundaryLinks]="true"
+    (pageChange)="criteriaChangedEvent.next()">
+  </ngb-pagination>
+</div>

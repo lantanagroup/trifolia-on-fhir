@@ -98,7 +98,7 @@
       <ng-template ngbTabContent>
         <app-fhir-narrative [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></app-fhir-narrative>
 
-        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipPath="StructureDefinition.description"
+        <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipKey="structureDefinition.description"
                            (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
 
         <app-fhir-markdown [parentObject]="structureDefinition" propertyName="intro" title="Intro" (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
@@ -302,7 +302,7 @@
           <tr class="clickable" *ngFor="let e of constraintManager.elements; let ei = index"
               [class.selected]="selectedElement === e"
               [class.constrained]="!!e.constrainedElement"
-              (click)="toggleSelectedElement(e, true)"
+              (click)="toggleSelectedElement(e, true, $event.currentTarget)"
               [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '2' : undefined"
               [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.row-constrained'] : undefined">
             <td class="element-name" [class.has-children]="e.hasChildren">
@@ -315,12 +315,12 @@
                 <!--i class="fa fa-edit" *ngIf="e.constrainedElement && e.displayId.endsWith('[x]')" (click)="selectChoice(e)" title="Select choice type"></i-->
               </div>
             </td>
-            <td class="element-properties" [ngbPopover]="elementPropertiesPopover" container="body" triggers="manual" (click)="e.constrainedElement ? epp.open() : null" #epp="ngbPopover">
-              <span *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types"><i class="fa fa-question-circle"></i></span>
-              <span *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ </span>
-              <span *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?! </span>
-              <span *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S </span>
-              <span *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I </span>
+            <td class="element-properties" [ngbPopover]="elementPropertiesPopover" container="body" triggers="manual" (click)="e.constrainedElement? epp.open() : null" #epp="ngbPopover">
+              <span *ngIf="e.constrainedElement && e.constrainedElement.type || e.baseElement && e.baseElement.type" title="An element which can have one of several different types"><i class="fa fa-question-circle"></i></span>
+              <span *ngIf="e.constrainedElement && e.constrainedElement.isSummary || e.baseElement && e.baseElement.isSummary" title="This element is an element that is part of the summary set">Σ </span>
+              <span *ngIf="e.constrainedElement && e.constrainedElement.isModifier || e.baseElement && e.baseElement.isModifier" title="This element is a modifying element">?! </span>
+              <span *ngIf="e.constrainedElement && e.constrainedElement.mustSupport || e.baseElement && e.baseElement.mustSupport" title="This element is an element that must be supported">S </span>
+              <span *ngIf="e.constrainedElement && e.constrainedElement.constraint || e.baseElement && e.baseElement.constraint" title="This element defines or is affected by constraints">I </span>
             </td>
             <td class="element-cardinality">
               <div class="input-group">
@@ -331,7 +331,9 @@
                 <input type="text" class="form-control" [(ngModel)]="e.max" [disabled]="!e.constrainedElement" (change)="isDirty = true; nameChanged();"/>
               </div>
             </td>
-            <td class="element-type">{{e.typeDisplay}}</td>
+            <td class="element-type">
+              <div>{{e.typeDisplay}}</div>
+            </td>
             <td class="element-binding">{{e.constraints}}</td>
           </tr>
           <tr>
@@ -416,6 +418,9 @@
         <button type="button" class="btn btn-primary" (click)="constraintManager.constrain(selectedElement); isDirty=true; nameChanged()" id="edConstraintBtn">
           <i class="fa fa-edit"></i> Constrain this element
         </button>
+      </div>
+      <div class="element-definition-panel-resize">
+        <i class="fas fa-arrows-alt-h"></i>
       </div>
     </div>
   </div>

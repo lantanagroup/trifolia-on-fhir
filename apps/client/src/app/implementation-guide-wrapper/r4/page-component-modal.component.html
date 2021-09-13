@@ -29,7 +29,7 @@
     <input type="text" class="form-control" [(ngModel)]="page.navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
   </div>
 
-  <div class="form-group">
+  <div class="form-group" *ngIf="level === 0">
     <label>
       <input type="checkbox" [(ngModel)]="page.reuseDescription" /> The content of this page should be the same as the description and contact(s) of the implementation guide (ImplementationGuide.description and ImplementationGuide.contact).
     </label>

@@ -40,6 +40,10 @@ export class MarkdownComponent implements OnInit {
     if (changed) this.valueChange.emit(value);
   }
 
+  get hasWhitespace() {
+    return this.value && this.value !== this.value.trim();
+  }
+
   constructor(private modalService: ModalService) {
     this.toolbar = [
       {

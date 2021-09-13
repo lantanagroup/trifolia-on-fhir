@@ -234,7 +234,7 @@ export class STU3HtmlExporter extends HtmlExporter {
       const foundExistingPage = pagesPathFiles.find(y => y.toLowerCase() === pageInfo.fileName.toLowerCase());
 
       if (foundExistingPage) {
-        this.sendSocketMessage('progress', `Removing pre-existing framework/template file ${foundExistingPage} to be replaced by a narrative page in the IG.`);
+        this.publishLog('progress', `Removing pre-existing framework/template file ${foundExistingPage} to be replaced by a narrative page in the IG.`);
         const removePagePath = path.join(pagesPath, foundExistingPage);
         fs.unlinkSync(removePagePath);
         pageInfo.fileName = foundExistingPage;

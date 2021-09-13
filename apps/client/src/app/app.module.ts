@@ -81,10 +81,12 @@ import {PageWrapperComponent} from './bulk-edit/page-wrapper/page-wrapper.compon
 import {R4PageComponent} from './bulk-edit/page-wrapper/r4-page/r4-page.component';
 import {STU3PageComponent} from './bulk-edit/page-wrapper/stu3-page/stu3-page.component';
 import {IgnoreWarningsComponent} from './implementation-guide-wrapper/ignore-warnings/ignore-warnings.component';
-import { JiraSpecComponent } from './implementation-guide-wrapper/jira-spec/jira-spec.component';
-import { CustomMenuComponent } from './implementation-guide-wrapper/custom-menu/custom-menu.component';
-import { SecurityServicesComponent } from './capability-statement-wrapper/security-services/security-services.component';
-import { PublishingTemplateComponent } from './implementation-guide-wrapper/publishing-template/publishing-template.component';
+import {JiraSpecComponent} from './implementation-guide-wrapper/jira-spec/jira-spec.component';
+import {CustomMenuComponent} from './implementation-guide-wrapper/custom-menu/custom-menu.component';
+import {SecurityServicesComponent} from './capability-statement-wrapper/security-services/security-services.component';
+import {PublishingTemplateComponent} from './implementation-guide-wrapper/publishing-template/publishing-template.component';
+import { MergeUserModalComponent } from './manage/merge-user-modal/merge-user-modal.component';
+import {NewProjectComponent} from "./new-project/new-project.component";
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -140,7 +142,7 @@ const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: ':fhirServer/home', component: HomeComponent},
   {path: ':fhirServer/:implementationGuideId/home', component: HomeComponent},
-  {path: ':fhirServer/implementation-guide/new', component: ImplementationGuideWrapperComponent},
+  {path: ':fhirServer/implementation-guide/new', component: NewProjectComponent},
   {path: ':fhirServer/implementation-guide/open', component: ImplementationGuidesComponent},
   {path: ':fhirServer/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
   {path: ':fhirServer/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
@@ -227,7 +229,8 @@ const authModuleConfig: OAuthModuleConfig = {
     ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
     QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
     MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, STU3PageComponent, R4PageComponent
+    GroupModalComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, STU3PageComponent, R4PageComponent,
+    MergeUserModalComponent
   ],
   declarations: [
     AppComponent, ImplementationGuidesComponent,
@@ -244,7 +247,7 @@ const authModuleConfig: OAuthModuleConfig = {
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
     GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
-    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent
+    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, MergeUserModalComponent, NewProjectComponent
   ],
   imports: [
     RouterModule.forRoot(

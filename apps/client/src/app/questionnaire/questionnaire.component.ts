@@ -12,7 +12,8 @@ import {QuestionnaireItemModalComponent} from './questionnaire-item-modal.compon
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
-import { config } from 'rxjs';
+import { config, Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 export class ItemModel {
   public item: QuestionnaireItemComponent;
@@ -51,6 +52,11 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
   public validation: any;
   public flattenedItems: ItemModel[];
   public qNotFound = false;
+
+  public idChangedEvent = new Subject();
+  public isIdUnique = true;
+  public alreadyInUseIDMessage = '';
+
   private navSubscription: any;
 
   constructor(
@@ -67,6 +73,19 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     super(configService, authService);
 
     this.questionnaire = new Questionnaire({ meta: this.authService.getDefaultMeta() });
+
+    this.idChangedEvent.pipe(debounceTime(500))
+      .subscribe(async () => {
+        const isIdUnique = await this.fhirService.checkUniqueId(this.questionnaire);
+        if(!isIdUnique){
+          this.isIdUnique = false;
+          this.alreadyInUseIDMessage = "ID " +  this.questionnaire.id  + " is already used.";
+        }
+        else{
+          this.isIdUnique = true;
+          this.alreadyInUseIDMessage="";
+        }
+      });
   }
 
   public get isNew(): boolean {

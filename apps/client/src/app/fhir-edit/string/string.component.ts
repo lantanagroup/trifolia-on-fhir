@@ -14,6 +14,8 @@ export class FhirStringComponent implements OnInit {
   @Input() propertyName: string;
   @Input() title: string;
   @Input() required = false;
+  @Input() requiredMessage = 'This field is required.';
+  @Input() whiteSpaceMessage = 'This field should not start or end with a white-space.';
   @Input() isFormGroup = true;
   @Input() defaultValue = '';
   @Input() tooltipKey: string;
@@ -23,7 +25,6 @@ export class FhirStringComponent implements OnInit {
   @Input() pattern: string | RegExp;
   @Input() patternMessage: string;
   @Input() label = true;
-  @Input() alphanumeric = false;
 
   @ViewChild('formGroupModel', { static: true })
   private formGroupModel: NgModel;
@@ -49,7 +50,7 @@ export class FhirStringComponent implements OnInit {
 
   public changeValue(value: string) {
     if (value !== this.value) {
-      this.value = this.alphanumeric ? value.replace(/[^a-zA-Z0-9]/gi, '') : value;
+      this.value = value;
       this.changeEvent.next();
     }
   }
@@ -59,27 +60,26 @@ export class FhirStringComponent implements OnInit {
       return '';
     }
 
-    return this.alphanumeric ?
-      this.parentObject[this.propertyName].replace(/[^a-zA-Z0-9]/gi, '') :
-      this.parentObject[this.propertyName];
+    return this.parentObject[this.propertyName];
   }
 
   public get isValid() {
     if (this.required && !this.value) {
       return false;
     }
-
     if (this.isFormGroup && this.formGroupModel && this.formGroupModel.invalid) {
       return false;
     } else if (!this.isFormGroup && this.model && this.model.invalid) {
       return false;
     }
+    return !this.whiteSpace();
+  }
 
-    return true;
+  public whiteSpace() {
+    return this.value && this.value !== this.value.trim();
   }
 
   public set value(newValue: string) {
-    newValue = this.alphanumeric && newValue ? newValue.replace(/[^a-zA-Z0-9]/gi, '') : newValue;
     if (!newValue && this.parentObject[this.propertyName]) {
       delete this.parentObject[this.propertyName];
 

@@ -1,17 +1,15 @@
-import {EventEmitter, Injectable, Injector, ComponentFactoryResolver} from '@angular/core';
+import {EventEmitter, Injectable, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PractitionerService} from './practitioner.service';
-import { DomainResource, Group, Meta, Practitioner } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Group, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {SocketService} from './socket.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {addPermission} from '../../../../../libs/tof-lib/src/lib/helper';
 import {GroupService} from './group.service';
 import {map} from 'rxjs/operators';
-import {AuthConfig, OAuthService, OAuthEvent} from 'angular-oauth2-oidc';
+import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
 import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import {log} from 'util';
 
 @Injectable()
 export class AuthService {
@@ -137,17 +135,19 @@ export class AuthService {
       if(!this.oauthService.state || this.oauthService.state !== 'undefined'){
         path = this.oauthService.state;
       }else{
-        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/home`;
+        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/implementation-guide/open`;
       }
 
       // Make sure the user is not sent back to the /login page, which is only used to active .handleAuthentication()
       if (path.startsWith('/login')) {
         //path = '/';
-        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/home`;
+        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/implementation-guide/open`;
       }
 
-      if (path && path !== '/' && path !== '/logout' && path !== '/login') {
+      if (path && path !== '/' && path !== '/logout' && path !== '/login' && !path.endsWith('/home')) {
         this.router.navigate([path]);
+      } else if (window.location.pathname === '/' || path.endsWith('/home')) {
+        this.router.navigate([this.configService.fhirServer, 'implementation-guide', 'open']);
       }
 
       this.authChanged.emit();

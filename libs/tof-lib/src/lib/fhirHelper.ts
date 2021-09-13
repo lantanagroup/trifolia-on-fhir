@@ -2,10 +2,9 @@ import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, Resource
 import {Extension, ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
 import nanoid from 'nanoid/generate';
 import * as semver from 'semver';
-import {Fhir, Versions} from 'fhir/fhir';
+import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
 import {Globals} from './globals';
-import {FhirReferenceModalComponent} from '../../../../apps/client/src/app/fhir-edit/reference-modal/reference-modal.component';
 
 export function identifyRelease(fhirVersion: string): Versions {
   if (!fhirVersion) {
@@ -79,7 +78,10 @@ export function buildUrl(base: string, resourceType?: string, id?: string, opera
         }
       } else {
         const value = params[key];
-        paramArray.push(`${key}=${encodeURIComponent(value)}`);
+
+        if (value) {
+          paramArray.push(`${key}=${encodeURIComponent(value)}`);
+        }
       }
     });
 
@@ -92,7 +94,7 @@ export function buildUrl(base: string, resourceType?: string, id?: string, opera
 }
 
 export function parseUrl(url: string, base?: string) {
-  const parseUrlRegex = /([A-z]+)(\/([A-Za-z0-9\-\.]+))?(\/_history\/([A-Za-z0-9\-\.]{1,64}))?/g;
+  const parseUrlRegex = /([A-z]+)(\/([A-Za-z0-9\-]+))?(\/_history\/([A-Za-z0-9\-]{1,64}))?/g;
 
   if (base && base.lastIndexOf('/') === base.length-1) {
     base = base.substring(0, base.length - 1);
@@ -276,6 +278,7 @@ export function setIgnoreWarningsValue(implementationGuide: IImplementationGuide
       foundContained = <IDocumentReference> {
         resourceType: 'DocumentReference',
         id: foundExtension.valueReference.reference.substring(1),
+        status: 'current',
         type: {
           coding: [{
             code: 'ignore-warnings'
@@ -285,14 +288,14 @@ export function setIgnoreWarningsValue(implementationGuide: IImplementationGuide
           attachment: {
             contentType: 'text/plain',
             title: 'ignoreWarnings.txt',
-            data: btoa(value)
+            data: btoa(encodeURIComponent(value))
           }
         }]
       };
       implementationGuide.contained.push(foundContained);
     } else {
       const docRef = <IDocumentReference> foundContained;
-      docRef.content[0].attachment.data = btoa(value);
+      docRef.content[0].attachment.data = btoa(encodeURIComponent(value));
     }
   }
 }
@@ -323,9 +326,9 @@ export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide
 
     // Set the data after decoding it from base64
     if (typeof atob === 'function') {
-      return atob(documentReference.content[0].attachment.data);
+      return decodeURIComponent(atob(documentReference.content[0].attachment.data));
     } else {
-      return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
+      return decodeURIComponent(new Buffer(documentReference.content[0].attachment.data, 'base64').toString());
     }
   }
 }
@@ -371,6 +374,7 @@ export function setCustomMenu(implementationGuide: IImplementationGuide, value: 
       foundContained = <IDocumentReference> {
         resourceType: 'DocumentReference',
         id: foundExtension.valueReference.reference.substring(1),
+        status: 'current',
         type: {
           coding: [{
             code: 'custom-menu'
@@ -466,6 +470,7 @@ export function setJiraSpecValue(implementationGuide: IImplementationGuide, valu
       foundContained = <IDocumentReference> {
         resourceType: 'DocumentReference',
         id: foundExtension.valueReference.reference.substring(1),
+        status: 'current',
         type: {
           coding: [{
             code: 'jira-spec'

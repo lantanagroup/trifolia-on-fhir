@@ -11,11 +11,10 @@
   <app-fhir-string [parentObject]="resource" propertyName="name" title="Name" [required]="true" tooltipPath="ImplementationGuide.definition.resource.name"></app-fhir-string>
   <span *ngIf="!resource.name">You must specify a name.</span>
 
-
   <div class="form-group">
     <label>
       Description
-      <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.description"></app-tooltip-icon>
+      <app-tooltip-icon tooltipKey="ig.definition.resource.description"></app-tooltip-icon>
     </label>
     <textarea class="form-control" [(ngModel)]="resource.description" [class.is-invalid]="isDescriptionRequired"></textarea>
     <span  *ngIf="isDescriptionRequired">When a resource is an example, description is required.</span>

@@ -1,10 +1,12 @@
 <div class="alert alert-warning" *ngIf="message">{{message}}</div>
 
 <div class="row" *ngIf="historyBundle && historyBundle.entry">
-  <div [class.col-md-12]="!compareResource" [class.col-md-4]="!!compareResource">
+  <div [class.col-md-12]="!rightResource || !leftResource" [class.col-md-4]="!!rightResource && !!leftResource">
     <table class="table table-striped" *ngIf="historyBundle && historyBundle.total > 0">
       <thead>
       <tr>
+        <th>Left</th>
+        <th>Right</th>
         <th>Version ID</th>
         <th>Timestamp</th>
         <th>Action</th>
@@ -12,20 +14,35 @@
       </thead>
       <tbody>
       <tr *ngFor="let entry of historyBundle.entry; let ei = index">
-        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource?.meta?.versionId}}{{ei === 0 ? ' (current)' : ''}}</a></td>
-        <td><a href="javascript:void(0)" (click)="compareResource = entry.resource">{{entry.resource?.meta?.lastUpdated}}</a></td>
+        <td><input [(ngModel)]="leftResource" [value]="entry.resource" name="leftSelect" type="radio" /></td>
+        <td><input [(ngModel)]="rightResource" [value]="entry.resource" name="rightSelect" type="radio" /></td>
+        <td>{{entry.resource?.meta?.versionId}}{{resource.meta?.versionId === entry.resource?.meta?.versionId ? ' (In Editor)' : ''}}</td>
+        <td>{{entry.resource?.meta?.lastUpdated}}</td>
         <td>{{getActionDisplay(entry)}}</td>
       </tr>
       </tbody>
     </table>
+    <ngb-pagination
+    [(page)]="page"
+    [pageSize]="20"
+    [collectionSize]="historyBundle.total"
+    (pageChange)="getHistory()"></ngb-pagination>
   </div>
-  <div class="col-md-8" *ngIf="compareResource">
+  <div *ngIf="rightResource && leftResource" class="col-md-8">
     <h3>
-      Comparing version {{resource.meta.versionId}} to version {{compareResource.meta.versionId}}
-      <button type="button" class="btn btn-default" (click)="loadHistory(compareResource)" title="Restore this version. Must press 'Save' before this restored version is persisted.">
+      Comparing version {{leftResource.meta.versionId}}
+      <button (click)="loadHistory(leftResource,rightResource,!isLeftResource)" class="btn btn-default"
+              title="Restore this version. Must press 'Save' before this restored version is persisted."
+              type="button">
+        <i class="fas fa-upload"></i>
+      </button>
+      to version {{rightResource.meta.versionId}}
+      <button (click)="loadHistory(rightResource,leftResource,isLeftResource)" class="btn btn-default"
+              title="Restore this version. Must press 'Save' before this restored version is persisted."
+              type="button">
         <i class="fas fa-upload"></i>
       </button>
     </h3>
-    <pre diff [left]="compareResource | json" [right]="resource | json"></pre>
+    <pre [left]="rightResource | json" [right]="leftResource | json" diff></pre>
   </div>
 </div>

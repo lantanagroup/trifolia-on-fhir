@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FhirService} from '../../shared/fhir.service';
-import {Bundle, EntryComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {IBundle, IBundleEntry, IDomainResource} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   selector: 'app-resource-history',
@@ -9,18 +9,21 @@ import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
   styleUrls: ['./resource-history.component.css']
 })
 export class ResourceHistoryComponent implements OnInit {
-  @Input() public resource: any;
+  @Input() public resource: IDomainResource;
   @Output() public resourceChange = new EventEmitter<any>();
   @Output() public change: EventEmitter<void> = new EventEmitter<void>();
 
-  public historyBundle: Bundle;
+  public historyBundle: IBundle;
   public message: string;
-  public compareResource: any;
+  public leftResource: any;
+  public rightResource: any;
+  public isLeftResource = false;
+  public page = 1;
 
   constructor(private fhirService: FhirService) {
   }
 
-  public getActionDisplay(entry: EntryComponent) {
+  public getActionDisplay(entry: IBundleEntry) {
     if (!entry || !entry.request || !entry.request.method) {
       return 'Unknown';
     }
@@ -37,25 +40,61 @@ export class ResourceHistoryComponent implements OnInit {
     }
   }
 
-  public loadHistory(resource: any) {
+  public loadHistory(resource1: any, resource2: any, isLeft: boolean) {
     if (!confirm('Loading the history will overwrite any changes you have made to the resource that are not saved. Save to confirm reverting to the selected historical item. Are you sure want to continue?')) {
       return;
     }
 
-    this.compareResource = null;
-    this.resourceChange.emit(resource);
+    if (isLeft === true) {
+      this.leftResource = resource1;
+      this.rightResource = resource2;
+      this.message = `Done loading version ${this.leftResource.meta.versionId}`;
+    } else {
+      this.rightResource = resource1;
+      this.leftResource = resource2;
+      this.message = `Done loading version ${this.rightResource.meta.versionId}`;
+    }
+
+    this.resourceChange.emit(resource1);
     this.change.emit();
-    this.message = `Done loading version ${this.compareResource.meta.versionId}`;
+
   }
 
-  ngOnInit() {
+  public async getHistory() {
     if (this.resource && this.resource.resourceType && this.resource.id) {
-      this.fhirService.history(this.resource.resourceType, this.resource.id)
-        .subscribe((bundle: Bundle) => {
-          this.historyBundle = bundle;
-        }, (err) => {
-          this.message = getErrorString(err);
-        });
+      try {
+        this.historyBundle = await this.fhirService.getHistory(this.resource.resourceType, this.resource.id, this.page);
+
+        if (this.historyBundle && this.historyBundle.entry && this.historyBundle.entry.length > 0) {
+          if (this.leftResource) {
+            const foundLeft = this.historyBundle.entry.find(e => e.resource.meta.versionId === this.leftResource.meta.versionId);
+
+            if (foundLeft) {
+              this.leftResource = foundLeft.resource;
+            }
+          }
+
+          if (this.rightResource) {
+            const foundRight = this.historyBundle.entry.find(e => e.resource.meta.versionId === this.rightResource.meta.versionId);
+
+            if (foundRight) {
+              this.rightResource = foundRight.resource;
+            }
+          }
+        }
+      } catch (ex) {
+        this.message = getErrorString(ex);
+      }
+    }
+  }
+
+  async ngOnInit() {
+    await this.getHistory();
+
+    // Default the left and right selection to the two most recent versions
+    if (this.historyBundle && this.historyBundle.entry && this.historyBundle.entry.length > 2) {
+      this.leftResource = this.historyBundle.entry[0].resource;
+      this.rightResource = this.historyBundle.entry[1].resource;
     }
   }
 }

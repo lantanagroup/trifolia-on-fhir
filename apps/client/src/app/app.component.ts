@@ -72,11 +72,11 @@ export class AppComponent implements OnInit {
   }
 
   get showNewUser() {
-    return this.authService.isAuthenticated() && !this.authService.practitioner && this.configService.fhirConformance;
+    return this.authService.isAuthenticated() && !this.authService.practitioner && !!this.configService.fhirConformance;
   }
 
   get showRouterOutlet() {
-    return this.authService.isAuthenticated() && this.authService.practitioner && this.configService.fhirConformance;
+    return this.authService.isAuthenticated() && !!this.authService.practitioner && !!this.configService.fhirConformance;
   }
 
   public startIntro() {

@@ -18,7 +18,8 @@
           <app-fhir-multi-use-context [parentObject]="valueSet" propertyName="useContext" tooltipPath="ValueSet.useContext"></app-fhir-multi-use-context>
         </div>
         <div class="col-md-4">
-          <app-fhir-string [parentObject]="valueSet" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew"></app-fhir-string>
+          <app-fhir-string [parentObject]="valueSet" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+          <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
           <app-fhir-string [parentObject]="valueSet" propertyName="version" title="Version" tooltipPath="ValueSet.version"></app-fhir-string>
 
@@ -152,7 +153,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(valueSet)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(valueSet) || (isNew && !isIdUnique)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

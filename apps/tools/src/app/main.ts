@@ -6,6 +6,8 @@ import {UserListCommand} from './user-list';
 import {PopulateFromAuth0} from './populateFromAuth0';
 import {Migrate} from './migrate';
 import {ChangeId, ChangeIdOptions} from './change-id';
+import { positionElements } from '@ng-bootstrap/ng-bootstrap/util/positioning';
+import { ChangeExtensionUrl } from './change-extension-url';
 
 const populateFromAuth0Format = 'populate-from-auth0 <server> <domain> <token>';
 const populateFromAuth0Description = 'Populates user (Practitioner) information in ToF based on user information entered in a matching Auth0 domain.';
@@ -28,7 +30,33 @@ const migrateDescription = 'Migrates data in previous versions of ToF to new ver
 const changeIdFormat = 'change-id [directory] [resourceType] [oldId] [newId]';
 const changeIdDescription = 'Changes the ID of a resource in one or more files in a directory';
 
+const changeExtensionUrlFormat = 'change-ext-url [server]';
+const changeExtensionUrlDescription = 'Changes the url of an extension';
+
 const argv = Yargs
+  .command(changeExtensionUrlFormat, changeExtensionUrlDescription, (yargs: Yargs.Argv) => {
+    return yargs
+      .positional('server', {
+        description: 'The FHIR server to change extension urls on',
+        required: true
+      })
+      .option('currentUrl', {
+        description: 'The URL of the extension that should be changed and is currently set to'
+      })
+      .option('newUrl', {
+        description: 'The URL that the extension should be changed to'
+      })
+      .option('file', {
+        description: 'A comma-separated text file (CSV) that lists "currentUrl" and "newUrl" for each line, allowing multiple extension changes'
+      })
+      .option('resourceType', {
+        type: 'string',
+        description: 'Only change extensions for this resource type'
+      });
+  }, async (args: any) => {
+    const changeExtensionUrl = new ChangeExtensionUrl(args);
+    await changeExtensionUrl.execute();
+  })
   .command(changeIdFormat, changeIdDescription, (yargs: Yargs.Argv) => {
     return yargs
       .positional('directory', {

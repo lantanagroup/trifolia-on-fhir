@@ -29,7 +29,7 @@ import {CustomR4Validator} from './validation/custom-R4-validator';
 import * as vkbeautify from 'vkbeautify';
 import {forkJoin} from 'rxjs/internal/observable/forkJoin';
 import {publishReplay, refCount} from 'rxjs/operators';
-import {IBundle} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, ICoding} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 export interface IResourceGithubDetails {
@@ -55,8 +55,9 @@ export class FhirService {
   public fhir: Fhir;
   public loaded: boolean;
   public profiles: StructureDefinition[] = [];
-  public valueSets: ValueSet[] = [];
+  public valueSets: (ValueSet | CodeSystem)[] = [];
   private customValidator: CustomValidator;
+  private validCodes: string[] = ['ignore-warnings', 'custom-menu', 'jira-spec', 'package-list'];
 
   constructor(
     private injector: Injector,
@@ -141,6 +142,7 @@ export class FhirService {
           this.fhir = new Fhir(parser);
 
           this.valueSets = (<Bundle>allAssets[1]).entry.map((entry) => <ValueSet> entry.resource);
+          this.valueSets.push(<CodeSystem>allAssets[0]);
           this.profiles = (<Bundle>allAssets[2]).entry
             .concat((<Bundle>allAssets[3]).entry)
             .map((entry) => <StructureDefinition> entry.resource);
@@ -167,11 +169,11 @@ export class FhirService {
 
   public getResourceGithubDetails(resource: DomainResource): ResourceGithubDetails {
     const branchExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-      Globals.extensionUrls['r4-github-branch'] :
-      Globals.extensionUrls['stu3-github-branch'];
+      Globals.extensionUrls['github-branch'] :
+      Globals.extensionUrls['github-branch'];
     const pathExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-      Globals.extensionUrls['r4-github-path'] :
-      Globals.extensionUrls['stu3-github-path'];
+      Globals.extensionUrls['github-path'] :
+      Globals.extensionUrls['github-path'];
 
     const branchExtension = (resource.extension || []).find((extension) => extension.url === branchExtensionUrl);
     const pathExtension = (resource.extension || []).find((extension) => extension.url === pathExtensionUrl);
@@ -192,11 +194,11 @@ export class FhirService {
     }
 
     const branchExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-      Globals.extensionUrls['r4-github-branch'] :
-      Globals.extensionUrls['stu3-github-branch'];
+      Globals.extensionUrls['github-branch'] :
+      Globals.extensionUrls['github-branch'];
     const pathExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
-      Globals.extensionUrls['r4-github-path'] :
-      Globals.extensionUrls['stu3-github-path'];
+      Globals.extensionUrls['github-path'] :
+      Globals.extensionUrls['github-path'];
 
     let branchExtension = (resource.extension || []).find((extension) => extension.url === branchExtensionUrl);
     let pathExtension = (resource.extension || []).find((extension) => extension.url === pathExtensionUrl);
@@ -217,7 +219,7 @@ export class FhirService {
 
   public getValueSetCodes(valueSetUrl: string): Coding[] {
     let codes: Coding[] = [];
-    const foundValueSet = this.valueSets
+    const foundValueSet = <ValueSet> this.valueSets
       .filter((item) => item.resourceType === 'ValueSet')
       .find((valueSet) => valueSet.url === valueSetUrl);
 
@@ -338,9 +340,14 @@ export class FhirService {
    * @param {string} resourceType
    * @param {string} id
    */
-  public history(resourceType: string, id: string) {
-    const url = `/api/fhir/${resourceType}/${id}/_history`;
-    return this.http.get(url);
+  public getHistory(resourceType: string, id: string, page = 1) {
+    let url = `/api/fhir/${resourceType}/${id}/_history?`;
+
+    if (page > 1) {
+      url += `page=${page}`;
+    }
+
+    return this.http.get<IBundle>(url).toPromise();
   }
 
   /**
@@ -455,7 +462,16 @@ export class FhirService {
     try {
       const results = this.fhir.validate(resource, {
         // inject custom validation into the FHIR module
-        onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData)
+        onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData),
+        beforeCheckCode: (valueSetUrl: string, code: string, system?: string) => {
+          if (system === 'https://trifolia-fhir.lantanagroup.com/security') {
+            return true;
+          } else if (code && this.validCodes.indexOf(code) >= 0) {
+            return true;
+          }
+
+          return null;
+        }
       });
 
       // Remove any messages that are only information
@@ -530,6 +546,14 @@ export class FhirService {
     });
 
     return resourceTypes;
+  }
+
+  public async checkUniqueId(resource: DomainResource) {
+    let url = `/api/fhir/${resource.resourceType}`;
+    url += `/${resource.id}`;
+    url += `/$check-id`;
+
+    return await this.http.get<boolean>(url).toPromise();
   }
 
   /**

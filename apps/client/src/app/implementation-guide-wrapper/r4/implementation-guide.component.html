@@ -48,7 +48,7 @@
           </div>
 
           <div class="col-md-3">
-            <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version" (change)="igChanging.emit(true)"></app-fhir-string>
+            <app-fhir-string [parentObject]="implementationGuide" propertyName="version" title="Version" tooltipPath="ImplementationGuide.version" (change)="igChanging.emit(true)" [required]="true"></app-fhir-string>
           </div>
 
           <div class="col-md-3">
@@ -58,8 +58,8 @@
                 <app-tooltip-icon tooltipPath="ImplementationGuide.packageId"></app-tooltip-icon>
               </label>
               <input type="text" class="form-control" [(ngModel)]="implementationGuide.packageId" (change)="igChanging.emit(true); packageIdChanged()" [class.is-invalid]="!packageIdFormatValid || !implementationGuide.packageId" />
-              <span class="help-block" *ngIf="!implementationGuide.packageId">You must specify Package ID.</span>
-              <div class="help-block" *ngIf="!packageIdFormatValid">If this is an HL7 implementation guide, it must match the format <strong>hl7.family.realm.id</strong>.
+              <span class="help-block error" *ngIf="!implementationGuide.packageId">You must specify Package ID.</span>
+              <div class="help-block error" *ngIf="!packageIdFormatValid">If this is an HL7 implementation guide, it must match the format <strong>hl7.family.realm.id</strong>.
                 <ul><li>"family" can be "fhir" or "cda"</li><li>"realm" can be "us" or "uv"</li></ul>
               </div>
             </div>
@@ -337,17 +337,20 @@
           <table class="table table-striped">
             <thead>
             <tr>
-              <td colspan="4">
+              <td colspan="5">
                 <div class="row filter-row">
                   <div class="col-md-6 checkboxes">
                     <label>
-                      <input type="checkbox" [ngModel]="isFilterResourceTypeAll" (click)="toggleFilterResourceType('all')"> All
+                      <input type="checkbox" [ngModel]="isFilterResourceTypeAll"
+                             (click)="toggleFilterResourceType('all')"> All
                     </label>
                     <label>
-                      <input type="checkbox" [ngModel]="filterResourceType.profile" (click)="toggleFilterResourceType('profile')"> Profiles
+                      <input type="checkbox" [ngModel]="filterResourceType.profile"
+                             (click)="toggleFilterResourceType('profile')"> Profiles
                     </label>
                     <label>
-                      <input type="checkbox" [ngModel]="filterResourceType.terminology" (click)="toggleFilterResourceType('terminology')"> Terminology
+                      <input type="checkbox" [ngModel]="filterResourceType.terminology"
+                             (click)="toggleFilterResourceType('terminology')"> Terminology
                     </label>
                     <label>
                       <input type="checkbox" [ngModel]="filterResourceType.example" (click)="toggleFilterResourceType('example')"> Examples
@@ -356,9 +359,15 @@
                   <div class="col-md-6">
                     <input type="text" class="form-control" placeholder="Search resources" [(ngModel)]="filterResourceQuery"/>
                   </div>
-                  <div class="col-md-6 checkboxes" *ngIf="implementationGuide.definition?.grouping && implementationGuide.definition.grouping.length > 0">
-                    <label *ngFor="let group of implementationGuide.definition.grouping">
-                      <input type="checkbox" [ngModel]="filterGroup[group.id]" (click)="toggleFilterGroup(group.id)"> {{group.name}}
+                  <div class="col-md-6 checkboxes">
+                    <label>
+                      <input type="checkbox" [(ngModel)]="filterGroupsAll"> All
+                    </label>
+                    <label *ngFor="let group of implementationGuide.definition?.grouping || 0">
+                      <input (click)="toggleFilterGroup(group.id)" [ngModel]="filterGroups.indexOf(group.id) >= 0" type="checkbox"> {{group.name}}
+                    </label>
+                    <label>
+                      <input type="checkbox" [(ngModel)]="filterGroupsUnspecified"> Unspecified
                     </label>
                   </div>
                 </div>
@@ -707,7 +716,7 @@
                  (ngModelChange)="setDependsOnLocation(dependsOn, $event)"/>
         </td-->
         <td>
-          <app-fhir-string [parentObject]="dependsOn" alphanumeric="true" propertyName="id" [required]="true" (change)="igChanging.emit(true)" [isFormGroup]="false"></app-fhir-string>
+          <app-fhir-string [parentObject]="dependsOn" propertyName="id" [required]="true" (change)="igChanging.emit(true)" [isFormGroup]="false"></app-fhir-string>
         </td>
         <td>
           <app-fhir-string [parentObject]="dependsOn" propertyName="packageId" [required]="true" (change)="igChanging.emit(true)" [isFormGroup]="false"></app-fhir-string>

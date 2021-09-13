@@ -90,7 +90,8 @@
         </div>
 
         <div class="col-md-4">
-          <app-fhir-string [parentObject]="capabilityStatement" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew"></app-fhir-string>
+          <app-fhir-string [parentObject]="capabilityStatement" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+          <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
           <app-fhir-date [parentObject]="capabilityStatement" propertyName="date" title="Date"
                          [required]="false"></app-fhir-date>
@@ -862,7 +863,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="(capabilityStatement && !canEdit(capabilityStatement)) || wrongDateFormat">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="(capabilityStatement && !canEdit(capabilityStatement)) || wrongDateFormat || (isNew && !isIdUnique)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

@@ -1,0 +1,23 @@
+select.realm {
+  width: 250px;
+}
+
+select.family {
+  width: 250px;
+}
+
+input.standard {
+  width: 250px;
+}
+
+input.long {
+  width: 400px;
+}
+
+input.extended {
+  width: 600px;
+}
+
+button.back {
+  margin-right: 10px;
+}

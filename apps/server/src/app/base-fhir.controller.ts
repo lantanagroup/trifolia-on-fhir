@@ -15,6 +15,7 @@ import {
   SearchImplementationGuideResponseContainer
 } from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import * as fs from 'fs-extra';
+import {ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 
 
 export class BaseFhirController extends BaseController {
@@ -283,6 +284,23 @@ export class BaseFhirController extends BaseController {
     try {
       const updateResults = await this.httpService.request(options).toPromise();
       const resource = updateResults.data;
+
+      if (fhirServerVersion === 'r4' && contextImplementationGuide) {
+        const ig = contextImplementationGuide as ImplementationGuide;
+        const resources = ig.definition && ig.definition.resource ? ig.definition.resource : [];
+        const index = resources.findIndex(r => {
+          return r.reference.reference.indexOf(id) > 0;
+        });
+
+        if (index >= 0 && (data.title || data.name)) {
+          //If data.title exists, set to data.title. Else if data.name exists, set to data.name. Else if data.title and data.name don't exist, do nothing.
+          (<ImplementationGuide>contextImplementationGuide).definition.resource[index].name =
+            data.title ? data.title : data.name;
+
+          const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuideId);
+          await this.httpService.put<ImplementationGuide>(igUrl, contextImplementationGuide).toPromise();
+        }
+      }
 
       // If we're in the context of an IG and the resource is not another IG or security-related resources
       // Then add the resource to the IG

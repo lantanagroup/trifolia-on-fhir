@@ -9,7 +9,7 @@ import {
   addPermission,
   ensureSecurity, getErrorString,
   getHumanNameDisplay,
-  getHumanNamesDisplay,
+  getHumanNamesDisplay, getIdentifierSource,
   getMetaSecurity,
   getPractitionerEmail,
   groupBy,
@@ -20,6 +20,7 @@ import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators
 import {GroupService} from '../../shared/group.service';
 import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
+import {IPractitioner} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 class ResourceSecurity {
   type: 'everyone'|'user'|'group';
@@ -62,15 +63,17 @@ export class ResourcePermissionsComponent implements OnInit {
   public searchGroupsCriteria: string;
   public searchUsersCriteria: string;
   public message: string;
-  public Globals = Globals;
-  public getHumanNamesDisplay = getHumanNamesDisplay;
-  public getPractitionerEmail = getPractitionerEmail;
   public resourceTypes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
   public copyResourceType: string;
   public copyResource: DomainResource;
   public isSearchingGroups = false;
 
   private currentUser: Practitioner;
+
+  public Globals = Globals;
+  public getHumanNamesDisplay = getHumanNamesDisplay;
+  public getPractitionerEmail = getPractitionerEmail;
+  public getIdentifierSource = getIdentifierSource;
 
   constructor(
     public configService: ConfigService,
@@ -104,11 +107,17 @@ export class ResourcePermissionsComponent implements OnInit {
     );
   };
 
-  getIdentifierDisplay(user: Practitioner) {
-    const identifier = (user.identifier || []).find(next => next.system === 'https://trifolia-fhir.lantanagroup.com');
+  getIdentifierDisplay(user: IPractitioner) {
+    const tofIdentifier = (user.identifier || []).find(next => next.system === 'https://trifolia-fhir.lantanagroup.com');
 
-    if (identifier) {
-      return identifier.value;
+    if (tofIdentifier && tofIdentifier.value) {
+      const valueParts = tofIdentifier.value.split('|');
+
+      if (valueParts && valueParts.length > 1) {
+        return valueParts[1];
+      } else {
+        return tofIdentifier.value;
+      }
     }
   }
 

@@ -1,5 +1,5 @@
-tr.invalid td {
-    text-decoration: line-through;
+tr.invalid td{
+  text-decoration: line-through;
 }
 
 .card.results {
@@ -8,4 +8,10 @@ tr.invalid td {
 
 i.warning {
   color: #ff0000;
+}
+
+span.message
+{
+  text-decoration: none;
+  padding-left: 15px
 }

@@ -1,10 +1,9 @@
 <div [class.form-group]="isFormGroup" *ngIf="parentObject">
   <label *ngIf="isFormGroup && !hasChoice()">
-    <input type="checkbox" *ngIf="!required" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event); change.emit()"/>
+    <input (ngModelChange)="toggleChoice($event); change.emit()" *ngIf="!required" [disabled]="disabled" [ngModel]="hasChoice()" type="checkbox" />
     {{title || 'Choice'}}
   </label>
-  <input type="checkbox" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event); change.emit()"
-         *ngIf="!isFormGroup && !hasChoice()"/>
+  <input (ngModelChange)="toggleChoice($event); change.emit()" *ngIf="!isFormGroup && !hasChoice()" [disabled]="disabled" [ngModel]="hasChoice()" type="checkbox" />
   <app-tooltip-icon *ngIf="isFormGroup && !hasChoice()" [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
   <div class="input-group" *ngIf="hasChoice()">
     <div class="input-group-prepend" *ngIf="!required || title">
