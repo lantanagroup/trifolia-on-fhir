@@ -1,5 +1,5 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {ExpandOptions} from '../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 import {ValueSet} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -10,6 +10,7 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {AxiosRequestConfig} from 'axios';
+import { IOperationOutcome } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Controller('api/valueSet')
 @UseGuards(AuthGuard('bearer'))
@@ -24,11 +25,11 @@ export class ValueSetController extends BaseFhirController {
     super(httpService, configService);
   }
 
-  @Get(':id/expand')
-  public getExpanded(@Req() request: ITofRequest, @Param('id') id: string, @Body() options?: ExpandOptions) {
-    return new Promise((resolve, reject) => {
-      this.logger.log(`Beginning request to expand value set ${id}`);
+  @Post(':id/expand')
+  public async getExpanded(@Req() request: ITofRequest, @Param('id') id: string, @Body() options?: ExpandOptions) {
+    this.logger.log(`Beginning request to expand value set ${id}`);
 
+    try {
       const getOptions: AxiosRequestConfig = {
         url: buildUrl(request.fhirServerBase, 'ValueSet', id),
         method: 'GET'
@@ -36,27 +37,31 @@ export class ValueSetController extends BaseFhirController {
 
       this.logger.log(`Expand operation is requesting value set content for ${id}`);
 
-      this.httpService.request<ValueSet>(getOptions).toPromise()
-        .then((results) => {
-          const valueSet = results.data;
-          this.logger.log('Retrieved value set content for expand');
+      const vsResults = await this.httpService.request<ValueSet>(getOptions).toPromise();
 
-          const expandOptions: AxiosRequestConfig = {
-            url: buildUrl(this.configService.fhir.terminologyServer || request.fhirServerBase, 'ValueSet', null, '$expand', options),
-            method: 'POST',
-            data: valueSet
-          };
+      const valueSet = vsResults.data;
+      this.logger.log('Retrieved value set content for expand');
 
-          this.logger.log(`Asking the FHIR server to expand value set ${id}`);
-          return this.httpService.request(expandOptions).toPromise();
-        })
-        .then((results) => {
-          this.logger.log('FHIR server responded with expanded value set');
-          resolve(results.data);
-          return results.data;
-        })
-        .catch((err) => reject(err));
-    });
+      const expandOptions: AxiosRequestConfig = {
+        url: buildUrl(this.configService.fhir.terminologyServer || request.fhirServerBase, 'ValueSet', null, '$expand', options),
+        method: 'POST',
+        data: valueSet
+      };
+
+      this.logger.log(`Asking the FHIR server to expand value set ${id}`);
+      const expandedResults = await this.httpService.request(expandOptions).toPromise();
+
+      this.logger.log('FHIR server responded with expanded value set');
+      return expandedResults.data;
+    } catch (ex) {
+      if (ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
+        const oo = ex.response.data as IOperationOutcome;
+        throw new InternalServerErrorException(oo);
+      }
+
+      this.logger.error(`Failed to expand value set: ${ex.message}`);
+      throw new InternalServerErrorException();
+    }
   }
 
   @Get()
