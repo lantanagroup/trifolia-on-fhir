@@ -240,6 +240,9 @@ export class PublishComponent implements OnInit {
           }
 
           this.inProgress = false;
+          if (this.autoScroll && this.outputEle) {
+            setTimeout(() => this.outputEle.nativeElement.scrollTop = this.outputEle.nativeElement.scrollHeight, 50);
+          }
         } else if (data.status === 'error') {
           this.inProgress = false;
           this.message = 'An error occurred. Please review the status tab.';
@@ -251,10 +254,10 @@ export class PublishComponent implements OnInit {
           }
 
           this.socketOutput += msg;
-
           if (this.autoScroll && this.outputEle) {
             setTimeout(() => this.outputEle.nativeElement.scrollTop = this.outputEle.nativeElement.scrollHeight, 50);
           }
+
         }
       }
     }, (err) => {
