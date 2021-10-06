@@ -16,7 +16,6 @@ import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { ElementTreeModel } from '../../../../../libs/tof-lib/src/lib/element-tree-model';
 import {
   ConstraintComponent,
-  DifferentialComponent,
   ElementDefinition as STU3ElementDefinition,
   StructureDefinition as STU3StructureDefinition,
   TypeRefComponent
@@ -36,7 +35,7 @@ import { ElementDefinitionPanelComponent } from './element-definition-panel/elem
 import { AuthService } from '../shared/auth.service';
 import { BaseComponent } from '../base.component';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { IElementDefinition, IExtension } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { IElementDefinition } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { ConstraintManager } from '../../../../../libs/tof-lib/src/lib/constraint-manager';
 import { BaseDefinitionResponseModel } from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
 import { Severities, ValidatorResponse } from 'fhir/validator';
@@ -211,6 +210,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     try {
       const sd = await this.strucDefService.getStructureDefinition(sdId).toPromise();
 
+      delete sd.snapshot;
+
       if (identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
         this.structureDefinition = new R4StructureDefinition(sd);
       } else {
@@ -343,7 +344,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     });
     // noinspection JSIgnoredPromiseFromCall
     this.getStructureDefinition();
-    delete this.structureDefinition.snapshot;
   }
 
   ngDoCheck() {

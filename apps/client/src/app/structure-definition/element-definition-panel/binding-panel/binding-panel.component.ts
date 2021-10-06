@@ -5,7 +5,10 @@ import {Globals} from '../../../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../../../shared/config.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirReferenceModalComponent} from '../../../fhir-edit/reference-modal/reference-modal.component';
-import {IElementDefinition} from '../../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { IBundle, IElementDefinition, IValueSet } from '../../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { ValueSetService } from '../../../shared/value-set.service';
 
 @Component({
   selector: 'app-element-definition-binding',
@@ -16,6 +19,7 @@ export class BindingPanelComponent implements OnInit {
   @Input() element: IElementDefinition;
   public Globals = Globals;
   public valueSetChoices = ['Uri', 'Reference'];
+  public selectedValueSet: IValueSet;
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public get STU3Element() {
@@ -43,7 +47,8 @@ export class BindingPanelComponent implements OnInit {
   }
 
   constructor(public configService: ConfigService,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private valueSetService: ValueSetService) {
   }
 
   public getDefaultBinding(): ElementDefinitionBindingComponent | ElementDefinitionElementDefinitionBindingComponent {
@@ -74,18 +79,68 @@ export class BindingPanelComponent implements OnInit {
     }
   }
 
-  public selectValueSet() {
+  public openSelectValueSet() {
     const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resourceType = 'ValueSet';
     modalRef.componentInstance.hideResourceType = true;
     modalRef.result.then((result) => {
-      const valueSet: ValueSet = result.resource;
-      this.R4Element.binding.valueSet = valueSet.url;
-      this.change.emit();
+      const valueSet: IValueSet = result.resource;
+      this.selectValueSet(valueSet);
     });
   }
 
+  public selectValueSet(valueSet: IValueSet) {
+    this.selectedValueSet = valueSet;
+
+    if (this.configService.isFhirR4) {
+      this.R4Element.binding.valueSet = valueSet.url;
+    } else if (this.configService.isFhirSTU3) {
+      if (this.STU3Element.binding.hasOwnProperty('valueSetUri')) {
+        this.STU3Element.binding.valueSetUri = valueSet.url;
+      } else if (this.STU3Element.binding.hasOwnProperty('valueSetReference')) {
+        this.STU3Element.binding.valueSetReference = {
+          reference: 'ValueSet/' + valueSet.id
+        };
+      }
+    }
+
+    this.change.emit();
+  }
+
+  /*private searchValueSet(term: string) {
+    return this.valueSetService.search(1, term)
+  }*/
+
+  public getValueSetText(valueSet: IValueSet): string {
+    return valueSet.url;
+  }
+
+  public search = (text$: Observable<string>) => {
+    return text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(term => {
+        if (term.length <= 2) return [];
+        return this.valueSetService.search(1, term).pipe(
+          map((bundle: IBundle) => (bundle.entry || []).map(entry => <IValueSet> entry.resource))
+        );
+      })
+    );
+  }
+
+
   ngOnInit() {
+    if (this.configService.isFhirR4) {
+      if (this.R4Element && this.R4Element.binding && this.R4Element.binding.valueSet) {
+        this.selectedValueSet = {
+          resourceType: 'ValueSet',
+          url: this.R4Element.binding.valueSet
+        };
+      }
+    } else if (this.configService.isFhirSTU3) {
+      if (this.STU3Element && this.STU3Element.binding) {
+      }
+    }
   }
 
 }

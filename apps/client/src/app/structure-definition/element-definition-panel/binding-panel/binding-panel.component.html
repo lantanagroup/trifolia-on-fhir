@@ -1,60 +1,79 @@
-
 <div class="card" *ngIf="element">
-    <div class="card-header">
-        <input type="checkbox" [ngModel]="element.hasOwnProperty('binding')" (ngModelChange)="Globals.toggleProperty(element, 'binding', getDefaultBinding()); change.emit()" />
-        Binding
-        <app-tooltip-icon tooltipPath="ElementDefinition.binding"></app-tooltip-icon>
-    </div>
-    <div class="card-body" *ngIf="element.hasOwnProperty('binding')">
-        <app-fhir-select-single-code [parentObject]="element.binding" propertyName="strength"
-                                     valueSetUrl="http://hl7.org/fhir/ValueSet/binding-strength"
-                                     title="Strength" tooltipPath="ElementDefinition.binding.strength"
-                                     [required]="true" (change)="change.emit()"></app-fhir-select-single-code>
+  <div class="card-header">
+    <input type="checkbox" [ngModel]="element.hasOwnProperty('binding')" (ngModelChange)="Globals.toggleProperty(element, 'binding', getDefaultBinding()); change.emit()" />
+    Binding
+    <app-tooltip-icon tooltipPath="ElementDefinition.binding"></app-tooltip-icon>
+  </div>
+  <div class="card-body" *ngIf="element.hasOwnProperty('binding')">
+    <app-fhir-select-single-code [parentObject]="element.binding" propertyName="strength"
+                                 valueSetUrl="http://hl7.org/fhir/ValueSet/binding-strength"
+                                 title="Strength" tooltipPath="ElementDefinition.binding.strength"
+                                 [required]="true" (change)="change.emit()"></app-fhir-select-single-code>
 
-        <app-fhir-string [parentObject]="element.binding" propertyName="description" title="Description" tooltipPath="ElementDefinition.binding.description" (change)="change.emit()"></app-fhir-string>
+    <app-fhir-string [parentObject]="element.binding" propertyName="description" title="Description" tooltipPath="ElementDefinition.binding.description"
+                     (change)="change.emit()"></app-fhir-string>
 
-        <div class="form-group" *ngIf="configService.isFhirSTU3">
-            <label>
-                <input type="checkbox"
-                       [ngModel]="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
-                       (ngModelChange)="Globals.toggleChoiceProperty(element.binding, 'valueSet', valueSetChoices, ''); change.emit()"/>
-                Value Set
-                <app-tooltip-icon tooltipPath="ElementDefinition.binding.valueSet[x]"></app-tooltip-icon>
-            </label>
-            <div class="input-group">
-                <div class="input-group-addon">
-                    <select class="form-control"
-                            [disabled]="!Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
-                            [ngModel]="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
-                            (ngModelChange)="setValueSetChoice(element.binding, $event); change.emit()">
-                        <option value="Uri">URI</option>
-                        <option value="Reference">Reference</option>
-                    </select>
-                    <input type="text" class="form-control"
-                           *ngIf="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Uri'"
-                           [(ngModel)]="STU3Element.binding.valueSetUri" (change)="change.emit()"/>
-                    <app-fhir-reference
-                            *ngIf="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Reference'"
-                            [parentObject]="element.binding"
-                            propertyName="valueSetReference"
-                            resourceType="ValueSet" (change)="change.emit()"></app-fhir-reference>
-                </div>
-            </div>
+    <div class="form-group" *ngIf="configService.isFhirSTU3">
+      <label>
+        <input type="checkbox"
+               [ngModel]="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
+               (ngModelChange)="Globals.toggleChoiceProperty(element.binding, 'valueSet', valueSetChoices, ''); change.emit()" />
+        Value Set
+        <app-tooltip-icon tooltipPath="ElementDefinition.binding.valueSet[x]"></app-tooltip-icon>
+      </label>
+      <ng-template #valueSetSearchResult let-r="result">
+        {{r.name}} <br />
+        <div class="help-block">{{r.url}}</div>
+      </ng-template>
+      <div class="input-group">
+        <div class="input-group-addon">
+          <select class="form-control"
+                  [disabled]="!Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
+                  [ngModel]="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
+                  (ngModelChange)="setValueSetChoice(element.binding, $event); change.emit()">
+            <option value="Uri">URI</option>
+            <option value="Reference">Reference</option>
+          </select>
+          <input type="text" class="form-control"
+                 *ngIf="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Uri'"
+                 [(ngModel)]="selectedValueSet"
+                 [ngbTypeahead]="search"
+                 [resultTemplate]="valueSetSearchResult"
+                 [editable]="false"
+                 (selectItem)="selectValueSet($event.item)"
+                 [inputFormatter]="getValueSetText" />
+          <app-fhir-reference
+            *ngIf="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Reference'"
+            [parentObject]="element.binding"
+            propertyName="valueSetReference"
+            resourceType="ValueSet" (change)="change.emit()"></app-fhir-reference>
         </div>
-
-        <div class="form-group" *ngIf="configService.isFhirR4">
-            <label>
-                Value Set
-                <app-tooltip-icon tooltipPath="ElementDefinition.binding.valueSet"></app-tooltip-icon>
-            </label>
-            <div class="input-group">
-                <input type="text" class="form-control" [(ngModel)]="R4ValueSet" (change)="change.emit()"/>
-                <div class="input-group-btn">
-                    <button type="button" class="btn btn-default" title="Select a value set" (click)="selectValueSet()">
-                        <i class="fas fa-hand-pointer"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <div class="form-group" *ngIf="configService.isFhirR4">
+      <label>
+        Value Set
+        <app-tooltip-icon tooltipPath="ElementDefinition.binding.valueSet"></app-tooltip-icon>
+      </label>
+      <ng-template #valueSetSearchResult let-r="result">
+        {{r.name}} <br />
+        <div class="help-block">{{r.url}}</div>
+      </ng-template>
+      <div class="input-group">
+        <input type="text" class="form-control"
+               [(ngModel)]="selectedValueSet"
+               [ngbTypeahead]="search"
+               [resultTemplate]="valueSetSearchResult"
+               [editable]="false"
+               (selectItem)="selectValueSet($event.item)"
+               [inputFormatter]="getValueSetText" />
+        <div class="input-group-btn">
+          <button type="button" class="btn btn-primary" title="Select a value set" (click)="openSelectValueSet()">
+            <i class="fas fa-hand-pointer"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
