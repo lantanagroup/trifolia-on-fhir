@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent, ValueSet} from '../../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ElementDefinition as R4ElementDefinition, ElementDefinitionElementDefinitionBindingComponent} from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {Globals} from '../../../../../../../libs/tof-lib/src/lib/globals';
-import {ConfigService} from '../../../shared/config.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirReferenceModalComponent} from '../../../fhir-edit/reference-modal/reference-modal.component';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent, ValueSet } from '../../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { ElementDefinition as R4ElementDefinition, ElementDefinitionElementDefinitionBindingComponent } from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { Globals } from '../../../../../../../libs/tof-lib/src/lib/globals';
+import { ConfigService } from '../../../shared/config.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FhirReferenceModalComponent } from '../../../fhir-edit/reference-modal/reference-modal.component';
 import { IBundle, IElementDefinition, IValueSet } from '../../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
@@ -80,7 +80,7 @@ export class BindingPanelComponent implements OnInit {
   }
 
   public openSelectValueSet() {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'ValueSet';
     modalRef.componentInstance.hideResourceType = true;
     modalRef.result.then((result) => {
@@ -107,10 +107,6 @@ export class BindingPanelComponent implements OnInit {
     this.change.emit();
   }
 
-  /*private searchValueSet(term: string) {
-    return this.valueSetService.search(1, term)
-  }*/
-
   public getValueSetText(valueSet: IValueSet): string {
     return valueSet.url;
   }
@@ -122,12 +118,11 @@ export class BindingPanelComponent implements OnInit {
       switchMap(term => {
         if (term.length <= 2) return [];
         return this.valueSetService.search(1, term).pipe(
-          map((bundle: IBundle) => (bundle.entry || []).map(entry => <IValueSet> entry.resource))
+          map((bundle: IBundle) => (bundle.entry || []).map(entry => <IValueSet>entry.resource))
         );
       })
     );
-  }
-
+  };
 
   ngOnInit() {
     if (this.configService.isFhirR4) {
@@ -137,10 +132,6 @@ export class BindingPanelComponent implements OnInit {
           url: this.R4Element.binding.valueSet
         };
       }
-    } else if (this.configService.isFhirSTU3) {
-      if (this.STU3Element && this.STU3Element.binding) {
-      }
     }
   }
-
 }

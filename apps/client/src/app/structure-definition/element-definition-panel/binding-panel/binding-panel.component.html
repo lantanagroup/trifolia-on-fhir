@@ -21,10 +21,6 @@
         Value Set
         <app-tooltip-icon tooltipPath="ElementDefinition.binding.valueSet[x]"></app-tooltip-icon>
       </label>
-      <ng-template #valueSetSearchResult let-r="result">
-        {{r.name}} <br />
-        <div class="help-block">{{r.url}}</div>
-      </ng-template>
       <div class="input-group">
         <div class="input-group-addon">
           <select class="form-control"
@@ -36,12 +32,7 @@
           </select>
           <input type="text" class="form-control"
                  *ngIf="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Uri'"
-                 [(ngModel)]="selectedValueSet"
-                 [ngbTypeahead]="search"
-                 [resultTemplate]="valueSetSearchResult"
-                 [editable]="false"
-                 (selectItem)="selectValueSet($event.item)"
-                 [inputFormatter]="getValueSetText" />
+                 [(ngModel)]="STU3Element.binding.valueSetUri" (change)="change.emit()" />
           <app-fhir-reference
             *ngIf="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices) === 'Reference'"
             [parentObject]="element.binding"
