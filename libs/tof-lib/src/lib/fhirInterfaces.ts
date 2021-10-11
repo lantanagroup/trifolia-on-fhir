@@ -152,6 +152,12 @@ export interface IBundle extends IDomainResource {
   entry?: IBundleEntry[];
 }
 
+export interface IValueSet extends IDomainResource {
+  url?: string;
+  name?: string;
+  title?: string;
+}
+
 export interface IHumanName {
   use?: string;
   text?: string;

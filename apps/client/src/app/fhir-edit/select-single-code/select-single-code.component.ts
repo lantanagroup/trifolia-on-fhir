@@ -101,6 +101,8 @@ export class FhirSelectSingleCodeComponent implements OnInit {
     map((term: string) => term.length < 2 ? [] : this.searchCodes(term))
   )
 
+
+
   ngOnInit() {
     if (!this.codes && this.valueSetUrl) {
       this.codes = this.fhirService.getValueSetCodes(this.valueSetUrl);

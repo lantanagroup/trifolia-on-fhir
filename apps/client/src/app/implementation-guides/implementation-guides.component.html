@@ -5,7 +5,7 @@
   <strong>Recent Projects:</strong>
   <ul>
     <li *ngFor="let ri of recentIgs">
-      <a (click)="projectReselected(ri)" routerLink="{{configService.baseSessionUrl}}/{{ri.id}}/home">{{ri.title || ri.name}}</a>
+      <a (click)="projectReselected(ri)" routerLink="{{configService.baseSessionUrl}}/{{ri.id}}/implementation-guide">{{ri.title || ri.name}}</a>
     </li>
   </ul>
 </div>
@@ -63,7 +63,7 @@
 
     <td class="actions-column-1">
       <div class="btn-group pull-right">
-        <a (click)="projectSelected(ig.data.resource)" class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/{{ig.data.resource.id}}/home"
+        <a (click)="projectSelected(ig.data.resource)" class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/{{ig.data.resource.id}}/implementation-guide"
            title="Select this implementation guide project">
           <i class="fas fa-hand-pointer"></i>
         </a>
