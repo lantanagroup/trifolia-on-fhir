@@ -126,7 +126,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
-  get max(): string {
+  get max(): number|string {
     if (this.element && this.element.max) {
       if (this.element.max === '*') {
         return '';
