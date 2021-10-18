@@ -1027,6 +1027,10 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public setExampleCanonical(resource: ImplementationGuideResourceComponent, value: string) {
     delete resource.exampleBoolean;
     resource.exampleCanonical = value;
+    if (!value) {
+      delete resource.exampleCanonical;
+      resource.exampleBoolean = true;
+    }
   }
 
   public selectExampleCanonical(resource: ImplementationGuideResourceComponent) {
