@@ -116,9 +116,9 @@ export class ElementDefinitionPanelComponent implements OnInit {
     return '';
   }
 
-  set max(value: string) {
+  set max(value: number|string) {
     if (this.element) {
-      if (value || value === '0') {
+      if (value || value === 0 || value === '0') {
         this.element.max = value.toString();
       } else if (!value && this.element.max) {
         delete this.element.max;
@@ -126,7 +126,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
     }
   }
 
-  get max(): string {
+  get max(): number|string {
     if (this.element && this.element.max) {
       if (this.element.max === '*') {
         return '';

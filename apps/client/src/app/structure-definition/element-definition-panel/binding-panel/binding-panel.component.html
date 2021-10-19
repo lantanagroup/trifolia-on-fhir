@@ -56,6 +56,7 @@
                [(ngModel)]="selectedValueSet"
                [ngbTypeahead]="search"
                [resultTemplate]="valueSetSearchResult"
+               container="body"
                [editable]="false"
                (selectItem)="selectValueSet($event.item)"
                [inputFormatter]="getValueSetText" />

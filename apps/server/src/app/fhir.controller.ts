@@ -72,7 +72,7 @@ export class FhirController extends BaseController {
     try {
       const getResponse = await this.httpService.request(currentOptions).toPromise();
       const bundle: Bundle = getResponse.data;
-      if (bundle.entry.length >= 2 || bundle.entry.length === 1 && contextImplementationGuideId !== bundle.entry[0].resource.id) {
+      if (bundle.entry && bundle.entry.length >= 1 && contextImplementationGuideId !== bundle.entry[0].resource.id) {
         return false;
       }
     } catch (ex) {
