@@ -65,6 +65,8 @@ export class ChangeExtensionUrl extends BaseTools {
       resourceTypes = [this.options.resourceType];
     }
 
+    resourceTypes = resourceTypes.filter(rt => rt !== 'AuditEvent');
+
     const allResources = await this.getAllResourcesByType(this.options.server, resourceTypes.map(rt => rt));
     const changedResources = [];
 
@@ -80,7 +82,7 @@ export class ChangeExtensionUrl extends BaseTools {
 
     const bundle: IBundle = {
       resourceType: 'Bundle',
-      type: 'transaction',
+      type: 'batch',
       entry: changedResources.map(r => {
         return {
           request: {
@@ -92,15 +94,21 @@ export class ChangeExtensionUrl extends BaseTools {
       })
     };
 
-    const response = await this.httpService.post<IBundle>(this.options.server, bundle).toPromise();
+    fs.writeFileSync('change-ext-urls.json', JSON.stringify(bundle));
 
-    console.log('Done posting bundle of changes to FHIR server');
+    try {
+      const response = await this.httpService.post<IBundle>(this.options.server, bundle).toPromise();
 
-    response.data.entry.forEach((e, index) => {
-      if (e.response && e.response.status) {
-        console.log(`${index}: ${e.response.status}`);
-      }
-    });
+      console.log('Done posting bundle of changes to FHIR server');
+
+      response.data.entry.forEach((e, index) => {
+        if (e.response && e.response.status) {
+          console.log(`${index}: ${e.response.status}`);
+        }
+      });
+    } catch (ex) {
+      console.error(`Error executing update on FHIR server: ${ex}`);
+    }
   }
 
   private findAndUpdateExtension(parentObj: any, path: string) {

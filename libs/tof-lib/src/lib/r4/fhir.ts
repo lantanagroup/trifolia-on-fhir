@@ -17,7 +17,7 @@ import {
   IImplementationGuide, IMeta,
   INetworkComponent, IOperationOutcome,
   IPractitioner, IResourceReference,
-  IStructureDefinition,
+  IStructureDefinition, IValueSet,
   setChoice
 } from '../fhirInterfaces';
 import {Globals} from '../globals';
@@ -28601,7 +28601,7 @@ export class ValueSetExpansionComponent extends BackboneElement {
 
 }
 
-export class ValueSet extends DomainResource {
+export class ValueSet extends DomainResource implements IValueSet {
   public resourceType = 'ValueSet';
   public url?: string;
   public identifier?: Identifier[];

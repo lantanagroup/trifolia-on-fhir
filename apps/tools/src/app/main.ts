@@ -212,8 +212,13 @@ const argv = Yargs
         multiple: true,
         required: true
       })
-      .option('auth0export', {
-        description: 'A file exported from the Auth0 import/export plugin that should provide additional data to this tool.'
+      .option('auth0Domain', {
+        alias: 'd',
+        description: 'Domain for auth0 (ex: "trifolia" for trifolia.auth0.com)'
+      })
+      .option('auth0ApiKey', {
+        alias: 'a',
+        description: 'An API key to use with auth0 to query for more information related to users of ToF'
       })
       .option('tabs', {
         description: 'Dump the results as a TXT with tab delims',
