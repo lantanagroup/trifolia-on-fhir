@@ -140,7 +140,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
   propertyExistWithPrefix(obj: any, prefix: string) {
     const objKeys = Object.keys(obj);
-    const found = objKeys.find(key => key.startsWith(prefix));
+    const found = objKeys.find(key => key.startsWith(prefix) && key.length !== prefix.length);
     return !!found;
   }
 
