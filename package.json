@@ -71,7 +71,7 @@
     "jszip": "^3.7.1",
     "jwks-rsa": "^1.12.2",
     "mustache": "^3.2.1",
-    "nanoid": "^2.1.11",
+    "nanoid": "^3.1.31",
     "ng-diff-match-patch": "^3.0.1",
     "ng2-tree": "^2.0.0-rc.11",
     "ngx-file-drop": "^6.0.1",
