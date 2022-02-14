@@ -84,7 +84,7 @@
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
-    "rxjs": "6.5.3",
+    "rxjs": "6.6.7",
     "rxjs-compat": "^6.6.3",
     "semver": "^6.3.0",
     "simplemde-antd": "^1.0.0",
