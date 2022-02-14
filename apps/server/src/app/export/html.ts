@@ -16,7 +16,6 @@ import {
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {BundleExporter} from './bundle';
 import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
-import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {Formats} from '../models/export-options';
 import {PageInfo} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 import {
@@ -318,7 +317,7 @@ export class HtmlExporter {
                       version: string, templateType = 'official', template = 'hl7.fhir.template',
                       templateVersion = 'current', zipper: JSZip, useTerminologyServer?: boolean): Promise<void> {
     if (!this.configService.fhir.servers) {
-      throw new InvalidModuleConfigException('This server is not configured with FHIR servers');
+      throw new Error('This server is not configured with FHIR servers');
     }
 
     const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';

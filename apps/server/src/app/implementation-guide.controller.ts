@@ -1,6 +1,5 @@
 import {BaseFhirController} from './base-fhir.controller';
 import {Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Logger, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
-import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User} from './server.decorators';
@@ -259,7 +258,7 @@ export class ImplementationGuideController extends BaseFhirController {
   @Get('published')
   public getPublishedGuides(): Promise<any> {
     if (!this.configService.fhir.publishedGuides) {
-      throw new InvalidModuleConfigException('Server is not configured with a publishedGuides property');
+      throw new Error('Server is not configured with a publishedGuides property');
     }
 
     return this.httpService.get(this.configService.fhir.publishedGuides).toPromise()

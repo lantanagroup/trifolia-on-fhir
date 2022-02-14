@@ -1,6 +1,6 @@
 import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, ResourceReference} from './r4/fhir';
 import {Extension, ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
-import nanoid from 'nanoid/generate';
+import { customAlphabet } from 'nanoid';
 import * as semver from 'semver';
 import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
@@ -167,7 +167,8 @@ export function getDefaultImplementationGuideResourcePath(reference: ResourceRef
 }
 
 export function generateId(): string {
-  return nanoid('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUBWXYZ', 8);
+  const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUBWXYZ', 8);
+  return nanoid();
 }
 
 export class MediaReference {
