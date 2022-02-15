@@ -3,7 +3,7 @@ FROM node:10-alpine AS build-ToF
 # Python and G++ are required for some of the node devDependencies
 # Java is required for Trifolia-on-FHIR to "Publish" implementation guides
 # (Java is used to executed the FHIR IG Publisher)
-RUN apk add --no-cache --virtual .gyp make python3 gcc g++ openjdk8-jre build-base fontconfig
+RUN apk add --no-cache --virtual .gyp make python3 gcc g++ openjdk11-jre build-base fontconfig
 
 RUN mkdir /build
 
