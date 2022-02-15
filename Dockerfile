@@ -1,7 +1,4 @@
 FROM node:16.13.0-alpine AS build-ToF
-# Temp mirror
-RUN echo "https://ewr.edge.kernel.org/alpine/v3.14/main" > /etc/apk/repositories ; \
-echo "https://ewr.edge.kernel.org/alpine/v3.14/community" >> /etc/apk/repositories ;
 
 # Python and G++ are required for some of the node devDependencies
 # Java is required for Trifolia-on-FHIR to "Publish" implementation guides
@@ -33,9 +30,6 @@ RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build tools 
 RUN npm prune --production
 
 FROM node:16.13.0-alpine
-# Temp mirror
-RUN echo "https://ewr.edge.kernel.org/alpine/v3.14/main" > /etc/apk/repositories ; \
-echo "https://ewr.edge.kernel.org/alpine/v3.14/community" >> /etc/apk/repositories ;
 
 # Install ruby, open-jdk
 RUN apk add --no-cache ruby-full ruby-dev build-base openjdk11-jre
