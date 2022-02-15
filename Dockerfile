@@ -1,4 +1,4 @@
-FROM node:17-alpine AS build-ToF
+FROM node:16-alpine AS build-ToF
 
 # Python and G++ are required for some of the node devDependencies
 # Java is required for Trifolia-on-FHIR to "Publish" implementation guides
@@ -29,7 +29,7 @@ RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build tools 
 
 RUN npm prune --production
 
-FROM node:17-alpine
+FROM node:16-alpine
 
 # Install ruby, open-jdk
 RUN apk add --no-cache ruby-full ruby-dev build-base openjdk11-jre
