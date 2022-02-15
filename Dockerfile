@@ -1,4 +1,4 @@
-FROM node:16-alpine AS build-ToF
+FROM node:10-alpine AS build-ToF
 
 # Python and G++ are required for some of the node devDependencies
 # Java is required for Trifolia-on-FHIR to "Publish" implementation guides
@@ -29,10 +29,10 @@ RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build tools 
 
 RUN npm prune --production
 
-FROM node:16-alpine
+FROM node:10-alpine
 
 # Install ruby, open-jdk
-RUN apk add --no-cache ruby-full ruby-dev build-base openjdk11-jre
+RUN apk update && apk --update --no-cache add ruby-full ruby-dev build-base openjdk11-jre
 # Install fonts that are used by ig publisher. Without these, ig publisher throws a bunch of exceptions
 RUN apk add --no-cache fontconfig ttf-dejavu
 RUN gem install sassc -- --disable-march-tune-native
