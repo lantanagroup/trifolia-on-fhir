@@ -1,8 +1,8 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {IDocumentReference, IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {codeableConceptHasCode, generateId, getIgnoreWarningsValue, setIgnoreWarningsValue} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {debounceTime} from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { IImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { getIgnoreWarningsValue, setIgnoreWarningsValue } from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+import { debounceTime } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'trifolia-fhir-ignore-warnings',
@@ -12,7 +12,7 @@ import {debounceTime} from 'rxjs/operators';
 export class IgnoreWarningsComponent implements OnInit, OnChanges {
   @Input() implementationGuide: IImplementationGuide;
   @Output() change = new EventEmitter<string>();
-  public valueChanged = new EventEmitter();
+  public valueChanged = new Subject();
   public value: string;
 
   constructor() {
@@ -30,7 +30,7 @@ export class IgnoreWarningsComponent implements OnInit, OnChanges {
 
   set intervalValue(value: string) {
     this.value = value;
-    this.valueChanged.emit();
+    this.valueChanged.next(this.value);
   }
 
   public updateIgnoreWarningsValue() {

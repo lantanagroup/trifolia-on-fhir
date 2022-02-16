@@ -115,7 +115,7 @@ export class BindingPanelComponent implements OnInit {
     return text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap(term => {
+      switchMap((term: string) => {
         if (term.length <= 2) return [];
         return this.valueSetService.search(1, term).pipe(
           map((bundle: IBundle) => (bundle.entry || []).map(entry => <IValueSet>entry.resource))

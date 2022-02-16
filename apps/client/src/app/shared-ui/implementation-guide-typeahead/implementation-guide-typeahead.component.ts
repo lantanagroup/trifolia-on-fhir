@@ -6,6 +6,7 @@ import { ConfigService } from '../../shared/config.service';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { ImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { SearchImplementationGuideResponseContainer } from '../../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 
 @Component({
   selector: 'app-implementation-guide-typeahead',
@@ -30,10 +31,10 @@ export class ImplementationGuideTypeaheadComponent implements OnInit, OnChanges 
       debounceTime(300),
       distinctUntilChanged(),
       tap(() => this.searching = true),
-      switchMap((term) => {
+      switchMap((term: string) => {
         return this.implementationGuideService.getImplementationGuides(1, term).pipe(
-          map((bundle) => {
-            return (bundle.responses || []).map((entry) => <ImplementationGuide> entry.data.resource);
+          map((responses: SearchImplementationGuideResponseContainer) => {
+            return (responses.responses || []).map((entry) => <ImplementationGuide> entry.data.resource);
           })
         );
       }),

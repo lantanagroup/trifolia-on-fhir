@@ -10,6 +10,7 @@ import {GroupService} from './group.service';
 import {map} from 'rxjs/operators';
 import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
 import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
+import { IBundle } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Injectable()
 export class AuthService {
@@ -205,7 +206,7 @@ export class AuthService {
 
     try {
       this.groups = await this.groupService.getMembership()
-        .pipe(map(groupsBundle =>
+        .pipe(map((groupsBundle: IBundle) =>
           (groupsBundle.entry || []).map(entry => <Group>entry.resource)
         ))
         .toPromise();

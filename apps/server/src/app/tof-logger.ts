@@ -1,9 +1,9 @@
-import {Logger} from '@nestjs/common';
+import { ConsoleLogger, Logger } from '@nestjs/common';
 import {ConfigService} from './config.service';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
-export class TofLogger extends Logger {
+export class TofLogger extends ConsoleLogger {
   private static loggedFileError = false;
   private static configService = ConfigService.create();
   private static rotateTimeout: number;

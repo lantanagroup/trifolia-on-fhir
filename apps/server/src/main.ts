@@ -184,10 +184,16 @@ async function bootstrap() {
     });
   }
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    httpsOptions,
-    logger: false
-  });
+  let app: NestExpressApplication;
+
+  try {
+    app = await NestFactory.create<NestExpressApplication>(AppModule, {
+      httpsOptions,
+      logger: false
+    });
+  } catch (ex) {
+    logger.error(ex);
+  }
 
   app.useGlobalFilters(new NotFoundExceptionFilter());
   app.useLogger(new TofLogger());

@@ -13,6 +13,7 @@ import {saveAs} from 'file-saver';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute} from '@angular/router';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import { SearchImplementationGuideResponseContainer } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 
 @Component({
   selector: 'ngbd-typeahead-basic',
@@ -100,10 +101,11 @@ export class PublishComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged(),
       tap(() => this.searching = true),
-      switchMap((term) => {
-        return this.implementationGuideService.getImplementationGuides(1, term).pipe(map((bundle) => {
-          return (bundle.responses || []).map((entry) => <ImplementationGuide>entry.data.resource);
-        }));
+      switchMap((term: string) => {
+        return this.implementationGuideService.getImplementationGuides(1, term)
+          .pipe(map((bundle: SearchImplementationGuideResponseContainer) => {
+            return (bundle.responses || []).map((entry) => <ImplementationGuide>entry.data.resource);
+          }));
       }),
       tap(() => this.searching = false)
     );

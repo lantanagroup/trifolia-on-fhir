@@ -27,10 +27,10 @@ import {CustomValidator} from './validation/custom-validator';
 import {CustomSTU3Validator} from './validation/custom-STU3-validator';
 import {CustomR4Validator} from './validation/custom-R4-validator';
 import * as vkbeautify from 'vkbeautify';
-import {forkJoin} from 'rxjs/internal/observable/forkJoin';
 import {publishReplay, refCount} from 'rxjs/operators';
 import {IBundle, ICoding} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import { forkJoin } from 'rxjs';
 
 export interface IResourceGithubDetails {
   owner: string;
