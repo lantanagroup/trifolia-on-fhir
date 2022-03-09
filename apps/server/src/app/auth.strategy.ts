@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 @Injectable()
 export class HttpStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new TofLogger(HttpStrategy.name);
-  private readonly jwksClient;
+  private readonly jwksClient: jwksClient.JwksClient;
 
   constructor(private httpService: HttpService, private configService: ConfigService) {
     super();
@@ -34,7 +34,7 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
         });
       }
 
-      const profile = jwt.verify(token, getKey, (err, decoded) => {
+      jwt.verify(token, getKey, (err, decoded) => {
         if (err) {
           reject(err);
         } else {
@@ -45,6 +45,8 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(token: string) {
+    this.logger.trace('Validating user token');
+
     try {
       const profile = await this.verify(token);
 

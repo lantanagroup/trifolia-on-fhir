@@ -1,35 +1,44 @@
-import {createParamDecorator} from '@nestjs/common';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 
-export const User = createParamDecorator((data, req: ITofRequest) => {
+export const User = createParamDecorator((data, ctx: ExecutionContext) => {
+  const req = ctx.switchToHttp().getRequest() as ITofRequest;
   return req.user;
 });
 
-export const FhirServerId = createParamDecorator((data, req: ITofRequest) => {
+export const FhirServerId = createParamDecorator((data, ctx: ExecutionContext) => {
+  const req = ctx.switchToHttp().getRequest() as ITofRequest;
   return req.fhirServerId;
 });
 
-export const FhirServerBase = createParamDecorator((data, req: ITofRequest) => {
+export const FhirServerBase = createParamDecorator((data, ctx: ExecutionContext) => {
+  const req = ctx.switchToHttp().getRequest() as ITofRequest;
   return req.fhirServerBase;
 });
 
-export const FhirServerVersion = createParamDecorator((data, req: ITofRequest): 'stu3'|'r4' => {
+export const FhirServerVersion = createParamDecorator((data, ctx: ExecutionContext): 'stu3'|'r4' => {
+  const req = ctx.switchToHttp().getRequest() as ITofRequest;
   return <'stu3'|'r4'> req.fhirServerVersion;
 });
 
-export const FhirInstance = createParamDecorator((data, req: ITofRequest) => {
+export const FhirInstance = createParamDecorator((data, ctx: ExecutionContext) => {
+  const req = ctx.switchToHttp().getRequest() as ITofRequest;
   return req.fhir;
 });
 
-export const RequestUrl = createParamDecorator((data, req: ITofRequest) => {
+export const RequestUrl = createParamDecorator((data, ctx: ExecutionContext) => {
+  const req = ctx.switchToHttp().getRequest() as ITofRequest;
   return req.url;
 });
 
-export const RequestMethod = createParamDecorator((data, req: ITofRequest) => {
+export const RequestMethod = createParamDecorator((data, ctx: ExecutionContext) => {
+  const req = ctx.switchToHttp().getRequest() as ITofRequest;
   return req.method;
 });
 
-export const RequestHeaders = createParamDecorator((data, req: ITofRequest) => {
+export const RequestHeaders = createParamDecorator((data, ctx: ExecutionContext) => {
+  const req = ctx.switchToHttp().getRequest() as ITofRequest;
+
   if (data) {
     return req.headers[data.toLowerCase()];
   } else {

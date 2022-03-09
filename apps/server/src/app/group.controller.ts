@@ -194,6 +194,8 @@ export class GroupController extends BaseFhirController {
   })
   @Get('membership')
   public async getMembership(@User() user, @FhirServerBase() fhirServerBase, @Query('name') name?: string, @Query('_id') id?: string) {
+    if (!user) return null;
+
     const userPractitioner = await this.getMyPractitioner(user, fhirServerBase);
 
     // TODO: Assumes that the user is not going to belong to more than 50 groups
