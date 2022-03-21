@@ -94,7 +94,7 @@ export function buildUrl(base: string, resourceType?: string, id?: string, opera
 }
 
 export function parseUrl(url: string, base?: string) {
-  const parseUrlRegex = /([A-z]+)(\/([A-Za-z0-9\-]+))?(\/_history\/([A-Za-z0-9\-]{1,64}))?/g;
+  const parseUrlRegex = /([A-z]+)(\/([A-Za-z0-9\-\\.]+))?(\/_history\/([A-Za-z0-9\-]{1,64}))?/g;
 
   if (base && base.lastIndexOf('/') === base.length-1) {
     base = base.substring(0, base.length - 1);
