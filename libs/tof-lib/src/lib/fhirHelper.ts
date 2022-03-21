@@ -437,7 +437,7 @@ export function setJiraSpecValue(implementationGuide: IImplementationGuide, valu
   implementationGuide.extension = implementationGuide.extension || [];
   let foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-jira-spec']);
   let foundContained = foundExtension && foundExtension.valueReference && foundExtension.valueReference.reference ?
-    implementationGuide.contained.find(c => c.id === foundExtension.valueReference.reference.substring(1)) :
+    (implementationGuide.contained || []).find(c => c.id === foundExtension.valueReference.reference.substring(1)) :
     null;
 
   if (!value) {
