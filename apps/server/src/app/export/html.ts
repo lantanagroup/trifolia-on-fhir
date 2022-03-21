@@ -349,8 +349,7 @@ export class HtmlExporter {
 
       const packageListPath = path.join(this.rootPath, 'package-list.json');
 
-      zipper.file(packageListPath, JSON.stringify(packageList, null, '\t'));
-
+      fs.writeFileSync(packageListPath, JSON.stringify(packageList, null, '\t'));
       PackageListModel.removePackageList(this.implementationGuide);
     }
 
