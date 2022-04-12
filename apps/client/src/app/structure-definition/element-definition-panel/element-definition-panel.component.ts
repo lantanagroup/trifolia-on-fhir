@@ -159,11 +159,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
     const isExpanded = this.elementTreeModel.expanded;
 
+    // If the element is expanded, collapse it
     if (isExpanded) {
       await this.constraintManager.toggleExpand(this.elementTreeModel);
     }
 
-    const children = await this.constraintManager.findChildren(this.element, this.elementTreeModel.constrainedElement);
+    const children = await this.constraintManager.findChildren(this.elementTreeModel.baseElement, this.elementTreeModel.constrainedElement);
     this.elementTreeModel.hasChildren = children.length > 0;
 
     if (isExpanded && this.elementTreeModel.hasChildren && !init) {
