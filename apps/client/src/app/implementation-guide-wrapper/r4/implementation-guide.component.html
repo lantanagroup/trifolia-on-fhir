@@ -377,7 +377,9 @@
               <th>Reference</th>
               <th>Name</th>
               <th>Group</th>
-              <th>Example?</th>
+              <th>Description
+                <app-tooltip-icon tooltipKey="ig.definition.resource.description"></app-tooltip-icon>
+              </th>
               <th class="actions-column-1">
                 <div class="btn-group pull-right">
                   <button type="button" class="btn btn-primary" (click)="addResources()" title="Add existing resources to this implementation guide">
@@ -419,7 +421,7 @@
                 <span *ngIf="resource.exampleCanonical" title="This resource is an example of a profile">{{resource.exampleCanonical.length > 30 ? '...' : ''}}{{resource.exampleCanonical.substr(-30)}}</span>
                 -->
                 <div class="input-group">
-                  <textarea class="form-control" [(ngModel)]="resource.description"></textarea>
+                  <textarea class="form-control" [(ngModel)]="resource.description" [class.is-invalid]="isDescriptionRequired(resource)"></textarea>
                 </div>
               </td>
               <td>

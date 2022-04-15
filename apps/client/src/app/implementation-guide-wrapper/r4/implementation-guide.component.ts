@@ -1024,6 +1024,10 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
   }
 
+  public isDescriptionRequired(resource: ImplementationGuideResourceComponent) {
+    return !resource.description && ((resource.hasOwnProperty('exampleBoolean') && resource.exampleBoolean === true) || (resource.hasOwnProperty('exampleCanonical') && resource.exampleCanonical !== ''));
+  }
+
   public setExampleCanonical(resource: ImplementationGuideResourceComponent, value: string) {
     delete resource.exampleBoolean;
     resource.exampleCanonical = value;
@@ -1031,8 +1035,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   public selectExampleCanonical(resource: ImplementationGuideResourceComponent) {
     //Can only set Structure Definitions to exampleCanonical according to FHIR R4 standard
-    const modalRef = this.modal.open(FhirReferenceModalComponent, {size: 'lg'});
-    modalRef.componentInstance.resourceType = "StructureDefinition";
+    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg' });
+    modalRef.componentInstance.resourceType = 'StructureDefinition';
     modalRef.componentInstance.hideResourceType = true;
 
     modalRef.result.then((result: ResourceSelection) => {
