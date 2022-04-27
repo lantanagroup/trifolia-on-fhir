@@ -323,11 +323,15 @@ export class ElementTreeModel {
   static getTypeRefDisplay(typeRefs: IElementDefinitionType[]): string {
     const typeCounts = {};
 
-    typeRefs.forEach((type: TypeRefComponent | ElementDefinitionTypeRefComponent) => {
-      if (typeCounts.hasOwnProperty(type.code)) {
-        typeCounts[type.code]++;
+    typeRefs.forEach((type: TypeRefComponent | ElementDefinitionTypeRefComponent, index) => {
+      if (!type.code) {
+        return '';
       } else {
-        typeCounts[type.code] = 1;
+        if (typeCounts.hasOwnProperty(type.code)) {
+          typeCounts[type.code]++;
+        } else {
+          typeCounts[type.code] = 1;
+        }
       }
     });
 
