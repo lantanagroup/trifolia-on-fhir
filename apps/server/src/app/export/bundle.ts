@@ -5,6 +5,7 @@ import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { HttpService, LoggerService } from '@nestjs/common';
 import { buildUrl } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { IExtension, IStructureDefinition } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { response } from 'express';
 
 export type FormatTypes = 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml';
 export type BundleTypes = 'searchset'|'transaction';
@@ -189,6 +190,7 @@ export class BundleExporter {
     if (cleanup) {
       (bundle.entry || []).forEach((entry) => BundleExporter.cleanupResource(entry.resource, false));
     }
+
 
     return bundle;
   }
