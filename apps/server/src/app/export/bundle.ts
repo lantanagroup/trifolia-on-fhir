@@ -201,17 +201,22 @@ export class BundleExporter {
         .then((results) => {
           let response: Bundle | string = results;
 
-          if(results.entry){
+          if (results.entry) {
             results.entry.forEach(entry => {
-              if(entry.resource.resourceType && entry.resource.resourceType === "StructureDefinition"){
-                delete (<IStructureDefinition> entry.resource).snapshot;
+              if (entry.resource.resourceType && entry.resource.resourceType === 'StructureDefinition') {
+                delete (<IStructureDefinition>entry.resource).snapshot;
               }
             });
+          }
+
+          if (type === 'transaction') {
+            delete response.total;
           }
 
           if (format === 'xml' || format === 'application/xml') {
             response = this.fhir.objToXml(results);
           }
+
 
           resolve(response);
         })
