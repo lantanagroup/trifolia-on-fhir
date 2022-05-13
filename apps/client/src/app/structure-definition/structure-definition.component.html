@@ -253,6 +253,7 @@
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.elements-tab'] : undefined">Elements</span>
       </ng-template>
       <ng-template ngbTabContent>
+        <div class="page-content">
         <div class="elements">
           <div class="element" *ngFor="let e of constraintManager.elements">
             <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
@@ -341,6 +342,7 @@
           </tr>
           </tbody>
         </table>
+        </div>
       </ng-template>
     </ngb-tab>
 
