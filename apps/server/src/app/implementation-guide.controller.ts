@@ -393,20 +393,38 @@ export class ImplementationGuideController extends BaseFhirController {
     const resources = (bundle.entry || [])
       .filter(e => {
         if (!e.resource || e.resource === ig) return false;
-        return this.userHasPermission(usi, 'write', e.resource);
+        try {
+          return this.userHasPermission(usi, 'write', e.resource);
+        } catch (ex) {
+          this.logger.error(`Error determining if user has permission to resource ${e.resource.resourceType}/${e.resource.id}: ${ex.message}`);
+        }
       })
       .map(e => e.resource);
 
-    const updated = resources
-      .map(r => {
+    const updateBundle: IBundle = {
+      resourceType: 'Bundle',
+      type: 'batch',
+      entry: resources.map(r => {
         copyPermissions(ig, r);
-        const url = buildUrl(fhirServerBase, r.resourceType, r.id);
-        return this.httpService.put(url, r).toPromise();
-      });
 
-    await Promise.all(updated);
+        return {
+          request: {
+            method: 'PUT',
+            url: `${r.resourceType}/${r.id}`
+          },
+          resource: r
+        };
+      })
+    }
 
-    return updated.length;
+    try {
+      await this.httpService.post(fhirServerBase, updateBundle).toPromise();
+    } catch (ex) {
+      this.logger.error(`Error updating resources with a copy of permissions from IG ${ig.id}: ${ex.message}`);
+      return 0;
+    }
+
+    return resources.length;
   }
 
   private getSTU3Examples(implementationGuide: STU3ImplementationGuide) {
