@@ -55,6 +55,16 @@
 
         <div class="col-md-6">
           <div class="form-group">
+            <label>Exclude ToF Extensions?</label>
+            <select [(ngModel)]="options.removeExtensions" class="form-control">
+              <option [ngValue]="false">No</option>
+              <option [ngValue]="true">Yes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
             <label>Notify via email after done publishing?</label>
             <select [(ngModel)]="options.notifyMe" class="form-control">
               <option [ngValue]="false">No</option>
