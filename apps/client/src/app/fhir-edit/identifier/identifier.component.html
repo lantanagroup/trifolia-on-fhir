@@ -50,54 +50,12 @@
   <input type="text" class="form-control" [disabled]="!identifier || identifier.hasOwnProperty('value')" [(ngModel)]="identifierValue" placeholder="Value" title="Value"
          (change)="change.emit()" />
 </div>
-<div class="input-group">
-  <app-fhir-string class="text-field" [parentObject]="identifier.type" propertyName="text" title="Text"></app-fhir-string>
-</div>
 
-<div class="input-group">
-  <div class="card">
-    <div class="card-header">
-      <input type="checkbox" [ngModel]="identifier.type.hasOwnProperty('coding')" (ngModelChange)="Globals.toggleProperty(identifier.type, 'coding', [{ }])" />
-      Coding
-    </div>
-    <table class="table table-striped" *ngIf="identifier.type.hasOwnProperty('coding')">
-      <thead>
-      <tr>
-        <th>System</th>
-        <th>Code</th>
-        <th>Display</th>
-        <th>
-          <div class="pull-right">
-            <button type="button" class="btn btn-default btn-sm" title="Add a coding" (click)="identifier.type.coding.push({ })">
-              <i class="fa fa-plus"></i>
-            </button>
-          </div>
-        </th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let c of identifier.type.coding; let ci = index">
-        <td>
-          <app-fhir-string [parentObject]="c" propertyName="system" [isFormGroup]="false"></app-fhir-string>
-        </td>
-        <td>
-          <app-fhir-string [parentObject]="c" propertyName="code" [isFormGroup]="false"></app-fhir-string>
-        </td>
-        <td>
-          <app-fhir-string [parentObject]="c" propertyName="display" [isFormGroup]="false"></app-fhir-string>
-        </td>
-        <td>
-          <div class="pull-right btn-group">
-            <button type="button" class="btn btn-default btn-sm" title="Edit this coding" (click)="editCoding(c)">
-              <i class="fa fa-edit"></i>
-            </button>
-            <button type="button" class="btn btn-default btn-sm" title="Remove this coding" (click)="identifier.type.coding.splice(ci, 1)">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+
+<div class="button-container">
+  <div class="button">
+    <button type="button" class="btn btn-secondary" (click)="editCodeableConcept()" title="Edit this codeable concept">
+      Edit
+    </button>
   </div>
 </div>
