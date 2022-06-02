@@ -50,12 +50,11 @@
   <input type="text" class="form-control" [disabled]="!identifier || identifier.hasOwnProperty('value')" [(ngModel)]="identifierValue" placeholder="Value" title="Value"
          (change)="change.emit()" />
 </div>
-
-
 <div class="button-container">
   <div class="button">
     <button type="button" class="btn btn-secondary" (click)="editCodeableConcept()" title="Edit this codeable concept">
       Edit
     </button>
+
   </div>
 </div>
