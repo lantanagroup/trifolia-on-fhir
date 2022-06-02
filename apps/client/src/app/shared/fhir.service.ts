@@ -477,6 +477,9 @@ export class FhirService {
       // Remove any messages that are only information
       results.messages = (results.messages || []).filter((message) => message.severity !== Severities.Information);
 
+      // Remove jurisdiction error
+      results.messages = (results.messages || []).filter((message) => !(message.location.includes('jurisdiction')));
+
       // Update the "valid" property to account for custom validations
       results.valid = !(results.messages || []).find((message) => message.severity === Severities.Error);
 
@@ -571,6 +574,7 @@ export class FhirService {
     if (resource.resourceType === 'ImplementationGuide') {
       additionalMessages = additionalMessages.concat(this.customValidator.validateImplementationGuide(resource));
     }
+
 
     return additionalMessages;
   }
