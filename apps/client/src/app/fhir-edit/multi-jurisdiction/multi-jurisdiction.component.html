@@ -32,16 +32,20 @@
             </div>
             <input type="text" class="form-control" [disabled]="!typeahead[ci]" [(ngModel)]="jurisdictionSearch" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter"/>
           </div-->
-          <select (ngModelChange)="setJurisdictionCode(jurisdictions[ji], ci, $event)" *ngIf="!editFields[ji][ci]" [ngModel]="getJurisdictionCode(jurisdictions[ji].coding[ci])"
+          <input class="form-control" type="text" (ngModelChange)="setJurisdictionCode(jurisdictions[ji], ci, $event)"
+                 [ngModel]="getJurisdictionCodes(jurisdictions[ji].coding[ci].code)" [resultFormatter]="typeaheadFormatter" [ngbTypeahead]="typeaheadSearch" [editable]="false"
+                 *ngIf="editor[ji]" />
+
+          <!--<select (ngModelChange)="setJurisdictionCode(jurisdictions[ji], ci, $event)" *ngIf="!editFields[ji][ci]" [ngModel]="getJurisdictionCode(jurisdictions[ji].coding[ci])"
                   class="form-control">
             <option [ngValue]="undefined">SELECT ONE</option>
             <option *ngFor="let code of jurisdictionCodes" [ngValue]="code">{{code.display}} ({{code.code}})</option>
-          </select>
-          <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" (change)="change.emit()" *ngIf="editFields[ji][ci]" />
-          <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" (change)="change.emit()" *ngIf="editFields[ji][ci]" />
-          <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" (change)="change.emit()" *ngIf="editFields[ji][ci]" />
+          </select>-->
+          <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" (change)="change.emit()" *ngIf="!editor[ji]" />
+          <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" (change)="change.emit()" *ngIf="!editor[ji]" />
+          <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" (change)="change.emit()" *ngIf="!editor[ji]" />
           <div class="input-group-append">
-            <button (click)="editFields[ji][ci] = !editFields[ji][ci]" *ngIf="jurisdictionCodes" class="btn btn-primary" title="Edit the code/display/system for this jurisdiction"
+            <button (click)="changeEditor(ji)" *ngIf="jurisdictionCodes" class="btn btn-primary" title="Edit the code/display/system for this jurisdiction"
                     type="button">
               <i class="fa fa-edit"></i>
             </button>
