@@ -22,10 +22,7 @@ export class FhirMultiJurisdictionComponent implements OnInit {
 
   public tooltip: string;
   public Globals = Globals;
-  public editFields: boolean[][] = [[]];
   public jurisdictionCodes: Coding[];
-  public jDCodes: string;
-  public input = 'US';
   public editor: boolean[];
 
   constructor(
@@ -49,23 +46,6 @@ export class FhirMultiJurisdictionComponent implements OnInit {
       }
     }
     return arr;
-  }
-
-
-  public get fields(): boolean[] {
-    const arr: boolean[] = [];
-    if (this.jurisdictions) {
-      for (let i = 0; i < this.jurisdictions.length; i++) {
-        if (this.jurisdictions[i]) {
-          arr[i] = true;
-        }
-      }
-    }
-    return arr;
-  }
-
-  public setFields(arr: boolean[], index: number) {
-    arr[index] = !arr[index];
   }
 
   public changeEditor(index: number) {
@@ -99,10 +79,6 @@ export class FhirMultiJurisdictionComponent implements OnInit {
     if (jurisdiction.coding.length === 1) {
       this.setJurisdictionCode(this.jurisdictions[index], 0, this.jurisdictionCodes[0]);
     }
-    if (this.fields.length < index + 1) {
-      this.fields.push(false);
-    }
-    this.fields[index] = false;
   }
 
   isInvalid(){
@@ -123,10 +99,8 @@ export class FhirMultiJurisdictionComponent implements OnInit {
 
   removeJurisdiction(index: number) {
     this.jurisdictions.splice(index, 1);
-    this.editFields.splice(index, 1);
     if (this.jurisdictions.length === 0) {
       delete this.parentObject[this.propertyName];
-      this.editFields = [[]];
     }
   }
 
@@ -183,11 +157,6 @@ export class FhirMultiJurisdictionComponent implements OnInit {
     } else if (this.tooltipPath) {
       this.tooltip = this.fhirService.getFhirTooltip(this.tooltipPath);
     }
-  }
-
-  getJurisdictionCode(coding: ICoding) {
-    if (!this.jurisdictionCodes) return null;
-    return this.jurisdictionCodes.find(j => j.code === coding.code && j.display === coding.display && j.system === coding.system);
   }
 
   getJurisdictionCodes(input: string) {
