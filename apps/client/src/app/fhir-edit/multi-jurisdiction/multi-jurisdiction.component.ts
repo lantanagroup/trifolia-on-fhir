@@ -1,8 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {FhirService} from '../../shared/fhir.service';
-import {ICodeableConcept, ICoding} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {Coding} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
+import { FhirService } from '../../shared/fhir.service';
+import { ICodeableConcept, ICoding } from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { Coding } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-fhir-multi-jurisdiction',
@@ -20,8 +22,8 @@ export class FhirMultiJurisdictionComponent implements OnInit {
 
   public tooltip: string;
   public Globals = Globals;
-  public editFields: boolean[][] = [[]];
   public jurisdictionCodes: Coding[];
+  public editor: boolean[];
 
   constructor(
     private fhirService: FhirService) {
@@ -29,18 +31,33 @@ export class FhirMultiJurisdictionComponent implements OnInit {
 
   get jurisdictions(): ICodeableConcept[] {
     if (this.parentObject.hasOwnProperty(this.propertyName)) {
-      return <ICodeableConcept[]> this.parentObject[this.propertyName];
+      return <ICodeableConcept[]>this.parentObject[this.propertyName];
     }
     return null;
+  }
+
+  public fillEditor(): boolean[] {
+    const arr: boolean[] = [];
+    if (this.jurisdictions) {
+      for (let i = 0; i < this.jurisdictions.length; i++) {
+        if (this.jurisdictions[i]) {
+          arr[i] = true;
+        }
+      }
+    }
+    return arr;
+  }
+
+  public changeEditor(index: number) {
+    this.editor[index] = !this.editor[index];
   }
 
   addJurisdiction() {
     if (!this.jurisdictions) {
       this.parentObject[this.propertyName] = [];
-      this.editFields = [[]];
     }
 
-    this.jurisdictions.push({ });
+    this.jurisdictions.push({});
     this.addCoding(this.jurisdictions[this.jurisdictions.length - 1], this.jurisdictions.length - 1);
   }
 
@@ -59,13 +76,9 @@ export class FhirMultiJurisdictionComponent implements OnInit {
   addCoding(jurisdiction: ICodeableConcept, index: number) {
     jurisdiction.coding = jurisdiction.coding || [];
     jurisdiction.coding.push({});
-    if(jurisdiction.coding.length === 1){
+    if (jurisdiction.coding.length === 1) {
       this.setJurisdictionCode(this.jurisdictions[index], 0, this.jurisdictionCodes[0]);
     }
-    if(this.editFields.length < index + 1){
-      this.editFields.push([]);
-    }
-    this.editFields[index].push(false);
   }
 
   isInvalid(){
@@ -84,14 +97,25 @@ export class FhirMultiJurisdictionComponent implements OnInit {
     return true;
   }
 
-  removeJurisdiction(index: number){
+  removeJurisdiction(index: number) {
     this.jurisdictions.splice(index, 1);
-    this.editFields.splice(index, 1);
-    if(this.jurisdictions.length === 0){
+    if (this.jurisdictions.length === 0) {
       delete this.parentObject[this.propertyName];
-      this.editFields = [[]];
     }
   }
+
+  public typeaheadFormatter = (result: Coding) => {
+    return result.code;
+  };
+
+  public typeaheadSearch = (text$: Observable<string>) => text$.pipe(
+    debounceTime(200),
+    distinctUntilChanged(),
+    map((term: string) => term.length < 1 ? [] : this.jurisdictionCodes.filter((coding) => {
+      if (coding.code && coding.code.toLowerCase().indexOf(term.toLowerCase()) >= 0) {
+        return coding.code;
+      }
+    })));
 
   ngOnInit() {
     if (!this.jurisdictionCodes) {
@@ -124,6 +148,8 @@ export class FhirMultiJurisdictionComponent implements OnInit {
       const indexOfUniversal = this.jurisdictionCodes.indexOf(uv);
       this.jurisdictionCodes.splice(indexOfUniversal, 1);
       this.jurisdictionCodes.splice(0, 0, u, us);
+
+      this.editor = this.fillEditor();
     }
 
     if (this.tooltipKey) {
@@ -133,9 +159,9 @@ export class FhirMultiJurisdictionComponent implements OnInit {
     }
   }
 
-  getJurisdictionCode(coding: ICoding) {
+  getJurisdictionCodes(input: string) {
     if (!this.jurisdictionCodes) return null;
-    return this.jurisdictionCodes.find(j => j.code === coding.code && j.display === coding.display && j.system === coding.system);
+    return this.jurisdictionCodes.find(j => j.code === input).code;
   }
 
   setJurisdictionCode(jurisdiction: ICodeableConcept, index: number, coding: ICoding) {
