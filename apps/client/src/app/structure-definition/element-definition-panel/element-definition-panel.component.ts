@@ -98,6 +98,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
         this.element.min = parseInt(value);
       } else if (!value) {
         delete this.element.min;
+      } else {
+        this.element.min = parseInt(value);
       }
     }
   }
@@ -109,8 +111,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   get min(): string {
-    if (this.elementTreeModel && this.elementTreeModel.constrainedElement && this.elementTreeModel.constrainedElement.min >= 0) {
-      return this.elementTreeModel.constrainedElement.min.toString();
+    if (this.element && this.element.min >= 0) {
+      return this.element.min.toString();
     }
 
     return '';
