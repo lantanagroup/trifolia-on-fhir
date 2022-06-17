@@ -49,6 +49,8 @@ div.element-definition {
   resize:horizontal;
   overflow: auto;
   direction: rtl;
+  max-width: 80%;
+  margin-left: 10%;
 }
 
 tr.selected > td {
