@@ -76,17 +76,18 @@ import {UpdateDiffComponent} from './import/update-diff/update-diff.component';
 import {DiffMatchPatchModule} from 'ng-diff-match-patch';
 import { QueueComponent } from './manage/queue/queue.component';
 import {ExamplesComponent} from './examples/examples.component';
-import {BulkEditComponent} from './bulk-edit/bulk-edit.component';
-import {PageWrapperComponent} from './bulk-edit/page-wrapper/page-wrapper.component';
-import {R4PageComponent} from './bulk-edit/page-wrapper/r4-page/r4-page.component';
-import {STU3PageComponent} from './bulk-edit/page-wrapper/stu3-page/stu3-page.component';
-import {IgnoreWarningsComponent} from './implementation-guide-wrapper/ignore-warnings/ignore-warnings.component';
-import {JiraSpecComponent} from './implementation-guide-wrapper/jira-spec/jira-spec.component';
-import {CustomMenuComponent} from './implementation-guide-wrapper/custom-menu/custom-menu.component';
-import {SecurityServicesComponent} from './capability-statement-wrapper/security-services/security-services.component';
-import {PublishingTemplateComponent} from './implementation-guide-wrapper/publishing-template/publishing-template.component';
+import { BulkEditComponent } from './bulk-edit/bulk-edit.component';
+import { PageWrapperComponent } from './bulk-edit/page-wrapper/page-wrapper.component';
+import { R4PageComponent } from './bulk-edit/page-wrapper/r4-page/r4-page.component';
+import { STU3PageComponent } from './bulk-edit/page-wrapper/stu3-page/stu3-page.component';
+import { IgnoreWarningsComponent } from './implementation-guide-wrapper/ignore-warnings/ignore-warnings.component';
+import { JiraSpecComponent } from './implementation-guide-wrapper/jira-spec/jira-spec.component';
+import { CustomMenuComponent } from './implementation-guide-wrapper/custom-menu/custom-menu.component';
+import { SecurityServicesComponent } from './capability-statement-wrapper/security-services/security-services.component';
+import { PublishingTemplateComponent } from './implementation-guide-wrapper/publishing-template/publishing-template.component';
 import { MergeUserModalComponent } from './manage/merge-user-modal/merge-user-modal.component';
-import {NewProjectComponent} from "./new-project/new-project.component";
+import { NewProjectComponent } from './new-project/new-project.component';
+import { SearchParametersComponent } from './search-parameters/search-parameters.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -150,31 +151,32 @@ const appRoutes: Routes = [
   {path: ':fhirServer/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
   {path: ':fhirServer/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
   {path: ':fhirServer/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent},
-  {path: ':fhirServer/:implementationGuideId/capability-statement/new', component: CapabilityStatementWrapperComponent},
-  {path: ':fhirServer/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/:implementationGuideId/operation-definition', component: OperationDefinitionsComponent},
-  {path: ':fhirServer/:implementationGuideId/operation-definition/new', component: OperationDefinitionComponent},
-  {path: ':fhirServer/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/:implementationGuideId/value-set', component: ValuesetsComponent},
-  {path: ':fhirServer/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/:implementationGuideId/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/:implementationGuideId/code-system', component: CodesystemsComponent},
-  {path: ':fhirServer/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/:implementationGuideId/questionnaire', component: QuestionnairesComponent},
-  {path: ':fhirServer/:implementationGuideId/questionnaire/new', component: QuestionnaireComponent},
-  {path: ':fhirServer/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/:implementationGuideId/publish', component: PublishComponent},
-  {path: ':fhirServer/:implementationGuideId/export', component: ExportComponent},
-  {path: ':fhirServer/:implementationGuideId/import', component: ImportComponent},
-  {path: ':fhirServer/:implementationGuideId/other-resources', component: OtherResourcesComponent},
-  {path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent},
-  {path: ':fhirServer/:implementationGuideId/examples', component: ExamplesComponent},
-  {path: ':fhirServer/:implementationGuideId/bulk-edit', component: BulkEditComponent},
-  {path: ':fhirServer/import', component: ImportComponent},
-  {path: ':fhirServer/users/me', component: UserComponent},
-  {path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/manage/user', component: UsersComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always'}
+  { path: ':fhirServer/:implementationGuideId/capability-statement/new', component: CapabilityStatementWrapperComponent },
+  { path: ':fhirServer/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always' },
+  { path: ':fhirServer/:implementationGuideId/operation-definition', component: OperationDefinitionsComponent },
+  { path: ':fhirServer/:implementationGuideId/operation-definition/new', component: OperationDefinitionComponent },
+  { path: ':fhirServer/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always' },
+  { path: ':fhirServer/:implementationGuideId/value-set', component: ValuesetsComponent },
+  { path: ':fhirServer/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always' },
+  { path: ':fhirServer/:implementationGuideId/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always' },
+  { path: ':fhirServer/:implementationGuideId/code-system', component: CodesystemsComponent },
+  { path: ':fhirServer/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
+  { path: ':fhirServer/:implementationGuideId/questionnaire', component: QuestionnairesComponent },
+  { path: ':fhirServer/:implementationGuideId/questionnaire/new', component: QuestionnaireComponent },
+  { path: ':fhirServer/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always' },
+  { path: ':fhirServer/:implementationGuideId/publish', component: PublishComponent },
+  { path: ':fhirServer/:implementationGuideId/export', component: ExportComponent },
+  { path: ':fhirServer/:implementationGuideId/import', component: ImportComponent },
+  { path: ':fhirServer/:implementationGuideId/other-resources', component: OtherResourcesComponent },
+  { path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent },
+  { path: ':fhirServer/:implementationGuideId/examples', component: ExamplesComponent },
+  { path: ':fhirServer/:implementationGuideId/bulk-edit', component: BulkEditComponent },
+  { path: ':fhirServer/:implementationGuideId/searchParameter', component: SearchParametersComponent },
+  { path: ':fhirServer/import', component: ImportComponent },
+  { path: ':fhirServer/users/me', component: UserComponent },
+  { path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
+  { path: ':fhirServer/manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
+  { path: ':fhirServer/manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
 ];
 
 /**
@@ -247,7 +249,7 @@ const authModuleConfig: OAuthModuleConfig = {
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
     GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
-    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, MergeUserModalComponent, NewProjectComponent
+    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, MergeUserModalComponent, NewProjectComponent, SearchParametersComponent
   ],
   imports: [
     RouterModule.forRoot(
