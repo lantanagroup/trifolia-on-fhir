@@ -171,7 +171,7 @@ const appRoutes: Routes = [
   { path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent },
   { path: ':fhirServer/:implementationGuideId/examples', component: ExamplesComponent },
   { path: ':fhirServer/:implementationGuideId/bulk-edit', component: BulkEditComponent },
-  { path: ':fhirServer/:implementationGuideId/searchParameter', component: SearchParametersComponent },
+  { path: ':fhirServer/:implementationGuideId/search-parameter', component: SearchParametersComponent },
   { path: ':fhirServer/import', component: ImportComponent },
   { path: ':fhirServer/users/me', component: UserComponent },
   { path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },

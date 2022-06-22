@@ -6,7 +6,9 @@ import { Bundle, OperationOutcome } from '../../../../../libs/tof-lib/src/lib/st
 import { SearchParameter as STU3SearchParameter } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SearchParameterService {
   constructor(private http: HttpClient) {
   }
