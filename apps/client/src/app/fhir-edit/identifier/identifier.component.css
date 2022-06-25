@@ -1,3 +1,13 @@
 .text-field {
   width: 100%;
 }
+
+.button {
+  margin-top: 20px;
+  float: right;
+}
+
+.button-container {
+  height: 30px;
+  width: 100%;
+}
