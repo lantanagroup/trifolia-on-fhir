@@ -307,7 +307,7 @@ export class HtmlExporter {
   public updatePublishStatuses(status: boolean){
     let publishStatuses: { [implementationGuideId: string]: boolean } = {};
     if (fs.existsSync(this.configService.server.publishStatusPath)) {
-      publishStatuses = JSON.parse(fs.readFileSync(this.configService.server.publishStatusPath));
+      publishStatuses = JSON.parse(fs.readFileSync(this.configService.server.publishStatusPath).toString());
     }
     publishStatuses[this.implementationGuide.id] = status;
     fs.writeFileSync(this.configService.server.publishStatusPath, JSON.stringify(publishStatuses));

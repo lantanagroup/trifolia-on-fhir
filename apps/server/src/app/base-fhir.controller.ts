@@ -114,7 +114,7 @@ export class BaseFhirController extends BaseController {
   public getPublishStatus(implementationGuideId: string): boolean{
     let publishStatuses: { [implementationGuideId: string]: boolean } = {};
     if (fs.existsSync(this.configService.server.publishStatusPath)) {
-      publishStatuses = JSON.parse(fs.readFileSync(this.configService.server.publishStatusPath));
+      publishStatuses = JSON.parse(fs.readFileSync(this.configService.server.publishStatusPath).toString());
     }
     return publishStatuses.hasOwnProperty(implementationGuideId) ? publishStatuses[implementationGuideId] : null;
   }

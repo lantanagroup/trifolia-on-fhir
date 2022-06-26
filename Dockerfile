@@ -21,6 +21,8 @@ RUN npm ci
 # where actual code files have changed, and need to be re-built.
 COPY . .
 
+RUN nx dep-graph --file dep-graph.json
+
 # Need --max_old_space_size to allocate more ram to node when building. Without it,
 # you get an error "Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory"
 RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build client --prod
