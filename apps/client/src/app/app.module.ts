@@ -3,7 +3,6 @@ import {APP_INITIALIZER, Injectable, NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {FormsModule} from '@angular/forms';
 // noinspection JSDeprecatedSymbols
-import {HttpModule} from '@angular/http';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuidesComponent} from './implementation-guides/implementation-guides.component';
 import {HomeComponent} from './home/home.component';
@@ -260,7 +259,6 @@ const authModuleConfig: OAuthModuleConfig = {
     FormsModule,
     HttpClientModule,
     OAuthModule.forRoot(authModuleConfig),
-    HttpModule,
     NgbModule,
     FileDropModule,
     TreeModule,
