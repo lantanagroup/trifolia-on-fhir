@@ -1,6 +1,5 @@
 import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {RecentItemService} from '../shared/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {CodeSystemService} from '../shared/code-system.service';
 import {CodeSystem as STU3CodeSystem, ConceptDefinitionComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -47,7 +46,6 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     private modalService: NgbModal,
     private codeSystemService: CodeSystemService,
     private router: Router,
-    private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService) {
 
@@ -187,7 +185,6 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${codeSystem.id}`]);
         } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystem.id, codeSystem.name);
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -230,14 +227,9 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
           this.codeSystem = <ICodeSystem>cs;
           this.nameChanged();
           this.refreshConcepts();
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentCodeSystems,
-            this.codeSystem.id,
-            this.codeSystem.name || this.codeSystem.title);
         }, (err) => {
           this.csNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystemId);
         });
     }
   }

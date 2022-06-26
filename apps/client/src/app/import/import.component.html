@@ -15,10 +15,11 @@
 
       <div class="alert alert-danger" *ngIf="errorMessage !== ''">{{errorMessage}}</div>
 
-      <file-drop (onFileDrop)="dropped($event)">
-        <span [attr.data-intro]="Globals.introText['import.file.drag-and-drop']">Drag and drop file or <a href="javascript:void(0)" (click)="selectFile.click()">click to select</a>.</span>
-        <input style="display: none;" type="file" class="form-control" (change)="filesChanged($event)" #selectFile/>
-      </file-drop>
+      <ngx-file-drop (onFileDrop)="dropped($event)">
+        <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+          <span [attr.data-intro]="Globals.introText['import.file.drag-and-drop']">Drag and drop file(s) or <a href="javascript:void(0)" (click)="openFileSelector()">click to select</a>.</span>
+        </ng-template>
+      </ngx-file-drop>
 
       <table class="table table-striped" *ngIf="!configService.showingIntroduction && files && files.length > 0">
         <thead>

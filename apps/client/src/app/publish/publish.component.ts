@@ -5,7 +5,6 @@ import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/oper
 import {ExportOptions, ExportService} from '../shared/export.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
-import {CookieService} from 'angular2-cookie/core';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {FhirService} from '../shared/fhir.service';
 import {HtmlExportStatus, SocketService} from '../shared/socket.service';
@@ -13,7 +12,8 @@ import {saveAs} from 'file-saver';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute} from '@angular/router';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import { SearchImplementationGuideResponseContainer } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import {SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import {CookieService} from 'ngx-cookie-service';
 
 @Component({
   selector: 'ngbd-typeahead-basic',
@@ -69,9 +69,9 @@ export class PublishComponent implements OnInit {
     const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
 
     if (implementationGuide && implementationGuide.id) {
-      this.cookieService.put(cookieKey, implementationGuide.id);
+      this.cookieService.set(cookieKey, implementationGuide.id);
     } else if (this.cookieService.get(cookieKey)) {
-      this.cookieService.remove(cookieKey);
+      this.cookieService.delete(cookieKey);
     }
 
     const pubTemplateExt = (implementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-pub-template']);
@@ -122,7 +122,7 @@ export class PublishComponent implements OnInit {
       this.options.implementationGuideId = null;
 
     if (this.cookieService.get(cookieKey)) {
-      this.cookieService.remove(cookieKey);
+      this.cookieService.delete(cookieKey);
     }
   }
 
@@ -131,7 +131,7 @@ export class PublishComponent implements OnInit {
   }
 
   public responseFormatChanged() {
-    this.cookieService.put(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
+    this.cookieService.set(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
   }
 
   public async templateTypeChanged() {
@@ -142,12 +142,12 @@ export class PublishComponent implements OnInit {
       this.options.template = '';
     }
 
-    this.cookieService.put(Globals.cookieKeys.lastTemplateType, this.options.templateType);
+    this.cookieService.set(Globals.cookieKeys.lastTemplateType, this.options.templateType);
     await this.templateChanged();
   }
 
   public async templateChanged() {
-    this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
+    this.cookieService.set(Globals.cookieKeys.lastTemplate, this.options.template);
 
     if (this.options.templateType === 'official') {
       this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
@@ -169,10 +169,10 @@ export class PublishComponent implements OnInit {
   public templateVersionChanged() {
     if (!this.options.templateVersion) {
       if (this.cookieService.get(Globals.cookieKeys.lastTemplateVersion)) {
-        this.cookieService.remove(Globals.cookieKeys.lastTemplateVersion);
+        this.cookieService.delete(Globals.cookieKeys.lastTemplateVersion);
       }
     } else {
-      this.cookieService.put(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
+      this.cookieService.set(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
     }
   }
 

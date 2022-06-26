@@ -2,9 +2,8 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ImportService, VSACImportCriteria } from '../shared/import.service';
 import { Bundle, DomainResource, EntryComponent, IssueComponent, Media as STU3Media, OperationOutcome, RequestComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
-import { FileSystemFileEntry, UploadEvent, UploadFile } from 'ngx-file-drop';
+import { FileSystemFileEntry } from 'ngx-file-drop';
 import { FhirService } from '../shared/fhir.service';
-import { CookieService } from 'angular2-cookie/core';
 import { ContentModel, GithubService } from '../shared/github.service';
 import { ImportGithubPanelComponent } from './import-github-panel/import-github-panel.component';
 import { forkJoin } from 'rxjs';
@@ -17,6 +16,8 @@ import { ConfigService } from '../shared/config.service';
 import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { IDomainResource } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
+import { CookieService } from 'ngx-cookie-service';
+import {NgxFileDropEntry} from 'ngx-file-drop/ngx-file-drop/ngx-file-drop-entry';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
@@ -228,7 +229,6 @@ export class ImportComponent implements OnInit {
   }
 
   public async getList(importFileModel) {
-
     if (!importFileModel.resource || !importFileModel.resource.resourceType || !importFileModel.resource.id) return;
 
     let url = `/api/fhir/${importFileModel.resource.resourceType}`;
@@ -255,10 +255,10 @@ export class ImportComponent implements OnInit {
    * panel, needing to be loaded into the list of files to be imported.
    * @param event
    */
-  public async dropped(event: UploadEvent) {
+  public async dropped(event: NgxFileDropEntry[]) {
     // Create an inline function that returns an awaitable promise
     // when the file has been loaded/populated
-    const populateFile = (droppedFile: UploadFile) => {
+    const populateFile = (droppedFile) => {
       return new Promise(resolve => {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file(async (file: File) => {
@@ -268,7 +268,7 @@ export class ImportComponent implements OnInit {
       });
     }
 
-    for (const droppedFile of event.files) {
+    for (const droppedFile of event) {
       if (droppedFile.fileEntry.isFile) {
         await populateFile(droppedFile);
       }
@@ -486,7 +486,7 @@ export class ImportComponent implements OnInit {
 
   private importVsac(tabSet: NgbTabset) {
     if (this.rememberVsacCredentials) {
-      this.cookieService.put(this.vsacPasswordCookieKey, btoa(this.vsacCriteria.password));
+      this.cookieService.set(this.vsacPasswordCookieKey, btoa(this.vsacCriteria.password));
     }
 
     this.importService.importVsac(this.vsacCriteria)

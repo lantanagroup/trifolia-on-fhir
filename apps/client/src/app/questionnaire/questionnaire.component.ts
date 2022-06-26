@@ -3,7 +3,6 @@ import {OperationOutcome, Questionnaire, QuestionnaireItemComponent} from '../..
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {RecentItemService} from '../shared/recent-item.service';
 import {FileService} from '../shared/file.service';
 import {FhirService} from '../shared/fhir.service';
 import {QuestionnaireService} from '../shared/questionnaire.service';
@@ -66,7 +65,6 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     private questionnaireService: QuestionnaireService,
     private router: Router,
     private modalService: NgbModal,
-    private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService) {
 
@@ -129,10 +127,6 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.baseSessionUrl}/questionnaire/${results.id}`]);
         } else {
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentQuestionnaires,
-            results.id,
-            results.name || results.title);
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
@@ -168,15 +162,9 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
           this.questionnaire = <Questionnaire>questionnaire;
           this.nameChanged();
           this.initFlattenedItems();
-
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentQuestionnaires,
-            questionnaire.id,
-            this.questionnaire.name || this.questionnaire.title);
         }, (err) => {
           this.qNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentQuestionnaires, questionnaireId);
         });
     }
   }

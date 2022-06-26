@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { ImplementationGuideService } from '../../shared/implementation-guide.service';
-import { CookieService } from 'angular2-cookie/core';
 import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
 import { ConfigService } from '../../shared/config.service';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { ImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { SearchImplementationGuideResponseContainer } from '../../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-implementation-guide-typeahead',
@@ -57,9 +57,9 @@ export class ImplementationGuideTypeaheadComponent implements OnInit, OnChanges 
     const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
 
     if (implementationGuide && implementationGuide.id) {
-      this.cookieService.put(cookieKey, implementationGuide.id);
+      this.cookieService.set(cookieKey, implementationGuide.id);
     } else if (this.cookieService.get(cookieKey)) {
-      this.cookieService.remove(cookieKey);
+      this.cookieService.delete(cookieKey);
     }
   }
 

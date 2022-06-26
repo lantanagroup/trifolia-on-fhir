@@ -2,7 +2,6 @@ import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
 import {OperationDefinition, OperationOutcome, ParameterComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {OperationDefinitionService} from '../shared/operation-definition.service';
-import {RecentItemService} from '../shared/recent-item.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ParameterModalComponent} from './parameter-modal/parameter-modal.component';
@@ -40,7 +39,6 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
     private modal: NgbModal,
     private router: Router,
     private opDefService: OperationDefinitionService,
-    private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService) {
 
@@ -109,7 +107,6 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.baseSessionUrl}/operation-definition/${results.id}`]);
         } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentOperationDefinitions, results.id, results.name);
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
@@ -146,14 +143,9 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
 
           this.operationDefinition = <OperationDefinition>opDef;
           this.nameChanged();
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentOperationDefinitions,
-            this.operationDefinition.id,
-            this.operationDefinition.name);
         }, (err) => {
           this.odNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentOperationDefinitions, operationDefinitionId);
         });
     }
   }

@@ -3,7 +3,6 @@ import { CapabilityStatementService } from '../../shared/capability-statement.se
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
-import { RecentItemService } from '../../shared/recent-item.service';
 import { FhirService } from '../../shared/fhir.service';
 import { NgbModal, NgbTabChangeEvent, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
 import { FhirCapabilityStatementResourceModalComponent } from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
@@ -47,8 +46,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     private modalService: NgbModal,
     private csService: CapabilityStatementService,
     public configService: ConfigService,
-    private router: Router,
-    private recentItemService: RecentItemService) {
+    private router: Router) {
 
     super(configService, authService);
 
@@ -158,7 +156,6 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${results.id}`]);
         } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
@@ -281,14 +278,9 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
 
           this.capabilityStatement = <CapabilityStatement>cs;
           this.nameChanged();
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentCapabilityStatements,
-            this.capabilityStatement.id,
-            this.capabilityStatement.name || this.capabilityStatement.title);
         }, (err) => {
           this.csNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
         });
     }
   }

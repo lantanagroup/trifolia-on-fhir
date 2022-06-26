@@ -10,8 +10,8 @@ import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
 import {SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
-import {CookieService} from 'angular2-cookie';
 import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-implementation-guides',
@@ -109,7 +109,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
     const currentIndex = this.recentIgs.indexOf(recentIg);
     this.recentIgs.splice(currentIndex, 1);
     this.recentIgs.splice(0, 0, recentIg);
-    this.cookieService.put(this.selectCookie, JSON.stringify(this.recentIgs));
+    this.cookieService.set(this.selectCookie, JSON.stringify(this.recentIgs));
   }
 
   public projectSelected(ig: IImplementationGuide) {
@@ -131,7 +131,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
       this.recentIgs = this.recentIgs.slice(0, 3);
     }
 
-    this.cookieService.put(this.selectCookie, JSON.stringify(this.recentIgs));
+    this.cookieService.set(this.selectCookie, JSON.stringify(this.recentIgs));
   }
 
   public get implementationGuides() {

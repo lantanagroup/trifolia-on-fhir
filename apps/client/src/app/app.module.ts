@@ -20,7 +20,6 @@ import {LoginComponent} from './login/login.component';
 import {StructureDefinitionsComponent} from './structure-definitions/structure-definitions.component';
 import {UserComponent} from './user/user.component';
 import {NewProfileComponent} from './new-profile/new-profile.component';
-import {CookieService} from 'angular2-cookie/core';
 import {HTTP_INTERCEPTORS, HttpClientModule, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {ElementDefinitionPanelComponent} from './structure-definition/element-definition-panel/element-definition-panel.component';
@@ -36,7 +35,6 @@ import {ValuesetExpandComponent} from './valueset-expand/valueset-expand.compone
 import {CapabilityStatementWrapperComponent} from './capability-statement-wrapper/capability-statement-wrapper.component';
 import {STU3CapabilityStatementComponent} from './capability-statement-wrapper/stu3/capability-statement.component';
 import {R4CapabilityStatementComponent} from './capability-statement-wrapper/r4/capability-statement.component';
-import {FileDropModule} from 'ngx-file-drop';
 import {ConfigService} from './shared/config.service';
 import {ConceptCardComponent} from './valueset/concept-card/concept-card.component';
 import {ImplementationGuideViewComponent} from './implementation-guide-view/implementation-guide-view.component';
@@ -48,7 +46,6 @@ import {ImplementationGuideWrapperComponent} from './implementation-guide-wrappe
 import {RouteTransformerDirective} from './route-transformer.directive';
 import {MappingModalComponent} from './structure-definition/element-definition-panel/mapping-modal/mapping-modal.component';
 import {ImportGithubPanelComponent} from './import/import-github-panel/import-github-panel.component';
-import {TreeModule} from 'ng2-tree';
 import {ExportGithubPanelComponent} from './export-github-panel/export-github-panel.component';
 import {ContextPanelWrapperComponent} from './structure-definition/context-panel-wrapper/context-panel-wrapper.component';
 import {ContextPanelR4Component} from './structure-definition/context-panel-wrapper/r4/context-panel-r4.component';
@@ -84,8 +81,11 @@ import {JiraSpecComponent} from './implementation-guide-wrapper/jira-spec/jira-s
 import {CustomMenuComponent} from './implementation-guide-wrapper/custom-menu/custom-menu.component';
 import {SecurityServicesComponent} from './capability-statement-wrapper/security-services/security-services.component';
 import {PublishingTemplateComponent} from './implementation-guide-wrapper/publishing-template/publishing-template.component';
-import { MergeUserModalComponent } from './manage/merge-user-modal/merge-user-modal.component';
+import {MergeUserModalComponent} from './manage/merge-user-modal/merge-user-modal.component';
 import {NewProjectComponent} from "./new-project/new-project.component";
+import {NgxFileDropModule} from 'ngx-file-drop';
+import {TreeModule} from './ng2-tree/tree.module';
+import {CookieService} from 'ngx-cookie-service';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -128,10 +128,6 @@ export class AddHeaderInterceptor implements HttpInterceptor {
 
     return next.handle(req.clone({ headers: headers }));
   }
-}
-
-export function cookieServiceFactory() {
-  return new CookieService();
 }
 
 /**
@@ -260,7 +256,7 @@ const authModuleConfig: OAuthModuleConfig = {
     HttpClientModule,
     OAuthModule.forRoot(authModuleConfig),
     NgbModule,
-    FileDropModule,
+    NgxFileDropModule,
     TreeModule,
     SharedModule,
     SharedUiModule,
@@ -279,9 +275,6 @@ const authModuleConfig: OAuthModuleConfig = {
       provide: HTTP_INTERCEPTORS,
       useClass: AddHeaderInterceptor,
       multi: true
-    }, {
-      provide: CookieService,
-      useFactory: cookieServiceFactory
     },
     {
       provide: OAuthModuleConfig,
@@ -294,7 +287,8 @@ const authModuleConfig: OAuthModuleConfig = {
     {
       provide: OAuthStorage,
       useValue: localStorage
-    }
+    },
+    CookieService
   ],
   bootstrap: [AppComponent]
 })

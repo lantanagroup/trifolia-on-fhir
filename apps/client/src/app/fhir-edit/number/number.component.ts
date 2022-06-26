@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {CookieService} from 'angular2-cookie/core';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-fhir-number',
@@ -41,13 +41,13 @@ export class FhirEditNumberComponent implements OnInit {
       delete this.parentObject[this.propertyName];
 
       if (this.cookieKey && this.cookieService.get(this.cookieKey)) {
-        this.cookieService.remove(this.cookieKey);
+        this.cookieService.delete(this.cookieKey);
       }
     } else if (newValue !== undefined && newValue !== null) {
       this.parentObject[this.propertyName] = newValue;
 
       if (this.cookieKey) {
-        this.cookieService.put(this.cookieKey, newValue.toString());
+        this.cookieService.set(this.cookieKey, newValue.toString());
       }
     }
   }

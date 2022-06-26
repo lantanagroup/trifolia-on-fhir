@@ -12,7 +12,6 @@ import {ImportService} from './import.service';
 import {OperationDefinitionService} from './operation-definition.service';
 import {PractitionerService} from './practitioner.service';
 import {QuestionnaireService} from './questionnaire.service';
-import {RecentItemService} from './recent-item.service';
 import {SocketService} from './socket.service';
 import {StructureDefinitionService} from './structure-definition.service';
 import {UserService} from './user.service';
@@ -43,7 +42,6 @@ import {ModalService} from './modal.service';
     OperationDefinitionService,
     PractitionerService,
     QuestionnaireService,
-    RecentItemService,
     SocketService,
     StructureDefinitionService,
     UserService,

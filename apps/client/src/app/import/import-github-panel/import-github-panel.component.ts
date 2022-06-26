@@ -2,13 +2,13 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {BranchModel, ContentModel, GithubService, RepositoryModel} from '../../shared/github.service';
 import {
   NodeCheckedEvent,
-  NodeUncheckedEvent,
-  TreeModel
-} from 'ng2-tree';
+  NodeUncheckedEvent
+} from '../../ng2-tree/tree.events';
 import {FhirService} from '../../shared/fhir.service';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from '../../shared/config.service';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {TreeModel} from '../../ng2-tree/tree.types';
 
 const createTreeItem = (value: string, directory: boolean, ...children: TreeModel[]) => {
   const item = {

@@ -243,13 +243,6 @@ export class Globals {
   ];
 
   static readonly cookieKeys = {
-    recentImplementationGuides: 'recentImplementationGuides',
-    recentStructureDefinitions: 'recentStructureDefinitions',
-    recentCapabilityStatements: 'recentCapabilityStatements',
-    recentOperationDefinitions: 'recentOperationDefinitions',
-    recentValueSets: 'recentValueSets',
-    recentCodeSystems: 'recentCodeSystems',
-    recentQuestionnaires: 'recentQuestionnaires',
     exportLastImplementationGuideId: 'exportLastImplementationGuideId',
     exportLastUseTerminologyServer: 'exportLastUseTerminologyServer',
     exportLastIncludeFhirIgPublisher: 'exportLastIncludeFhirIgPublisher',

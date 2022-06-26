@@ -1,7 +1,6 @@
 import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
 import {OperationOutcome, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {RecentItemService} from '../shared/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ValueSetService} from '../shared/value-set.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -42,7 +41,6 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     private valueSetService: ValueSetService,
     private router: Router,
     private modalService: NgbModal,
-    private recentItemService: RecentItemService,
     private fileService: FileService,
     private fhirService: FhirService) {
 
@@ -205,7 +203,6 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`${this.configService.baseSessionUrl}/value-set/${results.id}`]);
         } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentValueSets, results.id, results.name);
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -242,14 +239,9 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
 
           this.valueSet = <ValueSet>results;
           this.nameChanged();
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentValueSets,
-            this.valueSet.id,
-            this.valueSet.name || this.valueSet.title);
         }, (err) => {
           this.vsNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentValueSets, valueSetId);
         });
     }
   }

@@ -1,19 +1,9 @@
-import {
-  Component,
-  DoCheck,
-  HostListener,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Renderer2,
-  ViewChild
-} from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { StructureDefinitionService } from '../shared/structure-definition.service';
-import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
-import { ElementTreeModel } from '../../../../../libs/tof-lib/src/lib/element-tree-model';
+import {Component, DoCheck, HostListener, Inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {StructureDefinitionService} from '../shared/structure-definition.service';
+import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {ElementTreeModel} from '../../../../../libs/tof-lib/src/lib/element-tree-model';
 import {
   ConstraintComponent,
   ElementDefinition as STU3ElementDefinition,
@@ -23,22 +13,22 @@ import {
 import {
   ElementDefinition as R4ElementDefinition,
   ElementDefinitionConstraintComponent,
-  ElementDefinitionTypeRefComponent, ImplementationGuide,
+  ElementDefinitionTypeRefComponent,
+  ImplementationGuide,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { RecentItemService } from '../shared/recent-item.service';
-import { FhirService } from '../shared/fhir.service';
-import { FileService } from '../shared/file.service';
-import { DOCUMENT } from '@angular/common';
-import { ConfigService } from '../shared/config.service';
-import { ElementDefinitionPanelComponent } from './element-definition-panel/element-definition-panel.component';
-import { AuthService } from '../shared/auth.service';
-import { BaseComponent } from '../base.component';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { IElementDefinition } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { ConstraintManager } from '../../../../../libs/tof-lib/src/lib/constraint-manager';
-import { BaseDefinitionResponseModel } from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
-import { Severities, ValidatorResponse } from 'fhir/validator';
+import {FhirService} from '../shared/fhir.service';
+import {FileService} from '../shared/file.service';
+import {DOCUMENT} from '@angular/common';
+import {ConfigService} from '../shared/config.service';
+import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
+import {AuthService} from '../shared/auth.service';
+import {BaseComponent} from '../base.component';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {IElementDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {ConstraintManager} from '../../../../../libs/tof-lib/src/lib/constraint-manager';
+import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
+import {Severities, ValidatorResponse} from 'fhir/validator';
 import {CanComponentDeactivate} from '../guards/resource.guard';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Versions} from 'fhir/fhir';
@@ -77,11 +67,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     private router: Router,
     private strucDefService: StructureDefinitionService,
     private implementationGuideService: ImplementationGuideService,
-    private modalService: NgbModal,
-    private recentItemService: RecentItemService,
     private fhirService: FhirService,
     private fileService: FileService,
-    private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document) {
 
     super(configService, authService);
@@ -226,7 +213,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     } catch (err) {
       this.sdNotFound = err.status === 404;
       this.message = getErrorString(err);
-      this.recentItemService.removeRecentItem(Globals.cookieKeys.recentStructureDefinitions, sdId);
       return;
     }
 
@@ -241,11 +227,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     await this.loadBaseDefinition();
-
-    this.recentItemService.ensureRecentItem(
-      Globals.cookieKeys.recentStructureDefinitions,
-      this.structureDefinition.id,
-      this.structureDefinition.name);
 
     if (this.route.snapshot.queryParams.copy === 'true') {
       this.message = 'Done copying structure definition';
@@ -301,7 +282,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
           this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${updatedStructureDefinition.id}`]);
         } else {
           this.structureDefinition.snapshot = updatedStructureDefinition.snapshot;
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, updatedStructureDefinition.id, updatedStructureDefinition.name);
           this.message = 'Your changes have been saved!';
           this.isDirty = false;
           this.nameChanged();
