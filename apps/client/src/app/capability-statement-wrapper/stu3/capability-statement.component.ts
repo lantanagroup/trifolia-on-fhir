@@ -1,21 +1,21 @@
-import { Component, DoCheck, Input, OnDestroy, OnInit } from '@angular/core';
-import { CapabilityStatementService } from '../../shared/capability-statement.service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
-import { FhirService } from '../../shared/fhir.service';
-import { NgbModal, NgbTabChangeEvent, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
-import { FhirCapabilityStatementResourceModalComponent } from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
-import { FhirMessagingEventModalComponent } from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
-import { FhirReferenceModalComponent } from '../../fhir-edit/reference-modal/reference-modal.component';
-import { ConfigService } from '../../shared/config.service';
-import { FileService } from '../../shared/file.service';
-import { ClientHelper } from '../../clientHelper';
-import { AuthService } from '../../shared/auth.service';
-import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
-import { BaseComponent } from '../../base.component';
+import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
+import {CapabilityStatementService} from '../../shared/capability-statement.service';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {FhirService} from '../../shared/fhir.service';
+import {NgbModal, NgbNav, NgbNavChangeEvent} from '@ng-bootstrap/ng-bootstrap';
+import {FhirCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
+import {FhirMessagingEventModalComponent} from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
+import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {ConfigService} from '../../shared/config.service';
+import {FileService} from '../../shared/file.service';
+import {ClientHelper} from '../../clientHelper';
+import {AuthService} from '../../shared/auth.service';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {BaseComponent} from '../../base.component';
 import {debounceTime} from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import {Subject} from 'rxjs';
 
 @Component({
   templateUrl: './capability-statement.component.html',
@@ -23,7 +23,7 @@ import { Subject } from 'rxjs';
 })
 export class STU3CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   @Input() public capabilityStatement: CapabilityStatement;
-  public idChangedEvent = new Subject();
+  public idChangedEvent = new Subject<void>();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
 
@@ -120,7 +120,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     this.getCapabilityStatement();
   }
 
-  public moveRestLeft(rest: RestComponent, tabSet: NgbTabset) {
+  public moveRestLeft(rest: RestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex > 0) {
@@ -130,7 +130,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     }
   }
 
-  public moveRestRight(rest: RestComponent, tabSet: NgbTabset) {
+  public moveRestRight(rest: RestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex < this.capabilityStatement.rest.length) {
@@ -210,7 +210,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     }, 50);
   }
 
-  public beforeRestTabChange($event: NgbTabChangeEvent) {
+  public beforeRestTabChange($event: NgbNavChangeEvent) {
     if ($event.nextId === 'add') {
       $event.preventDefault();
     }

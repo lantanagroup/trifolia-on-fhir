@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ImportService, VSACImportCriteria } from '../shared/import.service';
 import { Bundle, DomainResource, EntryComponent, IssueComponent, Media as STU3Media, OperationOutcome, RequestComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { FileSystemFileEntry } from 'ngx-file-drop';
 import { FhirService } from '../shared/fhir.service';
 import { ContentModel, GithubService } from '../shared/github.service';
@@ -142,7 +142,7 @@ export class ImportComponent implements OnInit {
       return;
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       reader.onload = (e: any) => {
         const result = e.target.result;
         const importFileModel = new ImportFileModel();
@@ -259,7 +259,7 @@ export class ImportComponent implements OnInit {
     // Create an inline function that returns an awaitable promise
     // when the file has been loaded/populated
     const populateFile = (droppedFile) => {
-      return new Promise(resolve => {
+      return new Promise<void>(resolve => {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file(async (file: File) => {
           await this.populateFile(file);
@@ -386,7 +386,7 @@ export class ImportComponent implements OnInit {
     return clone;
   }
 
-  private importText(tabSet: NgbTabset) {
+  private importText(tabSet: NgbNav) {
     let resource;
 
     try {
@@ -460,7 +460,7 @@ export class ImportComponent implements OnInit {
       });
   }
 
-  private importFiles(tabSet: NgbTabset) {
+  private importFiles(tabSet: NgbNav) {
     const json = JSON.stringify(this.importBundle, null, '\t');
     this.fhirService.batch(json, 'application/json', false, this.applyContextPermissions)
       .subscribe((results: OperationOutcome | Bundle) => {
@@ -484,7 +484,7 @@ export class ImportComponent implements OnInit {
       });
   }
 
-  private importVsac(tabSet: NgbTabset) {
+  private importVsac(tabSet: NgbNav) {
     if (this.rememberVsacCredentials) {
       this.cookieService.set(this.vsacPasswordCookieKey, btoa(this.vsacCriteria.password));
     }
@@ -520,7 +520,7 @@ export class ImportComponent implements OnInit {
       });
   }
 
-  public importGithub(tabSet: NgbTabset) {
+  public importGithub(tabSet: NgbNav) {
     // Filter the paths so that we don't include duplicate paths, or paths for directories where
     // child files are already selected.
     const filteredPaths = this.importGithubPanel.selectedPaths.filter((selectedPath: string) => {
@@ -659,7 +659,7 @@ export class ImportComponent implements OnInit {
     });
   }
 
-  public import(tabSet: NgbTabset) {
+  public import(tabSet: NgbNav) {
     this.outcome = null;
     this.resultsBundle = null;
     this.message = 'Importing...';

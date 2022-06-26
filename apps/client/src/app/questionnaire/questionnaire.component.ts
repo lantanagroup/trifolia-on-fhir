@@ -52,7 +52,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
   public flattenedItems: ItemModel[];
   public qNotFound = false;
 
-  public idChangedEvent = new Subject();
+  public idChangedEvent = new Subject<void>();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
 

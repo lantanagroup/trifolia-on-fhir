@@ -130,7 +130,7 @@ export class FhirService {
       this.http.get('/assets/' + loadDirectory + '/profiles-resources.json').pipe(publishReplay(1), refCount())
     ];
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       forkJoin(assetPromises)
         .subscribe((allAssets) => {
           const parser = new ParseConformance(false, fhirVersion);

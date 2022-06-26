@@ -56,3 +56,4 @@ apps/server/src/assets/ig-publisher/
 .idea/workspace.xml
 .idea/usage.statistics.xml
 .idea/shelf/
+.angular/

@@ -1,9 +1,9 @@
-FROM node:10-alpine AS build-ToF
+FROM node:16-alpine AS build-ToF
 
 # Python and G++ are required for some of the node devDependencies
 # Java is required for Trifolia-on-FHIR to "Publish" implementation guides
 # (Java is used to executed the FHIR IG Publisher)
-RUN apk add --no-cache --virtual .gyp make python gcc g++ openjdk8-jre build-base fontconfig
+RUN apk add --no-cache --virtual .gyp make py3-pip gcc g++ openjdk8-jre build-base fontconfig
 
 RUN mkdir /build
 
@@ -15,13 +15,13 @@ WORKDIR /build
 COPY package.json /build/
 COPY package-lock.json /build/
 
-RUN npm ci
+RUN npm ci --verbose
 
 # Docker should (most of the time) skip the above (when rebuilding) and go straight here
 # where actual code files have changed, and need to be re-built.
 COPY . .
 
-RUN nx dep-graph --file dep-graph.json
+RUN ./node_modules/.bin/nx dep-graph --file dep-graph.json
 
 # Need --max_old_space_size to allocate more ram to node when building. Without it,
 # you get an error "Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory"
@@ -31,7 +31,7 @@ RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build tools 
 
 RUN npm prune --production
 
-FROM node:10-alpine
+FROM node:16-alpine
 
 # Install ruby, open-jdk
 RUN apk update && apk --update --no-cache add ruby-full ruby-dev build-base openjdk8-jre

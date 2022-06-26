@@ -5,9 +5,9 @@
   <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!
 </div>
 
-<ngb-tabset *ngIf="capabilityStatement" [destroyOnHide]="false" #csTabs="ngbTabset">
-  <ngb-tab title="General">
-    <ng-template ngbTabContent>
+<ul ngbNav *ngIf="capabilityStatement" [destroyOnHide]="false" #csTabs="ngbNav">
+  <li ngbNavItem title="General">
+    <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-8">
           <app-fhir-string [parentObject]="capabilityStatement" propertyName="url" title="URL" (change)="urlChanged()"></app-fhir-string>
@@ -131,9 +131,9 @@
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab title="Additional">
-    <ng-template ngbTabContent>
+  </li>
+  <li ngbNavItem title="Additional">
+    <ng-template ngbNavContent>
 
       <!-- Use Context -->
       <app-fhir-multi-use-context [parentObject]="capabilityStatement"
@@ -332,20 +332,20 @@
         <div class="card-body">...</div>
       </div-->
     </ng-template>
-  </ngb-tab>
-  <ngb-tab>
+  </li>
+  <li ngbNavItem>
     <ng-template ngbTabTitle>REST</ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('rest')"
              (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This
       capability statement includes REST entries
 
-      <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center" #restTabSet [destroyOnHide]="false">
-        <ngb-tab *ngFor="let r of capabilityStatement.rest; let ri = index" id="rest-{{ri}}">
+      <ul ngbNav *ngIf="capabilityStatement.hasOwnProperty('rest')" justify="center" #restTabSet [destroyOnHide]="false">
+        <li ngbNavItem *ngFor="let r of capabilityStatement.rest; let ri = index" id="rest-{{ri}}">
           <ng-template ngbTabTitle>
             <span>REST {{ri + 1}} </span>
           </ng-template>
-          <ng-template ngbTabContent>
+          <ng-template ngbNavContent>
             <div class="btn-group rest-actions">
               <button type="button" class="btn btn-primary" [disabled]="ri === 0" (click)="moveRestLeft(r, restTabSet)">
                 <i class="fas fa-arrow-left" title="Move this REST entry left/previous"></i>
@@ -623,32 +623,32 @@
               </table>
             </div>
           </ng-template>
-        </ngb-tab>
-        <ngb-tab>
+        </li>
+        <li ngbNavItem>
           <ng-template ngbTabTitle>
             <button type="button" class="btn btn-primary" title="Add a REST entry" (click)="addRestEntry(restTabSet)">Add</button>
           </ng-template>
-          <ng-template ngbTabContent></ng-template>
-        </ngb-tab>
-      </ngb-tabset>
+          <ng-template ngbNavContent></ng-template>
+        </li>
+      </ul>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab>
+  </li>
+  <li ngbNavItem>
     <ng-template ngbTabTitle>Messaging</ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('messaging')"
              (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'messaging', [{ }])"/> This capability
       statement includes messaging entries
 
-      <ngb-tabset *ngIf="capabilityStatement.hasOwnProperty('messaging')" justify="center" #messagingTabSet
+      <ul ngbNav *ngIf="capabilityStatement.hasOwnProperty('messaging')" justify="center" #messagingTabSet
                   [destroyOnHide]="false">
-        <ngb-tab *ngFor="let messaging of capabilityStatement.messaging; let mi = index" id="messaging-{{mi}}">
+        <li ngbNavItem *ngFor="let messaging of capabilityStatement.messaging; let mi = index" id="messaging-{{mi}}">
           <ng-template ngbTabTitle>
             <span>Messaging {{mi + 1}} </span>
             <i class="fas fa-trash-alt" title="Remove this messaging entry"
                (click)="ClientHelper.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
           </ng-template>
-          <ng-template ngbTabContent>
+          <ng-template ngbNavContent>
             <!-- Endpoints -->
             <div class="card">
               <div class="card-header">
@@ -756,20 +756,20 @@
               </table>
             </div>
           </ng-template>
-        </ngb-tab>
-        <ngb-tab [disabled]="true">
+        </li>
+        <li ngbNavItem [disabled]="true">
           <ng-template ngbTabTitle>
             <button type="button" class="btn btn-primary" title="Add a messaging entry"
                     (click)="addMessagingEntry(messagingTabSet)">Add
             </button>
           </ng-template>
-          <ng-template ngbTabContent></ng-template>
-        </ngb-tab>
-      </ngb-tabset>
+          <ng-template ngbNavContent></ng-template>
+        </li>
+      </ul>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab title="Document">
-    <ng-template ngbTabContent>
+  </li>
+  <li ngbNavItem title="Document">
+    <ng-template ngbNavContent>
       <p>
         <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('document')"
                (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'document', [{ mode: 'producer', profile: { reference: '', display: '' }}])"/>
@@ -824,42 +824,42 @@
         </tbody>
       </table>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Permissions -->
-  <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
+  <li ngbNavItem id="permissions" *ngIf="configService.config.enableSecurity">
     <ng-template ngbTabTitle>
       Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(capabilityStatement)" title="No write permissions for current user specified!"></i>
     </ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <trifolia-fhir-resource-permissions [resource]="capabilityStatement"></trifolia-fhir-resource-permissions>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Validation -->
-  <ngb-tab id="validation">
+  <li ngbNavItem id="validation">
     <ng-template ngbTabTitle>
       <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
     </ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <app-validation-results [results]="validation"></app-validation-results>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- RAW JSON/XML -->
-  <ngb-tab id="raw" title="RAW">
-    <ng-template ngbTabContent>
+  <li ngbNavItem id="raw" title="RAW">
+    <ng-template ngbNavContent>
       <app-raw-resource [resource]="capabilityStatement" [shown]="csTabs.activeId === 'raw'"></app-raw-resource>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Version History -->
-  <ngb-tab id="history" title="History" *ngIf="!isNew">
-    <ng-template ngbTabContent>
+  <li ngbNavItem id="history" title="History" *ngIf="!isNew">
+    <ng-template ngbNavContent>
       <app-resource-history [(resource)]="capabilityStatement"></app-resource-history>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
 
 <footer class="footer">
   <div class="btn-group">

@@ -19,7 +19,7 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
   public codeSystemsBundle: Bundle;
   public nameText: string;
   public page = 1;
-  public criteriaChangedEvent = new Subject();
+  public criteriaChangedEvent = new Subject<void>();
   public Globals = Globals;
 
   constructor(

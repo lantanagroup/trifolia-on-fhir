@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {NgModel} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
-import { CookieService } from 'ngx-cookie-service';
+import {CookieService} from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-fhir-string',
@@ -37,7 +37,7 @@ export class FhirStringComponent implements OnInit {
    */
   @Input() cookieKey?: string;
 
-  public changeEvent = new Subject();
+  public changeEvent = new Subject<void>();
   @Output() change: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(

@@ -29,7 +29,7 @@ export class NewProfileComponent extends BaseComponent {
   public selectedType: ILogicalTypeDefinition;
 
   public isIdUnique = true;
-  public idChangedEvent = new Subject();
+  public idChangedEvent = new Subject<void>();
 
   constructor(
     public configService: ConfigService,

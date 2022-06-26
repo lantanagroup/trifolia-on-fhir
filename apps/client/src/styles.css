@@ -235,6 +235,7 @@ pre del {
   z-index: 999999;
   background-color: #000;
   opacity: 0;
+  /*
   background: -moz-radial-gradient(center, ellipse farthest-corner, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
   background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(0, 0, 0, 0.4)), color-stop(100%, rgba(0, 0, 0, 0.9)));
   background: -webkit-radial-gradient(center, ellipse farthest-corner, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
@@ -242,6 +243,7 @@ pre del {
   background: -ms-radial-gradient(center, ellipse farthest-corner, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
   background: radial-gradient(center, ellipse farthest-corner, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.9) 100%);
   filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#66000000',endColorstr='#e6000000',GradientType=1)";
+  */
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
   filter: alpha(opacity=50);
   -webkit-transition: all 0.3s ease-out;
@@ -473,7 +475,6 @@ tr.introjs-showElement > th {
   border-radius: 0.2em;
   /* IE hacks */
   zoom: 1;
-  *display: inline;
   margin-top: 10px;
 }
 

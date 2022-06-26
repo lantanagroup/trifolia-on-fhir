@@ -1,6 +1,7 @@
-import { ElementRef, Injectable } from '@angular/core';
-import { NodeMenuAction, NodeMenuEvent } from './menu.events';
-import { Subject, Observable } from 'rxjs';
+import {ElementRef, Injectable} from '@angular/core';
+import {NodeMenuAction, NodeMenuEvent} from './menu.events';
+import {Observable, Subject} from 'rxjs';
+import {filter} from 'rxjs';
 
 @Injectable()
 export class NodeMenuService {
@@ -13,8 +14,8 @@ export class NodeMenuService {
 
   public hideMenuStream(treeElementRef: ElementRef): Observable<any> {
     return this.nodeMenuEvents$
-      .filter((e: NodeMenuEvent) => treeElementRef.nativeElement !== e.sender)
-      .filter((e: NodeMenuEvent) => e.action === NodeMenuAction.Close);
+      .pipe(filter((e: NodeMenuEvent) => treeElementRef.nativeElement !== e.sender))
+      .pipe(filter((e: NodeMenuEvent) => e.action === NodeMenuAction.Close));
   }
 
   public hideMenuForAllNodesExcept(treeElementRef: ElementRef): void {

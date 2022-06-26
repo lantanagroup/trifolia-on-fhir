@@ -1,29 +1,19 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  SimpleChanges,
-  TemplateRef,
-  ViewChild
-} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, TemplateRef, ViewChild} from '@angular/core';
 
 import * as TreeTypes from './tree.types';
-import { Ng2TreeSettings } from './tree.types';
-import { Tree } from './tree';
-import { TreeController } from './tree-controller';
-import { NodeMenuService } from './menu/node-menu.service';
-import { NodeMenuItemAction, NodeMenuItemSelectedEvent } from './menu/menu.events';
-import { NodeEditableEvent, NodeEditableEventAction } from './editable/editable.events';
-import { NodeCheckedEvent, NodeEvent } from './tree.events';
-import { TreeService } from './tree.service';
+import {Ng2TreeSettings} from './tree.types';
+import {Tree} from './tree';
+import {TreeController} from './tree-controller';
+import {NodeMenuService} from './menu/node-menu.service';
+import {NodeMenuItemAction, NodeMenuItemSelectedEvent} from './menu/menu.events';
+import {NodeEditableEvent, NodeEditableEventAction} from './editable/editable.events';
+import {NodeCheckedEvent, NodeEvent} from './tree.events';
+import {TreeService} from './tree.service';
 import * as EventUtils from './utils/event.utils';
-import { NodeDraggableEvent } from './draggable/draggable.events';
-import { Subscription } from 'rxjs';
-import { get, isNil } from './utils/fn.utils';
+import {NodeDraggableEvent} from './draggable/draggable.events';
+import {Subscription} from 'rxjs';
+import {get, isNil} from './utils/fn.utils';
+import {merge, filter} from 'rxjs';
 
 @Component({
   selector: 'tree-internal',
@@ -151,9 +141,8 @@ export class TreeInternalComponent implements OnInit, OnChanges, OnDestroy, Afte
     );
 
     this.subscriptions.push(
-      this.treeService.nodeChecked$
-        .merge(this.treeService.nodeUnchecked$)
-        .filter((e: NodeCheckedEvent) => this.eventContainsId(e) && this.tree.hasChild(e.node))
+      merge(this.treeService.nodeChecked$, this.treeService.nodeUnchecked$)
+        .pipe(filter((e: NodeCheckedEvent) => this.eventContainsId(e) && this.tree.hasChild(e.node)))
         .subscribe((e: NodeCheckedEvent) => this.updateCheckboxState())
     );
   }

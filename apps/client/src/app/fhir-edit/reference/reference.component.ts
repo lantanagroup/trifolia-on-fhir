@@ -26,7 +26,7 @@ export class FhirReferenceComponent implements OnInit {
   @Input() public structureDefinitionType?: string;
 
   @Output() public change = new EventEmitter<any>();
-  private changeDebouncer = new Subject();
+  private changeDebouncer = new Subject<void>();
 
   public Globals = Globals;
 

@@ -18,8 +18,8 @@ export class PackageListComponent implements OnInit {
   @Input() defaultTitle: string;
   public packageList: PackageListModel;
   public packageListJSON;
-  @Output() public change = new Subject();
-  public valueChange = new Subject();
+  @Output() public change = new Subject<void>();
+  public valueChange = new Subject<void>();
 
   constructor(private configService: ConfigService) {
     this.change

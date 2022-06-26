@@ -1,7 +1,6 @@
 import {EventEmitter, Injectable, OnDestroy} from '@angular/core';
-import * as io from 'socket.io-client';
+import {io, Socket} from 'socket.io-client';
 import {Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Socket} from 'socket.io';
 
 export class HtmlExportStatus {
     public status: string;                  // when dealing with exports

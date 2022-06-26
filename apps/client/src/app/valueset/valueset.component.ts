@@ -28,7 +28,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
   public Globals = Globals;
   public ClientHelper = ClientHelper;
 
-  public idChangedEvent = new Subject();
+  public idChangedEvent = new Subject<void>();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
 

@@ -17,7 +17,7 @@ export class UsersComponent implements OnInit {
   users: UserModel[];
   totalUsers: number;
   usersPage = 1;
-  usersPageChanged = new Subject();
+  usersPageChanged = new Subject<void>();
   searchUsersName: string;
 
   getDisplayName = getDisplayName;

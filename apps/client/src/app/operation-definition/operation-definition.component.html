@@ -2,10 +2,10 @@
 
 <div class="alert alert-danger" *ngIf="odNotFound">Operation Definition with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<ngb-tabset *ngIf="operationDefinition" [destroyOnHide]="false" #odTabs="ngbTabset">
+<ul ngbNav *ngIf="operationDefinition" [destroyOnHide]="false" #odTabs="ngbNav">
   <!-- General -->
-  <ngb-tab title="General">
-    <ng-template ngbTabContent>
+  <li ngbNavItem title="General">
+    <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-8">
           <app-fhir-string [parentObject]="operationDefinition" propertyName="url" title="URL" tooltipPath="OperationDefinition.url" (change)="urlChanged()"></app-fhir-string>
@@ -69,20 +69,20 @@
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Additional -->
-  <ngb-tab title="Additional">
-    <ng-template ngbTabContent>
+  <li ngbNavItem title="Additional">
+    <ng-template ngbNavContent>
       <app-fhir-multi-use-context [parentObject]="operationDefinition" propertyName="useContext" tooltipPath="OperationDefinition.useContext"></app-fhir-multi-use-context>
 
       <app-fhir-multi-jurisdiction [parentObject]="operationDefinition" property="jurisdiction" tooltipPath="OperationDefinition.jurisdiction"></app-fhir-multi-jurisdiction>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Parameters -->
-  <ngb-tab title="Parameters">
-    <ng-template ngbTabContent>
+  <li ngbNavItem title="Parameters">
+    <ng-template ngbNavContent>
       <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('parameter')" (ngModelChange)="Globals.toggleProperty(operationDefinition, 'parameter', [])"/>
       Operation definition has parameters
       <app-tooltip-icon tooltipPath="OperationDefinition.parameter"></app-tooltip-icon>
@@ -142,11 +142,11 @@
         </tbody>
       </table>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Overload -->
-  <ngb-tab title="Overload">
-    <ng-template ngbTabContent>
+  <li ngbNavItem title="Overload">
+    <ng-template ngbNavContent>
       <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('overload')" (ngModelChange)="Globals.toggleProperty(operationDefinition, 'overload', [])"/>
       Operation definition has overload
       <app-tooltip-icon tooltipPath="OperationDefinition.overload"></app-tooltip-icon>
@@ -206,39 +206,39 @@
         </tbody>
       </table>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Permissions -->
-  <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
+  <li ngbNavItem id="permissions" *ngIf="configService.config.enableSecurity">
     <ng-template ngbTabTitle>
         Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(operationDefinition)" title="No write permissions for current user specified!"></i>
     </ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <trifolia-fhir-resource-permissions [resource]="operationDefinition"></trifolia-fhir-resource-permissions>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Validation -->
-  <ngb-tab id="validation" title="Validation">
-    <ng-template ngbTabContent>
+  <li ngbNavItem id="validation" title="Validation">
+    <ng-template ngbNavContent>
       <app-validation-results [results]="validation"></app-validation-results>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- RAW JSON/XML -->
-  <ngb-tab id="raw" title="RAW">
-    <ng-template ngbTabContent>
+  <li ngbNavItem id="raw" title="RAW">
+    <ng-template ngbNavContent>
       <app-raw-resource [resource]="operationDefinition" [shown]="odTabs.activeId === 'raw'"></app-raw-resource>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Version History -->
-  <ngb-tab id="history" title="History" *ngIf="!isNew">
-    <ng-template ngbTabContent>
+  <li ngbNavItem id="history" title="History" *ngIf="!isNew">
+    <ng-template ngbNavContent>
       <app-resource-history [(resource)]="operationDefinition"></app-resource-history>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
 
 <footer class="footer">
   <div class="btn-group">

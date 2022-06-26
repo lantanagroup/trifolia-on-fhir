@@ -35,7 +35,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
   public Globals = Globals;
   private navSubscription: any;
 
-  public idChangedEvent = new Subject();
+  public idChangedEvent = new Subject<void>();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
 

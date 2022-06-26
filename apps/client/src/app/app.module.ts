@@ -181,7 +181,7 @@ const appRoutes: Routes = [
  */
 export function init(configService: ConfigService, authService: AuthService, fhirService: FhirService) {
   const getConfig = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       // Get the initial config for the server and get the FHIR server config
       configService.getConfig(true)
         .then(() => {

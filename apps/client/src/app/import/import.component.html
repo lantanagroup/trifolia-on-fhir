@@ -4,12 +4,12 @@
   <input type="checkbox" [(ngModel)]="applyContextPermissions" /> Apply permissions of context implementation guide to imported resources.
 </p>
 
-<ngb-tabset #t="ngbTabset" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
-  <ngb-tab id="file">
+<ul ngbNav #t="ngbNav" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
+  <li ngbNavItem id="file">
     <ng-template ngbTabTitle>
       <span [attr.data-intro]="Globals.introText['import.file-tab']">Files</span>
     </ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <div class="alert alert-info">You may select (or drag-and-drop) JSON, XML, XLSX (excel) and image (JPG, PNG, GIF, etc.) files in this window. Excel files will be imported as value sets. See the help documentation for more information.
       </div>
 
@@ -91,12 +91,12 @@
         </tbody>
       </table>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab id="text">
+  </li>
+  <li ngbNavItem id="text">
     <ng-template ngbTabTitle>
       <span [attr.data-intro]="Globals.introText['import.text-tab']">Text</span>
     </ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <div class="form-group">
         <label>Content Type</label>
         <br/>
@@ -109,13 +109,13 @@
         <textarea class="form-control" rows="20" [(ngModel)]="textContent"></textarea>
       </div>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab id="vsac">
+  <li ngbNavItem id="vsac">
     <ng-template ngbTabTitle>
       <span [attr.data-intro]="Globals.introText['import.vsac-tab']">VSAC</span>
     </ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-6">
           <div class="card">
@@ -149,16 +149,16 @@
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab id="github">
+  </li>
+  <li ngbNavItem id="github">
     <ng-template ngbTabTitle>
       <span [attr.data-intro]="Globals.introText['import.github-tab']">GitHub</span>
     </ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <app-import-github-panel #importGithubPanel></app-import-github-panel>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
 
 <div class="card results" *ngIf="outcome || resultsBundle">
   <div class="card-header">Results</div>

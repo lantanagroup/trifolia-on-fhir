@@ -20,9 +20,9 @@
   </div>
 </div>
 
-<ngb-tabset *ngIf="options.implementationGuideId || configService.showingIntroduction" [activeId]="activeTabId" (tabChange)="onTabChange($event)">
-  <ngb-tab title="IG Publisher Package" id="html">
-    <ng-template ngbTabContent>
+<ul ngbNav *ngIf="options.implementationGuideId || configService.showingIntroduction" [activeId]="activeTabId" (tabChange)="onTabChange($event)">
+  <li ngbNavItem title="IG Publisher Package" id="html">
+    <ng-template ngbNavContent>
       <div class="alert alert-info">The "IG Publisher Package" export format produces a package to be used with the FHIR
         IG Publisher. You will be prompted to download a ZIP package of all files necessary to execute the FHIR IG
         Publisher.
@@ -102,9 +102,9 @@
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab title="Bundle" id="bundle">
-    <ng-template ngbTabContent>
+  </li>
+  <li ngbNavItem title="Bundle" id="bundle">
+    <ng-template ngbNavContent>
       <div class="alert alert-info">The "Bundle" export format is a Bundle of all resources referenced by the selected
         implementation guide, including the implementation guide resource.
       </div>
@@ -141,23 +141,23 @@
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab title="MsWord" id="msword">
-    <ng-template ngbTabContent>
+  </li>
+  <li ngbNavItem title="MsWord" id="msword">
+    <ng-template ngbNavContent>
       <div class="alert alert-info">The "MsWord" document export contains all resources referenced by the selected
         implementation guide, including the implementation guide resource.
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab title="GitHub" id="github">
-    <ng-template ngbTabContent>
+  </li>
+  <li ngbNavItem title="GitHub" id="github">
+    <ng-template ngbNavContent>
       <div [attr.data-intro]="Globals.introText['export.github']">
         <trifolia-fhir-export-github-panel #githubPanel [attr.data-intro]="Globals.introText['export.githubLogin']"
                                            [responseFormat]="options.responseFormat" (change)="responseFormatChanged($event)" ></trifolia-fhir-export-github-panel>
       </div>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
 
 <!-- DEMO -->
 <footer class="footer" *ngIf="configService.showingIntroduction">

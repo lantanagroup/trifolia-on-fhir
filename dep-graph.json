@@ -4253,11 +4253,12 @@
             },
             {
               "file": "apps/client/src/polyfills.ts",
-              "hash": "1352e576663b68df4971463a0e76dec1d1a03c96",
+              "hash": "08b80d9d748c34a5c9179efb609dfe4cdd35e381",
               "deps": [
                 "npm:classlist.js",
                 "npm:core-js",
-                "npm:web-animations-js"
+                "npm:web-animations-js",
+                "npm:zone.js"
               ]
             },
             {
@@ -4407,7 +4408,7 @@
             },
             {
               "file": "apps/server/src/app/base-fhir.controller.ts",
-              "hash": "5ff52b2d2263c4a00acd214ebabea4cefbc1ab5d",
+              "hash": "3ada553b2f63d1b630acfb35d812732415369120",
               "deps": [
                 "npm:@nestjs/common",
                 "tof-lib",
@@ -4530,7 +4531,7 @@
             },
             {
               "file": "apps/server/src/app/export/html.ts",
-              "hash": "89bc84bdc2c56ecdadda061d2a76af3e96f6ae0e",
+              "hash": "9699c62e8ec927537f6dbccae0691eb8ce2c7294",
               "deps": [
                 "npm:fhir",
                 "npm:socket.io",

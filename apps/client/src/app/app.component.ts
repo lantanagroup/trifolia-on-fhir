@@ -167,7 +167,7 @@ export class AppComponent implements OnInit {
               securityTags: ig.meta && ig.meta.security ? ig.meta.security : []
             });
           } else {
-            resolve();
+            resolve(null);
           }
         })
         .catch((err) => reject(err));

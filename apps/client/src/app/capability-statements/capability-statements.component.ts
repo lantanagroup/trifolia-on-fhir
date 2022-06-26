@@ -17,7 +17,7 @@ import {AuthService} from '../shared/auth.service';
 export class CapabilityStatementsComponent extends BaseComponent implements OnInit {
   public capabilityStatementsBundle: Bundle;
   public nameText: string;
-  public criteriaChangedEvent = new Subject();
+  public criteriaChangedEvent = new Subject<void>();
   public page = 1;
   public Globals = Globals;
 

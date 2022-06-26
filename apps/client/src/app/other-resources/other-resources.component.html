@@ -1,11 +1,11 @@
 <h1>Other Resources</h1>
 
-<ngb-tabset #tabSet="ngbTabset" [destroyOnHide]="false">
-  <ngb-tab id="criteria">
+<ul ngbNav #tabSet="ngbNav" [destroyOnHide]="false">
+  <li ngbNavItem id="criteria">
     <ng-template ngbTabTitle>
       <span [attr.data-intro]="Globals.introText['other.search-criteria']">Criteria</span>
     </ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <div class="col-md-6">
         <div class="form-group" [attr.data-intro]="tabSet.activeId === 'criteria' ? Globals.introText['other.search.resource-type'] : undefined">
           <label>Resource Type</label>
@@ -44,12 +44,12 @@
         </p>
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab id="results">
+  </li>
+  <li ngbNavItem id="results">
     <ng-template ngbTabTitle>
       <span [attr.data-intro]="Globals.introText['other.search-results-tab']">Search Results</span>
     </ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <div *ngIf="results && results.total > 0" [attr.data-intro]="Globals.introText['other.search-results-paging']">
         <ngb-pagination class="d-flex justify-content-center"
                         *ngIf="results && results.total > 0"
@@ -57,7 +57,7 @@
                         [collectionSize]="results.total"
                         [(page)]="page"
                         [boundaryLinks]="true"
-                        (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+                        (pageChange)="criteriaChangedEvent.next(null)"></ngb-pagination>
       </div>
       <table class="table table-striped" *ngIf="results">
         <thead>
@@ -90,15 +90,15 @@
           <td colspan="6">
             <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="results.total"
                             [(page)]="page" [boundaryLinks]="true"
-                            (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+                            (pageChange)="criteriaChangedEvent.next(null)"></ngb-pagination>
           </td>
         </tr>
         </tfoot>
       </table>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-</ngb-tabset>
+</ul>
 
 <footer class="footer">
   <span class="message">{{message}}</span>

@@ -21,6 +21,7 @@ import { ElementRef, Inject, Injectable } from '@angular/core';
 import { NodeDraggableService } from './draggable/node-draggable.service';
 import { NodeDraggableEvent } from './draggable/draggable.events';
 import { isEmpty } from './utils/fn.utils';
+import {filter} from 'rxjs';
 
 @Injectable()
 export class TreeService {
@@ -45,7 +46,7 @@ export class TreeService {
   }
 
   public unselectStream(tree: Tree): Observable<NodeSelectedEvent> {
-    return this.nodeSelected$.filter((e: NodeSelectedEvent) => tree !== e.node);
+    return this.nodeSelected$.pipe(filter((e: NodeSelectedEvent) => tree !== e.node));
   }
 
   public fireNodeRemoved(tree: Tree): void {
@@ -109,8 +110,8 @@ export class TreeService {
 
   public draggedStream(tree: Tree, element: ElementRef): Observable<NodeDraggableEvent> {
     return this.nodeDraggableService.draggableNodeEvents$
-      .filter((e: NodeDraggableEvent) => e.target === element)
-      .filter((e: NodeDraggableEvent) => !e.captured.tree.hasChild(tree));
+      .pipe(filter((e: NodeDraggableEvent) => e.target === element))
+      .pipe(filter((e: NodeDraggableEvent) => !e.captured.tree.hasChild(tree)));
   }
 
   public setController(id: string | number, controller: TreeController): void {

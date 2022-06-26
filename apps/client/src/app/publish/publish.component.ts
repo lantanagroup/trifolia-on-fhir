@@ -9,7 +9,7 @@ import {ImplementationGuideService} from '../shared/implementation-guide.service
 import {FhirService} from '../shared/fhir.service';
 import {HtmlExportStatus, SocketService} from '../shared/socket.service';
 import {saveAs} from 'file-saver';
-import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {NgbNav} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute} from '@angular/router';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
@@ -33,7 +33,7 @@ export class PublishComponent implements OnInit {
   private packageId;
 
   @ViewChild('tabs', { static: true })
-  private tabs: NgbTabset;
+  private tabs: NgbNav;
 
   @ViewChild('outputEle', { static: false })
   private outputEle: ElementRef;

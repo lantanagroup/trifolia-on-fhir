@@ -25,7 +25,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
   public odNotFound = false;
   public Globals = Globals;
 
-  public idChangedEvent = new Subject();
+  public idChangedEvent = new Subject<void>();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
 

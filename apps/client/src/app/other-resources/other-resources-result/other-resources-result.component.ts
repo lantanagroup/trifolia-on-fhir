@@ -3,7 +3,7 @@ import { FhirService } from '../../shared/fhir.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomainResource } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
-import { NgbModal, NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { saveAs } from 'file-saver';
 import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import { ConfigService } from '../../shared/config.service';
@@ -110,7 +110,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     }, 500);
   }
 
-  changeSubTab(event: NgbTabChangeEvent) {
+  changeSubTab(event: NgbNavChangeEvent) {
     this.activeSub = <any>event.nextId;
   }
 

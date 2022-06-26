@@ -25,7 +25,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
   public nameText: string;
   public titleText: string;
   public idText: string;
-  public criteriaChangedEvent = new Subject();
+  public criteriaChangedEvent = new Subject<void>();
   public Globals = Globals;
   public recentIgs: RecentImplementationGuide[] = [];
 

@@ -3,9 +3,9 @@
 <div class="alert alert-info" *ngIf="loading">Loading...</div>
 
 <div *ngIf="implementationGuide" class="bulk-edit">
-  <ngb-tabset (tabChange)="changeTab($event.nextId)">
-    <ngb-tab title="Profiles" id="profiles">
-      <ng-template ngbTabContent>
+  <ul ngbNav (tabChange)="changeTab($event.nextId)">
+    <li ngbNavItem title="Profiles" id="profiles">
+      <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-3">
             <input type="text" class="form-control" placeholder="Search profiles..." [(ngModel)]="searchProfileText" />
@@ -51,10 +51,10 @@
           </div>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab title="Elements" id="elements">
-      <ng-template ngbTabContent>
+    <li ngbNavItem title="Elements" id="elements">
+      <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-3">
             <input type="text" class="form-control" placeholder="Search profiles..." [(ngModel)]="searchProfileText" />
@@ -106,14 +106,14 @@
           </div>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab title="Pages" id="pages">
-      <ng-template ngbTabContent>
+    <li ngbNavItem title="Pages" id="pages">
+      <ng-template ngbNavContent>
         <trifolia-fhir-page-wrapper [implementationGuide]="implementationGuide" [changedPages]="changedProfiles"></trifolia-fhir-page-wrapper>
       </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+    </li>
+  </ul>
 </div>
 
 <footer class="footer">

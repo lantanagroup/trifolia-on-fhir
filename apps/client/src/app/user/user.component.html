@@ -1,15 +1,15 @@
 <h1>Edit User/Person</h1>
 
-<ngb-tabset>
-  <ngb-tab title="My Information">
-    <ng-template ngbTabContent>
+<ul ngbNav>
+  <li ngbNavItem title="My Information">
+    <ng-template ngbNavContent>
       <trifolia-fhir-practitioner [practitioner]="practitioner" #editPractitioner></trifolia-fhir-practitioner>
 
       <button type="button" class="btn btn-primary" (click)="saveUser()" [disabled]="!editPractitioner.valid">Save</button>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab title="Groups">
-    <ng-template ngbTabContent>
+  </li>
+  <li ngbNavItem title="Groups">
+    <ng-template ngbNavContent>
       <div class="row">
         <div [class.col-md-3]="editGroup" [class.col-md-12]="!editGroup">
           <h3>Managing Groups</h3>
@@ -154,13 +154,13 @@
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab title="RAW">
-    <ng-template ngbTabContent>
+  </li>
+  <li ngbNavItem title="RAW">
+    <ng-template ngbNavContent>
       <app-raw-resource [resource]="practitioner"></app-raw-resource>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
 
 <footer class="footer" *ngIf="message">
   <span class="message">{{message}}</span>

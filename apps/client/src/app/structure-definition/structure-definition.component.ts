@@ -1,7 +1,7 @@
 import {Component, DoCheck, HostListener, Inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {StructureDefinitionService} from '../shared/structure-definition.service';
-import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {NgbNav} from '@ng-bootstrap/ng-bootstrap';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../../../../../libs/tof-lib/src/lib/element-tree-model';
 import {
@@ -55,7 +55,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public constraintManager: ConstraintManager;
 
   @ViewChild('edPanel', { static: true }) edPanel: ElementDefinitionPanelComponent;
-  @ViewChild('sdTabs', { static: true }) sdTabs: NgbTabset;
+  @ViewChild('sdTabs', { static: true }) sdTabs: NgbNav;
 
   private navSubscription: any;
   private baseDefResponse: BaseDefinitionResponseModel;

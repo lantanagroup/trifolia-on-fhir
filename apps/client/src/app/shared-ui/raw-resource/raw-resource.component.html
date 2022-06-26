@@ -1,24 +1,24 @@
-<ngb-tabset [justify]="'fill'" [destroyOnHide]="true">
-    <ngb-tab id="json">
+<ul ngbNav [destroyOnHide]="true">
+    <li ngbNavItem id="json">
         <ng-template ngbTabTitle>
             Plain JSON
             <button type="button" class="btn btn-default btn-sm" (click)="downloadJson($event)" title="Download JSON">
                 <i class="fas fa-download"></i>
             </button>
         </ng-template>
-        <ng-template ngbTabContent>
+        <ng-template ngbNavContent>
             <pre>{{resource | json}}</pre>
         </ng-template>
-    </ngb-tab>
-    <ngb-tab id="xml">
+    </li>
+    <li ngbNavItem id="xml">
         <ng-template ngbTabTitle>
             XML
             <button type="button" class="btn btn-default btn-sm" (click)="downloadXml($event)" title="Download XML">
                 <i class="fas fa-download"></i>
             </button>
         </ng-template>
-        <ng-template ngbTabContent>
+        <ng-template ngbNavContent>
             <pre>{{xml}}</pre>
         </ng-template>
-    </ngb-tab>
-</ngb-tabset>
+    </li>
+</ul>

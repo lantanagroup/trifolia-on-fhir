@@ -30,39 +30,39 @@
       </select>
     </div>
   </div>
-  <ngb-tabset (tabChange)="changeSubTab($event)" #tabs>
-    <ngb-tab id="json/xml">
+  <ul ngbNav (tabChange)="changeSubTab($event)" #tabs>
+    <li ngbNavItem id="json/xml">
       <ng-template ngbTabTitle>JSON/XML</ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <textarea class="form-control other" [ngModel]="content" (keyup)="contentHasChanged($event.target.value)" #jsonXmlTextField></textarea>
       </ng-template>
-    </ngb-tab>
-    <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
+    </li>
+    <li ngbNavItem id="permissions" *ngIf="configService.config.enableSecurity">
       <ng-template ngbTabTitle>
         Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(data)" title="No write permissions for current user specified!"></i>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <trifolia-fhir-resource-permissions [resource]="data"></trifolia-fhir-resource-permissions>
       </ng-template>
-    </ngb-tab>
-    <ngb-tab id="validation">
+    </li>
+    <li ngbNavItem id="validation">
       <ng-template ngbTabTitle>
         Validation <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
-    </ngb-tab>
+    </li>
     <!-- Version History -->
-    <ngb-tab id="history">
+    <li ngbNavItem id="history">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <app-resource-history [(resource)]="data"></app-resource-history>
       </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+    </li>
+  </ul>
 
 
 </div>

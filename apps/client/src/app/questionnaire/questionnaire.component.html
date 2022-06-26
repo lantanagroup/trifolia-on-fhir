@@ -2,9 +2,9 @@
 
 <div class="alert alert-danger" *ngIf="qNotFound">Questionnaire with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<ngb-tabset *ngIf="questionnaire" [destroyOnHide]="false" #qTabs="ngbTabset">
-  <ngb-tab title="General">
-    <ng-template ngbTabContent>
+<ul ngbNav *ngIf="questionnaire" [destroyOnHide]="false" #qTabs="ngbNav">
+  <li ngbNavItem title="General">
+    <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-8">
           <app-fhir-string [parentObject]="questionnaire" propertyName="url" title="URL" (change)="urlChanged()"></app-fhir-string>
@@ -43,10 +43,10 @@
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab title="Additional">
-    <ng-template ngbTabContent>
+  <li ngbNavItem title="Additional">
+    <ng-template ngbNavContent>
       <app-fhir-markdown [parentObject]="questionnaire" propertyName="purpose" title="Purpose"></app-fhir-markdown>
 
       <app-fhir-markdown [parentObject]="questionnaire" propertyName="copyright" title="Copyright"></app-fhir-markdown>
@@ -57,10 +57,10 @@
 
       <app-fhir-multi-contact [parentObject]="questionnaire" propertyName="contact" title="Contact"></app-fhir-multi-contact>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab title="Items">
-    <ng-template ngbTabContent>
+  <li ngbNavItem title="Items">
+    <ng-template ngbNavContent>
       <p>
         <input type="checkbox" [ngModel]="questionnaire.hasOwnProperty('item')" (ngModelChange)="toggleItems()"/> This questionnaire includes items
       </p>
@@ -119,39 +119,39 @@
         </tbody>
       </table>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Permissions -->
-  <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
+  <li ngbNavItem id="permissions" *ngIf="configService.config.enableSecurity">
     <ng-template ngbTabTitle>
       Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(questionnaire)" title="No write permissions for current user specified!"></i>
     </ng-template>
-    <ng-template ngbTabContent>
+    <ng-template ngbNavContent>
       <trifolia-fhir-resource-permissions [resource]="questionnaire"></trifolia-fhir-resource-permissions>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Validation -->
-  <ngb-tab id="validation" title="Validation">
-    <ng-template ngbTabContent>
+  <li ngbNavItem id="validation" title="Validation">
+    <ng-template ngbNavContent>
       <app-validation-results [results]="validation"></app-validation-results>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- JSON -->
-  <ngb-tab id="raw" title="RAW">
-    <ng-template ngbTabContent>
+  <li ngbNavItem id="raw" title="RAW">
+    <ng-template ngbNavContent>
       <app-raw-resource [resource]="questionnaire" [shown]="qTabs.activeId === 'raw'"></app-raw-resource>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Version History -->
-  <ngb-tab id="history" title="History" *ngIf="!isNew">
-    <ng-template ngbTabContent>
+  <li ngbNavItem id="history" title="History" *ngIf="!isNew">
+    <ng-template ngbNavContent>
       <app-resource-history [(resource)]="questionnaire"></app-resource-history>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
 
 <footer class="footer">
   <div class="btn-group">

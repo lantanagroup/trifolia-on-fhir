@@ -1,6 +1,6 @@
-import { Component, DoCheck, Input, OnDestroy, OnInit } from '@angular/core';
-import { CapabilityStatementService } from '../../shared/capability-statement.service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
+import {CapabilityStatementService} from '../../shared/capability-statement.service';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {
   CapabilityStatement,
   CapabilityStatementResourceComponent,
@@ -8,19 +8,19 @@ import {
   Coding,
   StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
-import { Observable, Subject } from 'rxjs';
-import { FhirService } from '../../shared/fhir.service';
-import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
-import { FhirCapabilityStatementResourceModalComponent } from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
-import { FileService } from '../../shared/file.service';
-import { ConfigService } from '../../shared/config.service';
-import { ClientHelper } from '../../clientHelper';
-import { AuthService } from '../../shared/auth.service';
-import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
-import { FhirReferenceModalComponent, ResourceSelection } from '../../fhir-edit/reference-modal/reference-modal.component';
-import { BaseComponent } from '../../base.component';
-import { debounceTime } from 'rxjs/operators';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {Observable, Subject} from 'rxjs';
+import {FhirService} from '../../shared/fhir.service';
+import {NgbModal, NgbNav} from '@ng-bootstrap/ng-bootstrap';
+import {FhirCapabilityStatementResourceModalComponent} from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
+import {FileService} from '../../shared/file.service';
+import {ConfigService} from '../../shared/config.service';
+import {ClientHelper} from '../../clientHelper';
+import {AuthService} from '../../shared/auth.service';
+import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {BaseComponent} from '../../base.component';
+import {debounceTime} from 'rxjs/operators';
 
 @Component({
   templateUrl: './capability-statement.component.html',
@@ -29,7 +29,7 @@ import { debounceTime } from 'rxjs/operators';
 export class R4CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   @Input() public capabilityStatement: CapabilityStatement;
 
-  public idChangedEvent = new Subject();
+  public idChangedEvent = new Subject<void>();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
 
@@ -140,7 +140,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
 
 
 
-  public moveRestLeft(rest: CapabilityStatementRestComponent, tabSet: NgbTabset) {
+  public moveRestLeft(rest: CapabilityStatementRestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex > 0) {
@@ -150,7 +150,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     }
   }
 
-  public moveRestRight(rest: CapabilityStatementRestComponent, tabSet: NgbTabset) {
+  public moveRestRight(rest: CapabilityStatementRestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex < this.capabilityStatement.rest.length) {

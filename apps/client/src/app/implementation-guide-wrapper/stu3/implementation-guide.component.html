@@ -7,12 +7,12 @@
     {{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
     <span class="badge badge-danger" *ngIf="isDirty">Changed!</span>
   </h2>
-  <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbTabset">
-    <ngb-tab id="general">
+  <ul ngbNav [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbNav">
+    <li ngbNavItem id="general">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['ig.general-tab']">General</span>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <fieldset>
           <div class="row">
             <div class="col-md-8">
@@ -155,14 +155,14 @@
           </div>
         </fieldset>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Pages -->
-    <ngb-tab id="pages">
+    <li ngbNavItem id="pages">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['ig.narrative-tab']">Narrative/Pages</span>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <table class="table">
           <thead>
           <tr>
@@ -235,14 +235,14 @@
           </tfoot>
         </table>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Other -->
-    <ngb-tab id="other">
+    <li ngbNavItem id="other">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['ig.other-tab']">Other</span>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction" (change)="igChanging.emit(true);"></app-fhir-multi-jurisdiction>
 
         <div class="card">
@@ -355,11 +355,11 @@
           </table>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Publishing -->
-    <ngb-tab id="publishing" title="Publishing">
-      <ng-template ngbTabContent>
+    <li ngbNavItem id="publishing" title="Publishing">
+      <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-12">
             <trifolia-fhir-package-list
@@ -379,13 +379,13 @@
           </div>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="resources">
+    <li ngbNavItem id="resources">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['ig.resources-tab']">Resources</span>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <table class="table table-striped">
           <thead>
           <tr>
@@ -441,27 +441,27 @@
           </tfoot>
         </table>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Packages -->
-    <ngb-tab id="packages">
+    <li ngbNavItem id="packages">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['ig.packages-tab']">Packages</span>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('package')"
                (ngModelChange)="Globals.toggleProperty(implementationGuide, 'package', [{ name: '', resource: [{ sourceReference: { reference: '', display: '' }, example: false}]}])"
         (change)="igChanging.emit(true);"/> This
         implementation guide has packages
         <app-tooltip-icon tooltipPath="ImplementationGuide.package"></app-tooltip-icon>
-        <ngb-tabset *ngIf="implementationGuide.hasOwnProperty('package')" justify="center" #packagesTabSet [destroyOnHide]="false">
-          <ngb-tab *ngFor="let p of implementationGuide.package; let pi = index" id="package-{{pi}}">
+        <ul ngbNav *ngIf="implementationGuide.hasOwnProperty('package')" justify="center" #packagesTabSet [destroyOnHide]="false">
+          <li ngbNavItem *ngFor="let p of implementationGuide.package; let pi = index" id="package-{{pi}}">
             <ng-template ngbTabTitle>
               <span title="{{p.name}}">#{{pi + 1}}</span>
               <i class="fas fa-trash-alt" title="Remove this package"
                  (click)="prompt(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
             </ng-template>
-            <ng-template ngbTabContent>
+            <ng-template ngbNavContent>
               <div class="form-group">
                 <label>Name
                   <app-tooltip-icon tooltipPath="ImplementationGuide.package.name"></app-tooltip-icon>
@@ -540,20 +540,20 @@
                 </tbody>
               </table>
             </ng-template>
-          </ngb-tab>
-          <ngb-tab [disabled]="true">
+          </li>
+          <li ngbNavItem [disabled]="true">
             <ng-template ngbTabTitle>
               <button type="button" class="btn btn-default" title="Add a package entry" (click)="addPackageEntry(packagesTabSet); igChanging.emit(true);">Add</button>
             </ng-template>
-            <ng-template ngbTabContent></ng-template>
-          </ngb-tab>
-        </ngb-tabset>
+            <ng-template ngbNavContent></ng-template>
+          </li>
+        </ul>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Binary -->
-    <ngb-tab id="binary" title="Binary">
-      <ng-template ngbTabContent>
+    <li ngbNavItem id="binary" title="Binary">
+      <ng-template ngbNavContent>
         <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('binary')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'binary', [''])"
                (change)="igChanging.emit(true);"/>
         Implementation guide has binary URIs
@@ -588,48 +588,48 @@
           </tbody>
         </table>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
+    <li ngbNavItem id="permissions" *ngIf="configService.config.enableSecurity">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions
         <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(implementationGuide)" title="No write permissions for current user specified!"></i></span>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <trifolia-fhir-resource-permissions [resource]="implementationGuide" (change)="igChanging.emit(true);"></trifolia-fhir-resource-permissions>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Validation -->
-    <ngb-tab id="validation">
+    <li ngbNavItem id="validation">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- RAW JSON/XML -->
-    <ngb-tab id="raw">
+    <li ngbNavItem id="raw">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['resource.raw-tab']">RAW</span>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <app-raw-resource [resource]="implementationGuide" [shown]="igTabs.activeId === 'raw'"></app-raw-resource>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Version History -->
-    <ngb-tab id="history" *ngIf="!isNew">
+    <li ngbNavItem id="history" *ngIf="!isNew">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
       </ng-template>
-      <ng-template ngbTabContent>
+      <ng-template ngbNavContent>
         <app-resource-history [(resource)]="implementationGuide" (change)="igChanging.emit(true);"></app-resource-history>
       </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+    </li>
+  </ul>
 </div>
 
 <ng-template #packageResourceModal let-c="close" let-d="dismiss">

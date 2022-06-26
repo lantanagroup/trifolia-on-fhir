@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ValueSetService} from '../shared/value-set.service';
 import {OperationOutcome, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {NgbNav} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../shared/fhir.service';
 import {ExpandOptions} from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
@@ -33,7 +33,7 @@ export class ValuesetExpandComponent implements OnInit {
     return this.results && this.results.resourceType === 'OperationOutcome';
   }
 
-  public expand(tabSet: NgbTabset) {
+  public expand(tabSet: NgbNav) {
     this.expanding = true;
     this.message = 'Expanding... This may take a while.';
 

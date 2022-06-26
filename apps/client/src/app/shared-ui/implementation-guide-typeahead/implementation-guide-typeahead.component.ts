@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { ImplementationGuideService } from '../../shared/implementation-guide.service';
-import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
-import { ConfigService } from '../../shared/config.service';
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
-import { ImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { SearchImplementationGuideResponseContainer } from '../../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
-import { CookieService } from 'ngx-cookie-service';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {ImplementationGuideService} from '../../shared/implementation-guide.service';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {ConfigService} from '../../shared/config.service';
+import {Observable} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
+import {ImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {SearchImplementationGuideResponseContainer} from '../../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import {CookieService} from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-implementation-guide-typeahead',
