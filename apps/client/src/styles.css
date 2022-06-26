@@ -176,11 +176,11 @@ button.angular-editor-button[title='Insert Image'] {
   display: none;
 }
 
-#editor {
-  background-color: white;
+.angular-editor-textarea[contenteditable=true] {
+  background-color: white !important;
 }
 
-#editor[contenteditable=false] {
+.angular-editor-textarea[contenteditable=false] {
   background-color: transparent;
 }
 
