@@ -11,7 +11,7 @@ import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import nock from 'nock';
 import EventEmitter = NodeJS.EventEmitter;
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 
 export function createTestUser(userId = 'test.user', name = 'test user', email = 'test@test.com', isAdmin = false): ITofUser {
   return {

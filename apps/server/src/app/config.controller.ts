@@ -1,13 +1,13 @@
 import {Controller, Get, HttpService, Req} from '@nestjs/common';
 import {BaseController} from './base.controller';
 import {CapabilityStatement} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ITofRequest} from './models/tof-request';
+import type {ITofRequest} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
 import {ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import {AxiosRequestConfig} from 'axios';
-import * as modulePackage from '../../../../package.json';
+import {version as modulePackageVersion} from '../../../../package.json';
 
 @Controller('api/config')
 @ApiTags('Config')
@@ -25,7 +25,7 @@ export class ConfigController extends BaseController {
     }
 
     const retConfig: ConfigModel = {
-      version: modulePackage.version,
+      version: modulePackageVersion,
       supportUrl: this.configService.server.supportUrl,
       fhirServers: this.configService.fhir.servers.map((server) => ({ id: server.id, name: server.name, short: server.short })),
       enableSecurity: this.configService.server.enableSecurity,

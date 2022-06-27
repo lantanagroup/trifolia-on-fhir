@@ -35,11 +35,7 @@
           "files": [
             {
               "file": "apps/client-e2e/protractor.conf.js",
-              "hash": "09d576c3ef62aeb41b1c1f8d43058e39be7953d7",
-              "deps": [
-                "npm:jasmine-spec-reporter",
-                "npm:ts-node"
-              ]
+              "hash": "09d576c3ef62aeb41b1c1f8d43058e39be7953d7"
             },
             {
               "file": "apps/client-e2e/README.md",
@@ -47,17 +43,11 @@
             },
             {
               "file": "apps/client-e2e/src/app.e2e-spec.ts",
-              "hash": "b916f631c8d794fc98c4117081cdedc1f6f28904",
-              "deps": [
-                "npm:protractor"
-              ]
+              "hash": "b916f631c8d794fc98c4117081cdedc1f6f28904"
             },
             {
               "file": "apps/client-e2e/src/home.po.ts",
-              "hash": "42fe5f018bc4c6c808e923af77bba83e46608aa2",
-              "deps": [
-                "npm:protractor"
-              ]
+              "hash": "42fe5f018bc4c6c808e923af77bba83e46608aa2"
             },
             {
               "file": "apps/client-e2e/tsconfig.e2e.json",
@@ -244,17 +234,11 @@
             },
             {
               "file": "libs/tof-lib/src/lib/constraint-manager.spec.ts",
-              "hash": "b77d67c09e506bd1461bf210b189862e7da566f5",
-              "deps": [
-                "npm:fhir"
-              ]
+              "hash": "b77d67c09e506bd1461bf210b189862e7da566f5"
             },
             {
               "file": "libs/tof-lib/src/lib/constraint-manager.ts",
-              "hash": "98fbb9ddcbe51e09092b70fdbbb4f963ce2b7f4c",
-              "deps": [
-                "npm:fhir"
-              ]
+              "hash": "98fbb9ddcbe51e09092b70fdbbb4f963ce2b7f4c"
             },
             {
               "file": "libs/tof-lib/src/lib/date-extensions.ts",
@@ -270,12 +254,7 @@
             },
             {
               "file": "libs/tof-lib/src/lib/fhirHelper.ts",
-              "hash": "887e2a4ec5bdaf9be2a5f40bbc0124948ef60b85",
-              "deps": [
-                "npm:nanoid",
-                "npm:semver",
-                "npm:fhir"
-              ]
+              "hash": "887e2a4ec5bdaf9be2a5f40bbc0124948ef60b85"
             },
             {
               "file": "libs/tof-lib/src/lib/fhirInterfaces.ts",
@@ -307,10 +286,7 @@
             },
             {
               "file": "libs/tof-lib/src/lib/package-list-model.ts",
-              "hash": "cb4c0741afdeba9d856e15c9c879e45e02d0fd35",
-              "deps": [
-                "npm:fhir"
-              ]
+              "hash": "cb4c0741afdeba9d856e15c9c879e45e02d0fd35"
             },
             {
               "file": "libs/tof-lib/src/lib/queue-info.ts",
@@ -403,7 +379,7 @@
                 "styles": [
                   "node_modules/bootstrap/dist/css/bootstrap.min.css",
                   "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-                  "node_modules/ngx-simplemde/src/index.less",
+                  "node_modules/ngx-simplemde/index.less",
                   "apps/client/src/styles.css",
                   "apps/client/src/app/ng2-tree/styles.css"
                 ],
@@ -412,8 +388,7 @@
                   "node_modules/jquery/dist/jquery.min.js",
                   "node_modules/bootstrap/dist/js/bootstrap.min.js",
                   "node_modules/simplemde-antd/dist/simplemde.min.js"
-                ],
-                "es5BrowserSupport": true
+                ]
               },
               "configurations": {
                 "production": {
@@ -501,39 +476,15 @@
             },
             {
               "file": "apps/client/src/app/app.component.ts",
-              "hash": "cd174c1e89e427404f6e00727edb33d67bd5ab6c",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:intro.js",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "d2d98a8e4f799bbe919b648fa9e0e2104379040e"
             },
             {
               "file": "apps/client/src/app/app.module.ts",
-              "hash": "052cb2156b2c9255a2ea810c3138776e0a368ce7",
-              "deps": [
-                "npm:@angular/platform-browser",
-                "npm:@angular/core",
-                "npm:@angular/forms",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:@angular/router",
-                "npm:@angular/common",
-                "npm:rxjs",
-                "npm:angular-oauth2-oidc",
-                "npm:ng-diff-match-patch",
-                "npm:ngx-file-drop",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "58d3f42642e97b2d3677d1edb0a389ba3708a165"
             },
             {
               "file": "apps/client/src/app/base.component.ts",
-              "hash": "40d936e0bc16d576303b1e0274ba55db6627a385",
-              "deps": [
-                "tof-lib"
-              ]
+              "hash": "40d936e0bc16d576303b1e0274ba55db6627a385"
             },
             {
               "file": "apps/client/src/app/bulk-edit/bulk-edit.component.css",
@@ -541,26 +492,15 @@
             },
             {
               "file": "apps/client/src/app/bulk-edit/bulk-edit.component.html",
-              "hash": "ae887c2ede7168e00181d85cb93ced3218f03953"
+              "hash": "fe2ede77844b152857e25322278eb83a133870d1"
             },
             {
               "file": "apps/client/src/app/bulk-edit/bulk-edit.component.ts",
-              "hash": "4b53e515645d28120a3a17cb6a34a895b3b5f252",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "tof-lib",
-                "npm:fhir"
-              ]
+              "hash": "7b90f98116bc4d678330e7adebf4379f5e5b29cb"
             },
             {
               "file": "apps/client/src/app/bulk-edit/page-wrapper/page-wrapper.component.ts",
-              "hash": "e709a4e52feadaf783d4c3e65eef0ce4531b42a7",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:fhir"
-              ]
+              "hash": "e709a4e52feadaf783d4c3e65eef0ce4531b42a7"
             },
             {
               "file": "apps/client/src/app/bulk-edit/page-wrapper/r4-page/r4-page.component.css",
@@ -572,11 +512,7 @@
             },
             {
               "file": "apps/client/src/app/bulk-edit/page-wrapper/r4-page/r4-page.component.ts",
-              "hash": "2efa7a481c2dd673b8792085c4bc52fd34971a81",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "2efa7a481c2dd673b8792085c4bc52fd34971a81"
             },
             {
               "file": "apps/client/src/app/bulk-edit/page-wrapper/stu3-page/stu3-page.component.css",
@@ -588,21 +524,11 @@
             },
             {
               "file": "apps/client/src/app/bulk-edit/page-wrapper/stu3-page/stu3-page.component.ts",
-              "hash": "4268e00ecd45c3ead791612178ec06a3cf952b84",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "4268e00ecd45c3ead791612178ec06a3cf952b84"
             },
             {
               "file": "apps/client/src/app/capability-statement-wrapper/capability-statement-wrapper.component.ts",
-              "hash": "3fe5612de36ab4317aa6440533d63edebccaf9dd",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "npm:fhir",
-                "tof-lib"
-              ]
+              "hash": "3fe5612de36ab4317aa6440533d63edebccaf9dd"
             },
             {
               "file": "apps/client/src/app/capability-statement-wrapper/r4/capability-statement.component.css",
@@ -610,18 +536,11 @@
             },
             {
               "file": "apps/client/src/app/capability-statement-wrapper/r4/capability-statement.component.html",
-              "hash": "f8f11b93d4364d910534e0af2c82b15071b8feeb"
+              "hash": "5185a4633dde59bbd2269c1d074c75cd86ec7334"
             },
             {
               "file": "apps/client/src/app/capability-statement-wrapper/r4/capability-statement.component.ts",
-              "hash": "bf5992c6b2f6fc2c9a137ef40a52b80e282015ae",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "tof-lib",
-                "npm:rxjs",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "672e053a3d426c3170132c32bef13a3a77992dc0"
             },
             {
               "file": "apps/client/src/app/capability-statement-wrapper/security-services/security-services.component.css",
@@ -633,12 +552,7 @@
             },
             {
               "file": "apps/client/src/app/capability-statement-wrapper/security-services/security-services.component.ts",
-              "hash": "4f123ee00ea72d8604ace5b8bed0ea74fdfe56e3",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "4f123ee00ea72d8604ace5b8bed0ea74fdfe56e3"
             },
             {
               "file": "apps/client/src/app/capability-statement-wrapper/stu3/capability-statement.component.css",
@@ -646,18 +560,11 @@
             },
             {
               "file": "apps/client/src/app/capability-statement-wrapper/stu3/capability-statement.component.html",
-              "hash": "fe62e54e8991d28609d16595d75f5fe3af83c9b6"
+              "hash": "657eb25f66be9bafc59b103f898352c679261002"
             },
             {
               "file": "apps/client/src/app/capability-statement-wrapper/stu3/capability-statement.component.ts",
-              "hash": "7f9be42beda304bf7f0dfd1b80552a2f54ead33a",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs"
-              ]
+              "hash": "708c011347c8ecc1b8bbd238b25b545d3f17f617"
             },
             {
               "file": "apps/client/src/app/capability-statements/capability-statements.component.css",
@@ -669,13 +576,7 @@
             },
             {
               "file": "apps/client/src/app/capability-statements/capability-statements.component.ts",
-              "hash": "c772ca247fa1c5c636596aae1614d1c3b2b9cbbf",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs"
-              ]
+              "hash": "3b26f60bedc0dd3d86d722dedcefeb99972986c0"
             },
             {
               "file": "apps/client/src/app/clientHelper.ts",
@@ -687,18 +588,11 @@
             },
             {
               "file": "apps/client/src/app/codesystem/codesystem.component.html",
-              "hash": "05833af75b839d847e56f2ad4529c6b1cd7864c1"
+              "hash": "e9220390644d953b00f58a8ff5d2afbf8d407445"
             },
             {
               "file": "apps/client/src/app/codesystem/codesystem.component.ts",
-              "hash": "66ebe2b241de326832f55f3dcf5b98dc005cd280",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@angular/router",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs"
-              ]
+              "hash": "8d2f60c40b3be2a34fa3f465a8430e24fe0f8c71"
             },
             {
               "file": "apps/client/src/app/codesystems/codesystems.component.css",
@@ -710,14 +604,7 @@
             },
             {
               "file": "apps/client/src/app/codesystems/codesystems.component.ts",
-              "hash": "0831026c24491c89b06fa4291121ff711beec42e",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs",
-                "npm:@angular/router"
-              ]
+              "hash": "727907561958628391370c2fee9d35c4a6e22068"
             },
             {
               "file": "apps/client/src/app/examples/examples.component.css",
@@ -729,12 +616,7 @@
             },
             {
               "file": "apps/client/src/app/examples/examples.component.ts",
-              "hash": "3b6753b7679262cf47908f4abd0d68366feb3085",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "tof-lib"
-              ]
+              "hash": "3b6753b7679262cf47908f4abd0d68366feb3085"
             },
             {
               "file": "apps/client/src/app/export-github-panel/export-github-panel.component.css",
@@ -746,12 +628,7 @@
             },
             {
               "file": "apps/client/src/app/export-github-panel/export-github-panel.component.ts",
-              "hash": "839922bac82843ef6762d9d8c90a67251c1141d9",
-              "deps": [
-                "npm:@angular/core",
-                "npm:jszip",
-                "tof-lib"
-              ]
+              "hash": "839922bac82843ef6762d9d8c90a67251c1141d9"
             },
             {
               "file": "apps/client/src/app/export/export.component.css",
@@ -759,20 +636,11 @@
             },
             {
               "file": "apps/client/src/app/export/export.component.html",
-              "hash": "5aa4e1e0e2e6035fc9af1c473bffa0a808b26274"
+              "hash": "90964a02ede606690f6dcbaf730057e5fe02e296"
             },
             {
               "file": "apps/client/src/app/export/export.component.ts",
-              "hash": "cfc9cd9a8dc0fbcb9ffd71b66cb4e41693c3da37",
-              "deps": [
-                "npm:@angular/core",
-                "npm:file-saver",
-                "tof-lib",
-                "npm:rxjs",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:@angular/common",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "55714ce62f4fce0a0155ff57aada23e35c495683"
             },
             {
               "file": "apps/client/src/app/fhir-edit/address-modal/address-modal.component.css",
@@ -784,12 +652,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/address-modal/address-modal.component.ts",
-              "hash": "e3a1fae76146f1597d65a563b83d15a53f736e76",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "e3a1fae76146f1597d65a563b83d15a53f736e76"
             },
             {
               "file": "apps/client/src/app/fhir-edit/attachment-modal/attachment-modal.component.css",
@@ -801,12 +664,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/attachment-modal/attachment-modal.component.ts",
-              "hash": "f38ee7d0fac30179769ca16878e4c343e108985d",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "f38ee7d0fac30179769ca16878e4c343e108985d"
             },
             {
               "file": "apps/client/src/app/fhir-edit/attachment/attachment.component.css",
@@ -818,12 +676,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/attachment/attachment.component.ts",
-              "hash": "61e1e38314628fed5dd96d877ed428b7bfc159d1",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "61e1e38314628fed5dd96d877ed428b7bfc159d1"
             },
             {
               "file": "apps/client/src/app/fhir-edit/boolean/boolean.component.css",
@@ -835,11 +688,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/boolean/boolean.component.ts",
-              "hash": "7bd176731f86d7dacb142b32f018427133db4e75",
-              "deps": [
-                "npm:@angular/core",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "7bd176731f86d7dacb142b32f018427133db4e75"
             },
             {
               "file": "apps/client/src/app/fhir-edit/canonical-url/canonical-url.component.css",
@@ -851,11 +700,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/canonical-url/canonical-url.component.ts",
-              "hash": "5d86340d8ddbb0db408630ae0f9e66f20336d2e3",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "5d86340d8ddbb0db408630ae0f9e66f20336d2e3"
             },
             {
               "file": "apps/client/src/app/fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component.css",
@@ -867,12 +712,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component.ts",
-              "hash": "7df0e703d402b01c7e1c65fe30bd96be855630df",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "7df0e703d402b01c7e1c65fe30bd96be855630df"
             },
             {
               "file": "apps/client/src/app/fhir-edit/choice/choice.component.css",
@@ -884,12 +724,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/choice/choice.component.ts",
-              "hash": "80a8fd6c7c3b494f491c84ad22f5ec61409a1b46",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "80a8fd6c7c3b494f491c84ad22f5ec61409a1b46"
             },
             {
               "file": "apps/client/src/app/fhir-edit/codeable-concept-modal/codeable-concept-modal.component.css",
@@ -901,12 +736,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/codeable-concept-modal/codeable-concept-modal.component.ts",
-              "hash": "d610e838ed568bb8daa5e396ed85627a77174b3e",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "d610e838ed568bb8daa5e396ed85627a77174b3e"
             },
             {
               "file": "apps/client/src/app/fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component.css",
@@ -918,12 +748,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component.ts",
-              "hash": "4ebfcb21427f914b2e90562e29b67fa7b26cc04e",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "4ebfcb21427f914b2e90562e29b67fa7b26cc04e"
             },
             {
               "file": "apps/client/src/app/fhir-edit/coding-modal/coding-modal.component.css",
@@ -935,12 +760,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/coding-modal/coding-modal.component.ts",
-              "hash": "0c02d2c3e716b772ca0db481b01ca5a4d5216541",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "0c02d2c3e716b772ca0db481b01ca5a4d5216541"
             },
             {
               "file": "apps/client/src/app/fhir-edit/contact-modal/contact-modal.component.css",
@@ -952,12 +772,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/contact-modal/contact-modal.component.ts",
-              "hash": "430b18bc28084a5fb798ff052d0c00c11c48d243",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "430b18bc28084a5fb798ff052d0c00c11c48d243"
             },
             {
               "file": "apps/client/src/app/fhir-edit/contact-point-modal/contact-point-modal.component.css",
@@ -969,12 +784,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/contact-point-modal/contact-point-modal.component.ts",
-              "hash": "d2b44a93dbe2424ba89f41f5a962da73136149cb",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "d2b44a93dbe2424ba89f41f5a962da73136149cb"
             },
             {
               "file": "apps/client/src/app/fhir-edit/date/date.component.css",
@@ -986,25 +796,11 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/date/date.component.ts",
-              "hash": "b81da5647592951e9c6f3d32f4ea9378b940b39f",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "b81da5647592951e9c6f3d32f4ea9378b940b39f"
             },
             {
               "file": "apps/client/src/app/fhir-edit/fhir-edit.module.ts",
-              "hash": "9f6c2590bdaa084d583f2ee9455ae9061b1fca43",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:@angular/forms",
-                "npm:@kolkov/angular-editor",
-                "npm:ngx-simplemde"
-              ]
+              "hash": "9f6c2590bdaa084d583f2ee9455ae9061b1fca43"
             },
             {
               "file": "apps/client/src/app/fhir-edit/human-name-modal/human-name-modal.component.css",
@@ -1016,12 +812,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/human-name-modal/human-name-modal.component.ts",
-              "hash": "b42d2682be86748aa93faa82d83a28a6fc0fa39f",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "b42d2682be86748aa93faa82d83a28a6fc0fa39f"
             },
             {
               "file": "apps/client/src/app/fhir-edit/human-name/human-name.component.css",
@@ -1033,12 +824,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/human-name/human-name.component.ts",
-              "hash": "11d4b9be5e95a4cc022e030939b2929e601ec644",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "11d4b9be5e95a4cc022e030939b2929e601ec644"
             },
             {
               "file": "apps/client/src/app/fhir-edit/human-names/human-names.component.css",
@@ -1050,11 +836,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/human-names/human-names.component.ts",
-              "hash": "8ace8e8369128a74103bf7de926157a3a3372923",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "8ace8e8369128a74103bf7de926157a3a3372923"
             },
             {
               "file": "apps/client/src/app/fhir-edit/identifier-card/identifier-card.component.css",
@@ -1066,12 +848,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/identifier-card/identifier-card.component.ts",
-              "hash": "65f113c5b2051564ab6c186778f881103b113feb",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "65f113c5b2051564ab6c186778f881103b113feb"
             },
             {
               "file": "apps/client/src/app/fhir-edit/identifier-modal/identifier-modal.component.css",
@@ -1083,12 +860,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/identifier-modal/identifier-modal.component.ts",
-              "hash": "ed2dfaa62188dc865bc643a77b69ed8ba09b8eec",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "ed2dfaa62188dc865bc643a77b69ed8ba09b8eec"
             },
             {
               "file": "apps/client/src/app/fhir-edit/identifier/identifier.component.css",
@@ -1100,12 +872,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/identifier/identifier.component.ts",
-              "hash": "c33ea206cc668ef25e06112283df9da4a061faff",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "c33ea206cc668ef25e06112283df9da4a061faff"
             },
             {
               "file": "apps/client/src/app/fhir-edit/markdown/markdown.component.css",
@@ -1117,12 +884,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/markdown/markdown.component.ts",
-              "hash": "2096fc8ec7ca5777d592cc65d4b16c84fa61c9b1",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "2096fc8ec7ca5777d592cc65d4b16c84fa61c9b1"
             },
             {
               "file": "apps/client/src/app/fhir-edit/max-cardinality/max-cardinality.component.css",
@@ -1134,10 +896,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/max-cardinality/max-cardinality.component.ts",
-              "hash": "a9042555bf278361986191c2bc3d01b63f9b55d1",
-              "deps": [
-                "npm:@angular/core"
-              ]
+              "hash": "a9042555bf278361986191c2bc3d01b63f9b55d1"
             },
             {
               "file": "apps/client/src/app/fhir-edit/messaging-event-modal/messaging-event-modal.component.css",
@@ -1149,12 +908,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/messaging-event-modal/messaging-event-modal.component.ts",
-              "hash": "f25ad7c8eebab6ac967282b847cbbfd5fcb298cb",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "f25ad7c8eebab6ac967282b847cbbfd5fcb298cb"
             },
             {
               "file": "apps/client/src/app/fhir-edit/multi-contact/multi-contact.component.css",
@@ -1166,12 +920,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/multi-contact/multi-contact.component.ts",
-              "hash": "2239b321e27ed28824fd4b12d7f48ac756f26aff",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "2239b321e27ed28824fd4b12d7f48ac756f26aff"
             },
             {
               "file": "apps/client/src/app/fhir-edit/multi-identifier/multi-identifier.component.css",
@@ -1183,12 +932,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/multi-identifier/multi-identifier.component.ts",
-              "hash": "1d4e5e7688d6e0a9c736b9c9488521c0f38757a0",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "1d4e5e7688d6e0a9c736b9c9488521c0f38757a0"
             },
             {
               "file": "apps/client/src/app/fhir-edit/multi-jurisdiction/multi-jurisdiction.component.css",
@@ -1200,12 +944,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/multi-jurisdiction/multi-jurisdiction.component.ts",
-              "hash": "72ad01cb8b8e85172f43a4296b52819336a417b5",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs"
-              ]
+              "hash": "72ad01cb8b8e85172f43a4296b52819336a417b5"
             },
             {
               "file": "apps/client/src/app/fhir-edit/multi-use-context/multi-use-context.component.css",
@@ -1217,11 +956,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/multi-use-context/multi-use-context.component.ts",
-              "hash": "6a823053b90d7df9fe08cb6c31d2e078537cc513",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "6a823053b90d7df9fe08cb6c31d2e078537cc513"
             },
             {
               "file": "apps/client/src/app/fhir-edit/narrative/narrative.component.css",
@@ -1233,14 +968,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/narrative/narrative.component.ts",
-              "hash": "5bdd4b58f90eeab03dcfe29b54c168701a4f57fc",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:mustache",
-                "npm:@angular/common",
-                "npm:@kolkov/angular-editor"
-              ]
+              "hash": "5bdd4b58f90eeab03dcfe29b54c168701a4f57fc"
             },
             {
               "file": "apps/client/src/app/fhir-edit/number/number.component.css",
@@ -1252,11 +980,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/number/number.component.ts",
-              "hash": "28b9de82e39eabe100d0c059b04ae13498092ba2",
-              "deps": [
-                "npm:@angular/core",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "28b9de82e39eabe100d0c059b04ae13498092ba2"
             },
             {
               "file": "apps/client/src/app/fhir-edit/period/period.component.css",
@@ -1268,12 +992,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/period/period.component.ts",
-              "hash": "5d639d1251c84c09e5dee41246485b159aa61d82",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "5d639d1251c84c09e5dee41246485b159aa61d82"
             },
             {
               "file": "apps/client/src/app/fhir-edit/practitioner/practitioner.component.css",
@@ -1285,11 +1004,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/practitioner/practitioner.component.ts",
-              "hash": "2d637c8a9012d4b3938726c17cd9cdf2104e58cb",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "2d637c8a9012d4b3938726c17cd9cdf2104e58cb"
             },
             {
               "file": "apps/client/src/app/fhir-edit/quantity/quantity.component.css",
@@ -1301,11 +1016,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/quantity/quantity.component.ts",
-              "hash": "7aa3c5eba88d0096a998c20c0763e20443a56bb8",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "7aa3c5eba88d0096a998c20c0763e20443a56bb8"
             },
             {
               "file": "apps/client/src/app/fhir-edit/range-modal/range-modal.component.css",
@@ -1317,12 +1028,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/range-modal/range-modal.component.ts",
-              "hash": "4bd6361043e8d6e31a8b3b016c867b66a838548f",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "4bd6361043e8d6e31a8b3b016c867b66a838548f"
             },
             {
               "file": "apps/client/src/app/fhir-edit/range/range.component.css",
@@ -1334,12 +1040,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/range/range.component.ts",
-              "hash": "7a25f4efc41c184451111e787ff458c76845f8a4",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "7a25f4efc41c184451111e787ff458c76845f8a4"
             },
             {
               "file": "apps/client/src/app/fhir-edit/ratio-modal/ratio-modal.component.css",
@@ -1351,12 +1052,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/ratio-modal/ratio-modal.component.ts",
-              "hash": "a08e37b68a472c37509f7e9df33eecacc9f4b7a8",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "a08e37b68a472c37509f7e9df33eecacc9f4b7a8"
             },
             {
               "file": "apps/client/src/app/fhir-edit/ratio/ratio.component.css",
@@ -1368,12 +1064,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/ratio/ratio.component.ts",
-              "hash": "9a364cdd0347ac70f440101ba350d5a00966f3d2",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "9a364cdd0347ac70f440101ba350d5a00966f3d2"
             },
             {
               "file": "apps/client/src/app/fhir-edit/reference-modal/reference-modal.component.css",
@@ -1381,18 +1072,11 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/reference-modal/reference-modal.component.html",
-              "hash": "3b425e12811adeff7ede6a22e5efb9a14889d4f7"
+              "hash": "034d40bbc96b8467534512bb83147f82d81bd772"
             },
             {
               "file": "apps/client/src/app/fhir-edit/reference-modal/reference-modal.component.ts",
-              "hash": "7d78fc5cc7497eec3ae7851a0783cc1f88c8c3f9",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib",
-                "npm:@angular/common",
-                "npm:rxjs"
-              ]
+              "hash": "7d78fc5cc7497eec3ae7851a0783cc1f88c8c3f9"
             },
             {
               "file": "apps/client/src/app/fhir-edit/reference/reference.component.css",
@@ -1404,13 +1088,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/reference/reference.component.ts",
-              "hash": "313c69551b01cc4c640167163628f445c2c42627",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib",
-                "npm:rxjs"
-              ]
+              "hash": "1ce847f77f58ee4eea2d98e91979360873bbed03"
             },
             {
               "file": "apps/client/src/app/fhir-edit/select-multi-coding/select-multi-coding.component.css",
@@ -1422,11 +1100,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/select-multi-coding/select-multi-coding.component.ts",
-              "hash": "6d2fbc96024eae3948ec022db9b4d8cf120b1517",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "6d2fbc96024eae3948ec022db9b4d8cf120b1517"
             },
             {
               "file": "apps/client/src/app/fhir-edit/select-single-code/select-single-code.component.css",
@@ -1438,12 +1112,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/select-single-code/select-single-code.component.ts",
-              "hash": "6f56edea138d26708db69071eb3e1a8e462b5c5e",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs"
-              ]
+              "hash": "6f56edea138d26708db69071eb3e1a8e462b5c5e"
             },
             {
               "file": "apps/client/src/app/fhir-edit/string/string.component.css",
@@ -1455,13 +1124,7 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/string/string.component.ts",
-              "hash": "7fa612aa29760cd037e7826ae66cb53af09bb538",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/forms",
-                "npm:rxjs",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "ff450787f4b378d500f4c0b1df923db33f574e2b"
             },
             {
               "file": "apps/client/src/app/fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component.css",
@@ -1473,20 +1136,11 @@
             },
             {
               "file": "apps/client/src/app/fhir-edit/value-set-include-concept-modal/value-set-include-concept-modal.component.ts",
-              "hash": "96cfb99a04a0a520692b6c729b943bb46451a745",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "96cfb99a04a0a520692b6c729b943bb46451a745"
             },
             {
               "file": "apps/client/src/app/guards/resource.guard.ts",
-              "hash": "3ecf96033db6485e36f76d084b87c22ad8e8c29c",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router"
-              ]
+              "hash": "3ecf96033db6485e36f76d084b87c22ad8e8c29c"
             },
             {
               "file": "apps/client/src/app/home/home.component.css",
@@ -1498,11 +1152,7 @@
             },
             {
               "file": "apps/client/src/app/home/home.component.ts",
-              "hash": "b26b565a77f71c4ec04d6ba5fb74807dd34f7f8e",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common"
-              ]
+              "hash": "b26b565a77f71c4ec04d6ba5fb74807dd34f7f8e"
             },
             {
               "file": "apps/client/src/app/implementation-guide-view/implementation-guide-view.component.css",
@@ -1510,22 +1160,15 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-view/implementation-guide-view.component.html",
-              "hash": "a290b08f131238215a730ecd352811db7e49c0d6"
+              "hash": "9c63f0f2269015e297d7b5ed86eb653a9d09fe5b"
             },
             {
               "file": "apps/client/src/app/implementation-guide-view/implementation-guide-view.component.ts",
-              "hash": "41aed8585a0d9c89f42a8d86fa0971b504dff9c6",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router"
-              ]
+              "hash": "41aed8585a0d9c89f42a8d86fa0971b504dff9c6"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/base-implementation-guide-component.ts",
-              "hash": "c3852313b65c6ce0d3697d0970ff29f8a2ad90b4",
-              "deps": [
-                "tof-lib"
-              ]
+              "hash": "c3852313b65c6ce0d3697d0970ff29f8a2ad90b4"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/custom-menu/custom-menu.component.css",
@@ -1537,12 +1180,7 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/custom-menu/custom-menu.component.ts",
-              "hash": "d03c8c3229b79035c12a10b1521ba16612e39b66",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs"
-              ]
+              "hash": "d03c8c3229b79035c12a10b1521ba16612e39b66"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/ignore-warnings/ignore-warnings.component.css",
@@ -1554,22 +1192,11 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/ignore-warnings/ignore-warnings.component.ts",
-              "hash": "c09d98c425ba968631ed8bbb479eff7ab43f49d9",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs"
-              ]
+              "hash": "c09d98c425ba968631ed8bbb479eff7ab43f49d9"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/implementation-guide-wrapper.component.ts",
-              "hash": "28b58cb626e62d23230ef0d0eb0a15f5992d4293",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "npm:fhir",
-                "tof-lib"
-              ]
+              "hash": "28b58cb626e62d23230ef0d0eb0a15f5992d4293"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/jira-spec/jira-spec.component.css",
@@ -1581,14 +1208,7 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/jira-spec/jira-spec.component.ts",
-              "hash": "ea777f06bff5d382373496dece3d049d4022f8e0",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs",
-                "npm:vkbeautify",
-                "npm:file-saver"
-              ]
+              "hash": "ea777f06bff5d382373496dece3d049d4022f8e0"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/package-list/package-list.component.css",
@@ -1596,16 +1216,11 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/package-list/package-list.component.html",
-              "hash": "0824e33af3df8a7c7e29b5e683b1cf426b38d184"
+              "hash": "3805b8183c62ad40e04dd79b8109ec4ca7f22918"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/package-list/package-list.component.ts",
-              "hash": "8dc91d7107c117f4ee2f645bae3a106a56c156a6",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs"
-              ]
+              "hash": "f6bddcfa5f9a8d05ceba3b156ddb2386ddead5b9"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/publishing-template/publishing-template.component.css",
@@ -1617,11 +1232,7 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/publishing-template/publishing-template.component.ts",
-              "hash": "a2c979f319f1755e6f45704b822037f72ecda53b",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "a2c979f319f1755e6f45704b822037f72ecda53b"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/r4/group-modal.component.css",
@@ -1633,12 +1244,7 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/r4/group-modal.component.ts",
-              "hash": "0ba42dc23e20fc9ab870385a4fd2abcbd9b80f93",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "0ba42dc23e20fc9ab870385a4fd2abcbd9b80f93"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/r4/implementation-guide.component.css",
@@ -1646,17 +1252,11 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/r4/implementation-guide.component.html",
-              "hash": "bc8c07d443e632242100a1544bb0dc6059872f2f"
+              "hash": "1d2cd0dcbfff734b0903df60609e37407dad6427"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/r4/implementation-guide.component.ts",
-              "hash": "d204e5dff8ab8c94f117eb4f53d861c6eb99ccdc",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@angular/router",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "d204e5dff8ab8c94f117eb4f53d861c6eb99ccdc"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/r4/page-component-modal.component.css",
@@ -1668,13 +1268,7 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/r4/page-component-modal.component.ts",
-              "hash": "51aa16552821a9ce638727fa8caaa315c6181904",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib",
-                "npm:rxjs"
-              ]
+              "hash": "51aa16552821a9ce638727fa8caaa315c6181904"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/r4/resource-modal.component.css",
@@ -1686,12 +1280,7 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/r4/resource-modal.component.ts",
-              "hash": "f887c8cd2bddf82c262a62cbc10e943220fe1a87",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "f887c8cd2bddf82c262a62cbc10e943220fe1a87"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/stu3/implementation-guide.component.css",
@@ -1699,18 +1288,11 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/stu3/implementation-guide.component.html",
-              "hash": "115857bb597ed21d8d385c34fc41b54df6159e78"
+              "hash": "db94c87451ccbaeacca87bcda4485d4f33b9cb20"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/stu3/implementation-guide.component.ts",
-              "hash": "4498091b48130f32d3ba1edc8f6314423aef7643",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@angular/router",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:fhir"
-              ]
+              "hash": "c487aa9e05900f5e5b368cc806e69909954eda16"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/stu3/page-component-modal.component.css",
@@ -1722,13 +1304,7 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/stu3/page-component-modal.component.ts",
-              "hash": "d9b3a3f7fcf90ab32a0bd24b0e28def6d4a05a0e",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib",
-                "npm:rxjs"
-              ]
+              "hash": "d9b3a3f7fcf90ab32a0bd24b0e28def6d4a05a0e"
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/stu3/resource-modal.component.css",
@@ -1740,12 +1316,7 @@
             },
             {
               "file": "apps/client/src/app/implementation-guide-wrapper/stu3/resource-modal.component.ts",
-              "hash": "5d88f296c53a38948298af61d4f70b61c99391fc",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "5d88f296c53a38948298af61d4f70b61c99391fc"
             },
             {
               "file": "apps/client/src/app/implementation-guides/implementation-guides.component.css",
@@ -1757,14 +1328,7 @@
             },
             {
               "file": "apps/client/src/app/implementation-guides/implementation-guides.component.ts",
-              "hash": "c2bcdd9133b88238e01d6db0038c027257b9aa90",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "086c73a4289172fa42e3f5bae80d1206a7dd4861"
             },
             {
               "file": "apps/client/src/app/import/import-github-panel/import-github-panel.component.css",
@@ -1776,11 +1340,7 @@
             },
             {
               "file": "apps/client/src/app/import/import-github-panel/import-github-panel.component.ts",
-              "hash": "9683d77a3d570628c956a1399962f55bf92c0a45",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "9683d77a3d570628c956a1399962f55bf92c0a45"
             },
             {
               "file": "apps/client/src/app/import/import.component.css",
@@ -1788,22 +1348,11 @@
             },
             {
               "file": "apps/client/src/app/import/import.component.html",
-              "hash": "64794bfdb72cdafa9f8ee084b3a4e53a5928edc8"
+              "hash": "5467af8632696a5f0d0d785f929240cf7e52e4a8"
             },
             {
               "file": "apps/client/src/app/import/import.component.ts",
-              "hash": "e28dfba1975937b840e1830aafcfa7efcd13611e",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:ngx-file-drop",
-                "npm:rxjs",
-                "npm:uuid",
-                "npm:file-saver",
-                "npm:@angular/common",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "165c1ce1dc82009524e6a86b90f32f246042a554"
             },
             {
               "file": "apps/client/src/app/import/update-diff/update-diff.component.css",
@@ -1815,12 +1364,7 @@
             },
             {
               "file": "apps/client/src/app/import/update-diff/update-diff.component.ts",
-              "hash": "67b3095a3754db9ba462726d839f39041d6ba06c",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "67b3095a3754db9ba462726d839f39041d6ba06c"
             },
             {
               "file": "apps/client/src/app/login/login.component.css",
@@ -1832,11 +1376,7 @@
             },
             {
               "file": "apps/client/src/app/login/login.component.ts",
-              "hash": "119d392dda5084f3cfc5ebfa68680e5268f1d6cd",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router"
-              ]
+              "hash": "119d392dda5084f3cfc5ebfa68680e5268f1d6cd"
             },
             {
               "file": "apps/client/src/app/manage/merge-user-modal/merge-user-modal.component.css",
@@ -1848,12 +1388,7 @@
             },
             {
               "file": "apps/client/src/app/manage/merge-user-modal/merge-user-modal.component.ts",
-              "hash": "834f00cee0dd17fccc3240f21fea1f2932bcb026",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "834f00cee0dd17fccc3240f21fea1f2932bcb026"
             },
             {
               "file": "apps/client/src/app/manage/queue/queue.component.css",
@@ -1865,12 +1400,7 @@
             },
             {
               "file": "apps/client/src/app/manage/queue/queue.component.ts",
-              "hash": "8f162b7447122b1ba01a8332b6db58edea103c8b",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "tof-lib"
-              ]
+              "hash": "8f162b7447122b1ba01a8332b6db58edea103c8b"
             },
             {
               "file": "apps/client/src/app/manage/users/users.component.css",
@@ -1878,17 +1408,11 @@
             },
             {
               "file": "apps/client/src/app/manage/users/users.component.html",
-              "hash": "ac3739d483721c0c8b4df77b632fd5c93873d389"
+              "hash": "446eeff2bacf6a30f68b93a3518640d6e433be24"
             },
             {
               "file": "apps/client/src/app/manage/users/users.component.ts",
-              "hash": "a3973518192bf6165774661437527048e9ce18cd",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "6df4fdb3245542a0c35aa21840b4a42a6b904369"
             },
             {
               "file": "apps/client/src/app/modals/admin-message-modal/admin-message-modal.component.css",
@@ -1900,11 +1424,7 @@
             },
             {
               "file": "apps/client/src/app/modals/admin-message-modal/admin-message-modal.component.ts",
-              "hash": "6b8e87c87791203038f3a230b97f47f98cd2f16d",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "6b8e87c87791203038f3a230b97f47f98cd2f16d"
             },
             {
               "file": "apps/client/src/app/modals/change-resource-id-modal/change-resource-id-modal.component.css",
@@ -1916,14 +1436,7 @@
             },
             {
               "file": "apps/client/src/app/modals/change-resource-id-modal/change-resource-id-modal.component.ts",
-              "hash": "2676745ead3bdd036b40879dfa78d6f330eafe5c",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib",
-                "npm:@angular/router",
-                "npm:rxjs"
-              ]
+              "hash": "0ab373bd23abe4591979e203579760ef930d724d"
             },
             {
               "file": "apps/client/src/app/modals/copy-profile-modal/copy-profile-modal.component.css",
@@ -1935,13 +1448,7 @@
             },
             {
               "file": "apps/client/src/app/modals/copy-profile-modal/copy-profile-modal.component.ts",
-              "hash": "3b8c953f0bb268a7b083b69e024799e8689d6e75",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:@angular/router",
-                "tof-lib"
-              ]
+              "hash": "3b8c953f0bb268a7b083b69e024799e8689d6e75"
             },
             {
               "file": "apps/client/src/app/modals/element-definition-constraint/element-definition-constraint.component.css",
@@ -1953,12 +1460,7 @@
             },
             {
               "file": "apps/client/src/app/modals/element-definition-constraint/element-definition-constraint.component.ts",
-              "hash": "622990e2e9b09fcb4526294779f91f6388309dfd",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "622990e2e9b09fcb4526294779f91f6388309dfd"
             },
             {
               "file": "apps/client/src/app/modals/file-open-modal/file-open-modal.component.css",
@@ -1970,11 +1472,7 @@
             },
             {
               "file": "apps/client/src/app/modals/file-open-modal/file-open-modal.component.ts",
-              "hash": "1a4570522fc99262a2ab9c7e7db04e7d79e1f334",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "1a4570522fc99262a2ab9c7e7db04e7d79e1f334"
             },
             {
               "file": "apps/client/src/app/modals/markdown-modal/markdown-modal.component.css",
@@ -1986,11 +1484,7 @@
             },
             {
               "file": "apps/client/src/app/modals/markdown-modal/markdown-modal.component.ts",
-              "hash": "e9f0378f401eeeedcb418732d4ca89ec5f529d8f",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "e9f0378f401eeeedcb418732d4ca89ec5f529d8f"
             },
             {
               "file": "apps/client/src/app/modals/media-selection-modal/media-selection-modal.component.css",
@@ -2002,22 +1496,11 @@
             },
             {
               "file": "apps/client/src/app/modals/media-selection-modal/media-selection-modal.component.ts",
-              "hash": "0a15c38f1f5b8106c5c029a71b7dfb03b7045afc",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "0a15c38f1f5b8106c5c029a71b7dfb03b7045afc"
             },
             {
               "file": "apps/client/src/app/modals/modals.module.ts",
-              "hash": "11998c08846626d23c811bdbf94e82d761c81c91",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:@angular/forms"
-              ]
+              "hash": "11998c08846626d23c811bdbf94e82d761c81c91"
             },
             {
               "file": "apps/client/src/app/modals/new-user-modal/new-user-modal.component.css",
@@ -2029,12 +1512,7 @@
             },
             {
               "file": "apps/client/src/app/modals/new-user-modal/new-user-modal.component.ts",
-              "hash": "52c762899f54657f7f4590b7ddfd127622c61304",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@angular/router"
-              ]
+              "hash": "52c762899f54657f7f4590b7ddfd127622c61304"
             },
             {
               "file": "apps/client/src/app/modals/published-ig-select-modal/published-ig-edition-select-modal/published-ig-edition-select-modal.component.css",
@@ -2046,11 +1524,7 @@
             },
             {
               "file": "apps/client/src/app/modals/published-ig-select-modal/published-ig-edition-select-modal/published-ig-edition-select-modal.component.ts",
-              "hash": "5eb5cb1edacec39f7f06857791fcabc90b85abd8",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "5eb5cb1edacec39f7f06857791fcabc90b85abd8"
             },
             {
               "file": "apps/client/src/app/modals/published-ig-select-modal/published-ig-select-modal.component.css",
@@ -2062,11 +1536,7 @@
             },
             {
               "file": "apps/client/src/app/modals/published-ig-select-modal/published-ig-select-modal.component.ts",
-              "hash": "2ceccc7d0e59068d4d5f575d9edf3cea165233c3",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "2ceccc7d0e59068d4d5f575d9edf3cea165233c3"
             },
             {
               "file": "apps/client/src/app/modals/README.md",
@@ -2082,12 +1552,7 @@
             },
             {
               "file": "apps/client/src/app/modals/select-choice-modal/select-choice-modal.component.ts",
-              "hash": "6e573953ded30d4be128219260cb322d33ea3844",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "6e573953ded30d4be128219260cb322d33ea3844"
             },
             {
               "file": "apps/client/src/app/modals/settings-modal/settings-modal.component.css",
@@ -2099,13 +1564,7 @@
             },
             {
               "file": "apps/client/src/app/modals/settings-modal/settings-modal.component.ts",
-              "hash": "defdd81e0b2a0de46e859efa0c0b476099e56c84",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:@angular/router",
-                "npm:angular-oauth2-oidc"
-              ]
+              "hash": "defdd81e0b2a0de46e859efa0c0b476099e56c84"
             },
             {
               "file": "apps/client/src/app/models/export-formats.enum.ts",
@@ -2113,10 +1572,7 @@
             },
             {
               "file": "apps/client/src/app/models/file-model.ts",
-              "hash": "ce359012224467ea43016ab87d3f4abc4e49ff5b",
-              "deps": [
-                "tof-lib"
-              ]
+              "hash": "ce359012224467ea43016ab87d3f4abc4e49ff5b"
             },
             {
               "file": "apps/client/src/app/models/implementation-guide-list-item-model.ts",
@@ -2124,10 +1580,7 @@
             },
             {
               "file": "apps/client/src/app/models/person-list-model.ts",
-              "hash": "411a39a766477ec245c019e5b387a08c013161ad",
-              "deps": [
-                "tof-lib"
-              ]
+              "hash": "411a39a766477ec245c019e5b387a08c013161ad"
             },
             {
               "file": "apps/client/src/app/models/recent-item-model.ts",
@@ -2147,18 +1600,11 @@
             },
             {
               "file": "apps/client/src/app/new-profile/new-profile.component.html",
-              "hash": "77771bbf1df66f1f7b049219fb8a2a5917070f43"
+              "hash": "d3e66aca575ce973442dd1bacfca28a874a69881"
             },
             {
               "file": "apps/client/src/app/new-profile/new-profile.component.ts",
-              "hash": "c2ce749eaba501e359853afc896e08b24783e75b",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib",
-                "npm:rxjs"
-              ]
+              "hash": "57dda8ba28c42fd0065acfde7f8784315c7fc401"
             },
             {
               "file": "apps/client/src/app/new-project/new-project.component.css",
@@ -2170,41 +1616,23 @@
             },
             {
               "file": "apps/client/src/app/new-project/new-project.component.ts",
-              "hash": "51407ade70139e802a791a2e49939727517f7c54",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@angular/router"
-              ]
+              "hash": "51407ade70139e802a791a2e49939727517f7c54"
             },
             {
               "file": "apps/client/src/app/ng2-tree/draggable/captured-node.ts",
-              "hash": "e3c45a287798d2e557bd4d56ec58cd0a055adccc",
-              "deps": [
-                "npm:@angular/core"
-              ]
+              "hash": "e3c45a287798d2e557bd4d56ec58cd0a055adccc"
             },
             {
               "file": "apps/client/src/app/ng2-tree/draggable/draggable.events.ts",
-              "hash": "af933a62b5a01317904a41d72d4741c6c020769f",
-              "deps": [
-                "npm:@angular/core"
-              ]
+              "hash": "af933a62b5a01317904a41d72d4741c6c020769f"
             },
             {
               "file": "apps/client/src/app/ng2-tree/draggable/node-draggable.directive.ts",
-              "hash": "d0e399520aa7e6380d29fd54eb6f5614343150b0",
-              "deps": [
-                "npm:@angular/core"
-              ]
+              "hash": "d0e399520aa7e6380d29fd54eb6f5614343150b0"
             },
             {
               "file": "apps/client/src/app/ng2-tree/draggable/node-draggable.service.ts",
-              "hash": "3d53c8399cb45b30c2f27831636c1220f7a9cb63",
-              "deps": [
-                "npm:@angular/core",
-                "npm:rxjs"
-              ]
+              "hash": "3d53c8399cb45b30c2f27831636c1220f7a9cb63"
             },
             {
               "file": "apps/client/src/app/ng2-tree/editable/editable.events.ts",
@@ -2212,10 +1640,7 @@
             },
             {
               "file": "apps/client/src/app/ng2-tree/editable/node-editable.directive.ts",
-              "hash": "7ef616839bb1dcc7d51646b4066c9902d7adf011",
-              "deps": [
-                "npm:@angular/core"
-              ]
+              "hash": "7ef616839bb1dcc7d51646b4066c9902d7adf011"
             },
             {
               "file": "apps/client/src/app/ng2-tree/menu/menu.events.ts",
@@ -2223,25 +1648,11 @@
             },
             {
               "file": "apps/client/src/app/ng2-tree/menu/node-menu.component.ts",
-              "hash": "8238f617818f2262156469729867dfe803fa5e12",
-              "deps": [
-                "npm:@angular/core"
-              ]
+              "hash": "8238f617818f2262156469729867dfe803fa5e12"
             },
             {
               "file": "apps/client/src/app/ng2-tree/menu/node-menu.service.ts",
-              "hash": "91d3f43035f5008e573f1c4d5a783b94c0aa8655",
-              "deps": [
-                "npm:@angular/core",
-                "npm:rxjs"
-              ]
-            },
-            {
-              "file": "apps/client/src/app/ng2-tree/rxjs-imports.ts",
-              "hash": "17c0c6c3ffc9f08102457e12de81007dca85898f",
-              "deps": [
-                "npm:rxjs"
-              ]
+              "hash": "0d584c0e596c217259b21b65a7cbb7ac5bb87c35"
             },
             {
               "file": "apps/client/src/app/ng2-tree/styles.css",
@@ -2253,19 +1664,11 @@
             },
             {
               "file": "apps/client/src/app/ng2-tree/tree-internal.component.ts",
-              "hash": "a5775386fe7b660a83e06bb7f945c76675e544d4",
-              "deps": [
-                "npm:@angular/core",
-                "npm:rxjs"
-              ]
+              "hash": "4e7cd441124dea04a38d830776143f9ef4a932c0"
             },
             {
               "file": "apps/client/src/app/ng2-tree/tree.component.ts",
-              "hash": "06b5e733737445c361fbf42c004fdce41c7d3ff7",
-              "deps": [
-                "npm:@angular/core",
-                "npm:rxjs"
-              ]
+              "hash": "06b5e733737445c361fbf42c004fdce41c7d3ff7"
             },
             {
               "file": "apps/client/src/app/ng2-tree/tree.events.ts",
@@ -2273,27 +1676,15 @@
             },
             {
               "file": "apps/client/src/app/ng2-tree/tree.module.ts",
-              "hash": "9260016344b21404e00ec4ef04f2e7322613b251",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common"
-              ]
+              "hash": "5012172bc9875e891e522af035c45db1c73e0a6f"
             },
             {
               "file": "apps/client/src/app/ng2-tree/tree.service.ts",
-              "hash": "2f43d0aa1f86776dded25367d10be674cce775bc",
-              "deps": [
-                "npm:rxjs",
-                "npm:@angular/core"
-              ]
+              "hash": "0518201a0ba22576773772c4d5d85b5e9f7e9615"
             },
             {
               "file": "apps/client/src/app/ng2-tree/tree.ts",
-              "hash": "05eea5954414e4c740dd29ae546e659cf6700057",
-              "deps": [
-                "npm:rxjs",
-                "npm:uuid"
-              ]
+              "hash": "85e728ee268b8561f56ca6c3bfaf8aac00d1bb04"
             },
             {
               "file": "apps/client/src/app/ng2-tree/tree.types.ts",
@@ -2309,11 +1700,7 @@
             },
             {
               "file": "apps/client/src/app/ng2-tree/utils/safe-html.pipe.ts",
-              "hash": "c74b2c30a622c4308310c314451ff240b960a441",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/platform-browser"
-              ]
+              "hash": "c74b2c30a622c4308310c314451ff240b960a441"
             },
             {
               "file": "apps/client/src/app/operation-definition/operation-definition.component.css",
@@ -2321,18 +1708,11 @@
             },
             {
               "file": "apps/client/src/app/operation-definition/operation-definition.component.html",
-              "hash": "ac69477284d87f8830546699f394d0617b2403bb"
+              "hash": "55d2524b8de7dc548915e71da2f3825d6f9cd4d1"
             },
             {
               "file": "apps/client/src/app/operation-definition/operation-definition.component.ts",
-              "hash": "5956a8de6ddfa32048dda982e2cd85c022373bfc",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@angular/router",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs"
-              ]
+              "hash": "4fa715f6d60ef72983289ff02391936d79d1fafb"
             },
             {
               "file": "apps/client/src/app/operation-definition/parameter-modal/parameter-modal.component.css",
@@ -2344,12 +1724,7 @@
             },
             {
               "file": "apps/client/src/app/operation-definition/parameter-modal/parameter-modal.component.ts",
-              "hash": "1437a360b99677428e5a4083497db5c5c85320aa",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "1437a360b99677428e5a4083497db5c5c85320aa"
             },
             {
               "file": "apps/client/src/app/operation-definitions/operation-definitions.component.css",
@@ -2361,13 +1736,7 @@
             },
             {
               "file": "apps/client/src/app/operation-definitions/operation-definitions.component.ts",
-              "hash": "572bcfcf7731a45dc8df58fd36ed5388d6853eb5",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs"
-              ]
+              "hash": "9e2f36019a52faa3614ce7e1dd248921db3cdfdb"
             },
             {
               "file": "apps/client/src/app/other-resources/other-resources-result/other-resources-result.component.css",
@@ -2375,20 +1744,11 @@
             },
             {
               "file": "apps/client/src/app/other-resources/other-resources-result/other-resources-result.component.html",
-              "hash": "94cfea973fe35dae6b7a2ceef424679126636e87"
+              "hash": "ea9e83ad388ae1708bdc29b81b34ba5e70faa37b"
             },
             {
               "file": "apps/client/src/app/other-resources/other-resources-result/other-resources-result.component.ts",
-              "hash": "38bd661a2250508b1c20f357f2d8383d2c93325f",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:file-saver",
-                "npm:fhir",
-                "npm:rxjs"
-              ]
+              "hash": "087c3e4569ce4af0a898895e9356e28adae898e9"
             },
             {
               "file": "apps/client/src/app/other-resources/other-resources.component.css",
@@ -2396,17 +1756,11 @@
             },
             {
               "file": "apps/client/src/app/other-resources/other-resources.component.html",
-              "hash": "2b3bc212d9727754cbf35c6c006939ed57d192cb"
+              "hash": "4ae96e792dfc0d1b0afa962b7028930dfac769f1"
             },
             {
               "file": "apps/client/src/app/other-resources/other-resources.component.ts",
-              "hash": "cbe70fdd1b0a30129fd76ca767a54a13fe602d54",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs"
-              ]
+              "hash": "e161713623b52e647ed3d7fab4742884411e9971"
             },
             {
               "file": "apps/client/src/app/publish/publish.component.css",
@@ -2414,20 +1768,11 @@
             },
             {
               "file": "apps/client/src/app/publish/publish.component.html",
-              "hash": "2f3e58bbf5d11eb36dc99fce2d8b894b4c5067ff"
+              "hash": "87c693b6ebc7fe7f4051c886117fd89bd0ec4651"
             },
             {
               "file": "apps/client/src/app/publish/publish.component.ts",
-              "hash": "1eadcb6b2a02f512233e21013780e00468c03485",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs",
-                "npm:file-saver",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:@angular/router",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "bcb715ae0f87efc223f795276a52cb91401f3844"
             },
             {
               "file": "apps/client/src/app/questionnaire/questionnaire-item-modal.component.css",
@@ -2439,12 +1784,7 @@
             },
             {
               "file": "apps/client/src/app/questionnaire/questionnaire-item-modal.component.ts",
-              "hash": "7edf4eea55ae0f129b49aea3795fb289e9950dcb",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "7edf4eea55ae0f129b49aea3795fb289e9950dcb"
             },
             {
               "file": "apps/client/src/app/questionnaire/questionnaire.component.css",
@@ -2452,18 +1792,11 @@
             },
             {
               "file": "apps/client/src/app/questionnaire/questionnaire.component.html",
-              "hash": "18cc1a0df406cebc34c10f424f05ba12e894289e"
+              "hash": "4a82e1cde1dca414273b8e675a717f20907c0e03"
             },
             {
               "file": "apps/client/src/app/questionnaire/questionnaire.component.ts",
-              "hash": "395104dce532a356620b3cf75f8735b4855bf9ce",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@angular/router",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs"
-              ]
+              "hash": "0ae1ee92f15471c6b277d9f7e5d095f3293d1881"
             },
             {
               "file": "apps/client/src/app/questionnaires/questionnaires.component.css",
@@ -2475,36 +1808,19 @@
             },
             {
               "file": "apps/client/src/app/questionnaires/questionnaires.component.ts",
-              "hash": "9910b606276ac68b8d55238a76bb3b02ce43ccf9",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs"
-              ]
+              "hash": "cacd9fdfa97b2436cf1eec5ebd67c93715a876d4"
             },
             {
               "file": "apps/client/src/app/route-transformer.directive.ts",
-              "hash": "c3e9fbdf6735a76fa8a8232e1ebd144fc725a309",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router"
-              ]
+              "hash": "c3e9fbdf6735a76fa8a8232e1ebd144fc725a309"
             },
             {
               "file": "apps/client/src/app/shared-ui/fhir-display-pipe.ts",
-              "hash": "f337bbf0d97585129617c927ce1c41d13d2623d8",
-              "deps": [
-                "npm:@angular/core"
-              ]
+              "hash": "f337bbf0d97585129617c927ce1c41d13d2623d8"
             },
             {
               "file": "apps/client/src/app/shared-ui/fhir-xml-pipe.ts",
-              "hash": "dba3d76f50fb83330cf732c73922ec2729c30c38",
-              "deps": [
-                "npm:vkbeautify",
-                "npm:@angular/core"
-              ]
+              "hash": "dba3d76f50fb83330cf732c73922ec2729c30c38"
             },
             {
               "file": "apps/client/src/app/shared-ui/ig-publisher-selection/ig-publisher-selection.component.css",
@@ -2516,12 +1832,7 @@
             },
             {
               "file": "apps/client/src/app/shared-ui/ig-publisher-selection/ig-publisher-selection.component.ts",
-              "hash": "b7481896b6c326ec20a974a371341736771d1146",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "npm:rxjs"
-              ]
+              "hash": "b7481896b6c326ec20a974a371341736771d1146"
             },
             {
               "file": "apps/client/src/app/shared-ui/implementation-guide-typeahead/implementation-guide-typeahead.component.css",
@@ -2533,20 +1844,11 @@
             },
             {
               "file": "apps/client/src/app/shared-ui/implementation-guide-typeahead/implementation-guide-typeahead.component.ts",
-              "hash": "ccf69db296cd85f232aea7931b7a9b022e87327b",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "d2ea21da8959796361b025f44bf838293072365b"
             },
             {
               "file": "apps/client/src/app/shared-ui/keys-pipe.ts",
-              "hash": "63b485c78d2628542180fb9cf1b1f14ddabe19f6",
-              "deps": [
-                "npm:@angular/core"
-              ]
+              "hash": "63b485c78d2628542180fb9cf1b1f14ddabe19f6"
             },
             {
               "file": "apps/client/src/app/shared-ui/markdown/markdown.component.css",
@@ -2558,13 +1860,7 @@
             },
             {
               "file": "apps/client/src/app/shared-ui/markdown/markdown.component.ts",
-              "hash": "451d7f5b20a1d87f808bf5ab3dc624d76553eab8",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:simplemde-antd",
-                "npm:ngx-simplemde"
-              ]
+              "hash": "451d7f5b20a1d87f808bf5ab3dc624d76553eab8"
             },
             {
               "file": "apps/client/src/app/shared-ui/raw-resource/raw-resource.component.css",
@@ -2572,17 +1868,11 @@
             },
             {
               "file": "apps/client/src/app/shared-ui/raw-resource/raw-resource.component.html",
-              "hash": "b68c8c9ae800865da7e68d4e93606d3605c1f72a"
+              "hash": "5eff12ce39d7cb1a83f1f045438860789a268246"
             },
             {
               "file": "apps/client/src/app/shared-ui/raw-resource/raw-resource.component.ts",
-              "hash": "c359bd3faef2af0935881edd2a3d7306ff8eaac7",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:file-saver",
-                "npm:vkbeautify"
-              ]
+              "hash": "c359bd3faef2af0935881edd2a3d7306ff8eaac7"
             },
             {
               "file": "apps/client/src/app/shared-ui/README.md",
@@ -2598,11 +1888,7 @@
             },
             {
               "file": "apps/client/src/app/shared-ui/resource-history/resource-history.component.ts",
-              "hash": "3f411b1278c8eda1044e7acca2f0f6299554b7cd",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "3f411b1278c8eda1044e7acca2f0f6299554b7cd"
             },
             {
               "file": "apps/client/src/app/shared-ui/resource-permissions/resource-permissions.component.css",
@@ -2614,33 +1900,15 @@
             },
             {
               "file": "apps/client/src/app/shared-ui/resource-permissions/resource-permissions.component.ts",
-              "hash": "9b6ed00d3c5052a3f789f5f4c14336d0ae17b230",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs"
-              ]
+              "hash": "9b6ed00d3c5052a3f789f5f4c14336d0ae17b230"
             },
             {
               "file": "apps/client/src/app/shared-ui/safe-pipe.ts",
-              "hash": "f7131b220c40654ba3c96758b2c627483d77f05f",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/platform-browser"
-              ]
+              "hash": "f7131b220c40654ba3c96758b2c627483d77f05f"
             },
             {
               "file": "apps/client/src/app/shared-ui/shared-ui.module.ts",
-              "hash": "eac937d5c7a70f0fc8478bbd18f3f7aff8d0791a",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:ng-diff-match-patch",
-                "npm:@angular/forms",
-                "npm:ngx-simplemde"
-              ]
+              "hash": "eac937d5c7a70f0fc8478bbd18f3f7aff8d0791a"
             },
             {
               "file": "apps/client/src/app/shared-ui/tooltip-icon/tooltip-icon.component.css",
@@ -2652,13 +1920,7 @@
             },
             {
               "file": "apps/client/src/app/shared-ui/tooltip-icon/tooltip-icon.component.ts",
-              "hash": "be33cfbcda0a0bb5b85a1b8cf0e4fd102ebd8cd7",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@angular/common",
-                "npm:ngx-cookie-service"
-              ]
+              "hash": "be33cfbcda0a0bb5b85a1b8cf0e4fd102ebd8cd7"
             },
             {
               "file": "apps/client/src/app/shared-ui/validation-results/validation-results.component.css",
@@ -2670,262 +1932,111 @@
             },
             {
               "file": "apps/client/src/app/shared-ui/validation-results/validation-results.component.ts",
-              "hash": "d2881934c88029536c4fa4d83eb7fa24662d5b01",
-              "deps": [
-                "npm:@angular/core",
-                "npm:fhir"
-              ]
+              "hash": "d2881934c88029536c4fa4d83eb7fa24662d5b01"
             },
             {
               "file": "apps/client/src/app/shared-ui/xml-pipe.ts",
-              "hash": "05290325770e7c3e8fb91234abd0dcd2fcfa0b07",
-              "deps": [
-                "npm:vkbeautify",
-                "npm:@angular/core"
-              ]
+              "hash": "05290325770e7c3e8fb91234abd0dcd2fcfa0b07"
             },
             {
               "file": "apps/client/src/app/shared/auth.service.ts",
-              "hash": "57ebe3b156febd5424c2d10823359aef0fb6c2ce",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs",
-                "npm:angular-oauth2-oidc"
-              ]
+              "hash": "57ebe3b156febd5424c2d10823359aef0fb6c2ce"
             },
             {
               "file": "apps/client/src/app/shared/capability-statement.service.ts",
-              "hash": "167b06a0d21f040aaff2d4f644c3186ec4db089c",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs",
-                "npm:@angular/common"
-              ]
+              "hash": "167b06a0d21f040aaff2d4f644c3186ec4db089c"
             },
             {
               "file": "apps/client/src/app/shared/code-system.service.ts",
-              "hash": "f2bcc038115c744027f3ba05c70b7f36b4e59c64",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs",
-                "npm:@angular/common"
-              ]
+              "hash": "f2bcc038115c744027f3ba05c70b7f36b4e59c64"
             },
             {
               "file": "apps/client/src/app/shared/config.service.ts",
-              "hash": "3085f0534889254bc50267a4e2ee2536b3a16846",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "tof-lib",
-                "npm:@angular/platform-browser",
-                "npm:fhir",
-                "npm:rxjs"
-              ]
+              "hash": "3085f0534889254bc50267a4e2ee2536b3a16846"
             },
             {
               "file": "apps/client/src/app/shared/export.service.ts",
-              "hash": "8b0ed78564fb1bd3837a2d09ebf1f89aee0ce1ea",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "tof-lib"
-              ]
+              "hash": "8b0ed78564fb1bd3837a2d09ebf1f89aee0ce1ea"
             },
             {
               "file": "apps/client/src/app/shared/fhir.service.ts",
-              "hash": "00ccf46efd5fab0546633ad7cd0554397c98fbfe",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "tof-lib",
-                "npm:rxjs",
-                "npm:fhir",
-                "npm:vkbeautify"
-              ]
+              "hash": "8ea1df2fe69ebc206a0e0363d58b53cbb78a4019"
             },
             {
               "file": "apps/client/src/app/shared/file.service.ts",
-              "hash": "2d1474052d2e955b457b2e618680a4346b72c6c1",
-              "deps": [
-                "npm:@angular/core",
-                "npm:file-saver",
-                "npm:@angular/router",
-                "npm:vkbeautify"
-              ]
+              "hash": "2d1474052d2e955b457b2e618680a4346b72c6c1"
             },
             {
               "file": "apps/client/src/app/shared/github.service.ts",
-              "hash": "b687b14519c98c54fdcc3789df5fb9b383856128",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "tof-lib"
-              ]
+              "hash": "f1852e29cbc0fef62a9624e557d7099971a9f599"
             },
             {
               "file": "apps/client/src/app/shared/group.service.ts",
-              "hash": "a7f01112b328e783c527f38312a7a8a3e766026c",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "tof-lib",
-                "npm:rxjs"
-              ]
+              "hash": "a7f01112b328e783c527f38312a7a8a3e766026c"
             },
             {
               "file": "apps/client/src/app/shared/implementation-guide.service.ts",
-              "hash": "e511f93a171404dd57052ca73a167d12ad78a937",
-              "deps": [
-                "npm:@angular/core",
-                "npm:rxjs",
-                "npm:@angular/common",
-                "tof-lib",
-                "npm:@angular/router"
-              ]
+              "hash": "e511f93a171404dd57052ca73a167d12ad78a937"
             },
             {
               "file": "apps/client/src/app/shared/import.service.ts",
-              "hash": "bfca9ae85622a2d10399f38057d89048e4700f5e",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "npm:rxjs",
-                "npm:xlsx",
-                "tof-lib"
-              ]
+              "hash": "bfca9ae85622a2d10399f38057d89048e4700f5e"
             },
             {
               "file": "apps/client/src/app/shared/manage.service.ts",
-              "hash": "ab215f8cd93c98d38c6121d9a43ac2c4f8e48639",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "tof-lib"
-              ]
+              "hash": "ab215f8cd93c98d38c6121d9a43ac2c4f8e48639"
             },
             {
               "file": "apps/client/src/app/shared/modal.service.ts",
-              "hash": "dac2df671fef13217b017bbbc35bc4f5bb16d385",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "dac2df671fef13217b017bbbc35bc4f5bb16d385"
             },
             {
               "file": "apps/client/src/app/shared/operation-definition.service.ts",
-              "hash": "0856335e904e0815d6f7ae2e18a6e6b058702f92",
-              "deps": [
-                "npm:@angular/core",
-                "npm:rxjs",
-                "tof-lib",
-                "npm:@angular/common"
-              ]
+              "hash": "0856335e904e0815d6f7ae2e18a6e6b058702f92"
             },
             {
               "file": "apps/client/src/app/shared/practitioner.service.ts",
-              "hash": "8d42c9b2ce424d0bb5247ea8e98819c56be5e63c",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@angular/common",
-                "npm:rxjs"
-              ]
+              "hash": "8d42c9b2ce424d0bb5247ea8e98819c56be5e63c"
             },
             {
               "file": "apps/client/src/app/shared/questionnaire.service.ts",
-              "hash": "00033741504ebf55f26468bdaf219c18d581001d",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "tof-lib",
-                "npm:rxjs"
-              ]
+              "hash": "00033741504ebf55f26468bdaf219c18d581001d"
             },
             {
               "file": "apps/client/src/app/shared/shared.module.ts",
-              "hash": "393c4c62d12df059a9036dc83eaae92379e82238",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "393c4c62d12df059a9036dc83eaae92379e82238"
             },
             {
               "file": "apps/client/src/app/shared/socket.service.ts",
-              "hash": "7b33091ce984b16f0efc317a32b707ac8286197c",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:socket.io"
-              ]
+              "hash": "c60472aaaa064c274d31ebc20994caab2df4f6bf"
             },
             {
               "file": "apps/client/src/app/shared/structure-definition.service.ts",
-              "hash": "89e998c9249628fc7976cb46d0370e7545d88cad",
-              "deps": [
-                "npm:@angular/core",
-                "npm:rxjs",
-                "npm:@angular/common",
-                "tof-lib"
-              ]
+              "hash": "89e998c9249628fc7976cb46d0370e7545d88cad"
             },
             {
               "file": "apps/client/src/app/shared/user.service.ts",
-              "hash": "c31ce777dc681d55a2dc8c543dc23c4444b08953",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/common"
-              ]
+              "hash": "c31ce777dc681d55a2dc8c543dc23c4444b08953"
             },
             {
               "file": "apps/client/src/app/shared/validation/custom-R4-validator.ts",
-              "hash": "bda3a8058cf95726f6aa8d0007757e6865a98535",
-              "deps": [
-                "tof-lib",
-                "npm:fhir"
-              ]
+              "hash": "bda3a8058cf95726f6aa8d0007757e6865a98535"
             },
             {
               "file": "apps/client/src/app/shared/validation/custom-STU3-validator.ts",
-              "hash": "853f53b34d987522f1a80c56b0e20392f67de83f",
-              "deps": [
-                "tof-lib",
-                "npm:fhir"
-              ]
+              "hash": "853f53b34d987522f1a80c56b0e20392f67de83f"
             },
             {
               "file": "apps/client/src/app/shared/validation/custom-validator.ts",
-              "hash": "c4d9b8a9b48925176605e43f6e37e8f5f0b0fdf7",
-              "deps": [
-                "npm:fhir"
-              ]
+              "hash": "c4d9b8a9b48925176605e43f6e37e8f5f0b0fdf7"
             },
             {
               "file": "apps/client/src/app/shared/value-set.service.ts",
-              "hash": "a45cb7bb42473357e0d7e4fc3a40fdf60f4be8ca",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:rxjs",
-                "npm:@angular/common"
-              ]
+              "hash": "a45cb7bb42473357e0d7e4fc3a40fdf60f4be8ca"
             },
             {
               "file": "apps/client/src/app/structure-definition/context-panel-wrapper/context-panel-wrapper.component.ts",
-              "hash": "552ff59a98e30ce4764f7a67decb7ea09b546fd8",
-              "deps": [
-                "npm:@angular/core",
-                "npm:fhir",
-                "npm:@angular/router",
-                "tof-lib"
-              ]
+              "hash": "552ff59a98e30ce4764f7a67decb7ea09b546fd8"
             },
             {
               "file": "apps/client/src/app/structure-definition/context-panel-wrapper/r4/context-panel-r4.component.css",
@@ -2937,11 +2048,7 @@
             },
             {
               "file": "apps/client/src/app/structure-definition/context-panel-wrapper/r4/context-panel-r4.component.ts",
-              "hash": "a57a4798b9ff7e46a95e11119239c80d13dab271",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "a57a4798b9ff7e46a95e11119239c80d13dab271"
             },
             {
               "file": "apps/client/src/app/structure-definition/context-panel-wrapper/stu3/context-panel-stu3.component.css",
@@ -2953,11 +2060,7 @@
             },
             {
               "file": "apps/client/src/app/structure-definition/context-panel-wrapper/stu3/context-panel-stu3.component.ts",
-              "hash": "3a1ffaad7e4a46b6c92351f8543f90f817f61eeb",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib"
-              ]
+              "hash": "3a1ffaad7e4a46b6c92351f8543f90f817f61eeb"
             },
             {
               "file": "apps/client/src/app/structure-definition/element-definition-panel/binding-panel/binding-panel.component.css",
@@ -2969,13 +2072,7 @@
             },
             {
               "file": "apps/client/src/app/structure-definition/element-definition-panel/binding-panel/binding-panel.component.ts",
-              "hash": "0251c07602775ca71cd5fb7b2f3e65c766109299",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs"
-              ]
+              "hash": "0251c07602775ca71cd5fb7b2f3e65c766109299"
             },
             {
               "file": "apps/client/src/app/structure-definition/element-definition-panel/element-definition-panel.component.css",
@@ -2983,16 +2080,11 @@
             },
             {
               "file": "apps/client/src/app/structure-definition/element-definition-panel/element-definition-panel.component.html",
-              "hash": "d7b77f0e12e9207b7b088a8306281c60be67bc0c"
+              "hash": "8603391e145df3e78452275b4c3d3865dbad7f2b"
             },
             {
               "file": "apps/client/src/app/structure-definition/element-definition-panel/element-definition-panel.component.ts",
-              "hash": "6d695fe2f9d3f569afaec4e50aea9fa623c92b91",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "c8cd05b687ce1ed547f94d44eb38a87c3e577c65"
             },
             {
               "file": "apps/client/src/app/structure-definition/element-definition-panel/mapping-modal/mapping-modal.component.css",
@@ -3004,12 +2096,7 @@
             },
             {
               "file": "apps/client/src/app/structure-definition/element-definition-panel/mapping-modal/mapping-modal.component.ts",
-              "hash": "9c0cb5e7107a3959046231ea85cf8110d48e663d",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "9c0cb5e7107a3959046231ea85cf8110d48e663d"
             },
             {
               "file": "apps/client/src/app/structure-definition/element-definition-panel/r4-type-modal/type-modal.component.css",
@@ -3021,12 +2108,7 @@
             },
             {
               "file": "apps/client/src/app/structure-definition/element-definition-panel/r4-type-modal/type-modal.component.ts",
-              "hash": "9864560133c7fe385936a23c721126838dce84d5",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "9864560133c7fe385936a23c721126838dce84d5"
             },
             {
               "file": "apps/client/src/app/structure-definition/element-definition-panel/stu3-type-modal/type-modal.component.css",
@@ -3038,12 +2120,7 @@
             },
             {
               "file": "apps/client/src/app/structure-definition/element-definition-panel/stu3-type-modal/type-modal.component.ts",
-              "hash": "63c601ce9687aa0e7074f66a78e4fe33785eaa15",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "63c601ce9687aa0e7074f66a78e4fe33785eaa15"
             },
             {
               "file": "apps/client/src/app/structure-definition/structure-definition.component.css",
@@ -3051,19 +2128,11 @@
             },
             {
               "file": "apps/client/src/app/structure-definition/structure-definition.component.html",
-              "hash": "4908f75e17ee87076444d933590121be023d7fb6"
+              "hash": "3bf4f095a51cc2082d1f1d60babedba3349baf2d"
             },
             {
               "file": "apps/client/src/app/structure-definition/structure-definition.component.ts",
-              "hash": "a10a0c376f3238eac61e7cb9150c151eb05fb251",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib",
-                "npm:@angular/common",
-                "npm:fhir"
-              ]
+              "hash": "b51ae9bb0d81c4444a4fbfcab18e7b3ac4c12891"
             },
             {
               "file": "apps/client/src/app/structure-definitions/structure-definitions.component.css",
@@ -3075,13 +2144,7 @@
             },
             {
               "file": "apps/client/src/app/structure-definitions/structure-definitions.component.ts",
-              "hash": "8202c91eeb8b8200f46776db90640e2ac2fc98ab",
-              "deps": [
-                "npm:@angular/core",
-                "npm:rxjs",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "tof-lib"
-              ]
+              "hash": "bec4b8732fcf66c9c0957ffb1630e0a09559e4ba"
             },
             {
               "file": "apps/client/src/app/user/user.component.css",
@@ -3089,16 +2152,11 @@
             },
             {
               "file": "apps/client/src/app/user/user.component.html",
-              "hash": "ce6fea33345a4cf0bbdd5611b0e6da3a42d6f319"
+              "hash": "3c156746b71c68578d4d0ab7c96fe4269fa9e731"
             },
             {
               "file": "apps/client/src/app/user/user.component.ts",
-              "hash": "b2416ff2e77ceb97edb63e822fda0d785953f34b",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "b2416ff2e77ceb97edb63e822fda0d785953f34b"
             },
             {
               "file": "apps/client/src/app/valueset-expand/valueset-expand.component.css",
@@ -3106,17 +2164,11 @@
             },
             {
               "file": "apps/client/src/app/valueset-expand/valueset-expand.component.html",
-              "hash": "c1bc0300bd59d491161cdd17b907d5a6a9f8dff8"
+              "hash": "5c7d9618f9d490f5c6dbd3406e83923781c41953"
             },
             {
               "file": "apps/client/src/app/valueset-expand/valueset-expand.component.ts",
-              "hash": "acb0908267de0c3fec7c780da2abe91c69668668",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/router",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "6189d81648eeea1fc8b5a834f3724de6e12baedd"
             },
             {
               "file": "apps/client/src/app/valueset/concept-card/concept-card.component.css",
@@ -3128,12 +2180,7 @@
             },
             {
               "file": "apps/client/src/app/valueset/concept-card/concept-card.component.ts",
-              "hash": "d72a974c05d0b923922965b447f53ab9a7818d53",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "d72a974c05d0b923922965b447f53ab9a7818d53"
             },
             {
               "file": "apps/client/src/app/valueset/include-panel/include-panel.component.css",
@@ -3145,12 +2192,7 @@
             },
             {
               "file": "apps/client/src/app/valueset/include-panel/include-panel.component.ts",
-              "hash": "5ca74c2dd1df1051719246b355d76e32512e4958",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "5ca74c2dd1df1051719246b355d76e32512e4958"
             },
             {
               "file": "apps/client/src/app/valueset/valueset.component.css",
@@ -3158,18 +2200,11 @@
             },
             {
               "file": "apps/client/src/app/valueset/valueset.component.html",
-              "hash": "0f702965b73fac9d533fecfb7014483bfffc2db0"
+              "hash": "262f256fbbc84a3f8ef93d24a3f6f9f67b39cc86"
             },
             {
               "file": "apps/client/src/app/valueset/valueset.component.ts",
-              "hash": "dfc2393f42fe84d226c75cba1598b4ad7348455f",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@angular/router",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs"
-              ]
+              "hash": "9f4dfa9a0e19efc1ccb9b3f50fa0cfb0ecaa00a5"
             },
             {
               "file": "apps/client/src/app/valuesets/valuesets.component.css",
@@ -3181,14 +2216,7 @@
             },
             {
               "file": "apps/client/src/app/valuesets/valuesets.component.ts",
-              "hash": "3929096437b6a603b3932f9cbfb806a6ed690369",
-              "deps": [
-                "npm:@angular/core",
-                "tof-lib",
-                "npm:@ng-bootstrap/ng-bootstrap",
-                "npm:rxjs",
-                "npm:@angular/router"
-              ]
+              "hash": "000827639aa25c4143b2be4cb8f4f8f7f6acf90b"
             },
             {
               "file": "apps/client/src/assets/.gitkeep",
@@ -4116,10 +3144,7 @@
             },
             {
               "file": "apps/client/src/help/vendors/jstree-3.3.10/jstree.min.js",
-              "hash": "76dfe11df1ffcb5a727edbbe4d33d2e108a1011b",
-              "deps": [
-                "npm:jquery"
-              ]
+              "hash": "76dfe11df1ffcb5a727edbbe4d33d2e108a1011b"
             },
             {
               "file": "apps/client/src/help/vendors/jstree-3.3.10/themes/default-dark/32px.png",
@@ -4163,10 +3188,7 @@
             },
             {
               "file": "apps/client/src/help/vendors/jstree-3.3.7/jstree.min.js",
-              "hash": "9221c3384cceebf80938835bbf3be782d02b8c52",
-              "deps": [
-                "npm:jquery"
-              ]
+              "hash": "9221c3384cceebf80938835bbf3be782d02b8c52"
             },
             {
               "file": "apps/client/src/help/vendors/jstree-3.3.7/themes/default-dark/32px.png",
@@ -4210,10 +3232,7 @@
             },
             {
               "file": "apps/client/src/help/vendors/markjs-8.11.1/jquery.mark.min.js",
-              "hash": "197e3123cd5f87bd661bbed2809b9253d7b01b22",
-              "deps": [
-                "npm:jquery"
-              ]
+              "hash": "197e3123cd5f87bd661bbed2809b9253d7b01b22"
             },
             {
               "file": "apps/client/src/help/vendors/respond-1.4.2/respond.min.js",
@@ -4245,21 +3264,11 @@
             },
             {
               "file": "apps/client/src/main.ts",
-              "hash": "fa4e0aef33721b84c2cc9f415da4770e770a68b4",
-              "deps": [
-                "npm:@angular/core",
-                "npm:@angular/platform-browser-dynamic"
-              ]
+              "hash": "fa4e0aef33721b84c2cc9f415da4770e770a68b4"
             },
             {
               "file": "apps/client/src/polyfills.ts",
-              "hash": "08b80d9d748c34a5c9179efb609dfe4cdd35e381",
-              "deps": [
-                "npm:classlist.js",
-                "npm:core-js",
-                "npm:web-animations-js",
-                "npm:zone.js"
-              ]
+              "hash": "b84e45a9f1a73c1781117bf91ded4ca5508f21e8"
             },
             {
               "file": "apps/client/src/silent-refresh.html",
@@ -4267,7 +3276,7 @@
             },
             {
               "file": "apps/client/src/styles.css",
-              "hash": "e623da5312bfb2aea093bffaea3e4a86819b29cc"
+              "hash": "3ae503dbdfb38b0529e7db1db47966272de80a69"
             },
             {
               "file": "apps/client/src/test-setup.ts",
@@ -4299,24 +3308,18 @@
           "root": "apps/server",
           "sourceRoot": "apps/server/src",
           "projectType": "application",
-          "prefix": "server",
-          "generators": {},
           "targets": {
             "build": {
-              "executor": "@nrwl/node:build",
+              "executor": "@nrwl/node:webpack",
+              "outputs": [
+                "{options.outputPath}"
+              ],
               "options": {
                 "outputPath": "dist/apps/server",
                 "main": "apps/server/src/main.ts",
                 "tsConfig": "apps/server/tsconfig.app.json",
                 "assets": [
-                  "apps/server/src/assets",
-                  "apps/server/src/config",
-                  "apps/server/src/igs",
-                  {
-                    "glob": "**/*",
-                    "input": "libs/tof-lib/src/assets",
-                    "output": "./assets"
-                  }
+                  "apps/server/src/assets"
                 ]
               },
               "configurations": {
@@ -4334,28 +3337,9 @@
               }
             },
             "serve": {
-              "executor": "@nrwl/node:execute",
+              "executor": "@nrwl/node:node",
               "options": {
                 "buildTarget": "server:build"
-              }
-            },
-            "lint": {
-              "executor": "@angular-devkit/build-angular:tslint",
-              "options": {
-                "tsConfig": [
-                  "apps/server/tsconfig.app.json",
-                  "apps/server/tsconfig.spec.json"
-                ],
-                "exclude": [
-                  "**/node_modules/**"
-                ]
-              }
-            },
-            "test": {
-              "executor": "@nrwl/jest:jest",
-              "options": {
-                "jestConfig": "apps/server/jest.config.js",
-                "tsConfig": "apps/server/tsconfig.spec.json"
               }
             }
           },
@@ -4371,223 +3355,99 @@
             },
             {
               "file": "apps/server/src/app/app.module.ts",
-              "hash": "9f40fbbb0fc54bf2211e2d9aa11c333b9014c766",
-              "deps": [
-                "npm:@nestjs/common"
-              ]
+              "hash": "9f40fbbb0fc54bf2211e2d9aa11c333b9014c766"
             },
             {
               "file": "apps/server/src/app/audit-event.controller.ts",
-              "hash": "6bec8ed21feb774e08753c775e06f2cbf456b1b9",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger"
-              ]
+              "hash": "6bec8ed21feb774e08753c775e06f2cbf456b1b9"
             },
             {
               "file": "apps/server/src/app/auth.strategy.ts",
-              "hash": "09f4fa6d4a54fc003713c50aba53f29184d5f64e",
-              "deps": [
-                "npm:passport-http-bearer",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/common",
-                "npm:jwks-rsa",
-                "npm:jsonwebtoken"
-              ]
+              "hash": "09f4fa6d4a54fc003713c50aba53f29184d5f64e"
             },
             {
               "file": "apps/server/src/app/base-fhir.controller.spec.ts",
-              "hash": "5f7b59a02ae6e89faea1944b998000667b0b2993",
-              "deps": [
-                "npm:@nestjs/testing",
-                "npm:@nestjs/common",
-                "tof-lib",
-                "npm:nock"
-              ]
+              "hash": "5f7b59a02ae6e89faea1944b998000667b0b2993"
             },
             {
               "file": "apps/server/src/app/base-fhir.controller.ts",
-              "hash": "3ada553b2f63d1b630acfb35d812732415369120",
-              "deps": [
-                "npm:@nestjs/common",
-                "tof-lib",
-                "npm:fs-extra"
-              ]
+              "hash": "3ada553b2f63d1b630acfb35d812732415369120"
             },
             {
               "file": "apps/server/src/app/base.controller.ts",
-              "hash": "8e9b20f3e33ceca64fd1f4f25f49e297d9b1467c",
-              "deps": [
-                "tof-lib",
-                "npm:@nestjs/common"
-              ]
+              "hash": "8e9b20f3e33ceca64fd1f4f25f49e297d9b1467c"
             },
             {
               "file": "apps/server/src/app/capability-statement.controller.ts",
-              "hash": "b801034675f964ef41ce9a867fca15140ce1335e",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger"
-              ]
+              "hash": "b801034675f964ef41ce9a867fca15140ce1335e"
             },
             {
               "file": "apps/server/src/app/code-system.controller.ts",
-              "hash": "9e5e4d6990f9c7b04c4867c350e0b2d328ce2c30",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger"
-              ]
+              "hash": "9e5e4d6990f9c7b04c4867c350e0b2d328ce2c30"
             },
             {
               "file": "apps/server/src/app/config.controller.ts",
-              "hash": "12e8ecdf82f99bffe1ee2b9b74319b2f74093ea8",
-              "deps": [
-                "npm:@nestjs/common",
-                "tof-lib",
-                "npm:@nestjs/swagger"
-              ]
+              "hash": "12e8ecdf82f99bffe1ee2b9b74319b2f74093ea8"
             },
             {
               "file": "apps/server/src/app/config.service.ts",
-              "hash": "baa3ad201821df692cac4fdb6d832ee1552bac90",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:config",
-                "npm:fs-extra",
-                "npm:semver"
-              ]
+              "hash": "baa3ad201821df692cac4fdb6d832ee1552bac90"
             },
             {
               "file": "apps/server/src/app/export.controller.ts",
-              "hash": "d6a9136a86c523de7d5b31298343f8c73eb2d724",
-              "deps": [
-                "npm:@nestjs/common",
-                "tof-lib",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger",
-                "npm:tmp",
-                "npm:nodemailer",
-                "npm:jszip"
-              ]
+              "hash": "d6a9136a86c523de7d5b31298343f8c73eb2d724"
             },
             {
               "file": "apps/server/src/app/export.service.ts",
-              "hash": "b56d67e42424a08289b7171a2b9d56d5b50c0bd3",
-              "deps": [
-                "npm:@nestjs/common"
-              ]
+              "hash": "b56d67e42424a08289b7171a2b9d56d5b50c0bd3"
             },
             {
               "file": "apps/server/src/app/export/bundle.ts",
-              "hash": "3c97c976eb4dfa3ccf3b503de63f6972eff858b2",
-              "deps": [
-                "npm:fhir",
-                "tof-lib",
-                "npm:@nestjs/common"
-              ]
+              "hash": "3c97c976eb4dfa3ccf3b503de63f6972eff858b2"
             },
             {
               "file": "apps/server/src/app/export/html.factory.ts",
-              "hash": "0488fe2cdf17dcc1c1a79c3ca23d1d6f9e44f5c3",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:fhir",
-                "npm:socket.io",
-                "tof-lib"
-              ]
+              "hash": "0488fe2cdf17dcc1c1a79c3ca23d1d6f9e44f5c3"
             },
             {
               "file": "apps/server/src/app/export/html.models.ts",
-              "hash": "41db60f6c7297433e8a9867e324d6c73f969ec68",
-              "deps": [
-                "tof-lib"
-              ]
+              "hash": "41db60f6c7297433e8a9867e324d6c73f969ec68"
             },
             {
               "file": "apps/server/src/app/export/html.r4.ts",
-              "hash": "24f88bf549924867498f6001b147b1e76636e930",
-              "deps": [
-                "tof-lib",
-                "npm:fs-extra"
-              ]
+              "hash": "24f88bf549924867498f6001b147b1e76636e930"
             },
             {
               "file": "apps/server/src/app/export/html.spec.ts",
-              "hash": "9c2f9462b81ed9618a89db556514065c6868f31a",
-              "deps": [
-                "tof-lib"
-              ]
+              "hash": "9c2f9462b81ed9618a89db556514065c6868f31a"
             },
             {
               "file": "apps/server/src/app/export/html.stu3.ts",
-              "hash": "d91846573882595141ff9501fa10302fc85fef70",
-              "deps": [
-                "tof-lib",
-                "npm:fs-extra"
-              ]
+              "hash": "d91846573882595141ff9501fa10302fc85fef70"
             },
             {
               "file": "apps/server/src/app/export/html.ts",
-              "hash": "9699c62e8ec927537f6dbccae0691eb8ce2c7294",
-              "deps": [
-                "npm:fhir",
-                "npm:socket.io",
-                "tof-lib",
-                "npm:@nestjs/common",
-                "npm:fs-extra",
-                "npm:tmp",
-                "npm:vkbeautify",
-                "npm:jszip"
-              ]
+              "hash": "9699c62e8ec927537f6dbccae0691eb8ce2c7294"
             },
             {
               "file": "apps/server/src/app/export/msword.ts",
-              "hash": "d1a6551a4c56ca4ff5fe963cd46c3d067d56523a",
-              "deps": [
-                "npm:docx",
-                "tof-lib"
-              ]
+              "hash": "6ffa8e65644b34230211c4d4cbe8e93bcae22d05"
             },
             {
               "file": "apps/server/src/app/fhir.controller.spec.ts",
-              "hash": "c57deedeb6b1c9523224ee04ebcd16cb45a57a2d",
-              "deps": [
-                "npm:@nestjs/testing",
-                "npm:@nestjs/common",
-                "tof-lib",
-                "npm:nock"
-              ]
+              "hash": "c57deedeb6b1c9523224ee04ebcd16cb45a57a2d"
             },
             {
               "file": "apps/server/src/app/fhir.controller.ts",
-              "hash": "7273a49912dfbd3c275768b763154c968bd5306a",
-              "deps": [
-                "npm:@nestjs/common",
-                "tof-lib",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger",
-                "npm:p-queue"
-              ]
+              "hash": "7273a49912dfbd3c275768b763154c968bd5306a"
             },
             {
               "file": "apps/server/src/app/github.controller.ts",
-              "hash": "5c06ad09f25d45ffce7bbeb423001217d023af3c",
-              "deps": [
-                "npm:@nestjs/common"
-              ]
+              "hash": "5c06ad09f25d45ffce7bbeb423001217d023af3c"
             },
             {
               "file": "apps/server/src/app/group.controller.ts",
-              "hash": "a9091c9d72e93dc36960ffe9966b5a95d4c80b60",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger",
-                "tof-lib"
-              ]
+              "hash": "a9091c9d72e93dc36960ffe9966b5a95d4c80b60"
             },
             {
               "file": "apps/server/src/app/helper.spec.ts",
@@ -4595,44 +3455,19 @@
             },
             {
               "file": "apps/server/src/app/helper.ts",
-              "hash": "aac67e4cc19605867a6115b35bc1d74030b6615d",
-              "deps": [
-                "npm:fhir",
-                "npm:fs-extra",
-                "npm:jszip",
-                "npm:@nestjs/common",
-                "tof-lib"
-              ]
+              "hash": "aac67e4cc19605867a6115b35bc1d74030b6615d"
             },
             {
               "file": "apps/server/src/app/implementation-guide.controller.ts",
-              "hash": "19d54234f1c08ffcaa9f64823a96731c891ea6b6",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger",
-                "tof-lib"
-              ]
+              "hash": "19d54234f1c08ffcaa9f64823a96731c891ea6b6"
             },
             {
               "file": "apps/server/src/app/import.controller.ts",
-              "hash": "634927429b0be8c5c297a8363fc764046f479a1b",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger",
-                "tof-lib"
-              ]
+              "hash": "634927429b0be8c5c297a8363fc764046f479a1b"
             },
             {
               "file": "apps/server/src/app/manage.controller.ts",
-              "hash": "114bd76db06482ec4d7088814e50b6477b85b660",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger",
-                "tof-lib"
-              ]
+              "hash": "114bd76db06482ec4d7088814e50b6477b85b660"
             },
             {
               "file": "apps/server/src/app/models/announcement-service-config.ts",
@@ -4668,91 +3503,43 @@
             },
             {
               "file": "apps/server/src/app/models/socket-connection.ts",
-              "hash": "591683b0ba60d4032d42478f955a7a39c880c872",
-              "deps": [
-                "tof-lib"
-              ]
+              "hash": "591683b0ba60d4032d42478f955a7a39c880c872"
             },
             {
               "file": "apps/server/src/app/models/tof-request.ts",
-              "hash": "9e07f76b4156c154279be31a6a3a220937644441",
-              "deps": [
-                "npm:fhir",
-                "npm:socket.io",
-                "tof-lib"
-              ]
+              "hash": "9e07f76b4156c154279be31a6a3a220937644441"
             },
             {
               "file": "apps/server/src/app/operation-definition.controller.ts",
-              "hash": "79534e0048b3bf5df2373e4f72b8a82cf2363717",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger"
-              ]
+              "hash": "79534e0048b3bf5df2373e4f72b8a82cf2363717"
             },
             {
               "file": "apps/server/src/app/practitioner.controller.ts",
-              "hash": "08e810ae86f5e0ed9ab334ed46b95893cd722060",
-              "deps": [
-                "npm:@nestjs/common",
-                "tof-lib",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger"
-              ]
+              "hash": "08e810ae86f5e0ed9ab334ed46b95893cd722060"
             },
             {
               "file": "apps/server/src/app/questionnaire.controller.ts",
-              "hash": "93ccdcea37430e305196d63dfbdb2361b758d9d5",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger"
-              ]
+              "hash": "93ccdcea37430e305196d63dfbdb2361b758d9d5"
             },
             {
               "file": "apps/server/src/app/server.decorators.ts",
-              "hash": "b69ace8a1e228c9e9db3437753b5a51b9feddc96",
-              "deps": [
-                "npm:@nestjs/common"
-              ]
+              "hash": "b69ace8a1e228c9e9db3437753b5a51b9feddc96"
             },
             {
               "file": "apps/server/src/app/structure-definition.controller.ts",
-              "hash": "f68759450a9ec6bcf8003fa24b7c67c1dd23c501",
-              "deps": [
-                "npm:@nestjs/common",
-                "tof-lib",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger",
-                "npm:fhir"
-              ]
+              "hash": "f68759450a9ec6bcf8003fa24b7c67c1dd23c501"
             },
             {
               "file": "apps/server/src/app/test.helper.ts",
-              "hash": "c357a8eb793951ab7f914c7f282826e58b075ddb",
-              "deps": [
-                "tof-lib",
-                "npm:nock"
-              ]
+              "hash": "c357a8eb793951ab7f914c7f282826e58b075ddb"
             },
             {
               "file": "apps/server/src/app/tof-logger.ts",
-              "hash": "ed4e89b833abf77ca008e47a4145250e9915c981",
-              "deps": [
-                "npm:@nestjs/common",
-                "npm:fs-extra"
-              ]
+              "hash": "ed4e89b833abf77ca008e47a4145250e9915c981"
             },
             {
               "file": "apps/server/src/app/value-set.controller.ts",
-              "hash": "1c438f651e5682dbb9feadcc8cb2588b18e9e094",
-              "deps": [
-                "npm:@nestjs/common",
-                "tof-lib",
-                "npm:@nestjs/passport",
-                "npm:@nestjs/swagger"
-              ]
+              "hash": "1c438f651e5682dbb9feadcc8cb2588b18e9e094"
             },
             {
               "file": "apps/server/src/assets/.gitkeep",
@@ -4788,31 +3575,15 @@
             },
             {
               "file": "apps/server/src/main.ts",
-              "hash": "d982af54294e10a9edfcf1d450a5b2fd6d2a70e1",
-              "deps": [
-                "npm:@nestjs/core",
-                "npm:socket.io",
-                "npm:@nestjs/common",
-                "npm:@nestjs/swagger",
-                "npm:compression",
-                "npm:fs-extra",
-                "npm:@nestjs/platform-express",
-                "npm:hpropagate"
-              ]
+              "hash": "d982af54294e10a9edfcf1d450a5b2fd6d2a70e1"
             },
             {
               "file": "apps/server/src/not-found-exception-filter.ts",
-              "hash": "05cbf69eaa44872f183218287e5128627ae72516",
-              "deps": [
-                "npm:@nestjs/common"
-              ]
+              "hash": "05cbf69eaa44872f183218287e5128627ae72516"
             },
             {
               "file": "apps/server/src/not-found-exception.ts",
-              "hash": "13168b567c7aa21887600378a26c77df1d460c3a",
-              "deps": [
-                "npm:@nestjs/common"
-              ]
+              "hash": "13168b567c7aa21887600378a26c77df1d460c3a"
             },
             {
               "file": "apps/server/tsconfig.app.json",
@@ -4899,68 +3670,35 @@
             },
             {
               "file": "apps/tools/src/app/baseTools.ts",
-              "hash": "5a6c58f6e74090b0b04e8b8323ab672f649649bf",
-              "deps": [
-                "tof-lib",
-                "npm:request-promise",
-                "npm:@nestjs/common",
-                "npm:fhir",
-                "server"
-              ]
+              "hash": "5a6c58f6e74090b0b04e8b8323ab672f649649bf"
             },
             {
               "file": "apps/tools/src/app/change-extension-url.ts",
-              "hash": "8939b46fe46221c9374f0562e1164919eed6acf8",
-              "deps": [
-                "tof-lib"
-              ]
+              "hash": "8939b46fe46221c9374f0562e1164919eed6acf8"
             },
             {
               "file": "apps/tools/src/app/change-id.ts",
-              "hash": "493d2bd4ffddca7e136bca4ea92018e86d74b6d8",
-              "deps": [
-                "npm:fhir",
-                "tof-lib"
-              ]
+              "hash": "493d2bd4ffddca7e136bca4ea92018e86d74b6d8"
             },
             {
               "file": "apps/tools/src/app/main.ts",
-              "hash": "31bda3aee0ebd07559eba8bc2b52bcefd5c2589a",
-              "deps": [
-                "npm:yargs",
-                "npm:@ng-bootstrap/ng-bootstrap"
-              ]
+              "hash": "31bda3aee0ebd07559eba8bc2b52bcefd5c2589a"
             },
             {
               "file": "apps/tools/src/app/migrate.ts",
-              "hash": "f507429e11e33b08250bbb451356bd311153f58c",
-              "deps": [
-                "tof-lib",
-                "npm:fhir"
-              ]
+              "hash": "f507429e11e33b08250bbb451356bd311153f58c"
             },
             {
               "file": "apps/tools/src/app/permissions.ts",
-              "hash": "d2dd2a2dba1af817ef21ed7480d8c3d1b871affd",
-              "deps": [
-                "tof-lib",
-                "npm:request-promise"
-              ]
+              "hash": "d2dd2a2dba1af817ef21ed7480d8c3d1b871affd"
             },
             {
               "file": "apps/tools/src/app/populateFromAuth0.ts",
-              "hash": "8a7836de7c78a7ac7a6687c2fea7f27d0ed778d0",
-              "deps": [
-                "tof-lib",
-                "npm:request-promise"
-              ]
+              "hash": "8a7836de7c78a7ac7a6687c2fea7f27d0ed778d0"
             },
             {
               "file": "apps/tools/src/app/removeExtensions.ts",
-              "hash": "f60821c56a1cd846da89c86321d9b9443b1c555d",
-              "deps": [
-                "tof-lib"
-              ]
+              "hash": "f60821c56a1cd846da89c86321d9b9443b1c555d"
             },
             {
               "file": "apps/tools/src/app/removeExtras.ts",
@@ -4968,10 +3706,7 @@
             },
             {
               "file": "apps/tools/src/app/user-list.ts",
-              "hash": "2c1c69454311e199449aeda9471cd202e9bc64a1",
-              "deps": [
-                "tof-lib"
-              ]
+              "hash": "2c1c69454311e199449aeda9471cd202e9bc64a1"
             },
             {
               "file": "apps/tools/src/assets/.gitkeep",
@@ -5000,32 +3735,9 @@
     "dependencies": {
       "client-e2e": [],
       "tof-lib": [],
-      "client": [
-        {
-          "source": "client",
-          "target": "tof-lib",
-          "type": "static"
-        }
-      ],
-      "server": [
-        {
-          "source": "server",
-          "target": "tof-lib",
-          "type": "static"
-        }
-      ],
-      "tools": [
-        {
-          "source": "tools",
-          "target": "tof-lib",
-          "type": "static"
-        },
-        {
-          "source": "tools",
-          "target": "server",
-          "type": "static"
-        }
-      ]
+      "client": [],
+      "server": [],
+      "tools": []
     }
   },
   "affectedProjects": [],

@@ -34,7 +34,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as tmp from 'tmp';
 import * as vkbeautify from 'vkbeautify';
-import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 import {ConfigService} from '../config.service';
 import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 import JSZip from 'jszip';

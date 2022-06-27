@@ -1,7 +1,7 @@
 import {BaseFhirController} from './base-fhir.controller';
-import { Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
-import {ITofRequest} from './models/tof-request';
-import {ExpandOptions} from '../../../../libs/tof-lib/src/lib/stu3/expandOptions';
+import {Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
+import type {ITofRequest} from './models/tof-request';
+import type {ExpandOptions} from '../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 import {ValueSet} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AuthGuard} from '@nestjs/passport';
@@ -10,7 +10,7 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {AxiosRequestConfig} from 'axios';
-import { IOperationOutcome } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IOperationOutcome} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Controller('api/valueSet')
 @UseGuards(AuthGuard('bearer'))

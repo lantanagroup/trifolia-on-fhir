@@ -1,8 +1,8 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app/app.module';
 import {Response} from 'express';
-import {ITofRequest} from './app/models/tof-request';
-import socketIo from 'socket.io';
+import type {ITofRequest} from './app/models/tof-request';
+import {Server} from 'socket.io';
 import {BadRequestException} from '@nestjs/common';
 import {ISocketConnection} from './app/models/socket-connection';
 import {NotFoundExceptionFilter} from './not-found-exception-filter';
@@ -12,7 +12,7 @@ import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as fs from 'fs-extra';
-import * as modulePackage from '../../../package.json';
+import {version as modulePackageVersion} from '../../../package.json';
 import {ConfigService} from './app/config.service';
 import {NestExpressApplication} from '@nestjs/platform-express';
 import hpropagate from 'hpropagate';
@@ -103,7 +103,7 @@ const parseFhirBody = (req: ITofRequest, res: Response, next) => {
 };
 
 const initSocket = (app) => {
-  io = socketIo(app.getHttpServer());
+  io = new Server(app.getHttpServer());
 
   io.on('connection', (socket) => {
     logger.log(`Client (id: ${socket.client.id}) connected to socket`);
@@ -230,7 +230,7 @@ async function bootstrap() {
 
   const options = new DocumentBuilder()
     .setTitle('Trifolia-on-FHIR API')
-    .setVersion(modulePackage.version)
+    .setVersion(modulePackageVersion)
     .setBasePath('/api')
     .addOAuth2({
       type: 'oauth2',

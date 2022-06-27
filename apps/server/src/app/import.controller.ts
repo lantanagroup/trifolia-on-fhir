@@ -18,7 +18,7 @@ import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {TofNotFoundException} from '../not-found-exception';
 import {AxiosRequestConfig} from 'axios';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {
   ValueSet, ValueSetComposeComponent,
   ValueSetConceptReferenceComponent,

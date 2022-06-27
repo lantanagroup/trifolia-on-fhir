@@ -6,7 +6,7 @@ import {ConfigService} from './config.service';
 import {createBundle, createTestUser, nockDelete, nockPermissions} from './test.helper';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {RequestHeaders} from './server.decorators';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 // @ts-ignore
 import nock = require('nock');
 // @ts-ignore

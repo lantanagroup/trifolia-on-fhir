@@ -30,7 +30,7 @@ import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAudi
 import {Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide, OperationOutcome} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {default as PQueue} from 'p-queue';
 import {IBundle, IImplementationGuide, IOperationOutcome, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import os from 'os';

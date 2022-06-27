@@ -7,13 +7,11 @@
       "root": "apps/server",
       "sourceRoot": "apps/server/src",
       "projectType": "application",
-      "prefix": "server",
-      "schematics": {},
       "architect": {
         "build": {
           "builder": "@nrwl/node:webpack",
+          "outputs": ["{options.outputPath}"],
           "options": {
-            "target": "server",
             "outputPath": "dist/apps/server",
             "main": "apps/server/src/main.ts",
             "tsConfig": "apps/server/tsconfig.app.json",
@@ -43,26 +41,9 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/node:execute",
+          "builder": "@nrwl/node:node",
           "options": {
             "buildTarget": "server:build"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/server/tsconfig.app.json",
-              "apps/server/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/server/jest.config.js",
-            "tsConfig": "apps/server/tsconfig.spec.json"
           }
         }
       }
