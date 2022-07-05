@@ -1,132 +1,131 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-  <a class="navbar-brand" routerLink="/">
-    <!--suppress HtmlUnknownTarget -->
-    <img src="assets/trifoliaonfhir_64.png" alt="Trifolia-on-FHIR" title="Trifolia-on-FHIR"/>
-    <span>Trifolia-on-FHIR</span>
-  </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-          aria-label="Toggle navigation" #navbarToggler>
-    <span class="navbar-toggler-icon"></span>
-  </button>
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/">
+      <!--suppress HtmlUnknownTarget -->
+      <img src="assets/trifoliaonfhir_64.png" alt="Trifolia-on-FHIR" title="Trifolia-on-FHIR"/>
+      <span>Trifolia-on-FHIR</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation" #navbarToggler>
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-  <div class="navbar-collapse collapse" id="navbarSupportedContent" #navbarCollapse>
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="homeMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          File <span class="sr-only">(current)</span>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="homeMenu">
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/home">
-            <i class="fa fa-home"></i> Home
+    <div class="navbar-collapse collapse" id="navbarSupportedContent" #navbarCollapse>
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item" ngbDropdown>
+          <a class="nav-link" ngbDropdownToggle href="javascript:void(0)" id="homeMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            File <span class="sr-only">(current)</span>
           </a>
-          <a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/implementation-guide/new" *ngIf="authService.isAuthenticated() && !configService.project" title="Create a new project (implementation guide)">
-            <i class="fa fa-plus"></i> New Project
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)" routerLink="/{{configService.baseSessionUrl}}/implementation-guide/open" *ngIf="authService.isAuthenticated() && !configService.project" title="Open/select an implementation guide project to work on">
-            <i class="far fa-folder"></i> Open project
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)" (click)="closeProject()" *ngIf="authService.isAuthenticated() && configService.project" title="Close the currently opened project implementation guide">
-            <i class="fa fa-window-close"></i> Close project
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)" (click)="openFile()" title="Open a resource file from your computer">
-            <i class="fa fa-upload"></i> Open from computer
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)" (click)="editSettings()" title="Change application settings">
-            <i class="fa fa-cog"></i> Settings
-          </a>
-        </div>
-      </li>
-      <li class="nav-item dropdown" *ngIf="authService.isAuthenticated() && configService.project">
-        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="browseMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Browse/Edit
-        </a>
-        <div class="dropdown-menu" aria-labelledby="browseMenu">
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/implementation-guide/view" *ngIf="configService.project">View IG</a>
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/implementation-guide" *ngIf="configService.project">Edit IG</a>
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/bulk-edit" *ngIf="configService.project">Bulk Edit IG</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/structure-definition">Profiles/Extensions</a>
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/capability-statement">Capability Statements</a>
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/operation-definition">Operation Definition</a>
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/value-set">Value Sets</a>
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/code-system">Code Systems</a>
-          <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/questionnaire">Questionnaires</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/examples">Examples</a>
-          <a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/other-resources">Other Resources</a>
-        </div>
-      </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated()">
-        <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/import">Import</a>
-      </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.project">
-        <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/export">Export</a>
-      </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.project">
-        <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/publish">Publish</a>
-      </li>
-      <li class="nav-item dropdown" *ngIf="authService.userProfile && authService.userProfile.isAdmin">
-        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="manageMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Manage <span class="sr-only">(current)</span>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="manageMenu">
-          <a class="dropdown-item" routerLink="{{configService.fhirServer}}/manage/user">
-            Users
-          </a>
-          <a class="dropdown-item" routerLink="{{configService.fhirServer}}/manage/queue">
-            Publishing Queue
-          </a>
-        </div>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="helpMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Help <span class="sr-only">(current)</span>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="helpMenu">
-          <!--suppress HtmlUnknownTarget -->
-          <a class="dropdown-item" href="/help/index.html" target="tof-help">
-            <i class="fa fa-book"></i> Documentation
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)" (click)="supportButtonClicked()">
-            <i class="fa fa-question"></i> Request Support
-          </a>
-        </div>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item" *ngIf="configService.project">
-          <a class="nav-link" href="javascript:void(0)" title="The currently selected project">
-            <div class="badge badge-info">{{configService.project.name || configService.project.implementationGuideId}}</div>
-          </a>
+          <div ngbDropdownMenu aria-labelledby="homeMenu">
+            <button ngbDropdownItem routerLink="{{configService.baseSessionUrl}}/home">
+              <i class="fa fa-home"></i> Home
+            </button>
+            <button ngbDropdownItem routerLink="/{{configService.baseSessionUrl}}/implementation-guide/new" *ngIf="authService.isAuthenticated() && !configService.project" title="Create a new project (implementation guide)">
+              <i class="fa fa-plus"></i> New Project
+            </button>
+            <button ngbDropdownItem href="javascript:void(0)" routerLink="/{{configService.baseSessionUrl}}/implementation-guide/open" *ngIf="authService.isAuthenticated() && !configService.project" title="Open/select an implementation guide project to work on">
+              <i class="far fa-folder"></i> Open project
+            </button>
+            <button ngbDropdownItem href="javascript:void(0)" (click)="closeProject()" *ngIf="authService.isAuthenticated() && configService.project" title="Close the currently opened project implementation guide">
+              <i class="fa fa-window-close"></i> Close project
+            </button>
+            <button ngbDropdownItem href="javascript:void(0)" (click)="openFile()" title="Open a resource file from your computer">
+              <i class="fa fa-upload"></i> Open from computer
+            </button>
+            <button ngbDropdownItem href="javascript:void(0)" (click)="editSettings()" title="Change application settings">
+              <i class="fa fa-cog"></i> Settings
+            </button>
+          </div>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0)" (click)="editSettings()" title="The currently selected FHIR server">
-            <div class="badge badge-info">{{fhirServerDisplay}}</div>
-          </a>
-        </li>
-        <li class="nav-item" *ngIf="!authService.isAuthenticated()">
-          <a class="nav-link" href="javascript:void(0)" (click)="authService.login()">Login</a>
+        <li class="nav-item" ngbDropdown *ngIf="authService.isAuthenticated() && configService.project">
+          <a class="nav-link" ngbDropdownToggle href="javascript:void(0)" id="browseMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Browse/Edit</a>
+          <div ngbDropdownMenu aria-labelledby="browseMenu">
+            <button ngbDropdownItem routerLink="{{configService.baseSessionUrl}}/implementation-guide/view" *ngIf="configService.project">View IG</button>
+            <button ngbDropdownItem routerLink="{{configService.baseSessionUrl}}/implementation-guide" *ngIf="configService.project">Edit IG</button>
+            <button ngbDropdownItem routerLink="{{configService.baseSessionUrl}}/bulk-edit" *ngIf="configService.project">Bulk Edit IG</button>
+            <div class="dropdown-divider"></div>
+            <button ngbDropdownItem routerLink="{{configService.baseSessionUrl}}/structure-definition">Profiles/Extensions</button>
+            <button ngbDropdownItem routerLink="{{configService.baseSessionUrl}}/capability-statement">Capability Statements</button>
+            <button ngbDropdownItem routerLink="{{configService.baseSessionUrl}}/operation-definition">Operation Definition</button>
+            <button ngbDropdownItem routerLink="{{configService.baseSessionUrl}}/value-set">Value Sets</button>
+            <button ngbDropdownItem routerLink="{{configService.baseSessionUrl}}/code-system">Code Systems</button>
+            <button ngbDropdownItem routerLink="{{configService.baseSessionUrl}}/questionnaire">Questionnaires</button>
+            <div class="dropdown-divider"></div>
+            <button ngbDropdownItem routerLink="/{{configService.baseSessionUrl}}/examples">Examples</button>
+            <button ngbDropdownItem routerLink="/{{configService.baseSessionUrl}}/other-resources">Other Resources</button>
+          </div>
         </li>
         <li class="nav-item" *ngIf="authService.isAuthenticated()">
-          <a class="nav-link" routerLink="/{{configService.fhirServer}}/users/me">
-            <img class="profile-picture" *ngIf="authService.userProfile && authService.userProfile.picture" src="{{authService.userProfile.picture}}" alt="Your profile picture"/>
-            {{displayName}}
-          </a>
+          <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/import">Import</a>
         </li>
-        <li class="nav-item nav-icons">
-          <a class="nav-link" href="javascript:void(0)" (click)="authService.logout()" title="Logout" *ngIf="authService.isAuthenticated()">
-            <i class="fas fa-sign-out-alt"></i>
+        <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.project">
+          <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/export">Export</a>
+        </li>
+        <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.project">
+          <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/publish">Publish</a>
+        </li>
+        <li class="nav-item dropdown" *ngIf="authService.userProfile && authService.userProfile.isAdmin">
+          <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="manageMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Manage <span class="sr-only">(current)</span>
           </a>
-          <a class="nav-link" href="javascript:void(0)" (click)="githubService.logout()" title="Logout of GitHub within ToF" *ngIf="githubService.token">
-            <i class="fab fa-github"></i>
+          <ul class="dropdown-menu" aria-labelledby="manageMenu">
+            <li><a class="dropdown-item" routerLink="{{configService.fhirServer}}/manage/user">Users</a></li>
+            <li><a class="dropdown-item" routerLink="{{configService.fhirServer}}/manage/queue">Publishing Queue</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="helpMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Help <span class="sr-only">(current)</span>
           </a>
-          <a class="nav-link" href="javascript:void(0)" (click)="startIntro()" title="Get information about how to use the current page">
-            <i class="fas fa-info"></i>
-          </a>
+          <ul class="dropdown-menu" aria-labelledby="helpMenu">
+            <li>
+              <a class="dropdown-item" href="/help/index.html" target="tof-help">
+                <i class="fa fa-book"></i> Documentation
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="javascript:void(0)" (click)="supportButtonClicked()">
+                <i class="fa fa-question"></i> Request Support
+              </a>
+            </li>
+          </ul>
         </li>
       </ul>
-    </form>
+      <form class="d-flex">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item" *ngIf="configService.project">
+            <a class="nav-link" href="javascript:void(0)" title="The currently selected project">
+              <div class="badge bg-info">{{configService.project.name || configService.project.implementationGuideId}}</div>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0)" (click)="editSettings()" title="The currently selected FHIR server">
+              <div class="badge bg-info">{{fhirServerDisplay}}</div>
+            </a>
+          </li>
+          <li class="nav-item" *ngIf="!authService.isAuthenticated()">
+            <a class="nav-link" href="javascript:void(0)" (click)="authService.login()">Login</a>
+          </li>
+          <li class="nav-item" *ngIf="authService.isAuthenticated()">
+            <a class="nav-link" routerLink="/{{configService.fhirServer}}/users/me">
+              <img class="profile-picture" *ngIf="authService.userProfile && authService.userProfile.picture" src="{{authService.userProfile.picture}}" alt="Your profile picture"/>
+              {{displayName}}
+            </a>
+          </li>
+          <li class="nav-item nav-icons">
+            <a class="nav-link" href="javascript:void(0)" (click)="authService.logout()" title="Logout" *ngIf="authService.isAuthenticated()">
+              <i class="fas fa-sign-out-alt"></i>
+            </a>
+            <a class="nav-link" href="javascript:void(0)" (click)="githubService.logout()" title="Logout of GitHub within ToF" *ngIf="githubService.token">
+              <i class="fab fa-github"></i>
+            </a>
+            <a class="nav-link" href="javascript:void(0)" (click)="startIntro()" title="Get information about how to use the current page">
+              <i class="fas fa-info"></i>
+            </a>
+          </li>
+        </ul>
+      </form>
+    </div>
   </div>
 </nav>
 

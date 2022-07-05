@@ -900,6 +900,8 @@ export class FhirController extends BaseController {
     @User() user: ITofUser,
     @Body() body?) {
 
+    console.log('test');
+
     const shouldRemovePermissions = headers['shouldremovepermissions'] ? headers['shouldremovepermissions'].toLowerCase() === 'true' : true;
     const applyContextPermissions = url.indexOf('applyContextPermissions=true') > -1;
     const results = await this.proxy(url, headers, method, fhirServerBase, fhirServerVersion, user, body, shouldRemovePermissions, applyContextPermissions);

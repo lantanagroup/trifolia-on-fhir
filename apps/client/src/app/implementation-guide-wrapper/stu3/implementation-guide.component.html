@@ -4,8 +4,8 @@
 
 <div class="ig-main" *ngIf="implementationGuide">
   <h2>
-    {{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
-    <span class="badge badge-danger" *ngIf="isDirty">Changed!</span>
+    {{implementationGuide.name || 'no-name'}} <span class="badge bg-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
+    <span class="badge bg-danger" *ngIf="isDirty">Changed!</span>
   </h2>
   <ul ngbNav [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbNav">
     <li ngbNavItem id="general">

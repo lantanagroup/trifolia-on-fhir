@@ -254,7 +254,7 @@
             },
             {
               "file": "libs/tof-lib/src/lib/fhirHelper.ts",
-              "hash": "887e2a4ec5bdaf9be2a5f40bbc0124948ef60b85"
+              "hash": "9e78cb0546c085746c27bc7362f55ae1d8466d07"
             },
             {
               "file": "libs/tof-lib/src/lib/fhirInterfaces.ts",
@@ -472,7 +472,7 @@
             },
             {
               "file": "apps/client/src/app/app.component.html",
-              "hash": "abc2faf14d379d30f3d5e2cdb8cf8203242ad793"
+              "hash": "83b05aa801c623388c1c31b81d587a3b6473945b"
             },
             {
               "file": "apps/client/src/app/app.component.ts",
@@ -1940,7 +1940,7 @@
             },
             {
               "file": "apps/client/src/app/shared/auth.service.ts",
-              "hash": "57ebe3b156febd5424c2d10823359aef0fb6c2ce"
+              "hash": "97702e1d6a4d51a0071877862c6da95b03174666"
             },
             {
               "file": "apps/client/src/app/shared/capability-statement.service.ts",
@@ -3319,7 +3319,14 @@
                 "main": "apps/server/src/main.ts",
                 "tsConfig": "apps/server/tsconfig.app.json",
                 "assets": [
-                  "apps/server/src/assets"
+                  "apps/server/src/assets",
+                  "apps/server/src/config",
+                  "apps/server/src/igs",
+                  {
+                    "glob": "**/*",
+                    "input": "libs/tof-lib/src/assets",
+                    "output": "./assets"
+                  }
                 ]
               },
               "configurations": {
@@ -3367,15 +3374,15 @@
             },
             {
               "file": "apps/server/src/app/base-fhir.controller.spec.ts",
-              "hash": "5f7b59a02ae6e89faea1944b998000667b0b2993"
+              "hash": "5f0a2035c08b2b397529b82a07678c6b9749006e"
             },
             {
               "file": "apps/server/src/app/base-fhir.controller.ts",
-              "hash": "3ada553b2f63d1b630acfb35d812732415369120"
+              "hash": "9ec5d0ec3a974b15869ee1160f7ff9731ec6e57a"
             },
             {
               "file": "apps/server/src/app/base.controller.ts",
-              "hash": "8e9b20f3e33ceca64fd1f4f25f49e297d9b1467c"
+              "hash": "392272064617515b74444da210240b4391c4421a"
             },
             {
               "file": "apps/server/src/app/capability-statement.controller.ts",
@@ -3387,7 +3394,7 @@
             },
             {
               "file": "apps/server/src/app/config.controller.ts",
-              "hash": "12e8ecdf82f99bffe1ee2b9b74319b2f74093ea8"
+              "hash": "d7ae687448b2537ea9899b62f8ccf372267269bf"
             },
             {
               "file": "apps/server/src/app/config.service.ts",
@@ -3395,7 +3402,7 @@
             },
             {
               "file": "apps/server/src/app/export.controller.ts",
-              "hash": "d6a9136a86c523de7d5b31298343f8c73eb2d724"
+              "hash": "306a203d50e4a8d13047f053924d188cfbb3bef0"
             },
             {
               "file": "apps/server/src/app/export.service.ts",
@@ -3407,7 +3414,7 @@
             },
             {
               "file": "apps/server/src/app/export/html.factory.ts",
-              "hash": "0488fe2cdf17dcc1c1a79c3ca23d1d6f9e44f5c3"
+              "hash": "6c9cd54a95be2f025e355baf1235fb618a50838f"
             },
             {
               "file": "apps/server/src/app/export/html.models.ts",
@@ -3427,11 +3434,11 @@
             },
             {
               "file": "apps/server/src/app/export/html.ts",
-              "hash": "9699c62e8ec927537f6dbccae0691eb8ce2c7294"
+              "hash": "b231716c2cf693c646a5e402bb4f61ffe71b3f0f"
             },
             {
               "file": "apps/server/src/app/export/msword.ts",
-              "hash": "6ffa8e65644b34230211c4d4cbe8e93bcae22d05"
+              "hash": "d1a6551a4c56ca4ff5fe963cd46c3d067d56523a"
             },
             {
               "file": "apps/server/src/app/fhir.controller.spec.ts",
@@ -3439,7 +3446,7 @@
             },
             {
               "file": "apps/server/src/app/fhir.controller.ts",
-              "hash": "7273a49912dfbd3c275768b763154c968bd5306a"
+              "hash": "6b8157a9012236b89cca4c2f91d3f0dab7e48267"
             },
             {
               "file": "apps/server/src/app/github.controller.ts",
@@ -3447,7 +3454,7 @@
             },
             {
               "file": "apps/server/src/app/group.controller.ts",
-              "hash": "a9091c9d72e93dc36960ffe9966b5a95d4c80b60"
+              "hash": "d8b1238b450f8b05e4abc16eb3b8707a98b3e49c"
             },
             {
               "file": "apps/server/src/app/helper.spec.ts",
@@ -3459,15 +3466,15 @@
             },
             {
               "file": "apps/server/src/app/implementation-guide.controller.ts",
-              "hash": "19d54234f1c08ffcaa9f64823a96731c891ea6b6"
+              "hash": "0f89ca99adfa40fda0c6ab917066c3e954c701d9"
             },
             {
               "file": "apps/server/src/app/import.controller.ts",
-              "hash": "634927429b0be8c5c297a8363fc764046f479a1b"
+              "hash": "cd74a5aa3664511ead4d5ba68865838606af7f13"
             },
             {
               "file": "apps/server/src/app/manage.controller.ts",
-              "hash": "114bd76db06482ec4d7088814e50b6477b85b660"
+              "hash": "a21f132582a2d7a9446b49cef5721903333e327f"
             },
             {
               "file": "apps/server/src/app/models/announcement-service-config.ts",
@@ -3507,7 +3514,7 @@
             },
             {
               "file": "apps/server/src/app/models/tof-request.ts",
-              "hash": "9e07f76b4156c154279be31a6a3a220937644441"
+              "hash": "3db79cfe1bb4d8ab7023c07d80158843f9072562"
             },
             {
               "file": "apps/server/src/app/operation-definition.controller.ts",
@@ -3515,7 +3522,7 @@
             },
             {
               "file": "apps/server/src/app/practitioner.controller.ts",
-              "hash": "08e810ae86f5e0ed9ab334ed46b95893cd722060"
+              "hash": "d1354a5f5f03108435b481db295794d28dce308b"
             },
             {
               "file": "apps/server/src/app/questionnaire.controller.ts",
@@ -3523,15 +3530,15 @@
             },
             {
               "file": "apps/server/src/app/server.decorators.ts",
-              "hash": "b69ace8a1e228c9e9db3437753b5a51b9feddc96"
+              "hash": "e9c34e23e09ec872e60ce1f3f32f4172357237a6"
             },
             {
               "file": "apps/server/src/app/structure-definition.controller.ts",
-              "hash": "f68759450a9ec6bcf8003fa24b7c67c1dd23c501"
+              "hash": "29ecb9e0a56d941235bd2521bf7d948e92daa52e"
             },
             {
               "file": "apps/server/src/app/test.helper.ts",
-              "hash": "c357a8eb793951ab7f914c7f282826e58b075ddb"
+              "hash": "ef8b8ecc7364a02bc5822cc9ae41df78cdf8cac1"
             },
             {
               "file": "apps/server/src/app/tof-logger.ts",
@@ -3539,7 +3546,7 @@
             },
             {
               "file": "apps/server/src/app/value-set.controller.ts",
-              "hash": "1c438f651e5682dbb9feadcc8cb2588b18e9e094"
+              "hash": "6023ecfe1b62bbb1083e50a9348b98163b88a3a7"
             },
             {
               "file": "apps/server/src/assets/.gitkeep",
@@ -3575,11 +3582,11 @@
             },
             {
               "file": "apps/server/src/main.ts",
-              "hash": "d982af54294e10a9edfcf1d450a5b2fd6d2a70e1"
+              "hash": "7fb7ea73897663ccaf995ceb34e684517f1211bc"
             },
             {
               "file": "apps/server/src/not-found-exception-filter.ts",
-              "hash": "05cbf69eaa44872f183218287e5128627ae72516"
+              "hash": "f30ebc3502bc4e8a875050b63a3afd977b9c538d"
             },
             {
               "file": "apps/server/src/not-found-exception.ts",

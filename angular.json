@@ -27,6 +27,11 @@
             ]
           },
           "configurations": {
+            "development": {
+              "optimization": true,
+              "extractLicenses": true,
+              "sourceMap": true
+            },
             "production": {
               "optimization": true,
               "extractLicenses": true,
@@ -115,6 +120,11 @@
             ]
           },
           "configurations": {
+            "development": {
+              "optimization": true,
+              "extractLicenses": true,
+              "sourceMap": true
+            },
             "production": {
               "fileReplacements": [
                 {
