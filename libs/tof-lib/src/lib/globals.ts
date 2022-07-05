@@ -209,6 +209,7 @@ export class Globals {
     { name: 'Governance and Operations', url: 'http://www.hl7.org/Special/committees/gno' },
     { name: 'Health Care Devices', url: 'http://www.hl7.org/Special/committees/healthcaredevices' },
     { name: 'HL7 Foundation Task Force / Advisory Council', url: 'http://www.hl7.org/Special/committees/foundtf' },
+    { name: 'Human and Social Services', url: 'http://www.hl7.org/Special/committees/hsswg' },
     { name: 'Imaging Integration', url: 'http://www.hl7.org/Special/committees/imagemgt' },
     { name: 'Implementable Technology Specifications', url: 'http://www.hl7.org/Special/committees/xml' },
     { name: 'Infrastructure and Messaging', url: 'http://www.hl7.org/Special/committees/inm' },
