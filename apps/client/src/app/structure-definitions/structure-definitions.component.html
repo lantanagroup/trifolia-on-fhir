@@ -60,7 +60,7 @@
                                                                    *ngIf="structureDefinition.description"
                                                                    [ngbTooltip]="structureDefinition.description"></i>
       <br/>
-      <sub *ngIf="structureDefinition.title">{{structureDefinition.name}}</sub>
+      <sub *ngIf="structureDefinition.title">{{structureDefinition.name}}&nbsp;</sub>
       <sub>{{structureDefinition.url}}</sub>
     </td>
     <td class="experimental">{{structureDefinition.experimental ? "Yes" : "No"}}</td>
