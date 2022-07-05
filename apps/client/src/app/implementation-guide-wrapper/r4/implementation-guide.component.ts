@@ -507,16 +507,16 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     });
   }
 
-  public revert() {
+  public async revert() {
     if (!confirm('Are you sure you want to revert your changes to the implementation guide?')) {
       return;
     }
 
     this.igChanging.emit(true);
-    this.getImplementationGuide();
+    await this.getImplementationGuide();
   }
 
-  private getImplementationGuide() {
+  private async getImplementationGuide() {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
     if (this.isFile) {
@@ -534,20 +534,17 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (!this.isNew) {
       this.implementationGuide = null;
 
-      this.implementationGuideService.getImplementationGuide(implementationGuideId)
-        .subscribe((results: ImplementationGuide | OperationOutcome) => {
-          if (results.resourceType !== 'ImplementationGuide') {
-            this.message = 'The specified implementation guide either does not exist or was deleted';
-            return;
-          }
+      const results = await this.implementationGuideService.getImplementationGuide(implementationGuideId) as ImplementationGuide | OperationOutcome;
+      console.log(results);
 
-          this.implementationGuide = new ImplementationGuide(results);
-          this.igChanging.emit(false);
-          this.initPagesAndGroups();
-        }, (err) => {
-          this.igNotFound = err.status === 404;
-          this.message = getErrorString(err);
-        });
+      if (results.resourceType !== 'ImplementationGuide') {
+        this.message = 'The specified implementation guide either does not exist or was deleted';
+        return;
+      }
+
+      this.implementationGuide = new ImplementationGuide(results);
+      this.igChanging.emit(false);
+      this.initPagesAndGroups();
     }
   }
 
@@ -897,14 +894,14 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
-    this.getImplementationGuide();
+    await this.getImplementationGuide();
 
     // Watch the route parameters to see if the id of the implementation guide changes. Reload if it does.
-    this.route.params.subscribe((params) => {
+    this.route.params.subscribe(async (params) => {
       if (params.implementationGuideId && this.implementationGuide && params.implementationGuideId !== this.implementationGuide.id) {
-        this.getImplementationGuide();
+        await this.getImplementationGuide();
       }
     });
   }

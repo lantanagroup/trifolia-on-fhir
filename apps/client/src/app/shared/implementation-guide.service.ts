@@ -99,7 +99,7 @@ export class ImplementationGuideService {
   }
 
   public getImplementationGuide(id: string) {
-    return this.http.get<STU3ImplementationGuide | STU3OperationOutcome | R4ImplementationGuide | R4OperationOutcome>(`/api/implementationGuide/${id}`);
+    return this.http.get<STU3ImplementationGuide | STU3OperationOutcome | R4ImplementationGuide | R4OperationOutcome>(`/api/implementationGuide/${id}`).toPromise();
   }
 
   public saveImplementationGuide(implementationGuide: IImplementationGuide) {

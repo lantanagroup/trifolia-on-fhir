@@ -889,7 +889,7 @@ export class FhirController extends BaseController {
     return responseBundle;
   }
 
-  @All()
+  @All('*')
   public async proxyRequest(
     @RequestUrl() url: string,
     @Headers() headers: { [key: string]: any },
@@ -900,11 +900,10 @@ export class FhirController extends BaseController {
     @User() user: ITofUser,
     @Body() body?) {
 
-    console.log('test');
-
+    const proxyUrl = url.indexOf('/api/fhir') === 0 ? url.substring('/api/fhir'.length) : url;
     const shouldRemovePermissions = headers['shouldremovepermissions'] ? headers['shouldremovepermissions'].toLowerCase() === 'true' : true;
     const applyContextPermissions = url.indexOf('applyContextPermissions=true') > -1;
-    const results = await this.proxy(url, headers, method, fhirServerBase, fhirServerVersion, user, body, shouldRemovePermissions, applyContextPermissions);
+    const results = await this.proxy(proxyUrl, headers, method, fhirServerBase, fhirServerVersion, user, body, shouldRemovePermissions, applyContextPermissions);
 
     response.status(results.status);
 

@@ -417,7 +417,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       .map(e => new Parameter(e));
   }
 
-  private getImplementationGuide() {
+  private async getImplementationGuide() {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
     if (this.isFile) {
@@ -436,21 +436,17 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     if (!this.isNew) {
       this.implementationGuide = null;
 
-      this.implementationGuideService.getImplementationGuide(implementationGuideId)
-        .subscribe((results: ImplementationGuide | OperationOutcome) => {
-          if (results.resourceType !== 'ImplementationGuide') {
-            this.message = 'The specified implementation guide either does not exist or was deleted';
-            return;
-          }
+      const results = await this.implementationGuideService.getImplementationGuide(implementationGuideId) as ImplementationGuide | OperationOutcome;
 
-          this.implementationGuide = new ImplementationGuide(results);
-          this.igChanging.emit(false);
-          this.initPages();
-          this.initParameters();
-        }, (err) => {
-          this.igNotFound = err.status === 404;
-          this.message = getErrorString(err);
-        });
+      if (results.resourceType !== 'ImplementationGuide') {
+        this.message = 'The specified implementation guide either does not exist or was deleted';
+        return;
+      }
+
+      this.implementationGuide = new ImplementationGuide(results);
+      this.igChanging.emit(false);
+      this.initPages();
+      this.initParameters();
     }
   }
 
@@ -737,20 +733,20 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     this.initPage(this.implementationGuide.page);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     //this.isDirty = false;
-    this.navSubscription = this.router.events.subscribe((e: any) => {
+    this.navSubscription = this.router.events.subscribe(async (e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/implementation-guide/')) {
-        this.getImplementationGuide();
+        await this.getImplementationGuide();
       }
     });
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
-    this.getImplementationGuide();
+    await this.getImplementationGuide();
 
     // Watch the route parameters to see if the id of the implementation guide changes. Reload if it does.
-    this.route.params.subscribe((params) => {
+    this.route.params.subscribe(async (params) => {
       if (params.implementationGuideId && this.implementationGuide && params.implementationGuideId !== this.implementationGuide.id) {
-        this.getImplementationGuide();
+        await this.getImplementationGuide();
       }
     });
   }

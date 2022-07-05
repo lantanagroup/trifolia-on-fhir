@@ -273,19 +273,14 @@ export class ExportComponent implements OnInit {
     }
 
     if (this.options.implementationGuideId) {
-      this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
-        .subscribe((implementationGuide: ImplementationGuide) => {
-          this.implementationGuideChanged(implementationGuide);
-        }, (err) => this.message = getErrorString(err));
+      const implementationGuide = await this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId) as ImplementationGuide;
+      await this.implementationGuideChanged(implementationGuide);
     }
 
     await this.templateChanged();
 
     if (this.options.implementationGuideId) {
-      this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
-        .subscribe((implementationGuide: ImplementationGuide) => {
-          this.selectedImplementationGuide = implementationGuide;
-        }, (err) => this.message = getErrorString(err));
+      this.selectedImplementationGuide = await this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId) as ImplementationGuide
     }
   }
 }

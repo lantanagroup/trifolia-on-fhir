@@ -94,7 +94,7 @@ export class BulkEditComponent implements OnInit {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
     if (implementationGuideId) {
-      const ig = await this.igService.getImplementationGuide(implementationGuideId).toPromise();
+      const ig = await this.igService.getImplementationGuide(implementationGuideId);
 
       if (identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
         this.originalImplementationGuide = new R4ImplementationGuide(ig);

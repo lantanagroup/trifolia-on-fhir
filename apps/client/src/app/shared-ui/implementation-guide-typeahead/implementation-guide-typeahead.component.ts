@@ -65,7 +65,7 @@ export class ImplementationGuideTypeaheadComponent implements OnInit, OnChanges 
 
   async ngOnInit() {
     if (this.implementationGuideId) {
-      this.selectedImplementationGuide = <ImplementationGuide> await this.implementationGuideService.getImplementationGuide(this.implementationGuideId).toPromise();
+      this.selectedImplementationGuide = <ImplementationGuide> await this.implementationGuideService.getImplementationGuide(this.implementationGuideId);
     }
   }
 
@@ -73,7 +73,7 @@ export class ImplementationGuideTypeaheadComponent implements OnInit, OnChanges 
     if (!this.implementationGuideId) {
       this.selectedImplementationGuide = null;
     } else {
-      this.selectedImplementationGuide = <ImplementationGuide> await this.implementationGuideService.getImplementationGuide(this.implementationGuideId).toPromise();
+      this.selectedImplementationGuide = <ImplementationGuide> await this.implementationGuideService.getImplementationGuide(this.implementationGuideId);
     }
   }
 }
