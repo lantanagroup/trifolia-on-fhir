@@ -5,23 +5,27 @@
   </button>
 </div>
 <div class="modal-body">
-  <ul ngbNav orientation="vertical" (tabChange)="tabChanged($event)">
-    <li ngbNavItem id="server" title="Server">
+  <ul ngbNav orientation="vertical" (navChange)="tabChanged($event)" #referenceTabs="ngbNav" class="nav-tabs">
+    <li ngbNavItem="server">
+      <a ngbNavLink>Server</a>
       <ng-template ngbNavContent>
         <ng-container *ngTemplateOutlet="tabContent"></ng-container>
       </ng-template>
     </li>
-    <li ngbNavItem id="dependency" title="Dependency" *ngIf="resourceType === 'StructureDefinition'">
+    <li ngbNavItem="dependency" *ngIf="resourceType === 'StructureDefinition'">
+      <a ngbNavLink>Dependency</a>
       <ng-template ngbNavContent>
         <ng-container *ngTemplateOutlet="tabContent"></ng-container>
       </ng-template>
     </li>
-    <li ngbNavItem id="base" title="Base">
+    <li ngbNavItem="base">
+      <a ngbNavLink>Base</a>
       <ng-template ngbNavContent>
         <ng-container *ngTemplateOutlet="tabContent"></ng-container>
       </ng-template>
     </li>
   </ul>
+  <div [ngbNavOutlet]="referenceTabs"></div>
 </div>
 <div class="modal-footer">
   <div class="pull-left footer-criteria">

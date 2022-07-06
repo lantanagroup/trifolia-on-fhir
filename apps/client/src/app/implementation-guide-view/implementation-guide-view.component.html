@@ -1,12 +1,14 @@
-<ul ngbNav [destroyOnHide]="false">
-  <li ngbNavItem title="Output">
+<ul ngbNav [destroyOnHide]="false" #viewTabs="ngbNav" class="nav-tabs">
+  <li ngbNavItem>
+    <a ngbNavLink>Output</a>
     <ng-template ngbNavContent>
       <a href="{{implementationGuideOutputUrl}}" target="_new">Open in new tab</a>
       <a *ngIf="implementationGuideId" class="nav-link" routerLink="{{configService.baseSessionUrl}}/publish">Publish/Re-Publish</a>
       <iframe *ngIf="implementationGuideId" [src]="implementationGuideOutputUrl | safe"></iframe>
     </ng-template>
   </li>
-  <li ngbNavItem title="QA">
+  <li ngbNavItem>
+    <a ngbNavLink>QA</a>
     <ng-template ngbNavContent>
       <a href="{{implementationGuideQAUrl}}" target="_new">Open in new tab</a>
       <a *ngIf="implementationGuideId" class="nav-link" routerLink="{{configService.baseSessionUrl}}/publish">Publish/Re-Publish</a>
@@ -14,4 +16,4 @@
     </ng-template>
   </li>
 </ul>
--
+<div [ngbNavOutlet]="viewTabs"></div>

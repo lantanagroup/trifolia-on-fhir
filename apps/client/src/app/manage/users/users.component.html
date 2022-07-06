@@ -1,7 +1,8 @@
 <h2>Users</h2>
 
-<ul ngbNav class="nav-tabs">
-  <li ngbNavItem title="Users">
+<ul ngbNav class="nav-tabs" #nav="ngbNav" class="nav-tabs">
+  <li ngbNavItem>
+    <a ngbNavLink>Users</a>
     <ng-template ngbNavContent>
       <table class="table table-striped">
         <thead>
@@ -59,7 +60,8 @@
     </ng-template>
   </li>
 
-  <li ngbNavItem title="Active Users">
+  <li ngbNavItem>
+    <a ngbNavLink>Active Users</a>
     <ng-template ngbNavContent>
       <table class="table table-striped">
         <thead>
@@ -86,10 +88,12 @@
     </ng-template>
   </li>
 
-  <li ngbNavItem title="Broadcast Message">
+  <li ngbNavItem>
+    <a ngbNavLink>Broadcast Message</a>
     <ng-template ngbNavContent>
       <textarea class="form-control" #messageToBroadcast></textarea>
       <button type="button" class="btn btn-primary" (click)="broadcastMessage(messageToBroadcast.value)">Broadcast!</button>
     </ng-template>
   </li>
 </ul>
+<div [ngbNavOutlet]="nav"></div>

@@ -9,11 +9,9 @@
     <!--span class="badge bg-danger" *ngIf="isDirty">Changed!</span-->
   </h2>
 
-  <ul ngbNav (tabChange)="beforeTabChange($event)" [class.has-element-definition]="selectedElement" #sdTabs>
-    <li ngbNavItem id="general">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general-tab'] : undefined">General</span>
-      </ng-template>
+  <ul ngbNav (navChange)="beforeTabChange($event)" [class.has-element-definition]="selectedElement" #sdTabs="ngbNav" class="nav-tabs">
+    <li ngbNavItem="general">
+      <a ngbNavLink [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general-tab'] : undefined">General</a>
       <ng-template ngbNavContent>
         <fieldset>
           <div class="row">
@@ -90,11 +88,8 @@
         </fieldset>
       </ng-template>
     </li>
-
-    <li ngbNavItem id="narrative">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.narrative-tab'] : undefined">Narrative</span>
-      </ng-template>
+    <li ngbNavItem="narrative">
+      <a ngbNavLink [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.narrative-tab'] : undefined">Narrative</a>
       <ng-template ngbNavContent>
         <app-fhir-narrative [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></app-fhir-narrative>
 
@@ -112,8 +107,7 @@
                            (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
       </ng-template>
     </li>
-
-    <li ngbNavItem id="additional">
+    <li ngbNavItem="additional">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.additional-tab'] : undefined">Additional</span>
       </ng-template>
@@ -181,11 +175,8 @@
         </div>
       </ng-template>
     </li>
-
-    <li ngbNavItem id="mapping">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.mappings-tab'] : undefined">Mapping(s)</span>
-      </ng-template>
+    <li ngbNavItem="mapping">
+      <a ngbNavLink [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.mappings-tab'] : undefined">Mapping(s)</a>
       <ng-template ngbNavContent>
         <p>
           <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('mapping')" (ngModelChange)="toggleMappings(); isDirty = true; nameChanged();"/>
@@ -247,11 +238,8 @@
         </table>
       </ng-template>
     </li>
-
-    <li ngbNavItem id="elements" *ngIf="constraintManager && constraintManager.elements">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.elements-tab'] : undefined">Elements</span>
-      </ng-template>
+    <li ngbNavItem="elements" *ngIf="constraintManager && constraintManager.elements">
+      <a ngbNavLink [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.elements-tab'] : undefined">Elements</a>
       <ng-template ngbNavContent>
         <div class="elements">
           <div class="element" *ngFor="let e of constraintManager.elements">
@@ -343,41 +331,43 @@
         </table>
       </ng-template>
     </li>
-
     <!-- Permissions -->
-    <li ngbNavItem id="permissions" *ngIf="configService.config.enableSecurity">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+      <a ngbNavLink>
         Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(structureDefinition)" title="No write permissions for current user specified!"></i>
-      </ng-template>
+      </a>
       <ng-template ngbNavContent>
         <trifolia-fhir-resource-permissions [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></trifolia-fhir-resource-permissions>
       </ng-template>
     </li>
 
     <!-- Validation -->
-    <li ngbNavItem id="validation">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="validation">
+      <a ngbNavLink>
         Validation ({{validation?.messages?.length || 0}})
-      </ng-template>
+      </a>
       <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
     </li>
 
     <!-- RAW JSON/XML -->
-    <li ngbNavItem id="raw" title="RAW">
+    <li ngbNavItem="raw">
+      <a ngbNavLink>RAW</a>
       <ng-template ngbNavContent>
         <app-raw-resource [resource]="structureDefinition" [shown]="sdTabs.activeId === 'raw'"></app-raw-resource>
       </ng-template>
     </li>
 
     <!-- Version History -->
-    <li ngbNavItem id="history" title="History">
+    <li ngbNavItem="history">
+      <a ngbNavLink>History</a>
       <ng-template ngbNavContent>
         <app-resource-history [(resource)]="structureDefinition" (resourceChange)="loadBaseDefinition()" (change)="isDirty = true; nameChanged();"></app-resource-history>
       </ng-template>
     </li>
   </ul>
+  <div [ngbNavOutlet]="sdTabs"></div>
 
   <div class="element-definition card" *ngIf="selectedElement">
     <div class="card-header">

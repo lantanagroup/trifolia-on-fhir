@@ -23,11 +23,9 @@
   </div>
 </div>
 
-<ul ngbNav #tabs>
-  <li ngbNavItem id="options">
-    <ng-template ngbTabTitle>
-      <span [attr.data-intro]="Globals.introText['publish.options']">Options</span>
-    </ng-template>
+<ul ngbNav #tabs="ngbNav" class="nav-tabs">
+  <li ngbNavItem="options">
+    <a ngbNavLink [attr.data-intro]="Globals.introText['publish.options']">Options</a>
     <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-6">
@@ -127,16 +125,15 @@
       </div>
     </ng-template>
   </li>
-  <li ngbNavItem id="status">
-    <ng-template ngbTabTitle>
-      <span [attr.data-intro]="Globals.introText['publish.status']">Status</span>
-    </ng-template>
+  <li ngbNavItem="status">
+    <a ngbNavLink [attr.data-intro]="Globals.introText['publish.status']">Status</a>
     <ng-template ngbNavContent>
       <pre *ngIf="socketOutput" [innerHTML]="socketOutput" routeTransformer #outputEle></pre>
       <input type="checkbox" [(ngModel)]="autoScroll" /> Automatically scroll to bottom when status is updated
     </ng-template>
   </li>
 </ul>
+<div [ngbNavOutlet]="tabs"></div>
 
 <footer class="footer">
   <button type="button" class="btn btn-primary" (click)="publish()" [disabled]="publishDisabled" [attr.data-intro]="Globals.introText['publish.publish-btn']">Publish</button>

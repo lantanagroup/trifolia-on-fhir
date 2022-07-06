@@ -30,31 +30,31 @@
       </select>
     </div>
   </div>
-  <ul ngbNav (tabChange)="changeSubTab($event)" #tabs>
-    <li ngbNavItem id="json/xml">
-      <ng-template ngbTabTitle>JSON/XML</ng-template>
+  <ul ngbNav (navChange)="changeSubTab($event)" #tabs="ngbNav" class="nav-tabs">
+    <li ngbNavItem="json/xml">
+      <a ngbNavLink>JSON/XML</a>
       <ng-template ngbNavContent>
         <textarea class="form-control other" [ngModel]="content" (keyup)="contentHasChanged($event.target.value)" #jsonXmlTextField></textarea>
       </ng-template>
     </li>
-    <li ngbNavItem id="permissions" *ngIf="configService.config.enableSecurity">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+      <a ngbNavLink>
         Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(data)" title="No write permissions for current user specified!"></i>
-      </ng-template>
+      </a>
       <ng-template ngbNavContent>
         <trifolia-fhir-resource-permissions [resource]="data"></trifolia-fhir-resource-permissions>
       </ng-template>
     </li>
-    <li ngbNavItem id="validation">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="validation">
+      <a ngbNavLink>
         Validation <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
-      </ng-template>
+      </a>
       <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
     </li>
     <!-- Version History -->
-    <li ngbNavItem id="history">
+    <li ngbNavItem="history">
       <ng-template ngbTabTitle>
         <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
       </ng-template>
@@ -63,8 +63,7 @@
       </ng-template>
     </li>
   </ul>
-
-
+  <div [ngbNavOutlet]="tabs"></div>
 </div>
 
 <footer class="footer">

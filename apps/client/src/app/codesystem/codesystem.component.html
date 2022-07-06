@@ -297,7 +297,7 @@
   </li>
 
   <!-- Permissions -->
-  <li ngbNavItem id="permissions" *ngIf="configService.config.enableSecurity">
+  <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
     <ng-template ngbTabTitle>
       Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(codeSystem)" title="No write permissions for current user specified!"></i>
     </ng-template>
@@ -307,21 +307,21 @@
   </li>
 
   <!-- Validation -->
-  <li ngbNavItem id="validation" title="Validation">
+  <li ngbNavItem="validation" title="Validation">
     <ng-template ngbNavContent>
       <app-validation-results [results]="validation"></app-validation-results>
     </ng-template>
   </li>
 
   <!-- JSON -->
-  <li ngbNavItem id="raw" title="RAW">
+  <li ngbNavItem="raw" title="RAW">
     <ng-template ngbNavContent>
       <app-raw-resource [resource]="codeSystem" [shown]="csTabs.activeId === 'raw'"></app-raw-resource>
     </ng-template>
   </li>
 
   <!-- Version History -->
-  <li ngbNavItem id="history" title="History" *ngIf="!isNew">
+  <li ngbNavItem="history" title="History" *ngIf="!isNew">
     <ng-template ngbNavContent>
       <app-resource-history [(resource)]="codeSystem"></app-resource-history>
     </ng-template>

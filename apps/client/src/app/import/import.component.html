@@ -4,11 +4,9 @@
   <input type="checkbox" [(ngModel)]="applyContextPermissions" /> Apply permissions of context implementation guide to imported resources.
 </p>
 
-<ul ngbNav #t="ngbNav" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
-  <li ngbNavItem id="file">
-    <ng-template ngbTabTitle>
-      <span [attr.data-intro]="Globals.introText['import.file-tab']">Files</span>
-    </ng-template>
+<ul ngbNav #t="ngbNav" [activeId]="activeTab" (navChange)="activeTab = $event.nextId" class="nav-tabs">
+  <li ngbNavItem="file">
+    <a ngbNavLink [attr.data-intro]="Globals.introText['import.file-tab']">Files</a>
     <ng-template ngbNavContent>
       <div class="alert alert-info">You may select (or drag-and-drop) JSON, XML, XLSX (excel) and image (JPG, PNG, GIF, etc.) files in this window. Excel files will be imported as value sets. See the help documentation for more information.
       </div>
@@ -92,10 +90,8 @@
       </table>
     </ng-template>
   </li>
-  <li ngbNavItem id="text">
-    <ng-template ngbTabTitle>
-      <span [attr.data-intro]="Globals.introText['import.text-tab']">Text</span>
-    </ng-template>
+  <li ngbNavItem="text">
+    <a ngbNavLink [attr.data-intro]="Globals.introText['import.text-tab']">Text</a>
     <ng-template ngbNavContent>
       <div class="form-group">
         <label>Content Type</label>
@@ -110,11 +106,8 @@
       </div>
     </ng-template>
   </li>
-
-  <li ngbNavItem id="vsac">
-    <ng-template ngbTabTitle>
-      <span [attr.data-intro]="Globals.introText['import.vsac-tab']">VSAC</span>
-    </ng-template>
+  <li ngbNavItem="vsac">
+    <a ngbNavLink [attr.data-intro]="Globals.introText['import.vsac-tab']">VSAC</a>
     <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-6">
@@ -150,15 +143,14 @@
       </div>
     </ng-template>
   </li>
-  <li ngbNavItem id="github">
-    <ng-template ngbTabTitle>
-      <span [attr.data-intro]="Globals.introText['import.github-tab']">GitHub</span>
-    </ng-template>
+  <li ngbNavItem="github">
+    <a ngbNavLink [attr.data-intro]="Globals.introText['import.github-tab']">GitHub</a>
     <ng-template ngbNavContent>
       <app-import-github-panel #importGithubPanel></app-import-github-panel>
     </ng-template>
   </li>
 </ul>
+<div [ngbNavOutlet]="t"></div>
 
 <div class="card results" *ngIf="outcome || resultsBundle">
   <div class="card-header">Results</div>

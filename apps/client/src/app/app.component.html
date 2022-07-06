@@ -64,31 +64,27 @@
         <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.project">
           <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/publish">Publish</a>
         </li>
-        <li class="nav-item dropdown" *ngIf="authService.userProfile && authService.userProfile.isAdmin">
-          <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="manageMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <li class="nav-item" ngbDropdown *ngIf="authService.userProfile && authService.userProfile.isAdmin">
+          <a class="nav-link" ngbDropdownToggle href="javascript:void(0)" id="manageMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Manage <span class="sr-only">(current)</span>
           </a>
-          <ul class="dropdown-menu" aria-labelledby="manageMenu">
-            <li><a class="dropdown-item" routerLink="{{configService.fhirServer}}/manage/user">Users</a></li>
-            <li><a class="dropdown-item" routerLink="{{configService.fhirServer}}/manage/queue">Publishing Queue</a></li>
-          </ul>
+          <div ngbDropdownMenu aria-labelledby="manageMenu">
+            <button ngbDropdownItem routerLink="{{configService.fhirServer}}/manage/user">Users</button>
+            <button ngbDropdownItem routerLink="{{configService.fhirServer}}/manage/queue">Publishing Queue</button>
+          </div>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="helpMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <li class="nav-item" ngbDropdown>
+          <a class="nav-link" ngbDropdownToggle href="javascript:void(0)" id="helpMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Help <span class="sr-only">(current)</span>
           </a>
-          <ul class="dropdown-menu" aria-labelledby="helpMenu">
-            <li>
-              <a class="dropdown-item" href="/help/index.html" target="tof-help">
-                <i class="fa fa-book"></i> Documentation
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="javascript:void(0)" (click)="supportButtonClicked()">
-                <i class="fa fa-question"></i> Request Support
-              </a>
-            </li>
-          </ul>
+          <div ngbDropdownMenu aria-labelledby="helpMenu">
+            <a class="btn btn-primary" ngbDropdownItem href="/help/index.html" target="tof-help">
+              <i class="fa fa-book"></i> Documentation
+            </a>
+            <a class="btn btn-primary" ngbDropdownItem href="javascript:void(0)" (click)="supportButtonClicked()">
+              <i class="fa fa-question"></i> Request Support
+            </a>
+          </div>
         </li>
       </ul>
       <form class="d-flex">
