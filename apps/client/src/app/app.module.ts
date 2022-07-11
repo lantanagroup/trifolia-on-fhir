@@ -88,6 +88,7 @@ import { PublishingTemplateComponent } from './implementation-guide-wrapper/publ
 import { MergeUserModalComponent } from './manage/merge-user-modal/merge-user-modal.component';
 import { NewProjectComponent } from './new-project/new-project.component';
 import { SearchParameterComponent } from './search-parameter/search-parameter.component';
+import { SearchParametersComponent } from './search-parameters/search-parameters.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -171,6 +172,7 @@ const appRoutes: Routes = [
   { path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent },
   { path: ':fhirServer/:implementationGuideId/examples', component: ExamplesComponent },
   { path: ':fhirServer/:implementationGuideId/bulk-edit', component: BulkEditComponent },
+  { path: ':fhirServer/:implementationGuideId/search-parameter', component: SearchParametersComponent },
   { path: ':fhirServer/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
   { path: ':fhirServer/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },
   { path: ':fhirServer/import', component: ImportComponent },
@@ -250,7 +252,7 @@ const authModuleConfig: OAuthModuleConfig = {
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
     GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
-    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, MergeUserModalComponent, NewProjectComponent, SearchParameterComponent
+    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, MergeUserModalComponent, NewProjectComponent, SearchParametersComponent, SearchParameterComponent
   ],
   imports: [
     RouterModule.forRoot(

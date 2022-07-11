@@ -1,4 +1,4 @@
-import {Coding} from './stu3/fhir';
+import { Coding } from './stu3/fhir';
 
 export class Globals {
   static readonly securityDelim = '^';
@@ -246,6 +246,7 @@ export class Globals {
     recentImplementationGuides: 'recentImplementationGuides',
     recentStructureDefinitions: 'recentStructureDefinitions',
     recentCapabilityStatements: 'recentCapabilityStatements',
+    recentSearchParameters: 'recentSearchParameters',
     recentOperationDefinitions: 'recentOperationDefinitions',
     recentValueSets: 'recentValueSets',
     recentCodeSystems: 'recentCodeSystems',
