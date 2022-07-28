@@ -240,6 +240,10 @@ export function parseFhirUrl(url: string) {
     parts = url.split('/');
   }
 
+  if (parts && parts.length >= 2 && parts[parts.length - 1] === 'fhir' && parts[parts.length - 2] === 'api') {
+    return parsed;
+  }
+
   if (parts.length > 0) {
     parsed.resourceType = parts[0];
   }
