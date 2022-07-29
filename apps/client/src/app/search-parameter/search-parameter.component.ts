@@ -1,4 +1,4 @@
-import { Component, DoCheck, Input, OnInit } from '@angular/core';
+import { Component, DoCheck, EventEmitter, Input, OnInit } from '@angular/core';
 import { ConfigService } from '../shared/config.service';
 import { Coding, ImplementationGuide, SearchParameter } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { FhirService } from '../shared/fhir.service';
@@ -12,6 +12,8 @@ import { RecentItemService } from '../shared/recent-item.service';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ChangeResourceIdModalComponent } from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 
 @Component({
   selector: 'trifolia-fhir-search-parameter',
@@ -38,10 +40,12 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
   private navSubscription: any;
   public name: string;
   public xml: string;
+  public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(
     public configService: ConfigService,
     protected authService: AuthService,
+    private modal: NgbModal,
     private spService: SearchParameterService,
     private route: ActivatedRoute,
     private router: Router,
@@ -64,6 +68,11 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
           this.alreadyInUseIDMessage = '';
         }
       });
+
+    this.igChanging.subscribe((value) => {
+      this.isDirty = value;
+      this.configService.setTitle(`SearchParameter - ${this.searchParameter.name || 'no-name'}`, this.isDirty);
+    });
   }
 
   public nameChanged() {
@@ -186,6 +195,20 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     const dateParts = this.searchParameter.date.toString().split('-');
 
     return dateParts.length > 1 && (dateParts.length !== 3 || dateParts[0].length < 4 || dateParts[1].length !== 2 || dateParts[2].length !== 2);
+  }
+
+  public changeId() {
+    if (!confirm('Any changes to the implementation guide that are not saved will be lost. Continue?')) {
+      return;
+    }
+
+    const modalRef = this.modal.open(ChangeResourceIdModalComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.resourceType = 'SearchParameter';
+    modalRef.componentInstance.originalId = this.searchParameter.id;
+
+    modalRef.result.then(() => {
+      this.igChanging.emit(true);
+    });
   }
 
   ngOnInit() {

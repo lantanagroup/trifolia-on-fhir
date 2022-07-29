@@ -31,6 +31,16 @@
         </div>
 
         <div class="col-md-6">
+          <div class="form-group">
+            <label>ID</label>
+            <div [class.input-group]="!isNew">
+              <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="searchParameter.id" placeholder="AUTO" />
+              <div class="input-group-btn" *ngIf="!isNew">
+                <button type="button" class="btn btn-primary" (click)="changeId()">Change</button>
+              </div>
+            </div>
+          </div>
+
           <app-fhir-date [parentObject]="searchParameter" propertyName="date" title="Date"
                          [required]="false"></app-fhir-date>
           <div class="alert alert-warning status-message" *ngIf="searchParameter.date && wrongDateFormat">
@@ -242,6 +252,30 @@
     </ng-template>
   </ngb-tab>
 
+  <!-- Permissions -->
+  <ngb-tab title="Permissions">
+    <ng-template ngbTabContent>
+      <trifolia-fhir-resource-permissions [resource]="searchParameter" (change)="igChanging.emit(true)"></trifolia-fhir-resource-permissions>
+    </ng-template>
+  </ngb-tab>
+
+  <!-- Validation -->
+  <ngb-tab id="validation">
+    <ng-template ngbTabTitle>
+      <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span
+      *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
+    </ng-template>
+    <ng-template ngbTabContent>
+      <app-validation-results [results]="validation"></app-validation-results>
+    </ng-template>
+  </ngb-tab>
+
+  <!-- RAW JSON/XML -->
+  <ngb-tab title="RAW">
+    <ng-template ngbTabContent>
+      <app-raw-resource [resource]="searchParameter"></app-raw-resource>
+    </ng-template>
+  </ngb-tab>
 </ngb-tabset>
 
 <footer class="footer">

@@ -1,13 +1,12 @@
-import {EventEmitter, Injectable, Injector} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {ConfigModel} from '../../../../../libs/tof-lib/src/lib/config-model';
-import {Title} from '@angular/platform-browser';
-import {CapabilityStatement as STU3CapabilityStatement} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {CapabilityStatement as R4CapabilityStatement, Coding} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {Versions} from 'fhir/fhir';
-import {map} from 'rxjs/operators';
-import {ExportOptions} from './export.service';
-import {identifyRelease as identifyReleaseFunc} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import { EventEmitter, Injectable, Injector } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ConfigModel } from '../../../../../libs/tof-lib/src/lib/config-model';
+import { Title } from '@angular/platform-browser';
+import { CapabilityStatement as STU3CapabilityStatement } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { CapabilityStatement as R4CapabilityStatement, Coding } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { Versions } from 'fhir/fhir';
+import { map } from 'rxjs/operators';
+import { identifyRelease as identifyReleaseFunc } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 @Injectable()
 export class ConfigService {
@@ -26,6 +25,21 @@ export class ConfigService {
   constructor(private injector: Injector) {
     this.fhirServer = localStorage.getItem('fhirServer');
   }
+
+  /*public async getBinaryResources(igId: string): Promise<Resource[]> {
+    let url = '';
+
+    url = '/api/fhir/Binary?_has:ImplementationGuide:resource:_id=<' + igId + '>';
+
+    try {
+      const result = await this.http.get(url).toPromise();
+
+
+    } catch(ex) {
+
+    }
+
+  }*/
 
   public async getTemplateVersions(template: string): Promise<string[]> {
     let url = '';
