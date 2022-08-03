@@ -45,7 +45,7 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
   }
 
   public remove(searchParameter: SearchParameter) {
-    if (!confirm(`Are you sure you want to delete the capability statement ${searchParameter.base || searchParameter.name || searchParameter.id}`)) {
+    if (!confirm(`Are you sure you want to delete the search parameter ${searchParameter.base || searchParameter.name || searchParameter.id}`)) {
       return;
     }
 

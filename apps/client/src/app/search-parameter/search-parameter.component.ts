@@ -96,13 +96,25 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     }
   }
 
-  public getSearchParameters() {
+  private afterSearchParameterInit() {
+    if (!this.searchParameter) {
+      return;
+    }
+
+    if (!this.searchParameter.base || !this.searchParameter.base.length) {
+      this.searchParameter.base = this.searchParameter.base || [];
+      this.searchParameter.base.push('');
+    }
+  }
+
+  public getSearchParameter() {
     const searchParameterId = this.route.snapshot.paramMap.get('id');
 
     if (this.isFile) {
       if (this.fileService.file) {
         this.searchParameter = <SearchParameter>this.fileService.file.resource;
         this.nameChanged();
+        this.afterSearchParameterInit();
       } else {
         this.router.navigate([this.configService.baseSessionUrl]);
         return;
@@ -121,6 +133,8 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
 
           this.searchParameter = <SearchParameter>sp;
           this.nameChanged();
+          this.afterSearchParameterInit();
+
           this.recentItemService.ensureRecentItem(
             Globals.cookieKeys.recentSearchParameters,
             this.searchParameter.id,
@@ -130,8 +144,9 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
           this.message = getErrorString(err);
           this.recentItemService.removeRecentItem(Globals.cookieKeys.recentSearchParameters, searchParameterId);
         });
+    } else {
+      this.afterSearchParameterInit();
     }
-
   }
 
   addBase() {
@@ -159,13 +174,15 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
       return;
     }
 
-    this.getSearchParameters();
+    this.getSearchParameter();
   }
 
   public save() {
     if (!this.validation.valid && !confirm('This search parameter is not valid, are you sure you want to save?')) {
       return;
     }
+
+    this.message = '';
 
     if (this.isFile) {
       this.fileService.saveFile();
@@ -198,7 +215,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
   }
 
   public changeId() {
-    if (!confirm('Any changes to the implementation guide that are not saved will be lost. Continue?')) {
+    if (!confirm('Any changes to the search parameter that are not saved will be lost. Continue?')) {
       return;
     }
 
@@ -227,10 +244,10 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     this.messageEventCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-events');
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/search-parameter/')) {
-        this.getSearchParameters();
+        this.getSearchParameter();
       }
     });
-    this.getSearchParameters();
+    this.getSearchParameter();
   }
 
   ngDoCheck() {

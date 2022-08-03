@@ -82,7 +82,7 @@
   </tbody>
   <tfoot>
   <tr *ngIf="searchParameterBundle && searchParameterBundle.total === 0">
-    <td colspan="3">No capability statements! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/capability-statement/new">here</a>...</td>
+    <td colspan="3">No search parameters! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/search-parameter/new">here</a>...</td>
   </tr>
   <tr *ngIf="searchParameterBundle && searchParameterBundle.total > 0">
     <td colspan="3">
