@@ -1,0 +1,98 @@
+<h1>Search Parameters</h1>
+
+<div class="input-group" [attr.data-intro]="Globals.introText['browse.search']">
+  <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name">
+  <div class="input-group-btn">
+    <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
+      <i class="fa fa-times"></i> Clear
+    </button>
+    <button type="button" class="btn btn-primary" title="Refresh" (click)="getSearchParameters()">
+      <i class="fa fa-search"></i> Search
+    </button>
+  </div>
+</div>
+
+<br />
+
+<div *ngIf="searchParameterBundle && searchParameterBundle.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+  <ngb-pagination class="d-flex justify-content-center"
+                  [maxSize]="5"
+                  [collectionSize]="searchParameterBundle.total"
+                  [(page)]="page"
+                  [boundaryLinks]="true"
+                  (pageChange)="criteriaChanged()"></ngb-pagination>
+</div>
+
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Base</th>
+    <th>Type</th>
+    <th class="actions-column-3">
+      <div class="pull-right">
+        <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/search-parameter/new" title="Create a new search parameter"
+                [attr.data-intro]="Globals.introText['browse.add']">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+    </th>
+  </tr>
+  </thead>
+  <tbody *ngIf="!configService.showingIntroduction">
+  <tr *ngFor="let sp of searchParameter">
+    <td>{{sp.id}}</td>
+    <td>{{sp.name}}</td>
+    <td>{{sp.base}}</td>
+    <td>{{sp.type}}</td>
+    <td>
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/search-parameter/{{sp.id}}" title="Edit this resource">
+          <i class="fa fa-edit"></i>
+        </a>
+        <button type="button" class="btn btn-secondary" (click)="remove(sp)" [disabled]="!canEdit(sp)" title="Remove this resource">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="changeId(sp)" [disabled]="!canEdit(sp)" title="Change this resource's ID">
+          <i class="fa fa-id-badge"></i>
+        </button>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+  <tbody *ngIf="configService.showingIntroduction">
+  <tr>
+    <td>DEMO-ID</td>
+    <td>Demo Name</td>
+    <td>
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary" href="#" title="Edit this resource" [attr.data-intro]="Globals.introText['browse.edit']">
+          <i class="fa fa-edit"></i>
+        </a>
+        <button type="button" class="btn btn-primary" title="Remove this resource" [attr.data-intro]="Globals.introText['browse.remove']">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        <button type="button" class="btn btn-primary" title="Change this resource's ID" [attr.data-intro]="Globals.introText['browse.changeid']">
+          <i class="fa fa-id-badge"></i>
+        </button>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+  <tfoot>
+  <tr *ngIf="searchParameterBundle && searchParameterBundle.total === 0">
+    <td colspan="3">No search parameters! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/search-parameter/new">here</a>...</td>
+  </tr>
+  <tr *ngIf="searchParameterBundle && searchParameterBundle.total > 0">
+    <td colspan="3">
+      <ngb-pagination class="d-flex justify-content-center"
+                      [maxSize]="5"
+                      [collectionSize]="searchParameterBundle.total"
+                      [(page)]="page"
+                      [boundaryLinks]="true"
+                      (pageChange)="criteriaChanged()"></ngb-pagination>
+    </td>
+  </tr>
+  </tfoot>
+</table>
