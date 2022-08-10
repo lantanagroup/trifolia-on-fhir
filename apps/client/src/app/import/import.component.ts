@@ -1,6 +1,15 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ImportService, VSACImportCriteria } from '../shared/import.service';
-import { Bundle, DomainResource, EntryComponent, IssueComponent, Media as STU3Media, OperationOutcome, RequestComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {
+  Binary as STU3Binary,
+  Bundle,
+  DomainResource,
+  EntryComponent,
+  IssueComponent,
+  Media as STU3Media,
+  OperationOutcome,
+  RequestComponent
+} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
 import { FileSystemFileEntry, UploadEvent, UploadFile } from 'ngx-file-drop';
 import { FhirService } from '../shared/fhir.service';
@@ -14,7 +23,7 @@ import { HttpClient } from '@angular/common/http';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { ConfigService } from '../shared/config.service';
-import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { Binary as R4Binary, Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { IDomainResource } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
 
@@ -24,7 +33,8 @@ enum ContentTypes {
   Json = 0,
   Xml = 1,
   Xlsx = 2,
-  Image = 3
+  Image = 3,
+  Zip = 4
 }
 
 class ImportFileModel {
@@ -57,7 +67,7 @@ export class ImportComponent implements OnInit {
   public importBundle: Bundle;
   public resultsBundle: Bundle;
   public message: string;
-  public errorMessage: string = '';
+  public errorMessage = '';
   public activeTab = 'file';
   public vsacCriteria = new VSACImportCriteria();
   public rememberVsacCredentials: boolean;
@@ -91,6 +101,30 @@ export class ImportComponent implements OnInit {
   viewUpdateDiff(resource: IDomainResource) {
     const modalRef = this.modalService.open(UpdateDiffComponent, { backdrop: 'static', size: 'lg' });
     modalRef.componentInstance.importResource = resource;
+  }
+
+  private createZip(name: string, contentType: string, buffer: ArrayBuffer) {
+    const b64content = btoa(new Uint8Array(buffer)
+      .reduce((data, byte) => data + String.fromCharCode(byte), ''));
+
+    if (this.configService.isFhirR4) {
+      const binary = new R4Binary();
+      binary.contentType = 'application/zip';
+      binary.data = b64content;
+
+      return binary;
+    } else if (this.configService.isFhirSTU3) {
+      const binary = new STU3Binary();
+
+      binary.contentType = 'application/zip';
+      binary.content = b64content;
+
+      return binary;
+    } else {
+      throw new Error('Can\'t create Binary Resource. Unexpected FHIR server version');
+    }
+
+
   }
 
   private createMedia(name: string, contentType: string, buffer: ArrayBuffer) {
@@ -157,6 +191,8 @@ export class ImportComponent implements OnInit {
           importFileModel.contentType = ContentTypes.Xlsx;
         } else if (extension === '.jpg' || extension === '.gif' || extension === '.png' || extension === '.bmp' || extension === '.svg') {
           importFileModel.contentType = ContentTypes.Image;
+        } else if (extension === '.zip') {
+          importFileModel.contentType = ContentTypes.Zip;
         }
 
         try {
@@ -176,6 +212,8 @@ export class ImportComponent implements OnInit {
             importFileModel.vsBundle = convertResults.bundle;
           } else if (importFileModel.contentType === ContentTypes.Image) {
             importFileModel.resource = this.createMedia(file.name, file.type, result);
+          } else if (importFileModel.contentType = ContentTypes.Zip) {
+            importFileModel.resource = this.createZip(file.name, file.type, result);
           }
         } catch (ex) {
           importFileModel.message = ex.message;
