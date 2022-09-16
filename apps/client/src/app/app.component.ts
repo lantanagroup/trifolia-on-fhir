@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
           const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
 
           if (implementationGuideId) {
-            if (this.configService.project && this.configService.project.implementationGuideId !== implementationGuideId) {
+            if (!this.configService.project || this.configService.project.implementationGuideId !== implementationGuideId) {
               this.configService.project = {
                 implementationGuideId: implementationGuideId
               };

@@ -95,7 +95,7 @@ export class ResourcePermissionsComponent implements OnInit {
     return text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap(term =>
+      switchMap((term: string) =>
         this.fhirService
           .search(this.copyResourceType, term, true)
           .pipe(

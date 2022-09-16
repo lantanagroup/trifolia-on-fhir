@@ -1,16 +1,18 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
-import {FhirService} from '../../shared/fhir.service';
+import { Component, OnInit } from '@angular/core';
+import { FhirService } from '../../shared/fhir.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import {DomainResource} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {NgbModal, NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
-import {saveAs} from 'file-saver';
-import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
-import {ConfigService} from '../../shared/config.service';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {ValidatorResponse} from 'fhir/validator';
-import {BaseComponent} from '../../base.component';
-import {AuthService} from '../../shared/auth.service';
+import { DomainResource } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
+import { NgbModal, NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { saveAs } from 'file-saver';
+import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
+import { ConfigService } from '../../shared/config.service';
+import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
+import { ValidatorResponse } from 'fhir/validator';
+import { BaseComponent } from '../../base.component';
+import { AuthService } from '../../shared/auth.service';
+import { debounceTime } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   templateUrl: './other-resources-result.component.html',
@@ -22,7 +24,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   data: DomainResource;
   Globals = Globals;
   content: string;
-  contentChanged = new EventEmitter();
+  contentChanged = new Subject();
   serializationError = false;
   validation: ValidatorResponse;
   selected = 'JSON';
@@ -38,7 +40,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     super(configService, authService);
 
     this.contentChanged
-      .debounceTime(500)
+      .pipe(debounceTime(500))
       .subscribe(() => {
         if (this.data) {
           this.serializationError = false;
@@ -73,7 +75,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
   contentHasChanged(newValue: string) {
     this.content = newValue;
-    this.contentChanged.emit();
+    this.contentChanged.next(this.content);
   }
 
   ngOnInit() {

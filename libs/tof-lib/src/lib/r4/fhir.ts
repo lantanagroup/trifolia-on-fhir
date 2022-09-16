@@ -24113,7 +24113,7 @@ export class SearchParameter extends DomainResource {
   public version?: string;
   public name: string;
   public derivedFrom?: string;
-  public status: string;
+  public status = 'active';
   public experimental?: boolean;
   public date?: Date;
   public publisher?: string;

@@ -240,6 +240,10 @@ export function parseFhirUrl(url: string) {
     parts = url.split('/');
   }
 
+  if (parts && parts.length >= 2 && parts[parts.length - 1] === 'fhir' && parts[parts.length - 2] === 'api') {
+    return parsed;
+  }
+
   if (parts.length > 0) {
     parsed.resourceType = parts[0];
   }
@@ -355,15 +359,16 @@ export async function addToImplementationGuide(httpService: HttpService, configS
 
   logger.verbose(`Adding resource ${resource.resourceType}/${resource.id} to context implementation guide.`);
 
+  let igId;
   let igUrl;
   let changed = false;
   const resourceReferenceString = `${resource.resourceType}/${resource.id}`;
 
   if (typeof implementationGuide === 'string') {
-    const implementationGuideId = <string>implementationGuide;
-    igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuideId);
+    igId = <string>implementationGuide;
+    igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', igId);
 
-    logger.verbose(`Retrieving implementation guide ${implementationGuideId}`);
+    logger.verbose(`Retrieving implementation guide ${igId}`);
 
     const igResults = await httpService.get<STU3ImplementationGuide | R4ImplementationGuide>(igUrl).toPromise();
     implementationGuide = igResults.data;
@@ -371,7 +376,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuide.id);
   }
 
-  logger.verbose(`Asserting that user can edit the implementation guide ${implementationGuide.id}`);
+  logger.verbose(`Asserting that user can edit the implementation guide ${igId}`);
 
   assertUserCanEdit(configService, userSecurityInfo, implementationGuide);
 
@@ -468,7 +473,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     };
 
     if (changed) {
-      logger.verbose(`Persisting the implementation guide ${implementationGuide.id} with the resource added.`);
+      logger.verbose(`Persisting the implementation guide ${igId} with the resource added.`);
 
       try {
         await httpService.request(updateOptions).toPromise();

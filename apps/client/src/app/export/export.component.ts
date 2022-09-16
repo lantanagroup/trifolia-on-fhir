@@ -13,6 +13,7 @@ import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/oper
 import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {HttpClient} from '@angular/common/http';
+import { SearchImplementationGuideResponseContainer } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 
 @Component({
   templateUrl: './export.component.html',
@@ -149,10 +150,10 @@ export class ExportComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged(),
       tap(() => this.searching = true),
-      switchMap((term) => {
+      switchMap((term: string) => {
         return this.implementationGuideService.getImplementationGuides(1, term).pipe(
-          map((bundle) => {
-            return (bundle.responses || []).map((entry) => <ImplementationGuide> entry.data.resource);
+          map((response: SearchImplementationGuideResponseContainer) => {
+            return (response.responses || []).map((entry) => <ImplementationGuide> entry.data.resource);
           })
         );
       }),

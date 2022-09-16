@@ -59,7 +59,7 @@ export class NewProfileComponent extends BaseComponent {
     return text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap((term) => this.strucDefService.getSupportedLogicalTypes(term))
+      switchMap((term: string) => this.strucDefService.getSupportedLogicalTypes(term))
     );
   };
 

@@ -68,6 +68,8 @@ export class BaseController {
   }
 
   public async getMyPractitioner(user: ITofUser, fhirServerBase: string, resolveIfNotFound = false): Promise<IPractitioner> {
+    if (!user) return null;
+
     let system = Globals.defaultAuthNamespace;
     let identifier = user.sub;
 

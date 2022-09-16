@@ -22,5 +22,5 @@
     "esModuleInterop": true,
     "rootDir": "."
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp", "node_modules/ng2-tree/index.ts"]
 }

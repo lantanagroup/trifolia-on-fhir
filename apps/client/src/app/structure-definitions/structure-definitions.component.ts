@@ -6,14 +6,13 @@ import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {Bundle, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import 'rxjs/add/operator/debounceTime';
 import {FhirService} from '../shared/fhir.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {CopyProfileModalComponent} from '../modals/copy-profile-modal/copy-profile-modal.component';
+import {debounceTime} from 'rxjs/operators';
 
 @Component({
   templateUrl: './structure-definitions.component.html',

@@ -27,10 +27,10 @@ import {CustomValidator} from './validation/custom-validator';
 import {CustomSTU3Validator} from './validation/custom-STU3-validator';
 import {CustomR4Validator} from './validation/custom-R4-validator';
 import * as vkbeautify from 'vkbeautify';
-import {forkJoin} from 'rxjs/internal/observable/forkJoin';
 import {publishReplay, refCount} from 'rxjs/operators';
 import {IBundle, ICoding} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import { forkJoin } from 'rxjs';
 
 export interface IResourceGithubDetails {
   owner: string;
@@ -477,6 +477,9 @@ export class FhirService {
       // Remove any messages that are only information
       results.messages = (results.messages || []).filter((message) => message.severity !== Severities.Information);
 
+      // Remove jurisdiction error
+      results.messages = (results.messages || []).filter((message) => !(message.location.includes('jurisdiction')));
+
       // Update the "valid" property to account for custom validations
       results.valid = !(results.messages || []).find((message) => message.severity === Severities.Error);
 
@@ -571,6 +574,7 @@ export class FhirService {
     if (resource.resourceType === 'ImplementationGuide') {
       additionalMessages = additionalMessages.concat(this.customValidator.validateImplementationGuide(resource));
     }
+
 
     return additionalMessages;
   }

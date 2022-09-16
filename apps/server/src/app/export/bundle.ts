@@ -1,10 +1,11 @@
-import {Fhir} from 'fhir/fhir';
-import {Bundle, DomainResource} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuidePageComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {HttpService, Logger} from '@nestjs/common';
-import {buildUrl} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {IExtension, IStructureDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { Fhir } from 'fhir/fhir';
+import { Bundle, DomainResource } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { ImplementationGuidePageComponent } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { HttpService, LoggerService } from '@nestjs/common';
+import { buildUrl } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import { IExtension, IStructureDefinition } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { response } from 'express';
 
 export type FormatTypes = 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml';
 export type BundleTypes = 'searchset'|'transaction';
@@ -16,9 +17,9 @@ export class BundleExporter {
   readonly fhirVersion: string;
   readonly fhir: Fhir;
   readonly implementationGuideId: string;
-  readonly logger: Logger;
+  readonly logger: LoggerService;
 
-  constructor(httpService: HttpService, logger: Logger, fhirServerBase: string, fhirServerId: string, fhirVersion: string, fhir: Fhir, implementationGuideId: string) {
+  constructor(httpService: HttpService, logger: LoggerService, fhirServerBase: string, fhirServerId: string, fhirVersion: string, fhir: Fhir, implementationGuideId: string) {
     this.httpService = httpService;
     this.logger = logger;
     this.fhirServerBase = fhirServerBase;
@@ -190,6 +191,7 @@ export class BundleExporter {
       (bundle.entry || []).forEach((entry) => BundleExporter.cleanupResource(entry.resource, false));
     }
 
+
     return bundle;
   }
 
@@ -199,17 +201,22 @@ export class BundleExporter {
         .then((results) => {
           let response: Bundle | string = results;
 
-          if(results.entry){
+          if (results.entry) {
             results.entry.forEach(entry => {
-              if(entry.resource.resourceType && entry.resource.resourceType === "StructureDefinition"){
-                delete (<IStructureDefinition> entry.resource).snapshot;
+              if (entry.resource.resourceType && entry.resource.resourceType === 'StructureDefinition') {
+                delete (<IStructureDefinition>entry.resource).snapshot;
               }
             });
+          }
+
+          if (type === 'transaction') {
+            delete response.total;
           }
 
           if (format === 'xml' || format === 'application/xml') {
             response = this.fhir.objToXml(results);
           }
+
 
           resolve(response);
         })

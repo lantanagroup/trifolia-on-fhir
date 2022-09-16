@@ -1,6 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {Identifier} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
+import { Coding, Identifier } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { CodeableConcept } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { FhirCodingModalComponent } from '../coding-modal/coding-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-fhir-identifier',
@@ -20,7 +23,7 @@ export class FhirIdentifierComponent implements OnInit {
 
   public Globals = Globals;
 
-  constructor() {
+  constructor(private modalService: NgbModal) {
 
   }
 
@@ -72,6 +75,11 @@ export class FhirIdentifierComponent implements OnInit {
     }
   }
 
+  editCoding(coding: Coding) {
+    const modalRef = this.modalService.open(FhirCodingModalComponent, { backdrop: 'static' });
+    modalRef.componentInstance.coding = coding;
+  }
+
   ngOnInit() {
     if (this.tooltipKey) {
       this.tooltip = Globals.tooltips[this.tooltipKey];
@@ -79,6 +87,10 @@ export class FhirIdentifierComponent implements OnInit {
 
     if (this.required && this.parentObject && !this.parentObject[this.propertyName]) {
       this.parentObject[this.propertyName] = new Identifier();
+    }
+
+    if (!this.identifier.type) {
+      this.identifier.type = new CodeableConcept();
     }
   }
 }

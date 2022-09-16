@@ -98,6 +98,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
         this.element.min = parseInt(value);
       } else if (!value) {
         delete this.element.min;
+      } else {
+        this.element.min = parseInt(value);
       }
     }
   }
@@ -109,8 +111,8 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   get min(): string {
-    if (this.elementTreeModel && this.elementTreeModel.constrainedElement && this.elementTreeModel.constrainedElement.min >= 0) {
-      return this.elementTreeModel.constrainedElement.min.toString();
+    if (this.element && this.element.min >= 0) {
+      return this.element.min.toString();
     }
 
     return '';
@@ -140,7 +142,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
   propertyExistWithPrefix(obj: any, prefix: string) {
     const objKeys = Object.keys(obj);
-    const found = objKeys.find(key => key.startsWith(prefix));
+    const found = objKeys.find(key => key.startsWith(prefix) && key.length !== prefix.length);
     return !!found;
   }
 
@@ -159,11 +161,12 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
     const isExpanded = this.elementTreeModel.expanded;
 
+    // If the element is expanded, collapse it
     if (isExpanded) {
       await this.constraintManager.toggleExpand(this.elementTreeModel);
     }
 
-    const children = await this.constraintManager.findChildren(this.element, this.elementTreeModel.constrainedElement);
+    const children = await this.constraintManager.findChildren(this.elementTreeModel.baseElement, this.elementTreeModel.constrainedElement);
     this.elementTreeModel.hasChildren = children.length > 0;
 
     if (isExpanded && this.elementTreeModel.hasChildren && !init) {

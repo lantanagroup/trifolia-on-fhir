@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {ResourceReference} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {FhirReferenceModalComponent, ResourceSelection} from '../reference-modal/reference-modal.component';
-import {Subject} from 'rxjs';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
+import { FhirReferenceModalComponent, ResourceSelection } from '../reference-modal/reference-modal.component';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-fhir-reference',
@@ -34,7 +34,7 @@ export class FhirReferenceComponent implements OnInit {
     private modalService: NgbModal) {
 
     this.changeDebouncer
-      .debounceTime(100)
+      .pipe(debounceTime(500))
       .subscribe((v) => this.change.emit(v));
   }
 

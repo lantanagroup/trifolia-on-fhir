@@ -60,7 +60,9 @@
               <input type="text" class="form-control" [(ngModel)]="implementationGuide.packageId" (change)="igChanging.emit(true); packageIdChanged()" [class.is-invalid]="!packageIdFormatValid || !implementationGuide.packageId" />
               <span class="help-block error" *ngIf="!implementationGuide.packageId">You must specify Package ID.</span>
               <div class="help-block error" *ngIf="!packageIdFormatValid">If this is an HL7 implementation guide, it must match the format <strong>hl7.family.realm.id</strong>.
-                <ul><li>"family" can be "fhir" or "cda"</li><li>"realm" can be "us" or "uv"</li></ul>
+                <ul>
+                  <li>"family" can be "fhir" or "cda"</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -377,7 +379,9 @@
               <th>Reference</th>
               <th>Name</th>
               <th>Group</th>
-              <th>Example?</th>
+              <th>Description
+                <app-tooltip-icon tooltipKey="ig.definition.resource.description"></app-tooltip-icon>
+              </th>
               <th class="actions-column-1">
                 <div class="btn-group pull-right">
                   <button type="button" class="btn btn-primary" (click)="addResources()" title="Add existing resources to this implementation guide">
@@ -419,19 +423,7 @@
                 <span *ngIf="resource.exampleCanonical" title="This resource is an example of a profile">{{resource.exampleCanonical.length > 30 ? '...' : ''}}{{resource.exampleCanonical.substr(-30)}}</span>
                 -->
                 <div class="input-group">
-                  <div class="input-group-prepend">
-                    <div class="input-group-text">
-                      <input type="checkbox" [ngModel]="resource.exampleBoolean || resource.exampleCanonical" (ngModelChange)="setExampleBoolean(resource, $event)" />
-                    </div>
-                  </div>
-                  <input type="text" class="form-control" [ngModel]="resource.exampleCanonical" (ngModelChange)="setExampleCanonical(resource, $event)" />
-                  <div class="input-group-append">
-                    <div class="input-group-btn">
-                      <button type="button" class="btn btn-primary" [disabled]="!resource.exampleBoolean && !resource.exampleCanonical" (click)="selectExampleCanonical(resource)">
-                        <i class="fas fa-hand-pointer"></i>
-                      </button>
-                    </div>
-                  </div>
+                  <textarea class="form-control" [(ngModel)]="resource.description" [class.is-invalid]="isDescriptionRequired(resource)"></textarea>
                 </div>
               </td>
               <td>

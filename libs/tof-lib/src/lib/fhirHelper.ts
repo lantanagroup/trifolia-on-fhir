@@ -1,6 +1,6 @@
 import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, ResourceReference} from './r4/fhir';
 import {Extension, ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
-import nanoid from 'nanoid/generate';
+import { customAlphabet } from 'nanoid';
 import * as semver from 'semver';
 import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
@@ -94,7 +94,7 @@ export function buildUrl(base: string, resourceType?: string, id?: string, opera
 }
 
 export function parseUrl(url: string, base?: string) {
-  const parseUrlRegex = /([A-z]+)(\/([A-Za-z0-9\-]+))?(\/_history\/([A-Za-z0-9\-]{1,64}))?/g;
+  const parseUrlRegex = /([A-z]+)(\/([A-Za-z0-9\-\\.]+))?(\/_history\/([A-Za-z0-9\-]{1,64}))?/g;
 
   if (base && base.lastIndexOf('/') === base.length-1) {
     base = base.substring(0, base.length - 1);
@@ -167,7 +167,8 @@ export function getDefaultImplementationGuideResourcePath(reference: ResourceRef
 }
 
 export function generateId(): string {
-  return nanoid('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUBWXYZ', 8);
+  const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUBWXYZ', 8);
+  return nanoid();
 }
 
 export class MediaReference {
@@ -436,7 +437,7 @@ export function setJiraSpecValue(implementationGuide: IImplementationGuide, valu
   implementationGuide.extension = implementationGuide.extension || [];
   let foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-jira-spec']);
   let foundContained = foundExtension && foundExtension.valueReference && foundExtension.valueReference.reference ?
-    implementationGuide.contained.find(c => c.id === foundExtension.valueReference.reference.substring(1)) :
+    (implementationGuide.contained || []).find(c => c.id === foundExtension.valueReference.reference.substring(1)) :
     null;
 
   if (!value) {

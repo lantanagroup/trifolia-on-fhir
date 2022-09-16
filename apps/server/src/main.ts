@@ -1,6 +1,5 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app/app.module';
-import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {Response} from 'express';
 import {ITofRequest} from './app/models/tof-request';
 import socketIo from 'socket.io';
@@ -27,7 +26,7 @@ let io;
 
 const loadTofRequest = (req: ITofRequest, res: Response, next) => {
   if (!config.fhir.servers || !config.fhir.servers.length) {
-    throw new InvalidModuleConfigException('This server is not configured with any FHIR servers');
+    throw new Error('This server is not configured with any FHIR servers');
   }
 
   req.fhirServerId = req.headers['fhirserver'] || config.fhir.servers[0].id;
@@ -37,7 +36,7 @@ const loadTofRequest = (req: ITofRequest, res: Response, next) => {
   req.ioConnections = connections;
 
   if (!config.fhir.servers) {
-    throw new InvalidModuleConfigException('FHIR servers have not been configured on the server');
+    throw new Error('FHIR servers have not been configured on the server');
   }
 
   if (req.fhirServerId && req.originalUrl !== '/api/config') {
@@ -185,10 +184,16 @@ async function bootstrap() {
     });
   }
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    httpsOptions,
-    logger: false
-  });
+  let app: NestExpressApplication;
+
+  try {
+    app = await NestFactory.create<NestExpressApplication>(AppModule, {
+      httpsOptions,
+      logger: false
+    });
+  } catch (ex) {
+    logger.error(ex);
+  }
 
   app.useGlobalFilters(new NotFoundExceptionFilter());
   app.useLogger(new TofLogger());

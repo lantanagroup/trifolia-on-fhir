@@ -1,25 +1,24 @@
-import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Logger, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
-import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
-import {AuthGuard} from '@nestjs/passport';
-import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
-import {FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User} from './server.decorators';
-import {ConfigService} from './config.service';
-import {BundleExporter} from './export/bundle';
-import {getErrorString, getHumanNameDisplay, getHumanNamesDisplay, parseReference} from '../../../../libs/tof-lib/src/lib/helper';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
-import {copyPermissions} from './helper';
-import {ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Bundle, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {buildUrl, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
-import {AxiosRequestConfig} from 'axios';
-import {IBundle, IImplementationGuide, IResourceReference} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IgExampleModel} from '../../../../libs/tof-lib/src/lib/ig-example-model';
-import {spawn} from 'child_process';
-import {BulkUpdateRequest} from '../../../../libs/tof-lib/src/lib/bulk-update-request';
-import path from "path";
-import os from "os";
+import { BaseFhirController } from './base-fhir.controller';
+import { Body, Controller, Delete, Get, HttpService, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
+import { FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User } from './server.decorators';
+import { ConfigService } from './config.service';
+import { BundleExporter } from './export/bundle';
+import { getErrorString, getHumanNameDisplay, getHumanNamesDisplay, parseReference } from '../../../../libs/tof-lib/src/lib/helper';
+import { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
+import { copyPermissions } from './helper';
+import { ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Bundle, ImplementationGuide as R4ImplementationGuide } from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import { buildUrl, getR4Dependencies, getSTU3Dependencies } from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import { SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer } from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import { AxiosRequestConfig } from 'axios';
+import { IBundle, IImplementationGuide, IResourceReference } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { IgExampleModel } from '../../../../libs/tof-lib/src/lib/ig-example-model';
+import { spawn } from 'child_process';
+import { BulkUpdateRequest } from '../../../../libs/tof-lib/src/lib/bulk-update-request';
+import path from 'path';
+import os from 'os';
 import * as fs from 'fs';
 
 class PatchRequest {
@@ -46,7 +45,7 @@ export class ImplementationGuideController extends BaseFhirController {
     super(httpService, configService);
   }
 
-  public static async downloadDependencies(ig: IImplementationGuide, fhirServerVersion: 'stu3'|'r4', configService: ConfigService, logger: Logger) {
+  public static async downloadDependencies(ig: IImplementationGuide, fhirServerVersion: 'stu3'|'r4', configService: ConfigService, logger: LoggerService) {
     try {
       const igPublisherLocation = await configService.getIgPublisherForDependencies();
 
@@ -259,7 +258,7 @@ export class ImplementationGuideController extends BaseFhirController {
   @Get('published')
   public getPublishedGuides(): Promise<any> {
     if (!this.configService.fhir.publishedGuides) {
-      throw new InvalidModuleConfigException('Server is not configured with a publishedGuides property');
+      throw new Error('Server is not configured with a publishedGuides property');
     }
 
     return this.httpService.get(this.configService.fhir.publishedGuides).toPromise()
@@ -394,20 +393,38 @@ export class ImplementationGuideController extends BaseFhirController {
     const resources = (bundle.entry || [])
       .filter(e => {
         if (!e.resource || e.resource === ig) return false;
-        return this.userHasPermission(usi, 'write', e.resource);
+        try {
+          return this.userHasPermission(usi, 'write', e.resource);
+        } catch (ex) {
+          this.logger.error(`Error determining if user has permission to resource ${e.resource.resourceType}/${e.resource.id}: ${ex.message}`);
+        }
       })
       .map(e => e.resource);
 
-    const updated = resources
-      .map(r => {
+    const updateBundle: IBundle = {
+      resourceType: 'Bundle',
+      type: 'batch',
+      entry: resources.map(r => {
         copyPermissions(ig, r);
-        const url = buildUrl(fhirServerBase, r.resourceType, r.id);
-        return this.httpService.put(url, r).toPromise();
-      });
 
-    await Promise.all(updated);
+        return {
+          request: {
+            method: 'PUT',
+            url: `${r.resourceType}/${r.id}`
+          },
+          resource: r
+        };
+      })
+    }
 
-    return updated.length;
+    try {
+      await this.httpService.post(fhirServerBase, updateBundle).toPromise();
+    } catch (ex) {
+      this.logger.error(`Error updating resources with a copy of permissions from IG ${ig.id}: ${ex.message}`);
+      return 0;
+    }
+
+    return resources.length;
   }
 
   private getSTU3Examples(implementationGuide: STU3ImplementationGuide) {

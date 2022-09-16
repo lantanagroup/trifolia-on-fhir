@@ -3,7 +3,6 @@ import {BaseController} from './base.controller';
 import {CapabilityStatement} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ITofRequest} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {InvalidModuleConfigException} from '@nestjs/common/decorators/modules/exceptions/invalid-module-config.exception';
 import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
 import {ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
@@ -22,7 +21,7 @@ export class ConfigController extends BaseController {
   @Get()
   public getConfig() {
     if (!this.configService.fhir.servers) {
-      throw new InvalidModuleConfigException('FHIR servers have not been configured on this server');
+      throw new Error('FHIR servers have not been configured on this server');
     }
 
     const retConfig: ConfigModel = {
