@@ -77,7 +77,7 @@
     "ngx-simplemde": "^1.1.1",
     "nodemailer": "^6.6.2",
     "p-queue": "^6.6.2",
-    "passport": "^0.4.1",
+    "passport": "^0.6.0",
     "passport-http-bearer": "^1.0.1",
     "popper.js": "^1.16.1",
     "reflect-metadata": "^0.1.13",
