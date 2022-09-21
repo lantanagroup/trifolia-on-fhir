@@ -34,7 +34,8 @@ class ImportFileModel {
   public resource?: DomainResource;
   public vsBundle?: Bundle;
   public message: string;
-  public status: 'add'|'update'|'unauthorized'|'pending'|'unknown' = 'pending';
+  public status: 'add' | 'update' | 'unauthorized' | 'pending' | 'unknown' = 'pending';
+  public bundleOperation: 'store' | 'execute';
   public singleIg = true;
   public multipleIgMessage: "";
 }
@@ -132,87 +133,52 @@ export class ImportComponent implements OnInit {
     }
   }
 
-  private populateFile(file: File) {
-    const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-    const reader = new FileReader();
+  public getFileBundle(): Bundle {
+    const bundle = new Bundle();
+    bundle.type = 'batch';
+    bundle.entry = [];
 
-    if (validExtensions.indexOf(extension) < 0) {
-      alert('Expected one of the following file types: ' + validExtensions.join(' '));
-      return;
-    }
+    this.files
+      .filter((importFile: ImportFileModel) => {
+        return importFile.contentType === ContentTypes.Json ||
+          importFile.contentType === ContentTypes.Xml ||
+          importFile.contentType === ContentTypes.Image;
+      })
+      .forEach((importFile: ImportFileModel) => {
+        if (importFile.resource.resourceType === 'Bundle' && importFile.bundleOperation === 'execute') {
+          const transactionBundle = <Bundle>importFile.resource;
 
-    return new Promise((resolve, reject) => {
-      reader.onload = (e: any) => {
-        const result = e.target.result;
-        const importFileModel = new ImportFileModel();
-        this.errorMessage = '';
-        importFileModel.name = file.name;
-        importFileModel.content = result;
+          (transactionBundle.entry || []).forEach(bundleEntry => {
+            if (!bundleEntry.resource) return;
 
-        if (extension === '.json') {
-          importFileModel.contentType = ContentTypes.Json;
-        } else if (extension === '.xml') {
-          importFileModel.contentType = ContentTypes.Xml;
-        } else if (extension === '.xlsx') {
-          importFileModel.contentType = ContentTypes.Xlsx;
-        } else if (extension === '.jpg' || extension === '.gif' || extension === '.png' || extension === '.bmp' || extension === '.svg') {
-          importFileModel.contentType = ContentTypes.Image;
-        }
+            bundle.entry.push(bundleEntry);
 
-        try {
-          if (importFileModel.contentType === ContentTypes.Xml) {
-            importFileModel.resource = this.fhirService.deserialize(result);
-          } else if (importFileModel.contentType === ContentTypes.Json) {
-            importFileModel.resource = JSON.parse(result);
-          } else if (importFileModel.contentType === ContentTypes.Xlsx) {
-            const convertResults = this.importService.convertExcelToValueSetBundle(result);
-            if (!convertResults.success) {
-              this.errorMessage = "The XLSX that you're attempting to import is not valid. " + convertResults.message + " Please refer to the help documentation for guidance on the proper format of the XLSX.";
-              throw new Error(convertResults.message);
-            } else {
-              this.errorMessage = '';
+            if (!bundleEntry.request) {
+              bundleEntry.request = {
+                method: bundleEntry.resource.id ? 'PUT' : 'POST',
+                url: bundleEntry.resource.resourceType + (bundleEntry.resource.id ? '/' + bundleEntry.resource.id : '')
+              };
             }
-
-            importFileModel.vsBundle = convertResults.bundle;
-          } else if (importFileModel.contentType === ContentTypes.Image) {
-            importFileModel.resource = this.createMedia(file.name, file.type, result);
-          }
-        } catch (ex) {
-          importFileModel.message = ex.message;
+          });
+        } else {
+          const entry = new EntryComponent();
+          entry.request = new RequestComponent();
+          entry.request.method = importFile.resource.id ? 'PUT' : 'POST';
+          entry.request.url = importFile.resource.resourceType + (importFile.resource.id ? '/' + importFile.resource.id : '');
+          entry.resource = importFile.resource;
+          bundle.entry.push(entry);
         }
+      });
 
-        // First find a matching file based on the file name. If it has the same file name as one that already exists, replace it
-        let foundImportFile = this.files.find((importFile: ImportFileModel) => importFile.name === file.name);
-
-        // If another file with the same name can't be found, determine if there is a file with the same resource id as this one, and replace it
-        if (!foundImportFile && importFileModel.resource) {
-          foundImportFile = this.files.find((importFile) => importFile.resource && importFile.resource.id === importFileModel.resource.id);
+    this.files
+      .filter((importFile: ImportFileModel) => importFile.contentType === ContentTypes.Xlsx)
+      .forEach((importFile: ImportFileModel) => {
+        if (importFile.vsBundle) {
+          bundle.entry = bundle.entry.concat(importFile.vsBundle.entry);
         }
+      });
 
-        if (foundImportFile) {
-          const index = this.files.indexOf(foundImportFile);
-          this.files.splice(index, 1);
-        }
-
-        // only add to the list of files to import if it doesn't have a formatting error.
-        if (this.errorMessage === '') {
-          this.files.push(importFileModel);
-        }
-        if (this.configService.project && this.configService.project.implementationGuideId) {
-          this.getList(importFileModel);
-        }
-        this.importBundle = this.getFileBundle();
-        this.cdr.detectChanges();
-
-        resolve();
-      };
-
-      if (extension === '.json' || extension === '.xml') {
-        reader.readAsText(file);
-      } else {
-        reader.readAsArrayBuffer(file);
-      }
-    });
+    return bundle;
   }
 
   public async filesChanged(event) {
@@ -228,7 +194,6 @@ export class ImportComponent implements OnInit {
   }
 
   public async getList(importFileModel) {
-
     if (!importFileModel.resource || !importFileModel.resource.resourceType || !importFileModel.resource.id) return;
 
     let url = `/api/fhir/${importFileModel.resource.resourceType}`;
@@ -317,40 +282,91 @@ export class ImportComponent implements OnInit {
     }
   }
 
-  private getFileBundle(): Bundle {
-    const bundle = new Bundle();
-    bundle.type = 'batch';
-    bundle.entry = [];
+  private populateFile(file: File) {
+    const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    const reader = new FileReader();
 
-    this.files
-      .filter((importFile: ImportFileModel) => {
-        return importFile.contentType === ContentTypes.Json ||
-          importFile.contentType === ContentTypes.Xml ||
-          importFile.contentType === ContentTypes.Image;
-      })
-      .forEach((importFile: ImportFileModel) => {
-        if (importFile.resource.resourceType === 'Bundle' && (<Bundle> importFile.resource).type === 'transaction') {
-          const transactionBundle = <Bundle> importFile.resource;
-          bundle.entry.push(...transactionBundle.entry);
-        } else {
-          const entry = new EntryComponent();
-          entry.request = new RequestComponent();
-          entry.request.method = importFile.resource.id ? 'PUT' : 'POST';
-          entry.request.url = importFile.resource.resourceType + (importFile.resource.id ? '/' + importFile.resource.id : '');
-          entry.resource = importFile.resource;
-          bundle.entry.push(entry);
+    if (validExtensions.indexOf(extension) < 0) {
+      alert('Expected one of the following file types: ' + validExtensions.join(' '));
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      reader.onload = (e: any) => {
+        const result = e.target.result;
+        const importFileModel = new ImportFileModel();
+        this.errorMessage = '';
+        importFileModel.name = file.name;
+        importFileModel.content = result;
+
+        if (extension === '.json') {
+          importFileModel.contentType = ContentTypes.Json;
+        } else if (extension === '.xml') {
+          importFileModel.contentType = ContentTypes.Xml;
+        } else if (extension === '.xlsx') {
+          importFileModel.contentType = ContentTypes.Xlsx;
+        } else if (extension === '.jpg' || extension === '.gif' || extension === '.png' || extension === '.bmp' || extension === '.svg') {
+          importFileModel.contentType = ContentTypes.Image;
         }
-      });
 
-    this.files
-      .filter((importFile: ImportFileModel) => importFile.contentType === ContentTypes.Xlsx)
-      .forEach((importFile: ImportFileModel) => {
-        if (importFile.vsBundle) {
-          bundle.entry = bundle.entry.concat(importFile.vsBundle.entry);
+        try {
+          if (importFileModel.contentType === ContentTypes.Xml) {
+            importFileModel.resource = this.fhirService.deserialize(result);
+          } else if (importFileModel.contentType === ContentTypes.Json) {
+            importFileModel.resource = JSON.parse(result);
+          } else if (importFileModel.contentType === ContentTypes.Xlsx) {
+            const convertResults = this.importService.convertExcelToValueSetBundle(result);
+            if (!convertResults.success) {
+              this.errorMessage = 'The XLSX that you\'re attempting to import is not valid. ' + convertResults.message + ' Please refer to the help documentation for guidance on the proper format of the XLSX.';
+              throw new Error(convertResults.message);
+            } else {
+              this.errorMessage = '';
+            }
+
+            importFileModel.vsBundle = convertResults.bundle;
+          } else if (importFileModel.contentType === ContentTypes.Image) {
+            importFileModel.resource = this.createMedia(file.name, file.type, result);
+          }
+        } catch (ex) {
+          importFileModel.message = ex.message;
         }
-      });
 
-    return bundle;
+        if (importFileModel.resource && importFileModel.resource.resourceType === 'Bundle') {
+          importFileModel.bundleOperation = 'execute';
+        }
+
+        // First find a matching file based on the file name. If it has the same file name as one that already exists, replace it
+        let foundImportFile = this.files.find((importFile: ImportFileModel) => importFile.name === file.name);
+
+        // If another file with the same name can't be found, determine if there is a file with the same resource id as this one, and replace it
+        if (!foundImportFile && importFileModel.resource) {
+          foundImportFile = this.files.find((importFile) => importFile.resource && importFile.resource.id === importFileModel.resource.id);
+        }
+
+        if (foundImportFile) {
+          const index = this.files.indexOf(foundImportFile);
+          this.files.splice(index, 1);
+        }
+
+        // only add to the list of files to import if it doesn't have a formatting error.
+        if (this.errorMessage === '') {
+          this.files.push(importFileModel);
+        }
+        if (this.configService.project && this.configService.project.implementationGuideId) {
+          this.getList(importFileModel);
+        }
+        this.importBundle = this.getFileBundle();
+        this.cdr.detectChanges();
+
+        resolve();
+      };
+
+      if (extension === '.json' || extension === '.xml') {
+        reader.readAsText(file);
+      } else {
+        reader.readAsArrayBuffer(file);
+      }
+    });
   }
 
   public downloadBundle(format: 'json'|'xml') {
