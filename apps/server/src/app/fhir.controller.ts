@@ -1,4 +1,4 @@
-import {BaseController, IUserSecurityInfo} from './base.controller';
+import { BaseController, IUserSecurityInfo } from './base.controller';
 import {
   All,
   BadRequestException,
@@ -17,26 +17,26 @@ import {
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import {buildUrl, createOperationOutcome, generateId, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Response} from 'express';
-import {AuthGuard} from '@nestjs/passport';
-import {TofLogger} from './tof-logger';
-import {AxiosRequestConfig} from 'axios';
-import {ApiOAuth2, ApiOperation, ApiTags} from '@nestjs/swagger';
-import {FhirServerBase, FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User} from './server.decorators';
-import {ConfigService} from './config.service';
-import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl} from './helper';
-import {Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide, OperationOutcome} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
-import {default as PQueue} from 'p-queue';
-import {IBundle, IImplementationGuide, IOperationOutcome, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { buildUrl, createOperationOutcome, generateId, getR4Dependencies, getSTU3Dependencies } from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import { Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
+import { TofLogger } from './tof-logger';
+import { AxiosRequestConfig } from 'axios';
+import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FhirServerBase, FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User } from './server.decorators';
+import { ConfigService } from './config.service';
+import { Globals } from '../../../../libs/tof-lib/src/lib/globals';
+import { addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl } from './helper';
+import { Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { ImplementationGuide as R4ImplementationGuide, OperationOutcome } from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import { format as formatUrl, parse as parseUrl, UrlWithStringQuery } from 'url';
+import { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
+import { default as PQueue } from 'p-queue';
+import { IBundle, IImplementationGuide, IOperationOutcome, IStructureDefinition } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
-import {ImplementationGuideController} from './implementation-guide.controller';
+import { ImplementationGuideController } from './implementation-guide.controller';
 
 export interface ProxyResponse {
   status: number;
@@ -306,246 +306,6 @@ export class FhirController extends BaseController {
   }
 
   /**
-   * Processes an individual entry in the batch.
-   * If the resource already exists, checks permissions to make sure the user can edit.
-   * @param entry The entry to process.
-   * @param fhirServerBase The base address of the fhir server.
-   * @param fhirServerVersion The version of the fhir server.
-   * @param userSecurityInfo The security info for the currently logged-in user.
-   * @param contextImplementationGuide The implementation guide this batch should be int he context of. Ensures the entry/resource is added to the ig.
-   * @param shouldRemovePermissions Indicates if permissions should be removed as part of this batch process. Some scenarios (such as importing) don't want permissions removed.
-   * @param applyContextPermissions Indicates if created/updated resources should apply permissions from the context implementation guide
-   */
-  private async processBatchEntry(
-    entry: EntryComponent,
-    fhirServerBase: string,
-    fhirServerVersion: 'stu3' | 'r4',
-    userSecurityInfo: IUserSecurityInfo,
-    contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
-    shouldRemovePermissions = true,
-    applyContextPermissions = false) {
-
-    if (entry.resource && entry.resource.resourceType === 'StructureDefinition') {
-      delete (<IStructureDefinition>entry.resource).snapshot;
-    }
-
-    // Make sure the user has permission to edit the pre-existing resource
-    if (entry.request.method !== 'POST') {
-      const id = entry.resource.id;
-
-      if (!id) {
-        throw new BadRequestException('Batch entry with a request method of PUT must specify Resource.id');
-      }
-
-      if (this.configService.server.enableSecurity) {
-        let originalResource;
-        const getUrl = buildUrl(fhirServerBase, entry.resource.resourceType, entry.resource.id);
-
-        try {
-          this.logger.log(`Retrieving existing resource and checking security for ${entry.resource.resourceType}/${entry.resource.id}`);
-          originalResource = (await this.httpService.get<DomainResource>(getUrl).toPromise()).data;
-
-          assertUserCanEdit(this.configService, userSecurityInfo, originalResource);
-        } catch (ex) {
-          if (ex.response) {
-            if (ex.response.status === 404 || ex.response.status === 410) {
-              // Do nothing... It doesn't exist or has been deleted, so the user can create it.
-            } else if (ex.status === 401) {
-              return {
-                status: 401,
-                data: createOperationOutcome('fatal', 'forbidden', 'You do not have permissions to update this resource.')
-              };
-            } else if (ex.response.status !== 404) {
-              let msg = `Expected either 200 or 404. Received ${ex.status} with error '${ex.message}'`;
-
-              if (ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
-                const oo = <IOperationOutcome>ex.response.data;
-                if (oo.issue && oo.issue.length > 0) {
-                  const newMsg = oo.issue.map(i => i.diagnostics).join(' \n');
-
-                  if (newMsg) {
-                    msg = newMsg;
-                  }
-                }
-              }
-
-              return {
-                status: ex.response.status,
-                data: createOperationOutcome('fatal', 'processing', msg)
-              };
-            }
-          } else {
-            this.logger.error(`A generic error occurred while attempting to confirm that the user can edit the resource in the transaction entry: ${ex.message}`);
-            return {
-              status: ex.response.status,
-              data: createOperationOutcome('fatal', 'processing', `A generic error occurred while attempting to confirm that the user can edit the resource in the transaction entry: ${ex.message}`)
-            };
-          }
-          // Do nothing if the resource is not found... That means this is a create-with-id request
-        }
-
-        if (originalResource && shouldRemovePermissions) {
-          try {
-            await this.removePermissions(fhirServerBase, originalResource, entry.resource);
-          } catch (ex) {
-            this.logger.error(`Error occurred while removing permissions for resource in transaction: ${ex.message}`, ex.stack);
-            throw ex;
-          }
-        }
-
-        // Make sure the user has given themselves permissions to edit
-        // the resource they are requesting to be updated
-        if (!originalResource && entry.resource) {
-          this.ensureUserCanEdit(userSecurityInfo, entry.resource);
-        }
-
-        // Copy the permissions from the context ig to the entry/resource
-        if (applyContextPermissions) {
-          copyPermissions(contextImplementationGuide, entry.resource);
-        }
-      }
-    }
-
-    if (entry.request.method === 'POST' && !entry.resource.id) {
-      entry.resource.id = generateId();
-    }
-
-    const url = fhirServerBase +
-      (!fhirServerBase.endsWith('/') ? '/' : '') +
-      (entry.request.url.startsWith('/') ? entry.request.url.substring(1) : entry.request.url);
-    const options: AxiosRequestConfig = {
-      url: url,
-      method: entry.request.method,
-      data: entry.resource
-    };
-
-    let batchProcessingResponse;
-
-    try {
-      this.logger.log(`Sending ${entry.request.method} request for ${entry.resource.resourceType}${entry.resource.id ? '/' + entry.resource.id : ''} to FHIR server.`);
-      batchProcessingResponse = await this.httpService.request(options).toPromise();
-    } catch (ex) {
-      this.logger.error(`Error occurred while updating resource '${url}' in transaction entry: ${ex.message}`, ex.stack);
-
-      if (ex.response) {
-        return ex.response;
-      }
-
-      throw ex;
-    }
-
-    if (contextImplementationGuide) {
-      this.logger.trace(`Batch is being processed within the context of the IG "${contextImplementationGuide.id}. Ensuring the resource is added to the IG.`);
-      await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, batchProcessingResponse.data, userSecurityInfo, contextImplementationGuide, false);
-      // TODO: Handle DELETE events (remove the resource from the IG).
-    }
-
-    let action = '';
-    if (entry.request.method === 'POST') {
-      action = 'C';
-    } else if (entry.request.method === 'GET') {
-      action = 'R';
-    } else if (entry.request.method === 'PUT') {
-      action = 'U';
-    } else if (entry.request.method.indexOf('DEL') > 0) {
-      action = 'D';
-    }
-
-    createAuditEvent(this.logger, this.httpService, fhirServerVersion, fhirServerBase, action, userSecurityInfo, batchProcessingResponse.data);
-
-    return batchProcessingResponse;
-  }
-
-  /**
-   * Process a Bundle[type='batch'] of resources
-   * @param bundle The bundle to process
-   * @param fhirServerBase The base address of the fhir server
-   * @param fhirServerVersion The version of the fhir server
-   * @param userSecurityInfo The security info about the currently logged-in user
-   * @param contextImplementationGuide
-   * @param shouldRemovePermissions Indicates if permissions should be removed from resources in the batch if the original resource has permissions that aren't in the request
-   * @param applyContextPermissions Indicates if created/updated resources should apply permissions from the context implementation guide
-   */
-  private async processBatch(
-    bundle: Bundle,
-    fhirServerBase: string,
-    fhirServerVersion: 'stu3' | 'r4',
-    userSecurityInfo: IUserSecurityInfo,
-    contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
-    shouldRemovePermissions = true,
-    applyContextPermissions = false) {
-
-    if (!bundle || bundle.resourceType !== 'Bundle') {
-      throw new BadRequestException(`Expected the resource to be a Bundle, got ${bundle.resourceType}.`);
-    }
-
-    if (bundle.type !== 'batch') {
-      throw new BadRequestException('Trifolia-on-FHIR only supports Bundles of type "batch".');
-    }
-
-    // Make sure each entry has a request.url
-    (bundle.entry || []).forEach((entry, index) => {
-      if (!entry.request || !entry.request.url || !entry.request.method) {
-        throw new BadRequestException('Transaction entries must have an request.url and request.method');
-      } else if (['GET', 'POST', 'PUT', 'DELETE'].indexOf(entry.request.method) < 0) {
-        throw new BadRequestException(`Transaction entry[${index}] method must be GET, POST, PUT or DELETE`);
-      }
-    });
-
-    const contextImplementationGuideUrl = contextImplementationGuide ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuide.id) : null;
-
-    // Uses promise-queue to throttle the number of requests that can be sent to the FHIR server at the same time
-    const queue = new PQueue({ concurrency: this.configService.server.maxAsyncQueueRequests });
-    const results = [];
-
-    (bundle.entry || []).forEach((entry) => {
-      queue.add(async () => {
-        const next = await this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions, applyContextPermissions);
-        results.push(next);
-      });
-    });
-    await queue.onIdle();
-
-    // Now that processing the batch entries is done, persist the context IG back to the server
-    if (contextImplementationGuide) {
-      this.logger.trace(`Updating the context implementation guide ${contextImplementationGuide.id} for the batch.`);
-      await this.httpService.put(contextImplementationGuideUrl, contextImplementationGuide).toPromise();
-    }
-
-    const responseBundle: Bundle = {
-      resourceType: 'Bundle',
-      type: 'batch-response'
-    };
-
-    responseBundle.entry = results.map((result, index) => {
-      const responseEntry = <EntryComponent>{
-        request: {
-          method: bundle.entry[index].request.method,
-          url: bundle.entry[index].request.url
-        },
-        response: {
-          status: result.status.toString() + (result.statusText ? ' ' + result.statusText : ''),
-          location: result.headers ? result.headers['content-location'] : undefined
-        }
-      };
-
-      if (result.data && result.data.resourceType === 'OperationOutcome') {
-        responseEntry.response.outcome = result.data;
-      } else {
-        if (result.data && result.data.resourceType) {
-          responseEntry.response.outcome = createOperationOutcome('information', 'informational', `Successfully created/updated resource ${result.data.resourceType}/${result.data.id}`);
-        } else {
-          responseEntry.response.outcome = createOperationOutcome('information', 'informational', 'Successfully created/updated resource.');
-        }
-      }
-
-      return responseEntry;
-    });
-
-    return responseBundle;
-  }
-
-  /**
    * Proxies the request through the selected/specified FHIR server
    * @param url The full url of the request to proxy. This will be modified to use a different base address for the proxying fhir server.
    * @param headers Headers for the proxy request. Some headers may be deleted to make the proxy work.
@@ -601,9 +361,15 @@ export class FhirController extends BaseController {
 
     const parsedUrl = parseFhirUrl(url);
     const isBatch = body && body.resourceType === 'Bundle' && body.type === 'batch';
-    const contextImplementationGuide = headers.implementationguideid ? await this.getImplementationGuide(fhirServerBase, headers.implementationguideid) : undefined;
+    let contextImplementationGuide = headers.implementationguideid ? await this.getImplementationGuide(fhirServerBase, headers.implementationguideid) : undefined;
 
     if (isBatch && !parsedUrl.resourceType) {
+      const contextIgInBundle = (body.entry || []).find(e => e.resource && e.resource.resourceType === 'ImplementationGuide' && e.resource.id === contextImplementationGuide.id);
+
+      if (contextIgInBundle) {
+        contextImplementationGuide = contextIgInBundle.resource;
+      }
+
       // When dealing with a transaction, process each individual resource within the bundle
       try {
         const responseBundle = await this.processBatch(body, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions, applyContextPermissions);
@@ -767,6 +533,250 @@ export class FhirController extends BaseController {
         throw new InternalServerErrorException();
       }
     }
+  }
+
+  /**
+   * Process a Bundle[type='batch'] of resources
+   * @param bundle The bundle to process
+   * @param fhirServerBase The base address of the fhir server
+   * @param fhirServerVersion The version of the fhir server
+   * @param userSecurityInfo The security info about the currently logged-in user
+   * @param contextImplementationGuide
+   * @param shouldRemovePermissions Indicates if permissions should be removed from resources in the batch if the original resource has permissions that aren't in the request
+   * @param applyContextPermissions Indicates if created/updated resources should apply permissions from the context implementation guide
+   */
+  private async processBatch(
+    bundle: Bundle,
+    fhirServerBase: string,
+    fhirServerVersion: 'stu3' | 'r4',
+    userSecurityInfo: IUserSecurityInfo,
+    contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
+    shouldRemovePermissions = true,
+    applyContextPermissions = false) {
+
+    if (!bundle || bundle.resourceType !== 'Bundle') {
+      throw new BadRequestException(`Expected the resource to be a Bundle, got ${bundle.resourceType}.`);
+    }
+
+    if (bundle.type !== 'batch') {
+      throw new BadRequestException('Trifolia-on-FHIR only supports Bundles of type "batch".');
+    }
+
+    // Make sure each entry has a request.url
+    (bundle.entry || []).forEach((entry, index) => {
+      if (!entry.request || !entry.request.url || !entry.request.method) {
+        throw new BadRequestException('Transaction entries must have an request.url and request.method');
+      } else if (['GET', 'POST', 'PUT', 'DELETE'].indexOf(entry.request.method) < 0) {
+        throw new BadRequestException(`Transaction entry[${index}] method must be GET, POST, PUT or DELETE`);
+      }
+    });
+
+    const contextImplementationGuideUrl = contextImplementationGuide ? buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuide.id) : null;
+
+    // Uses promise-queue to throttle the number of requests that can be sent to the FHIR server at the same time
+    const queue = new PQueue({ concurrency: this.configService.server.maxAsyncQueueRequests });
+    const results = [];
+
+    (bundle.entry || []).forEach((entry) => {
+      queue.add(async () => {
+        const next = await this.processBatchEntry(entry, fhirServerBase, fhirServerVersion, userSecurityInfo, contextImplementationGuide, shouldRemovePermissions, applyContextPermissions);
+        results.push(next);
+      });
+    });
+    await queue.onIdle();
+
+    // Now that processing the batch entries is done, persist the context IG back to the server
+    if (contextImplementationGuide) {
+      this.logger.trace(`Updating the context implementation guide ${contextImplementationGuide.id} for the batch.`);
+      await this.httpService.put(contextImplementationGuideUrl, contextImplementationGuide).toPromise();
+    }
+
+    const responseBundle: Bundle = {
+      resourceType: 'Bundle',
+      type: 'batch-response'
+    };
+
+    responseBundle.entry = results.map((result, index) => {
+      const responseEntry = <EntryComponent>{
+        request: {
+          method: bundle.entry[index].request.method,
+          url: bundle.entry[index].request.url
+        },
+        response: {
+          status: result.status.toString() + (result.statusText ? ' ' + result.statusText : ''),
+          location: result.headers ? result.headers['content-location'] : undefined
+        }
+      };
+
+      if (result.data && result.data.resourceType === 'OperationOutcome') {
+        responseEntry.response.outcome = result.data;
+      } else {
+        if (result.data && result.data.resourceType) {
+          responseEntry.response.outcome = createOperationOutcome('information', 'informational', `Successfully created/updated resource ${result.data.resourceType}/${result.data.id}`);
+        } else {
+          responseEntry.response.outcome = createOperationOutcome('information', 'informational', 'Successfully created/updated resource.');
+        }
+      }
+
+      return responseEntry;
+    });
+
+    return responseBundle;
+  }
+
+  /**
+   * Processes an individual entry in the batch.
+   * If the resource already exists, checks permissions to make sure the user can edit.
+   * @param entry The entry to process.
+   * @param fhirServerBase The base address of the fhir server.
+   * @param fhirServerVersion The version of the fhir server.
+   * @param userSecurityInfo The security info for the currently logged-in user.
+   * @param contextImplementationGuide The implementation guide this batch should be int he context of. Ensures the entry/resource is added to the ig.
+   * @param shouldRemovePermissions Indicates if permissions should be removed as part of this batch process. Some scenarios (such as importing) don't want permissions removed.
+   * @param applyContextPermissions Indicates if created/updated resources should apply permissions from the context implementation guide
+   */
+  private async processBatchEntry(
+    entry: EntryComponent,
+    fhirServerBase: string,
+    fhirServerVersion: 'stu3' | 'r4',
+    userSecurityInfo: IUserSecurityInfo,
+    contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
+    shouldRemovePermissions = true,
+    applyContextPermissions = false) {
+
+    if (entry.resource && entry.resource.resourceType === 'StructureDefinition') {
+      delete (<IStructureDefinition>entry.resource).snapshot;
+    }
+
+    // Make sure the user has permission to edit the pre-existing resource
+    if (entry.request.method !== 'POST') {
+      const id = entry.resource.id;
+
+      if (!id) {
+        throw new BadRequestException('Batch entry with a request method of PUT must specify Resource.id');
+      }
+
+      if (this.configService.server.enableSecurity) {
+        let originalResource;
+        const getUrl = buildUrl(fhirServerBase, entry.resource.resourceType, entry.resource.id);
+
+        try {
+          this.logger.log(`Retrieving existing resource and checking security for ${entry.resource.resourceType}/${entry.resource.id}`);
+          originalResource = (await this.httpService.get<DomainResource>(getUrl).toPromise()).data;
+
+          assertUserCanEdit(this.configService, userSecurityInfo, originalResource);
+        } catch (ex) {
+          if (ex.response) {
+            if (ex.response.status === 404 || ex.response.status === 410) {
+              // Do nothing... It doesn't exist or has been deleted, so the user can create it.
+            } else if (ex.status === 401) {
+              return {
+                status: 401,
+                data: createOperationOutcome('fatal', 'forbidden', 'You do not have permissions to update this resource.')
+              };
+            } else if (ex.response.status !== 404) {
+              let msg = `Expected either 200 or 404. Received ${ex.status} with error '${ex.message}'`;
+
+              if (ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
+                const oo = <IOperationOutcome>ex.response.data;
+                if (oo.issue && oo.issue.length > 0) {
+                  const newMsg = oo.issue.map(i => i.diagnostics).join(' \n');
+
+                  if (newMsg) {
+                    msg = newMsg;
+                  }
+                }
+              }
+
+              return {
+                status: ex.response.status,
+                data: createOperationOutcome('fatal', 'processing', msg)
+              };
+            }
+          } else {
+            this.logger.error(`A generic error occurred while attempting to confirm that the user can edit the resource in the transaction entry: ${ex.message}`);
+            return {
+              status: ex.response.status,
+              data: createOperationOutcome('fatal', 'processing', `A generic error occurred while attempting to confirm that the user can edit the resource in the transaction entry: ${ex.message}`)
+            };
+          }
+          // Do nothing if the resource is not found... That means this is a create-with-id request
+        }
+
+        if (originalResource && shouldRemovePermissions) {
+          try {
+            await this.removePermissions(fhirServerBase, originalResource, entry.resource);
+          } catch (ex) {
+            this.logger.error(`Error occurred while removing permissions for resource in transaction: ${ex.message}`, ex.stack);
+            throw ex;
+          }
+        }
+
+        // Make sure the user has given themselves permissions to edit
+        // the resource they are requesting to be updated
+        if (!originalResource && entry.resource) {
+          this.ensureUserCanEdit(userSecurityInfo, entry.resource);
+        }
+
+        // Copy the permissions from the context ig to the entry/resource
+        if (applyContextPermissions) {
+          copyPermissions(contextImplementationGuide, entry.resource);
+        }
+      }
+    }
+
+    if (entry.request.method === 'POST' && !entry.resource.id) {
+      entry.resource.id = generateId();
+    }
+
+    const url = fhirServerBase +
+      (!fhirServerBase.endsWith('/') ? '/' : '') +
+      (entry.request.url.startsWith('/') ? entry.request.url.substring(1) : entry.request.url);
+    const options: AxiosRequestConfig = {
+      url: url,
+      method: entry.request.method,
+      data: entry.resource
+    };
+
+    let batchProcessingResponse;
+
+    try {
+      this.logger.log(`Sending ${entry.request.method} request for ${entry.resource.resourceType}${entry.resource.id ? '/' + entry.resource.id : ''} to FHIR server.`);
+      batchProcessingResponse = await this.httpService.request(options).toPromise();
+    } catch (ex) {
+      this.logger.error(`Error occurred while updating resource '${url}' in transaction entry: ${ex.message}`, ex.stack);
+
+      if (ex.response) {
+        return ex.response;
+      }
+
+      throw ex;
+    }
+
+    const igIsContext = contextImplementationGuide &&
+      batchProcessingResponse.data.resourceType === 'ImplementationGuide' &&
+      batchProcessingResponse.data.id === contextImplementationGuide.id;
+
+    if (contextImplementationGuide && !igIsContext) {
+      this.logger.trace(`Batch is being processed within the context of the IG "${contextImplementationGuide.id}. Ensuring the resource is added to the IG.`);
+      await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, batchProcessingResponse.data, userSecurityInfo, contextImplementationGuide, false);
+      // TODO: Handle DELETE events (remove the resource from the IG).
+    }
+
+    let action = '';
+    if (entry.request.method === 'POST') {
+      action = 'C';
+    } else if (entry.request.method === 'GET') {
+      action = 'R';
+    } else if (entry.request.method === 'PUT') {
+      action = 'U';
+    } else if (entry.request.method.indexOf('DEL') > 0) {
+      action = 'D';
+    }
+
+    createAuditEvent(this.logger, this.httpService, fhirServerVersion, fhirServerBase, action, userSecurityInfo, batchProcessingResponse.data);
+
+    return batchProcessingResponse;
   }
 
   @Get('dependency')
