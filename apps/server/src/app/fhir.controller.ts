@@ -325,10 +325,10 @@ export class FhirController extends BaseController {
     fhirServerBase: string,
     fhirServerVersion: 'stu3' | 'r4',
     user: ITofUser,
-    body?): Promise<ProxyResponse> {
+    body?,
+    applyContextPermissions = false): Promise<ProxyResponse> {
 
     const shouldRemovePermissions = headers['shouldremovepermissions'] ? headers['shouldremovepermissions'].toLowerCase() === 'true' : true;
-    const applyContextPermissions = url.indexOf('applyContextPermissions=true') > -1;
 
     if (!user) {
       throw new UnauthorizedException();
@@ -974,7 +974,7 @@ export class FhirController extends BaseController {
 
     this.logger.log(`Proxying ${method} request ${url} to FHIR server`);
 
-    const results = await this.proxy(url.replace(/^\/api\/fhir/, ''), headers, method, fhirServerBase, fhirServerVersion, user, body);
+    const results = await this.proxy(url.replace(/^\/api\/fhir/, ''), headers, method, fhirServerBase, fhirServerVersion, user, body, url.indexOf('applyContextPermissions=true') > -1);
     response.status(results.status);
     if (results.contentType) {
       response.contentType(results.contentType);
