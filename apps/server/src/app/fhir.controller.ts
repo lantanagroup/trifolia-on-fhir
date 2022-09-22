@@ -1,9 +1,9 @@
 import { BaseController, IUserSecurityInfo } from './base.controller';
 import {
-  All,
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   Headers,
@@ -12,6 +12,7 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Put,
   Query,
   Res,
   UnauthorizedException,
@@ -324,9 +325,10 @@ export class FhirController extends BaseController {
     fhirServerBase: string,
     fhirServerVersion: 'stu3' | 'r4',
     user: ITofUser,
-    body?,
-    shouldRemovePermissions = true,
-    applyContextPermissions = false): Promise<ProxyResponse> {
+    body?): Promise<ProxyResponse> {
+
+    const shouldRemovePermissions = headers['shouldremovepermissions'] ? headers['shouldremovepermissions'].toLowerCase() === 'true' : true;
+    const applyContextPermissions = url.indexOf('applyContextPermissions=true') > -1;
 
     if (!user) {
       throw new UnauthorizedException();
@@ -526,7 +528,7 @@ export class FhirController extends BaseController {
         return {
           status: results && results.statusCode ? results.statusCode : 500,
           contentType: results && results.headers ? results.headers['content-type'] || null : null,
-          data: results && results.error ? results.error : 'Unknown error occurred'
+          data: results && results.error ? results.error : results.data || 'Unknown error occurred'
         };
       } else {
         this.logger.error(`Error (status ${ex.status} processing http-error results in proxy: ${ex.message}`, ex);
@@ -899,8 +901,8 @@ export class FhirController extends BaseController {
     return responseBundle;
   }
 
-  @All()
-  public async proxyRequest(
+  @Get(['/', '*', '*/*', '*/*/_history', '*/*/_history/*'])
+  public async proxyGetRequest(
     @RequestUrl() url: string,
     @Headers() headers: { [key: string]: any },
     @RequestMethod() method: string,
@@ -910,16 +912,73 @@ export class FhirController extends BaseController {
     @User() user: ITofUser,
     @Body() body?) {
 
-    const shouldRemovePermissions = headers['shouldremovepermissions'] ? headers['shouldremovepermissions'].toLowerCase() === 'true' : true;
-    const applyContextPermissions = url.indexOf('applyContextPermissions=true') > -1;
-    const results = await this.proxy(url, headers, method, fhirServerBase, fhirServerVersion, user, body, shouldRemovePermissions, applyContextPermissions);
+    await this.proxyRequest(url, headers, method, fhirServerBase, fhirServerVersion, response, user, body);
+  }
 
+  /*
+  The @All() route attribute no longer works in NestJS. Have to explicitly state each of the supported routes, and direct them
+  to the private method that proxy's the request to the internal FHIR server
+  */
+
+  @Put('*/*')
+  public async proxyPutRequest(
+    @RequestUrl() url: string,
+    @Headers() headers: { [key: string]: any },
+    @RequestMethod() method: string,
+    @FhirServerBase() fhirServerBase: string,
+    @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4',
+    @Res() response: Response,
+    @User() user: ITofUser,
+    @Body() body?) {
+
+    await this.proxyRequest(url, headers, method, fhirServerBase, fhirServerVersion, response, user, body);
+  }
+
+  @Post(['/', '*'])
+  public async proxyPostRequest(
+    @RequestUrl() url: string,
+    @Headers() headers: { [key: string]: any },
+    @RequestMethod() method: string,
+    @FhirServerBase() fhirServerBase: string,
+    @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4',
+    @Res() response: Response,
+    @User() user: ITofUser,
+    @Body() body?) {
+
+    await this.proxyRequest(url, headers, method, fhirServerBase, fhirServerVersion, response, user, body);
+  }
+
+  @Delete('*/*')
+  public async proxyDeleteRequest(
+    @RequestUrl() url: string,
+    @Headers() headers: { [key: string]: any },
+    @RequestMethod() method: string,
+    @FhirServerBase() fhirServerBase: string,
+    @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4',
+    @Res() response: Response,
+    @User() user: ITofUser,
+    @Body() body?) {
+
+    await this.proxyRequest(url, headers, method, fhirServerBase, fhirServerVersion, response, user, body);
+  }
+
+  private async proxyRequest(
+    url: string,
+    headers: { [key: string]: any },
+    method: string,
+    fhirServerBase: string,
+    fhirServerVersion: 'stu3' | 'r4',
+    response: Response,
+    user: ITofUser,
+    body?) {
+
+    this.logger.log(`Proxying ${method} request ${url} to FHIR server`);
+
+    const results = await this.proxy(url.replace(/^\/api\/fhir/, ''), headers, method, fhirServerBase, fhirServerVersion, user, body);
     response.status(results.status);
-
     if (results.contentType) {
       response.contentType(results.contentType);
     }
-
     response.send(results.data);
   }
 }
