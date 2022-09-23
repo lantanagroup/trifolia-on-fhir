@@ -27,8 +27,8 @@
         <app-tooltip-icon tooltipKey="ig.publishing.template.custom"></app-tooltip-icon>
       </div>
     </div>
-    <select class="form-control" *ngIf="templateType === 'uploaded'">
-
+    <select class="form-control" *ngIf="templateType === 'uploaded'" [(ngModel)]="examples2">
+      <option *ngFor="let binary of examples2" [value]="binary">{{binary.id}}</option>
     </select>
   </div>
   <p class="help-block" *ngIf="!valueUriValid">The custom template specified must be a valid URL.</p>

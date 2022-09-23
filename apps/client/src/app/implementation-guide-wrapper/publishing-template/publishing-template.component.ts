@@ -1,7 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {IExtension, IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {ConfigService} from '../../shared/config.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { IExtension, IImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
+import { ConfigService } from '../../shared/config.service';
+import { Resource } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { ImplementationGuideService } from '../../shared/implementation-guide.service';
+import { IgExampleModel } from '../../../../../../libs/tof-lib/src/lib/ig-example-model';
 
 @Component({
   selector: 'trifolia-fhir-publishing-template',
@@ -11,57 +14,76 @@ import {ConfigService} from '../../shared/config.service';
 export class PublishingTemplateComponent implements OnInit {
   @Input() implementationGuide: IImplementationGuide;
   @Output() change = new EventEmitter<IExtension>();
-  templateType: 'not-specified'|'official'|'custom-uri';
+  templateType: 'not-specified' | 'official' | 'custom-uri' | 'uploaded';
   officialTemplate: string;
   officialVersion: string;
   officialVersions: string[];
   customUri: string;
+  resources: Resource[];
+  examples: IgExampleModel[];
+  examples2: IgExampleModel[];
 
   Globals = Globals;
 
-  constructor(private configService: ConfigService) { }
+  constructor(private configService: ConfigService, private igService: ImplementationGuideService) {
+  }
 
   get extension() {
     return (this.implementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-pub-template']);
   }
 
+  private async getBinaryResources() {
+    if (this.configService.isFhirSTU3) {
+
+    } else if (this.configService.isFhirR4) {
+      this.examples = await this.igService.getExamples(this.implementationGuide.id).toPromise();
+      this.examples2 = this.examples.filter(i => i.resourceType === 'Composition');
+    }
+  }
+
   async init() {
     const ext = this.extension;
 
-    if (ext) {
-      if (ext.hasOwnProperty('valueUri')) {
-        this.templateType = 'custom-uri';
-        this.customUri = ext.valueUri;
-      } else {
-        this.templateType = 'official';
-
-        const hashTagIndex = (ext.valueString || '').indexOf('#');
-        if (ext.valueString && hashTagIndex >= 0) {
-          this.officialTemplate = ext.valueString.substring(0, hashTagIndex);
-          this.officialVersion = ext.valueString.substring(hashTagIndex + 1);
-        } else {
-          this.officialTemplate = ext.valueString;
-          this.officialVersion = 'current';
-        }
-      }
-
-      this.officialVersions = await this.configService.getTemplateVersions(this.officialTemplate);
-
-      if (this.officialVersion && this.officialVersions && this.officialVersions.indexOf(this.officialVersion) < 0) {
-        this.officialVersion = this.officialVersions[0];
-      } else if (!this.officialVersion && this.officialVersions && this.officialVersions.length > 0) {
-        this.officialVersion = this.officialVersions[0];
-      }
+    if (this.templateType === 'uploaded') {
+      this.templateType = 'uploaded';
     } else {
-      this.templateType = 'not-specified';
-      this.officialTemplate = undefined;
-      this.officialVersion = undefined;
+      if (ext) {
+        if (ext.hasOwnProperty('valueUri')) {
+          this.templateType = 'custom-uri';
+          this.customUri = ext.valueUri;
+        } else {
+          this.templateType = 'official';
+
+          const hashTagIndex = (ext.valueString || '').indexOf('#');
+          if (ext.valueString && hashTagIndex >= 0) {
+            this.officialTemplate = ext.valueString.substring(0, hashTagIndex);
+            this.officialVersion = ext.valueString.substring(hashTagIndex + 1);
+          } else {
+            this.officialTemplate = ext.valueString;
+            this.officialVersion = 'current';
+          }
+        }
+
+        this.officialVersions = await this.configService.getTemplateVersions(this.officialTemplate);
+
+        if (this.officialVersion && this.officialVersions && this.officialVersions.indexOf(this.officialVersion) < 0) {
+          this.officialVersion = this.officialVersions[0];
+        } else if (!this.officialVersion && this.officialVersions && this.officialVersions.length > 0) {
+          this.officialVersion = this.officialVersions[0];
+        }
+      } else {
+        this.templateType = 'not-specified';
+        this.officialTemplate = undefined;
+        this.officialVersion = undefined;
+        this.examples2 = undefined;
+      }
+
+      this.customUri = ext ? ext.valueUri : undefined;
     }
 
-    this.customUri = ext ? ext.valueUri : undefined;
   }
 
-  async setTemplateType(value: 'not-specified'|'official'|'custom-uri') {
+  async setTemplateType(value: 'not-specified' | 'official' | 'custom-uri' | 'uploaded') {
     this.implementationGuide.extension = this.implementationGuide.extension || [];
     let hasChanged = false;
 
@@ -92,6 +114,10 @@ export class PublishingTemplateComponent implements OnInit {
     } else if (value === 'custom-uri' && !this.extension.hasOwnProperty('valueUri')) {
       delete this.extension.valueString;
       this.extension.valueUri = 'https://github.com/HL7/ig-template-fhir/archive/master.zip';
+      hasChanged = true;
+    } else if (value === 'uploaded') {
+      this.templateType = value;
+      await this.getBinaryResources();
       hasChanged = true;
     }
 
@@ -160,5 +186,6 @@ export class PublishingTemplateComponent implements OnInit {
 
   async ngOnInit() {
     await this.init();
+    await this.getBinaryResources();
   }
 }

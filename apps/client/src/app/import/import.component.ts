@@ -123,9 +123,8 @@ export class ImportComponent implements OnInit {
     } else {
       throw new Error('Can\'t create Binary Resource. Unexpected FHIR server version');
     }
-
-
   }
+
 
   private createMedia(name: string, contentType: string, buffer: ArrayBuffer) {
     const b64content = btoa(new Uint8Array(buffer)
@@ -212,7 +211,7 @@ export class ImportComponent implements OnInit {
             importFileModel.vsBundle = convertResults.bundle;
           } else if (importFileModel.contentType === ContentTypes.Image) {
             importFileModel.resource = this.createMedia(file.name, file.type, result);
-          } else if (importFileModel.contentType = ContentTypes.Zip) {
+          } else if (importFileModel.contentType === ContentTypes.Zip) {
             importFileModel.resource = this.createZip(file.name, file.type, result);
           }
         } catch (ex) {
