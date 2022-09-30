@@ -1,42 +1,44 @@
-import { Component, Input, OnInit } from '@angular/core';
-import {StructureDefinitionService} from '../shared/structure-definition.service';
-import {Router} from '@angular/router';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirService} from '../shared/fhir.service';
-import {ImplementationGuide, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {
-  StructureDefinition as R4StructureDefinition,
-  StructureDefinitionContextComponent
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {AuthService} from '../shared/auth.service';
-import {ConfigService} from '../shared/config.service';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {BaseComponent} from '../base.component';
+import { Component, OnInit } from '@angular/core';
+import { StructureDefinitionService } from '../shared/structure-definition.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FhirService } from '../shared/fhir.service';
+import { StructureDefinition as STU3StructureDefinition } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { StructureDefinition as R4StructureDefinition, StructureDefinitionContextComponent } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { AuthService } from '../shared/auth.service';
+import { ConfigService } from '../shared/config.service';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { BaseComponent } from '../base.component';
 import { Observable, Subject } from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
-import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { ILogicalTypeDefinition } from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
+import { PackageListModel } from '../../../../../libs/tof-lib/src/lib/package-list-model';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import { IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 
 @Component({
   templateUrl: './new-profile.component.html',
   styleUrls: ['./new-profile.component.css']
 })
-export class NewProfileComponent extends BaseComponent {
+export class NewProfileComponent extends BaseComponent implements OnInit {
   public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
   public message: string;
   public Globals = Globals;
   public selectedType: ILogicalTypeDefinition;
-
+  public canonicalURL: string;
   public isIdUnique = true;
   public idChangedEvent = new Subject();
 
   constructor(
     public configService: ConfigService,
     private fhirService: FhirService,
+    private router: ActivatedRoute,
     private route: Router,
     private modalService: NgbModal,
     protected authService: AuthService,
+    private implementationGuideService: ImplementationGuideService,
     private strucDefService: StructureDefinitionService) {
 
     super(configService, authService);
@@ -105,5 +107,12 @@ export class NewProfileComponent extends BaseComponent {
       this.structureDefinition.id = this.structureDefinition.url.substring(lastIndex + 1);
       this.idChangedEvent.next();
     }
+  }
+
+  async ngOnInit() {
+    const implementationGuideId = this.router.snapshot.paramMap.get('implementationGuideId');
+    const implementationGuide = <IImplementationGuide>await this.implementationGuideService.getImplementationGuide(implementationGuideId).toPromise();
+    this.canonicalURL = PackageListModel.getPackageList(implementationGuide).canonical;
+    console.log(this.canonicalURL);
   }
 }
