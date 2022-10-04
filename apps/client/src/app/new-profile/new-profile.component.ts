@@ -27,7 +27,6 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
   public message: string;
   public Globals = Globals;
   public selectedType: ILogicalTypeDefinition;
-  public canonicalURL: string;
   public isIdUnique = true;
   public idChangedEvent = new Subject();
 
@@ -112,7 +111,9 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
   async ngOnInit() {
     const implementationGuideId = this.router.snapshot.paramMap.get('implementationGuideId');
     const implementationGuide = <IImplementationGuide>await this.implementationGuideService.getImplementationGuide(implementationGuideId).toPromise();
-    this.canonicalURL = PackageListModel.getPackageList(implementationGuide).canonical;
-    console.log(this.canonicalURL);
+    const packageList = PackageListModel.getPackageList(implementationGuide);
+    if (packageList) {
+      this.structureDefinition.url = packageList.canonical;
+    }
   }
 }
