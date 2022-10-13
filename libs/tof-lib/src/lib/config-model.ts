@@ -24,4 +24,6 @@ export interface ConfigModel {
     [resourceType: string]: string[];
   };
   announcementService: boolean;
+  termsOfUse: string;
+  privacyPolicy: string;
 }

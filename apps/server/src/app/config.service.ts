@@ -47,6 +47,8 @@ export class ConfigService {
     queueLimit: 2,
     timeOut: 5000
   };
+  public privacyPolicy: string;
+  public termsOfUse: string;
   public announcementService?: AnnouncementServiceConfig;
   public headerPropagation: string[];
   private logger = new Logger('ConfigService');
@@ -63,6 +65,8 @@ export class ConfigService {
       this.publish = config.get('publish');
       this.headerPropagation = config.get('headerPropagation');
       this.announcementService = config.has('announcementService') ? config.get('announcementService') : undefined;
+      this.privacyPolicy = config.get('privacyPolicy');
+      this.termsOfUse = config.get('termsOfUse');
     }
   }
 
