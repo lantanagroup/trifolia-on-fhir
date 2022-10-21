@@ -135,12 +135,19 @@ export class FhirController extends BaseController {
     }
 
     if (!resource || !resource.id) {
-      throw new Error(`No resource found for ${resourceType} with id ${currentId}`);
+      const msg = `No resource found for ${resourceType} with id ${currentId}`;
+      this.logger.error(msg);
+      throw new Error(msg);
     }
 
     // Make sure the resource can be edited, by the user
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
-    assertUserCanEdit(this.configService, userSecurityInfo, resource);
+
+    try {
+      assertUserCanEdit(this.configService, userSecurityInfo, resource);
+    } catch (ex) {
+      this.logger.error(`User ${userSecurityInfo.user.sub} does not have permissions to edit ${resource.resourceType}/${resource.id}`);
+    }
 
     // Change the id of the resource
     resource.id = newId;
@@ -160,6 +167,7 @@ export class FhirController extends BaseController {
     };
 
     this.logger.log(`Sending GET request to FHIR server to check existence for new resource id of type ${resourceType}`);
+
     try {
       await this.httpService.request(checkOptions).toPromise();
       this.logger.error(`Resource id ${newId} already exists`);
@@ -217,7 +225,11 @@ export class FhirController extends BaseController {
     });
 
     if (contextImplementationGuideId && !igFound) {
-      allResults.push(await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId));
+      try {
+        allResults.push(await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId));
+      } catch (ex) {
+        this.logger.error(`Context implementation guide ${contextImplementationGuideId} doesn't exist.`);
+      }
     }
 
     const allResources = allResults.reduce((prev, curr) => {
