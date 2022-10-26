@@ -36,6 +36,7 @@ RUN apk update && apk --update --no-cache add ruby-full ruby-dev build-base open
 # Install fonts that are used by ig publisher. Without these, ig publisher throws a bunch of exceptions
 RUN apk add --no-cache fontconfig ttf-dejavu
 RUN gem install sassc -- --disable-march-tune-native
+RUN gem install rouge -v 3.30.0
 RUN gem install jekyll bundler --no-document
 RUN jekyll -v
 
