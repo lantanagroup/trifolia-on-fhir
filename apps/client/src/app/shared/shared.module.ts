@@ -22,6 +22,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {GroupService} from './group.service';
 import {ManageService} from './manage.service';
 import {ModalService} from './modal.service';
+import { FshService } from './fsh.service';
 
 @NgModule({
   declarations: [],
@@ -50,7 +51,8 @@ import {ModalService} from './modal.service';
     ValueSetService,
     GroupService,
     ManageService,
-    ModalService
+    ModalService,
+    FshService
   ],
   exports: []
 })

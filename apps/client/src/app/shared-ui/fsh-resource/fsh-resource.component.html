@@ -1,0 +1,15 @@
+<div *ngIf="!loadingFSH">
+  <textarea class="form-control" rows="10" [(ngModel)]="fsh"></textarea>
+  <div class="messages">
+    <div class="alert alert-info" *ngIf="message">{{message}}</div>
+    <h3 *ngIf="errors?.length">Errors</h3>
+    <ul *ngIf="errors?.length">
+      <li *ngFor="let error of errors" title="{{error.location}}">{{error.message}}</li>
+    </ul>
+    <h3 *ngIf="warnings?.length">Warnings</h3>
+    <ul *ngIf="warnings?.length">
+      <li *ngFor="let warning of warnings" title="{{warning.message}}">{{warning.message}}</li>
+    </ul>
+  </div>
+</div>
+<div *ngIf="loadingFSH">Converting resource to FSH...</div>

@@ -1,0 +1,10 @@
+textarea {
+  width: 60%;
+  float: left;
+}
+
+div.messages {
+  width: 40%;
+  padding-left: 15px;
+  float: left;
+}

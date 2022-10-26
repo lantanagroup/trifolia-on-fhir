@@ -371,6 +371,13 @@
       </ng-template>
     </ngb-tab>
 
+    <!-- RAW JSON/XML -->
+    <ngb-tab id="fsh" title="FSH">
+      <ng-template ngbTabContent>
+        <app-fsh-resource [resource]="structureDefinition" #fsh></app-fsh-resource>
+      </ng-template>
+    </ngb-tab>
+
     <!-- Version History -->
     <ngb-tab id="history" title="History">
       <ng-template ngbTabContent>
@@ -430,6 +437,7 @@
   <div class="btn-group">
     <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(structureDefinition)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()">Revert</button>
+    <button type="button" class="btn btn-primary" *ngIf="showUpdateFromFSH" (click)="fsh.update()">Update from FSH</button>
   </div>
   <span class="message">{{message}}</span>
 </footer>

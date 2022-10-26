@@ -24,6 +24,8 @@ import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {IAuditEvent, IDomainResource} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {TofLogger} from './tof-logger';
 
+declare var jasmine;
+
 export class FhirInstances {
   private static fhirStu3Instance: Fhir;
   private static fhirR4Instance: Fhir;
@@ -295,9 +297,13 @@ function getJsonFromFile(actualPath: string) {
 export function getFhirStu3Instance(tool = false) {
   let rootDir = __dirname;
 
-  if (tool) {
-    rootDir = '../server';
-  }
+  try {
+    if (tool) {
+      rootDir = '../server';
+    } else if (jasmine) {
+      rootDir = path.join(__dirname, '../../../../libs/tof-lib/src');
+    }
+  } catch (ex) {}
 
   const parser = new ParseConformance(false, FhirVersions.STU3);
   const valueSets = getJsonFromFile(path.join(rootDir, 'assets/stu3/valuesets.json'));
@@ -316,9 +322,13 @@ export function getFhirStu3Instance(tool = false) {
 export function getFhirR4Instance(tool = false) {
   let rootDir = __dirname;
 
-  if (tool) {
-    rootDir = '../server';
-  }
+  try {
+    if (tool) {
+      rootDir = '../server';
+    } else if (jasmine) {
+      rootDir = path.join(__dirname, '../../../../libs/tof-lib/src');
+    }
+  } catch (ex) {}
 
   const parser = new ParseConformance(false, FhirVersions.R4);
   const valueSets = getJsonFromFile(path.join(rootDir, 'assets/r4/valuesets.json'));
