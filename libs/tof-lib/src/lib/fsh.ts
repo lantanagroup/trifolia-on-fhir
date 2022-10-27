@@ -7,6 +7,7 @@ export interface FSHMessage {
 export interface FromFSHModel {
   fhir?: any[];
   errors?: FSHMessage[];
+  warnings?: FSHMessage[];
 }
 
 export interface ToFSHModel {

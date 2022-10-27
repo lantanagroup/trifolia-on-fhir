@@ -68,7 +68,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
   @ViewChild('edPanel', { static: true }) edPanel: ElementDefinitionPanelComponent;
   @ViewChild('sdTabs', { static: true }) sdTabs: NgbTabset;
-  @ViewChild('fsh', { static: false }) fsh: FshResourceComponent;
 
   private navSubscription: any;
   private baseDefResponse: BaseDefinitionResponseModel;
@@ -118,6 +117,11 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     return this.route.snapshot.paramMap.get('id') === 'from-file';
   }
 
+  public editFSH() {
+    const modalRef = this.modalService.open(FshResourceComponent, { size: 'xl' });
+    modalRef.componentInstance.resource = this.structureDefinition;
+  }
+
   public toggleMappings() {
     if (this.structureDefinition.mapping) {
       if (this.structureDefinition.mapping.length > 0) {
@@ -162,8 +166,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     if (event.nextId !== 'elements') {
       this.selectedElement = null;
     }
-
-    this.showUpdateFromFSH = event.nextId === 'fsh';
   }
 
   public nameChanged() {

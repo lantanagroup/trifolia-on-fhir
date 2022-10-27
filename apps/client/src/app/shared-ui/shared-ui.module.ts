@@ -38,6 +38,9 @@ const components = [
 ];
 
 @NgModule({
+  entryComponents: [
+    FshResourceComponent
+  ],
   declarations: components,
   exports: components,
   imports: [
