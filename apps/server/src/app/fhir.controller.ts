@@ -378,7 +378,7 @@ export class FhirController extends BaseController {
     let contextImplementationGuide = headers.implementationguideid ? await this.getImplementationGuide(fhirServerBase, headers.implementationguideid) : undefined;
 
     if (isBatch && !parsedUrl.resourceType) {
-      const contextIgInBundle = (body.entry || []).find(e => e.resource && e.resource.resourceType === 'ImplementationGuide' && e.resource.id === contextImplementationGuide.id);
+      const contextIgInBundle = contextImplementationGuide ? (body.entry || []).find(e => e.resource && e.resource.resourceType === 'ImplementationGuide' && e.resource.id === contextImplementationGuide.id) : null;
 
       if (contextIgInBundle) {
         contextImplementationGuide = contextIgInBundle.resource;
