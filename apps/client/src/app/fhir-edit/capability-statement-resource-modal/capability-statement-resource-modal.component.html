@@ -316,6 +316,51 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Operations -->
+  <div class="card">
+    <div class="card-header">
+      <input type="checkbox" [ngModel]="resource.hasOwnProperty('operation')"
+             (ngModelChange)="Globals.toggleProperty(resource, 'operation', [{ name: '', definition: { reference: '', display: '' }}])" />
+      Operations
+    </div>
+    <table class="table table-striped" *ngIf="resource.hasOwnProperty('operation')">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Definition</th>
+        <th>
+          <div class="pull-right">
+            <button type="button" class="btn btn-primary btn-sm" title="Add an operation"
+                    (click)="resource.operation.push({ name: '', definition: { reference: '', display: '' }})">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let si of resource.operation; let sii = index">
+        <td>
+          <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false"
+                           [required]="true"></app-fhir-string>
+        </td>
+        <td>
+          <app-fhir-reference [parentObject]="si" propertyName="definition" [isFormGroup]="false"
+                              [required]="true" resourceType="OperationDefinition"></app-fhir-reference>
+        </td>
+        <td>
+          <div class="pull-right">
+            <button type="button" class="btn btn-primary btn-sm" title="Remove this operation"
+                    (click)="resource.operation.splice(sii, 1)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
