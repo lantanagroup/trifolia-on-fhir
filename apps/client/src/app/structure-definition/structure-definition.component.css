@@ -18,7 +18,7 @@ div.elements > .element span.action {
   margin-left: 10px;
 }
 
-@media (max-width: 1024px) {
+/*@media (max-width: 1024px) {
   div.element-definition {
     top: 0;
     height: 100%;
@@ -38,7 +38,7 @@ div.elements > .element span.action {
   div.element-definition > .card-header > .pull-right {
     display: inherit;
   }
-}
+}*/
 
 div.element-definition {
   position: absolute;
@@ -46,9 +46,6 @@ div.element-definition {
   right: 23px;
   top: 0;
   height: 98%;
-  resize:horizontal;
-  overflow: auto;
-  direction: rtl;
   max-width: 80%;
   margin-left: 10%;
 }
@@ -176,9 +173,11 @@ table.elements td.element-cardinality {
 
 div.page-content {
   z-index: 10000;
-  resize: horizontal;
-  overflow: auto;
-  direction: ltr;
   height: 95%;
 }
+
+input.form-control.search {
+ z-index: 0;
+}
+
 
