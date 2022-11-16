@@ -25,50 +25,50 @@
                 </button>
               </div>
             </div>
-            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' [required]='true' propertyName='package-id' title='Package ID'></app-fhir-string>
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="true" propertyName="package-id" title="Package ID"></app-fhir-string>
 
             <label>Version</label>
-            <input (change)='change.emit()' [(ngModel)]='publishingRequest.version' [class.is-invalid]='!publishingRequest.version' class='form-control' title='Version'
-                   type='text' />
+            <input (change)="change.next()" [(ngModel)]="publishingRequest.version" [class.is-invalid]="!publishingRequest.version" class="form-control" title="Version"
+                   type="text" />
 
-            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' propertyName='path' title='Path'></app-fhir-string>
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" propertyName="path" title="Path"></app-fhir-string>
 
 
             <label>Milestone</label>
-            <select (change)='change.emit()' [(ngModel)]='publishingRequest.milestone' class='form-control'>
-              <option [ngValue]='undefined'>Unspecified</option>
-              <option [ngValue]='true'>Yes</option>
-              <option [ngValue]='false'>No</option>
+            <select (change)="change.next()" [(ngModel)]="publishingRequest.milestone" class="form-control">
+              <option [ngValue]="undefined">Unspecified</option>
+              <option [ngValue]="true">Yes</option>
+              <option [ngValue]="false">No</option>
             </select>
 
             <label>Status</label>
-            <select (change)='change.emit()' [(ngModel)]='publishingRequest.status' [class.is-invalid]='!publishingRequest.status' class='form-control'>
-              <option value='ci-build'>CI Build</option>
-              <option value='draft'>Draft</option>
-              <option value='ballot'>Ballot</option>
-              <option value='trial-use'>Trial Use</option>
-              <option value='normative'>Normative</option>
+            <select (change)="change.next()" [(ngModel)]="publishingRequest.status" [class.is-invalid]="!publishingRequest.status" class="form-control">
+              <option value="ci-build">CI Build</option>
+              <option value="draft">Draft</option>
+              <option value="ballot">Ballot</option>
+              <option value="trial-use">Trial Use</option>
+              <option value="normative">Normative</option>
             </select>
 
             <label>Sequence</label>
-            <input (change)='change.emit()' [(ngModel)]='publishingRequest.sequence' class='form-control' type='text' />
+            <input (change)="change.next()" [(ngModel)]="publishingRequest.sequence" class="form-control" type="text" />
 
             <label>Description</label>
-            <input (change)='change.emit()' [(ngModel)]='publishingRequest.desc' class='form-control' type='text' />
+            <input (change)="change.next()" [(ngModel)]="publishingRequest.desc" class="form-control" type="text" />
 
-            <app-fhir-markdown (change)='change.emit()' [parentObject]='publishingRequest' propertyName='descmd' title='Description Markdown'></app-fhir-markdown>
+            <app-fhir-markdown (change)="change.next()" [parentObject]="publishingRequest" propertyName="descmd" title="Description Markdown"></app-fhir-markdown>
 
 
             <!--        <-- PUBLISHINGREQ.CHANGES-->
 
 
-            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' propertyName='title' title='Title'></app-fhir-string>
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" propertyName="title" title="Title"></app-fhir-string>
 
-            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' propertyName='ci-build' title='CI-Build'></app-fhir-string>
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" propertyName="ci-build" title="CI-Build"></app-fhir-string>
 
-            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' propertyName='category' title='Category'></app-fhir-string>
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" propertyName="category" title="Category"></app-fhir-string>
 
-            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' propertyName='introduction' title='Introduction'></app-fhir-string>
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" propertyName="introduction" title="Introduction"></app-fhir-string>
 
           </div>
         </div>
@@ -80,7 +80,7 @@
       </ng-template>
       <ng-template ngbTabContent>
         <div class='card'>
-          <textarea (change)='valueChange.emit()' [(ngModel)]='publishingRequestJSON' [ngModelOptions]="{ updateOn: 'change' }" class='form-control' rows='23'></textarea>
+          <textarea (change)="valueChange.next()" [(ngModel)]="publishingRequestJSON" [ngModelOptions]="{ updateOn: 'change' }" class="form-control" rows="23"></textarea>
         </div>
       </ng-template>
     </ngb-tab>

@@ -24,7 +24,7 @@ export class PublishingRequestModel {
       .find((c) => {
         if (c.resourceType === 'DocumentReference') {
           const dr = <R4DocumentReference>c;
-          return dr.type && dr.type.coding && dr.type.coding.length > 0 && dr.type.coding[0].code === 'package-list';
+          return dr.type && dr.type.coding && dr.type.coding.length > 0 && dr.type.coding[0].code === 'publishing-request';
         }
 
         return false;
