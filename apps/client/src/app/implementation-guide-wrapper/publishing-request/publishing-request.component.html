@@ -1,4 +1,4 @@
-<input type='file' style='display: none;' #importFile (change)='import(importFile.files[0])' accept='application/json' />
+<input #importFile (change)='import(importFile.files[0])' accept='application/json' style='display: none;' type='file' />
 <div>
   <ngb-tabset>
     <ngb-tab>
@@ -7,38 +7,42 @@
       </ng-template>
       <ng-template ngbTabContent>
         <div class='card'>
-          <div class='card-body' *ngIf='!publishingRequest'>
+          <div *ngIf='!publishingRequest' class='card-body'>
             <p>No publishing-request.json has been specified for this IG.</p>
             <div class='btn-group'>
-              <button type='button' class='btn btn-primary' (click)='initPublishingRequest();'>Add publishing-request.json</button>
-              <button type='button' class='btn btn-primary' (click)='importFile.click();'>Import from computer</button>
+              <button (click)='initPublishingRequest();' class='btn btn-primary' type='button'>Add publishing-request.json</button>
+              <button (click)='importFile.click();' class='btn btn-primary' type='button'>Import from computer</button>
             </div>
           </div>
-          <div class='card-body' *ngIf='publishingRequest'>
+          <div *ngIf='publishingRequest' class='card-body'>
             <div class='card-header-btn'>
               <div class='btn-group'>
-                <button type='button' class='btn btn-primary btn-sm' title='Import the publishing-request.json from your computer' (click)='importFile.click();'>
+                <button (click)='importFile.click();' class='btn btn-primary btn-sm' title='Import the publishing-request.json from your computer' type='button'>
                   <i class='fas fa-file-upload'></i>
                 </button>
-                <button type='button' class='btn btn-primary btn-sm' title='Remove the publishing-request.json' *ngIf='publishingRequest' (click)='remove();'>
+                <button (click)='remove();' *ngIf='publishingRequest' class='btn btn-primary btn-sm' title='Remove the publishing-request.json' type='button'>
                   <i class='fa fa-times'></i>
                 </button>
               </div>
             </div>
-            <app-fhir-string [parentObject]='publishingRequest' propertyName='package-id' [required]='true' title='Package ID' (change)='change.emit()'></app-fhir-string>
+            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' [required]='true' propertyName='package-id' title='Package ID'></app-fhir-string>
 
-            <input type='text' class='form-control' title='Version' [(ngModel)]='publishingRequest.version' [class.is-invalid]='!publishingRequest.version'
-                   (change)='change.emit()' />
+            <label>Version</label>
+            <input (change)='change.emit()' [(ngModel)]='publishingRequest.version' [class.is-invalid]='!publishingRequest.version' class='form-control' title='Version'
+                   type='text' />
 
-            <app-fhir-string [parentObject]='publishingRequest' propertyName='path' title='Path' (change)='change.emit()'></app-fhir-string>
+            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' propertyName='path' title='Path'></app-fhir-string>
 
-            <select class='form-control' [(ngModel)]='publishingRequest.milestone' (change)='change.emit()'>
+
+            <label>Milestone</label>
+            <select (change)='change.emit()' [(ngModel)]='publishingRequest.milestone' class='form-control'>
               <option [ngValue]='undefined'>Unspecified</option>
               <option [ngValue]='true'>Yes</option>
               <option [ngValue]='false'>No</option>
             </select>
 
-            <select class='form-control' [(ngModel)]='publishingRequest.status' [class.is-invalid]='!publishingRequest.status' (change)='change.emit()'>
+            <label>Status</label>
+            <select (change)='change.emit()' [(ngModel)]='publishingRequest.status' [class.is-invalid]='!publishingRequest.status' class='form-control'>
               <option value='ci-build'>CI Build</option>
               <option value='draft'>Draft</option>
               <option value='ballot'>Ballot</option>
@@ -46,22 +50,25 @@
               <option value='normative'>Normative</option>
             </select>
 
-            <input type='text' class='form-control' [(ngModel)]='publishingRequest.sequence' (change)='change.emit()' />
+            <label>Sequence</label>
+            <input (change)='change.emit()' [(ngModel)]='publishingRequest.sequence' class='form-control' type='text' />
 
-            <input type='text' class='form-control' [(ngModel)]='publishingRequest.desc' (change)='change.emit()' />
+            <label>Description</label>
+            <input (change)='change.emit()' [(ngModel)]='publishingRequest.desc' class='form-control' type='text' />
 
-            <app-fhir-markdown [parentObject]='publishingRequest' propertyName='descmd' title='Description Markdown' (change)='change.emit()'></app-fhir-markdown>
+            <app-fhir-markdown (change)='change.emit()' [parentObject]='publishingRequest' propertyName='descmd' title='Description Markdown'></app-fhir-markdown>
 
 
             <!--        <-- PUBLISHINGREQ.CHANGES-->
 
-            <app-fhir-string [parentObject]='publishingRequest' propertyName='title' title='Title' (change)='change.emit()'></app-fhir-string>
 
-            <app-fhir-string [parentObject]='publishingRequest' propertyName='ci-build' title='CI-Build' (change)='change.emit()'></app-fhir-string>
+            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' propertyName='title' title='Title'></app-fhir-string>
 
-            <app-fhir-string [parentObject]='publishingRequest' propertyName='category' title='Category' (change)='change.emit()'></app-fhir-string>
+            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' propertyName='ci-build' title='CI-Build'></app-fhir-string>
 
-            <app-fhir-string [parentObject]='publishingRequest' propertyName='introduction' title='Introduction' (change)='change.emit()'></app-fhir-string>
+            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' propertyName='category' title='Category'></app-fhir-string>
+
+            <app-fhir-string (change)='change.emit()' [parentObject]='publishingRequest' propertyName='introduction' title='Introduction'></app-fhir-string>
 
           </div>
         </div>
@@ -73,7 +80,7 @@
       </ng-template>
       <ng-template ngbTabContent>
         <div class='card'>
-          <textarea class='form-control' rows='23' [(ngModel)]='publishingRequestJSON' (change)='valueChange.emit()' [ngModelOptions]="{ updateOn: 'change' }"></textarea>
+          <textarea (change)='valueChange.emit()' [(ngModel)]='publishingRequestJSON' [ngModelOptions]="{ updateOn: 'change' }" class='form-control' rows='23'></textarea>
         </div>
       </ng-template>
     </ngb-tab>
