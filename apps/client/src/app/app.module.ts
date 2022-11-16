@@ -89,6 +89,7 @@ import { MergeUserModalComponent } from './manage/merge-user-modal/merge-user-mo
 import { NewProjectComponent } from './new-project/new-project.component';
 import { SearchParameterComponent } from './search-parameter/search-parameter.component';
 import { SearchParametersComponent } from './search-parameters/search-parameters.component';
+import { PublishingRequestComponent } from './implementation-guide-wrapper/publishing-request/publishing-request.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -252,7 +253,7 @@ const authModuleConfig: OAuthModuleConfig = {
     MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
     ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
     GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
-    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, MergeUserModalComponent, NewProjectComponent, SearchParametersComponent, SearchParameterComponent
+    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, MergeUserModalComponent, NewProjectComponent, SearchParametersComponent, SearchParameterComponent, PublishingRequestComponent
   ],
   imports: [
     RouterModule.forRoot(
