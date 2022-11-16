@@ -27,7 +27,8 @@
             </div>
             <app-fhir-string [parentObject]='publishingRequest' propertyName='package-id' [required]='true' title='Package ID' (change)='change.emit()'></app-fhir-string>
 
-            <input type='text' class='form-control' [(ngModel)]='publishingRequest.version' [class.is-invalid]='!publishingRequest.version' (change)='change.emit()' />
+            <input type='text' class='form-control' title='Version' [(ngModel)]='publishingRequest.version' [class.is-invalid]='!publishingRequest.version'
+                   (change)='change.emit()' />
 
             <app-fhir-string [parentObject]='publishingRequest' propertyName='path' title='Path' (change)='change.emit()'></app-fhir-string>
 
