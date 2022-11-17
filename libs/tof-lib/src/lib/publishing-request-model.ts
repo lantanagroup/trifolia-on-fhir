@@ -24,7 +24,7 @@ export class PublishingRequestModel {
       .find((c) => {
         if (c.resourceType === 'DocumentReference') {
           const dr = <R4DocumentReference>c;
-          return dr.type && dr.type.coding && dr.type.coding.length > 0 && dr.type.coding[0].code === 'publishing-request';
+          return dr.type && dr.type.coding && dr.type.coding.length > 0 && dr.type.coding[0].code === 'publication-request';
         }
 
         return false;
@@ -45,7 +45,7 @@ export class PublishingRequestModel {
       }
     }
 
-    const ext = (implementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-publishing-request'] && e.valueReference && e.valueReference.reference === '#publishing-request');
+    const ext = (implementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-publication-request'] && e.valueReference && e.valueReference.reference === '#publication-request');
 
     if (ext) {
       const index = implementationGuide.extension.indexOf(ext);
@@ -92,7 +92,7 @@ export class PublishingRequestModel {
 
       found.type = {
         coding: [{
-          code: 'publishing-request'
+          code: 'publication-request'
         }]
       };
       found.content = [{
@@ -103,7 +103,7 @@ export class PublishingRequestModel {
       implementationGuide.contained.push(found);
     }
 
-    found.id = 'publishing-request';
+    found.id = 'publication-request';
     found.status = 'current';
 
     if (fhirVersion === Versions.STU3) {
@@ -128,13 +128,13 @@ export class PublishingRequestModel {
     found.content[0].attachment.data = typeof btoa !== 'undefined' ? btoa(json) : Buffer.from(json).toString('base64');
 
     implementationGuide.extension = implementationGuide.extension || [];
-    let ext = implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-publishing-request'] && e.valueReference && e.valueReference.reference === '#publishing-request');
+    let ext = implementationGuide.extension.find(e => e.url === Globals.extensionUrls['extension-ig-publication-request'] && e.valueReference && e.valueReference.reference === '#publication-request');
 
     if (!ext) {
       ext = {
-        url: Globals.extensionUrls['extension-ig-publishing-request'],
+        url: Globals.extensionUrls['extension-ig-publication-request'],
         valueReference: {
-          reference: '#publishing-request'
+          reference: '#publication-request'
         }
       };
       implementationGuide.extension.push(ext);
