@@ -346,7 +346,7 @@ export class HtmlExporter {
     if (publishingRequest) {
       this.logger.log("Implementation guide has a publishing-request.json file defined. Including it in export.");
 
-      const publishingRequestPath = path.join(this.rootPath, "publishing-request.json");
+      const publishingRequestPath = path.join(this.rootPath, "publication-request.json");
 
       fs.writeFileSync(publishingRequestPath, JSON.stringify(publishingRequest, null, "\t"));
       PublishingRequestModel.removePublishingRequest(this.implementationGuide);
