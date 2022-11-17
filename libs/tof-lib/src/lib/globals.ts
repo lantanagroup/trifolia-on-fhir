@@ -36,6 +36,7 @@ export class Globals {
     'extension-practitioner-announcements': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-practitioner-announcements',
     'elementdefinition-profile-element': 'http://hl7.org/fhir/StructureDefinition/elementdefinition-profile-element',
     'extension-ig-package-list': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-package-list',
+    'extension-ig-publishing-request': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-publishing-request',
     'extension-ig-page-content': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
     'extension-ig-page-filename': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-filename',
     'extension-ig-page-reuse-description': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-reuse-description',
