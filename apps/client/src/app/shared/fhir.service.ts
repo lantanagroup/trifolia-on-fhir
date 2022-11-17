@@ -463,6 +463,7 @@ export class FhirService {
       const results = this.fhir.validate(resource, {
         // inject custom validation into the FHIR module
         onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData),
+        /*
         beforeCheckCode: (valueSetUrl: string, code: string, system?: string) => {
           if (system === 'https://trifolia-fhir.lantanagroup.com/security') {
             return true;
@@ -472,6 +473,7 @@ export class FhirService {
 
           return null;
         }
+        */
       });
 
       // Remove any messages that are only information
