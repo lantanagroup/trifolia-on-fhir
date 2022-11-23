@@ -51,6 +51,7 @@ export class NewProjectComponent implements OnInit {
     publishingRequest.milestone = false;
     publishingRequest.status = 'ci-build';
     publishingRequest.sequence = 'Releases';
+    publishingRequest.desc = 'New IG: ' + this.igTitle;
     publishingRequest.title = this.igTitle;
     publishingRequest.category = 'National Base';
     publishingRequest['ci-build'] = 'http://build.fhir.org/ig/';
