@@ -89,7 +89,7 @@
     "rxjs-compat": "^6.6.3",
     "semver": "^6.3.0",
     "simplemde-antd": "^1.0.0",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.5.0",
     "source-map-support": "^0.5.19",
     "stream": "0.0.2",
     "swagger-ui-express": "^4.2.0",
