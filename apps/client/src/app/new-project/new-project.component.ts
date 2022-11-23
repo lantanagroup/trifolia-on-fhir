@@ -1,19 +1,15 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
-import {ImplementationGuideService} from "../shared/implementation-guide.service";
-import {IImplementationGuide} from "../../../../../libs/tof-lib/src/lib/fhirInterfaces";
-import {
-  ImplementationGuide,
-  ImplementationGuide as R4ImplementationGuide
-} from "../../../../../libs/tof-lib/src/lib/r4/fhir";
-import {FhirService} from "../shared/fhir.service";
-import {ConfigService} from "../shared/config.service";
-import {ImplementationGuide as STU3ImplementationGuide} from "../../../../../libs/tof-lib/src/lib/stu3/fhir";
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {Router} from '@angular/router';
-import {getErrorString} from "../../../../../libs/tof-lib/src/lib/helper";
-import {PackageListModel} from "../../../../../libs/tof-lib/src/lib/package-list-model";
-import {identifyRelease} from "../../../../../libs/tof-lib/src/lib/fhirHelper";
-import {Extension as STU3Extension} from "../../../../../libs/tof-lib/src/lib/stu3/fhir"
+import { Component, EventEmitter, OnInit } from '@angular/core';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import { IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { ImplementationGuide, ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { FhirService } from '../shared/fhir.service';
+import { ConfigService } from '../shared/config.service';
+import { Extension as STU3Extension, ImplementationGuide as STU3ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { Router } from '@angular/router';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { identifyRelease } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import { PublishingRequestModel } from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
 
 @Component({
   templateUrl: './new-project.component.html',
@@ -47,18 +43,18 @@ export class NewProjectComponent implements OnInit {
 
   done() {
     let ig: IImplementationGuide;
-    const packageList = new PackageListModel();
-    packageList.title = this.igTitle;
-    packageList["package-id"] = this.packageId;
-    packageList.canonical = this.canonicalURL;
-    packageList.list = [];
-    packageList.list.push({
-      status: 'ci-build',
-      version: 'current',
-      path: this.igUrl,
-      desc: 'tbd',
-      fhirversion: this.fhirVersion
-    });
+
+    const publishingRequest = new PublishingRequestModel();
+    publishingRequest['package-id'] = this.packageId;
+    publishingRequest.version = '0.1.0';
+    publishingRequest.path = this.canonicalURL + '/0.1.0';
+    publishingRequest.milestone = false;
+    publishingRequest.status = 'ci-build';
+    publishingRequest.sequence = 'Releases';
+    publishingRequest.title = this.igTitle;
+    publishingRequest.category = 'National Base';
+    publishingRequest['ci-build'] = 'http://build.fhir.org/ig/';
+    publishingRequest.introduction = 'New IG: ' + this.igTitle;
 
     if (this.configService.isFhirR4) {
       ig = new R4ImplementationGuide();
@@ -71,7 +67,7 @@ export class NewProjectComponent implements OnInit {
 
     this.igId = this.projectCode.replace(/\./g, '-');
     ig.url = this.igUrl;
-    ig.version = this.fhirVersion;
+    ig.version = '0.1.0';
     ig.name = this.igName;
     const wg = Globals.hl7WorkGroups.find(w => w.url === this.hl7WorkGroup);
     const wgName = wg ? `HL7 International - ${wg.name}` : 'HL7 International Working Group';
@@ -103,7 +99,7 @@ export class NewProjectComponent implements OnInit {
       }
     }
 
-    PackageListModel.setPackageList(ig, packageList, identifyRelease(this.configService.fhirConformanceVersion));
+    PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));
 
     this.igService.saveImplementationGuide(ig)
       .subscribe((implementationGuide: ImplementationGuide) => {
@@ -160,7 +156,7 @@ export class NewProjectComponent implements OnInit {
   }
 
   setIgId(value: string) {
-    this.projectCode = value;
+    this.projectCode = value.split('.').join('-');
     this.igUrlChanged();
   }
 
