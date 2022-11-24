@@ -15,7 +15,7 @@ export class PublishingRequestModel {
   descmd?: string;
   changes?: string;
   title?: string;
-  'ci-build?': string;
+  'ci-build'?: string;
   introduction?: string;
   category?: string;
 

@@ -51,24 +51,27 @@
             </select>
 
             <label>Sequence</label>
-            <input (change)="change.next()" [(ngModel)]="publishingRequest.sequence" class="form-control" type="text" />
+            <input (change)="change.next()" [(ngModel)]="publishingRequest.sequence" [class.is-invalid]="!publishingRequest.sequence" class="form-control" type="text" />
 
             <label>Description</label>
-            <input (change)="change.next()" [(ngModel)]="publishingRequest.desc" class="form-control" type="text" />
+            <input (change)="change.next()" [(ngModel)]="publishingRequest.desc" [class.is-invalid]="!publishingRequest.desc" class="form-control" type="text" />
 
             <app-fhir-markdown (change)="change.next()" [parentObject]="publishingRequest" propertyName="descmd" title="Description Markdown"></app-fhir-markdown>
 
+            <label>Changes</label>
+            <input (change)="change.next()" [(ngModel)]="publishingRequest.changes" class="form-control" type="text" />
 
-            <!--        <-- PUBLISHINGREQ.CHANGES-->
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="implementationGuide.version.startsWith('0')" propertyName="title"
+                             title="Title"></app-fhir-string>
 
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="implementationGuide.version.startsWith('0')" propertyName="ci-build"
+                             title="CI-Build"></app-fhir-string>
 
-            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" propertyName="title" title="Title"></app-fhir-string>
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="implementationGuide.version.startsWith('0')" propertyName="category"
+                             title="Category"></app-fhir-string>
 
-            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" propertyName="ci-build" title="CI-Build"></app-fhir-string>
-
-            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" propertyName="category" title="Category"></app-fhir-string>
-
-            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" propertyName="introduction" title="Introduction"></app-fhir-string>
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="implementationGuide.version.startsWith('0')" propertyName="introduction"
+                             title="Introduction"></app-fhir-string>
 
           </div>
         </div>

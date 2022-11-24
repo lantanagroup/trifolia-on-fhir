@@ -60,12 +60,12 @@ export class PublishingRequestComponent implements OnInit {
         this.publishingRequest = <PublishingRequestModel>JSON.parse(json);
 
         if (!this.publishingRequest['package-id']) {
-          throw new Error('Not a publishing-request.json file');
+          throw new Error('Not a publication-request.json file');
         }
 
         this.change.next(null);
       } catch (ex) {
-        alert('The uploaded file does not appear to be a publishing-request.json');
+        alert('The uploaded file does not appear to be a publication-request.json');
       }
     };
 
@@ -76,6 +76,10 @@ export class PublishingRequestComponent implements OnInit {
   ngOnInit() {
     this.publishingRequest = PublishingRequestModel.getPublishingRequest(this.implementationGuide);
     this.publishingRequestJSON = JSON.stringify(this.publishingRequest, null, '\t');
+
+    /*if(this.publishingRequest.sequence.length === 0) {
+      this.publishingRequest.sequence = "Releases";
+    }*/
   }
 
 }
