@@ -47,7 +47,7 @@ export class NewProjectComponent implements OnInit {
     const publishingRequest = new PublishingRequestModel();
     publishingRequest['package-id'] = this.packageId;
     publishingRequest.version = '0.1.0';
-    publishingRequest.path = this.canonicalURL + '/0.1.0';
+    publishingRequest.path = this.canonicalURL;
     publishingRequest.milestone = false;
     publishingRequest.status = 'ci-build';
     publishingRequest.sequence = 'Releases';
