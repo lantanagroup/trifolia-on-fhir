@@ -110,7 +110,7 @@
     <label>IG URL:</label>
     <input type="text" class="form-control extended" [(ngModel)]="igUrl" [class.is-invalid]="!igUrl || !isValidUrl(igUrl)" />
     <div class="help-block" *ngIf="!igUrl">IG URL is required</div>
-    <div class="help-block" *ngIf="igURL && !isValidUrl(igUrl)">IG URL is not formatted correctly</div>
+    <div *ngIf="igUrl && !isValidUrl(igUrl)" class="help-block">IG URL is not formatted correctly</div>
   </div>
 
   <div class="form-group">
