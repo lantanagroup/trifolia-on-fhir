@@ -43,11 +43,15 @@
 
             <label>Status</label>
             <select (change)="change.next()" [(ngModel)]="publishingRequest.status" [class.is-invalid]="!publishingRequest.status" class="form-control">
-              <option value="ci-build">CI Build</option>
-              <option value="draft">Draft</option>
-              <option value="ballot">Ballot</option>
+              <option value="release">Release</option>
               <option value="trial-use">Trial Use</option>
+              <option value="update">Update</option>
+              <option value="qa-preview">QA Preview</option>
+              <option value="ballot">Ballot</option>
+              <option value="draft">Draft</option>
+              <option value="normative+trial-use">Normative + Trial-Use</option>
               <option value="normative">Normative</option>
+              <option value="Informative">Informative</option>
             </select>
 
             <label>Sequence</label>
