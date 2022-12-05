@@ -1,13 +1,13 @@
-import {RemoveExtensions} from './removeExtensions';
-import {AddPermission, RemovePermission} from './permissions';
+import { RemoveExtensions } from './removeExtensions';
+import { AddPermission, RemovePermission } from './permissions';
 import * as Yargs from 'yargs';
-import {RemoveExtras} from './removeExtras';
-import {UserListCommand} from './user-list';
-import {PopulateFromAuth0} from './populateFromAuth0';
-import {Migrate} from './migrate';
-import {ChangeId, ChangeIdOptions} from './change-id';
-import { positionElements } from '@ng-bootstrap/ng-bootstrap/util/positioning';
+import { RemoveExtras } from './removeExtras';
+import { UserListCommand } from './user-list';
+import { PopulateFromAuth0 } from './populateFromAuth0';
+import { Migrate } from './migrate';
+import { ChangeId } from './change-id';
 import { ChangeExtensionUrl } from './change-extension-url';
+import { ReplacePackageList } from './replace-package-list';
 
 const populateFromAuth0Format = 'populate-from-auth0 <server> <domain> <token>';
 const populateFromAuth0Description = 'Populates user (Practitioner) information in ToF based on user information entered in a matching Auth0 domain.';
@@ -33,7 +33,25 @@ const changeIdDescription = 'Changes the ID of a resource in one or more files i
 const changeExtensionUrlFormat = 'change-ext-url [server]';
 const changeExtensionUrlDescription = 'Changes the url of an extension';
 
+const replacePackageListFormat = 'replace-package-list [server] [fhirVersion]';
+const replacePackageListDescription = 'Replaces all ImplementationGuide package-list.json with publishing-request.json';
+
 const argv = Yargs
+  .command(replacePackageListFormat, replacePackageListDescription, (yargs: Yargs.Argv) => {
+    return yargs
+      .positional('server', {
+        description: 'The FHIR server to replace implementation guide package-list\'s on',
+        required: true
+      })
+      .positional('fhirVersion', {
+        description: 'The version of the FHIR server',
+        required: true,
+        choices: ['STU3', 'R4']
+      });
+  }, (args: any) => {
+    const replacePackageList = new ReplacePackageList(args);
+    replacePackageList.execute();
+  })
   .command(changeExtensionUrlFormat, changeExtensionUrlDescription, (yargs: Yargs.Argv) => {
     return yargs
       .positional('server', {
