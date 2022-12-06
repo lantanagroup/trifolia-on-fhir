@@ -184,11 +184,12 @@
           <tbody *ngIf="pages?.length">
           <tr *ngFor="let p of pages" class="page-prefix-{{p.level}}">
             <td>
-              <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, implementationGuide.page === p.page)" [class.is-invalid]="!p.page.title"
+              <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, this.implementationGuide.page === p.page)" [class.is-invalid]="!p.page.title"
               (change)="igChanging.emit(true);"/>
             </td>
             <td>
               <input type="text" class="form-control" [(ngModel)]="p.page.source" [class.is-invalid]="!p.page.source" (change)="igChanging.emit(true);"/>
+              <span *ngIf="isFileNameInvalid(p)" style="color:red">The file name must not include special characters such as "&" and "/"</span>
             </td>
             <td>
               <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind" (change)="igChanging.emit(true);">

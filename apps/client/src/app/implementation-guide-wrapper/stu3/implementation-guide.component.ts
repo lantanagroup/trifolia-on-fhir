@@ -142,6 +142,13 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     return this.route.snapshot.paramMap.get('implementationGuideId') === 'from-file';
   }
 
+  public isFileNameInvalid(page: PageDefinition): boolean {
+    if (!page.page || !page.page.source) return false;
+    const regexp: RegExp = /[^A-z0-9_\-\.]/;
+    const matches = regexp.exec(page.page.source);
+    return matches && matches.length > 0;
+  }
+
   public get dependencies(): Extension[] {
     return (this.implementationGuide.extension || []).filter((extension: Extension) => extension.url === Globals.extensionUrls['extension-ig-dependency']);
   }
