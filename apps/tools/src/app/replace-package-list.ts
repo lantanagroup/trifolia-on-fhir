@@ -29,22 +29,26 @@ export class ReplacePackageList extends BaseTools {
       if (packageList) {
         const publishingRequest = new PublishingRequestModel();
 
-        // TODO: Copy fields from package-list to publishingRequest where possible
+
         publishingRequest['package-id'] = packageList['package-id'];
         publishingRequest.title = packageList.title;
         publishingRequest.introduction = packageList.introduction;
         publishingRequest.category = packageList.category;
         if (packageList.list[0]) {
-          publishingRequest.version = implementationGuide.;
+          publishingRequest.version = packageList.list[0].version;
           publishingRequest.desc = packageList.list[0].desc;
           publishingRequest.path = packageList.list[0].path;
-          publishingRequest.status = packageList.list[0].status;
+          if (packageList.list[0].status === 'ci-build') {
+            publishingRequest.status = 'draft';
+          } else {
+            publishingRequest.status = packageList.list[0].status;
+          }
           publishingRequest.sequence = packageList.list[0].sequence;
         }
 
 
-        PublishingRequestModel.setPublishingRequest(implementationGuide, publishingRequest, this.options.fhirVersion);
-        PackageListModel.removePackageList(implementationGuide);
+        PublishingRequestModel.setPublishingRequest(implementationGuide as IImplementationGuide, publishingRequest, this.options.fhirVersion);
+        PackageListModel.removePackageList(implementationGuide as IImplementationGuide);
 
         changedImplementationGuides.push(implementationGuide);
       }
