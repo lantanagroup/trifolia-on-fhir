@@ -18,6 +18,7 @@ import {ResourcePermissionsComponent} from './resource-permissions/resource-perm
 import {ImplementationGuideTypeaheadComponent} from './implementation-guide-typeahead/implementation-guide-typeahead.component';
 import {SimplemdeModule} from 'ngx-simplemde';
 import { IgPublisherSelectionComponent } from './ig-publisher-selection/ig-publisher-selection.component';
+import { FshResourceComponent } from './fsh-resource/fsh-resource.component';
 
 const components = [
   MarkdownComponent,
@@ -32,10 +33,14 @@ const components = [
   XmlPipe,
   ResourcePermissionsComponent,
   ImplementationGuideTypeaheadComponent,
-  IgPublisherSelectionComponent
+  IgPublisherSelectionComponent,
+  FshResourceComponent
 ];
 
 @NgModule({
+  entryComponents: [
+    FshResourceComponent
+  ],
   declarations: components,
   exports: components,
   imports: [

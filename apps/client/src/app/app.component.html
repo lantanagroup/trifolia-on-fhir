@@ -88,6 +88,12 @@
           <a class="dropdown-item" href="/help/index.html" target="tof-help">
             <i class="fa fa-book"></i> Documentation
           </a>
+          <a class="dropdown-item" *ngIf="configService.config.termsOfUse" href="{{configService.config.termsOfUse}}" target="_blank">
+            <i class="fa fa-file"></i> Terms of Use
+          </a>
+          <a class="dropdown-item" *ngIf="configService.config.privacyPolicy" href="{{configService.config.privacyPolicy}}" target="_blank">
+            <i class="fa fa-file"></i> Privacy Policy
+          </a>
           <a class="dropdown-item" href="javascript:void(0)" (click)="supportButtonClicked()">
             <i class="fa fa-question"></i> Request Support
           </a>

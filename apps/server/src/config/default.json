@@ -17,6 +17,8 @@
     "maxAsyncQueueRequests": 10,
     "publishStatusPath": "igs/publishedIGs.json"
   },
+  "privacyPolicy": "https://www.lantanagroup.com/trifolia-on-fhir-privacy-policy/",
+  "termsOfUse": "https://www.lantanagroup.com/terms-of-use/",
   "publish": {
     "queueLimit": 2,
     "timeout": 5000

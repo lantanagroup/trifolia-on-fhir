@@ -43,6 +43,7 @@ import {CanComponentDeactivate} from '../guards/resource.guard';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Versions} from 'fhir/fhir';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import { FshResourceComponent } from '../shared-ui/fsh-resource/fsh-resource.component';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -63,6 +64,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public Globals = Globals;
   public elementSearch: string;
   public constraintManager: ConstraintManager;
+  public showUpdateFromFSH = false;
 
   @ViewChild('edPanel', { static: true }) edPanel: ElementDefinitionPanelComponent;
   @ViewChild('sdTabs', { static: true }) sdTabs: NgbTabset;
@@ -113,6 +115,11 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
   public get isFile(): boolean {
     return this.route.snapshot.paramMap.get('id') === 'from-file';
+  }
+
+  public editFSH() {
+    const modalRef = this.modalService.open(FshResourceComponent, { size: 'xl' });
+    modalRef.componentInstance.resource = this.structureDefinition;
   }
 
   public toggleMappings() {

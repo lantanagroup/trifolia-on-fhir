@@ -24,6 +24,17 @@ export function escapeForXml(value: string) {
     .replace(/>/g, '&gt;');
 }
 
+export function getFhirVersion(releaseVersion: 'stu3'|'r4') {
+  switch (releaseVersion) {
+    case 'stu3':
+      return '3.0.2';
+    case 'r4':
+      return '4.0.1';
+    default:
+      throw new Error(`Unknown FHIR release version ${releaseVersion}`);
+  }
+}
+
 export function getErrorString(err: any, body?: any, defaultMessage?: string) {
   if (err && err.error) {
     if (err.error.message) {

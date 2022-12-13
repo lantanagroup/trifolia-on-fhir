@@ -19,6 +19,7 @@ import { GroupController } from './group.controller';
 import { GithubController } from './github.controller';
 import { ExportService } from './export.service';
 import { SearchParameterController } from './search-parameter.controller';
+import { FshController } from './fsh.controller';
 
 
 @Module({
@@ -40,7 +41,8 @@ import { SearchParameterController } from './search-parameter.controller';
     ImportController,
     GroupController,
     GithubController,
-    SearchParameterController
+    SearchParameterController,
+    FshController
   ],
   providers: [
     HttpStrategy,

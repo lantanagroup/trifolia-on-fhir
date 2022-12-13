@@ -1,43 +1,42 @@
-import {Fhir as FhirModule} from 'fhir/fhir';
-import {Server} from 'socket.io';
-import {ChildProcess, spawn} from 'child_process';
+import { Fhir as FhirModule } from "fhir/fhir";
+import { Server } from "socket.io";
+import { ChildProcess, spawn } from "child_process";
 import {
   DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
   Media,
   PackageResourceComponent,
   StructureDefinition as STU3StructureDefinition
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+} from "../../../../../libs/tof-lib/src/lib/stu3/fhir";
 import {
   ImplementationGuide as R4ImplementationGuide,
   ImplementationGuidePageComponent,
   ImplementationGuideResourceComponent,
   StructureDefinition as R4StructureDefinition
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {BundleExporter} from './bundle';
-import {HttpService, Logger, MethodNotAllowedException} from '@nestjs/common';
-import {Formats} from '../models/export-options';
-import {PageInfo} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
+} from "../../../../../libs/tof-lib/src/lib/r4/fhir";
+import { BundleExporter } from "./bundle";
+import { HttpService, Logger, MethodNotAllowedException } from "@nestjs/common";
+import { Formats } from "../models/export-options";
+import { IgPageHelper, PageInfo } from "../../../../../libs/tof-lib/src/lib/ig-page-helper";
 import {
   getCustomMenu,
   getDefaultImplementationGuideResourcePath,
   getIgnoreWarningsValue,
   setIgnoreWarningsValue,
   setJiraSpecValue
-} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {IBundle, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {PackageListModel} from '../../../../../libs/tof-lib/src/lib/package-list-model';
-import {FhirInstances, unzip} from '../helper';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import * as path from 'path';
-import * as fs from 'fs-extra';
-import * as tmp from 'tmp';
-import * as vkbeautify from 'vkbeautify';
-import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
-import {ConfigService} from '../config.service';
-import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
-import JSZip from 'jszip';
+} from "../../../../../libs/tof-lib/src/lib/fhirHelper";
+import { Globals } from "../../../../../libs/tof-lib/src/lib/globals";
+import { IBundle, IImplementationGuide } from "../../../../../libs/tof-lib/src/lib/fhirInterfaces";
+import { FhirInstances, unzip } from "../helper";
+import { getErrorString } from "../../../../../libs/tof-lib/src/lib/helper";
+import * as path from "path";
+import * as fs from "fs-extra";
+import * as tmp from "tmp";
+import * as vkbeautify from "vkbeautify";
+import { ITofUser } from "../../../../../libs/tof-lib/src/lib/tof-user";
+import { ConfigService } from "../config.service";
+import JSZip from "jszip";
+import { PublishingRequestModel } from "../../../../../libs/tof-lib/src/lib/publishing-request-model";
 
 export class HtmlExporter {
   public queuedAt: Date;
@@ -334,23 +333,23 @@ export class HtmlExporter {
     if (!ignoreWarningsValue) {
       ignoreWarningsValue = '== Suppressed Messages ==\r\n';
     } else if (!ignoreWarningsValue.startsWith('== Suppressed Messages ==')) {
-      ignoreWarningsValue = '== Suppressed Messages ==\r\n' + ignoreWarningsValue;
+      ignoreWarningsValue = "== Suppressed Messages ==\r\n" + ignoreWarningsValue;
     }
 
-    fs.writeFileSync(path.join(inputDir, 'ignoreWarnings.txt'), ignoreWarningsValue);
+    fs.writeFileSync(path.join(inputDir, "ignoreWarnings.txt"), ignoreWarningsValue);
 
     this.removeNonExampleMedia();
     this.populatePageInfos();
 
-    const packageList = PackageListModel.getPackageList(this.implementationGuide);
+    const publishingRequest = PublishingRequestModel.getPublishingRequest(this.implementationGuide);
 
-    if (packageList) {
-      this.logger.log('Implementation guide has a package-list.json file defined. Including it in export.');
+    if (publishingRequest) {
+      this.logger.log("Implementation guide has a publishing-request.json file defined. Including it in export.");
 
-      const packageListPath = path.join(this.rootPath, 'package-list.json');
+      const publishingRequestPath = path.join(this.rootPath, "publication-request.json");
 
-      fs.writeFileSync(packageListPath, JSON.stringify(packageList, null, '\t'));
-      PackageListModel.removePackageList(this.implementationGuide);
+      fs.writeFileSync(publishingRequestPath, JSON.stringify(publishingRequest, null, "\t"));
+      PublishingRequestModel.removePublishingRequest(this.implementationGuide);
     }
 
     const igToWrite: IImplementationGuide = this.prepareImplementationGuide();

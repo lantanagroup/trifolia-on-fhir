@@ -10,8 +10,11 @@ i.warning {
   color: #ff0000;
 }
 
-span.message
-{
+span.message {
   text-decoration: none;
   padding-left: 15px
+}
+
+select {
+  max-width: 150px;
 }

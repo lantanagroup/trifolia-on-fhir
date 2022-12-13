@@ -39,7 +39,11 @@
           <td>{{getIdDisplay(f)}}</td>
           <td>{{getContentTypeDisplay(f)}}</td>
           <td>
-            <span>{{f.status.substring(0, 1).toUpperCase()}}{{f.status.substring(1)}}&nbsp;</span>
+            <span *ngIf="f.resource?.resourceType !== 'Bundle'">{{f.status.substring(0, 1).toUpperCase()}}{{f.status.substring(1)}}&nbsp;</span>
+            <select (change)="importBundle = getFileBundle()" *ngIf="f.resource?.resourceType === 'Bundle'" [(ngModel)]="f.bundleOperation" class="form-control">
+              <option value="store">Store</option>
+              <option value="execute">Execute</option>
+            </select>
             <a *ngIf="f.status === 'update' && f.resource" href="javascript:void(0)" (click)="viewUpdateDiff(f.resource)">
               <i class="fas fa-eye"></i>
             </a>

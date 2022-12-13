@@ -1,5 +1,5 @@
-import {BaseTools} from './baseTools';
-import {IBundle} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { BaseTools } from './baseTools';
+import { IBundle } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import * as fs from 'fs';
 
 export interface ChangeExtensionUrlOptions {
@@ -94,7 +94,7 @@ export class ChangeExtensionUrl extends BaseTools {
       })
     };
 
-    fs.writeFileSync('change-ext-urls.json', JSON.stringify(bundle));
+    //fs.writeFileSync('change-ext-urls.json', JSON.stringify(bundle));
 
     try {
       const response = await this.httpService.post<IBundle>(this.options.server, bundle).toPromise();
