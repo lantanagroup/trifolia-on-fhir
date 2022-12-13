@@ -32,7 +32,7 @@ RUN npm prune --production
 FROM node:10-alpine
 
 # Install ruby, open-jdk
-RUN apk update && apk --update --no-cache add ruby-full ruby-dev build-base openjdk8-jre
+RUN apk update && apk --update --no-cache add ruby-full ruby-dev build-base openjdk11-jre
 # Install fonts that are used by ig publisher. Without these, ig publisher throws a bunch of exceptions
 RUN apk add --no-cache fontconfig ttf-dejavu
 RUN gem install sassc -- --disable-march-tune-native
