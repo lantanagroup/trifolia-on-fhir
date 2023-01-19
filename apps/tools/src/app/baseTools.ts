@@ -81,26 +81,28 @@ export class BaseTools {
     });
   }
 
-  protected getAllResources(server: string, resourceType?: string): Promise<DomainResource[]> {
+  protected async getAllResourceTypes(server: string, excluded?: string[]) {
+    const conformance = await this.getConformance(server);
+    const resourceTypes = [];
+
+    (conformance.rest || []).forEach((rest) => {
+      (rest.resource || []).forEach((next) => {
+        if (!excluded || excluded.indexOf(next.type) < 0) {
+          resourceTypes.push(next.type);
+        }
+      });
+    });
+
+    return resourceTypes;
+  }
+
+  protected async getAllResources(server: string, resourceType?: string, excluded?: string[]): Promise<DomainResource[]> {
     if (resourceType) {
       return this.getAllResourcesByType(server, [resourceType]);
     }
 
-    return this.getConformance(server)
-      .then((conformance) => {
-        const resourceTypes = [];
-
-        (conformance.rest || []).forEach((rest) => {
-          (rest.resource || []).forEach((next) => resourceTypes.push(next.type));
-        });
-
-        return this.getAllResourcesByType(server, resourceTypes);
-      })
-      .then((results) => results)
-      .catch((err) => {
-        console.error(err);
-        throw err;
-      });
+    const resourceTypes = await this.getAllResourceTypes(server, excluded)
+    return this.getAllResourcesByType(server, resourceTypes);
   }
 
   protected getResource(server: string, resourceType: string, id: string): Promise<DomainResource> {

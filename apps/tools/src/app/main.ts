@@ -37,7 +37,7 @@ const changeExtensionUrlDescription = 'Changes the url of an extension';
 const replacePackageListFormat = 'replace-package-list [server] [fhirVersion]';
 const replacePackageListDescription = 'Replaces all ImplementationGuide package-list.json with publishing-request.json';
 
-const migrateDbFormat = 'migrate-db [server] [fhirVersion] [dbServer] [dbName]';
+const migrateDbFormat = 'migrate-db [server] [fhirVersion] [dbServer] [dbName] [idPrefix]';
 const migrateDbDescription = 'Migrate the specific FHIR server to mongo database';
 
 const argv = Yargs
@@ -49,7 +49,8 @@ const argv = Yargs
       })
       .positional('fhirVersion', {})
       .positional('dbServer', {})
-      .positional('dbName', {});
+      .positional('dbName', {})
+      .positional('idPrefix', {});
   }, async (args: any) => {
     try {
       const migrator = new MigrateDb(args);
