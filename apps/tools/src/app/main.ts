@@ -8,6 +8,7 @@ import { Migrate } from './migrate';
 import { ChangeId } from './change-id';
 import { ChangeExtensionUrl } from './change-extension-url';
 import { ReplacePackageList } from './replace-package-list';
+import { MigrateDb } from './migrate-db';
 
 const populateFromAuth0Format = 'populate-from-auth0 <server> <domain> <token>';
 const populateFromAuth0Description = 'Populates user (Practitioner) information in ToF based on user information entered in a matching Auth0 domain.';
@@ -36,7 +37,28 @@ const changeExtensionUrlDescription = 'Changes the url of an extension';
 const replacePackageListFormat = 'replace-package-list [server] [fhirVersion]';
 const replacePackageListDescription = 'Replaces all ImplementationGuide package-list.json with publishing-request.json';
 
+const migrateDbFormat = 'migrate-db [server] [fhirVersion] [dbServer] [dbName] [idPrefix]';
+const migrateDbDescription = 'Migrate the specific FHIR server to mongo database';
+
 const argv = Yargs
+  .command(migrateDbFormat, migrateDbDescription, (yargs: Yargs.Argv) => {
+    return yargs
+      .positional('server', {
+        description: 'The FHIR server to migrate',
+        required: true
+      })
+      .positional('fhirVersion', {})
+      .positional('dbServer', {})
+      .positional('dbName', {})
+      .positional('idPrefix', {});
+  }, async (args: any) => {
+    try {
+      const migrator = new MigrateDb(args);
+      await migrator.migrate();
+    } catch (ex) {
+      console.error(ex.message);
+    }
+  })
   .command(replacePackageListFormat, replacePackageListDescription, (yargs: Yargs.Argv) => {
     return yargs
       .positional('server', {
