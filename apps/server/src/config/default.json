@@ -7,7 +7,7 @@
       "certPath": null
     },
     "enableSecurity": false,
-    "supportUrl": "https://trifolia.atlassian.net/servicedesk/customer/portal/3",
+    "supportUrl": "https://lantana.atlassian.net/servicedesk/customer/portal/2",
     "googleAnalyticsCode": "UA-43626731-3",
     "logFileName": "logs/tof.log",
     "logLevel": "all",
