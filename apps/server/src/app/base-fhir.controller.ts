@@ -292,10 +292,18 @@ export class BaseFhirController extends BaseController {
           return r.reference.reference.indexOf(id) > 0;
         });
 
-        if (index >= 0 && (data.title || data.name)) {
+        if (index >= 0) {
           //If data.title exists, set to data.title. Else if data.name exists, set to data.name. Else if data.title and data.name don't exist, do nothing.
-          (<ImplementationGuide>contextImplementationGuide).definition.resource[index].name =
-            data.title ? data.title : data.name;
+
+          if (data.title || data.name) {
+            (<ImplementationGuide>contextImplementationGuide).definition.resource[index].name =
+              data.title ? data.title : data.name;
+          }
+
+          // if data.description exists set to data.description
+          if (data.description) {
+            (<ImplementationGuide>contextImplementationGuide).definition.resource[index].description = data.description;
+          }
 
           const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', contextImplementationGuideId);
           await this.httpService.put<ImplementationGuide>(igUrl, contextImplementationGuide).toPromise();
