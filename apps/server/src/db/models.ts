@@ -1,8 +1,8 @@
 import { IDomainResource, IImplementationGuide } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 export interface IProjectPermission {
-  targetId: string;
-  type: 'user'|'group';
+  targetId?: string;    // no targetId means "everyone"
+  type: 'user'|'group'|'everyone';
   grant: 'read'|'write';
 }
 
@@ -38,6 +38,7 @@ export interface IGroup {
 
 export interface IProjectResource {
   _id?: string;
+  fhirVersion: 'stu3'|'r4'|'r5';
   projectId?: string[];
   name?: string;
   groupingId?: string;    // from ImplementationGuide.definition.grouping. Not used in STU3
@@ -54,11 +55,20 @@ export interface IExample extends IProjectResource {
 }
 
 export interface IAudit {
-  _id: string;
+  _id?: string;
   action: 'read'|'update'|'delete'|'create',
   timestamp: Date,
   who: string;
   what: string;
   note?: string;
   networkAddr?: string;
+}
+
+export class IHistory {
+  _id?: string;
+  content: IDomainResource;
+  targetId: string;
+  timestamp: Date;
+  type: 'conformance'|'example';
+  versionId: number;
 }

@@ -37,20 +37,23 @@ const changeExtensionUrlDescription = 'Changes the url of an extension';
 const replacePackageListFormat = 'replace-package-list [server] [fhirVersion]';
 const replacePackageListDescription = 'Replaces all ImplementationGuide package-list.json with publishing-request.json';
 
-const migrateDbFormat = 'migrate-db [server] [fhirVersion] [dbServer] [dbName] [idPrefix]';
+const migrateDbFormat = 'migrate-db [mysqlHost] [mysqlDb] [mysqlUser] [mysqlPass] [fhirVersion] [dbServer] [dbName] [idPrefix]';
 const migrateDbDescription = 'Migrate the specific FHIR server to mongo database';
 
 const argv = Yargs
   .command(migrateDbFormat, migrateDbDescription, (yargs: Yargs.Argv) => {
     return yargs
-      .positional('server', {
-        description: 'The FHIR server to migrate',
-        required: true
-      })
+      .positional('mysqlHost', {})
+      .positional('mysqlDb', {})
+      .positional('mysqlUser', {})
+      .positional('mysqlPass', {})
       .positional('fhirVersion', {})
       .positional('dbServer', {})
       .positional('dbName', {})
-      .positional('idPrefix', {});
+      .positional('idPrefix', {})
+      .option('out', {
+        description: 'The file to store log output to'
+      });
   }, async (args: any) => {
     try {
       const migrator = new MigrateDb(args);
