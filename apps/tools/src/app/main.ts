@@ -37,7 +37,7 @@ const changeExtensionUrlDescription = 'Changes the url of an extension';
 const replacePackageListFormat = 'replace-package-list [server] [fhirVersion]';
 const replacePackageListDescription = 'Replaces all ImplementationGuide package-list.json with publishing-request.json';
 
-const migrateDbFormat = 'migrate-db [mysqlHost] [mysqlDb] [mysqlUser] [mysqlPass] [fhirVersion] [dbServer] [dbName] [idPrefix]';
+const migrateDbFormat = 'migrate-db [mysqlHost] [mysqlDb] [mysqlUser] [mysqlPass] [fhirVersion] [dbServer] [dbName] [migratedFromLabel]';
 const migrateDbDescription = 'Migrate the specific FHIR server to mongo database';
 
 const argv = Yargs
@@ -50,7 +50,7 @@ const argv = Yargs
       .positional('fhirVersion', {})
       .positional('dbServer', {})
       .positional('dbName', {})
-      .positional('idPrefix', {})
+      .positional('migratedFromLabel', {})
       .option('out', {
         description: 'The file to store log output to'
       });

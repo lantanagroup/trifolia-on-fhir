@@ -13,6 +13,7 @@ export interface IProjectContributor {
 
 export interface IProject {
   _id?: string;
+  migratedFrom?: string;
   name: string;
   authorId: string;
   contributors?: IProjectContributor[];
@@ -26,10 +27,12 @@ export interface IUser {
   authId?: string[];
   email?: string;
   phone?: string;
+  name?: string;
 }
 
 export interface IGroup {
   _id?: string;
+  migratedFrom?: string;
   name: string;
   description?: string;
   managingUserId: string;
@@ -38,6 +41,7 @@ export interface IGroup {
 
 export interface IProjectResource {
   _id?: string;
+  migratedFrom?: string;
   fhirVersion: 'stu3'|'r4'|'r5';
   projectId?: string[];
   name?: string;
@@ -66,6 +70,7 @@ export interface IAudit {
 
 export class IHistory {
   _id?: string;
+  migratedFrom?: string;
   content: IDomainResource;
   targetId: string;
   timestamp: Date;
