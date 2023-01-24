@@ -22,14 +22,22 @@ import { ExportService } from './export.service';
 import { SearchParameterController } from './search-parameter.controller';
 import { FshController } from './fsh.controller';
 import { Project, ProjectSchema } from '../db/schemas/project.schema';
+import { DatabaseConfigService } from './database-config.service';
 import { ProjectsService } from './services/projects.service';
 
 
 @Module({
   imports: [
     HttpModule,
-    MongooseModule.forRoot('mongodb://root:test@localhost:27017/tof?authSource=admin'),
+    MongooseModule.forRootAsync({
+      imports: [AppModule],
+      useExisting: DatabaseConfigService
+    }),
     MongooseModule.forFeature([{name: Project.name, schema: ProjectSchema}])
+  ],
+  exports: [
+    ConfigService,
+    DatabaseConfigService
   ],
   controllers: [
     AuditEventController,
@@ -55,7 +63,8 @@ import { ProjectsService } from './services/projects.service';
     HttpStrategy,
     ConfigService,
     ExportService,
-    ProjectsService
+    ProjectsService,
+    DatabaseConfigService
   ]
 })
 export class AppModule {}
