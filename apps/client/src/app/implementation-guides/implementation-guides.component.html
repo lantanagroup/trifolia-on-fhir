@@ -52,9 +52,9 @@
   </thead>
   <tbody *ngIf="!configService.showingIntroduction">
   <tr *ngFor="let ig of implementationGuides">
-    <td>{{ig.data.resource.id}}</td>
-    <td>{{ig.data.resource.name}}</td>
-    <td *ngIf="configService.isFhirR4">{{ig.data.resource.title}}</td>
+    <td>{{ig.data.ig.id}}</td>
+    <td>{{ig.data.ig.name}}</td>
+    <td *ngIf="configService.isFhirR4">{{ig.data.ig.title}}</td>
     <td>
       <i *ngIf="ig.published === true" class="fas fa-check" style="color:green" title="Success"></i>
       <i *ngIf="ig.published === false" class="fas fa-times" style="color:red" title="Failed"></i>
@@ -63,7 +63,7 @@
 
     <td class="actions-column-1">
       <div class="btn-group pull-right">
-        <a (click)="projectSelected(ig.data.resource)" class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/{{ig.data.resource.id}}/implementation-guide"
+        <a (click)="projectSelected(ig.data.ig)" class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/{{ig.data.ig.id}}/implementation-guide"
            title="Select this implementation guide project">
           <i class="fas fa-hand-pointer"></i>
         </a>

@@ -1,4 +1,5 @@
 import { HttpModule, Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AuditEventController } from './audit-event.controller';
 import { ConfigController } from './config.controller';
 import { FhirController } from './fhir.controller';
@@ -20,10 +21,16 @@ import { GithubController } from './github.controller';
 import { ExportService } from './export.service';
 import { SearchParameterController } from './search-parameter.controller';
 import { FshController } from './fsh.controller';
+import { Project, ProjectSchema } from '../db/schemas/project.schema';
+import { ProjectsService } from './services/projects.service';
 
 
 @Module({
-  imports: [HttpModule],
+  imports: [
+    HttpModule,
+    MongooseModule.forRoot('mongodb://root:test@localhost:27017/tof?authSource=admin'),
+    MongooseModule.forFeature([{name: Project.name, schema: ProjectSchema}])
+  ],
   controllers: [
     AuditEventController,
     ConfigController,
@@ -47,7 +54,8 @@ import { FshController } from './fsh.controller';
   providers: [
     HttpStrategy,
     ConfigService,
-    ExportService
-  ],
+    ExportService,
+    ProjectsService
+  ]
 })
 export class AppModule {}

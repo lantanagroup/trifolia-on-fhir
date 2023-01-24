@@ -20,6 +20,8 @@ import { BulkUpdateRequest } from '../../../../libs/tof-lib/src/lib/bulk-update-
 import path from 'path';
 import os from 'os';
 import * as fs from 'fs';
+import { ProjectsService } from './services/projects.service';
+import { PaginateOptions } from 'libs/tof-lib/src/lib/paginate';
 
 class PatchRequest {
   op: string;
@@ -41,7 +43,8 @@ export class ImplementationGuideController extends BaseFhirController {
   resourceType = 'ImplementationGuide';
 
   constructor(protected httpService: HttpService,
-              protected configService: ConfigService) {
+              protected configService: ConfigService,
+              protected projectService: ProjectsService) {
     super(httpService, configService);
   }
 
@@ -68,7 +71,7 @@ export class ImplementationGuideController extends BaseFhirController {
 
       logger.log(`Executing IG Publisher to download package dependencies for IG ${ig.id}`);
 
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         const dependencyProcess = spawn('java', ['-jar', igPublisherLocation, '-package', packageIdsForDownload.join(';')]);
 
         dependencyProcess.stdout.on('data', (data) => {
@@ -284,26 +287,60 @@ export class ImplementationGuideController extends BaseFhirController {
 
   @Get()
   public async search(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query() query?: any, @RequestHeaders() headers?): Promise<SearchImplementationGuideResponseContainer> {
-    const preparedQuery = await this.prepareSearchQuery(user, fhirServerBase, query, headers);
 
-    const options = <AxiosRequestConfig> {
-      url: buildUrl(fhirServerBase, this.resourceType, null, null, preparedQuery),
-      method: 'GET',
-      headers: {
-        'Cache-Control': 'no-cache'
-      }
-    };
+    //const preparedQuery = await this.prepareSearchQuery(user, fhirServerBase, query, headers);
+
+    // const options = <AxiosRequestConfig> {
+    //   url: buildUrl(fhirServerBase, this.resourceType, null, null, preparedQuery),
+    //   method: 'GET',
+    //   headers: {
+    //     'Cache-Control': 'no-cache'
+    //   }
+    // };
+
+    console.log(`query: ${JSON.stringify(query)}`);
+    //console.log(`options: ${JSON.stringify(options)}`);
 
     try {
-      const results = await this.httpService.request(options).toPromise();
-      const searchIGResponses: SearchImplementationGuideResponse[] = [];
+      //const results = await this.httpService.request(options).toPromise();
+      //const results = await this.db.collection('project').find().skip((query.page-1)*preparedQuery._count).limit(preparedQuery._count).toArray();
+      
+      const filter = {};
 
-      if (results.data && results.data.entry) {
-        results.data.entry.forEach(bundle => {
+      if ('name' in query) {
+        filter['ig.name'] = { $regex: query['name'], $options: 'i' };
+      }
+      if ('title' in query) {
+        filter['ig.title'] = { $regex: query['title'], $options: 'i' };
+      }
+      if ('_id' in query) {
+        filter['ig.id'] = { $regex: query['_id'], $options: 'i' };
+      }
+
+      const options: PaginateOptions = {
+        page: query.page,
+        itemsPerPage: 10,
+        filter: filter
+      };
+
+      options.sortBy = {};
+      if ('_sort' in query) {
+        options.sortBy[query['_sort']] = 'asc';
+      }
+
+      console.log(`filter: ${JSON.stringify(filter)}`);
+
+      const results = await this.projectService.search(options);
+      
+      const searchIGResponses: SearchImplementationGuideResponse[] = [];
+      let total = 0;
+
+      if (results && results.results) {
+        results.results.forEach(bundle => {
           if (this.configService.server && this.configService.server.publishStatusPath) {
             searchIGResponses.push({
               data: bundle,
-              published: this.getPublishStatus(bundle.resource.id),
+              published: this.getPublishStatus(bundle.ig.id),
             });
           } else {
             searchIGResponses.push({
@@ -311,11 +348,12 @@ export class ImplementationGuideController extends BaseFhirController {
             });
           }
         });
+        total = results.total;
       }
 
       return {
         responses: searchIGResponses,
-        total: results.data.total
+        total: total
       };
     } catch (ex) {
       let message = `Failed to search for resource type ${this.resourceType}: ${ex.message}`;
