@@ -1,5 +1,4 @@
 import { HttpModule, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AuditEventController } from './audit-event.controller';
 import { ConfigController } from './config.controller';
 import { FhirController } from './fhir.controller';
@@ -15,29 +14,20 @@ import { HttpStrategy } from './auth.strategy';
 import { OperationDefinitionController } from './operation-definition.controller';
 import { CodeSystemController } from './code-system.controller';
 import { QuestionnaireController } from './questionnaire.controller';
-import { ConfigService } from './config.service';
 import { GroupController } from './group.controller';
 import { GithubController } from './github.controller';
 import { ExportService } from './export.service';
 import { SearchParameterController } from './search-parameter.controller';
 import { FshController } from './fsh.controller';
-import { Project, ProjectSchema } from '../db/schemas/project.schema';
-import { DatabaseConfigService } from './database-config.service';
-import { ProjectsService } from './services/projects.service';
+import { SharedModule } from './shared.module';
 
 
 @Module({
   imports: [
     HttpModule,
-    MongooseModule.forRootAsync({
-      imports: [AppModule],
-      useExisting: DatabaseConfigService
-    }),
-    MongooseModule.forFeature([{name: Project.name, schema: ProjectSchema}])
+    SharedModule
   ],
   exports: [
-    ConfigService,
-    DatabaseConfigService
   ],
   controllers: [
     AuditEventController,
@@ -61,10 +51,7 @@ import { ProjectsService } from './services/projects.service';
   ],
   providers: [
     HttpStrategy,
-    ConfigService,
-    ExportService,
-    ProjectsService,
-    DatabaseConfigService
+    ExportService
   ]
 })
 export class AppModule {}

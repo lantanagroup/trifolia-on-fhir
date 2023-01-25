@@ -11,7 +11,7 @@ import config from 'config';
 import {createWriteStream, ensureDirSync, existsSync, readdirSync, statSync, unlinkSync} from 'fs-extra';
 import semver from 'semver';
 
-@Injectable()
+//@Injectable()
 export class ConfigService {
   public server: IServerConfig = {
     supportUrl: 'http://test.com/support',
