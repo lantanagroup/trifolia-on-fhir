@@ -1,4 +1,4 @@
-import { IDomainResource, IImplementationGuide } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { IDomainResource, IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 export interface IProjectPermission {
   targetId?: string;    // no targetId means "everyone"

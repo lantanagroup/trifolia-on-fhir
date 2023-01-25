@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { modelDefinitions } from "../db/schemas";
+import { modelDefinitions } from "./db/schemas";
 import { ConfigService } from "./config.service";
 import { DatabaseConfigService } from "./database-config.service";
 import { ProjectsService } from "./services/projects.service";
