@@ -13,7 +13,7 @@ import {
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {
   AuditEvent as R4AuditEvent,
-  DomainResource as R4DomainResource,
+  DomainResource as R4DomainResource, ImplementationGuide,
   ImplementationGuide as R4ImplementationGuide
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AxiosRequestConfig} from 'axios';
@@ -404,6 +404,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
 
     if (!foundResource) {
       const display = (<any>resource).title || (<any>resource).name;
+      const description =  (<any>resource).description;
 
       logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');
 
@@ -422,7 +423,8 @@ export async function addToImplementationGuide(httpService: HttpService, configS
           display: display
         },
         exampleBoolean: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(resource.resourceType) < 0,
-        name: display
+        name: display,
+        description: description
       });
       changed = true;
     }
@@ -442,8 +444,11 @@ export async function addToImplementationGuide(httpService: HttpService, configS
 
     if (foundInPackages.length === 0) {
       const display = (<any>resource).title || (<any>resource).name;
+      const description =  (<any>resource).description;
+
       const newResource: PackageResourceComponent = {
         name: display,
+        description: description,
         sourceReference: {
           reference: resourceReferenceString,
           display: display
