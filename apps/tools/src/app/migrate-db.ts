@@ -1,5 +1,5 @@
 import {BaseTools} from './baseTools';
-import {IAudit, IConformance, IExample, IGroup, IHistory, IProject, IProjectPermission, IProjectResource, IUser} from '../../../server/src/db/models';
+import {IAudit, IConformance, IExample, IGroup, IHistory, IProject, IProjectPermission, IProjectResource, IUser} from '../../../server/src/app/db/models';
 import {IAuditEvent, IContactPoint, IDomainResource, IImplementationGuide, IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {MongoClient} from 'mongodb/lib';
 import {Db} from 'mongodb';
