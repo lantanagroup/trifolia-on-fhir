@@ -1,5 +1,6 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, Param, Post, Put, Query, UnauthorizedException, UseGuards} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {Body, Controller, Delete, Get, Param, Post, Put, Query, UnauthorizedException, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {ApiOAuth2, ApiOperation, ApiTags} from '@nestjs/swagger';

@@ -187,11 +187,13 @@ async function bootstrap() {
   let app: NestExpressApplication;
 
   try {
+    console.log('creating application');
     app = await NestFactory.create<NestExpressApplication>(AppModule, {
       httpsOptions,
-      logger: false
+      //logger: false
     });
   } catch (ex) {
+    console.log(ex);
     logger.error(ex);
   }
 

@@ -1,5 +1,6 @@
 import {BaseFhirController} from './base-fhir.controller';
-import { Body, Controller, Delete, Get, HttpService, InternalServerErrorException, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import { Body, Controller, Delete, Get, InternalServerErrorException, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {ExpandOptions} from '../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 import {ValueSet} from '../../../../libs/tof-lib/src/lib/stu3/fhir';

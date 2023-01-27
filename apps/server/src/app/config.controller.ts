@@ -1,4 +1,5 @@
-import {Controller, Get, HttpService, Req} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {Controller, Get, Req} from '@nestjs/common';
 import {BaseController} from './base.controller';
 import {CapabilityStatement} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ITofRequest} from './models/tof-request';

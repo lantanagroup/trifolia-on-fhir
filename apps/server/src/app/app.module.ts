@@ -1,4 +1,5 @@
-import { HttpModule, Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
+import { Module } from '@nestjs/common';
 import { AuditEventController } from './audit-event.controller';
 import { ConfigController } from './config.controller';
 import { FhirController } from './fhir.controller';

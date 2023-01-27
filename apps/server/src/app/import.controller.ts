@@ -1,10 +1,10 @@
 import {BaseController} from './base.controller';
+import {HttpService} from '@nestjs/axios';
 import {
   BadRequestException, Body,
   Controller,
   Get,
   Headers,
-  HttpService,
   Param, Post, Query,
   UnauthorizedException,
   UseGuards

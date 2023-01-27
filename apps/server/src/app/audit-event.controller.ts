@@ -1,4 +1,5 @@
-import {Controller, Get, HttpService, Param, Query, UseGuards} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {Controller, Get, Param, Query, UseGuards} from '@nestjs/common';
 import {BaseFhirController} from './base-fhir.controller';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';

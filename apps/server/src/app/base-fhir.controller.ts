@@ -1,5 +1,6 @@
 import {BaseController} from './base.controller';
-import {BadRequestException, HttpService, InternalServerErrorException} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {BadRequestException, InternalServerErrorException} from '@nestjs/common';
 import {buildUrl, generateId} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {TofNotFoundException} from '../not-found-exception';
 import {TofLogger} from './tof-logger';

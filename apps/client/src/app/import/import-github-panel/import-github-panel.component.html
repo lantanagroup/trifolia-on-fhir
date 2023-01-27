@@ -1,3 +1,4 @@
+<!--
 <div class="alert alert-warning" *ngIf="message">{{message}}</div>
 
 <button type="button" class="btn btn-primary" *ngIf="!githubService.token" (click)="githubLogin()">Login to GitHub</button>
@@ -28,10 +29,10 @@
         <label>Select files</label>
         <tree [tree]="tree" [settings]="{ rootIsVisible: false, showCheckboxes: true }" (nodeChecked)="handleSelected($event)" (nodeUnchecked)="handleUnselected($event)" #treeComponent></tree>
     </div>
-</div>
+</div> -->
 
 <!-- INTRO -->
-<div class="row" *ngIf="configService.showingIntroduction">
+<!-- <div class="row" *ngIf="configService.showingIntroduction">
   <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
     <div class="form-group" [attr.data-intro]="Globals.introText['import.github.repository']">
       <label>Select a repository</label>
@@ -52,4 +53,4 @@
     <label>Select files</label>
     <tree [tree]="introTree" [settings]="{ rootIsVisible: false, showCheckboxes: true }"></tree>
   </div>
-</div>
+</div> -->

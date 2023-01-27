@@ -1,6 +1,7 @@
 import {BaseFhirController} from './base-fhir.controller';
 import {Test, TestingModule} from '@nestjs/testing';
-import {Controller, HttpModule, HttpService} from '@nestjs/common';
+import {HttpModule, HttpService} from '@nestjs/axios';
+import {Controller} from '@nestjs/common';
 import {Bundle, DomainResource, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ConfigService} from './config.service';
 import {createBundle, createTestUser, nockDelete, nockPermissions} from './test.helper';

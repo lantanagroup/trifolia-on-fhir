@@ -49,7 +49,7 @@ import { ImplementationGuideWrapperComponent } from './implementation-guide-wrap
 import { RouteTransformerDirective } from './route-transformer.directive';
 import { MappingModalComponent } from './structure-definition/element-definition-panel/mapping-modal/mapping-modal.component';
 import { ImportGithubPanelComponent } from './import/import-github-panel/import-github-panel.component';
-import { TreeModule } from 'ng2-tree';
+// import { TreeModule } from 'ng2-tree';
 import { ExportGithubPanelComponent } from './export-github-panel/export-github-panel.component';
 import { ContextPanelWrapperComponent } from './structure-definition/context-panel-wrapper/context-panel-wrapper.component';
 import { ContextPanelR4Component } from './structure-definition/context-panel-wrapper/r4/context-panel-r4.component';
@@ -269,7 +269,7 @@ const authModuleConfig: OAuthModuleConfig = {
     HttpModule,
     NgbModule,
     FileDropModule,
-    TreeModule,
+    // TreeModule,
     SharedModule,
     SharedUiModule,
     FhirEditModule,

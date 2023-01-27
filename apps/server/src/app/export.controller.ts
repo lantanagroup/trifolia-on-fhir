@@ -1,5 +1,6 @@
 import {BaseController} from './base.controller';
-import {Controller, Get, HttpService, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {Controller, Get, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/common';
 import {BundleExporter} from './export/bundle';
 import {ITofRequest} from './models/tof-request';
 import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';

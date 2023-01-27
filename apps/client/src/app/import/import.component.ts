@@ -536,6 +536,7 @@ export class ImportComponent implements OnInit {
       });
   }
 
+  /*
   public importGithub(tabSet: NgbTabset) {
     // Filter the paths so that we don't include duplicate paths, or paths for directories where
     // child files are already selected.
@@ -674,6 +675,7 @@ export class ImportComponent implements OnInit {
       this.message = getErrorString(err);
     });
   }
+  */
 
   public import(tabSet: NgbTabset) {
     this.outcome = null;
@@ -686,9 +688,9 @@ export class ImportComponent implements OnInit {
       this.importText(tabSet);
     } else if (this.activeTab === 'vsac') {
       this.importVsac(tabSet);
-    } else if (this.activeTab === 'github') {
+    } /*else if (this.activeTab === 'github') {
       this.importGithub(tabSet);
-    }
+    }*/
   }
 
   public importDisabled(): boolean {
@@ -700,9 +702,9 @@ export class ImportComponent implements OnInit {
         return !this.textContent;
       } else if (this.activeTab === 'vsac') {
         return !this.vsacCriteria.id || !this.vsacCriteria.password;
-      } else if (this.importGithubPanel && this.activeTab === 'github') {
+      } /*else if (this.importGithubPanel && this.activeTab === 'github') {
         return !this.importGithubPanel || !this.importGithubPanel.selectedPaths || this.importGithubPanel.selectedPaths.length === 0;
-      }
+      }*/
     }
     return true;
   }

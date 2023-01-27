@@ -15,7 +15,8 @@ import {
   StructureDefinition as R4StructureDefinition
 } from "../../../../../libs/tof-lib/src/lib/r4/fhir";
 import { BundleExporter } from "./bundle";
-import { HttpService, Logger, MethodNotAllowedException } from "@nestjs/common";
+import { HttpService } from '@nestjs/axios';
+import { Logger, MethodNotAllowedException } from "@nestjs/common";
 import { Formats } from "../models/export-options";
 import { IgPageHelper, PageInfo } from "../../../../../libs/tof-lib/src/lib/ig-page-helper";
 import {

@@ -1,4 +1,5 @@
-import {HttpService, Injectable, Logger} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {Logger} from '@nestjs/common';
 import {IServerConfig} from './models/server-config';
 import {IFhirConfig} from './models/fhir-config';
 import {IDatabaseConfig} from './models/database-config';

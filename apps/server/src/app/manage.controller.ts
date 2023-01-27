@@ -1,5 +1,6 @@
 import {BaseController} from './base.controller';
-import {Body, Controller, Get, Header, HttpService, Param, ParseIntPipe, Post, Query, Req, UseGuards} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {Body, Controller, Get, Header, Param, ParseIntPipe, Post, Query, Req, UseGuards} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {ISocketConnection} from './models/socket-connection';
 import {AuthGuard} from '@nestjs/passport';

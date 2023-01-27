@@ -3,7 +3,8 @@ import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import JSZip from 'jszip';
-import {BadRequestException, HttpService, Logger, UnauthorizedException} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {BadRequestException, Logger, UnauthorizedException} from '@nestjs/common';
 import {
   AuditEvent as STU3AuditEvent,
   DomainResource as STU3DomainResource,

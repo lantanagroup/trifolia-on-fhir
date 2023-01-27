@@ -1,4 +1,5 @@
-import {All, Controller, HttpService, Query, Response} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {All, Controller, Query, Response} from '@nestjs/common';
 import {BaseController} from './base.controller';
 import {ConfigService} from './config.service';
 import {TofLogger} from './tof-logger';

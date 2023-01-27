@@ -1,6 +1,6 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {FhirController} from './fhir.controller';
-import {HttpModule} from '@nestjs/common';
+import {HttpModule} from '@nestjs/axios';
 import {ConfigService} from './config.service';
 import {createBundle, createTestUser, nockDelete, nockPermissions} from './test.helper';
 import {addPermission} from '../../../../libs/tof-lib/src/lib/helper';

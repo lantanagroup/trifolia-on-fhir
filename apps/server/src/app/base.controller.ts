@@ -1,6 +1,7 @@
 import {Response} from 'express';
 import {addPermission, findPermission, getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
-import {BadRequestException, HttpService, InternalServerErrorException, UnauthorizedException} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {BadRequestException, InternalServerErrorException, UnauthorizedException} from '@nestjs/common';
 import {ITofRequest} from './models/tof-request';
 import {TofLogger} from './tof-logger';
 import {ConfigService} from './config.service';

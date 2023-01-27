@@ -1,5 +1,6 @@
 import { BaseFhirController } from './base-fhir.controller';
-import { Body, Controller, Delete, Get, HttpService, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
 import { FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User } from './server.decorators';

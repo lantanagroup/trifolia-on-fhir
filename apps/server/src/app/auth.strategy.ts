@@ -1,6 +1,7 @@
 import {Strategy} from 'passport-http-bearer';
 import {PassportStrategy} from '@nestjs/passport';
-import {HttpService, Injectable} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {Injectable} from '@nestjs/common';
 import {TofLogger} from './tof-logger';
 import {ConfigService} from './config.service';
 import jwksClient from 'jwks-rsa';

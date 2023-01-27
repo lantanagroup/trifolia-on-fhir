@@ -1,15 +1,16 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {BranchModel, ContentModel, GithubService, RepositoryModel} from '../../shared/github.service';
-import {
-  NodeCheckedEvent,
-  NodeUncheckedEvent,
-  TreeModel
-} from 'ng2-tree';
+// import {
+//   NodeCheckedEvent,
+//   NodeUncheckedEvent,
+//   TreeModel
+// } from 'ng2-tree';
 import {FhirService} from '../../shared/fhir.service';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from '../../shared/config.service';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 
+/*
 const createTreeItem = (value: string, directory: boolean, ...children: TreeModel[]) => {
   const item = {
     value: value,
@@ -24,13 +25,14 @@ const createTreeItem = (value: string, directory: boolean, ...children: TreeMode
 
   return item;
 };
+*/
 
 @Component({
   selector: 'app-import-github-panel',
   templateUrl: './import-github-panel.component.html',
   styleUrls: ['./import-github-panel.component.css']
 })
-export class ImportGithubPanelComponent implements OnInit {
+export class ImportGithubPanelComponent {/*implements OnInit {
   public repositories: RepositoryModel[];
   public repositoryId: string;
   public branches: BranchModel[];
@@ -199,4 +201,5 @@ export class ImportGithubPanelComponent implements OnInit {
     this.repositories = await this.githubService.getRepositories();
     this.loadingRepositories = false;
   }
+  */
 }
