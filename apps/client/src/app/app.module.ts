@@ -3,7 +3,6 @@ import { APP_INITIALIZER, Injectable, NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 // noinspection JSDeprecatedSymbols
-import { HttpModule } from '@angular/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ImplementationGuidesComponent } from './implementation-guides/implementation-guides.component';
 import { HomeComponent } from './home/home.component';
@@ -37,7 +36,7 @@ import { ValuesetExpandComponent } from './valueset-expand/valueset-expand.compo
 import { CapabilityStatementWrapperComponent } from './capability-statement-wrapper/capability-statement-wrapper.component';
 import { STU3CapabilityStatementComponent } from './capability-statement-wrapper/stu3/capability-statement.component';
 import { R4CapabilityStatementComponent } from './capability-statement-wrapper/r4/capability-statement.component';
-import { FileDropModule } from 'ngx-file-drop';
+import { NgxFileDropModule } from 'ngx-file-drop';
 import { ConfigService } from './shared/config.service';
 import { ConceptCardComponent } from './valueset/concept-card/concept-card.component';
 import { ImplementationGuideViewComponent } from './implementation-guide-view/implementation-guide-view.component';
@@ -192,7 +191,7 @@ const appRoutes: Routes = [
  */
 export function init(configService: ConfigService, authService: AuthService, fhirService: FhirService) {
   const getConfig = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       // Get the initial config for the server and get the FHIR server config
       configService.getConfig(true)
         .then(() => {
@@ -266,9 +265,8 @@ const authModuleConfig: OAuthModuleConfig = {
     FormsModule,
     HttpClientModule,
     OAuthModule.forRoot(authModuleConfig),
-    HttpModule,
     NgbModule,
-    FileDropModule,
+    NgxFileDropModule,
     // TreeModule,
     SharedModule,
     SharedUiModule,

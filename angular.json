@@ -119,7 +119,6 @@
               }
             ],
             "styles": [
-              "node_modules/ng2-tree/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "node_modules/ngx-simplemde/src/index.less",

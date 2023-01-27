@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ImportService, VSACImportCriteria } from '../shared/import.service';
 import { Bundle, DomainResource, EntryComponent, IssueComponent, Media as STU3Media, OperationOutcome, RequestComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
-import { FileSystemFileEntry, UploadEvent, UploadFile } from 'ngx-file-drop';
+import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { FhirService } from '../shared/fhir.service';
 import { CookieService } from 'angular2-cookie/core';
 import { ContentModel, GithubService } from '../shared/github.service';
@@ -220,11 +220,11 @@ export class ImportComponent implements OnInit {
    * panel, needing to be loaded into the list of files to be imported.
    * @param event
    */
-  public async dropped(event: UploadEvent) {
+  public async dropped(files: NgxFileDropEntry[]) {
     // Create an inline function that returns an awaitable promise
     // when the file has been loaded/populated
-    const populateFile = (droppedFile: UploadFile) => {
-      return new Promise(resolve => {
+    const populateFile = (droppedFile: NgxFileDropEntry) => {
+      return new Promise<void>(resolve => {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file(async (file: File) => {
           await this.populateFile(file);
@@ -233,7 +233,7 @@ export class ImportComponent implements OnInit {
       });
     }
 
-    for (const droppedFile of event.files) {
+    for (const droppedFile of files) {
       if (droppedFile.fileEntry.isFile) {
         await populateFile(droppedFile);
       }
@@ -291,7 +291,7 @@ export class ImportComponent implements OnInit {
       return;
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       reader.onload = (e: any) => {
         const result = e.target.result;
         const importFileModel = new ImportFileModel();
