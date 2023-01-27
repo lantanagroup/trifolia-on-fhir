@@ -397,12 +397,17 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     r4.definition = r4.definition || {resource: []};
     r4.definition.resource = r4.definition.resource || [];
 
-    const foundResource = r4.definition.resource.find((r) => {
+    let foundResource = r4.definition.resource.find((r) => {
       if (r.reference) {
         return r.reference.reference === resourceReferenceString;
       }
     });
-
+    if(foundResource) {
+      // remove existing
+      const removeIndex = r4.definition.resource.findIndex(r => r.reference.reference === resourceReferenceString);
+      r4.definition.resource.splice(removeIndex, 1);
+      foundResource = undefined;
+    }
     if (!foundResource) {
       const display = (<any>resource).title || (<any>resource).name;
       const description =  (<any>resource).description;
@@ -440,8 +445,21 @@ export async function addToImplementationGuide(httpService: HttpService, configS
           return r.sourceReference.reference === resourceReferenceString;
         }
       });
+
       return foundResources.length > 0;
     });
+
+    if(foundInPackages.length > 0) {
+      // remove existing
+      (stu3.package || []).filter((igPackage) => {
+        const removeIndex = (igPackage.resource || []).findIndex((r) => {
+          if (r.sourceReference && r.sourceReference.reference) {
+            return r.sourceReference.reference === resourceReferenceString;
+          }
+        });
+        igPackage.resource.splice(removeIndex, 1);
+      })
+    }
 
     if (foundInPackages.length === 0) {
       const display = (<any>resource).title || (<any>resource).name;
