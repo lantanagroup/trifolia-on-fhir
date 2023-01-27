@@ -20,7 +20,7 @@ import { LoginComponent } from './login/login.component';
 import { StructureDefinitionsComponent } from './structure-definitions/structure-definitions.component';
 import { UserComponent } from './user/user.component';
 import { NewProfileComponent } from './new-profile/new-profile.component';
-import { CookieService } from 'angular2-cookie/core';
+import { CookieService } from 'ngx-cookie-service';
 import { HTTP_INTERCEPTORS, HttpClientModule, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ElementDefinitionPanelComponent } from './structure-definition/element-definition-panel/element-definition-panel.component';
@@ -131,10 +131,6 @@ export class AddHeaderInterceptor implements HttpInterceptor {
 
     return next.handle(req.clone({ headers: headers }));
   }
-}
-
-export function cookieServiceFactory() {
-  return new CookieService();
 }
 
 /**
@@ -275,6 +271,7 @@ const authModuleConfig: OAuthModuleConfig = {
     DiffMatchPatchModule
   ],
   providers: [
+    CookieService,
     {
       provide: APP_INITIALIZER,
       useFactory: init,
@@ -285,9 +282,6 @@ const authModuleConfig: OAuthModuleConfig = {
       provide: HTTP_INTERCEPTORS,
       useClass: AddHeaderInterceptor,
       multi: true
-    }, {
-      provide: CookieService,
-      useFactory: cookieServiceFactory
     },
     {
       provide: OAuthModuleConfig,

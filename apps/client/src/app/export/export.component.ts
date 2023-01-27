@@ -4,7 +4,7 @@ import {saveAs} from 'file-saver';
 import {ExportOptions, ExportService} from '../shared/export.service';
 import {ExportFormats} from '../models/export-formats.enum';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {CookieService} from 'angular2-cookie/core';
+import {CookieService} from 'ngx-cookie-service';
 import {ConfigService} from '../shared/config.service';
 import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Observable} from 'rxjs';
@@ -55,12 +55,12 @@ export class ExportComponent implements OnInit {
       this.options.template = '';
     }
 
-    this.cookieService.put(Globals.cookieKeys.lastTemplateType, this.options.templateType);
+    this.cookieService.set(Globals.cookieKeys.lastTemplateType, this.options.templateType);
     await this.templateChanged();
   }
 
   public async templateChanged() {
-    this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
+    this.cookieService.set(Globals.cookieKeys.lastTemplate, this.options.template);
 
     if (this.options.templateType === 'official') {
       this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
@@ -83,10 +83,10 @@ export class ExportComponent implements OnInit {
   public templateVersionChanged() {
     if (!this.options.templateVersion) {
       if (this.cookieService.get(Globals.cookieKeys.lastTemplateVersion)) {
-        this.cookieService.remove(Globals.cookieKeys.lastTemplateVersion);
+        this.cookieService.delete(Globals.cookieKeys.lastTemplateVersion);
       }
     } else {
-      this.cookieService.put(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
+      this.cookieService.set(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
     }
   }
 
@@ -118,9 +118,9 @@ export class ExportComponent implements OnInit {
     const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
 
     if (implementationGuide && implementationGuide.id) {
-      this.cookieService.put(cookieKey, implementationGuide.id);
+      this.cookieService.set(cookieKey, implementationGuide.id);
     } else if (this.cookieService.get(cookieKey)) {
-      this.cookieService.remove(cookieKey);
+      this.cookieService.delete(cookieKey);
     }
 
     const pubTemplateExt = (implementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-pub-template']);
@@ -172,7 +172,7 @@ export class ExportComponent implements OnInit {
       this.options.implementationGuideId = null;
 
     if (this.cookieService.get(cookieKey)) {
-      this.cookieService.remove(cookieKey);
+      this.cookieService.delete(cookieKey);
     }
   }
 
@@ -180,7 +180,7 @@ export class ExportComponent implements OnInit {
     if(format === 'application/json' || format === 'application/xml'){
       this.options.responseFormat = format;
     }
-    this.cookieService.put(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
+    this.cookieService.set(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
   }
 
   public get exportDisabled(): boolean {
@@ -223,7 +223,7 @@ export class ExportComponent implements OnInit {
     this.socketOutput = '';
     this.message = 'Exporting...';
 
-    this.cookieService.put(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer, this.options.implementationGuideId);
+    this.cookieService.set(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer, this.options.implementationGuideId);
 
     const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
 

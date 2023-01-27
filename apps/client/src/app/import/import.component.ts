@@ -4,7 +4,7 @@ import { Bundle, DomainResource, EntryComponent, IssueComponent, Media as STU3Me
 import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
 import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { FhirService } from '../shared/fhir.service';
-import { CookieService } from 'angular2-cookie/core';
+import { CookieService } from 'ngx-cookie-service';
 import { ContentModel, GithubService } from '../shared/github.service';
 import { ImportGithubPanelComponent } from './import-github-panel/import-github-panel.component';
 import { forkJoin } from 'rxjs';
@@ -502,7 +502,7 @@ export class ImportComponent implements OnInit {
 
   private importVsac(tabSet: NgbTabset) {
     if (this.rememberVsacCredentials) {
-      this.cookieService.put(this.vsacPasswordCookieKey, btoa(this.vsacCriteria.password));
+      this.cookieService.set(this.vsacPasswordCookieKey, btoa(this.vsacCriteria.password));
     }
 
     this.importService.importVsac(this.vsacCriteria)

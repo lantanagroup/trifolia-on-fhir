@@ -11,7 +11,7 @@ import {FhirService} from './shared/fhir.service';
 import {SocketService} from './shared/socket.service';
 import {SettingsModalComponent} from './modals/settings-modal/settings-modal.component';
 import {GithubService} from './shared/github.service';
-import {CookieService} from 'angular2-cookie/core';
+import {CookieService} from 'ngx-cookie-service';
 import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-message-modal.component';
 import introJs from 'intro.js/intro.js';
 import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -141,7 +141,7 @@ export class AppComponent implements OnInit {
     const confirmedCookie = this.cookieService.get(Globals.cookieKeys.atlassianAccountConfirmed);
 
     if (confirmedCookie || confirm(Globals.tooltips['support.button.clicked'])) {
-      this.cookieService.put(Globals.cookieKeys.atlassianAccountConfirmed, 'true');
+      this.cookieService.set(Globals.cookieKeys.atlassianAccountConfirmed, 'true');
       window.open(this.configService.config.supportUrl, 'tof-support');
     }
   }

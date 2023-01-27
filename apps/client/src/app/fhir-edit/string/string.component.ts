@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {CookieService} from 'angular2-cookie/core';
+import {CookieService} from 'ngx-cookie-service';
 import {NgModel} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
@@ -84,13 +84,13 @@ export class FhirStringComponent implements OnInit {
       delete this.parentObject[this.propertyName];
 
       if (this.cookieKey && this.cookieService.get(this.cookieKey)) {
-        this.cookieService.remove(this.cookieKey);
+        this.cookieService.delete(this.cookieKey);
       }
     } else if (newValue) {
       this.parentObject[this.propertyName] = newValue;
 
       if (this.cookieKey) {
-        this.cookieService.put(this.cookieKey, newValue);
+        this.cookieService.set(this.cookieKey, newValue);
       }
     }
   }

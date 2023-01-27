@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { ImplementationGuideService } from '../../shared/implementation-guide.service';
-import { CookieService } from 'angular2-cookie/core';
+import { CookieService } from 'ngx-cookie-service';
 import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
 import { ConfigService } from '../../shared/config.service';
 import { Observable } from 'rxjs';
@@ -57,9 +57,9 @@ export class ImplementationGuideTypeaheadComponent implements OnInit, OnChanges 
     const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
 
     if (implementationGuide && implementationGuide.id) {
-      this.cookieService.put(cookieKey, implementationGuide.id);
+      this.cookieService.set(cookieKey, implementationGuide.id);
     } else if (this.cookieService.get(cookieKey)) {
-      this.cookieService.remove(cookieKey);
+      this.cookieService.delete(cookieKey);
     }
   }
 

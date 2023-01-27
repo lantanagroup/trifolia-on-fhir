@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {CookieService} from 'angular2-cookie/core';
+import {CookieService} from 'ngx-cookie-service';
 import {NgbDateStruct, NgbTimeStruct} from '@ng-bootstrap/ng-bootstrap';
 import {pad} from '../../../../../../libs/tof-lib/src/lib/helper';
 
@@ -104,13 +104,13 @@ export class FhirDateComponent implements OnInit {
       delete this.parentObject[this.propertyName];
 
       if (this.cookieKey && this.cookieService.get(this.cookieKey)) {
-        this.cookieService.remove(this.cookieKey);
+        this.cookieService.delete(this.cookieKey);
       }
     } else if (newValue) {
       this.parentObject[this.propertyName] = newValue;
 
       if (this.cookieKey) {
-        this.cookieService.put(this.cookieKey, newValue);
+        this.cookieService.set(this.cookieKey, newValue);
       }
     }
     this.change.emit();
