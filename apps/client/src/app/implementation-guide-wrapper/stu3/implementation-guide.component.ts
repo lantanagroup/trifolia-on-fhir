@@ -107,7 +107,6 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   public ClientHelper = ClientHelper;
   public parameters: Parameter[] = [];
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
-  public isDirty = false;
 
   private navSubscription: any;
   // noinspection JSMismatchedCollectionQueryUpdate

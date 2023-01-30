@@ -1,26 +1,3 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "es5",
-    "module": "es2015",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2017", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@trifolia-fhir/tof-lib": ["libs/tof-lib/src/index.ts"]
-    },
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "rootDir": "."
-  },
-  "exclude": ["node_modules", "tmp"]
+  "extends": "./tsconfig.base.json"
 }

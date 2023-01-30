@@ -1,7 +1,8 @@
 process.env.SUPPRESS_NO_CONFIG_WARNING = true;
 
 module.exports = {
-  name: 'server',
-  preset: '../../jest.config.js',
-  coverageDirectory: '../../coverage/apps/server'
+  preset: '../../jest.preset.js',
+  coverageDirectory: '../../coverage/apps/server',
+  globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
+  displayName: 'server',
 };
