@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListItemModel, PackageListModel} from '../../../../../../libs/tof-lib/src/lib/package-list-model';
 import {ConfigService} from '../../shared/config.service';
 import {identifyRelease} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';

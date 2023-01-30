@@ -4,12 +4,11 @@ import {PractitionerService} from './practitioner.service';
 import {Group, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ConfigService} from './config.service';
 import {SocketService} from './socket.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {addPermission} from '../../../../../libs/tof-lib/src/lib/helper';
 import {GroupService} from './group.service';
 import {map} from 'rxjs/operators';
 import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
-import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 import { IBundle } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Injectable()

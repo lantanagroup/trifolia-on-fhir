@@ -2,7 +2,7 @@ import {BaseFhirController} from './base-fhir.controller';
 import {HttpService} from '@nestjs/axios';
 import {Body, Controller, Delete, Headers, Get, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
 import {FhirController} from './fhir.controller';
-import {ITofRequest} from './models/tof-request';
+import type {ITofRequest} from './models/tof-request';
 import {Bundle, StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';

@@ -2,7 +2,7 @@ import {HttpService} from '@nestjs/axios';
 import {Controller, Get, Req} from '@nestjs/common';
 import {BaseController} from './base.controller';
 import {CapabilityStatement} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ITofRequest} from './models/tof-request';
+import type {ITofRequest} from './models/tof-request';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
 import {ApiTags} from '@nestjs/swagger';

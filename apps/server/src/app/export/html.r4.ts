@@ -3,7 +3,7 @@ import {ImplementationGuidePageComponent, ImplementationGuideResourceComponent} 
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
-import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 
 export class R4HtmlExporter extends HtmlExporter {

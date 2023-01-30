@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { OperationOutcome, ValueSet } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { ExpandOptions } from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
+import type { ExpandOptions } from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 
 @Injectable()
 export class ValueSetService {

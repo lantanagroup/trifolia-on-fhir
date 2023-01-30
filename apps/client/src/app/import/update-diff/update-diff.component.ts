@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {IDomainResource} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IDomainResource} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {FhirService} from '../../shared/fhir.service';
 
 @Component({

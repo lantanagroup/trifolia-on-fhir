@@ -11,7 +11,7 @@ import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
 import {SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {CookieService} from 'ngx-cookie-service';
-import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   selector: 'app-implementation-guides',

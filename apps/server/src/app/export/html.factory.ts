@@ -4,7 +4,7 @@ import {IFhirConfigServer} from '../models/fhir-config';
 import {HttpService} from '@nestjs/axios';
 import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
-import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 import {ConfigService} from '../config.service';
 import {TofLogger} from '../tof-logger';
 

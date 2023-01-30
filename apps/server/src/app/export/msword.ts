@@ -15,7 +15,7 @@ import {
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import * as fs from 'fs';
-import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {IgPageHelper, PageInfo} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 
 /**

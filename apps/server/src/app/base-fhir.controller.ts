@@ -10,11 +10,7 @@ import {Bundle, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir
 import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent} from './helper';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
-import {
-  SearchImplementationGuideResponse,
-  SearchImplementationGuideResponseContainer
-} from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import * as fs from 'fs-extra';
 import {ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 

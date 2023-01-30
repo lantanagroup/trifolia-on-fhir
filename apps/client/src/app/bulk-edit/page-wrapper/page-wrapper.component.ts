@@ -4,7 +4,7 @@ import {R4PageComponent} from './r4-page/r4-page.component';
 import {identifyRelease} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Versions} from 'fhir/fhir';
 import {ConfigService} from '../../shared/config.service';
-import {IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   selector: 'trifolia-fhir-page-wrapper',

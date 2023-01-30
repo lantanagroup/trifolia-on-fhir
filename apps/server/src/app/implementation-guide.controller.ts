@@ -7,7 +7,7 @@ import { FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, RequestH
 import { ConfigService } from './config.service';
 import { BundleExporter } from './export/bundle';
 import { getErrorString, getHumanNameDisplay, getHumanNamesDisplay, parseReference } from '../../../../libs/tof-lib/src/lib/helper';
-import { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
+import type { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
 import { copyPermissions } from './helper';
 import { ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { Bundle, ImplementationGuide as R4ImplementationGuide } from '../../../../libs/tof-lib/src/lib/r4/fhir';

@@ -15,7 +15,7 @@ import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { ConfigService } from '../shared/config.service';
 import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { IDomainResource } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type { IDomainResource } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];

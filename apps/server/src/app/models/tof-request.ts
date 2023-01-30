@@ -2,7 +2,7 @@ import {Request} from 'express';
 import {Fhir} from 'fhir/fhir';
 import * as SocketIO from 'socket.io';
 import {ISocketConnection} from './socket-connection';
-import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 
 export interface ITofRequest extends Request {
   fhirServerId: string;

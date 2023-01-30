@@ -10,7 +10,7 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 

@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {IImplementationGuide, IStructureDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IImplementationGuide, IStructureDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {ConfigService} from '../shared/config.service';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';

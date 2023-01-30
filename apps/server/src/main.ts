@@ -1,7 +1,7 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app/app.module';
 import {Response} from 'express';
-import {ITofRequest} from './app/models/tof-request';
+import type {ITofRequest} from './app/models/tof-request';
 import socketIo from 'socket.io';
 import {BadRequestException} from '@nestjs/common';
 import {ISocketConnection} from './app/models/socket-connection';

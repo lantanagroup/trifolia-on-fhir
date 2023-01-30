@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import {ITofRequest} from './models/tof-request';
+import type {ITofRequest} from './models/tof-request';
 
 export const User = createParamDecorator((data, ctx: ExecutionContext) => {
   const req = ctx.switchToHttp().getRequest() as ITofRequest;

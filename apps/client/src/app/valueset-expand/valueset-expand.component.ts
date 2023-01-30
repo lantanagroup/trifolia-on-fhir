@@ -4,7 +4,7 @@ import {ValueSetService} from '../shared/value-set.service';
 import {OperationOutcome, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../shared/fhir.service';
-import {ExpandOptions} from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
+import type {ExpandOptions} from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({

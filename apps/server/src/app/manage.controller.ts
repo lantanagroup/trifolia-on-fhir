@@ -1,13 +1,13 @@
 import {BaseController} from './base.controller';
 import {HttpService} from '@nestjs/axios';
 import {Body, Controller, Get, Header, Param, ParseIntPipe, Post, Query, Req, UseGuards} from '@nestjs/common';
-import {ITofRequest} from './models/tof-request';
+import type {ITofRequest} from './models/tof-request';
 import {ISocketConnection} from './models/socket-connection';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import {FhirServerBase, User} from './server.decorators';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, ContactPoint as R4ContactPoint, Practitioner as R4Practitioner} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ContactPoint as STU3ContactPoint, Practitioner as STU3Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';

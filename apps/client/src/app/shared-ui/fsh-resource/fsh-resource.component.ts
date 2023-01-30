@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { IDomainResource } from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type { IDomainResource } from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { FshService } from '../../shared/fsh.service';
 import { FSHMessage } from '../../../../../../libs/tof-lib/src/lib/fsh';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
