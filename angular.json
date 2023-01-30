@@ -25,7 +25,8 @@
                 "input": "libs/tof-lib/src/assets",
                 "output": "./assets"
               }
-            ]
+            ],
+            "buildLibsFromSource": true
           },
           "configurations": {
             "production": {
@@ -61,7 +62,8 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "apps/server/jest.config.js",
-            "tsConfig": "apps/server/tsconfig.spec.json"
+            "tsConfig": "apps/server/tsconfig.spec.json",
+            "passWithNoTests": true
           }
         }
       }
@@ -86,7 +88,8 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/tof-lib/jest.config.js",
-            "tsConfig": "libs/tof-lib/tsconfig.spec.json"
+            "tsConfig": "libs/tof-lib/tsconfig.spec.json",
+            "passWithNoTests": true
           }
         }
       },
@@ -192,7 +195,8 @@
           "options": {
             "jestConfig": "apps/client/jest.config.js",
             "tsConfig": "apps/client/tsconfig.spec.json",
-            "setupFile": "apps/client/src/test-setup.ts"
+            "setupFile": "apps/client/src/test-setup.ts",
+            "passWithNoTests": true
           }
         }
       }
@@ -236,7 +240,8 @@
             "outputPath": "dist/apps/tools",
             "main": "apps/tools/src/app/main.ts",
             "tsConfig": "apps/tools/tsconfig.app.json",
-            "assets": ["apps/tools/src/assets"]
+            "assets": ["apps/tools/src/assets"],
+            "buildLibsFromSource": true
           },
           "configurations": {
             "production": {
@@ -266,7 +271,8 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "apps/tools/jest.config.js",
-            "tsConfig": "apps/tools/tsconfig.spec.json"
+            "tsConfig": "apps/tools/tsconfig.spec.json",
+            "passWithNoTests": true
           }
         }
       }

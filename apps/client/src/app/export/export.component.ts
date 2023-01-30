@@ -27,7 +27,7 @@ export class ExportComponent implements OnInit {
   public Globals = Globals;
   public templateVersions: string[] = [];
 
-  @ViewChild('githubPanel', { static: false }) githubPanel: ExportGithubPanelComponent;
+  @ViewChild('githubPanel') githubPanel: ExportGithubPanelComponent;
 
   public options = new ExportOptions();
   public selectedImplementationGuide: ImplementationGuide;

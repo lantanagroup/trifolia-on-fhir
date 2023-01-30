@@ -24,7 +24,6 @@ export class AuthService {
     private injector: Injector,
     private socketService: SocketService,
     private configService: ConfigService,
-    private modalService: NgbModal,
     private practitionerService: PractitionerService,
     private groupService: GroupService,
     private oauthService: OAuthService) {

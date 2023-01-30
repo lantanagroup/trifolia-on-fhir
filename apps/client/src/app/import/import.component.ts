@@ -68,7 +68,7 @@ export class ImportComponent implements OnInit {
 
   private readonly vsacPasswordCookieKey = 'vsac_password';
 
-  @ViewChild('importGithubPanel', { static: false })
+  @ViewChild('importGithubPanel')
   private importGithubPanel: ImportGithubPanelComponent;
 
   constructor(
