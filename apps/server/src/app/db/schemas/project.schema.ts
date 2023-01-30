@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IImplementationGuide } from 'libs/tof-lib/src/lib/fhirInterfaces';
-import { HydratedDocument } from 'mongoose';
+//import { HydratedDocument } from 'mongoose';
 import { IProject, IProjectContributor, IProjectPermission } from '../models';
 
-export type ProjectDocument = HydratedDocument<Project> & Document;
+export type ProjectDocument = Project & Document; //HydratedDocument<Project> & Document;
 
 @Schema({ collection: 'project' })
 export class Project implements IProject {
