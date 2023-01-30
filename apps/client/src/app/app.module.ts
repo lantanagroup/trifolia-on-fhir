@@ -253,9 +253,10 @@ const authModuleConfig: OAuthModuleConfig = {
   imports: [
     RouterModule.forRoot(
       appRoutes, {
-        enableTracing: false,           // <-- debugging purposes only
-        onSameUrlNavigation: 'reload'
-      }
+    enableTracing: false,
+    onSameUrlNavigation: 'reload',
+    relativeLinkResolution: 'legacy'
+}
     ),
     BrowserModule,
     FormsModule,

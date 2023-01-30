@@ -40,7 +40,10 @@
                 }
               ]
             }
-          }
+          },
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -65,7 +68,10 @@
           "options": {
             "jestConfig": "apps/server/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/apps/server"
+          ]
         }
       }
     },
@@ -92,7 +98,10 @@
           "options": {
             "jestConfig": "libs/tof-lib/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/tof-lib"
+          ]
         }
       },
       "schematics": {}
@@ -147,7 +156,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -161,7 +169,10 @@
                 }
               ]
             }
-          }
+          },
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -198,7 +209,10 @@
           "options": {
             "jestConfig": "apps/client/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/apps/client/"
+          ]
         }
       }
     },
@@ -254,7 +268,10 @@
               "extractLicenses": true,
               "inspect": false
             }
-          }
+          },
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -279,7 +296,10 @@
           "options": {
             "jestConfig": "apps/tools/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/apps/tools"
+          ]
         }
       }
     }
