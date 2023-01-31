@@ -13,7 +13,7 @@ import {
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {
   AuditEvent as R4AuditEvent,
-  DomainResource as R4DomainResource,
+  DomainResource as R4DomainResource, ImplementationGuide,
   ImplementationGuide as R4ImplementationGuide
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AxiosRequestConfig} from 'axios';
@@ -396,14 +396,20 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     r4.definition = r4.definition || {resource: []};
     r4.definition.resource = r4.definition.resource || [];
 
-    const foundResource = r4.definition.resource.find((r) => {
+    let foundResource = r4.definition.resource.find((r) => {
       if (r.reference) {
         return r.reference.reference === resourceReferenceString;
       }
     });
-
+    if(foundResource) {
+      // remove existing
+      const removeIndex = r4.definition.resource.findIndex(r => r.reference.reference === resourceReferenceString);
+      r4.definition.resource.splice(removeIndex, 1);
+      foundResource = undefined;
+    }
     if (!foundResource) {
       const display = (<any>resource).title || (<any>resource).name;
+      const description =  (<any>resource).description;
 
       logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');
 
@@ -422,7 +428,8 @@ export async function addToImplementationGuide(httpService: HttpService, configS
           display: display
         },
         exampleBoolean: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(resource.resourceType) < 0,
-        name: display
+        name: display,
+        description: description
       });
       changed = true;
     }
@@ -437,13 +444,29 @@ export async function addToImplementationGuide(httpService: HttpService, configS
           return r.sourceReference.reference === resourceReferenceString;
         }
       });
+
       return foundResources.length > 0;
     });
 
+    if(foundInPackages.length > 0) {
+      // remove existing
+      (stu3.package || []).filter((igPackage) => {
+        const removeIndex = (igPackage.resource || []).findIndex((r) => {
+          if (r.sourceReference && r.sourceReference.reference) {
+            return r.sourceReference.reference === resourceReferenceString;
+          }
+        });
+        igPackage.resource.splice(removeIndex, 1);
+      })
+    }
+
     if (foundInPackages.length === 0) {
       const display = (<any>resource).title || (<any>resource).name;
+      const description =  (<any>resource).description;
+
       const newResource: PackageResourceComponent = {
         name: display,
+        description: description,
         sourceReference: {
           reference: resourceReferenceString,
           display: display
