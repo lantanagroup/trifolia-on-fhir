@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import {StructureDefinitionService} from '../shared/structure-definition.service';
-import {Router} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../shared/fhir.service';
 import {ImplementationGuide, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -16,13 +16,16 @@ import {BaseComponent} from '../base.component';
 import { Observable, Subject } from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
 import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
+import { PublishingRequestModel } from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+
 
 
 @Component({
   templateUrl: './new-profile.component.html',
   styleUrls: ['./new-profile.component.css']
 })
-export class NewProfileComponent extends BaseComponent {
+export class NewProfileComponent extends BaseComponent implements OnInit {
   public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
   public message: string;
   public Globals = Globals;
@@ -31,12 +34,17 @@ export class NewProfileComponent extends BaseComponent {
   public isIdUnique = true;
   public idChangedEvent = new Subject();
 
+  public publishingRequest: PublishingRequestModel;
+  public publishingRequestJSON;
+
   constructor(
+    public route: ActivatedRoute,
     public configService: ConfigService,
     private fhirService: FhirService,
-    private route: Router,
+    private router: Router,
     private modalService: NgbModal,
     protected authService: AuthService,
+    private implementationGuideService: ImplementationGuideService,
     private strucDefService: StructureDefinitionService) {
 
     super(configService, authService);
@@ -106,4 +114,15 @@ export class NewProfileComponent extends BaseComponent {
       this.idChangedEvent.next();
     }
   }
+
+  async ngOnInit() {
+
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    const implementationGuide = await this.implementationGuideService.getImplementationGuide(implementationGuideId).toPromise();
+
+    const url = (<ImplementationGuide> implementationGuide).url;
+    this.structureDefinition.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "StructureDefinition/" : "";
+
+  }
+
 }
