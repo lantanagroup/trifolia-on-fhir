@@ -1788,7 +1788,7 @@ export class BundleResponseComponent extends BackboneElement {
   public status: string;
   public location?: string;
   public etag?: string;
-  public lastModified?: Date;
+  public lastModified?: string;
   public outcome?: Resource;
 
   constructor(obj?: any) {
