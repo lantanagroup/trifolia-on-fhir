@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
-import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbNav} from '@ng-bootstrap/ng-bootstrap';
 import {STU3TypeModalComponent} from './stu3-type-modal/type-modal.component';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../../../../../../libs/tof-lib/src/lib/element-tree-model';
@@ -33,7 +33,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
   public Globals = Globals;
   public editingConstraint: IElementDefinitionConstraint;
 
-  @ViewChild('edTabSet', { static: true }) edTabSet: NgbTabset;
+  @ViewChild('edTabSet', { static: true }) edTabSet: NgbNav;
   @ViewChild('idTextField', { static: true }) idTextField: ElementRef;
 
   constructor(

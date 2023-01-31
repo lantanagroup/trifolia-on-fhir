@@ -6,9 +6,10 @@
   <h2>
     {{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span><span class="badge badge-danger" *ngIf="isDirty">Changed!</span>
   </h2>
-  <ngb-tabset [destroyOnHide]="false" #igTabs="ngbTabset">
-    <ngb-tab id="general" title="General">
-      <ng-template ngbTabContent>
+  <ul ngbNav #igTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+    <li ngbNavItem="general">
+      <a ngbNavLink>General</a>
+      <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
@@ -161,13 +162,13 @@
           </div>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="narrative">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="narrative">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['ig.narrative-tab']">Narrative/Pages</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <ng-template #pageKeyboardShortcuts>
           ALT + UP/DOWN = Select previous/next page<br/>
           CTRL + ALT + &lt;ARROW KEY&gt; = Move page
@@ -256,14 +257,14 @@
 
         <app-fhir-narrative [resource]="implementationGuide" (change)="igChanging.emit(true)"></app-fhir-narrative>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Resources -->
-    <ngb-tab id="resources">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="resources">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['ig.resources-tab']">Resources</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
 
         <!-- Resource Groups -->
         <div class="card">
@@ -452,14 +453,14 @@
           </table>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Other -->
-    <ngb-tab id="other">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="other">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['ig.other-tab']">Other</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
 
         <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental" (change)="igChanging.emit(true)"></app-fhir-boolean>
 
@@ -576,11 +577,12 @@
           </table>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Publishing -->
-    <ngb-tab id="publishing" title="Publishing">
-      <ng-template ngbTabContent>
+    <li ngbNavItem="publishing">
+      <a ngbNavLink>Publishing</a>
+      <ng-template ngbNavContent>
         <div class='row'>
           <div class='col-md-6'>
             <trifolia-fhir-publishing-template [implementationGuide]='implementationGuide' (change)='igChanging.emit(true)'></trifolia-fhir-publishing-template>
@@ -609,49 +611,50 @@
           </div>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Permissions -->
-    <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions
           <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(implementationGuide)" title="No write permissions for current user specified!"></i></span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <trifolia-fhir-resource-permissions [resource]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-resource-permissions>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Validation -->
-    <ngb-tab id="validation">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="validation">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- RAW JSON/XML -->
-    <ngb-tab id="raw">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="raw">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.raw-tab']">RAW</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-raw-resource [resource]="implementationGuide"></app-raw-resource>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Version History -->
-    <ngb-tab id="history" *ngIf="!isNew">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="history" *ngIf="!isNew">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-resource-history [(resource)]="implementationGuide"></app-resource-history>
       </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="igTabs" class="mt-2"></div>
 </div>
 
 <ng-template #dependsOn>

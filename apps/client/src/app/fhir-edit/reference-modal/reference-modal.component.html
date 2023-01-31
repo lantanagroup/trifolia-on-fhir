@@ -5,23 +5,29 @@
   </button>
 </div>
 <div class="modal-body">
-  <ngb-tabset orientation="vertical" (tabChange)="tabChanged($event)">
-    <ngb-tab id="server" title="Server">
-      <ng-template ngbTabContent>
-        <ng-container *ngTemplateOutlet="tabContent"></ng-container>
-      </ng-template>
-    </ngb-tab>
-    <ngb-tab id="dependency" title="Dependency" *ngIf="resourceType === 'StructureDefinition'">
-      <ng-template ngbTabContent>
-        <ng-container *ngTemplateOutlet="tabContent"></ng-container>
-      </ng-template>
-    </ngb-tab>
-    <ngb-tab id="base" title="Base">
-      <ng-template ngbTabContent>
-        <ng-container *ngTemplateOutlet="tabContent"></ng-container>
-      </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+  <div class="d-flex">
+    <ul ngbNav #nav="ngbNav" class="nav-pills" orientation="vertical" (navChange)="tabChanged($event)">
+      <li ngbNavItem="server">
+        <a ngbNavLink>Server</a>
+        <ng-template ngbNavContent>
+          <ng-container *ngTemplateOutlet="tabContent"></ng-container>
+        </ng-template>
+      </li>
+      <li ngbNavItem="dependency" *ngIf="resourceType === 'StructureDefinition'">
+        <a ngbNavLink>Dependency</a>
+        <ng-template ngbNavContent>
+          <ng-container *ngTemplateOutlet="tabContent"></ng-container>
+        </ng-template>
+      </li>
+      <li ngbNavItem="base">
+        <a ngbNavLink>Base</a>
+        <ng-template ngbNavContent>
+          <ng-container *ngTemplateOutlet="tabContent"></ng-container>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="ml-4"></div>
+  </div>
 </div>
 <div class="modal-footer">
   <div class="pull-left footer-criteria">

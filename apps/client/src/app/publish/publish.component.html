@@ -23,12 +23,12 @@
   </div>
 </div>
 
-<ngb-tabset #tabs>
-  <ngb-tab id="options">
-    <ng-template ngbTabTitle>
+<ul ngbNav #tabs="ngbNav" class="nav-tabs">
+  <li ngbNavItem="options">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['publish.options']">Options</span>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-6">
           <trifolia-fhir-ig-publisher-selection [options]="options"></trifolia-fhir-ig-publisher-selection>
@@ -126,17 +126,18 @@
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab id="status">
-    <ng-template ngbTabTitle>
+  </li>
+  <li ngbNavItem="status">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['publish.status']">Status</span>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <pre *ngIf="socketOutput" [innerHTML]="socketOutput" routeTransformer #outputEle></pre>
       <input type="checkbox" [(ngModel)]="autoScroll" /> Automatically scroll to bottom when status is updated
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
+<div [ngbNavOutlet]="tabs" class="mt-2"></div>
 
 <footer class="footer">
   <button type="button" class="btn btn-primary" (click)="publish()" [disabled]="publishDisabled" [attr.data-intro]="Globals.introText['publish.publish-btn']">Publish</button>

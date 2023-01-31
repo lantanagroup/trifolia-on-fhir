@@ -1,11 +1,11 @@
 <h1>Other Resources</h1>
 
-<ngb-tabset #tabSet="ngbTabset" [destroyOnHide]="false">
-  <ngb-tab id="criteria">
-    <ng-template ngbTabTitle>
+<ul ngbNav #tabSet="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+  <li ngbNavItem="criteria">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['other.search-criteria']">Criteria</span>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <div class="col-md-6">
         <div class="form-group" [attr.data-intro]="tabSet.activeId === 'criteria' ? Globals.introText['other.search.resource-type'] : undefined">
           <label>Resource Type</label>
@@ -44,12 +44,12 @@
         </p>
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab id="results">
-    <ng-template ngbTabTitle>
+  </li>
+  <li ngbNavItem="results">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['other.search-results-tab']">Search Results</span>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <div *ngIf="results && results.total > 0" [attr.data-intro]="Globals.introText['other.search-results-paging']">
         <ngb-pagination class="d-flex justify-content-center"
                         *ngIf="results && results.total > 0"
@@ -96,9 +96,10 @@
         </tfoot>
       </table>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-</ngb-tabset>
+</ul>
+<div [ngbNavOutlet]="tabSet" class="mt-2"></div>
 
 <footer class="footer">
   <span class="message">{{message}}</span>

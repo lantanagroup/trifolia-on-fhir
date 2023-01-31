@@ -5,7 +5,7 @@ import { CapabilityStatement, Coding, EventComponent, ResourceComponent, RestCom
 import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
 import { RecentItemService } from '../../shared/recent-item.service';
 import { FhirService } from '../../shared/fhir.service';
-import { NgbModal, NgbTabChangeEvent, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavChangeEvent, NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { FhirCapabilityStatementResourceModalComponent } from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
 import { FhirMessagingEventModalComponent } from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
 import { FhirReferenceModalComponent } from '../../fhir-edit/reference-modal/reference-modal.component';
@@ -122,7 +122,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     this.getCapabilityStatement();
   }
 
-  public moveRestLeft(rest: RestComponent, tabSet: NgbTabset) {
+  public moveRestLeft(rest: RestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex > 0) {
@@ -132,7 +132,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     }
   }
 
-  public moveRestRight(rest: RestComponent, tabSet: NgbTabset) {
+  public moveRestRight(rest: RestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex < this.capabilityStatement.rest.length) {
@@ -213,7 +213,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     }, 50);
   }
 
-  public beforeRestTabChange($event: NgbTabChangeEvent) {
+  public beforeRestTabChange($event: NgbNavChangeEvent) {
     if ($event.nextId === 'add') {
       $event.preventDefault();
     }

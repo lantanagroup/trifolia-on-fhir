@@ -2,243 +2,253 @@
 
 <div class="alert alert-danger" *ngIf="odNotFound">Operation Definition with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<ngb-tabset *ngIf="operationDefinition" [destroyOnHide]="false" #odTabs="ngbTabset">
-  <!-- General -->
-  <ngb-tab title="General">
-    <ng-template ngbTabContent>
-      <div class="row">
-        <div class="col-md-8">
-          <app-fhir-string [parentObject]="operationDefinition" propertyName="url" title="URL" tooltipPath="OperationDefinition.url" (change)="urlChanged()"></app-fhir-string>
+<ng-container *ngIf="operationDefinition">
+  <ul ngbNav #odTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+    <!-- General -->
+    <li ngbNavItem>
+      <a ngbNavLink>General</a>
+      <ng-template ngbNavContent>
+        <div class="row">
+          <div class="col-md-8">
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="url" title="URL" tooltipPath="OperationDefinition.url" (change)="urlChanged()"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="operationDefinition" propertyName="name" title="Name" [required]="true" (change)="nameChanged()" tooltipPath="OperationDefinition.name"></app-fhir-string>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="name" title="Name" [required]="true" (change)="nameChanged()" tooltipPath="OperationDefinition.name"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="operationDefinition" propertyName="publisher" title="Publisher" tooltipPath="OperationDefinition.publisher"></app-fhir-string>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="publisher" title="Publisher" tooltipPath="OperationDefinition.publisher"></app-fhir-string>
 
-          <app-fhir-markdown [parentObject]="operationDefinition" propertyName="description" title="Description" tooltipPath="OperationDefinition.description"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="operationDefinition" propertyName="description" title="Description" tooltipPath="OperationDefinition.description"></app-fhir-markdown>
 
-          <app-fhir-markdown [parentObject]="operationDefinition" propertyName="purpose" title="Purpose" tooltipPath="OperationDefinition.purpose"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="operationDefinition" propertyName="purpose" title="Purpose" tooltipPath="OperationDefinition.purpose"></app-fhir-markdown>
 
-          <app-fhir-markdown [parentObject]="operationDefinition" propertyName="comment" title="Comment" tooltipPath="OperationDefinition.comment"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="operationDefinition" propertyName="comment" title="Comment" tooltipPath="OperationDefinition.comment"></app-fhir-markdown>
 
-          <app-fhir-multi-contact [parentObject]="operationDefinition" property="contact" tooltipPath="OperationDefinition.contact"></app-fhir-multi-contact>
-        </div>
-        <div class="col-md-4">
-          <app-fhir-string [parentObject]="operationDefinition" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
-          <div class="help-block">{{alreadyInUseIDMessage}}</div>
-
-          <app-fhir-string [parentObject]="operationDefinition" propertyName="code" title="Code" [required]="true" tooltipPath="OperationDefinition.code"></app-fhir-string>
-
-          <app-fhir-reference [parentObject]="operationDefinition" propertyName="base" title="Base" resourceType="OperationDefinition" [hideResourceType]="true" [isCanonical]="true"></app-fhir-reference>
-
-          <div class="form-group">
-            <label>Status
-              <app-tooltip-icon tooltipPath="OperationDefinition.status"></app-tooltip-icon>
-            </label>
-
-            <select class="form-control" [(ngModel)]="operationDefinition.status" [class.is-invalid]="!operationDefinition.hasOwnProperty('status')">
-              <option value="draft">Draft</option>
-              <option value="active">Active</option>
-              <option value="retired">Retired</option>
-              <option value="unknown">Unknown</option>
-            </select>
+            <app-fhir-multi-contact [parentObject]="operationDefinition" property="contact" tooltipPath="OperationDefinition.contact"></app-fhir-multi-contact>
           </div>
+          <div class="col-md-4">
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+            <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
-          <div class="form-group">
-            <label>Kind
-              <app-tooltip-icon tooltipPath="OperationDefinition.kind"></app-tooltip-icon>
-            </label>
-            <select class="form-control" [(ngModel)]="operationDefinition.kind" [class.is-invalid]="!operationDefinition.hasOwnProperty('kind')">
-              <option value="operation">Operation</option>
-              <option value="query">Query</option>
-            </select>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="code" title="Code" [required]="true" tooltipPath="OperationDefinition.code"></app-fhir-string>
+
+            <app-fhir-reference [parentObject]="operationDefinition" propertyName="base" title="Base" resourceType="OperationDefinition" [hideResourceType]="true" [isCanonical]="true"></app-fhir-reference>
+
+            <div class="form-group">
+              <label>Status
+                <app-tooltip-icon tooltipPath="OperationDefinition.status"></app-tooltip-icon>
+              </label>
+
+              <select class="form-control" [(ngModel)]="operationDefinition.status" [class.is-invalid]="!operationDefinition.hasOwnProperty('status')">
+                <option value="draft">Draft</option>
+                <option value="active">Active</option>
+                <option value="retired">Retired</option>
+                <option value="unknown">Unknown</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Kind
+                <app-tooltip-icon tooltipPath="OperationDefinition.kind"></app-tooltip-icon>
+              </label>
+              <select class="form-control" [(ngModel)]="operationDefinition.kind" [class.is-invalid]="!operationDefinition.hasOwnProperty('kind')">
+                <option value="operation">Operation</option>
+                <option value="query">Query</option>
+              </select>
+            </div>
+
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="version" title="Version" tooltipPath="OperationDefinition.version"></app-fhir-string>
+
+            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="experimental" title="Experimental" tooltipPath="OperationDefinition.experimental"></app-fhir-boolean>
+
+            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="idempotent" title="Idempotent" tooltipPath="OperationDefinition.idempotent"></app-fhir-boolean>
+
+            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="system" title="System" [required]="true" tooltipPath="OperationDefinition.system"></app-fhir-boolean>
+
+            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="type" title="Type" [required]="true" tooltipPath="OperationDefinition.type"></app-fhir-boolean>
+
+            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="instance" title="Instance" [required]="true" tooltipPath="OperationDefinition.instance"></app-fhir-boolean>
+
+            <app-fhir-date [parentObject]="operationDefinition" propertyName="date" title="Date" tooltipPath="OperationDefinition.date"></app-fhir-date>
           </div>
-
-          <app-fhir-string [parentObject]="operationDefinition" propertyName="version" title="Version" tooltipPath="OperationDefinition.version"></app-fhir-string>
-
-          <app-fhir-boolean [parentObject]="operationDefinition" propertyName="experimental" title="Experimental" tooltipPath="OperationDefinition.experimental"></app-fhir-boolean>
-
-          <app-fhir-boolean [parentObject]="operationDefinition" propertyName="idempotent" title="Idempotent" tooltipPath="OperationDefinition.idempotent"></app-fhir-boolean>
-
-          <app-fhir-boolean [parentObject]="operationDefinition" propertyName="system" title="System" [required]="true" tooltipPath="OperationDefinition.system"></app-fhir-boolean>
-
-          <app-fhir-boolean [parentObject]="operationDefinition" propertyName="type" title="Type" [required]="true" tooltipPath="OperationDefinition.type"></app-fhir-boolean>
-
-          <app-fhir-boolean [parentObject]="operationDefinition" propertyName="instance" title="Instance" [required]="true" tooltipPath="OperationDefinition.instance"></app-fhir-boolean>
-
-          <app-fhir-date [parentObject]="operationDefinition" propertyName="date" title="Date" tooltipPath="OperationDefinition.date"></app-fhir-date>
         </div>
-      </div>
-    </ng-template>
-  </ngb-tab>
+      </ng-template>
+    </li>
 
-  <!-- Additional -->
-  <ngb-tab title="Additional">
-    <ng-template ngbTabContent>
-      <app-fhir-multi-use-context [parentObject]="operationDefinition" propertyName="useContext" tooltipPath="OperationDefinition.useContext"></app-fhir-multi-use-context>
+    <!-- Additional -->
+    <li ngbNavItem title="Additional">
+      <a ngbNavLink>Additional</a>
+      <ng-template ngbNavContent>
+        <app-fhir-multi-use-context [parentObject]="operationDefinition" propertyName="useContext" tooltipPath="OperationDefinition.useContext"></app-fhir-multi-use-context>
 
-      <app-fhir-multi-jurisdiction [parentObject]="operationDefinition" property="jurisdiction" tooltipPath="OperationDefinition.jurisdiction"></app-fhir-multi-jurisdiction>
-    </ng-template>
-  </ngb-tab>
+        <app-fhir-multi-jurisdiction [parentObject]="operationDefinition" property="jurisdiction" tooltipPath="OperationDefinition.jurisdiction"></app-fhir-multi-jurisdiction>
+      </ng-template>
+    </li>
 
-  <!-- Parameters -->
-  <ngb-tab title="Parameters">
-    <ng-template ngbTabContent>
-      <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('parameter')" (ngModelChange)="Globals.toggleProperty(operationDefinition, 'parameter', [])"/>
-      Operation definition has parameters
-      <app-tooltip-icon tooltipPath="OperationDefinition.parameter"></app-tooltip-icon>
+    <!-- Parameters -->
+    <li ngbNavItem>
+      <a ngbNavLink>Parameters</a>
+      <ng-template ngbNavContent>
+        <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('parameter')" (ngModelChange)="Globals.toggleProperty(operationDefinition, 'parameter', [])"/>
+        Operation definition has parameters
+        <app-tooltip-icon tooltipPath="OperationDefinition.parameter"></app-tooltip-icon>
 
-      <table class="table table-striped" *ngIf="operationDefinition.hasOwnProperty('parameter')">
-        <thead>
-        <tr>
-          <th>Name
-            <app-tooltip-icon tooltipPath="OperationDefinition.parameter.name"></app-tooltip-icon>
-          </th>
-          <th>Use
-            <app-tooltip-icon tooltipPath="OperationDefinition.parameter.use"></app-tooltip-icon>
-          </th>
-          <th>Min
-            <app-tooltip-icon tooltipPath="OperationDefinition.parameter.min"></app-tooltip-icon>
-          </th>
-          <th>Max
-            <app-tooltip-icon tooltipPath="OperationDefinition.parameter.max"></app-tooltip-icon>
-          </th>
-          <th>
-            <div class="pull-right">
-              <button type="button" class="btn btn-primary" title="Add a parameter" (click)="operationDefinition.parameter.push({ name: '', use: 'in', min: 0, max: '*', documentation: ''})">
-                <i class="fa fa-plus"></i>
-              </button>
-            </div>
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let p of operationDefinition.parameter; let pi = index">
-          <td>
-            <input type="text" class="form-control" [(ngModel)]="p.name"/>
-          </td>
-          <td>
-            <select class="form-control" [(ngModel)]="p.use">
-              <option value="in">In</option>
-              <option value="out">Out</option>
-            </select>
-          </td>
-          <td>
-            <input type="number" class="form-control" [(ngModel)]="p.min"/>
-          </td>
-          <td>
-            <app-fhir-max-cardinality [parentObject]="p" property="max"></app-fhir-max-cardinality>
-          </td>
-          <td>
-            <div class="btn-group pull-right">
-              <button type="button" class="btn btn-default" title="Edit this parameter" (click)="editParameter(p)">
-                <i class="fa fa-edit"></i>
-              </button>
-              <button type="button" class="btn btn-default" title="Remove this parameter" (click)="operationDefinition.parameter.splice(pi, 1)">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </ng-template>
-  </ngb-tab>
-
-  <!-- Overload -->
-  <ngb-tab title="Overload">
-    <ng-template ngbTabContent>
-      <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('overload')" (ngModelChange)="Globals.toggleProperty(operationDefinition, 'overload', [])"/>
-      Operation definition has overload
-      <app-tooltip-icon tooltipPath="OperationDefinition.overload"></app-tooltip-icon>
-
-      <table class="table table-striped" *ngIf="operationDefinition.hasOwnProperty('overload')">
-        <thead>
-        <tr>
-          <th>Parameter Name(s)
-            <app-tooltip-icon tooltipPath="OperationDefinition.overload.parameterName"></app-tooltip-icon>
-          </th>
-          <th>Comment
-            <app-tooltip-icon tooltipPath="OperationDefinition.overload.comment"></app-tooltip-icon>
-          </th>
-          <th>
-            <div class="pull-right">
-              <button type="button" class="btn btn-primary" title="Add a overload" (click)="operationDefinition.overload.push({ })">
-                <i class="fa fa-plus"></i>
-              </button>
-            </div>
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let o of operationDefinition.overload; let oi = index">
-          <td>
-            <a href="javascript:void(0)" *ngIf="!o.hasOwnProperty('parameterName')" (click)="o.parameterName = ['']">Add a name</a>
-            <div class="input-group" *ngFor="let pn of o.parameterName; let pni = index; trackBy: Globals.trackByFn">
-              <input type="text" class="form-control" [(ngModel)]="o.parameterName[pni]"/>
-              <div class="input-group-btn">
-                <button type="button" class="btn btn-default" title="Remove this name" (click)="o.parameterName.splice(pni, 1)">
+        <table class="table table-striped" *ngIf="operationDefinition.hasOwnProperty('parameter')">
+          <thead>
+          <tr>
+            <th>Name
+              <app-tooltip-icon tooltipPath="OperationDefinition.parameter.name"></app-tooltip-icon>
+            </th>
+            <th>Use
+              <app-tooltip-icon tooltipPath="OperationDefinition.parameter.use"></app-tooltip-icon>
+            </th>
+            <th>Min
+              <app-tooltip-icon tooltipPath="OperationDefinition.parameter.min"></app-tooltip-icon>
+            </th>
+            <th>Max
+              <app-tooltip-icon tooltipPath="OperationDefinition.parameter.max"></app-tooltip-icon>
+            </th>
+            <th>
+              <div class="pull-right">
+                <button type="button" class="btn btn-primary" title="Add a parameter" (click)="operationDefinition.parameter.push({ name: '', use: 'in', min: 0, max: '*', documentation: ''})">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let p of operationDefinition.parameter; let pi = index">
+            <td>
+              <input type="text" class="form-control" [(ngModel)]="p.name"/>
+            </td>
+            <td>
+              <select class="form-control" [(ngModel)]="p.use">
+                <option value="in">In</option>
+                <option value="out">Out</option>
+              </select>
+            </td>
+            <td>
+              <input type="number" class="form-control" [(ngModel)]="p.min"/>
+            </td>
+            <td>
+              <app-fhir-max-cardinality [parentObject]="p" property="max"></app-fhir-max-cardinality>
+            </td>
+            <td>
+              <div class="btn-group pull-right">
+                <button type="button" class="btn btn-default" title="Edit this parameter" (click)="editParameter(p)">
+                  <i class="fa fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-default" title="Remove this parameter" (click)="operationDefinition.parameter.splice(pi, 1)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
-            </div>
-            <p *ngIf="o.hasOwnProperty('parameterName')">
-              <a href="javascript:void(0)" (click)="o.parameterName.push('')">Add a name</a>
-              <br/>
-              <a href="javascript:void(0)" (click)="Globals.toggleProperty(o, 'parameterName', [])">Remove all names</a>
-            </p>
-          </td>
-          <td>
-            <div class="input-group">
-              <div class="input-group-addon">
-                <input type="checkbox" [ngModel]="o.hasOwnProperty('comment')" (ngModelChange)="Globals.toggleProperty(o, 'comment', '')"/>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-template>
+    </li>
+
+    <!-- Overload -->
+    <li ngbNavItem>
+      <a ngbNavLink>Overload</a>
+      <ng-template ngbNavContent>
+        <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('overload')" (ngModelChange)="Globals.toggleProperty(operationDefinition, 'overload', [])"/>
+        Operation definition has overload
+        <app-tooltip-icon tooltipPath="OperationDefinition.overload"></app-tooltip-icon>
+
+        <table class="table table-striped" *ngIf="operationDefinition.hasOwnProperty('overload')">
+          <thead>
+          <tr>
+            <th>Parameter Name(s)
+              <app-tooltip-icon tooltipPath="OperationDefinition.overload.parameterName"></app-tooltip-icon>
+            </th>
+            <th>Comment
+              <app-tooltip-icon tooltipPath="OperationDefinition.overload.comment"></app-tooltip-icon>
+            </th>
+            <th>
+              <div class="pull-right">
+                <button type="button" class="btn btn-primary" title="Add a overload" (click)="operationDefinition.overload.push({ })">
+                  <i class="fa fa-plus"></i>
+                </button>
               </div>
-              <input type="text" class="form-control" [disabled]="!o.hasOwnProperty('comment')" [(ngModel)]="o.comment"/>
-            </div>
-          </td>
-          <td>
-            <div class="btn-group pull-right">
-              <button type="button" class="btn btn-default" title="Remove this overload" (click)="operationDefinition.overload.splice(oi, 1)">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </ng-template>
-  </ngb-tab>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let o of operationDefinition.overload; let oi = index">
+            <td>
+              <a href="javascript:void(0)" *ngIf="!o.hasOwnProperty('parameterName')" (click)="o.parameterName = ['']">Add a name</a>
+              <div class="input-group" *ngFor="let pn of o.parameterName; let pni = index; trackBy: Globals.trackByFn">
+                <input type="text" class="form-control" [(ngModel)]="o.parameterName[pni]"/>
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default" title="Remove this name" (click)="o.parameterName.splice(pni, 1)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </div>
+              <p *ngIf="o.hasOwnProperty('parameterName')">
+                <a href="javascript:void(0)" (click)="o.parameterName.push('')">Add a name</a>
+                <br/>
+                <a href="javascript:void(0)" (click)="Globals.toggleProperty(o, 'parameterName', [])">Remove all names</a>
+              </p>
+            </td>
+            <td>
+              <div class="input-group">
+                <div class="input-group-addon">
+                  <input type="checkbox" [ngModel]="o.hasOwnProperty('comment')" (ngModelChange)="Globals.toggleProperty(o, 'comment', '')"/>
+                </div>
+                <input type="text" class="form-control" [disabled]="!o.hasOwnProperty('comment')" [(ngModel)]="o.comment"/>
+              </div>
+            </td>
+            <td>
+              <div class="btn-group pull-right">
+                <button type="button" class="btn btn-default" title="Remove this overload" (click)="operationDefinition.overload.splice(oi, 1)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-template>
+    </li>
 
-  <!-- Permissions -->
-  <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
-    <ng-template ngbTabTitle>
-        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(operationDefinition)" title="No write permissions for current user specified!"></i>
-    </ng-template>
-    <ng-template ngbTabContent>
-      <trifolia-fhir-resource-permissions [resource]="operationDefinition"></trifolia-fhir-resource-permissions>
-    </ng-template>
-  </ngb-tab>
+    <!-- Permissions -->
+    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+      <a ngbNavLink>
+          Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(operationDefinition)" title="No write permissions for current user specified!"></i>
+      </a>
+      <ng-template ngbNavContent>
+        <trifolia-fhir-resource-permissions [resource]="operationDefinition"></trifolia-fhir-resource-permissions>
+      </ng-template>
+    </li>
 
-  <!-- Validation -->
-  <ngb-tab id="validation" title="Validation">
-    <ng-template ngbTabContent>
-      <app-validation-results [results]="validation"></app-validation-results>
-    </ng-template>
-  </ngb-tab>
+    <!-- Validation -->
+    <li ngbNavItem="validation">
+      <a ngbNavLink>Validation</a>
+      <ng-template ngbNavContent>
+        <app-validation-results [results]="validation"></app-validation-results>
+      </ng-template>
+    </li>
 
-  <!-- RAW JSON/XML -->
-  <ngb-tab id="raw" title="RAW">
-    <ng-template ngbTabContent>
-      <app-raw-resource [resource]="operationDefinition" [shown]="odTabs.activeId === 'raw'"></app-raw-resource>
-    </ng-template>
-  </ngb-tab>
+    <!-- RAW JSON/XML -->
+    <ngb-tab ngbNavItem="raw">
+      <a ngbNavLink>RAW</a>
+      <ng-template ngbNavContent>
+        <app-raw-resource [resource]="operationDefinition" [shown]="odTabs.activeId === 'raw'"></app-raw-resource>
+      </ng-template>
+    </ngb-tab>
 
-  <!-- Version History -->
-  <ngb-tab id="history" title="History" *ngIf="!isNew">
-    <ng-template ngbTabContent>
-      <app-resource-history [(resource)]="operationDefinition"></app-resource-history>
-    </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+    <!-- Version History -->
+    <li ngbNavItem="history" *ngIf="!isNew">
+      <a ngbNavLink>History</a>
+      <ng-template ngbNavContent>
+        <app-resource-history [(resource)]="operationDefinition"></app-resource-history>
+      </ng-template>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="odTabs" class="mt-2"></div>
+</ng-container>
 
 <footer class="footer">
   <div class="btn-group">

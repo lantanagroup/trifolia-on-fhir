@@ -10,7 +10,7 @@ import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir
 import {Observable} from 'rxjs';
 import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
 import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
-import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
+import {NgbNavChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {HttpClient} from '@angular/common/http';
 import { SearchImplementationGuideResponseContainer } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
@@ -90,7 +90,7 @@ export class ExportComponent implements OnInit {
     }
   }
 
-  public onTabChange(event: NgbTabChangeEvent) {
+  public onTabChange(event: NgbNavChangeEvent) {
     this.activeTabId = event.nextId;
 
     switch (this.activeTabId) {

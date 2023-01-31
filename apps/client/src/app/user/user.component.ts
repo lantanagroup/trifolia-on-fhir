@@ -3,8 +3,6 @@ import {PractitionerService} from '../shared/practitioner.service';
 import {Bundle, MemberComponent, Practitioner, ResourceReference} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Group} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AuthService} from '../shared/auth.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirService} from '../shared/fhir.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ConfigService} from '../shared/config.service';
 import {getErrorString, getHumanNamesDisplay, getPractitionerEmail} from '../../../../../libs/tof-lib/src/lib/helper';
@@ -167,8 +165,9 @@ export class UserComponent implements OnInit {
       this.groupService.getMembership().toPromise()
     ]);
 
-    this.managingGroups = results[0].entry.map((entry) => <Group> entry.resource);
-    this.membershipGroups = results[1].entry.map((entry) => <Group> entry.resource);
+    this.managingGroups = results[0]?.entry?.map((entry) => <Group> entry.resource) || [];
+    this.membershipGroups = results[1]?.entry?.map((entry) => <Group> entry.resource) || [];
+    
   }
 
   async ngOnInit() {

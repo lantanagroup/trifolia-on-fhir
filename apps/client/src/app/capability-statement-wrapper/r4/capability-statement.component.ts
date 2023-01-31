@@ -12,7 +12,7 @@ import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
 import { Observable, Subject } from 'rxjs';
 import { RecentItemService } from '../../shared/recent-item.service';
 import { FhirService } from '../../shared/fhir.service';
-import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { FhirCapabilityStatementResourceModalComponent } from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
 import { FileService } from '../../shared/file.service';
 import { ConfigService } from '../../shared/config.service';
@@ -142,7 +142,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
 
 
 
-  public moveRestLeft(rest: CapabilityStatementRestComponent, tabSet: NgbTabset) {
+  public moveRestLeft(rest: CapabilityStatementRestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex > 0) {
@@ -152,7 +152,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     }
   }
 
-  public moveRestRight(rest: CapabilityStatementRestComponent, tabSet: NgbTabset) {
+  public moveRestRight(rest: CapabilityStatementRestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex < this.capabilityStatement.rest.length) {

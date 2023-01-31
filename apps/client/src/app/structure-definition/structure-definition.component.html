@@ -9,12 +9,12 @@
     <!--span class="badge badge-danger" *ngIf="isDirty">Changed!</span-->
   </h2>
 
-  <ngb-tabset (tabChange)="beforeTabChange($event)" [class.has-element-definition]="selectedElement" #sdTabs>
-    <ngb-tab id="general">
-      <ng-template ngbTabTitle>
+  <ul ngbNav #sdTabs="ngbNav" class="nav-tabs" (navChange)="beforeTabChange($event)" [class.has-element-definition]="selectedElement">
+    <li ngbNavItem="general">
+      <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general-tab'] : undefined">General</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <fieldset>
           <div class="row">
             <div class="col-md-6">
@@ -89,13 +89,13 @@
           </div>
         </fieldset>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="narrative">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="narrative">
+      <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.narrative-tab'] : undefined">Narrative</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-fhir-narrative [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></app-fhir-narrative>
 
         <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipKey="structureDefinition.description"
@@ -111,13 +111,13 @@
         <app-fhir-markdown [parentObject]="structureDefinition" propertyName="copyright" title="Copyright" tooltipPath="StructureDefinition.copyright"
                            (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="additional">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="additional">
+      <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.additional-tab'] : undefined">Additional</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-6">
             <app-fhir-multi-identifier [parentObject]="structureDefinition" propertyName="identifier" tooltipPath="StructureDefinition.identifier"
@@ -180,13 +180,13 @@
           </div>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="mapping">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="mapping">
+      <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.mappings-tab'] : undefined">Mapping(s)</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <p>
           <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('mapping')" (ngModelChange)="toggleMappings(); isDirty = true; nameChanged();"/>
           This structure definition includes mappings
@@ -246,13 +246,13 @@
           </tbody>
         </table>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="elements" *ngIf="constraintManager && constraintManager.elements">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="elements" *ngIf="constraintManager && constraintManager.elements">
+      <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.elements-tab'] : undefined">Elements</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <div class="elements">
           <div class="element" *ngFor="let e of constraintManager.elements">
             <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
@@ -342,42 +342,45 @@
           </tbody>
         </table>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Permissions -->
-    <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+      <a ngbNavLink>
         Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(structureDefinition)" title="No write permissions for current user specified!"></i>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <trifolia-fhir-resource-permissions [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></trifolia-fhir-resource-permissions>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Validation -->
-    <ngb-tab id="validation">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="validation">
+      <a ngbNavLink>
         Validation ({{validation?.messages?.length || 0}})
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- RAW JSON/XML -->
-    <ngb-tab id="raw" title="RAW">
-      <ng-template ngbTabContent>
+    <li ngbNavItem="raw">
+      <a ngbNavLink>RAW</a>
+      <ng-template ngbNavContent>
         <app-raw-resource [resource]="structureDefinition" [shown]="sdTabs.activeId === 'raw'"></app-raw-resource>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Version History -->
-    <ngb-tab id="history" title="History">
-      <ng-template ngbTabContent>
+    <li ngbNavItem="history">
+      <a ngbNavLink>History</a>
+      <ng-template ngbNavContent>
         <app-resource-history [(resource)]="structureDefinition" (resourceChange)="loadBaseDefinition()" (change)="isDirty = true; nameChanged();"></app-resource-history>
       </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="sdTabs" class="mt-2"></div>
 
   <div class="element-definition card" *ngIf="selectedElement">
     <div class="card-header">

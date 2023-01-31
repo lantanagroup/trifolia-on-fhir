@@ -2,9 +2,11 @@
 
 <div class="alert alert-danger" *ngIf="vsNotFound">Value Set with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<ngb-tabset *ngIf="valueSet" [destroyOnHide]="false" #vsTabs="ngbTabset">
-  <ngb-tab title="General">
-    <ng-template ngbTabContent>
+<ng-container *ngIf="valueSet">
+<ul ngbNav #vsTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+  <li ngbNavItem>
+    <a ngbNavLink>General</a>
+    <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-8">
           <app-fhir-string [parentObject]="valueSet" propertyName="url" title="URL" tooltipPath="ValueSet.url" (change)="urlChanged()"></app-fhir-string>
@@ -28,10 +30,11 @@
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab title="Narrative">
-    <ng-template ngbTabContent>
+  <li ngbNavItem>
+    <a ngbNavLink>Narrative</a>
+    <ng-template ngbNavContent>
       <app-fhir-narrative [resource]="valueSet"></app-fhir-narrative>
 
       <app-fhir-markdown [parentObject]="valueSet" propertyName="description" title="Description" [isFormGroup]="true" tooltipPath="ValueSet.description"></app-fhir-markdown>
@@ -40,11 +43,11 @@
 
       <app-fhir-markdown [parentObject]="valueSet" propertyName="copyright" title="Copyright" [isFormGroup]="true" tooltipPath="ValueSet.copyright"></app-fhir-markdown>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab>
-    <ng-template ngbTabTitle>Compose</ng-template>
-    <ng-template ngbTabContent>
+  <li ngbNavItem>
+    <a ngbNavLink>Compose</a>
+    <ng-template ngbNavContent>
       <label><input type="checkbox" [ngModel]="valueSet.hasOwnProperty('compose')" (ngModelChange)="Globals.toggleProperty(valueSet, 'compose', { include: [{}] })"/> Value set has a "compose" definition</label>
 
       <app-tooltip-icon tooltipPath="ValueSet.compose"></app-tooltip-icon>
@@ -69,24 +72,25 @@
               </div>
             </div>
 
-            <ngb-tabset *ngIf="valueSet.compose.hasOwnProperty('include')" #includeTabSet [destroyOnHide]="false">
-              <ngb-tab *ngFor="let include of valueSet.compose.include; let ii = index" id="include-{{ii}}">
-                <ng-template ngbTabTitle>
+            <ul ngbNav #includeTabSet="ngbNav" class="nav-tabs" *ngIf="valueSet.compose.hasOwnProperty('include')" [destroyOnHide]="false">
+              <li *ngFor="let include of valueSet.compose.include; let ii = index" ngbNavItem="include-{{ii}}">
+                <a ngbNavLink>
                   Include {{ii + 1}}
                   <i class="fas fa-trash-alt" title="Remove this include"
                      (click)="ClientHelper.promptForRemove(valueSet.compose.include, ii, 'Are you sure you want to remove this item?', $event)"></i>
-                </ng-template>
-                <ng-template ngbTabContent>
+                </a>
+                <ng-template ngbNavContent>
                   <app-valueset-include-panel [include]="include"></app-valueset-include-panel>
                 </ng-template>
-              </ngb-tab>
-              <ngb-tab>
-                <ng-template ngbTabTitle>
+              </li>
+              <li ngbNavItem>
+                <a ngbNavLink>
                   <button type="button" class="btn btn-primary" title="Add an include entry" (click)="addIncludeEntry(includeTabSet)">Add</button>
-                </ng-template>
-                <ng-template ngbTabContent></ng-template>
-              </ngb-tab>
-            </ngb-tabset>
+                </a>
+                <ng-template ngbNavContent></ng-template>
+              </li>
+            </ul>
+            <div [ngbNavOutlet]="includeTabSet" class="mt-2"></div>
           </div>
         </div>
 
@@ -96,60 +100,66 @@
             <label><input type="checkbox" [ngModel]="valueSet.compose.hasOwnProperty('exclude')" (ngModelChange)="Globals.toggleProperty(valueSet.compose, 'exclude', [{}])"/> This value set has exclude entries</label>
           </div>
           <div class="card-body" *ngIf="valueSet.compose.hasOwnProperty('exclude')">
-            <ngb-tabset #excludeTabSet [destroyOnHide]="false">
-              <ngb-tab *ngFor="let exclude of valueSet.compose.exclude; let ei = index" id="exclude-{{ei}}">
-                <ng-template ngbTabTitle>
+            <ul ngbNav #excludeTabSet="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+              <li *ngFor="let exclude of valueSet.compose.exclude; let ei = index" ngbNavItem="exclude-{{ei}}">
+                <a ngbNavLink>
                   Exclude {{ei + 1}}
                   <i class="fas fa-trash-alt" title="Remove this exclude" (click)="ClientHelper.promptForRemove(valueSet.compose.exclude, ei, 'Are you sure you want to remove this item?', $event)"></i>
-                </ng-template>
-                <ng-template ngbTabContent>
+                </a>
+                <ng-template ngbNavContent>
                   <app-valueset-include-panel [include]="exclude"></app-valueset-include-panel>
                 </ng-template>
-              </ngb-tab>
-              <ngb-tab>
-                <ng-template ngbTabTitle>
+              </li>
+              <li ngbNavItem>
+                <ng-template ngbNavLink>
                   <button type="button" class="btn btn-primary" title="Add an exclude entry" (click)="addExcludeEntry(excludeTabSet)">Add</button>
                 </ng-template>
-                <ng-template ngbTabContent></ng-template>
-              </ngb-tab>
-            </ngb-tabset>
+                <ng-template ngbNavContent></ng-template>
+              </li>
+            </ul>
+            <div [ngbNavOutlet]="excludeTabSet" class="mt-2"></div>
           </div>
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Permissions -->
-  <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
-    <ng-template ngbTabTitle>
+  <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+    <a ngbNavLink>
       Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(valueSet)" title="No write permissions for current user specified!"></i>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <trifolia-fhir-resource-permissions [resource]="valueSet"></trifolia-fhir-resource-permissions>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Validation -->
-  <ngb-tab id="validation" title="Validation">
-    <ng-template ngbTabContent>
+  <li ngbNavItem="validation">
+    <a ngbNavLink>Validation</a>
+    <ng-template ngbNavContent>
       <app-validation-results [results]="validation"></app-validation-results>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- RAW JSON/XML -->
-  <ngb-tab id="raw" title="RAW">
-    <ng-template ngbTabContent>
+  <li ngbNavItem="raw">
+    <a ngbNavLink>RAW</a>
+    <ng-template ngbNavContent>
       <app-raw-resource [resource]="valueSet" [shown]="vsTabs.activeId === 'raw'"></app-raw-resource>
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Version History -->
-  <ngb-tab id="history" title="History" *ngIf="!isNew">
-    <ng-template ngbTabContent>
+  <li ngbNavItem="history" *ngIf="!isNew">
+    <a ngbNavLink>History</a>
+    <ng-template ngbNavContent>
       <app-resource-history [(resource)]="valueSet"></app-resource-history>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
+<div [ngbNavOutlet]="vsTabs" class="mt-2"></div>
+</ng-container>
 
 <footer class="footer">
   <div class="btn-group">

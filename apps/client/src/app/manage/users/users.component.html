@@ -1,8 +1,9 @@
 <h2>Users</h2>
 
-<ngb-tabset>
-  <ngb-tab title="Users">
-    <ng-template ngbTabContent>
+<ul ngbNav #nav="ngbNav" class="nav-tabs">
+  <li ngbNavItem>
+    <a ngbNavLink>Users</a>
+    <ng-template ngbNavContent>
       <table class="table table-striped">
         <thead>
         <tr>
@@ -57,10 +58,11 @@
         (pageChange)="usersPageChanged.next()">
       </ngb-pagination>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab title="Active Users">
-    <ng-template ngbTabContent>
+  <li ngbNavItem>
+    <a ngbNavLink>Active Users</a>
+    <ng-template ngbNavContent>
       <table class="table table-striped">
         <thead>
         <tr>
@@ -84,12 +86,14 @@
         </tbody>
       </table>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab title="Broadcast Message">
-    <ng-template ngbTabContent>
+  <li ngbNavItem>
+    <a ngbNavLink>Broadcast Message</a>
+    <ng-template ngbNavContent>
       <textarea class="form-control" #messageToBroadcast></textarea>
       <button type="button" class="btn btn-primary" (click)="broadcastMessage(messageToBroadcast.value)">Broadcast!</button>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav" class="mt-2"></div>

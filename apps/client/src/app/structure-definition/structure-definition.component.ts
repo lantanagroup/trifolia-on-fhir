@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { StructureDefinitionService } from '../shared/structure-definition.service';
-import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { ElementTreeModel } from '../../../../../libs/tof-lib/src/lib/element-tree-model';
 import {
@@ -67,7 +67,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public showUpdateFromFSH = false;
 
   @ViewChild('edPanel', { static: true }) edPanel: ElementDefinitionPanelComponent;
-  @ViewChild('sdTabs', { static: true }) sdTabs: NgbTabset;
+  @ViewChild('sdTabs', { static: true }) sdTabs: NgbNav;
 
   private navSubscription: any;
   private baseDefResponse: BaseDefinitionResponseModel;

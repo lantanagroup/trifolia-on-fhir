@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {FhirService} from '../shared/fhir.service';
 import {Bundle, Coding} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 
-import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {NgbNav} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../shared/config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
@@ -26,7 +26,7 @@ export class OtherResourcesComponent implements OnInit {
   public ignoreContext = false;
 
   @ViewChild('tabSet', { static: true })
-  public tabSet: NgbTabset;
+  public tabSet: NgbNav;
 
 
   constructor (

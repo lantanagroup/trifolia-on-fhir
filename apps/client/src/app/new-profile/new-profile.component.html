@@ -1,8 +1,9 @@
 <h3>New Structure Definition</h3>
 
-<ngb-tabset>
-  <ngb-tab title="General">
-    <ng-template ngbTabContent>
+<ul ngbNav #nav="ngbNav" class="nav-tabs">
+  <li ngbNavItem>
+    <a ngbNavLink>General</a>
+    <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-8">
           <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" [required]="true" tooltipPath="StructureDefinition.url" (change)="urlChanged()"></app-fhir-string>
@@ -74,24 +75,27 @@
       </div>
 
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Permissions -->
-  <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
-    <ng-template ngbTabTitle>
+  <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+    <a ngbNavLink>
       Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(structureDefinition)" title="No write permissions for current user specified!"></i>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <trifolia-fhir-resource-permissions [resource]="structureDefinition"></trifolia-fhir-resource-permissions>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab title="RAW">
-    <ng-template ngbTabContent>
+  <li ngbNavItem>
+    <a ngbNavLink>RAW</a>
+    <ng-template ngbNavContent>
       <app-raw-resource [resource]="structureDefinition"></app-raw-resource>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
+
 
 <footer class="footer">
   <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saveDisabled()">Save</button>
