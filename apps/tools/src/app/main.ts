@@ -8,6 +8,7 @@ import { Migrate } from './migrate';
 import { ChangeId } from './change-id';
 import { ChangeExtensionUrl } from './change-extension-url';
 import { ReplacePackageList } from './replace-package-list';
+import { GenerateTypescript } from './generate-typescript';
 import { MigrateDb } from './migrate-db';
 
 const populateFromAuth0Format = 'populate-from-auth0 <server> <domain> <token>';
@@ -40,7 +41,33 @@ const replacePackageListDescription = 'Replaces all ImplementationGuide package-
 const migrateDbFormat = 'migrate-db [mysqlHost] [mysqlDb] [mysqlUser] [mysqlPass] [fhirVersion] [dbServer] [dbName] [migratedFromLabel]';
 const migrateDbDescription = 'Migrate the specific FHIR server to mongo database';
 
+const generateTypescriptFormat = 'generate-typescript [types] [resources] [valueSets] [output]';
+const generateTypescriptDescription = 'Generates typescript classes based on StructureDefinition resources in bundles within the specified path';
+
+
 const argv = Yargs
+  .command(generateTypescriptFormat, generateTypescriptDescription, (yargs: Yargs.Argv) => {
+    return yargs
+      .positional('types', {
+        required: true,
+        description: 'The path to profiles-types.json'
+      })
+      .positional('resources', {
+        required: true,
+        description: 'The path to profiles-resources.json'
+      })
+      .positional('valueSets', {
+        required: true,
+        description: 'The path to valuesets.json'
+      })
+      .positional('output', {
+        required: true,
+        description: 'Where the typescript generated should be stored'
+      });
+  }, (args: any) => {
+    const generateTypescript = new GenerateTypescript(args);
+    generateTypescript.execute();
+  })
   .command(migrateDbFormat, migrateDbDescription, (yargs: Yargs.Argv) => {
     return yargs
       .positional('mysqlHost', {})
