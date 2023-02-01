@@ -58,7 +58,7 @@ export class BulkEditComponent implements OnInit {
   }
 
   private editFieldWithWait(profileId: string, field: string, elementId?: string) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => {
         this.editFields[profileId + (elementId || '') + field] = true;
         resolve();

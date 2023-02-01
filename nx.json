@@ -8,23 +8,6 @@
     "tsconfig.base.json": "*",
     ".eslintrc.json": "*"
   },
-  "projects": {
-    "server": {
-      "tags": []
-    },
-    "tof-lib": {
-      "tags": []
-    },
-    "client": {
-      "tags": []
-    },
-    "client-e2e": {
-      "tags": []
-    },
-    "tools": {
-      "tags": []
-    }
-  },
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
@@ -48,5 +31,13 @@
     },
     "defaultCollection": "@nrwl/angular"
   },
-  "generators": {}
+  "generators": {},
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
+  }
 }
