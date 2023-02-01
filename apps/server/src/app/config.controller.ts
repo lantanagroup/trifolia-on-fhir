@@ -8,7 +8,7 @@ import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
 import {ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import {AxiosRequestConfig} from 'axios';
-import * as modulePackage from '../../../../package.json';
+import modulePackage from '../../../../package.json';
 
 @Controller('api/config')
 @ApiTags('Config')
