@@ -89,7 +89,7 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
   public save() {
     this.strucDefService.save(this.structureDefinition)
       .subscribe((results) => {
-        this.route.navigate([`${this.configService.baseSessionUrl}/structure-definition/${results.id}`]);
+        this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${results.id}`]);
       }, (err) => {
         this.message = getErrorString(err);
       });
