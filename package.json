@@ -68,7 +68,7 @@
     "hpropagate": "0.0.6",
     "intro.js": "^2.9.3",
     "jquery": "^3.5.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jszip": "^3.7.1",
     "jwks-rsa": "^1.12.2",
     "mustache": "^3.2.1",
