@@ -27,7 +27,7 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
   public urlText: string;
   public typeText: string;
   public titleText: string;
-  public criteriaChangedEvent = new Subject();
+  public criteriaChangedEvent = new Subject<void>();
   public implementationGuideId: string = null;
   public showMoreSearch = false;
   public Globals = Globals;

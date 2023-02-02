@@ -18,7 +18,7 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
 
   public searchParameterBundle: Bundle;
   public nameText: string;
-  public criteriaChangedEvent = new Subject();
+  public criteriaChangedEvent = new Subject<void>();
   public page = 1;
   public Globals = Globals;
 

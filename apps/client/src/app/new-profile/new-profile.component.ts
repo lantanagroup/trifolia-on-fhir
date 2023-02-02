@@ -32,7 +32,7 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
   public selectedType: ILogicalTypeDefinition;
 
   public isIdUnique = true;
-  public idChangedEvent = new Subject();
+  public idChangedEvent = new Subject<void>();
 
   public publishingRequest: PublishingRequestModel;
   public publishingRequestJSON;

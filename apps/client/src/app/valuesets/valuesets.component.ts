@@ -23,7 +23,7 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
   public idText: string;
   public page = 1;
   public urlText: string;
-  public criteriaChangedEvent = new Subject();
+  public criteriaChangedEvent = new Subject<void>();
   public message: string;
   public Globals = Globals;
 

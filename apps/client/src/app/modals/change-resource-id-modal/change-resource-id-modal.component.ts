@@ -22,7 +22,7 @@ export class ChangeResourceIdModalComponent implements OnInit {
   public message: string;
 
   public isIdUnique = true;
-  public idChangedEvent = new Subject();
+  public idChangedEvent = new Subject<void>();
 
   constructor(
     public activeModal: NgbActiveModal,

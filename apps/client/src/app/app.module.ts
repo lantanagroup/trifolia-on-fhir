@@ -225,79 +225,69 @@ const authModuleConfig: OAuthModuleConfig = {
 
 // noinspection JSDeprecatedSymbols
 @NgModule({
-  entryComponents: [
-    STU3TypeModalComponent, R4TypeModalComponent, STU3PageComponentModalComponent, R4PageComponentModalComponent,
-    ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
-    QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
-    MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, STU3PageComponent, R4PageComponent,
-    MergeUserModalComponent
-  ],
-  declarations: [
-    AppComponent, ImplementationGuidesComponent,
-    HomeComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent, ExportComponent,
-    ImportComponent, StructureDefinitionComponent, ValuesetsComponent, ValuesetComponent, CodesystemsComponent,
-    CodesystemComponent, LoginComponent, StructureDefinitionsComponent, UsersComponent, UserComponent,
-    NewProfileComponent, ElementDefinitionPanelComponent, STU3TypeModalComponent, R4TypeModalComponent,
-    STU3PageComponentModalComponent, R4PageComponentModalComponent, CapabilityStatementsComponent,
-    CapabilityStatementWrapperComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
-    OperationDefinitionsComponent, OperationDefinitionComponent, ParameterModalComponent, ValuesetExpandComponent,
-    ConceptCardComponent, ImplementationGuideViewComponent,
-    OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
-    ImplementationGuideWrapperComponent, RouteTransformerDirective,
-    MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
-    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
-    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, MergeUserModalComponent, NewProjectComponent, SearchParametersComponent, SearchParameterComponent, PublishingRequestComponent
-  ],
-  imports: [
-    RouterModule.forRoot(
-      appRoutes, {
-    enableTracing: false,
-    onSameUrlNavigation: 'reload',
-    relativeLinkResolution: 'legacy'
-}
-    ),
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    OAuthModule.forRoot(authModuleConfig),
-    NgbModule,
-    NgxFileDropModule,
-    // TreeModule,
-    SharedModule,
-    SharedUiModule,
-    FhirEditModule,
-    ModalsModule,
-    DiffMatchPatchModule
-  ],
-  providers: [
-    CookieService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: init,
-      deps: [ConfigService, AuthService, FhirService],
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AddHeaderInterceptor,
-      multi: true
-    },
-    {
-      provide: OAuthModuleConfig,
-      useValue: authModuleConfig
-    },
-    {
-      provide: ValidationHandler,
-      useClass: JwksValidationHandler
-    },
-    {
-      provide: OAuthStorage,
-      useValue: localStorage
-    }
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent, ImplementationGuidesComponent,
+        HomeComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent, ExportComponent,
+        ImportComponent, StructureDefinitionComponent, ValuesetsComponent, ValuesetComponent, CodesystemsComponent,
+        CodesystemComponent, LoginComponent, StructureDefinitionsComponent, UsersComponent, UserComponent,
+        NewProfileComponent, ElementDefinitionPanelComponent, STU3TypeModalComponent, R4TypeModalComponent,
+        STU3PageComponentModalComponent, R4PageComponentModalComponent, CapabilityStatementsComponent,
+        CapabilityStatementWrapperComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
+        OperationDefinitionsComponent, OperationDefinitionComponent, ParameterModalComponent, ValuesetExpandComponent,
+        ConceptCardComponent, ImplementationGuideViewComponent,
+        OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
+        ImplementationGuideWrapperComponent, RouteTransformerDirective,
+        MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
+        ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
+        GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
+        ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, MergeUserModalComponent, NewProjectComponent, SearchParametersComponent, SearchParameterComponent, PublishingRequestComponent
+    ],
+    imports: [
+        RouterModule.forRoot(appRoutes, {
+            enableTracing: false,
+            onSameUrlNavigation: 'reload',
+            relativeLinkResolution: 'legacy'
+        }),
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        OAuthModule.forRoot(authModuleConfig),
+        NgbModule,
+        NgxFileDropModule,
+        // TreeModule,
+        SharedModule,
+        SharedUiModule,
+        FhirEditModule,
+        ModalsModule,
+        DiffMatchPatchModule
+    ],
+    providers: [
+        CookieService,
+        {
+            provide: APP_INITIALIZER,
+            useFactory: init,
+            deps: [ConfigService, AuthService, FhirService],
+            multi: true
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AddHeaderInterceptor,
+            multi: true
+        },
+        {
+            provide: OAuthModuleConfig,
+            useValue: authModuleConfig
+        },
+        {
+            provide: ValidationHandler,
+            useClass: JwksValidationHandler
+        },
+        {
+            provide: OAuthStorage,
+            useValue: localStorage
+        }
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
 }

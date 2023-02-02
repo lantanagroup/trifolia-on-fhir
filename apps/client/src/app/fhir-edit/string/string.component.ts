@@ -37,7 +37,7 @@ export class FhirStringComponent implements OnInit {
    */
   @Input() cookieKey?: string;
 
-  public changeEvent = new Subject();
+  public changeEvent = new Subject<void>();
   @Output() change: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(

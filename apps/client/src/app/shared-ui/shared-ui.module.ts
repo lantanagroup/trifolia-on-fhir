@@ -38,19 +38,16 @@ const components = [
 ];
 
 @NgModule({
-  entryComponents: [
-    FshResourceComponent
-  ],
-  declarations: components,
-  exports: components,
-  imports: [
-    CommonModule,
-    NgbModule,
-    FormsModule,
-    SharedModule,
-    DiffMatchPatchModule,
-    SimplemdeModule.forRoot({ })
-  ]
+    declarations: components,
+    exports: components,
+    imports: [
+        CommonModule,
+        NgbModule,
+        FormsModule,
+        SharedModule,
+        DiffMatchPatchModule,
+        SimplemdeModule.forRoot({})
+    ]
 })
 export class SharedUiModule {
 }

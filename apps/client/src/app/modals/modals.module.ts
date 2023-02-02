@@ -32,17 +32,16 @@ const modalComponents = [
 ];
 
 @NgModule({
-  declarations: modalComponents,
-  entryComponents: modalComponents,
-  exports: modalComponents,
-  imports: [
-    CommonModule,
-    FormsModule,
-    SharedModule,
-    SharedUiModule,
-    FhirEditModule,
-    NgbModule
-  ]
+    declarations: modalComponents,
+    exports: modalComponents,
+    imports: [
+        CommonModule,
+        FormsModule,
+        SharedModule,
+        SharedUiModule,
+        FhirEditModule,
+        NgbModule
+    ]
 })
 export class ModalsModule {
 }
