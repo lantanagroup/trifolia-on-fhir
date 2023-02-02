@@ -72,7 +72,9 @@
               ]
             }
           },
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "defaultConfiguration": ""
         },
         "serve": {
@@ -99,7 +101,9 @@
             "jestConfig": "apps/client/jest.config.ts",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/apps/client/"]
+          "outputs": [
+            "coverage/apps/client/"
+          ]
         }
       },
       "tags": []
@@ -164,7 +168,9 @@
               ]
             }
           },
-          "outputs": ["{options.outputPath}"]
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -178,7 +184,9 @@
             "jestConfig": "apps/server/jest.config.ts",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/apps/server"]
+          "outputs": [
+            "coverage/apps/server"
+          ]
         }
       },
       "tags": []
@@ -195,7 +203,9 @@
             "jestConfig": "libs/tof-lib/jest.config.ts",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/libs/tof-lib"]
+          "outputs": [
+            "coverage/libs/tof-lib"
+          ]
         }
       },
       "schematics": {},
@@ -214,7 +224,9 @@
             "outputPath": "dist/apps/tools",
             "main": "apps/tools/src/app/main.ts",
             "tsConfig": "apps/tools/tsconfig.app.json",
-            "assets": ["apps/tools/src/assets"],
+            "assets": [
+              "apps/tools/src/assets"
+            ],
             "buildLibsFromSource": true,
             "target": "node",
             "compiler": "tsc"
@@ -226,7 +238,9 @@
               "inspect": false
             }
           },
-          "outputs": ["{options.outputPath}"]
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -240,7 +254,9 @@
             "jestConfig": "apps/tools/jest.config.ts",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/apps/tools"]
+          "outputs": [
+            "coverage/apps/tools"
+          ]
         }
       },
       "tags": []
