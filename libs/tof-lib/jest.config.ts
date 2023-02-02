@@ -1,6 +1,7 @@
+/* eslint-disable */
 process.env.SUPPRESS_NO_CONFIG_WARNING = true;
 
-module.exports = {
+export default {
   preset: '../../jest.preset.js',
   coverageDirectory: '../../coverage/libs/tof-lib',
   globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },

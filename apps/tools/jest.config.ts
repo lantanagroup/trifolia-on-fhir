@@ -1,4 +1,5 @@
-module.exports = {
+/* eslint-disable */
+export default {
   preset: '../../jest.preset.js',
   coverageDirectory: '../../coverage/apps/tools',
   globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },

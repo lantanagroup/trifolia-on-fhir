@@ -35,7 +35,7 @@
               "apps/client/src/styles.css"
             ],
             "scripts": [
-              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/@popperjs/core/dist/umd/popper.min.js",
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "node_modules/simplemde-antd/dist/simplemde.min.js"
@@ -96,7 +96,7 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/client/jest.config.js",
+            "jestConfig": "apps/client/jest.config.ts",
             "passWithNoTests": true
           },
           "outputs": ["coverage/apps/client/"]
@@ -132,7 +132,7 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:webpack",
+          "builder": "@nrwl/webpack:webpack",
           "options": {
             "outputPath": "dist/apps/server",
             "main": "apps/server/src/main.ts",
@@ -147,7 +147,9 @@
                 "output": "./assets"
               }
             ],
-            "buildLibsFromSource": true
+            "buildLibsFromSource": true,
+            "target": "node",
+            "compiler": "tsc"
           },
           "configurations": {
             "production": {
@@ -173,7 +175,7 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/server/jest.config.js",
+            "jestConfig": "apps/server/jest.config.ts",
             "passWithNoTests": true
           },
           "outputs": ["coverage/apps/server"]
@@ -190,7 +192,7 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/tof-lib/jest.config.js",
+            "jestConfig": "libs/tof-lib/jest.config.ts",
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/tof-lib"]
@@ -207,13 +209,15 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:webpack",
+          "builder": "@nrwl/webpack:webpack",
           "options": {
             "outputPath": "dist/apps/tools",
             "main": "apps/tools/src/app/main.ts",
             "tsConfig": "apps/tools/tsconfig.app.json",
             "assets": ["apps/tools/src/assets"],
-            "buildLibsFromSource": true
+            "buildLibsFromSource": true,
+            "target": "node",
+            "compiler": "tsc"
           },
           "configurations": {
             "production": {
@@ -233,7 +237,7 @@
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/tools/jest.config.js",
+            "jestConfig": "apps/tools/jest.config.ts",
             "passWithNoTests": true
           },
           "outputs": ["coverage/apps/tools"]
