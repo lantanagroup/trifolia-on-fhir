@@ -30,6 +30,8 @@ export class FhirInstances {
   private static fhirStu3Instance: Fhir;
   private static fhirR4Instance: Fhir;
 
+  private static fhirR5Instance: Fhir;
+
   static get fhirStu3() {
     if (!this.fhirStu3Instance) {
       this.fhirStu3Instance = getFhirStu3Instance();
@@ -42,6 +44,13 @@ export class FhirInstances {
       this.fhirR4Instance = getFhirR4Instance();
     }
     return this.fhirR4Instance;
+  }
+
+  static get fhirR5() {
+    if (!this.fhirR5Instance) {
+      this.fhirR5Instance = getFhirR5Instance();
+    }
+    return this.fhirR5Instance;
   }
 }
 
@@ -335,6 +344,31 @@ export function getFhirR4Instance(tool = false) {
   const types = getJsonFromFile(path.join(rootDir, 'assets/r4/profiles-types.json'));
   const resources = getJsonFromFile(path.join(rootDir, 'assets/r4/profiles-resources.json'));
   const iso3166 = getJsonFromFile(path.join(rootDir, 'assets/r4/codesystem-iso3166.json'));
+
+  parser.parseBundle(valueSets);
+  parser.parseBundle(types);
+  parser.parseBundle(resources);
+  parser.loadCodeSystem(iso3166);
+
+  return new Fhir(parser);
+}
+
+export function getFhirR5Instance(tool = false) {
+  let rootDir = __dirname;
+
+  try {
+    if (tool) {
+      rootDir = '../server';
+    } else if (jasmine) {
+      rootDir = path.join(__dirname, '../../../../libs/tof-lib/src');
+    }
+  } catch (ex) {}
+
+  const parser = new ParseConformance(false, FhirVersions.R4);
+  const valueSets = getJsonFromFile(path.join(rootDir, 'assets/r5/valuesets.json'));
+  const types = getJsonFromFile(path.join(rootDir, 'assets/r5/profiles-types.json'));
+  const resources = getJsonFromFile(path.join(rootDir, 'assets/r5/profiles-resources.json'));
+  const iso3166 = getJsonFromFile(path.join(rootDir, 'assets/r5/codesystem-iso3166.json'));
 
   parser.parseBundle(valueSets);
   parser.parseBundle(types);
