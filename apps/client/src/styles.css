@@ -472,9 +472,9 @@ tr.introjs-showElement > th {
   -moz-border-radius: 0.2em;
   border-radius: 0.2em;
   /* IE hacks */
-  zoom: 1;
+  /* zoom: 1;
   *display: inline;
-  margin-top: 10px;
+  margin-top: 10px; */
 }
 
 .introjs-button:hover {

@@ -14,7 +14,7 @@ import {
   ValueSet as STU3ValueSet
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import * as fs from 'fs';
+import {readFileSync} from 'fs';
 import type {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {IgPageHelper, PageInfo} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 
@@ -90,7 +90,7 @@ export class MSWordExporter {
 
   async export(bundle: Bundle, version: 'stu3'|'r4') {
     this.doc = new Document({
-      externalStyles: fs.readFileSync('./assets/msword-styles.xml').toString()
+      externalStyles: readFileSync('./assets/msword-styles.xml').toString()
     });
     this.body = [];
 

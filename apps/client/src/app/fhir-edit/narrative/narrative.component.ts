@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {DomainResource} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import * as Mustache from 'mustache';
+import Mustache from 'mustache';
 import {HttpClient} from '@angular/common/http';
 import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuide as STU3ImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';

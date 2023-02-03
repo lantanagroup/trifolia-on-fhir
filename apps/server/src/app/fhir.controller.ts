@@ -32,7 +32,7 @@ import { Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3Impl
 import { ImplementationGuide as R4ImplementationGuide, OperationOutcome } from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import { format as formatUrl, parse as parseUrl, UrlWithStringQuery } from 'url';
 import type { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
-import { default as PQueue } from 'p-queue';
+import PQueue from 'p-queue';
 import { IBundle, IImplementationGuide, IOperationOutcome, IStructureDefinition } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import os from 'os';
 import * as path from 'path';
