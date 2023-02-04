@@ -12,7 +12,7 @@ import {FhirDisplayPipe} from './fhir-display-pipe';
 import {KeysPipe} from './keys-pipe';
 import {SafePipe} from './safe-pipe';
 import {XmlPipe} from './xml-pipe';
-import {DiffMatchPatchModule} from 'ng-diff-match-patch';
+import { NgxDiffModule } from 'ngx-diff';
 import {FormsModule} from '@angular/forms';
 import {ResourcePermissionsComponent} from './resource-permissions/resource-permissions.component';
 import {ImplementationGuideTypeaheadComponent} from './implementation-guide-typeahead/implementation-guide-typeahead.component';
@@ -45,7 +45,7 @@ const components = [
         NgbModule,
         FormsModule,
         SharedModule,
-        DiffMatchPatchModule,
+        NgxDiffModule,
         SimplemdeModule.forRoot({})
     ]
 })

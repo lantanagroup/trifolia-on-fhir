@@ -8,7 +8,7 @@
     <option [ngValue]="false">XML</option>
     <option [ngValue]="true">JSON</option>
   </select>
-  <pre *ngIf="left && right" diff [right]="right" [left]="left"></pre>
+  <inline-diff *ngIf="left && right" [oldText]="left" [newText]="right"></inline-diff>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.close()">Close</button>

@@ -43,6 +43,6 @@
         <i class="fas fa-upload"></i>
       </button>
     </h3>
-    <pre [left]="rightResource | json" [right]="leftResource | json" diff></pre>
+    <inline-diff [oldText]="rightResource | json" [newText]="leftResource | json"></inline-diff>
   </div>
 </div>
