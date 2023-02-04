@@ -1,7 +1,7 @@
 <div class="card" *ngIf="parentObject">
     <div class="card-header">
         <label><input type="checkbox" [ngModel]="parentObject.hasOwnProperty(propertyName)" (ngModelChange)="toggleConcepts()"/> Concepts </label>
-        <app-tooltip-icon tooltipPath="ValueSet.compose.include.concept"></app-tooltip-icon>&nbsp;<span class="badge badge-info">{{concepts.length}} total</span>
+        <app-tooltip-icon tooltipPath="ValueSet.compose.include.concept"></app-tooltip-icon>&nbsp;<span class="badge bg-info">{{concepts.length}} total</span>
     </div>
     <table class="table table-striped" *ngIf="parentObject.hasOwnProperty(propertyName)">
         <thead>

@@ -1,13 +1,11 @@
 <div class="modal-header">
   <h4 class="modal-title">Edit settings</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body" *ngIf="configService.config">
   <p>Trifolia-on-FHIR Version <strong>{{configService.config.version}}</strong></p>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>Selected FHIR Server</label>
     <select class="form-control" name="fhirServerSelect" [(ngModel)]="fhirServerId">
       <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
@@ -15,20 +13,20 @@
     <div class="help-block">{{fhirServerId}}</div>
   </div>
 
-  <div class="form-group" *ngIf="authCode">
+  <div class="mb-3" *ngIf="authCode">
     <label>
       Authorization Code
       <i class="fas fa-cut clickable" (click)="copyToClipboard(authCode, authCodeCopiedEle)"></i>
-      <span class="badge badge-light" #authCodeCopiedEle></span>
+      <span class="badge bg-light" #authCodeCopiedEle></span>
     </label>
     <pre>{{authCode}}</pre>
   </div>
 
-  <div class="form-group" *ngIf="authCode">
+  <div class="mb-3" *ngIf="authCode">
     <label>
       Example FHIR Server Request
       <i class="fas fa-cut clickable" (click)="copyToClipboard(exampleCurl, exampleCurlCopiedEle)"></i>
-      <span class="badge badge-light" #exampleCurlCopiedEle></span>
+      <span class="badge bg-light" #exampleCurlCopiedEle></span>
     </label>
     <pre>{{exampleCurl}}</pre>
   </div>

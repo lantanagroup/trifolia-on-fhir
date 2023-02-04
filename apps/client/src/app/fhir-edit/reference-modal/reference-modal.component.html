@@ -1,8 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">{{modalTitle}}</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
   <div class="d-flex">
@@ -26,15 +24,15 @@
         </ng-template>
       </li>
     </ul>
-    <div [ngbNavOutlet]="nav" class="ml-4"></div>
+    <div [ngbNavOutlet]="nav" class="ms-4"></div>
   </div>
 </div>
 <div class="modal-footer">
   <div class="pull-left footer-criteria">
     <p *ngIf="configService.project && searchLocation === 'server'">
-      <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from the <span class="badge badge-info">{{configService.project.name}}</span> implementation guide.
+      <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from the <span class="badge bg-info">{{configService.project.name}}</span> implementation guide.
     </p>
-    <p *ngIf="resourceType === 'StructureDefinition' && structureDefinitionType">Showing profiles of type <span class="badge badge-info">{{structureDefinitionType}}</span>.</p>
+    <p *ngIf="resourceType === 'StructureDefinition' && structureDefinitionType">Showing profiles of type <span class="badge bg-info">{{structureDefinitionType}}</span>.</p>
   </div>
   <div class="pull-left" *ngIf="selected.length > 0">
     Selected {{selected.length}}: <span *ngFor="let s of selected">{{s.resourceType}}/{{s.id}} </span>
@@ -51,9 +49,7 @@
     <!-- Type -->
     <div class="col-md-6" *ngIf="!resourceType || !hideResourceType">
       <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">Type</div>
-        </div>
+        <div class="input-group-text">Type</div>
         <select class="form-control" [(ngModel)]="resourceType" (change)="criteriaChanged()">
           <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
         </select>
@@ -66,27 +62,21 @@
 
     <div class="col-md-6" *ngIf="showNameSearch">
       <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">Name</div>
-        </div>
+        <div class="input-group-text">Name</div>
         <input type="text" class="form-control" [(ngModel)]="nameSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
       </div>
     </div>
 
     <div class="col-md-6" *ngIf="showTitleSearch">
       <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">Title</div>
-        </div>
+        <div class="input-group-text">Title</div>
         <input type="text" class="form-control" [(ngModel)]="titleSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
       </div>
     </div>
 
     <div class="col-md-6" *ngIf="!!resourceType">
       <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">ID</div>
-        </div>
+        <div class="input-group-text">ID</div>
         <input type="text" class="form-control" [(ngModel)]="idSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
       </div>
     </div>

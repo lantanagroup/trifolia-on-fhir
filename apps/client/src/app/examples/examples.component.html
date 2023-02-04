@@ -7,11 +7,9 @@
       <div class="col-md-4">
         <div class="input-group">
           <input type="text" class="form-control" placeholder="Enter search text..." [(ngModel)]="searchText" />
-          <div class="input-group-append">
-            <button type="button" class="btn btn-primary" title="Clear the current search text" (click)="searchText = ''">
-              <i class="fa fa-times"></i>
-            </button>
-          </div>
+          <button type="button" class="btn btn-primary" title="Clear the current search text" (click)="searchText = ''">
+            <i class="fa fa-times"></i>
+          </button>
         </div>
       </div>
     </div>

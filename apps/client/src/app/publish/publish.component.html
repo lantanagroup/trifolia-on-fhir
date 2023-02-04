@@ -5,7 +5,7 @@
     href="https://chat.fhir.org/#narrow/stream/179252-IG-creation" target="_blank">chat.fhir.org</a>.
 </div>
 
-<div class="form-group" [attr.data-intro]="Globals.introText['publish.implementation-guide']" *ngIf="!configService.project">
+<div class="mb-3" [attr.data-intro]="Globals.introText['publish.implementation-guide']" *ngIf="!configService.project">
   <label>Implementation Guide</label>
   <div class="input-group">
     <input type="text" class="form-control"
@@ -54,7 +54,7 @@
         </div>
 
         <div class="col-md-6">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Notify via email after done publishing?</label>
             <select [(ngModel)]="options.notifyMe" class="form-control">
               <option [ngValue]="false">No</option>
@@ -74,7 +74,7 @@
         </div>
 
         <div class="col-md-6">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Resource Format</label>
             <select (change)="responseFormatChanged()" [(ngModel)]="options.responseFormat" class="form-control">
               <option value="application/json">JSON</option>
@@ -86,7 +86,7 @@
       <div class="alert alert-info">If the Edit IG tab specifies any Publishing Template customizations then further changes can only be made on the Edit IG tab</div>
       <div class="row">
         <div class="col-md-4">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Template Type</label>
             <select class="form-control" [(ngModel)]="options.templateType" [disabled]="igSpecifiesTemplate">
               <option value="not-specified">Not Specified</option>
@@ -96,7 +96,7 @@
           </div>
         </div>
         <div class="col-md-4" *ngIf="options.templateType === 'custom-uri'">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Template (Archive/ZIP URL)</label>
             <input type="text" class="form-control" [(ngModel)]="options.template" [disabled]="igSpecifiesTemplate"
                    placeholder="ex: http://github.com/HL7/ig-template-fhir/archive/master.zip" [class.is-invalid]="!options.template" />
@@ -104,7 +104,7 @@
           </div>
         </div>
         <div class="col-md-4" *ngIf="options.templateType === 'official' || options.templateType === 'not-specified'">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Template</label>
             <select class="form-control" *ngIf="options.templateType === 'not-specified' || options.templateType === 'official'" [(ngModel)]="options.template"
                     [disabled]="igSpecifiesTemplate">
@@ -115,7 +115,7 @@
           </div>
         </div>
         <div class="col-md-4" *ngIf="options.templateType === 'official'">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Version</label>
             <div>
               <select class="form-control" [(ngModel)]="options.templateVersion" [disabled]="igSpecifiesTemplate">

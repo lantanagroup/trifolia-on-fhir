@@ -517,7 +517,7 @@ export class MigrateDb extends BaseTools {
   }
 
   private async migrateUsers() {
-    this.users = (await this.db.collection('user').find({}).toArray()).map(u => u as IUser);
+    this.users = (await this.db.collection<IUser>('user').find({}).toArray()).map(u => u);
 
     const resources = this.getGroupedResources('Practitioner');
 
@@ -538,7 +538,7 @@ export class MigrateDb extends BaseTools {
       };
 
       this.log(`Adding user ${newUser.name} with authId ${newUser.authId[0]} to database`);
-      await this.db.collection('user').insertOne(newUser);
+      await this.db.collection<IUser>('user').insertOne(newUser);
       this.users.push(newUser);
     }
 

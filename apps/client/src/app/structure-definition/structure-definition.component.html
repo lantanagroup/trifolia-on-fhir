@@ -4,9 +4,9 @@
 
 <div class="sd-main" *ngIf="structureDefinition">
   <h2>
-    {{structureDefinition.name || 'No name'}} <span class="badge badge-warning" *ngIf="!canEdit(structureDefinition)">View-only</span>
-    <button class="badge badge-danger" *ngIf="isDirty" (click)="isDirty=false">Changed!</button>
-    <!--span class="badge badge-danger" *ngIf="isDirty">Changed!</span-->
+    {{structureDefinition.name || 'No name'}} <span class="badge bg-warning" *ngIf="!canEdit(structureDefinition)">View-only</span>
+    <button class="badge bg-danger" *ngIf="isDirty" (click)="isDirty=false">Changed!</button>
+    <!--span class="badge bg-danger" *ngIf="isDirty">Changed!</span-->
   </h2>
 
   <ul ngbNav #sdTabs="ngbNav" class="nav-tabs" (navChange)="beforeTabChange($event)" [class.has-element-definition]="selectedElement">
@@ -54,14 +54,14 @@
             </div>
 
             <div class="col-md-3">
-              <div class="form-group">
+              <div class="mb-3">
                 <label>ID
                   <app-tooltip-icon tooltipKey="resource.move"></app-tooltip-icon>
                 </label>
                 <input type="text" class="form-control" [disabled]="true" [ngModel]="structureDefinition.id" (change)="isDirty = true; nameChanged();"/>
               </div>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label>Type
                   <app-tooltip-icon tooltipKey="sd.type"></app-tooltip-icon>
                 </label>
@@ -263,11 +263,11 @@
               <a *ngIf="e.constrainedElement" href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.displayId}}</a>
               <span *ngIf="!e.constrainedElement">{{e.displayId}}</span>
 
-              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types">?</span>
-              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ</span>
-              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?!</span>
-              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S</span>
-              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types">?</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?!</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I</span>
               <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constraintManager.constrain(e); isDirty = true; nameChanged();"></i> </span>
               <span class="action" *ngIf="e.constrainedElement && e.depth > 0 && cardinalityAllowsMultiple(e.baseElement.max) && e.constrainedElement.slicing">
                 <i class="fa fa-cut" title="Slice this element" (click)="constraintManager.slice(e); isDirty = true; nameChanged();"></i>
@@ -325,9 +325,7 @@
             <td class="element-cardinality">
               <div class="input-group">
                 <input type="text" class="form-control" [(ngModel)]="e.minString" [disabled]="!e.constrainedElement" (change)="isDirty = true; nameChanged();"/>
-                <div class="input-group-append">
-                  <span class="input-group-text">...</span>
-                </div>
+                <span class="input-group-text">...</span>
                 <input type="text" class="form-control" [(ngModel)]="e.max" [disabled]="!e.constrainedElement" (change)="isDirty = true; nameChanged();"/>
               </div>
             </td>
@@ -387,7 +385,7 @@
       <span>Element Definition</span>
 
       <div class="btn-toolbar" style="float: right">
-        <div class="btn-group mr-2">
+        <div class="btn-group me-2">
           <button type="button" class="btn btn-primary btn-sm" title="Slice this element"
                   [disabled]="!selectedElement.constrainedElement || selectedElement.depth === 0 || !cardinalityAllowsMultiple(selectedElement.baseElement.max)"
                   (click)="constraintManager.slice(selectedElement); isDirty = true; nameChanged();">

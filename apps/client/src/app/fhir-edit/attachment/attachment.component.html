@@ -1,4 +1,4 @@
-<div class="form-group" *ngIf="isFormGroup">
+<div class="mb-3" *ngIf="isFormGroup">
     <label>
         <input type="checkbox" *ngIf="!required" [ngModel]="parentObject && parentObject.hasOwnProperty(propertyName)" (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, defaultValue); change.emit()" />
         {{title || 'Attachment'}}

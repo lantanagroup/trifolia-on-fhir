@@ -1,8 +1,6 @@
 <div class="modal-header">
     <h4 class="modal-title">Edit Human Name</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-        <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body" *ngIf="humanName">
     <app-fhir-string [parentObject]="humanName" propertyName="text" title="Text"></app-fhir-string>
@@ -116,7 +114,7 @@
         </table>
     </div>
 
-    <div class="form-group">
+    <div class="mb-3">
         <label>Period</label>
         TODO
     </div>

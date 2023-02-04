@@ -14,7 +14,7 @@
         </div>
 
         <div class="btn-toolbar">
-          <div class="btn-group mr-2" aria-label="Profile Fields">
+          <div class="btn-group me-2" aria-label="Profile Fields">
             <label class="btn-primary" ngbButtonLabel>
               <input type="checkbox" ngbButton [(ngModel)]="enabledFields.profileDescription"> Description
             </label>
@@ -32,19 +32,19 @@
             Profile {{profile.name}}{{changedProfiles[profile.id] === true ? '*' : ''}}
           </div>
           <div class="card-body">
-            <div class="form-group" *ngIf="enabledFields.profileDescription">
+            <div class="mb-3" *ngIf="enabledFields.profileDescription">
               <label>Description</label>
               <pre *ngIf="!editFields[profile.id + 'description']" (click)="editFields[profile.id + 'description'] = true">{{profile.description}}</pre>
               <trifolia-fhir-markdown [(value)]="profile.description" *ngIf="editFields[profile.id + 'description']" (valueChange)="changedProfiles[profile.id] = true"></trifolia-fhir-markdown>
             </div>
 
-            <div class="form-group" *ngIf="enabledFields.profileIntro">
+            <div class="mb-3" *ngIf="enabledFields.profileIntro">
               <label>Intro</label>
               <pre *ngIf="!editFields[profile.id + 'intro']" (click)="editFields[profile.id + 'intro'] = true">{{profile.intro}}</pre>
               <trifolia-fhir-markdown [(value)]="profile.intro" *ngIf="editFields[profile.id + 'intro']" (valueChange)="changedProfiles[profile.id] = true"></trifolia-fhir-markdown>
             </div>
 
-            <div class="form-group" *ngIf="enabledFields.profileNotes">
+            <div class="mb-3" *ngIf="enabledFields.profileNotes">
               <label>Notes</label>
               <pre *ngIf="!editFields[profile.id + 'notes']" (click)="editFields[profile.id + 'notes'] = true">{{profile.notes}}</pre>
               <trifolia-fhir-markdown [(value)]="profile.notes" *ngIf="editFields[profile.id + 'notes']" (valueChange)="changedProfiles[profile.id] = true"></trifolia-fhir-markdown>
@@ -64,7 +64,7 @@
         </div>
 
         <div class="btn-toolbar">
-          <div class="btn-group mr-2" aria-label="Element Fields">
+          <div class="btn-group me-2" aria-label="Element Fields">
             <label class="btn-primary" ngbButtonLabel>
               <input type="checkbox" ngbButton [(ngModel)]="enabledFields.elementShort"> Short
             </label>
@@ -86,19 +86,19 @@
             <div class="card" *ngFor="let element of profile.differential?.element; let eIndex = index">
               <div class="card-header">Element {{eIndex + 1}}: {{element.id}}</div>
               <div class="card-body">
-                <div class="form-group" *ngIf="enabledFields.elementShort">
+                <div class="mb-3" *ngIf="enabledFields.elementShort">
                   <label>Short</label>
                   <pre *ngIf="!editFields[profile.id + element.id + 'short'] " (click)="editFields[profile.id + element.id + 'short'] = true">{{element.short}}</pre>
                   <app-fhir-string [parentObject]="element" propertyName="short" [isFormGroup]="false" *ngIf="editFields[profile.id + element.id + 'short']" (change)="changedProfiles[profile.id] = true"></app-fhir-string>
                 </div>
 
-                <div class="form-group" *ngIf="enabledFields.elementDefinition">
+                <div class="mb-3" *ngIf="enabledFields.elementDefinition">
                   <label>Definition</label>
                   <pre *ngIf="!editFields[profile.id + element.id + 'definition']" (click)="editFields[profile.id + element.id + 'definition'] = true">{{element.definition}}</pre>
                   <trifolia-fhir-markdown [(value)]="element.definition" *ngIf="editFields[profile.id + element.id + 'definition']" (change)="changedProfiles[profile.id] = true"></trifolia-fhir-markdown>
                 </div>
 
-                <div class="form-group" *ngIf="enabledFields.elementRequirements">
+                <div class="mb-3" *ngIf="enabledFields.elementRequirements">
                   <label>Requirements</label>
                   <pre *ngIf="!editFields[profile.id + element.id + 'requirements']" (click)="editFields[profile.id + element.id + 'requirements'] = true">{{element.requirements}}</pre>
                   <trifolia-fhir-markdown [(value)]="element.requirements" *ngIf="editFields[profile.id + element.id + 'requirements']" (change)="changedProfiles[profile.id] = true"></trifolia-fhir-markdown>

@@ -1,8 +1,6 @@
 <div class="modal-header">
     <h4 class="modal-title">Edit Identifier</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-        <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body" *ngIf="identifier">
     <app-fhir-select-single-code [parentObject]="identifier" propertyName="use" title="Use" valueSetUrl="http://hl7.org/fhir/ValueSet/identifier-use"></app-fhir-select-single-code>
@@ -13,12 +11,12 @@
 
     <app-fhir-select-single-code [parentObject]="identifier" propertyName="type" title="Type" valueSetUrl="http://hl7.org/fhir/ValueSet/identifier-type"></app-fhir-select-single-code>
 
-    <div class="form-group">
+    <div class="mb-3">
         <label>Period</label>
         TODO
     </div>
 
-    <div class="form-group">
+    <div class="mb-3">
         <label>Assigner</label>
         TODO
     </div>

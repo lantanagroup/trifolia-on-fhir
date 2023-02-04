@@ -4,14 +4,14 @@
 
 <div class="row" *ngIf="githubService.token">
   <div class="col-md-12">
-    <div class="form-group">
+    <div class="mb-3">
       <label>Commit Message</label>
       <textarea class="form-control" [class.is-invalid]="!commitMessage" [(ngModel)]="commitMessage" placeholder="Required" [attr.data-intro]="Globals.introText['export.githubMessage']"></textarea>
     </div>
   </div>
 
   <div class="col-md-4">
-    <div class="form-group">
+    <div class="mb-3">
       <label>
         Repository <app-tooltip-icon tooltipKey="github.repository.onlypush"></app-tooltip-icon>
       </label>
@@ -23,7 +23,7 @@
   </div>
 
   <div class="col-md-4">
-    <div class="form-group" *ngIf="repository">
+    <div class="mb-3" *ngIf="repository">
       <label>Branch</label>
       <select class="form-control" [(ngModel)]="branch" (change)="branchChanged()">
         <option *ngFor="let b of branches">{{b.name}}</option>
@@ -31,7 +31,7 @@
     </div>
   </div>
   <div class="col-md-4">
-    <div class="form-group" *ngIf="repository">
+    <div class="mb-3" *ngIf="repository">
       <label>Output Format</label>
       <select class="form-control" [(ngModel)]="responseFormat" (change)="responseFormatChanged(); change.emit(responseFormat)">
         <option value="application/json">JSON</option>
@@ -64,7 +64,7 @@
         <th>Info</th>
         <th>
           <div class="dropdown pull-right">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
             <div class="dropdown-menu" aria-labelledby="actionsMenuButton">
               <a class="dropdown-item" href="javascript:void(0)" (click)="deleteOthers()">Delete everything not in the IG</a>
             </div>

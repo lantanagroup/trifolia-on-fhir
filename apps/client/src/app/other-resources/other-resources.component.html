@@ -7,14 +7,14 @@
     </a>
     <ng-template ngbNavContent>
       <div class="col-md-6">
-        <div class="form-group" [attr.data-intro]="tabSet.activeId === 'criteria' ? Globals.introText['other.search.resource-type'] : undefined">
+        <div class="mb-3" [attr.data-intro]="tabSet.activeId === 'criteria' ? Globals.introText['other.search.resource-type'] : undefined">
           <label>Resource Type</label>
           <select class="form-control" [(ngModel)]="searchResourceType" [class.is-invalid]="!searchResourceType" (keyup.enter)="search()">
             <option *ngFor="let o of resourceTypes" [ngValue]="o.code">{{o.display}}</option>
           </select>
         </div>
 
-        <div class="form-group" *ngIf="configService.project">
+        <div class="mb-3" *ngIf="configService.project">
           <label>Only show resources for the project (the context implementation guide)?</label>
           <select class="form-control" [(ngModel)]="ignoreContext">
             <option [ngValue]="false">Yes</option>
@@ -22,13 +22,13 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <label>Content</label>
           <input type="text" class="form-control" [(ngModel)]="searchContent" (keyup.enter)="search()" />
           <span class="help-block">This field searches the entire content of the resource.</span>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <label>Resource URL</label>
           <input type="text" class="form-control" [(ngModel)]="searchUrl" (keyup.enter)="search()" />
           <span class="help-block">This field only applies if the selected resource type has a "URL" field. Searching by URL requires an exact match.</span>

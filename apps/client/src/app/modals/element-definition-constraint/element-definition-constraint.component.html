@@ -1,15 +1,13 @@
 <div class="modal-header">
   <h4 class="modal-title" id="modal-basic-title">Edit constraint</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.close()">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.close()"></button>
 </div>
 <div class="modal-body">
   <app-fhir-string [parentObject]="constraint" propertyName="key" [required]="true" tooltipPath="ElementDefinition.constraint.key" title="Key"></app-fhir-string>
 
   <app-fhir-string [parentObject]="constraint" propertyName="requirements" tooltipPath="ElementDefinition.constraint.requirements" title="Requirements"></app-fhir-string>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>Severity</label>
     <select class="form-control" [(ngModel)]="constraint.severity" [class.is-invalid]="!constraint.severity">
       <option value="error">Error</option>

@@ -1,8 +1,6 @@
 <div class="modal-header">
     <h4 class="modal-title">Edit Range</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-        <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body" *ngIf="range">
     <!-- low -->
@@ -14,7 +12,7 @@
         <div class="card-body" *ngIf="range.hasOwnProperty('low')">
             <app-fhir-string [parentObject]="range.low" propertyName="unit" title="Unit"></app-fhir-string>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label>
                     <input type="checkbox" [ngModel]="range.low.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(range.low, 'value', 0)"/>
                     Value
@@ -22,7 +20,7 @@
                 <input type="number" class="form-control" [disabled]="!range.low.hasOwnProperty('value')" [(ngModel)]="range.low.value" />
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label>
                     <input type="checkbox" [ngModel]="range.low.hasOwnProperty('comparator')" (ngModelChange)="Globals.toggleProperty(range.low, 'comparator', '<')"/>
                     Comparator
@@ -50,7 +48,7 @@
         <div class="card-body" *ngIf="range.hasOwnProperty('high')">
             <app-fhir-string [parentObject]="range.high" propertyName="unit" title="Unit"></app-fhir-string>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label>
                     <input type="checkbox" [ngModel]="range.high.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(range.high, 'value', 0)"/>
                     Value
@@ -58,7 +56,7 @@
                 <input type="number" class="form-control" [disabled]="!range.high.hasOwnProperty('value')" [(ngModel)]="range.high.value" />
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label>
                     <input type="checkbox" [ngModel]="range.high.hasOwnProperty('comparator')" (ngModelChange)="Globals.toggleProperty(range.high, 'comparator', '<')"/>
                     Comparator

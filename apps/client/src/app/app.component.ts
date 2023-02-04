@@ -126,9 +126,12 @@ export class AppComponent implements OnInit {
   }
 
   public openFile() {
+    console.log('openFile');
     const modalRef = this.modalService.open(FileOpenModalComponent, {backdrop: 'static'});
+    console.log('openFile :: modal opened', modalRef);
 
     modalRef.result.then((results: FileModel) => {
+      console.log('modalRef.result.then results', results);
       this.fileService.loadFile(results);
     });
   }

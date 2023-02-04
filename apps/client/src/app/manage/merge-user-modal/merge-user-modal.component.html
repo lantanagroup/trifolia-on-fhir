@@ -1,13 +1,11 @@
 <div class="modal-header">
   <h4 class="modal-title">Merge Users</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
   <div class="alert alert-warning" *ngIf="message">{{message}}</div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>Source user to merge/delete</label>
     <ul>
       <li>ID: {{sourceUser.id}}</li>
@@ -18,7 +16,7 @@
     </ul>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>Search for destination user</label>
     <div class="input-group">
       <input type="text" class="form-control" placeholder="Name..." [(ngModel)]="searchUsersName" (change)="searchUsers()" />

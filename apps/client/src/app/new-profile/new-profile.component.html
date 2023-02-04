@@ -9,7 +9,7 @@
           <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" [required]="true" tooltipPath="StructureDefinition.url" (change)="urlChanged()"></app-fhir-string>
         </div>
         <div class="col-md-4">
-          <div class="form-group">
+          <div class="mb-3">
             <label>
               ID <app-tooltip-icon tooltipPath="StructureDefinition.id"></app-tooltip-icon>
             </label>
@@ -41,7 +41,7 @@
                             tooltipPath="StructureDefinition.abstract"></app-fhir-boolean>
         </div>
         <div class="col-md-4">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Type</label>
             <input type="text" class="form-control"
                    [(ngModel)]="selectedType"
@@ -54,7 +54,7 @@
 
             <ng-template #typeTemplate let-r="result" let-t="term">
               <ngb-highlight [result]="r.display || r.code" [term]="t"></ngb-highlight>
-              &nbsp;<i class="badge badge-info">{{r.spec}}</i>
+              &nbsp;<i class="badge bg-info">{{r.spec}}</i>
             </ng-template>
           </div>
         </div>

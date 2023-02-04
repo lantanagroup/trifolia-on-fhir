@@ -25,10 +25,8 @@
       <td>
         <div class="input-group" *ngFor="let c of (j.coding || []); let ci = index">
           <!--div class="input-group">
-            <div class="input-group-prepend">
-              <div class="input-group-text">
-                <input type="checkbox" [ngModel]="typeahead[ci]"/>
-              </div>
+            <div class="input-group-text">
+              <input type="checkbox" [ngModel]="typeahead[ci]"/>
             </div>
             <input type="text" class="form-control" [disabled]="!typeahead[ci]" [(ngModel)]="jurisdictionSearch" [ngbTypeahead]="typeaheadSearch" [resultFormatter]="typeaheadFormatter"/>
           </div-->
@@ -44,15 +42,13 @@
           <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" (change)="change.emit()" *ngIf="!editor[ji]" />
           <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" (change)="change.emit()" *ngIf="!editor[ji]" />
           <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" (change)="change.emit()" *ngIf="!editor[ji]" />
-          <div class="input-group-append">
-            <button (click)="changeEditor(ji)" *ngIf="jurisdictionCodes" class="btn btn-primary" title="Edit the code/display/system for this jurisdiction"
-                    type="button">
-              <i class="fa fa-edit"></i>
-            </button>
-            <button type="button" class="btn btn-outline-primary" title="Remove this code" (click)="j.coding.splice(ci, 1); change.emit();">
-              <i class="fa fa-times"></i>
-            </button>
-          </div>
+          <button (click)="changeEditor(ji)" *ngIf="jurisdictionCodes" class="btn btn-primary" title="Edit the code/display/system for this jurisdiction"
+                  type="button">
+            <i class="fa fa-edit"></i>
+          </button>
+          <button type="button" class="btn btn-outline-primary" title="Remove this code" (click)="j.coding.splice(ci, 1); change.emit();">
+            <i class="fa fa-times"></i>
+          </button>
         </div>
         <a href="javascript:void(0)" (click)="addCoding(j, ji); change.emit();">Add a code</a>
       </td>

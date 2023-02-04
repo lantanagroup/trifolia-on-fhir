@@ -2,13 +2,11 @@
 <label for="version-typeahead">FHIR IG Publisher Version</label>
 <div class="input-group">
   <input id="version-typeahead" type="text" class="form-control" (selectItem)="typeaheadSelectedVersion($event)" [(ngModel)]="versionTypeahead" [ngbTypeahead]="search"/>
-  <div class="input-group-append">
-    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-    <div class="dropdown-menu">
-      <a class="dropdown-item" href="javascript:void(0)" *ngFor="let v of versions | slice:0:10; let i=index" (click)="selectRecentVersion(v)">{{v.name}}</a>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="javascript:void(0)" (click)="selectRecentVersion({ id: 'dev', name: 'dev' })">dev</a>
-    </div>
+  <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+  <div class="dropdown-menu">
+    <a class="dropdown-item" href="javascript:void(0)" *ngFor="let v of versions | slice:0:10; let i=index" (click)="selectRecentVersion(v)">{{v.name}}</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="javascript:void(0)" (click)="selectRecentVersion({ id: 'dev', name: 'dev' })">dev</a>
   </div>
   <div class="help-block">The "dev" version of the FHIR IG Publisher may include changes that are not supported or not compatible with the export from Trifolia-on-FHIR.</div>
 </div>

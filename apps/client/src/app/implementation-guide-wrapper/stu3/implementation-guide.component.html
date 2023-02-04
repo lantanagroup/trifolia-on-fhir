@@ -4,8 +4,8 @@
 
 <div class="ig-main" *ngIf="implementationGuide">
   <h2>
-    {{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
-    <span class="badge badge-danger" *ngIf="isDirty">Changed!</span>
+    {{implementationGuide.name || 'no-name'}} <span class="badge bg-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
+    <span class="badge bg-danger" *ngIf="isDirty">Changed!</span>
   </h2>
   <ul ngbNav #igTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false" (navChange)="tabChange($event)">
     <li ngbNavItem="general">
@@ -95,7 +95,7 @@
               </div>
             </div>
             <div class="col-md-4">
-              <div class="form-group">
+              <div class="mb-3">
                 <label>ID
                   <app-tooltip-icon *ngIf="!isNew" tooltipKey="resource.move"></app-tooltip-icon>
                 </label>
@@ -109,7 +109,7 @@
 
               <app-fhir-date [parentObject]="implementationGuide" propertyName="date" title="Date" [allowTime]="true"></app-fhir-date>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label>Package ID</label>
                 <input type="text" class="form-control" [(ngModel)]="packageId" [class.is-invalid]="!packageId || !packageIdFormatValid" (change)="igChanging.emit(true);"/>
                 <span class="help-block" *ngIf="!packageId">You must specify Package ID.</span>
@@ -118,7 +118,7 @@
                 </div>
               </div>
 
-              <div class="form-group" *ngIf="packageId && packageId.startsWith('hl7.')">
+              <div class="mb-3" *ngIf="packageId && packageId.startsWith('hl7.')">
                 <label>HL7 Work Group</label>
                 <select class="form-control" [(ngModel)]="hl7WorkGroup" [class.is-invalid]="!hl7WorkGroup" (change)="igChanging.emit(true);">
                   <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
@@ -135,7 +135,7 @@
                 (change)="igChanging.emit(true);">
               </app-fhir-string>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label>Status
                   <app-tooltip-icon tooltipPath="ImplementationGuide.status"></app-tooltip-icon>
                 </label>
@@ -273,11 +273,9 @@
               <td>
                 <div class="input-group">
                   <input type="text" class="form-control" [class.is-invalid]="!param.code" [(ngModel)]="param.code" (change)="igChanging.emit(true);"/>
-                  <div class="input-group-append">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                    <div class="dropdown-menu">
-                      <a class="dropdown-item" href="javascript:void(0)" *ngFor="let p of Globals.igParameters" (click)="param.code = p">{{p}}</a>
-                    </div>
+                  <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="javascript:void(0)" *ngFor="let p of Globals.igParameters" (click)="param.code = p">{{p}}</a>
                   </div>
                 </div>
               </td>
@@ -464,14 +462,14 @@
                  (click)="prompt(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
             </a>
             <ng-template ngbNavContent>
-              <div class="form-group">
+              <div class="mb-3">
                 <label>Name
                   <app-tooltip-icon tooltipPath="ImplementationGuide.package.name"></app-tooltip-icon>
                 </label>
                 <input type="text" class="form-control" [(ngModel)]="p.name" (change)="igChanging.emit(true);"/>
               </div>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label>
                   <input type="checkbox" [ngModel]="p.hasOwnProperty('description')"
                          (ngModelChange)="Globals.toggleProperty(p, 'description', '')" (change)="igChanging.emit(true);"/>
@@ -640,14 +638,12 @@
 <ng-template #packageResourceModal let-c="close" let-d="dismiss">
   <div class="modal-header">
     <h4 class="modal-title">Edit package resource</h4>
-    <button type="button" class="close" aria-label="Close" (click)="closePackageResourceModal(d)">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closePackageResourceModal(d)"></button>
   </div>
   <div class="modal-body">
     <app-fhir-string [parentObject]="currentResource" propertyName="name" title="Name" (change)="igChanging.emit(true);"></app-fhir-string>
 
-    <div class="form-group">
+    <div class="mb-3">
       <label>Source type</label>
       <div class="input-group">
         <select class="form-control" [ngModel]="getResourceSourceType(currentResource)" (ngModelChange)="setResourceSourceType(currentResource, $event)" (change)="igChanging.emit(true);">

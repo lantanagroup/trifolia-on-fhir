@@ -15,7 +15,7 @@
 
             <app-fhir-string [parentObject]="searchParameter" propertyName="expression" title="Expression" [required]="searchParameter.status === 'active'" requiredMessage="Expression is required to save an Active search parameter"></app-fhir-string>
 
-            <div class="form-group">
+            <div class="mb-3">
               <label>Status</label>
               <select class="form-control" [(ngModel)]="searchParameter.status"
                       [required]="true"
@@ -34,7 +34,7 @@
           </div>
 
           <div class="col-md-6">
-            <div class="form-group">
+            <div class="mb-3">
               <label>ID</label>
               <div [class.input-group]="!isNew">
                 <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="searchParameter.id" placeholder="AUTO" />

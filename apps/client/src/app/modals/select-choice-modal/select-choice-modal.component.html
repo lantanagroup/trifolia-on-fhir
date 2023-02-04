@@ -1,11 +1,9 @@
 <div class="modal-header">
     <h4 class="modal-title">Select Choice</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-        <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body" *ngIf="element && structureDefinition">
-    <div class="form-group">
+    <div class="mb-3">
         <label>Type</label>
         <select class="form-control" [(ngModel)]="selectedType">
             <option *ngFor="let type of types" [ngValue]="type.code">{{type.code}}</option>

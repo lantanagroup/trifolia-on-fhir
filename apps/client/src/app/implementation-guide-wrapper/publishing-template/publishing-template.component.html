@@ -1,4 +1,4 @@
-<div class="form-group">
+<div class="mb-3">
   <label>
     Publishing Template
     <app-tooltip-icon tooltipKey="ig.publishing.template"></app-tooltip-icon>
@@ -18,11 +18,11 @@
       <option *ngFor="let version of officialVersions" [value]="version">{{version}}</option>
     </select>
     <input type="text" class="form-control" *ngIf="templateType === 'custom-uri'" [(ngModel)]="customUri" (change)="valueUriChanged()" placeholder="{{Globals.tooltips['ig.publishing.template.custom.example']}}" [class.is-invalid]="!valueUriValid" />
-    <div class="input-group-append" *ngIf="templateType === 'custom-uri'">
+    <ng-container *ngIf="templateType === 'custom-uri'">
       <div class="input-group-text">
         <app-tooltip-icon tooltipKey="ig.publishing.template.custom"></app-tooltip-icon>
       </div>
-    </div>
+    </ng-container>
   </div>
   <p class="help-block" *ngIf="!valueUriValid">The custom template specified must be a valid URL.</p>
 </div>

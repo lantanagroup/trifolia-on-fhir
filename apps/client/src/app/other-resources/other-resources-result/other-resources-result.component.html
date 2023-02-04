@@ -2,7 +2,7 @@
   <h1>{{data.resourceType}} - {{data.id}}</h1>
   <input type="file" style="display: none;" #fileUpload accept="application/json, application/xml" (change)="uploadFile($event)"/>
   <div class="btn-toolbar">
-    <div class="btn-group mr-2" role="group" aria-label="Generic actions for the resource">
+    <div class="btn-group me-2" role="group" aria-label="Generic actions for the resource">
       <button type="button" class="btn btn-primary" title="Remove this resource" (click)="remove(data)">
         <i class="fa fa-trash"></i>
       </button>

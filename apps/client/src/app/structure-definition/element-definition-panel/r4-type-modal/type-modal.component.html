@@ -1,11 +1,9 @@
 <div class="modal-header">
   <h4 class="modal-title">{{element ? element.path : 'Unknown'}}'s Type</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body" *ngIf="type">
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       Code
       <app-tooltip-icon tooltipPath="ElementDefinition.type.code"></app-tooltip-icon>
@@ -15,7 +13,7 @@
     </select>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       Profile
       <app-tooltip-icon tooltipPath="ElementDefinition.type.profile"></app-tooltip-icon>
@@ -23,42 +21,38 @@
     <div class="input-group" *ngFor="let p of type.profile; let pi = index; trackBy: Globals.trackByFn">
       <input type="text" class="form-control" [(ngModel)]="type.profile[pi]" placeholder="Profile Reference"/>
       <input type="text" class="form-control" [ngModel]="getProfileElement(pi)" (ngModelChange)="setProfileElement(pi, $event)" placeholder="Profile Element" />
-      <div class="input-group-append">
-        <button type="button" class="btn btn-primary" title="Select a profile" (click)="selectProfile(type.profile, pi)">
-          <i class="fas fa-hand-pointer"></i>
-        </button>
-        <button type="button" class="btn btn-primary" title="Remove this profile" (click)="type.profile.splice(pi, 1)">
-          <i class="fas fa-trash-alt"></i>
-        </button>
-      </div>
+      <button type="button" class="btn btn-primary" title="Select a profile" (click)="selectProfile(type.profile, pi)">
+        <i class="fas fa-hand-pointer"></i>
+      </button>
+      <button type="button" class="btn btn-primary" title="Remove this profile" (click)="type.profile.splice(pi, 1)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
     </div>
     <p>
       <a href="javascript:void(0)" (click)="addProfile()">Add profile</a>
     </p>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       Target Profile
       <app-tooltip-icon tooltipPath="ElementDefinition.type.targetProfile"></app-tooltip-icon>
     </label>
     <div class="input-group" *ngFor="let p of type.targetProfile; let tpi = index; trackBy: Globals.trackByFn">
       <input type="text" class="form-control" [(ngModel)]="type.targetProfile[tpi]" placeholder="Reference" />
-      <div class="input-group-append">
-        <button type="button" class="btn btn-primary" title="Select a target profile" (click)="selectProfile(type.targetProfile, tpi)">
-          <i class="fas fa-hand-pointer"></i>
-        </button>
-        <button type="button" class="btn btn-primary" title="Remove this target profile" (click)="type.targetProfile.splice(tpi, 1)">
-          <i class="fas fa-trash-alt"></i>
-        </button>
-      </div>
+      <button type="button" class="btn btn-primary" title="Select a target profile" (click)="selectProfile(type.targetProfile, tpi)">
+        <i class="fas fa-hand-pointer"></i>
+      </button>
+      <button type="button" class="btn btn-primary" title="Remove this target profile" (click)="type.targetProfile.splice(tpi, 1)">
+        <i class="fas fa-trash-alt"></i>
+      </button>
     </div>
     <p>
       <a href="javascript:void(0)" (click)="addTargetProfile()">Add target profile</a>
     </p>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       Aggregation
       <app-tooltip-icon tooltipPath="ElementDefinition.type.aggregation"></app-tooltip-icon>

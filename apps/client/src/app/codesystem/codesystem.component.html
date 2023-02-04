@@ -49,7 +49,7 @@
           <div class="col-md-4">
             <app-fhir-boolean [parentObject]="codeSystem" propertyName="versionNeeded" title="Version Needed" tooltipPath="CodeSystem.versionNeeded"></app-fhir-boolean>
 
-            <div class="form-group">
+            <div class="mb-3">
               <label>
                 <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('count')" (ngModelChange)="Globals.toggleProperty(codeSystem, 'count', 1)"/>
                 Count

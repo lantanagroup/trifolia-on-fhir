@@ -2,7 +2,7 @@
 
 <div class="alert alert-info" *ngIf="message">{{message}}</div>
 
-<div class="form-group" [attr.data-intro]="Globals.introText['export.implementationGuide']" *ngIf="!configService.project">
+<div class="mb-3" [attr.data-intro]="Globals.introText['export.implementationGuide']" *ngIf="!configService.project">
   <label>Implementation Guide</label>
   <div class="input-group">
     <input type="text" class="form-control"
@@ -32,7 +32,7 @@
 
         <div class="row" [attr.data-intro]="Globals.introText['export.igPublisher']">
           <div class="col-md-6">
-            <div class="form-group" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction" [attr.data-intro]="Globals.introText['export.igPublisherOutput']">
+            <div class="mb-3" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction" [attr.data-intro]="Globals.introText['export.igPublisherOutput']">
               <label>Output Format</label>
               <select class="form-control" [(ngModel)]="options.responseFormat">
                 <option value="application/json">JSON</option>
@@ -42,7 +42,7 @@
           </div>
 
           <div class="col-md-6">
-            <div class="form-group" [attr.data-intro]="Globals.introText['export.igPublisherJAR']">
+            <div class="mb-3" [attr.data-intro]="Globals.introText['export.igPublisherJAR']">
               <label>Include FHIR IG Publisher JAR?</label>
               <select class="form-control" [(ngModel)]="options.includeIgPublisherJar">
                 <option [ngValue]="true">Yes</option>
@@ -67,7 +67,7 @@
         </div>
         <div class="row">
           <div class="col-md-4">
-            <div class="form-group">
+            <div class="mb-3">
               <label>Template Type</label>
               <select class="form-control" [(ngModel)]="options.templateType" (change)="templateTypeChanged()">
                 <option value="official">Official</option>
@@ -76,14 +76,14 @@
             </div>
           </div>
           <div class="col-md-4" *ngIf="options.templateType === 'custom-uri'">
-            <div class="form-group">
+            <div class="mb-3">
               <label>Template (Archive/ZIP URL)</label>
               <input type="text" class="form-control" [(ngModel)]="options.template" (change)="templateChanged()" placeholder="{{Globals.tooltips['ig.publishing.template.custom.example']}}" [class.is-invalid]="!options.template" />
               <div class="help-block">Note: The URI must be a ZIP file.</div>
             </div>
           </div>
           <div class="col-md-4" *ngIf="options.templateType === 'official'">
-            <div class="form-group">
+            <div class="mb-3">
               <label>Template</label>
               <select class="form-control" [(ngModel)]="options.template" (change)="templateChanged()">
                 <option value="hl7.fhir.template">HL7 FHIR Template</option>
@@ -93,7 +93,7 @@
             </div>
           </div>
           <div class="col-md-4" *ngIf="options.templateType === 'official'">
-            <div class="form-group">
+            <div class="mb-3">
               <label>Version</label>
               <div>
                 <select class="form-control" [(ngModel)]="options.templateVersion" (click)="templateVersionChanged()">
@@ -114,7 +114,7 @@
 
         <div class="row" [attr.data-intro]="Globals.introText['export.bundle']">
           <div class="col-md-4">
-            <div class="form-group" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction"
+            <div class="mb-3" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction"
                 [attr.data-intro]="Globals.introText['export.bundleOutput']">
               <label>Output Format</label>
               <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
@@ -124,7 +124,7 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="form-group">
+            <div class="mb-3">
               <label>Remove ToF Extensions?</label>
               <select class="form-control" [(ngModel)]="options.removeExtensions">
                 <option [ngValue]="false">No</option>
@@ -134,7 +134,7 @@
           </div>
 
           <div class="col-md-4">
-            <div class="form-group">
+            <div class="mb-3">
               <label>Bundle Type</label>
               <select class="form-control" [(ngModel)]="options.bundleType">
                 <option value="transaction">Transaction</option>

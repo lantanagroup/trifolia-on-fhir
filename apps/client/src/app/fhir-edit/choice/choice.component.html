@@ -1,4 +1,4 @@
-<div [class.form-group]="isFormGroup" *ngIf="parentObject">
+<div [class.mb-3]="isFormGroup" *ngIf="parentObject">
   <label *ngIf="isFormGroup && !hasChoice()">
     <input (ngModelChange)="toggleChoice($event); change.emit()" *ngIf="!required" [disabled]="disabled" [ngModel]="hasChoice()" type="checkbox" />
     {{title || 'Choice'}}
@@ -6,24 +6,22 @@
   <input (ngModelChange)="toggleChoice($event); change.emit()" *ngIf="!isFormGroup && !hasChoice()" [disabled]="disabled" [ngModel]="hasChoice()" type="checkbox" />
   <app-tooltip-icon *ngIf="isFormGroup && !hasChoice()" [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
   <div class="input-group" *ngIf="hasChoice()">
-    <div class="input-group-prepend" *ngIf="!required || title">
+    <ng-container *ngIf="!required || title">
       <div class="input-group-text">
         <input type="checkbox" *ngIf="!required" [ngModel]="hasChoice()" (ngModelChange)="toggleChoice($event); change.emit()"/>
         <span>{{title}} </span>
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
       </div>
-    </div>
+    </ng-container>
     <select class="form-control" *ngIf="hasChoice() && choices.length > 1" [ngModel]="getChoiceName()" (ngModelChange)="setChoicePropertyName($event); change.emit()" [class.is-invalid]="typeInvalid">
       <option *ngFor="let c of choices" [ngValue]="c">{{c}}</option>
     </select>
   </div>
   <div class="input-group" *ngIf="getChoiceName() === 'Address'">
     <input type="text" class="form-control" [ngModel]="getAddressDisplay()" readonly/>
-    <div class="input-group-append">
-      <button type="button" class="btn btn-default" title="Edit this address" (click)="editAddress()">
-        <i class="fa fa-edit"></i>
-      </button>
-    </div>
+    <button type="button" class="btn btn-default" title="Edit this address" (click)="editAddress()">
+      <i class="fa fa-edit"></i>
+    </button>
   </div>
   <div class="input-group" *ngIf="isString()">
     <input type="text" class="form-control" [(ngModel)]="parentObject[getChoicePropertyName()]" (change)="change.emit()"/>
@@ -41,44 +39,34 @@
   <app-fhir-quantity *ngIf="isQuantity()" [parentObject]="parentObject" [propertyName]="getChoicePropertyName()" [isFormGroup]="false" (change)="change.emit()"></app-fhir-quantity>
   <div class="input-group" *ngIf="getChoiceName() === 'CodeableConcept'">
     <input type="text" class="form-control" readonly [ngModel]="getCodeableConceptDisplay()"/>
-    <div class="input-group-append">
-      <button type="button" class="btn btn-default" (click)="editCodeableConcept()" title="Edit this codeable concept">
-        <i class="fa fa-edit"></i>
-      </button>
-    </div>
+    <button type="button" class="btn btn-default" (click)="editCodeableConcept()" title="Edit this codeable concept">
+      <i class="fa fa-edit"></i>
+    </button>
   </div>
   <div class="input-group" *ngIf="getChoiceName() === 'Coding'">
     <input type="text" class="form-control" readonly [ngModel]="getCodingDisplay()"/>
-    <div class="input-group-append">
-      <button type="button" class="btn btn-default" (click)="editCoding()" title="Edit this coding">
-        <i class="fa fa-edit"></i>
-      </button>
-    </div>
+    <button type="button" class="btn btn-default" (click)="editCoding()" title="Edit this coding">
+      <i class="fa fa-edit"></i>
+    </button>
   </div>
   <div class="input-group" *ngIf="getChoiceName() === 'ContactPoint'">
-    <div class="input-group-append">
-      <div class="input-group-text">
-        <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('system')"
-               (ngModelChange)="Globals.toggleProperty(parentObject[getChoicePropertyName()], 'system', ''); change.emit()"/>
-      </div>
+    <div class="input-group-text">
+      <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('system')"
+              (ngModelChange)="Globals.toggleProperty(parentObject[getChoicePropertyName()], 'system', ''); change.emit()"/>
     </div>
     <select class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('system')"
             [(ngModel)]="parentObject[getChoicePropertyName()].system" (change)="change.emit()">
       <option *ngFor="let cpc of contactPointSystemCodes" [ngValue]="cpc.code">{{cpc.display}}</option>
     </select>
-    <div class="input-group-append">
-      <div class="input-group-text">
-        <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('value')"
-               (ngModelChange)="Globals.toggleProperty(parentObject[getChoicePropertyName()], 'value', ''); change.emit()"/>
-      </div>
+    <div class="input-group-text">
+      <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('value')"
+              (ngModelChange)="Globals.toggleProperty(parentObject[getChoicePropertyName()], 'value', ''); change.emit()"/>
     </div>
     <input type="text" class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('value')"
            [(ngModel)]="parentObject[getChoicePropertyName()].value" (change)="change.emit()"/>
-    <div class="input-group-append">
-      <button type="button" class="btn btn-default" (click)="editContactPoint()" title="Edit this contact point">
-        <i class="fa fa-edit"></i>
-      </button>
-    </div>
+    <button type="button" class="btn btn-default" (click)="editContactPoint()" title="Edit this contact point">
+      <i class="fa fa-edit"></i>
+    </button>
   </div>
   <app-fhir-human-name *ngIf="getChoiceName() === 'HumanName'" [parentObject]="parentObject"
                        [propertyName]="getChoicePropertyName()" [isFormGroup]="false"

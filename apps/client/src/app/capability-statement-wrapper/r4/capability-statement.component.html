@@ -101,7 +101,7 @@
               <span>Date must be written as yyyy-MM-dd</span>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
               <label>Status</label>
               <select class="form-control" [(ngModel)]="capabilityStatement.status"
                       [class.is-invalid]="!capabilityStatement.status">
@@ -112,7 +112,7 @@
               </select>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
               <label>Kind</label>
               <select class="form-control" [(ngModel)]="capabilityStatement.kind"
                       [class.is-invalid]="!capabilityStatement.kind">
@@ -343,298 +343,300 @@
               (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This
         capability statement includes REST entries
 
-        <ul ngbNav #restTabSet="ngbNav" class="nav-tabs"*ngIf="capabilityStatement.hasOwnProperty('rest')" [destroyOnHide]="false">
-          <li *ngFor="let r of capabilityStatement.rest; let ri = index" ngbNavItem="rest-{{ri}}">
-            <a ngbNavLink>
-              <span>REST {{ri + 1}} </span>
-            </a>
-            <ng-template ngbNavContent>
-              <div class="btn-group rest-actions">
-                <button type="button" class="btn btn-primary" [disabled]="ri === 0" (click)="moveRestLeft(r, restTabSet)">
-                  <i class="fas fa-arrow-left" title="Move this REST entry left/previous"></i>
-                </button>
-                <button type="button" class="btn btn-primary" [disabled]="ri === capabilityStatement.rest.length - 1" (click)="moveRestRight(r, restTabSet)">
-                  <i class="fas fa-arrow-right" title="Move this REST entry right/next" style="margin-left: 3px; margin-right: 3px;"></i>
-                </button>
-                <button type="button" class="btn btn-primary" (click)="ClientHelper.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)">
-                  <i class="fas fa-trash-alt" title="Remove this REST entry"></i>
-                </button>
-              </div>
-              <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode"
-                                          valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode"
-                                          [required]="true"></app-fhir-select-single-code>
-
-              <app-fhir-markdown [parentObject]="r" propertyName="documentation"
-                                title="Documentation"></app-fhir-markdown>
-
-              <!-- Security -->
-              <div class="card">
-                <div class="card-header">
-                  <input type="checkbox" [ngModel]="r.hasOwnProperty('security')" (ngModelChange)="Globals.toggleProperty(r, 'security', [{}])"/>
-                  Security
+        <ng-continer *ngIf="capabilityStatement.hasOwnProperty('rest')">
+          <ul ngbNav #restTabSet="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+            <li *ngFor="let r of capabilityStatement.rest; let ri = index" ngbNavItem="rest-{{ri}}">
+              <a ngbNavLink>
+                <span>REST {{ri + 1}} </span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="btn-group rest-actions">
+                  <button type="button" class="btn btn-primary" [disabled]="ri === 0" (click)="moveRestLeft(r, restTabSet)">
+                    <i class="fas fa-arrow-left" title="Move this REST entry left/previous"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary" [disabled]="ri === capabilityStatement.rest.length - 1" (click)="moveRestRight(r, restTabSet)">
+                    <i class="fas fa-arrow-right" title="Move this REST entry right/next" style="margin-left: 3px; margin-right: 3px;"></i>
+                  </button>
+                  <button type="button" class="btn btn-primary" (click)="ClientHelper.promptForRemove(capabilityStatement.rest, ri, 'Are you sure you want to remove this item?', $event)">
+                    <i class="fas fa-trash-alt" title="Remove this REST entry"></i>
+                  </button>
                 </div>
-                <div class="card-body" *ngIf="r.hasOwnProperty('security')">
-                  <app-fhir-boolean [parentObject]="r.security" propertyName="cors" title="CORS"></app-fhir-boolean>
+                <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode"
+                                            valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode"
+                                            [required]="true"></app-fhir-select-single-code>
 
-                  <app-fhir-string [parentObject]="r.security" propertyName="description" title="Description"></app-fhir-string>
+                <app-fhir-markdown [parentObject]="r" propertyName="documentation"
+                                  title="Documentation"></app-fhir-markdown>
 
-                  <trifolia-fhir-security-services [security]="r.security"></trifolia-fhir-security-services>
+                <!-- Security -->
+                <div class="card">
+                  <div class="card-header">
+                    <input type="checkbox" [ngModel]="r.hasOwnProperty('security')" (ngModelChange)="Globals.toggleProperty(r, 'security', [{}])"/>
+                    Security
+                  </div>
+                  <div class="card-body" *ngIf="r.hasOwnProperty('security')">
+                    <app-fhir-boolean [parentObject]="r.security" propertyName="cors" title="CORS"></app-fhir-boolean>
+
+                    <app-fhir-string [parentObject]="r.security" propertyName="description" title="Description"></app-fhir-string>
+
+                    <trifolia-fhir-security-services [security]="r.security"></trifolia-fhir-security-services>
+                  </div>
                 </div>
-              </div>
 
-              <!-- Resources -->
-              <div class="card">
-                <div class="card-header">
-                  <input type="checkbox" [ngModel]="r.hasOwnProperty('resource')"
-                        (ngModelChange)="Globals.toggleProperty(r, 'resource', [{ type: 'Account' }])"/>
-                  Resource(s)
-                </div>
-                <table class="table table-striped" *ngIf="r.hasOwnProperty('resource')">
-                  <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Profile</th>
-                    <th class="actions-column">
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Add a resource" (click)="defaultResource(r.resource)">
-                          <i class="fa fa-plus"></i>
-                        </button>
-                      </div>
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let res of r.resource; let resourceIndex = index">
-                    <td>
-                      <app-fhir-select-single-code [parentObject]="res" propertyName="type" [isFormGroup]="false" [codes]="getCodes(r.resource, resourceIndex)"
-                                                  valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
-                    </td>
-                    <td>
-                      <app-fhir-reference
-                        [parentObject]="res"
-                        propertyName="profile"
-                        [isFormGroup]="false"
-                        [isCanonical]="true"
-                        resourceType="StructureDefinition"></app-fhir-reference>
-                    </td>
-                    <td>
-                      <div class="btn-toolbar pull-right">
-                        <div class="btn-group">
-                          <button type="button" class="btn btn-primary" title="Move this resource up in the list" [disabled]="resourceIndex <= 0" (click)="moveResource(r, res, 'up')">
-                            <i class="fas fa-arrow-up"></i>
-                          </button>
-                          <button type="button" class="btn btn-primary" title="Move this resource down in the list" [disabled]="resourceIndex >= (r.resource || []).length - 1" (click)="moveResource(r, res, 'down')">
-                            <i class="fas fa-arrow-down"></i>
+                <!-- Resources -->
+                <div class="card">
+                  <div class="card-header">
+                    <input type="checkbox" [ngModel]="r.hasOwnProperty('resource')"
+                          (ngModelChange)="Globals.toggleProperty(r, 'resource', [{ type: 'Account' }])"/>
+                    Resource(s)
+                  </div>
+                  <table class="table table-striped" *ngIf="r.hasOwnProperty('resource')">
+                    <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Profile</th>
+                      <th class="actions-column">
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Add a resource" (click)="defaultResource(r.resource)">
+                            <i class="fa fa-plus"></i>
                           </button>
                         </div>
-                        <div class="btn-group">
-                          <button type="button" class="btn btn-primary" title="Edit this resource" (click)="editResource(res)">
-                            <i class="fa fa-edit"></i>
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let res of r.resource; let resourceIndex = index">
+                      <td>
+                        <app-fhir-select-single-code [parentObject]="res" propertyName="type" [isFormGroup]="false" [codes]="getCodes(r.resource, resourceIndex)"
+                                                    valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
+                      </td>
+                      <td>
+                        <app-fhir-reference
+                          [parentObject]="res"
+                          propertyName="profile"
+                          [isFormGroup]="false"
+                          [isCanonical]="true"
+                          resourceType="StructureDefinition"></app-fhir-reference>
+                      </td>
+                      <td>
+                        <div class="btn-toolbar pull-right">
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-primary" title="Move this resource up in the list" [disabled]="resourceIndex <= 0" (click)="moveResource(r, res, 'up')">
+                              <i class="fas fa-arrow-up"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" title="Move this resource down in the list" [disabled]="resourceIndex >= (r.resource || []).length - 1" (click)="moveResource(r, res, 'down')">
+                              <i class="fas fa-arrow-down"></i>
+                            </button>
+                          </div>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-primary" title="Edit this resource" (click)="editResource(res)">
+                              <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" title="Duplicate this resource" (click)="copyResource(r, res)">
+                              <i class="fa fa-copy"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" title="Remove this resource" (click)="r.resource.splice(resourceIndex, 1)">
+                              <i class="fas fa-trash-alt"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Interactions -->
+                <div class="card">
+                  <div class="card-header">
+                    <input type="checkbox" [ngModel]="r.hasOwnProperty('interaction')"
+                          (ngModelChange)="Globals.toggleProperty(r, 'interaction', [{ code: 'read' }])"/>
+                    Interaction(s)
+                  </div>
+                  <table class="table table-striped" *ngIf="r.hasOwnProperty('interaction')">
+                    <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Documentation</th>
+                      <th>
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Add an interaction" (click)="r.interaction.push({ code: 'read' })">
+                            <i class="fa fa-plus"></i>
                           </button>
-                          <button type="button" class="btn btn-primary" title="Duplicate this resource" (click)="copyResource(r, res)">
-                            <i class="fa fa-copy"></i>
-                          </button>
-                          <button type="button" class="btn btn-primary" title="Remove this resource" (click)="r.resource.splice(resourceIndex, 1)">
+                        </div>
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let i of r.interaction; let ii = index">
+                      <td>
+                        <app-fhir-select-single-code [parentObject]="i" propertyName="code" [isFormGroup]="false"
+                                                    [required]="true"
+                                                    valueSetUrl="http://hl7.org/fhir/ValueSet/type-restful-interaction"></app-fhir-select-single-code>
+                      </td>
+                      <td>
+                        <app-fhir-string [parentObject]="i" propertyName="documentation"
+                                        [isFormGroup]="false"></app-fhir-string>
+                      </td>
+                      <td>
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Remove this interaction"
+                                  (click)="r.interaction.splice(ii, 1)">
                             <i class="fas fa-trash-alt"></i>
                           </button>
                         </div>
-                      </div>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- Interactions -->
-              <div class="card">
-                <div class="card-header">
-                  <input type="checkbox" [ngModel]="r.hasOwnProperty('interaction')"
-                        (ngModelChange)="Globals.toggleProperty(r, 'interaction', [{ code: 'read' }])"/>
-                  Interaction(s)
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <table class="table table-striped" *ngIf="r.hasOwnProperty('interaction')">
-                  <thead>
-                  <tr>
-                    <th>Code</th>
-                    <th>Documentation</th>
-                    <th>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Add an interaction" (click)="r.interaction.push({ code: 'read' })">
-                          <i class="fa fa-plus"></i>
-                        </button>
-                      </div>
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let i of r.interaction; let ii = index">
-                    <td>
-                      <app-fhir-select-single-code [parentObject]="i" propertyName="code" [isFormGroup]="false"
-                                                  [required]="true"
-                                                  valueSetUrl="http://hl7.org/fhir/ValueSet/type-restful-interaction"></app-fhir-select-single-code>
-                    </td>
-                    <td>
-                      <app-fhir-string [parentObject]="i" propertyName="documentation"
-                                      [isFormGroup]="false"></app-fhir-string>
-                    </td>
-                    <td>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Remove this interaction"
-                                (click)="r.interaction.splice(ii, 1)">
-                          <i class="fas fa-trash-alt"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
 
-              <!-- Search Params -->
-              <div class="card">
-                <div class="card-header">
-                  <input type="checkbox" [ngModel]="r.hasOwnProperty('searchParam')"
-                        (ngModelChange)="Globals.toggleProperty(r, 'searchParam', [{}])"/>
-                  Search Params
+                <!-- Search Params -->
+                <div class="card">
+                  <div class="card-header">
+                    <input type="checkbox" [ngModel]="r.hasOwnProperty('searchParam')"
+                          (ngModelChange)="Globals.toggleProperty(r, 'searchParam', [{}])"/>
+                    Search Params
+                  </div>
+                  <table class="table table-striped" *ngIf="r.hasOwnProperty('searchParam')">
+                    <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Definition</th>
+                      <th>Type</th>
+                      <th>Documentation</th>
+                      <th>
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Add a search param" (click)="r.searchParam.push({ name: 'new search param', type: 'number' })">
+                            <i class="fa fa-plus"></i>
+                          </button>
+                        </div>
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let si of r.searchParam; let sii = index">
+                      <td>
+                        <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false"
+                                        [required]="true"></app-fhir-string>
+                      </td>
+                      <td>
+                        <app-fhir-string [parentObject]="si" propertyName="definition"
+                                        [isFormGroup]="false"></app-fhir-string>
+                      </td>
+                      <td>
+                        <app-fhir-select-single-code [parentObject]="si" propertyName="type" [isFormGroup]="false"
+                                                    valueSetUrl="http://hl7.org/fhir/ValueSet/search-param-type"></app-fhir-select-single-code>
+                      </td>
+                      <td>
+                        <app-fhir-string [parentObject]="si" propertyName="documentation"
+                                        [isFormGroup]="false"></app-fhir-string>
+                      </td>
+                      <td>
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Remove this search param"
+                                  (click)="r.searchParam.splice(sii, 1)">
+                            <i class="fas fa-trash-alt"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <table class="table table-striped" *ngIf="r.hasOwnProperty('searchParam')">
-                  <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Definition</th>
-                    <th>Type</th>
-                    <th>Documentation</th>
-                    <th>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Add a search param" (click)="r.searchParam.push({ name: 'new search param', type: 'number' })">
-                          <i class="fa fa-plus"></i>
-                        </button>
-                      </div>
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let si of r.searchParam; let sii = index">
-                    <td>
-                      <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false"
-                                      [required]="true"></app-fhir-string>
-                    </td>
-                    <td>
-                      <app-fhir-string [parentObject]="si" propertyName="definition"
-                                      [isFormGroup]="false"></app-fhir-string>
-                    </td>
-                    <td>
-                      <app-fhir-select-single-code [parentObject]="si" propertyName="type" [isFormGroup]="false"
-                                                  valueSetUrl="http://hl7.org/fhir/ValueSet/search-param-type"></app-fhir-select-single-code>
-                    </td>
-                    <td>
-                      <app-fhir-string [parentObject]="si" propertyName="documentation"
-                                      [isFormGroup]="false"></app-fhir-string>
-                    </td>
-                    <td>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Remove this search param"
-                                (click)="r.searchParam.splice(sii, 1)">
-                          <i class="fas fa-trash-alt"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
 
-              <!-- Operations -->
-              <div class="card">
-                <div class="card-header">
-                  <input type="checkbox" [ngModel]="r.hasOwnProperty('operation')"
-                        (ngModelChange)="Globals.toggleProperty(r, 'operation', [{ name: '', definition: { reference: '', display: '' }}])"/>
-                  Operations
+                <!-- Operations -->
+                <div class="card">
+                  <div class="card-header">
+                    <input type="checkbox" [ngModel]="r.hasOwnProperty('operation')"
+                          (ngModelChange)="Globals.toggleProperty(r, 'operation', [{ name: '', definition: { reference: '', display: '' }}])"/>
+                    Operations
+                  </div>
+                  <table class="table table-striped" *ngIf="r.hasOwnProperty('operation')">
+                    <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Definition</th>
+                      <th>
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Add an operation"
+                                  (click)="r.operation.push({ name: '', definition: { reference: '', display: '' }})">
+                            <i class="fa fa-plus"></i>
+                          </button>
+                        </div>
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let si of r.operation; let sii = index">
+                      <td>
+                        <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false"
+                                        [required]="true"></app-fhir-string>
+                      </td>
+                      <td>
+                        <app-fhir-reference [parentObject]="si" propertyName="definition" [isFormGroup]="false"
+                                            [required]="true" resourceType="OperationDefinition"></app-fhir-reference>
+                      </td>
+                      <td>
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Remove this operation"
+                                  (click)="r.operation.splice(sii, 1)">
+                            <i class="fas fa-trash-alt"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <table class="table table-striped" *ngIf="r.hasOwnProperty('operation')">
-                  <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Definition</th>
-                    <th>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Add an operation"
-                                (click)="r.operation.push({ name: '', definition: { reference: '', display: '' }})">
-                          <i class="fa fa-plus"></i>
-                        </button>
-                      </div>
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let si of r.operation; let sii = index">
-                    <td>
-                      <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false"
-                                      [required]="true"></app-fhir-string>
-                    </td>
-                    <td>
-                      <app-fhir-reference [parentObject]="si" propertyName="definition" [isFormGroup]="false"
-                                          [required]="true" resourceType="OperationDefinition"></app-fhir-reference>
-                    </td>
-                    <td>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Remove this operation"
-                                (click)="r.operation.splice(sii, 1)">
-                          <i class="fas fa-trash-alt"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
 
-              <!-- Compartments -->
-              <div class="card">
-                <div class="card-header">
-                  <input type="checkbox" [ngModel]="r.hasOwnProperty('compartment')"
-                        (ngModelChange)="Globals.toggleProperty(r, 'compartment', [{ name: '', definition: { reference: '', display: '' }}])"/>
-                  Compartments
+                <!-- Compartments -->
+                <div class="card">
+                  <div class="card-header">
+                    <input type="checkbox" [ngModel]="r.hasOwnProperty('compartment')"
+                          (ngModelChange)="Globals.toggleProperty(r, 'compartment', [{ name: '', definition: { reference: '', display: '' }}])"/>
+                    Compartments
+                  </div>
+                  <table class="table table-striped" *ngIf="r.hasOwnProperty('compartment')">
+                    <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Add a compartment" (click)="r.compartment.push('')">
+                            <i class="fa fa-plus"></i>
+                          </button>
+                        </div>
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let si of r.compartment; let sii = index; trackBy: Globals.trackByFn">
+                      <td>
+                        <app-fhir-string [parentObject]="r.compartment" propertyName="{{sii}}" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                      </td>
+                      <td>
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Remove this compartment" (click)="r.compartment.splice(sii, 1)">
+                            <i class="fas fa-trash-alt"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <table class="table table-striped" *ngIf="r.hasOwnProperty('compartment')">
-                  <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Add a compartment" (click)="r.compartment.push('')">
-                          <i class="fa fa-plus"></i>
-                        </button>
-                      </div>
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let si of r.compartment; let sii = index; trackBy: Globals.trackByFn">
-                    <td>
-                      <app-fhir-string [parentObject]="r.compartment" propertyName="{{sii}}" [isFormGroup]="false" [required]="true"></app-fhir-string>
-                    </td>
-                    <td>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Remove this compartment" (click)="r.compartment.splice(sii, 1)">
-                          <i class="fas fa-trash-alt"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </ng-template>
-          </li>
-          <li>
-            <a ngbNavLink>
-              <button type="button" class="btn btn-primary" title="Add a REST entry" (click)="addRestEntry(restTabSet)">Add</button>
-            </a>
-            <ng-template ngbNavContent></ng-template>
-          </li>
-        </ul>
-        <div [ngbNavOutlet]="restTabSet" class="mt-2"></div>
+              </ng-template>
+            </li>
+            <li>
+              <a ngbNavLink>
+                <button type="button" class="btn btn-primary" title="Add a REST entry" (click)="addRestEntry(restTabSet)">Add</button>
+              </a>
+              <ng-template ngbNavContent></ng-template>
+            </li>
+          </ul>
+          <div [ngbNavOutlet]="restTabSet" class="mt-2"></div>
+        </ng-continer>
       </ng-template>
     </li>
     <li ngbNavItem>
@@ -644,133 +646,135 @@
               (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'messaging', [{ }])"/> This capability
         statement includes messaging entries
 
-        <ul *ngIf="capabilityStatement.hasOwnProperty('messaging')" justify="center" #messagingTabSet
-                    [destroyOnHide]="false">
-          <li *ngFor="let messaging of capabilityStatement.messaging; let mi = index" ngbNavItem="messaging-{{mi}}">
-            <a ngbNavLink>
-              <span>Messaging {{mi + 1}} </span>
-              <i class="fas fa-trash-alt" title="Remove this messaging entry"
-                (click)="ClientHelper.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
-            </a>
-            <ng-template ngbNavContent>
-              <!-- Endpoints -->
-              <div class="card">
-                <div class="card-header">
-                  <input type="checkbox" [ngModel]="messaging.hasOwnProperty('endpoint')"
-                        (ngModelChange)="Globals.toggleProperty(messaging, 'endpoint', [{ protocol: messageTransportCodes[0], address: '' }])"/>
-                  Endpoints
+        <ng-container *ngIf="capabilityStatement.hasOwnProperty('messaging')">
+          <ul ngbNav #messagingTabSet="ngbNav" justify="center"
+                      [destroyOnHide]="false">
+            <li *ngFor="let messaging of capabilityStatement.messaging; let mi = index" ngbNavItem="messaging-{{mi}}">
+              <a ngbNavLink>
+                <span>Messaging {{mi + 1}} </span>
+                <i class="fas fa-trash-alt" title="Remove this messaging entry"
+                  (click)="ClientHelper.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
+              </a>
+              <ng-template ngbNavContent>
+                <!-- Endpoints -->
+                <div class="card">
+                  <div class="card-header">
+                    <input type="checkbox" [ngModel]="messaging.hasOwnProperty('endpoint')"
+                          (ngModelChange)="Globals.toggleProperty(messaging, 'endpoint', [{ protocol: messageTransportCodes[0], address: '' }])"/>
+                    Endpoints
+                  </div>
+                  <table class="table table-striped" *ngIf="messaging.hasOwnProperty('endpoint')">
+                    <thead>
+                    <tr>
+                      <th>Protocol</th>
+                      <th>Address</th>
+                      <th>
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Add an endpoint"
+                                  (click)="messaging.endpoint.push({ protocol: messageTransportCodes[0], address: '' })">
+                            <i class="fa fa-plus"></i>
+                          </button>
+                        </div>
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let endpoint of messaging.endpoint; let ei = index">
+                      <td>
+                        <select class="form-control"
+                                [ngModel]="Globals.getSelectCoding(endpoint.protocol, messageTransportCodes, true, true)"
+                                (ngModelChange)="endpoint.protocol = $event">
+                          <option *ngFor="let c of messageTransportCodes" [ngValue]="c">{{c.display || c.code}}</option>
+                        </select>
+                      </td>
+                      <td>
+                        <app-fhir-string [parentObject]="endpoint" propertyName="address" [isFormGroup]="false"
+                                        [required]="true"></app-fhir-string>
+                      </td>
+                      <td>
+                        <div class="pull-right btn-group">
+                          <button type="button" class="btn btn-primary btn-sm" title="Remove this endpoint"
+                                  (click)="messaging.endpoint.splice(ei, 1)">
+                            <i class="fas fa-trash-alt"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <table class="table table-striped" *ngIf="messaging.hasOwnProperty('endpoint')">
-                  <thead>
-                  <tr>
-                    <th>Protocol</th>
-                    <th>Address</th>
-                    <th>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Add an endpoint"
-                                (click)="messaging.endpoint.push({ protocol: messageTransportCodes[0], address: '' })">
-                          <i class="fa fa-plus"></i>
-                        </button>
-                      </div>
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let endpoint of messaging.endpoint; let ei = index">
-                    <td>
-                      <select class="form-control"
-                              [ngModel]="Globals.getSelectCoding(endpoint.protocol, messageTransportCodes, true, true)"
-                              (ngModelChange)="endpoint.protocol = $event">
-                        <option *ngFor="let c of messageTransportCodes" [ngValue]="c">{{c.display || c.code}}</option>
-                      </select>
-                    </td>
-                    <td>
-                      <app-fhir-string [parentObject]="endpoint" propertyName="address" [isFormGroup]="false"
-                                      [required]="true"></app-fhir-string>
-                    </td>
-                    <td>
-                      <div class="pull-right btn-group">
-                        <button type="button" class="btn btn-primary btn-sm" title="Remove this endpoint"
-                                (click)="messaging.endpoint.splice(ei, 1)">
-                          <i class="fas fa-trash-alt"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
 
-              <div class="form-group">
-                <label>
-                  <input type="checkbox" [ngModel]="messaging.hasOwnProperty('reliableCache')"
-                        (ngModelChange)="Globals.toggleProperty(messaging, 'reliableCache', 1)"/>
-                  Reliable Cache
-                </label>
-                <input type="number" class="form-control" [disabled]="!messaging.hasOwnProperty('reliableCache')"
-                      [(ngModel)]="messaging.reliableCache"/>
-              </div>
-
-              <app-fhir-string [parentObject]="messaging" propertyName="documentation"
-                              title="Documentation"></app-fhir-string>
-
-              <!-- Supported Messages -->
-              <div class="card">
-                <div class="card-header">
-                  <input type="checkbox" [ngModel]="messaging.hasOwnProperty('supportedMessage')"
-                        (ngModelChange)="Globals.toggleProperty(messaging, 'supportedMessage', [{ mode: 'sender', definition: { reference: '', display: '' }}])"/>
-                  Supported Messages
+                <div class="mb-3">
+                  <label>
+                    <input type="checkbox" [ngModel]="messaging.hasOwnProperty('reliableCache')"
+                          (ngModelChange)="Globals.toggleProperty(messaging, 'reliableCache', 1)"/>
+                    Reliable Cache
+                  </label>
+                  <input type="number" class="form-control" [disabled]="!messaging.hasOwnProperty('reliableCache')"
+                        [(ngModel)]="messaging.reliableCache"/>
                 </div>
-                <table class="table table-striped" *ngIf="messaging.hasOwnProperty('supportedMessage')">
-                  <thead>
-                  <tr>
-                    <th>Mode</th>
-                    <th>Definition</th>
-                    <th>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Add a supported message"
-                                (click)="messaging.supportedMessage.push({ mode: 'sender', definition: { reference: '', display: '' }})">
-                          <i class="fa fa-plus"></i>
-                        </button>
-                      </div>
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let sm of messaging.supportedMessage; let smi = index">
-                    <td>
-                      <app-fhir-select-single-code [parentObject]="sm" propertyName="mode" [isFormGroup]="false"
-                                                  [required]="true"
-                                                  valueSetUrl="http://hl7.org/fhir/ValueSet/event-capability-mode"></app-fhir-select-single-code>
-                    </td>
-                    <td>
-                      <app-fhir-reference [parentObject]="sm" propertyName="definition" [isFormGroup]="false"
-                                          [required]="true" resourceType="MessageDefinition"></app-fhir-reference>
-                    </td>
-                    <td>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-sm" title="Remove this supported message"
-                                (click)="messaging.supportedMessage.splice(smi, 1)">
-                          <i class="fas fa-trash-alt"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </ng-template>
-          </li>
-          <li [disabled]="true">
-            <ng-template ngbNavLink>
-              <button type="button" class="btn btn-primary" title="Add a messaging entry"
-                      (click)="addMessagingEntry(messagingTabSet)">Add
-              </button>
-            </ng-template>
-            <ng-template ngbNavContent></ng-template>
-          </li>
-        </ul>
-        <div [ngbNavOutlet]="messagingTabSet" class="mt-2"></div>
+
+                <app-fhir-string [parentObject]="messaging" propertyName="documentation"
+                                title="Documentation"></app-fhir-string>
+
+                <!-- Supported Messages -->
+                <div class="card">
+                  <div class="card-header">
+                    <input type="checkbox" [ngModel]="messaging.hasOwnProperty('supportedMessage')"
+                          (ngModelChange)="Globals.toggleProperty(messaging, 'supportedMessage', [{ mode: 'sender', definition: { reference: '', display: '' }}])"/>
+                    Supported Messages
+                  </div>
+                  <table class="table table-striped" *ngIf="messaging.hasOwnProperty('supportedMessage')">
+                    <thead>
+                    <tr>
+                      <th>Mode</th>
+                      <th>Definition</th>
+                      <th>
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Add a supported message"
+                                  (click)="messaging.supportedMessage.push({ mode: 'sender', definition: { reference: '', display: '' }})">
+                            <i class="fa fa-plus"></i>
+                          </button>
+                        </div>
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let sm of messaging.supportedMessage; let smi = index">
+                      <td>
+                        <app-fhir-select-single-code [parentObject]="sm" propertyName="mode" [isFormGroup]="false"
+                                                    [required]="true"
+                                                    valueSetUrl="http://hl7.org/fhir/ValueSet/event-capability-mode"></app-fhir-select-single-code>
+                      </td>
+                      <td>
+                        <app-fhir-reference [parentObject]="sm" propertyName="definition" [isFormGroup]="false"
+                                            [required]="true" resourceType="MessageDefinition"></app-fhir-reference>
+                      </td>
+                      <td>
+                        <div class="pull-right">
+                          <button type="button" class="btn btn-primary btn-sm" title="Remove this supported message"
+                                  (click)="messaging.supportedMessage.splice(smi, 1)">
+                            <i class="fas fa-trash-alt"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </ng-template>
+            </li>
+            <li [disabled]="true">
+              <ng-template ngbNavLink>
+                <button type="button" class="btn btn-primary" title="Add a messaging entry"
+                        (click)="addMessagingEntry(messagingTabSet)">Add
+                </button>
+              </ng-template>
+              <ng-template ngbNavContent></ng-template>
+            </li>
+          </ul>
+          <div [ngbNavOutlet]="messagingTabSet" class="mt-2"></div>
+        </ng-container>
       </ng-template>
     </li>
     <li ngbNavItem>
