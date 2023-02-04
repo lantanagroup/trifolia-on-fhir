@@ -13,6 +13,8 @@ export function identifyRelease(fhirVersion: string): Versions {
     return Versions.R4;
   } else if (semver.satisfies(fhirVersion, '>= 1.1.0 <= 3.0.2')) {
     return Versions.STU3;
+  } else if (semver.satisfies(fhirVersion, '>= 4.2.0 < 5.0.0')) {
+    return Versions.R5;
   } else {
     throw new Error('Unexpected FHIR Version ' + fhirVersion);
   }

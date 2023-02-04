@@ -57,6 +57,9 @@ const loadTofRequest = (req: ITofRequest, res: Response, next) => {
     case 'r4':
       req.fhir = FhirInstances.fhirR4;
       break;
+    case 'r5':
+      req.fhir = FhirInstances.fhirR5;
+      break;
     default:
       throw new Error(`Unsupported FHIR version ${req.fhirServerVersion}`);
   }
