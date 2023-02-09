@@ -25,7 +25,7 @@
         <tbody>
         <tr *ngFor="let ci of structureDefinition.context; let cii = index; trackBy: Globals.trackByFn" >
             <td>
-                <select class="form-control" [(ngModel)]="structureDefinition.context[cii].type" (change)="change.emit()">
+                <select class="form-select" [(ngModel)]="structureDefinition.context[cii].type" (change)="change.emit()">
                   <option value="fhirpath">FHIR Path</option>
                   <option value="element">Element</option>
                   <option value="extension">Extension</option>

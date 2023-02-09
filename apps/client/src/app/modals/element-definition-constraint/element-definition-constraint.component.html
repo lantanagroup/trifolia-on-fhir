@@ -9,7 +9,7 @@
 
   <div class="mb-3">
     <label>Severity</label>
-    <select class="form-control" [(ngModel)]="constraint.severity" [class.is-invalid]="!constraint.severity">
+    <select class="form-select" [(ngModel)]="constraint.severity" [class.is-invalid]="!constraint.severity">
       <option value="error">Error</option>
       <option value="warning">Warning</option>
     </select>

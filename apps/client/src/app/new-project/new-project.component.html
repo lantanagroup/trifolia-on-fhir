@@ -3,7 +3,7 @@
 
   <div class="mb-3">
     <label>Is this implementation guide intended to be published by HL7?</label>
-    <select class="form-control" style="width: 200px;" [(ngModel)]="isHL7">
+    <select class="form-select" style="width: 200px;" [(ngModel)]="isHL7">
       <option [ngValue]="true">Yes</option>
       <option [ngValue]="false">No</option>
     </select>
@@ -16,7 +16,7 @@
 
   <div class="mb-3">
     <label>Family</label>
-    <select class="form-control family" [(ngModel)]="isFHIR" (change)="packageIdCriteriaChanged()">
+    <select class="form-select family" [(ngModel)]="isFHIR" (change)="packageIdCriteriaChanged()">
       <option [ngValue]="false">CDA</option>
       <option [ngValue]="true">FHIR</option>
     </select>
@@ -24,7 +24,7 @@
 
   <div class="mb-3">
     <label>Realm</label>
-    <select class="form-control realm" [(ngModel)]="selectedJurisdiction" (change)="packageIdCriteriaChanged()" [class.is-invalid]="!selectedJurisdiction">
+    <select class="form-select realm" [(ngModel)]="selectedJurisdiction" (change)="packageIdCriteriaChanged()" [class.is-invalid]="!selectedJurisdiction">
       <option *ngFor="let jc of jurisdictionCodes" [ngValue]="jc">{{jc.display}} ({{jc.code}})</option>
     </select>
     <div class="help-block" *ngIf="!selectedJurisdiction">Realm is required</div>
@@ -80,7 +80,7 @@
 
   <div class="mb-3">
     <label>HL7 Work Group</label>
-    <select class="form-control extended" [(ngModel)]="hl7WorkGroup" (change)="igChanging.emit(true)"
+    <select class="form-select extended" [(ngModel)]="hl7WorkGroup" (change)="igChanging.emit(true)"
             [class.is-invalid]="!hl7WorkGroup">
       <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
       <option [ngValue]="undefined">Unspecified</option>

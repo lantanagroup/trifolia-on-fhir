@@ -22,7 +22,7 @@
     <tbody>
     <tr *ngFor="let mapping of mappings; let mi = index">
       <td>
-        <select class="form-control" [(ngModel)]="mappings[mi].identity">
+        <select class="form-select" [(ngModel)]="mappings[mi].identity">
           <option *ngFor="let pmi of profileMappingIdentities; let pmii = index; trackBy: Globals.trackByFn">{{profileMappingIdentities[pmii]}}</option>
         </select>
       </td>

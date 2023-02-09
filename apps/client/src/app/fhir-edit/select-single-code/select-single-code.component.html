@@ -4,7 +4,7 @@
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
     <div class="input-group">
-        <select class="form-control" *ngIf="!isTypeahead" [(ngModel)]="theValue">
+        <select class="form-select" *ngIf="!isTypeahead" [(ngModel)]="theValue">
             <option *ngIf="!required" value="">Unspecified</option>
             <option *ngFor="let o of codes" [ngValue]="o.code || o.display">{{o.display || o.code}}</option>
         </select>
@@ -22,7 +22,7 @@
         <span>{{title}} </span>
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
-    <select class="form-control" *ngIf="!isTypeahead" [(ngModel)]="theValue" (change)="selectedCodeChanged()">
+    <select class="form-select" *ngIf="!isTypeahead" [(ngModel)]="theValue" (change)="selectedCodeChanged()">
         <option *ngIf="!required" value="">Unspecified</option>
         <option *ngFor="let o of codes" [ngValue]="o.code || o.display">{{o.display || o.code}}</option>
     </select>

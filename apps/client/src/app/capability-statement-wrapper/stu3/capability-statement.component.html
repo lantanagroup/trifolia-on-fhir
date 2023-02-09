@@ -106,7 +106,7 @@
               <label>Status
                 <app-tooltip-icon tooltipPath="CapabilityStatement.status"></app-tooltip-icon>
               </label>
-              <select class="form-control" [(ngModel)]="capabilityStatement.status"
+              <select class="form-select" [(ngModel)]="capabilityStatement.status"
                       [class.is-invalid]="!capabilityStatement.status">
                 <option value="draft">Draft</option>
                 <option value="active">Active</option>
@@ -119,7 +119,7 @@
               <label>Kind
                 <app-tooltip-icon tooltipPath="CapabilityStatement.kind"></app-tooltip-icon>
               </label>
-              <select class="form-control" [(ngModel)]="capabilityStatement.kind"
+              <select class="form-select" [(ngModel)]="capabilityStatement.kind"
                       [class.is-invalid]="!capabilityStatement.kind">
                 <option value="instance">Instance</option>
                 <option value="capability">Capability</option>
@@ -131,7 +131,7 @@
               <label>Accept Unknown
                 <app-tooltip-icon tooltipPath="CapabilityStatement.acceptUnknown"></app-tooltip-icon>
               </label>
-              <select class="form-control" [(ngModel)]="capabilityStatement.acceptUnknown"
+              <select class="form-select" [(ngModel)]="capabilityStatement.acceptUnknown"
                       [class.is-invalid]="!capabilityStatement.acceptUnknown">
                 <option value="no">No</option>
                 <option value="extensions">Extensions</option>
@@ -720,7 +720,7 @@
                     <tbody>
                     <tr *ngFor="let endpoint of messaging.endpoint; let ei = index">
                       <td>
-                        <select class="form-control"
+                        <select class="form-select"
                                 [ngModel]="Globals.getSelectCoding(endpoint.protocol, messageTransportCodes, true, true)"
                                 (ngModelChange)="endpoint.protocol = $event">
                           <option *ngFor="let c of messageTransportCodes" [ngValue]="c">{{c.display || c.code}}</option>
@@ -849,7 +849,7 @@
                     <tbody>
                     <tr *ngFor="let event of messaging.event; let eventi = index">
                       <td>
-                        <select class="form-control"
+                        <select class="form-select"
                                 [ngModel]="Globals.getSelectCoding(event.code, messageEventCodes, true, true)"
                                 (ngModelChange)="event.code = $event">
                           <option *ngFor="let c of messageEventCodes" [ngValue]="c">{{c.display || c.code}}</option>

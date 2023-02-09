@@ -126,7 +126,7 @@
               <i class="fa fa-plus clickable" title="Add a type" (click)="addType()"></i>
             </div>
             <div class="input-group" *ngFor="let t of element.type; let i = index" [attr.data-index]="i">
-              <select class="form-control" [(ngModel)]="t.code" (change)="typeChanged()">
+              <select class="form-select" [(ngModel)]="t.code" (change)="typeChanged()">
                 <option [ngValue]="t.code">{{getTypeDisplay(t)}}</option>
                 <option *ngFor="let o of getTypes()" [ngValue]="o.code">{{getTypeDisplay(o)}}</option>
               </select>
@@ -157,7 +157,7 @@
               <i class="fa fa-plus clickable" title="Add a type" (click)="element.representation.push('xmlAttr'); change.emit()"></i>
             </div>
             <div class="input-group" *ngFor="let t of element.representation; let i = index" [attr.data-index]="i">
-              <select class="form-control" [(ngModel)]="element.representation[i]"
+              <select class="form-select" [(ngModel)]="element.representation[i]"
                       [disabled]="!element.hasOwnProperty('representation')" (change)="change.emit()">
                 <option>xmlAttr</option>
                 <option>xmlText</option>

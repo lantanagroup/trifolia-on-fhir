@@ -99,7 +99,7 @@
               <input type="checkbox" [ngModel]="interactionHasExpectation(i)"
                      (ngModelChange)="toggleInteractionExpectation(i)"/>
             </div>
-            <select class="form-control" [ngModel]="getInteractionExpectation(i)"
+            <select class="form-select" [ngModel]="getInteractionExpectation(i)"
                     (ngModelChange)="setInteractionExpectation(i, $event)">
               <option>SHALL</option>
               <option>SHOULD</option>

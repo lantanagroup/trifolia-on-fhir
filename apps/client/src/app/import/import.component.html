@@ -42,7 +42,7 @@
           <td>{{getContentTypeDisplay(f)}}</td>
           <td>
             <span *ngIf="f.resource?.resourceType !== 'Bundle'">{{f.status.substring(0, 1).toUpperCase()}}{{f.status.substring(1)}}&nbsp;</span>
-            <select (change)="importBundle = getFileBundle()" *ngIf="f.resource?.resourceType === 'Bundle'" [(ngModel)]="f.bundleOperation" class="form-control">
+            <select (change)="importBundle = getFileBundle()" *ngIf="f.resource?.resourceType === 'Bundle'" [(ngModel)]="f.bundleOperation" class="form-select">
               <option value="store">Store</option>
               <option value="execute">Execute</option>
             </select>

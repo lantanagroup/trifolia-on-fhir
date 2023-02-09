@@ -120,7 +120,7 @@
 
               <div class="mb-3" *ngIf="packageId && packageId.startsWith('hl7.')">
                 <label>HL7 Work Group</label>
-                <select class="form-control" [(ngModel)]="hl7WorkGroup" [class.is-invalid]="!hl7WorkGroup" (change)="igChanging.emit(true);">
+                <select class="form-select" [(ngModel)]="hl7WorkGroup" [class.is-invalid]="!hl7WorkGroup" (change)="igChanging.emit(true);">
                   <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
                   <option [ngValue]="undefined">Unspecified</option>
                 </select>
@@ -139,7 +139,7 @@
                 <label>Status
                   <app-tooltip-icon tooltipPath="ImplementationGuide.status"></app-tooltip-icon>
                 </label>
-                <select class="form-control" [(ngModel)]="implementationGuide.status" (change)="igChanging.emit(true);">
+                <select class="form-select" [(ngModel)]="implementationGuide.status" (change)="igChanging.emit(true);">
                   <option [ngValue]="'draft'">Draft</option>
                   <option [ngValue]="'active'">Active</option>
                   <option [ngValue]="'retired'">Retired</option>
@@ -192,7 +192,7 @@
               <span *ngIf="isFileNameInvalid(p)" style="color:red">The file name must not include special characters such as "&" and "/"</span>
             </td>
             <td>
-              <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind" (change)="igChanging.emit(true);">
+              <select class="form-select" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind" (change)="igChanging.emit(true);">
                 <option value="page">Page</option>
                 <option value="example">Example</option>
                 <option value="list">List</option>
@@ -327,7 +327,7 @@
             <tbody *ngIf="implementationGuide.hasOwnProperty('global')">
             <tr *ngFor="let g of implementationGuide.global; let i = index" [attr.data-index]="i">
               <td>
-                <select class="form-control" [(ngModel)]="g.type" (change)="igChanging.emit(true);">
+                <select class="form-select" [(ngModel)]="g.type" (change)="igChanging.emit(true);">
                   <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
                 </select>
               </td>
@@ -410,7 +410,7 @@
           <tbody>
           <tr *ngFor="let ir of resources">
             <td>
-              <select class="form-control" [ngModel]="ir.igPackage" (ngModelChange)="changeResourcePackage(ir, $event)" (change)="igChanging.emit(true);">
+              <select class="form-select" [ngModel]="ir.igPackage" (ngModelChange)="changeResourcePackage(ir, $event)" (change)="igChanging.emit(true);">
                 <option *ngFor="let p of implementationGuide.package; let pi = index" [ngValue]="p">{{p.name || 'Index ' + pi}}</option>
               </select>
             </td>
@@ -513,7 +513,7 @@
                   </td>
                   <td>
                     <div class="input-group">
-                      <select class="form-control" [ngModel]="getResourceSourceType(r)"
+                      <select class="form-select" [ngModel]="getResourceSourceType(r)"
                               (ngModelChange)="setResourceSourceType(r, $event)" (change)="igChanging.emit(true);">
                         <option value="uri">URI</option>
                         <option value="reference">Reference</option>
@@ -646,7 +646,7 @@
     <div class="mb-3">
       <label>Source type</label>
       <div class="input-group">
-        <select class="form-control" [ngModel]="getResourceSourceType(currentResource)" (ngModelChange)="setResourceSourceType(currentResource, $event)" (change)="igChanging.emit(true);">
+        <select class="form-select" [ngModel]="getResourceSourceType(currentResource)" (ngModelChange)="setResourceSourceType(currentResource, $event)" (change)="igChanging.emit(true);">
           <option value="uri">URI</option>
           <option value="reference">Reference</option>
         </select>

@@ -65,7 +65,7 @@
 
         <div class="mb-3">
           <div class="input-group">
-            <select class="form-control" [(ngModel)]="copyResourceType" [attr.data-intro]="Globals.introText['resource-permissions.copy.resource-type']">
+            <select class="form-select" [(ngModel)]="copyResourceType" [attr.data-intro]="Globals.introText['resource-permissions.copy.resource-type']">
               <option [ngValue]="undefined">SELECT</option>
               <option *ngFor="let rt of resourceTypes" [ngValue]="rt.code">{{rt.code}}</option>
             </select>

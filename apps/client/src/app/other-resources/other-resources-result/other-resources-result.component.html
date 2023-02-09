@@ -23,7 +23,7 @@
       </button>
     </div>
     <div class="input-group" *ngIf="activeSub == 'json/xml'">
-      <select class="form-control" [(ngModel)]="selected" (change)="changeType()">
+      <select class="form-select" [(ngModel)]="selected" (change)="changeType()">
         <option *ngFor="let option of options" value="{{option}}">
           {{option}}
         </option>

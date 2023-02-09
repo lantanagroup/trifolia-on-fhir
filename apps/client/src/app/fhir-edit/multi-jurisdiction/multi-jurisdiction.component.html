@@ -35,7 +35,7 @@
                  *ngIf="editor[ji]" />
 
           <!--<select (ngModelChange)="setJurisdictionCode(jurisdictions[ji], ci, $event)" *ngIf="!editFields[ji][ci]" [ngModel]="getJurisdictionCode(jurisdictions[ji].coding[ci])"
-                  class="form-control">
+                  class="form-select">
             <option [ngValue]="undefined">SELECT ONE</option>
             <option *ngFor="let code of jurisdictionCodes" [ngValue]="code">{{code.display}} ({{code.code}})</option>
           </select>-->

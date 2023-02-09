@@ -56,7 +56,7 @@
         <div class="col-md-6">
           <div class="mb-3">
             <label>Notify via email after done publishing?</label>
-            <select [(ngModel)]="options.notifyMe" class="form-control">
+            <select [(ngModel)]="options.notifyMe" class="form-select">
               <option [ngValue]="false">No</option>
               <option [ngValue]="true">Yes</option>
             </select>
@@ -76,7 +76,7 @@
         <div class="col-md-6">
           <div class="mb-3">
             <label>Resource Format</label>
-            <select (change)="responseFormatChanged()" [(ngModel)]="options.responseFormat" class="form-control">
+            <select (change)="responseFormatChanged()" [(ngModel)]="options.responseFormat" class="form-select">
               <option value="application/json">JSON</option>
               <option value="application/xml">XML</option>
             </select>
@@ -88,7 +88,7 @@
         <div class="col-md-4">
           <div class="mb-3">
             <label>Template Type</label>
-            <select class="form-control" [(ngModel)]="options.templateType" [disabled]="igSpecifiesTemplate">
+            <select class="form-select" [(ngModel)]="options.templateType" [disabled]="igSpecifiesTemplate">
               <option value="not-specified">Not Specified</option>
               <option value="official">Official</option>
               <option value="custom-uri">Custom</option>
@@ -106,7 +106,7 @@
         <div class="col-md-4" *ngIf="options.templateType === 'official' || options.templateType === 'not-specified'">
           <div class="mb-3">
             <label>Template</label>
-            <select class="form-control" *ngIf="options.templateType === 'not-specified' || options.templateType === 'official'" [(ngModel)]="options.template"
+            <select class="form-select" *ngIf="options.templateType === 'not-specified' || options.templateType === 'official'" [(ngModel)]="options.template"
                     [disabled]="igSpecifiesTemplate">
               <option value="hl7.fhir.template">HL7 FHIR Template</option>
               <option value="hl7.cda.template">HL7 CDA Template</option>
@@ -118,7 +118,7 @@
           <div class="mb-3">
             <label>Version</label>
             <div>
-              <select class="form-control" [(ngModel)]="options.templateVersion" [disabled]="igSpecifiesTemplate">
+              <select class="form-select" [(ngModel)]="options.templateVersion" [disabled]="igSpecifiesTemplate">
                 <option *ngFor="let templateVersion of templateVersions" [ngValue]="templateVersion">{{templateVersion}}</option>
               </select>
             </div>

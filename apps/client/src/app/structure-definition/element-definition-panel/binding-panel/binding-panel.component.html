@@ -23,7 +23,7 @@
       </label>
       <div class="input-group">
         <div class="input-group-addon">
-          <select class="form-control"
+          <select class="form-select"
                   [disabled]="!Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
                   [ngModel]="Globals.getChoiceProperty(element.binding, 'valueSet', valueSetChoices)"
                   (ngModelChange)="setValueSetChoice(element.binding, $event); change.emit()">

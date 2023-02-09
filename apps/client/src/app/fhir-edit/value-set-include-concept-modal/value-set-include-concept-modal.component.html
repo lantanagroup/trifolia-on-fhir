@@ -30,7 +30,7 @@
           <app-fhir-string [parentObject]="designation" propertyName="language" [isFormGroup]="false"></app-fhir-string>
         </td>
         <td>
-          <select class="form-control" [(ngModel)]="designation.use">
+          <select class="form-select" [(ngModel)]="designation.use">
             <option *ngFor="let u of uses" [ngValue]="u">{{u.display}}</option>
           </select>
         </td>

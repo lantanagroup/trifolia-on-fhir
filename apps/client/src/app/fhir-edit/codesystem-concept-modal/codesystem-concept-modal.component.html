@@ -40,8 +40,8 @@
                         <div class="input-group-addon">
                             <input type="checkbox" [ngModel]="c.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(c, 'use', Globals.designationUseCodes[0])" />
                         </div>
-                        <select class="form-control" *ngIf="!c.hasOwnProperty('use')" disabled="disabled"></select>
-                        <select class="form-control" *ngIf="c.hasOwnProperty('use')" [ngModel]="Globals.getSelectCoding(c.use, Globals.designationUseCodes, true, true)" (ngModelChange)="c.use = $event">
+                        <select class="form-select" *ngIf="!c.hasOwnProperty('use')" disabled="disabled"></select>
+                        <select class="form-select" *ngIf="c.hasOwnProperty('use')" [ngModel]="Globals.getSelectCoding(c.use, Globals.designationUseCodes, true, true)" (ngModelChange)="c.use = $event">
                             <option *ngFor="let duc of Globals.designationUseCodes" [ngValue]="duc">{{duc.display || duc.code}}</option>
                         </select>
                     </div>
@@ -88,7 +88,7 @@
                     <app-fhir-string [parentObject]="c" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
                 </td>
                 <td>
-                    <select class="form-control" [ngModel]="getPropertyType(c)" (ngModelChange)="setPropertyType(c, $event)">
+                    <select class="form-select" [ngModel]="getPropertyType(c)" (ngModelChange)="setPropertyType(c, $event)">
                         <option value=""></option>
                         <option value="Code">Code</option>
                         <option value="Coding">Coding</option>

@@ -8,7 +8,7 @@
         <div class="input-group-addon">
             <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(identifier, 'use', ''); change.emit()"/>
         </div>
-        <select class="form-control" [disabled]="!identifier || !identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse" (change)="change.emit()">
+        <select class="form-select" [disabled]="!identifier || !identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse" (change)="change.emit()">
             <option value="usual">Usual</option>
             <option value="official">Official</option>
             <option value="temp">Temporary</option>
@@ -31,7 +31,7 @@
     <div class="input-group-addon">
         <input type="checkbox" [ngModel]="identifier && identifier.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(identifier, 'use', ''); change.emit()"/>
     </div>
-    <select class="form-control" [disabled]="!identifier || identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse" (change)="change.emit()">
+    <select class="form-select" [disabled]="!identifier || identifier.hasOwnProperty('use')" [(ngModel)]="identifierUse" (change)="change.emit()">
         <option value="usual">Usual</option>
         <option value="official">Officials</option>
         <option value="temp">Temporary</option>

@@ -34,7 +34,7 @@
           <div class="col-md-6">
             <div class="mb-3" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction" [attr.data-intro]="Globals.introText['export.igPublisherOutput']">
               <label>Output Format</label>
-              <select class="form-control" [(ngModel)]="options.responseFormat">
+              <select class="form-select" [(ngModel)]="options.responseFormat">
                 <option value="application/json">JSON</option>
                 <option value="application/xml">XML</option>
               </select>
@@ -44,7 +44,7 @@
           <div class="col-md-6">
             <div class="mb-3" [attr.data-intro]="Globals.introText['export.igPublisherJAR']">
               <label>Include FHIR IG Publisher JAR?</label>
-              <select class="form-control" [(ngModel)]="options.includeIgPublisherJar">
+              <select class="form-select" [(ngModel)]="options.includeIgPublisherJar">
                 <option [ngValue]="true">Yes</option>
                 <option [ngValue]="false">No</option>
               </select>
@@ -69,7 +69,7 @@
           <div class="col-md-4">
             <div class="mb-3">
               <label>Template Type</label>
-              <select class="form-control" [(ngModel)]="options.templateType" (change)="templateTypeChanged()">
+              <select class="form-select" [(ngModel)]="options.templateType" (change)="templateTypeChanged()">
                 <option value="official">Official</option>
                 <option value="custom-uri">Custom</option>
               </select>
@@ -85,7 +85,7 @@
           <div class="col-md-4" *ngIf="options.templateType === 'official'">
             <div class="mb-3">
               <label>Template</label>
-              <select class="form-control" [(ngModel)]="options.template" (change)="templateChanged()">
+              <select class="form-select" [(ngModel)]="options.template" (change)="templateChanged()">
                 <option value="hl7.fhir.template">HL7 FHIR Template</option>
                 <option value="hl7.cda.template">HL7 CDA Template</option>
                 <option value="hl7.base.template">HL7 Base Template</option>
@@ -96,7 +96,7 @@
             <div class="mb-3">
               <label>Version</label>
               <div>
-                <select class="form-control" [(ngModel)]="options.templateVersion" (click)="templateVersionChanged()">
+                <select class="form-select" [(ngModel)]="options.templateVersion" (click)="templateVersionChanged()">
                   <option *ngFor="let templateVersion of templateVersions" [ngValue]="templateVersion">{{templateVersion}}</option>
                 </select>
               </div>
@@ -117,7 +117,7 @@
             <div class="mb-3" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction"
                 [attr.data-intro]="Globals.introText['export.bundleOutput']">
               <label>Output Format</label>
-              <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
+              <select class="form-select" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
                 <option value="application/json">JSON</option>
                 <option value="application/xml">XML</option>
               </select>
@@ -126,7 +126,7 @@
           <div class="col-md-4">
             <div class="mb-3">
               <label>Remove ToF Extensions?</label>
-              <select class="form-control" [(ngModel)]="options.removeExtensions">
+              <select class="form-select" [(ngModel)]="options.removeExtensions">
                 <option [ngValue]="false">No</option>
                 <option [ngValue]="true">Yes</option>
               </select>
@@ -136,7 +136,7 @@
           <div class="col-md-4">
             <div class="mb-3">
               <label>Bundle Type</label>
-              <select class="form-control" [(ngModel)]="options.bundleType">
+              <select class="form-select" [(ngModel)]="options.bundleType">
                 <option value="transaction">Transaction</option>
                 <option value="searchset">Search Set</option>
               </select>

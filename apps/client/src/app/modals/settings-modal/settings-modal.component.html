@@ -7,7 +7,7 @@
 
   <div class="mb-3">
     <label>Selected FHIR Server</label>
-    <select class="form-control" name="fhirServerSelect" [(ngModel)]="fhirServerId">
+    <select class="form-select" name="fhirServerSelect" [(ngModel)]="fhirServerId">
       <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
     </select>
     <div class="help-block">{{fhirServerId}}</div>

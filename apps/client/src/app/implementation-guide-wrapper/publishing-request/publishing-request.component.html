@@ -35,14 +35,14 @@
 
 
             <label>Milestone</label>
-            <select (change)="change.next()" [(ngModel)]="publishingRequest.milestone" class="form-control">
+            <select (change)="change.next()" [(ngModel)]="publishingRequest.milestone" class="form-select">
               <option [ngValue]="undefined">Unspecified</option>
               <option [ngValue]="true">Yes</option>
               <option [ngValue]="false">No</option>
             </select>
 
             <label>Status</label>
-            <select (change)="change.next()" [(ngModel)]="publishingRequest.status" [class.is-invalid]="!publishingRequest.status" class="form-control">
+            <select (change)="change.next()" [(ngModel)]="publishingRequest.status" [class.is-invalid]="!publishingRequest.status" class="form-select">
               <option value="release">Release</option>
               <option value="trial-use">Trial Use</option>
               <option value="update">Update</option>

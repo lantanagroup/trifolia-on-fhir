@@ -103,7 +103,7 @@
 
             <div class="mb-3">
               <label>Status</label>
-              <select class="form-control" [(ngModel)]="capabilityStatement.status"
+              <select class="form-select" [(ngModel)]="capabilityStatement.status"
                       [class.is-invalid]="!capabilityStatement.status">
                 <option value="draft">Draft</option>
                 <option value="active">Active</option>
@@ -114,7 +114,7 @@
 
             <div class="mb-3">
               <label>Kind</label>
-              <select class="form-control" [(ngModel)]="capabilityStatement.kind"
+              <select class="form-select" [(ngModel)]="capabilityStatement.kind"
                       [class.is-invalid]="!capabilityStatement.kind">
                 <option value="instance">Instance</option>
                 <option value="capability">Capability</option>
@@ -681,7 +681,7 @@
                     <tbody>
                     <tr *ngFor="let endpoint of messaging.endpoint; let ei = index">
                       <td>
-                        <select class="form-control"
+                        <select class="form-select"
                                 [ngModel]="Globals.getSelectCoding(endpoint.protocol, messageTransportCodes, true, true)"
                                 (ngModelChange)="endpoint.protocol = $event">
                           <option *ngFor="let c of messageTransportCodes" [ngValue]="c">{{c.display || c.code}}</option>

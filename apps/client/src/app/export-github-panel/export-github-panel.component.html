@@ -15,7 +15,7 @@
       <label>
         Repository <app-tooltip-icon tooltipKey="github.repository.onlypush"></app-tooltip-icon>
       </label>
-      <select class="form-control" [(ngModel)]="repository" (change)="repositoryChanged()" *ngIf="!loadingRepositories">
+      <select class="form-select" [(ngModel)]="repository" (change)="repositoryChanged()" *ngIf="!loadingRepositories">
         <option *ngFor="let repo of repositories" [ngValue]="repo">{{repo.owner.login}}/{{repo.name}}</option>
       </select>
       <p class="help-block" *ngIf="loadingRepositories">Loading list of GitHub repositories...</p>
@@ -25,7 +25,7 @@
   <div class="col-md-4">
     <div class="mb-3" *ngIf="repository">
       <label>Branch</label>
-      <select class="form-control" [(ngModel)]="branch" (change)="branchChanged()">
+      <select class="form-select" [(ngModel)]="branch" (change)="branchChanged()">
         <option *ngFor="let b of branches">{{b.name}}</option>
       </select>
     </div>
@@ -33,7 +33,7 @@
   <div class="col-md-4">
     <div class="mb-3" *ngIf="repository">
       <label>Output Format</label>
-      <select class="form-control" [(ngModel)]="responseFormat" (change)="responseFormatChanged(); change.emit(responseFormat)">
+      <select class="form-select" [(ngModel)]="responseFormat" (change)="responseFormatChanged(); change.emit(responseFormat)">
         <option value="application/json">JSON</option>
         <option value="application/xml">XML</option>
       </select>
@@ -77,7 +77,7 @@
         <td>{{file.path}}</td>
         <td>{{file.info}}</td>
         <td>
-          <select class="form-control" [(ngModel)]="file.action">
+          <select class="form-select" [(ngModel)]="file.action">
             <option value="nothing">Do Nothing</option>
             <option value="add" *ngIf="file.isNew">Add</option>
             <option value="update" *ngIf="file.content">Update</option>

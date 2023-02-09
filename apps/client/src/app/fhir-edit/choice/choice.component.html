@@ -13,7 +13,7 @@
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
       </div>
     </ng-container>
-    <select class="form-control" *ngIf="hasChoice() && choices.length > 1" [ngModel]="getChoiceName()" (ngModelChange)="setChoicePropertyName($event); change.emit()" [class.is-invalid]="typeInvalid">
+    <select class="form-select" *ngIf="hasChoice() && choices.length > 1" [ngModel]="getChoiceName()" (ngModelChange)="setChoicePropertyName($event); change.emit()" [class.is-invalid]="typeInvalid">
       <option *ngFor="let c of choices" [ngValue]="c">{{c}}</option>
     </select>
   </div>
@@ -54,7 +54,7 @@
       <input type="checkbox" [ngModel]="parentObject[getChoicePropertyName()].hasOwnProperty('system')"
               (ngModelChange)="Globals.toggleProperty(parentObject[getChoicePropertyName()], 'system', ''); change.emit()"/>
     </div>
-    <select class="form-control" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('system')"
+    <select class="form-select" [disabled]="!parentObject[getChoicePropertyName()].hasOwnProperty('system')"
             [(ngModel)]="parentObject[getChoicePropertyName()].system" (change)="change.emit()">
       <option *ngFor="let cpc of contactPointSystemCodes" [ngValue]="cpc.code">{{cpc.display}}</option>
     </select>

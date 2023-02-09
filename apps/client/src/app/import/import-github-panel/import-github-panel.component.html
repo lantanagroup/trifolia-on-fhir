@@ -11,7 +11,7 @@
     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
         <div class="mb-3" *ngIf="!loadingRepositories">
             <label>Select a repository</label>
-            <select class="form-control" [(ngModel)]="repositoryId" (change)="repositoryChanged()">
+            <select class="form-select" [(ngModel)]="repositoryId" (change)="repositoryChanged()">
                 <option *ngFor="let repo of repositories" [ngValue]="repo.id">{{repo.owner.login}}: {{repo.name}}</option>
             </select>
         </div>
@@ -20,7 +20,7 @@
     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6" *ngIf="repositoryId">
         <div class="mb-3">
             <label>Select a branch</label>
-            <select class="form-control" [(ngModel)]="branchName" (change)="branchChanged()">
+            <select class="form-select" [(ngModel)]="branchName" (change)="branchChanged()">
                 <option *ngFor="let b of branches">{{b.name}}</option>
             </select>
         </div>
@@ -36,7 +36,7 @@
   <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
     <div class="mb-3" [attr.data-intro]="Globals.introText['import.github.repository']">
       <label>Select a repository</label>
-      <select class="form-control">
+      <select class="form-select">
         <option>HL7/my-repository</option>
       </select>
     </div>
@@ -44,7 +44,7 @@
   <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
     <div class="mb-3">
       <label>Select a branch</label>
-      <select class="form-control">
+      <select class="form-select">
         <option>master</option>
       </select>
     </div>

@@ -8,7 +8,7 @@
       Code
       <app-tooltip-icon tooltipPath="ElementDefinition.type.code"></app-tooltip-icon>
     </label>
-    <select class="form-control" [(ngModel)]="type.code">
+    <select class="form-select" [(ngModel)]="type.code">
       <option *ngFor="let o of definedTypeCodes" [ngValue]="o.code">{{o.display}}</option>
     </select>
   </div>
@@ -58,7 +58,7 @@
       <app-tooltip-icon tooltipPath="ElementDefinition.type.aggregation"></app-tooltip-icon>
     </label>
     <div class="input-group" *ngFor="let a of type.aggregation; let ai = index; trackBy: Globals.trackByFn">
-      <select class="form-control" [(ngModel)]="type.aggregation[ai]">
+      <select class="form-select" [(ngModel)]="type.aggregation[ai]">
         <option value="contained">Contained</option>
         <option value="referenced">Referenced</option>
         <option value="bundled">Bundled</option>

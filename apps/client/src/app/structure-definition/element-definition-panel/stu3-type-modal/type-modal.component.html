@@ -9,7 +9,7 @@
       Code
       <app-tooltip-icon tooltipPath="ElementDefinition.type.code"></app-tooltip-icon>
     </label>
-    <select class="form-control" [(ngModel)]="type.code">
+    <select class="form-select" [(ngModel)]="type.code">
       <option *ngFor="let o of definedTypeCodes" [ngValue]="o.code">{{o.display}}</option>
     </select>
   </div>
@@ -47,7 +47,7 @@
       <app-tooltip-icon tooltipPath="ElementDefinition.type.aggregation"></app-tooltip-icon>
     </label>
     <div class="input-group">
-      <select class="form-control" [(ngModel)]="type.aggregation">
+      <select class="form-select" [(ngModel)]="type.aggregation">
         <option [ngValue]="undefined">NONE</option>
         <option>contained</option>
         <option>referenced</option>
@@ -62,7 +62,7 @@
       <app-tooltip-icon tooltipPath="ElementDefinition.type.versioning"></app-tooltip-icon>
     </label>
     <div class="input-group">
-      <select class="form-control" [(ngModel)]="type.versioning">
+      <select class="form-select" [(ngModel)]="type.versioning">
         <option [ngValue]="undefined">NONE</option>
         <option>either</option>
         <option>independent</option>

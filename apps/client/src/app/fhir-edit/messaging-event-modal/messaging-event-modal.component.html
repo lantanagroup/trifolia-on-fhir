@@ -5,7 +5,7 @@
 <div class="modal-body" *ngIf="event">
     <div class="mb-3">
         <label>Code</label>
-        <select class="form-control" [ngModel]="Globals.getSelectCoding(event.code, messageEventCodes, true, true)" (ngModelChange)="event.code = $event">
+        <select class="form-select" [ngModel]="Globals.getSelectCoding(event.code, messageEventCodes, true, true)" (ngModelChange)="event.code = $event">
             <option *ngFor="let c of messageEventCodes" [ngValue]="c">{{c.display || c.code}}</option>
         </select>
     </div>

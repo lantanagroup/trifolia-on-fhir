@@ -25,7 +25,7 @@
                     <input type="checkbox" [ngModel]="range.low.hasOwnProperty('comparator')" (ngModelChange)="Globals.toggleProperty(range.low, 'comparator', '<')"/>
                     Comparator
                 </label>
-                <select class="form-control" [disabled]="!range.low.hasOwnProperty('comparator')" [(ngModel)]="range.low.comparator">
+                <select class="form-select" [disabled]="!range.low.hasOwnProperty('comparator')" [(ngModel)]="range.low.comparator">
                     <option value="<">&lt;</option>
                     <option value="<=">&lt;=</option>
                     <option value=">=">&gt;=</option>
@@ -61,7 +61,7 @@
                     <input type="checkbox" [ngModel]="range.high.hasOwnProperty('comparator')" (ngModelChange)="Globals.toggleProperty(range.high, 'comparator', '<')"/>
                     Comparator
                 </label>
-                <select class="form-control" [disabled]="!range.high.hasOwnProperty('comparator')" [(ngModel)]="range.high.comparator">
+                <select class="form-select" [disabled]="!range.high.hasOwnProperty('comparator')" [(ngModel)]="range.high.comparator">
                     <option value="<">&lt;</option>
                     <option value="<=">&lt;=</option>
                     <option value=">=">&gt;=</option>

@@ -65,7 +65,7 @@
                 <label>Type
                   <app-tooltip-icon tooltipKey="sd.type"></app-tooltip-icon>
                 </label>
-                <select class="form-control" [ngModel]="structureDefinition.type" [disabled]="true"
+                <select class="form-select" [ngModel]="structureDefinition.type" [disabled]="true"
                         title="The type cannot be changed because the Elements tab relies on it. Delete and re-create the profile if you need to change the type." (change)="isDirty = true; nameChanged();">
                   <option>{{structureDefinition.type}}</option>
                 </select>

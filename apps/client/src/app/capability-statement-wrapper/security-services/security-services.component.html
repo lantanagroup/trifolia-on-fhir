@@ -4,7 +4,7 @@
   <ul>
     <li *ngFor="let service of security.service || []; let serviceIndex = index">
       <div class="input-group">
-        <select class="form-control" style="max-width: 300px" [ngModel]="getServiceText(service)" (ngModelChange)="setServiceText(service, $event)">
+        <select class="form-select" style="max-width: 300px" [ngModel]="getServiceText(service)" (ngModelChange)="setServiceText(service, $event)">
           <option>OAuth</option>
           <option>SMART-on-FHIR</option>
           <option>NTLM</option>

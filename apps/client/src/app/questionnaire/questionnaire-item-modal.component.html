@@ -63,7 +63,7 @@
             <tbody>
             <tr *ngFor="let ew of item.enableWhen; let ewi = index">
                 <td>
-                    <select class="form-control" [(ngModel)]="ew.question">
+                    <select class="form-select" [(ngModel)]="ew.question">
                         <option *ngFor="let aqi of allQuestions" [ngValue]="aqi.linkId">{{aqi.linkId}} ({{aqi.text}})</option>
                     </select>
                 </td>

@@ -72,7 +72,7 @@
                     <input type="text" class="form-control" [(ngModel)]="v.sequence" (change)="change.emit()" />
                   </td>
                   <td>
-                    <select class="form-control" [(ngModel)]="v.status" [class.is-invalid]="!v.status" (change)="change.emit()">
+                    <select class="form-select" [(ngModel)]="v.status" [class.is-invalid]="!v.status" (change)="change.emit()">
                       <option value="ci-build">CI Build</option>
                       <option value="draft">Draft</option>
                       <option value="ballot">Ballot</option>
@@ -81,7 +81,7 @@
                     </select>
                   </td>
                   <td>
-                    <select class="form-control" [(ngModel)]="v.current" (change)="change.emit()">
+                    <select class="form-select" [(ngModel)]="v.current" (change)="change.emit()">
                       <option [ngValue]="undefined">Unspecified</option>
                       <option [ngValue]="true">Yes</option>
                       <option [ngValue]="false">No</option>
