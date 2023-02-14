@@ -56,11 +56,7 @@
           <app-fhir-boolean [parentObject]="searchParameter" propertyName="multipleAnd" title="Multiple AND?"
                             [required]="false"></app-fhir-boolean>
 
-
-          <app-fhir-select-single-code [parentObject]="searchParameter" propertyName="code" title="Code"
-                                       [isFormGroup]="true" [required]="true"
-                                       valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
-
+          <app-fhir-string [parentObject]="searchParameter" propertyName="code" title="Code" [required]="true"></app-fhir-string>
         </div>
 
 
