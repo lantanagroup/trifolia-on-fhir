@@ -1,8 +1,9 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Project, ProjectDocument } from '../../schemas/project.schema';
-import { BaseDataService } from '../base-data.service';
+import { Project, ProjectDocument } from './project.schema';
+import { BaseDataService } from '../base/base-data.service';
+
 
 
 @Injectable()

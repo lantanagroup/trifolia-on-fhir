@@ -1,11 +1,9 @@
 import { Paginated, PaginateOptions } from "@trifolia-fhir/tof-lib/paginate";
-import { HydratedDocument, Model, Schema } from "mongoose";
+import { HydratedDocument, Model } from "mongoose";
+import { BaseEntity } from "./base.entity";
 import { TofLogger } from "../tof-logger";
 
 
-export class BaseEntity {
-    
-}
 
 export class BaseDataService<T extends HydratedDocument<BaseEntity>> {
 

@@ -1,5 +1,6 @@
 import { BaseController } from "./base.controller";
-import { BaseDataService, BaseEntity } from "../services/base-data.service";
+import { BaseDataService } from "./base-data.service";
+import { BaseEntity } from "./base.entity";
 import { Paginated } from "@trifolia-fhir/tof-lib/paginate";
 import { Body, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { HydratedDocument } from "mongoose";

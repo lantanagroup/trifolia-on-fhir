@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { IImplementationGuide } from '@trifolia-fhir/tof-lib/fhirInterfaces';
 import { IProject, IProjectContributor, IProjectPermission } from '@trifolia-fhir/models';
 import { HydratedDocument } from 'mongoose';
-import { BaseEntity } from '../services/base-data.service';
+import { BaseEntity } from '../base/base.entity';
 
 export type ProjectDocument = HydratedDocument<Project>;
 

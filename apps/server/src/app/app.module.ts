@@ -20,11 +20,12 @@ import { GithubController } from './github.controller';
 import { ExportService } from './export.service';
 import { SearchParameterController } from './search-parameter.controller';
 import { FshController } from './fsh.controller';
-import { SharedModule } from './shared.module';
-import { UsersController } from './controllers/users/users.controller';
+import { SharedModule } from './shared/shared.module';
+import { ProjectsModule } from './projects/projects.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [HttpModule, SharedModule],
+  imports: [HttpModule, SharedModule, ProjectsModule, UsersModule],
   exports: [],
   controllers: [
     AuditEventController,
@@ -45,7 +46,6 @@ import { UsersController } from './controllers/users/users.controller';
     GithubController,
     SearchParameterController,
     FshController,
-    UsersController,
   ],
   providers: [HttpStrategy, ExportService],
 })
