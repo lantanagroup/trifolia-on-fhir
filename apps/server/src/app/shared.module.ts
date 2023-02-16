@@ -1,9 +1,10 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { modelDefinitions } from "./db/schemas";
+import { modelDefinitions } from "./schemas";
 import { ConfigService } from "./config.service";
 import { DatabaseConfigService } from "./database-config.service";
-import { ProjectsService } from "./services/projects.service";
+import { ProjectsService } from "./services/projects/projects.service";
+import { UsersService } from "./services/users/users.service";
 
 
 
@@ -19,12 +20,14 @@ import { ProjectsService } from "./services/projects.service";
     exports: [
         ConfigService,
         DatabaseConfigService,
-        ProjectsService
+        ProjectsService,
+        UsersService
     ],
     providers: [
         ConfigService,
         DatabaseConfigService,
-        ProjectsService
+        ProjectsService,
+        UsersService
     ]
 })
 export class SharedModule {}

@@ -21,7 +21,7 @@ import { BulkUpdateRequest } from '../../../../libs/tof-lib/src/lib/bulk-update-
 import path from 'path';
 import os from 'os';
 import * as fs from 'fs';
-import { ProjectsService } from './services/projects.service';
+import { ProjectsService } from './services/projects/projects.service';
 import { PaginateOptions } from 'libs/tof-lib/src/lib/paginate';
 
 class PatchRequest {

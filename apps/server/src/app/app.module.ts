@@ -21,15 +21,11 @@ import { ExportService } from './export.service';
 import { SearchParameterController } from './search-parameter.controller';
 import { FshController } from './fsh.controller';
 import { SharedModule } from './shared.module';
-
+import { UsersController } from './controllers/users/users.controller';
 
 @Module({
-  imports: [
-    HttpModule,
-    SharedModule
-  ],
-  exports: [
-  ],
+  imports: [HttpModule, SharedModule],
+  exports: [],
   controllers: [
     AuditEventController,
     ConfigController,
@@ -48,11 +44,9 @@ import { SharedModule } from './shared.module';
     GroupController,
     GithubController,
     SearchParameterController,
-    FshController
+    FshController,
+    UsersController,
   ],
-  providers: [
-    HttpStrategy,
-    ExportService
-  ]
+  providers: [HttpStrategy, ExportService],
 })
 export class AppModule {}

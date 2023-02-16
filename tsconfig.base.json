@@ -16,7 +16,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@trifolia-fhir/tof-lib": ["libs/tof-lib/src/index.ts"]
+      "@trifolia-fhir/models": ["libs/tof-lib/src/lib/models/index.ts"],
+      "@trifolia-fhir/r4": ["libs/tof-lib/src/lib/r4/index.ts"],
+      "@trifolia-fhir/r5": ["libs/tof-lib/src/lib/r5/index.ts"],
+      "@trifolia-fhir/stu3": ["libs/tof-lib/src/lib/stu3/index.ts"],
+      "@trifolia-fhir/tof-lib/*": ["libs/tof-lib/src/lib/*"]
     },
     "resolveJsonModule": true,
     "esModuleInterop": true,

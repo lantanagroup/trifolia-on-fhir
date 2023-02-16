@@ -1,10 +1,10 @@
 import {BaseTools} from './baseTools';
-import {IAudit, IConformance, IExample, IGroup, IHistory, IProject, IProjectPermission, IProjectResource, IUser} from '../../../server/src/app/db/models';
-import {IAuditEvent, IContactPoint, IDomainResource, IImplementationGuide, IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IAudit, IConformance, IExample, IGroup, IHistory, IProject, IProjectPermission, IProjectResource, IUser} from '@trifolia-fhir/models';
+import {IAuditEvent, IContactPoint, IDomainResource, IImplementationGuide, IPractitioner} from '@trifolia-fhir/tof-lib/fhirInterfaces';
 import {Db, MongoClient} from 'mongodb';
-import {getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
-import {AuditEvent as R4AuditEvent, Coding, Group as R4Group, ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {AuditEvent as STU3AuditEvent, Group as STU3Group, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {getHumanNamesDisplay} from '@trifolia-fhir/tof-lib/helper';
+import {AuditEvent as R4AuditEvent, Coding, Group as R4Group, ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
+import {AuditEvent as STU3AuditEvent, Group as STU3Group, ImplementationGuide as STU3ImplementationGuide} from '@trifolia-fhir/stu3';
 import * as fs from 'fs';
 import {Connection, createConnection} from 'mysql';
 import {ungzip} from 'node-gzip';

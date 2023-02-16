@@ -1,4 +1,4 @@
-import type { IDomainResource, IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type { IDomainResource, IImplementationGuide } from '../fhirInterfaces';
 
 export interface IProjectPermission {
   targetId?: string;    // no targetId means "everyone"
@@ -17,7 +17,7 @@ export interface IProject {
   name: string;
   authorId: string;
   contributors?: IProjectContributor[];
-  fhirVersion: 'stu3'|'r4';
+  fhirVersion: 'stu3'|'r4'|'r5';
   permissions?: IProjectPermission[];
   ig: IImplementationGuide;
 }
