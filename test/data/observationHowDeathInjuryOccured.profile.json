@@ -1,0 +1,305 @@
+{
+  "resourceType": "StructureDefinition",
+  "id": "test-observation",
+  "status": "active",
+  "kind": "resource",
+  "derivation": "constraint",
+  "url": "http://www.test.com/StructureDefinition/test-observation",
+  "version": "0.1.0",
+  "name": "ObservationHowDeathInjuryOccurred",
+  "title": "Observation - How Death Injury Occurred",
+  "contact": [
+    {
+      "name": "HL7 International - Public Health",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://www.hl7.org/Special/committees/pher"
+        }
+      ]
+    }
+  ],
+  "description": "This Observation provides the certified explanation of how the injury leading to death occurred.\nThe MDI Observation - How Death Injury Occurred artifact overlaps with the VRDR Injury Incident artifact.",
+  "jurisdiction": [
+    {
+      "coding": [
+        {
+          "system": "urn:iso:std:iso:3166",
+          "code": "US",
+          "display": "United States of America"
+        }
+      ]
+    }
+  ],
+  "fhirVersion": "4.0.1",
+  "abstract": false,
+  "type": "Observation",
+  "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Observation",
+  "differential": {
+    "element": [
+      {
+        "id": "Observation",
+        "path": "Observation",
+        "short": "The certified explanation of how the injury leading to death occurred.",
+        "definition": "The certified explanation of how the injury leading to death occurred."
+      },
+      {
+        "id": "Observation.code",
+        "path": "Observation.code",
+        "short": "Injury incident description Narrative",
+        "definition": "Injury incident description Narrative",
+        "mustSupport": true,
+        "patternCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "11374-6"
+            }
+          ]
+        }
+      },
+      {
+        "id": "Observation.subject",
+        "path": "Observation.subject",
+        "short": "The subject of this observation is the decedent.",
+        "definition": "The subject of this observation is the decedent.",
+        "min": 1,
+        "type": [
+          {
+            "code": "Reference",
+            "targetProfile": [
+              "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"
+            ]
+          }
+        ],
+        "mustSupport": true
+      },
+      {
+        "id": "Observation.effective[x]",
+        "path": "Observation.effective[x]",
+        "short": "Date/Time of Injury",
+        "type": [
+          {
+            "code": "dateTime"
+          }
+        ]
+      },
+      {
+        "id": "Observation.effective[x].extension",
+        "path": "Observation.effective[x].extension",
+        "slicing": {
+          "discriminator": [
+            {
+              "type": "value",
+              "path": "url"
+            }
+          ],
+          "ordered": false,
+          "rules": "open"
+        }
+      },
+      {
+        "id": "Observation.effective[x].extension:partialDateTime",
+        "path": "Observation.effective[x].extension",
+        "sliceName": "partialDateTime",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "Extension",
+            "profile": [
+              "http://hl7.org/fhir/us/mdi/StructureDefinition/Extension-partial-date-time"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Observation.performer",
+        "path": "Observation.performer",
+        "short": "Certifier of the explanation.",
+        "definition": "Certifier of the explanation.",
+        "max": "1",
+        "type": [
+          {
+            "code": "Reference",
+            "targetProfile": [
+              "http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner"
+            ]
+          }
+        ],
+        "mustSupport": true
+      },
+      {
+        "id": "Observation.value[x]",
+        "path": "Observation.value[x]",
+        "min": 1,
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "mustSupport": true
+      },
+      {
+        "id": "Observation.value[x].text",
+        "path": "Observation.value[x].text",
+        "short": "Description of how injured",
+        "mustSupport": true
+      },
+      {
+        "id": "Observation.component",
+        "path": "Observation.component",
+        "slicing": {
+          "discriminator": [
+            {
+              "type": "value",
+              "path": "code"
+            }
+          ],
+          "rules": "open"
+        }
+      },
+      {
+        "id": "Observation.component:placeOfInjury",
+        "path": "Observation.component",
+        "sliceName": "placeOfInjury",
+        "short": "Place of injury",
+        "min": 0,
+        "max": "1"
+      },
+      {
+        "id": "Observation.component:placeOfInjury.code",
+        "path": "Observation.component.code",
+        "patternCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "69450-5"
+            }
+          ]
+        }
+      },
+      {
+        "id": "Observation.component:placeOfInjury.value[x]",
+        "path": "Observation.component.value[x]",
+        "slicing": {
+          "discriminator": [
+            {
+              "type": "type",
+              "path": "$this"
+            }
+          ],
+          "ordered": false,
+          "rules": "open"
+        },
+        "min": 1
+      },
+      {
+        "id": "Observation.component:placeOfInjury.valueCodeableConcept",
+        "path": "Observation.component.valueCodeableConcept",
+        "min": 0,
+        "max": "1",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ]
+      },
+      {
+        "id": "Observation.component:placeOfInjury.valueCodeableConcept.text",
+        "path": "Observation.component.valueCodeableConcept.text",
+        "short": "Place of Injury - Literal"
+      },
+      {
+        "id": "Observation.component:workInjuryIndicator",
+        "path": "Observation.component",
+        "sliceName": "workInjuryIndicator",
+        "short": "Injury at Work?",
+        "min": 0,
+        "max": "1"
+      },
+      {
+        "id": "Observation.component:workInjuryIndicator.code",
+        "path": "Observation.component.code",
+        "patternCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "69444-8"
+            }
+          ]
+        }
+      },
+      {
+        "id": "Observation.component:workInjuryIndicator.value[x]",
+        "path": "Observation.component.value[x]",
+        "short": "Injury at Work?",
+        "min": 1,
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "binding": {
+          "strength": "required",
+          "valueSet": "http://hl7.org/fhir/us/mdi/ValueSet/ValueSet-yes-no-unknown-not-applicable"
+        }
+      },
+      {
+        "id": "Observation.component:transportationRole",
+        "path": "Observation.component",
+        "sliceName": "transportationRole",
+        "min": 0,
+        "max": "1"
+      },
+      {
+        "id": "Observation.component:transportationRole.code",
+        "path": "Observation.component.code",
+        "patternCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "69451-3"
+            }
+          ]
+        }
+      },
+      {
+        "id": "Observation.component:transportationRole.value[x]",
+        "path": "Observation.component.value[x]",
+        "slicing": {
+          "discriminator": [
+            {
+              "type": "type",
+              "path": "$this"
+            }
+          ],
+          "ordered": false,
+          "rules": "open"
+        },
+        "short": "Transportation role of decedent",
+        "min": 1,
+        "type": [
+          {
+            "code": "CodeableConcept"
+          }
+        ],
+        "binding": {
+          "strength": "required",
+          "valueSet": "http://hl7.org/fhir/us/mdi/ValueSet/ValueSet-transportation-incident-role"
+        }
+      },
+      {
+        "id": "Observation.component:transportationRole.valueCodeableConcept",
+        "path": "Observation.component.valueCodeableConcept",
+        "min": 1,
+        "max": "1"
+      },
+      {
+        "id": "Observation.component:transportationRole.valueCodeableConcept.text",
+        "path": "Observation.component.valueCodeableConcept.text",
+        "short": "Transportation role of decedent, if code = OTH"
+      }
+    ]
+  }
+}
