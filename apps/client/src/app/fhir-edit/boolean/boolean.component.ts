@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {CookieService} from 'angular2-cookie/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { CookieService } from 'angular2-cookie/core';
 
 @Component({
   selector: 'app-fhir-boolean',
@@ -17,6 +17,7 @@ export class FhirBooleanComponent implements OnInit {
   @Input() tooltipPath: string;
   @Input() falseLabel = 'false';
   @Input() trueLabel = 'true';
+  @Input() allowUndefined = false;
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   /**
