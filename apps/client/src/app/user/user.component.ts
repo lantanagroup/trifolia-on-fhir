@@ -1,33 +1,32 @@
 import {Component, OnInit} from '@angular/core';
 import {PractitionerService} from '../shared/practitioner.service';
-import {Bundle, MemberComponent, Practitioner, ResourceReference} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Group} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Bundle, MemberComponent, Practitioner, ResourceReference} from '@trifolia-fhir/stu3';
+import {Group} from '@trifolia-fhir/r4';
 import {AuthService} from '../shared/auth.service';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {getErrorString, getHumanNamesDisplay, Globals} from '@trifolia-fhir/tof-lib';
 import {ConfigService} from '../shared/config.service';
-import {getErrorString, getHumanNamesDisplay, getPractitionerEmail} from '../../../../../libs/tof-lib/src/lib/helper';
 import {GroupService} from '../shared/group.service';
+import { IUser } from '@trifolia-fhir/models';
+import { UserService } from '../shared/user.service';
 
 @Component({
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
-  public practitioner = new Practitioner();
+  public user: IUser = {} as IUser;
   public searchUsersName: string;
   public searchUsersEmail: string;
   public searchUsersBundle: Bundle;
   public editGroup: Group;
   public message: string;
   public Globals = Globals;
-  public getHumanNamesDisplay = getHumanNamesDisplay;
-  public getPractitionerEmail = getPractitionerEmail;
   public managingGroups: Group[] = [];
   public membershipGroups: Group[] = [];
 
   constructor(
     private configService: ConfigService,
-    private personService: PractitionerService,
+    private userService: UserService,
     private groupService: GroupService,
     private authService: AuthService,
     private practitionerService: PractitionerService) {
@@ -43,15 +42,15 @@ export class UserComponent implements OnInit {
   }
 
   public saveUser() {
-    this.message = 'Saving person...';
+    this.message = 'Saving user...';
 
-    this.personService.updateMe(this.practitioner)
-      .subscribe((updatedPractitioner) => {
-        this.practitioner = updatedPractitioner;
+    this.userService.update(this.user).subscribe({
+      next: (updatedUser) => {
+        this.user = updatedUser;
         this.message = 'Your changes have been saved!';
-      }, err => {
-        this.message = 'Error saving practitioner: ' + getErrorString(err);
-      });
+      },
+      error: (err) => { this.message = 'Error saving user: ' + getErrorString(err) }
+    });
   }
 
   public addMember(practitioner: Practitioner) {
@@ -72,8 +71,8 @@ export class UserComponent implements OnInit {
     this.editGroup = new Group();
 
     const meReference = <ResourceReference> {
-      reference: `Practitioner/${this.practitioner.id}`,
-      display: getHumanNamesDisplay(this.practitioner.name)
+      reference: `Practitioner/${this.user.id}`,
+      display: this.user.name
     };
 
     const newMember = new MemberComponent();
@@ -101,7 +100,7 @@ export class UserComponent implements OnInit {
     if (!currentMember) {
       currentMember = {
         entity: {
-          reference: 'Practitioner/' + this.practitioner.id
+          reference: 'Practitioner/' + this.user.id
         }
       };
     }
@@ -152,11 +151,10 @@ export class UserComponent implements OnInit {
   }
 
   private getMe() {
-    this.personService.getMe().toPromise()
-      .then((practitioner) => {
-        this.practitioner = practitioner;
-      })
-      .catch((err) => this.message = getErrorString(err));
+    this.userService.getMe().subscribe({
+      next: (u) => { this.user = u; },
+      error: (e) => { this.message = getErrorString(e); }
+    });
   }
 
   private async getGroups() {

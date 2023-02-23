@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router, RoutesRecognized} from '@angular/router';
 import {AuthService} from './shared/auth.service';
 import {ConfigService} from './shared/config.service';
-import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {Globals} from '@trifolia-fhir/tof-lib';
 import {FileService} from './shared/file.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FileOpenModalComponent} from './modals/file-open-modal/file-open-modal.component';
@@ -14,9 +14,9 @@ import {GithubService} from './shared/github.service';
 import {CookieService} from 'ngx-cookie-service';
 import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-message-modal.component';
 import introJs from 'intro.js/intro.js';
-import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {getHumanNamesDisplay} from '../../../../libs/tof-lib/src/lib/helper';
-import {Bundle, Coding, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Practitioner} from '@trifolia-fhir/stu3';
+import {getHumanNamesDisplay} from '@trifolia-fhir/tof-lib';
+import {Bundle, Coding, ImplementationGuide} from '@trifolia-fhir/r4';
 
 @Component({
   selector: 'trifolia-fhir-root',
@@ -72,11 +72,11 @@ export class AppComponent implements OnInit {
   }
 
   get showNewUser() {
-    return this.authService.isAuthenticated() && !this.authService.practitioner && !!this.configService.fhirConformance;
+    return this.authService.isAuthenticated() && !this.authService.user && !!this.configService.fhirConformance;
   }
 
   get showRouterOutlet() {
-    return this.authService.isAuthenticated() && !!this.authService.practitioner && !!this.configService.fhirConformance;
+    return this.authService.isAuthenticated() && !!this.authService.user && !!this.configService.fhirConformance;
   }
 
   public startIntro() {
@@ -116,8 +116,8 @@ export class AppComponent implements OnInit {
   }
 
   public get displayName(): string {
-    if (this.authService.practitioner) {
-      return getHumanNamesDisplay(this.authService.practitioner.name);
+    if (this.authService.user) {
+      return this.authService.user.name;
     }
 
     if (this.authService.userProfile) {

@@ -19,6 +19,7 @@ import {ImplementationGuideTypeaheadComponent} from './implementation-guide-type
 import {SimplemdeModule} from 'ngx-simplemde';
 import { IgPublisherSelectionComponent } from './ig-publisher-selection/ig-publisher-selection.component';
 import { FshResourceComponent } from './fsh-resource/fsh-resource.component';
+import { UserEditComponent } from './user-edit/user-edit.component';
 
 const components = [
   MarkdownComponent,
@@ -34,7 +35,8 @@ const components = [
   ResourcePermissionsComponent,
   ImplementationGuideTypeaheadComponent,
   IgPublisherSelectionComponent,
-  FshResourceComponent
+  FshResourceComponent,
+  UserEditComponent
 ];
 
 @NgModule({

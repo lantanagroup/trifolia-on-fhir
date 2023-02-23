@@ -1,7 +1,44 @@
-import { PaginateOptions } from "@trifolia-fhir/tof-lib/paginate";
+import { UnauthorizedException } from "@nestjs/common";
+import { PaginateOptions } from "@trifolia-fhir/tof-lib";
+import type { ITofUser } from "@trifolia-fhir/tof-lib";
+import { TofLogger } from "../tof-logger";
 
 
 export class BaseController {
+
+    protected readonly logger = new TofLogger(BaseController.name);
+
+
+    /**
+     * Throws {UnauthorizedException} is given user is not an admin
+     * @param user 
+     * @throws UnauthorizedException
+     */
+    protected assertAdmin(user: ITofUser) {
+        if (!user.isAdmin) {
+            throw new UnauthorizedException('This operation requires administrative privileges.');
+        }
+    }
+
+
+    /**
+     * Returns the normalized authId string for the supplied subject. Currently just removes 'auth0|' from the start of the string if present.
+     * @param user 
+     */
+    protected getAuthIdFromSubject(sub: string): string {
+
+        if (!sub || sub.length < 1) {
+            return null;
+        }
+
+        if (sub.startsWith('auth0|')) {
+            sub = sub.substring(6);
+        }
+
+        return sub;
+
+    }
+
     
     
     /**
@@ -11,6 +48,7 @@ export class BaseController {
      * @returns object for use in PaginateOptions.filter
      */
     protected getFilterFromQuery(query?: any) : any {
+        this.logger.debug('getFilterFromQuery');
         return {};
     }
 
@@ -21,7 +59,7 @@ export class BaseController {
      * @returns PaginateOptions for use in the BaseDataController.search method
      */
     protected getPaginateOptionsFromQuery(query?: any) : PaginateOptions {
-        const filter = this.getFilterFromQuery(query);
+        this.logger.debug('getPaginateOptionsFromQuery');
 
         const options: PaginateOptions = {
             page: (query && query.page) ? query.page : 1,

@@ -1,7 +1,7 @@
 import {EventEmitter, Injectable, OnDestroy} from '@angular/core';
 import * as io from 'socket.io-client';
-import {Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Socket} from 'socket.io';
+import { IUser } from '@trifolia-fhir/models';
 
 export class HtmlExportStatus {
     public status: string;                  // when dealing with exports
@@ -48,11 +48,11 @@ export class SocketService implements OnDestroy {
         }
     }
 
-    notifyAuthenticated(userProfile?: any, practitioner?: Practitioner) {
+    notifyAuthenticated(userProfile?: any, user?: IUser) {
         if (!this.authInfoSent) {
             this.socket.emit('authenticated', {
                 userProfile: userProfile,
-                practitioner: practitioner
+                practitioner: user
             });
             this.authInfoSent = true;
         }

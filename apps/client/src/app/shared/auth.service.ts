@@ -1,20 +1,22 @@
 import {EventEmitter, Injectable, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {PractitionerService} from './practitioner.service';
-import {Group, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Group, Meta} from '@trifolia-fhir/stu3';
 import {ConfigService} from './config.service';
 import {SocketService} from './socket.service';
-import {addPermission} from '../../../../../libs/tof-lib/src/lib/helper';
+import {addPermission} from '@trifolia-fhir/tof-lib';
 import {GroupService} from './group.service';
 import {map} from 'rxjs/operators';
-import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
-import type {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
-import { IBundle } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {AuthConfig, OAuthErrorEvent, OAuthService} from 'angular-oauth2-oidc';
+import type {ITofUser} from '@trifolia-fhir/tof-lib';
+import { IBundle } from '@trifolia-fhir/tof-lib';
+import { UserService } from './user.service';
+import type { IUser } from '@trifolia-fhir/models';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
   public userProfile: ITofUser;
-  public practitioner: Practitioner;
+  public user: IUser;
   public groups: Group[] = [];
   public authChanged: EventEmitter<any>;
   public loggingIn = false;
@@ -23,7 +25,7 @@ export class AuthService {
     private injector: Injector,
     private socketService: SocketService,
     private configService: ConfigService,
-    private practitionerService: PractitionerService,
+    private userService: UserService,
     private groupService: GroupService,
     private oauthService: OAuthService) {
 
@@ -74,6 +76,7 @@ export class AuthService {
     authConfig.scope = this.configService.config.auth.scope;
     authConfig.requireHttps = false;
     authConfig.requestAccessToken = true;
+    //authConfig.showDebugInformation = true;
 
     this.oauthService.configure(authConfig);
 
@@ -93,14 +96,14 @@ export class AuthService {
 
     this.authChanged.subscribe(() => {
       if (this.isAuthenticated()) {
-        this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
+        this.socketService.notifyAuthenticated(this.userProfile, this.user);
       }
     });
 
     // If the socket re-connects, then re-send the authentication information for the connection
     this.socketService.onConnected.subscribe(() => {
       if (this.isAuthenticated()) {
-        this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
+        this.socketService.notifyAuthenticated(this.userProfile, this.user);
       }
     });
 
@@ -110,7 +113,7 @@ export class AuthService {
       await this.getProfile();
 
       if (this.isAuthenticated()) {
-        this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
+        this.socketService.notifyAuthenticated(this.userProfile, this.user);
       }
     });
   }
@@ -119,7 +122,8 @@ export class AuthService {
     if (!this.oauthService) {
       return;
     }
-    this.oauthService.initImplicitFlow(encodeURIComponent(this.router.url));
+    console.log('authservice::login', this.router.url);
+    this.oauthService.initImplicitFlow();
   }
 
   public handleAuthentication(): void {
@@ -153,7 +157,7 @@ export class AuthService {
       this.getProfile();
       this.socketService.notifyAuthenticated({
         userProfile: this.userProfile,
-        practitioner: this.practitioner
+        user: this.user
       });
     }
   }
@@ -184,22 +188,23 @@ export class AuthService {
         userProfile.isAdmin = false;
       }
 
+      //userProfile.isAdmin = true;
       return userProfile;
     }
   }
 
-  public async getProfile(): Promise<{ userProfile: any, practitioner: Practitioner }> {
+  public async getProfile(): Promise<{ userProfile: any, user: IUser }> {
     if (!this.isAuthenticated()) {
-      return Promise.resolve({ userProfile: null, practitioner: null });
+      return Promise.resolve({ userProfile: null, user: null });
     }
 
     this.userProfile = this.getAuthUserInfo();
 
     try {
-      this.practitioner = await this.practitionerService.getMe().toPromise();
+      this.user = await firstValueFrom(this.userService.getMe());
     } catch (ex) {
       console.error(ex);
-      this.practitioner = null;
+      this.user = null;
     }
 
     try {
@@ -218,7 +223,7 @@ export class AuthService {
 
     return {
       userProfile: this.userProfile,
-      practitioner: this.practitioner
+      user: this.user
     };
   }
 

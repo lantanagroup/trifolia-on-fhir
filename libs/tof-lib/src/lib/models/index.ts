@@ -23,11 +23,13 @@ export interface IProject {
 }
 
 export interface IUser {
-  _id?: string;
+  id?: string;
   authId?: string[];
   email?: string;
   phone?: string;
-  name?: string;
+  firstName?: string;
+  lastName?: string;
+  readonly name: string;
 }
 
 export interface IGroup {

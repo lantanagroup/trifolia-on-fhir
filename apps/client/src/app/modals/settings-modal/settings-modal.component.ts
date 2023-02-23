@@ -44,7 +44,7 @@ export class SettingsModalComponent implements OnInit {
   public ok() {
     if (this.fhirServerId !== this.configService.fhirServer) {
       this.configService.project = null;
-      this.authService.practitioner = null;
+      this.authService.user = null;
       // noinspection JSIgnoredPromiseFromCall
       this.router.navigate([`/${this.fhirServerId}/implementation-guide/open`]);
     }

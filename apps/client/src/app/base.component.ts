@@ -32,12 +32,12 @@ export class BaseComponent {
     }
 
     // Basic error checking to make sure we have the info we need to proceed
-    if (!resource || !this.configService.config || !this.authService.practitioner) {
+    if (!resource || !this.configService.config || !this.authService.user) {
       return false;
     }
 
     const foundEveryone = findPermission(resource.meta, 'everyone', permission);
-    const foundUser = findPermission(resource.meta, 'user', permission, this.authService.practitioner.id);
+    const foundUser = findPermission(resource.meta, 'user', permission, this.authService.user.id);
     const foundGroups = this.authService.groups.filter((group) => {
       return findPermission(resource.meta, 'group', permission, group.id);
     }).length > 0;

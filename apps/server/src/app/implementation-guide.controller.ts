@@ -22,7 +22,7 @@ import path from 'path';
 import os from 'os';
 import * as fs from 'fs';
 import { ProjectsService } from './projects/projects.service';
-import { PaginateOptions } from '@trifolia-fhir/tof-lib/paginate';
+import { PaginateOptions } from '@trifolia-fhir/tof-lib';
 
 class PatchRequest {
   op: string;

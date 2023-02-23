@@ -4,9 +4,9 @@
   <li ngbNavItem>
     <a ngbNavLink>My Information</a>
     <ng-template ngbNavContent>
-      <trifolia-fhir-practitioner [practitioner]="practitioner" #editPractitioner></trifolia-fhir-practitioner>
+      <user-edit [user]="user" #editUser></user-edit>
 
-      <button type="button" class="btn btn-primary" (click)="saveUser()" [disabled]="!editPractitioner.valid">Save</button>
+      <button type="button" class="btn btn-primary" (click)="saveUser()" [disabled]="!editUser.valid">Save</button>
     </ng-template>
   </li>
   <li ngbNavItem>
@@ -155,12 +155,6 @@
           </div>
         </div>
       </div>
-    </ng-template>
-  </li>
-  <li ngbNavItem>
-    <a ngbNavLink>RAW</a>
-    <ng-template ngbNavContent>
-      <app-raw-resource [resource]="practitioner"></app-raw-resource>
     </ng-template>
   </li>
 </ul>

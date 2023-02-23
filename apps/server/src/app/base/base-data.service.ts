@@ -1,8 +1,7 @@
-import { Paginated, PaginateOptions } from "@trifolia-fhir/tof-lib/paginate";
+import { Paginated, PaginateOptions } from "@trifolia-fhir/tof-lib";
 import { HydratedDocument, Model } from "mongoose";
 import { BaseEntity } from "./base.entity";
 import { TofLogger } from "../tof-logger";
-
 
 
 export class BaseDataService<T extends HydratedDocument<BaseEntity>> {
@@ -40,6 +39,10 @@ export class BaseDataService<T extends HydratedDocument<BaseEntity>> {
 
     public async findAll(filter = {}): Promise<T[]> {        
         return this.model.find(filter).exec();
+    }
+
+    public async findOne(filter = {}): Promise<T> {        
+        return this.model.findOne(filter).exec();
     }
 
     public async findById(id: string): Promise<T> {

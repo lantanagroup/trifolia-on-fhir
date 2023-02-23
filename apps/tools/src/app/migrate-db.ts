@@ -1,8 +1,8 @@
 import {BaseTools} from './baseTools';
 import {IAudit, IConformance, IExample, IGroup, IHistory, IProject, IProjectPermission, IProjectResource, IUser} from '@trifolia-fhir/models';
-import {IAuditEvent, IContactPoint, IDomainResource, IImplementationGuide, IPractitioner} from '@trifolia-fhir/tof-lib/fhirInterfaces';
+import {IAuditEvent, IContactPoint, IDomainResource, IImplementationGuide, IPractitioner} from '@trifolia-fhir/tof-lib';
 import {Db, MongoClient} from 'mongodb';
-import {getHumanNamesDisplay} from '@trifolia-fhir/tof-lib/helper';
+import {getHumanNamesDisplay} from '@trifolia-fhir/tof-lib';
 import {AuditEvent as R4AuditEvent, Coding, Group as R4Group, ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
 import {AuditEvent as STU3AuditEvent, Group as STU3Group, ImplementationGuide as STU3ImplementationGuide} from '@trifolia-fhir/stu3';
 import * as fs from 'fs';
@@ -471,11 +471,11 @@ export class MigrateDb extends BaseTools {
           return <IGroup> {
             name: r.name,
             migratedFrom: this.options.migratedFromLabel,
-            managingUserId: managingUser._id,
+            managingUserId: managingUser.id,
             member: r.member
               .map(m => {
                 const foundUser = this.findUser(m.entity.reference.substring('Practitioner/'.length));
-                return foundUser._id
+                return foundUser.id
               })
               .filter(m => !!m)
           };
@@ -496,12 +496,12 @@ export class MigrateDb extends BaseTools {
           return <IGroup> {
             name: r.name,
             migratedFrom: this.options.migratedFromLabel,
-            managingUserId: managingUser._id,
+            managingUserId: managingUser.id,
             member: r.member
               .filter(m => !(m.extension || []).find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager' && e.valueBoolean === true))
               .map(m => {
                 const user = this.findUser(m.entity.reference.substring('Practitioner/'.length));
-                return user._id;
+                return user.id;
               })
               .filter(m => !!m)
           };

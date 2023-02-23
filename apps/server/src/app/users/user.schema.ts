@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IUser } from '@trifolia-fhir/models';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 
 export type UserDocument = HydratedDocument<User>;
 
-@Schema({ collection: 'user' })
+@Schema({ collection: 'user', toJSON: { getters: true }})
 export class User extends BaseEntity implements IUser {
     
     @Prop()
@@ -18,9 +18,16 @@ export class User extends BaseEntity implements IUser {
     phone?: string;
 
     @Prop()
-    name?: string;
+    firstName?: string;
+
+    @Prop()
+    lastName?: string;
+
+    get name(): string {
+        return `${this.firstName} ${this.lastName}`;
+    }
     
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
+UserSchema.loadClass(User);
