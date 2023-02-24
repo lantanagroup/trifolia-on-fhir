@@ -33,12 +33,12 @@ export interface IUser {
 }
 
 export interface IGroup {
-  _id?: string;
+  id?: string;
   migratedFrom?: string;
   name: string;
   description?: string;
-  managingUserId: string;
-  member: string[];
+  managingUser: IUser;
+  members: IUser[];
 }
 
 export interface IProjectResource {

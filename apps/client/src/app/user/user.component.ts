@@ -6,7 +6,7 @@ import {AuthService} from '../shared/auth.service';
 import {getErrorString, getHumanNamesDisplay, Globals} from '@trifolia-fhir/tof-lib';
 import {ConfigService} from '../shared/config.service';
 import {GroupService} from '../shared/group.service';
-import { IUser } from '@trifolia-fhir/models';
+import {IGroup, IUser} from '@trifolia-fhir/models';
 import { UserService } from '../shared/user.service';
 
 @Component({
@@ -18,11 +18,11 @@ export class UserComponent implements OnInit {
   public searchUsersName: string;
   public searchUsersEmail: string;
   public searchUsersBundle: Bundle;
-  public editGroup: Group;
+  public editGroup: IGroup = {} as IGroup;
   public message: string;
   public Globals = Globals;
-  public managingGroups: Group[] = [];
-  public membershipGroups: Group[] = [];
+  public managingGroups: IGroup[] = [];
+  public membershipGroups: IGroup[] = [];
 
   constructor(
     private configService: ConfigService,
@@ -53,23 +53,20 @@ export class UserComponent implements OnInit {
     });
   }
 
-  public addMember(practitioner: Practitioner) {
-    const foundMember = this.editGroup.member.find((next) => next.entity.reference === 'Practitioner/' + practitioner.id);
+  public addMember(user: IUser) {
+    const foundMember = this.editGroup.members.find((u) => u.id = user.id);
 
     if (!foundMember) {
-      const reference = <ResourceReference>{
-        reference: `Practitioner/${practitioner.id}`,
-        display: getHumanNamesDisplay(practitioner.name)
-      };
-      this.editGroup.member.push({
-        entity: reference
-      });
+      var myuser = {};
+      myuser["name"] = "Sarah";
+      myuser["auth"] = "63cf15917ed330706cec77fa"
+      this.editGroup.members.push( user );
     }
   }
 
   public addGroup() {
-    this.editGroup = new Group();
-
+    this.editGroup.name = "" //new Group();
+/*
     const meReference = <ResourceReference> {
       reference: `Practitioner/${this.user.id}`,
       display: this.user.name
@@ -87,7 +84,7 @@ export class UserComponent implements OnInit {
       this.editGroup.managingEntity = meReference;
     }
 
-    this.editGroup.member = [newMember];
+    this.editGroup.member = [newMember];*/
   }
 
   public searchUsers() {
@@ -125,7 +122,7 @@ export class UserComponent implements OnInit {
   public saveGroup() {
     if (!this.editGroup.id) {
       this.groupService.createManagingGroup(this.editGroup).toPromise()
-        .then((results: Group) => {
+        .then((results) => {
           this.managingGroups.push(results);
           this.message = 'New group has been saved!';
           this.editGroup = null;
@@ -141,7 +138,7 @@ export class UserComponent implements OnInit {
     }
   }
 
-  public deleteGroup(group: Group) {
+  public deleteGroup(group: IGroup) {
     this.groupService.deleteManagingGroup(group).toPromise()
       .then(() => {
         const index = this.managingGroups.indexOf(group);
@@ -160,12 +157,12 @@ export class UserComponent implements OnInit {
   private async getGroups() {
     const results = await Promise.all([
       this.groupService.getManaging().toPromise(),
-      this.groupService.getMembership().toPromise()
+      this.groupService.getNewMembership().toPromise()
     ]);
 
-    this.managingGroups = results[0]?.entry?.map((entry) => <Group> entry.resource) || [];
-    this.membershipGroups = results[1]?.entry?.map((entry) => <Group> entry.resource) || [];
-    
+    this.managingGroups = results[0] || [];
+    this.membershipGroups = results[1] || [];
+
   }
 
   async ngOnInit() {
