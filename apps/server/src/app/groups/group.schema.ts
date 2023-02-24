@@ -1,4 +1,4 @@
-import { Prop,SchemaFactory } from '@nestjs/mongoose';
+import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
 import {HydratedDocument} from 'mongoose';
 import { BaseEntity } from '../base/base.entity'
 import {IGroup, IUser} from '@trifolia-fhir/models';

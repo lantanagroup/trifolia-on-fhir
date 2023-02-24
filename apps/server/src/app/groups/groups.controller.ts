@@ -53,7 +53,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     body.members = body.members || [];
     group.members = [];
     group.members.push(...body.members);
-    group.managingUserId = myuser._id;
+    group.managingUser = myuser._id;
     group.name = body.name;
     // be sure myuser is member of the group
     const foundMember = (group.members).find((member) => member = myuser._id);
@@ -134,7 +134,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
    // console.log(JSON.stringify(myuser));
     const filter = {};
 
-    filter['managingUserId'] = myuser._id;
+    filter['managingUser'] = myuser._id;
 
     const options: PaginateOptions = {
       page: 1,
@@ -189,7 +189,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     const group  = await this.groupsService.findById(id);
     console.log(JSON.stringify(group));
 
-    if (group.managingUserId.toString() != myuser.id.toString()) {
+    if (group.managingUser.toString() != myuser.id.toString()) {
       throw new UnauthorizedException();
     }
 
