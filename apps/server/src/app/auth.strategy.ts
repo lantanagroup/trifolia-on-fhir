@@ -60,6 +60,8 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
         profile.isAdmin = false;
       }
 
+
+      //profile.isAdmin = true;
       return profile;
     } catch (ex) {
       this.logger.error('Token validation failed: ' + ex.message);

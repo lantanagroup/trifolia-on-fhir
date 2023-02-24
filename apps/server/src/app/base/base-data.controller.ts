@@ -41,7 +41,7 @@ export class BaseDataController<T extends HydratedDocument<BaseEntity>> extends 
 
     @Post()
     public async create(@Body() body: BaseEntity): Promise<T> {
-        return this.dataService.create(body);;
+        return this.dataService.create(body);
     }
 
     @Post()

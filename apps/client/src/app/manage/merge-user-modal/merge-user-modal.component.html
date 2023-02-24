@@ -9,54 +9,57 @@
     <label>Source user to merge/delete</label>
     <ul>
       <li>ID: {{sourceUser.id}}</li>
-      <li>Name: {{getDisplayName(sourceUser.name)}}</li>
-      <li>Alias: {{getAliasName(sourceUser.name)}}</li>
-      <li>From: {{getIdentifierSource(sourceUser.identifier)}}</li>
-      <li>Identifier: {{getDisplayIdentifier(sourceUser.identifier)}}</li>
+      <li>Name: {{sourceUser.name}}</li>
+      <li>From: {{getAuthIdSource(sourceUser.authId)}}</li>
+      <li>Identifier: {{getAuthIdIdentifier(sourceUser.authId)}}</li>
     </ul>
   </div>
 
   <div class="mb-3">
     <label>Search for destination user</label>
     <div class="input-group">
-      <input type="text" class="form-control" placeholder="Name..." [(ngModel)]="searchUsersName" (change)="searchUsers()" />
+      <input type="text" class="form-control" placeholder="Name..." [(ngModel)]="searchUsersName"
+        (change)="searchUsers()" />
       <button type="button" class="btn btn-secondary">Search</button>
     </div>
   </div>
 
   <table class="table table-striped">
     <thead>
-    <tr>
-      <th>&nbsp;</th>
-      <th>Name</th>
-      <th>Alias</th>
-      <th>From</th>
-      <th>Identifier</th>
-    </tr>
+      <tr>
+        <th>&nbsp;</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>From</th>
+        <th>Identifier</th>
+      </tr>
     </thead>
-    <tbody *ngIf="searchUsersResults?.users?.length">
-    <tr *ngFor="let user of searchUsersResults.users">
-      <td>
-        <input type="radio" name="targetUserSelection" [(ngModel)]="targetUser" [value]="user" [disabled]="sourceUser.id === user.id" />
-      </td>
-      <td>{{user.id}}</td>
-      <td>{{getDisplayName(user.name)}}</td>
-      <td>{{getAliasName(user.name)}}</td>
-      <td>{{getIdentifierSource(user.identifier)}}</td>
-      <td>{{getDisplayIdentifier(user.identifier)}}</td>
-    </tr>
+    <tbody *ngIf="searchUsersResults?.total">
+      <tr *ngFor="let user of searchUsersResults.results">
+        <td>
+          <input type="radio" name="targetUserSelection" [(ngModel)]="targetUser" [value]="user"
+            [disabled]="sourceUser.id === user.id" />
+        </td>
+        <td>{{user.id}}</td>
+        <td>{{user.name}}</td>
+        <td>{{getAuthIdSource(user.authId)}}</td>
+        <td>{{getAuthIdIdentifier(user.authId)}}</td>
+      </tr>
     </tbody>
     <tfoot *ngIf="!searchUsersResults">
       <tr>
         <td colspan="5">Begin typing in search field...</td>
       </tr>
     </tfoot>
-    <tfoot *ngIf="!searchUsersResults?.users?.length">
-    <tr>
-      <td colspan="5">No users found</td>
-    </tr>
+    <tfoot *ngIf="!searchUsersResults?.total">
+      <tr>
+        <td colspan="5">No users found</td>
+      </tr>
     </tfoot>
   </table>
+  <ngb-pagination class="d-flex justify-content-center" *ngIf="searchUsersResults?.total > usersPageSize" [maxSize]="5"
+    [collectionSize]="searchUsersResults.total" [(page)]="usersPage" [boundaryLinks]="true" (pageChange)="usersPageChanged.next()">
+  </ngb-pagination>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="!targetUser">OK</button>

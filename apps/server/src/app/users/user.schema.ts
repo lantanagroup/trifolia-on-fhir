@@ -24,7 +24,7 @@ export class User extends BaseEntity implements IUser {
     lastName?: string;
 
     get name(): string {
-        return `${this.firstName} ${this.lastName}`;
+        return `${this.firstName ?? ''} ${this.lastName ?? ''}`;
     }
     
 }

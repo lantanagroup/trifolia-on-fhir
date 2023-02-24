@@ -17,6 +17,8 @@ import {ExportService} from './export.service';
 import {QueueInfo} from '../../../../libs/tof-lib/src/lib/queue-info';
 import {IAuditEvent, IBundle, IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {TofLogger} from './tof-logger';
+import { UsersService } from './users/users.service';
+import { IUser } from '@trifolia-fhir/models';
 
 interface MessageRequest {
   message: string;
@@ -34,45 +36,6 @@ export class ManageController extends BaseController {
     protected configService: ConfigService,
     private exportService: ExportService) {
     super(configService, httpService);
-  }
-
-  @Get('user/download')
-  @Header('Content-Type', 'text/plain')
-  @Header('Content-Disposition', 'attachment; filename="users.csv"')
-  async downloadUsers(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string) {
-    this.assertAdmin(user);
-
-    let practitioners: (STU3Practitioner | R4Practitioner)[] = [];
-
-    const getNext = async (url: string) => {
-      const bundle = await this.httpService.get<Bundle>(url).toPromise();
-      practitioners = practitioners.concat((bundle.data.entry || []).map(entry => <STU3Practitioner | R4Practitioner> entry.resource));
-      const nextLink = (bundle.data.link || []).find(link => link.relation === 'next');
-
-      if (nextLink) {
-        await getNext(nextLink.url);
-      }
-    };
-
-    const initialUrl = buildUrl(fhirServerBase, 'Practitioner', null, null, { _count: 50 });
-    await getNext(initialUrl);
-
-    let response = 'Identifier, Name, Email\n';
-
-    practitioners
-      .filter(practitioner => practitioner.name && practitioner.name.length > 0)
-      .forEach(practitioner => {
-        const cells = [ getDisplayIdentifier(practitioner.identifier, true).replace(/,/g, ' '), getDisplayName(practitioner.name).replace(/, /g, ' ') ];
-
-        const emailTelecoms: (STU3ContactPoint | R4ContactPoint)[] = (practitioner.telecom || []);
-        const emailTelecom = emailTelecoms.find(telecom => telecom.system === 'email');
-
-        cells.push(emailTelecom && emailTelecom.value ? emailTelecom.value.replace('mailto:', '') : '');
-
-        response += `${cells.join('\t')}\n`;
-      });
-
-    return response;
   }
 
   private async getAllAudits(url: string) {
@@ -131,66 +94,6 @@ export class ManageController extends BaseController {
     }
   }
 
-  @Post('user/:sourceUserId/([\$])merge/:targetUserId')
-  async mergeUser(@Param('sourceUserId') sourceUserId: string, @Param('targetUserId') targetUserId: string, @FhirServerBase() fhirServerBase: string, @User() user: ITofUser) {
-    this.assertAdmin(user);
-
-    const sourceUserResponse = await this.httpService.get<IPractitioner>(buildUrl(fhirServerBase, 'Practitioner', sourceUserId)).toPromise();
-    const targetUserResponse = await this.httpService.get<IPractitioner>(buildUrl(fhirServerBase, 'Practitioner', targetUserId)).toPromise();
-    const targetUser = targetUserResponse.data;
-
-    const allAudits = await this.getAllAudits(buildUrl(fhirServerBase, 'AuditEvent', null, null, {
-      _count: 100,
-      agent: `Practitioner/${sourceUserId}`
-    }));
-
-    await this.changeAuditAgent(fhirServerBase, allAudits, targetUser);
-    const deleteResults = await this.httpService.delete(buildUrl(fhirServerBase, 'Practitioner', sourceUserId)).toPromise();
-
-    this.logger.log(`Successfully merged user ${sourceUserId} into ${targetUserId}`);
-  }
-
-  @Get('user')
-  async getUsers(
-    @User() user: ITofUser,
-    @FhirServerBase() fhirServerBase: string,
-    @Query('name') searchName,
-    @Query('count', ParseIntPipe) count = 10,
-    @Query('page') page = 1): Promise<{ total: number, hasMore: boolean, users: UserModel[] }> {
-    this.assertAdmin(user);
-
-    const params = {
-      _count: count,
-      _getpagesoffset: (page - 1) * count,
-      _summary: true,
-      name: undefined
-    };
-
-    if (searchName) {
-      params.name = searchName;
-    }
-
-    const url = buildUrl(fhirServerBase, 'Practitioner', null, null, params);
-    const results = await this.httpService.get(url).toPromise();
-    const bundle = <Bundle> results.data;
-    const nextUrl = (bundle.link || []).find(l => l.relation === 'next');
-
-    const res = {
-      total: bundle.total,
-      hasMore: !!nextUrl,
-      users: (bundle.entry || []).map(entry => {
-        const practitioner = <STU3Practitioner | R4Practitioner> entry.resource;
-
-        return <UserModel> {
-          id: practitioner.id,
-          identifier: practitioner.identifier,
-          name: practitioner.name
-        };
-      })
-    };
-
-    return res;
-  }
 
   @Get('user/active')
   getActiveUsers(@Req() request: ITofRequest, @User() user: ITofUser) {

@@ -23,9 +23,16 @@ import { FshController } from './fsh.controller';
 import { SharedModule } from './shared/shared.module';
 import { ProjectsModule } from './projects/projects.module';
 import { UsersModule } from './users/users.module';
+import { ManageModule } from './manage/manage.module';
 
 @Module({
-  imports: [HttpModule, SharedModule, ProjectsModule, UsersModule],
+  imports: [
+    HttpModule,
+    SharedModule,
+    ProjectsModule,
+    UsersModule,
+    ManageModule,
+  ],
   exports: [],
   controllers: [
     AuditEventController,

@@ -24,7 +24,7 @@ export function escapeForXml(value: string) {
     .replace(/>/g, '&gt;');
 }
 
-export function getFhirVersion(releaseVersion: 'stu3'|'r4') {
+export function getFhirVersion(releaseVersion: 'stu3' | 'r4') {
   switch (releaseVersion) {
     case 'stu3':
       return '3.0.2';
@@ -113,7 +113,7 @@ export function reduceDistinct<T>(callback: (next: T) => any) {
  * @param items The items to group
  * @param callback The callback whose return value indicates what the key of each item is
  */
-export function groupBy<T>(items: T[], callback: (next: T) => any): { [key: string]: any} {
+export function groupBy<T>(items: T[], callback: (next: T) => any): { [key: string]: any } {
   const groups = {};
 
   (items || []).forEach((next) => {
@@ -141,12 +141,12 @@ export function getResourceSecurity(resource: IDomainResource): ResourceSecurity
         const split = security.code.split('|');
 
         if (split[0] === 'everyone') {
-          return <ResourceSecurityModel> {
+          return <ResourceSecurityModel>{
             type: 'everyone',
             permission: split[1]
           };
         } else if (split.length === 3) {
-          return <ResourceSecurityModel> {
+          return <ResourceSecurityModel>{
             type: split[0],
             id: split[1],
             permission: split[2]
@@ -202,8 +202,8 @@ export function ensureSecurity(meta: IMeta) {
 }
 
 export interface SecurityPermission {
-  type: 'user'|'group'|'everyone';
-  permission: 'read'|'write';
+  type: 'user' | 'group' | 'everyone';
+  permission: 'read' | 'write';
   id?: string;
 }
 
@@ -217,20 +217,20 @@ export function parsePermissions(meta: IMeta): SecurityPermission[] {
 
       if (parts.length === 2) {
         return {
-          type: <any> parts[0],
-          permission: <any> parts[1]
+          type: <any>parts[0],
+          permission: <any>parts[1]
         };
       } else if (parts.length === 3) {
         return {
-          type: <any> parts[0],
+          type: <any>parts[0],
           id: parts[1],
-          permission: <any> parts[2]
+          permission: <any>parts[2]
         };
       }
     });
 }
 
-export function findPermission(meta: IMeta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
+export function findPermission(meta: IMeta, type: 'user' | 'group' | 'everyone', permission: 'read' | 'write', id?: string) {
   if (!meta) {
     return false;
   }
@@ -251,7 +251,7 @@ export function findPermission(meta: IMeta, type: 'user'|'group'|'everyone', per
   });
 }
 
-export function addPermission(meta: IMeta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
+export function addPermission(meta: IMeta, type: 'user' | 'group' | 'everyone', permission: 'read' | 'write', id?: string): boolean {
   ensureSecurity(meta);
   const delim = Globals.securityDelim;
 
@@ -279,7 +279,7 @@ export function addPermission(meta: IMeta, type: 'user'|'group'|'everyone', perm
   return false;
 }
 
-export function removePermission(meta: IMeta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
+export function removePermission(meta: IMeta, type: 'user' | 'group' | 'everyone', permission: 'read' | 'write', id?: string): boolean {
   const delim = Globals.securityDelim;
 
   // Assume that if we're removing read permission, they shouldn't have write permission either
@@ -317,13 +317,13 @@ export function getMetaSecurity(meta: IMeta): ResourceSecurityModel[] {
         const inactiveExtension = (security.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-coding-inactive']);
 
         if (split[0] === 'everyone') {
-          return <ResourceSecurityModel> {
+          return <ResourceSecurityModel>{
             type: 'everyone',
             permission: split[1],
             inactive: inactiveExtension && inactiveExtension.valueBoolean === true
           };
         } else if (split.length === 3) {
-          return <ResourceSecurityModel> {
+          return <ResourceSecurityModel>{
             type: split[0],
             id: split[1],
             permission: split[2],
@@ -349,7 +349,7 @@ export function getStringFromBlob(theBlob: Blob): Promise<string> {
     try {
       const reader = new FileReader();
       reader.onload = function () {
-        resolve(<string> reader.result);
+        resolve(<string>reader.result);
       };
       reader.readAsText(theBlob);
     } catch (ex) {
@@ -392,7 +392,7 @@ export function getAliasName(names: IHumanName[]) {
   }
 }
 
- export function getDisplayName(name: string | IHumanName | IHumanName[]): string {
+export function getDisplayName(name: string | IHumanName | IHumanName[]): string {
   if (!name) {
     return;
   }
@@ -460,7 +460,7 @@ export function getDisplayIdentifier(identifier: IIdentifier | IIdentifier[], ig
     return getDisplayIdentifier(identifier[0], ignoreSystem);
   }
 
-  const obj = <IIdentifier> identifier;
+  const obj = <IIdentifier>identifier;
   let value = obj.value;
 
   if (value) {
@@ -493,4 +493,59 @@ export function parseReference(reference: string): ParsedUrlModel {
       historyId: match[5]
     };
   }
+}
+
+
+
+export function getAuthIdIdentifier(authId: string | string[]): string {
+  if (!authId) {
+    return '';
+  }
+
+  if (authId instanceof Array) {
+    if (authId.length > 0) {
+      return getAuthIdIdentifier(authId[0]);
+    }
+    return '';
+  }
+
+  let value = authId;
+
+  const parts = authId.split('|');
+  if (parts.length === 2) {
+    value = parts[1];
+  }
+
+  return value;
+}
+
+export function getAuthIdSource(authId: string | string[]): string {
+  if (!authId) {
+    return '';
+  }
+
+  if (authId instanceof Array) {
+    if (authId.length > 0) {
+      return getAuthIdSource(authId[0]);
+    }
+    return '';
+  }
+
+  const parts = authId.split('|');
+
+  switch (parts[0]) {
+    case 'waad':
+      return 'User/Pass';
+    case 'google-oauth2':
+      return 'Google';
+    case 'windowslive':
+      return 'Microsoft';
+    case 'github':
+      return 'GitHub';
+    case 'facebook':
+      return 'Facebook';
+    default:
+      return '';
+  }
+
 }
