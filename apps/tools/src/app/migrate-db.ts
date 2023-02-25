@@ -471,11 +471,11 @@ export class MigrateDb extends BaseTools {
           return <IGroup> {
             name: r.name,
             migratedFrom: this.options.migratedFromLabel,
-            managingUserId: managingUser.id,
-            member: r.member
+            managingUser: managingUser,
+            members: r.member
               .map(m => {
                 const foundUser = this.findUser(m.entity.reference.substring('Practitioner/'.length));
-                return foundUser.id
+                return foundUser
               })
               .filter(m => !!m)
           };
@@ -496,12 +496,12 @@ export class MigrateDb extends BaseTools {
           return <IGroup> {
             name: r.name,
             migratedFrom: this.options.migratedFromLabel,
-            managingUserId: managingUser.id,
-            member: r.member
+            managingUser: managingUser,
+            members: r.member
               .filter(m => !(m.extension || []).find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager' && e.valueBoolean === true))
               .map(m => {
                 const user = this.findUser(m.entity.reference.substring('Practitioner/'.length));
-                return user.id;
+                return user;
               })
               .filter(m => !!m)
           };

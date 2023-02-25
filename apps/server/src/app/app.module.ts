@@ -34,7 +34,7 @@ import {GroupsController} from './groups/groups.controller';
     ProjectsModule,
     UsersModule,
     ManageModule,
-  , GroupsModule],
+    GroupsModule],
   exports: [],
   controllers: [
     AuditEventController,

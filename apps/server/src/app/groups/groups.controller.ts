@@ -6,13 +6,13 @@ import { BaseDataController } from '../base/base-data.controller';
 import {Group, GroupDocument} from './group.schema';
 import {GroupsService} from './groups.service';
 import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from '../server.decorators';
-import {ITofUser} from '@trifolia-fhir/tof-lib';
+import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {UsersService} from '../users/users.service';
 import {AuthGuard} from '@nestjs/passport';
 import {Body, Controller, Delete, Get, Param, Put, Query, UnauthorizedException, UseGuards} from '@nestjs/common';
 import {PaginateOptions} from '@trifolia-fhir/tof-lib';
 import {UserDocument} from '../users/user.schema';
-import {IGroup} from '@trifolia-fhir/models';
+import type {IGroup} from '@trifolia-fhir/models';
 
 
 @Controller('api/group')
@@ -53,13 +53,13 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     body.members = body.members || [];
     group.members = [];
     group.members.push(...body.members);
-    group.managingUser = myuser._id;
+    group.managingUser = myuser;
     group.name = body.name;
     // be sure myuser is member of the group
-    const foundMember = (group.members).find((member) => member = myuser._id);
+    const foundMember = (group.members).find((member) => member.id === myuser.id);
 
     if (!foundMember) {
-      group.members.push(myuser._id);
+      group.members.push(myuser);
     }
 
     await this.groupsService.create(group);
@@ -86,10 +86,10 @@ export class GroupsController extends BaseDataController<GroupDocument> {
       throw new UnauthorizedException();
     }*/
     // be sure myuser is member of the group
-    const foundMember = (group.members).find((member) => member = myuser._id);
+    const foundMember = (group.members).find((member) => member.id === myuser.id);
 
     if (!foundMember) {
-      group.members.push(myuser._id);
+      group.members.push(myuser);
     }
 
     await this.groupsService.updateOne(id, group);
