@@ -1,4 +1,4 @@
-import {ConstraintManager} from './constraint-manager';
+import { ConstraintManager } from './constraint-manager';
 import * as profileTypes from '../assets/r4/profiles-types.json';
 import * as profileResources from '../assets/r4/profiles-resources.json';
 import * as shareablePlanDefinitionData from '../../../../test/data/shareableplandefinition.profile.json';
@@ -9,12 +9,12 @@ import * as dentalReferralData from '../../../../test/data/dentalReferral.json';
 import * as referralNoteData from '../../../../test/data/referralNote.json';
 import * as dentalCCDData from '../../../../test/data/dental-ccd.json';
 import * as fetalDeathReportdata from '../../../../test/data/composition-jurisdiction-fetal-death-report.json';
+import * as compositionClinicalDocumentDataEnterer from '../../../../test/data/composition-clinicaldocument-dataEnterer.json';
 
-import {Fhir, Versions} from 'fhir/fhir';
-import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
-import {ParseConformance} from 'fhir/parseConformance';
-import {ElementDefinition, StructureDefinition} from './r4/fhir';
-import {ElementTreeModel} from './element-tree-model';
+import { Fhir, Versions } from 'fhir/fhir';
+import { IElementDefinition, IStructureDefinition } from './fhirInterfaces';
+import { ParseConformance } from 'fhir/parseConformance';
+import { ElementDefinition, StructureDefinition } from './r4/fhir';
 
 describe('ConstraintManager', () => {
   const parser = new ParseConformance(false, Versions.R4);
@@ -671,6 +671,16 @@ describe('ConstraintManager', () => {
       expect(children[1].path).toBe('PlanDefinition.meta.extension');
       expect(children[7].id).toBe('PlanDefinition.meta.tag');
       expect(children[7].path).toBe('PlanDefinition.meta.tag');
+    });
+
+    describe('elements should be constrained when Reference is constrained by type', () => {
+      const dataEnterer: IStructureDefinition = <IStructureDefinition>JSON.parse(JSON.stringify(compositionClinicalDocumentDataEnterer));
+
+      it('should not be constrained', async () => {
+        const dataEnter = <IStructureDefinition>fhir.parser.structureDefinitions.find(ext => ext.id === 'composition-clinicaldocument-dataEnterer');
+      });
+
+      it('');
     });
 
     /*
