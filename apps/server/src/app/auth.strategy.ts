@@ -5,6 +5,8 @@ import {Injectable} from '@nestjs/common';
 import {TofLogger} from './tof-logger';
 import {ConfigService} from './config.service';
 import jwksClient from 'jwks-rsa';
+import {UsersService} from './users/users.service';
+import {ITofUser} from '@trifolia-fhir/tof-lib';
 
 const jwt = require('jsonwebtoken');
 
@@ -13,7 +15,7 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new TofLogger(HttpStrategy.name);
   private readonly jwksClient: jwksClient.JwksClient;
 
-  constructor(private httpService: HttpService, private configService: ConfigService) {
+  constructor(private httpService: HttpService, private configService: ConfigService, private userService: UsersService) {
     super();
 
     this.jwksClient = jwksClient({
@@ -49,8 +51,7 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
     this.logger.trace('Validating user token');
 
     try {
-      const profile = await this.verify(token);
-
+      const profile = <ITofUser> await this.verify(token);
       if (profile.roles) {
         // For auth0 and keycloak, roles is a top-level property
         // For auth0, it is assigned by the "Auth0 Authorization" extension in the auth0 dashboard
@@ -60,6 +61,8 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
         profile.isAdmin = false;
       }
 
+      const user = await this.userService.findOne({'authId' : profile.sub.startsWith('auth0|')? profile.sub.substring(6): profile.sub});
+      profile.user = user.$clone();
 
       //profile.isAdmin = true;
       return profile;

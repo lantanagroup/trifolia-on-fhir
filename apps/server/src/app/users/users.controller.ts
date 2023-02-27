@@ -24,13 +24,20 @@ export class UsersController extends BaseDataController<UserDocument> {
 
     protected getFilterFromQuery(query?: any) : any {
         let filter = super.getFilterFromQuery(query);
-        
+
         if (!query) {
             return filter;
         }
-
         if ('name' in query) {
-            filter['name'] = { $regex: query['name'], $options: 'i' };
+          filter = {
+            $or: [
+              { firstName: { $regex: query['name'], $options: 'i' } },
+              { lastName: { $regex: query['name'], $options: 'i' } }
+            ]
+          };
+        }
+        if ('email' in query) {
+          filter['email'] = { $regex: query['email'], $options: 'i' };
         }
         return filter;
     }
@@ -78,7 +85,7 @@ export class UsersController extends BaseDataController<UserDocument> {
         if (existing) {
             throw new ConflictException();
         }
-        
+
         return super.create(newUser);
     }
 
@@ -92,7 +99,7 @@ export class UsersController extends BaseDataController<UserDocument> {
         if (!(user.isAdmin || (me && me.id === id))) {
             throw new UnauthorizedException();
         }
-        
+
         return super.update(id, updatedUser);
     }
 

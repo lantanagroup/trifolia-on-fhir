@@ -1,17 +1,15 @@
 import {Post} from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
+import {InjectConnection} from '@nestjs/mongoose';
 import {ApiTags, ApiOAuth2, ApiOperation} from '@nestjs/swagger';
-import {Connection, HydratedDocument} from 'mongoose';
-import { BaseDataController } from '../base/base-data.controller';
+import {Connection} from 'mongoose';
+import {BaseDataController} from '../base/base-data.controller';
 import {Group, GroupDocument} from './group.schema';
 import {GroupsService} from './groups.service';
-import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from '../server.decorators';
+import {User} from '../server.decorators';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {UsersService} from '../users/users.service';
 import {AuthGuard} from '@nestjs/passport';
-import {Body, Controller, Delete, Get, Param, Put, Query, UnauthorizedException, UseGuards} from '@nestjs/common';
-import {PaginateOptions} from '@trifolia-fhir/tof-lib';
-import {UserDocument} from '../users/user.schema';
+import {Body, Controller, Delete, Get, Param, Put, UnauthorizedException, UseGuards} from '@nestjs/common';
 import type {IGroup} from '@trifolia-fhir/models';
 
 
@@ -21,104 +19,98 @@ import type {IGroup} from '@trifolia-fhir/models';
 @ApiOAuth2([])
 export class GroupsController extends BaseDataController<GroupDocument> {
 
-    constructor(private readonly groupsService: GroupsService, protected usersService: UsersService, @InjectConnection() private connection: Connection) {
-      super(groupsService);
+  constructor(private readonly groupsService: GroupsService, protected usersService: UsersService, @InjectConnection() private connection: Connection) {
+    super(groupsService);
+  }
+
+  protected getFilterFromQuery(query?: any): any {
+
+    const filter = {};
+
+    if ('name' in query) {
+      filter['name'] = { $regex: query['name'], $options: 'i' };
     }
-
-    protected getFilterFromQuery(query?: any) : any {
-
-      const filter = {};
-
-      if ('name' in query) {
-        filter['name'] = { $regex: query['name'], $options: 'i' };
-      }
-      if ('description' in query) {
-        filter['description'] = { $regex: query['description'], $options: 'i' };
-      }
-      if ('_id' in query) {
-        filter['_id'] = { $regex: query['_id'], $options: 'i' };
-      }
-      return filter;
+    if ('description' in query) {
+      filter['description'] = { $regex: query['description'], $options: 'i' };
     }
+    if ('_id' in query) {
+      filter['_id'] = { $regex: query['_id'], $options: 'i' };
+    }
+    return filter;
+  }
+
 
   @Post('managing')
-  public async createManagingGroup(@User() user: ITofUser, @Body() body: IGroup) {
+  public async createManagingGroup(@User() userProfile: ITofUser, @Body() newGroup: IGroup) {
 
-    let myuser = await this.getMe(user);
-
-    console.log(JSON.stringify(myuser));
+    console.log(JSON.stringify(userProfile.user));
 
     // move data from dto to entity
-    const group = new Group();
-    body.members = body.members || [];
-    group.members = [];
-    group.members.push(...body.members);
-    group.managingUser = myuser;
-    group.name = body.name;
-    // be sure myuser is member of the group
-    const foundMember = (group.members).find((member) => member.id === myuser.id);
+    const persistedGroup = new Group();
+    newGroup.members = newGroup.members || [];
+    persistedGroup.members = [];
 
-    if (!foundMember) {
-      group.members.push(myuser);
+    for (const m of newGroup.members) {
+      const persistedUser = await this.usersService.findById(userProfile.user.id);
+      persistedGroup.members.push(persistedUser);
     }
 
-    await this.groupsService.create(group);
+    persistedGroup.managingUser = userProfile.user;
+    persistedGroup.name = newGroup.name;
+    // be sure myuser is member of the group
+
+    const foundMember = (persistedGroup.members).find((member) => member.id == userProfile.user.id);
+
+    if (!foundMember) {
+      persistedGroup.members.push(userProfile.user);
+    }
+
+    return super.create(persistedGroup);
   }
 
 
   @Put('managing/:id')
-  public async updateManagingGroup(@User() user: ITofUser, @Body() body: IGroup, @Param('id') id: string) {
+  public async updateManagingGroup(@User() userProfile: ITofUser, @Body() updatedGroup: IGroup, @Param('id') id: string) {
 
-    let myuser = await this.getMe(user);
-    console.log(JSON.stringify(myuser));
+    if (!userProfile) return null;
 
-    const group  = await this.groupsService.findById(id);
-    if (group) {
-      group.members.forEach(m => console.log(m));
-    }
-    group.name = body.name;
-    body.members = body.members || [];
-    group.members =  [];
-    group.members.push(...body.members);
+    super.assertIdMatch(id, updatedGroup);
 
-    console.log("Group is: " + JSON.stringify(group));
-  /*  if (group.managingUserId.toString() != myuser._id.toString()) {
+    if (updatedGroup.managingUser.id !== userProfile.user.id) {
       throw new UnauthorizedException();
-    }*/
+    }
+
+    updatedGroup.members = updatedGroup.members || [];
+
+    const persistedGroup = await this.groupsService.findById(id);
+    persistedGroup.name = updatedGroup.name;
+    persistedGroup.members = [];
+
+    for (const m of updatedGroup.members) {
+      const persistedUser = await this.usersService.findById(m.id);
+      persistedGroup.members.push(persistedUser);
+    }
+
     // be sure myuser is member of the group
-    const foundMember = (group.members).find((member) => member.id === myuser.id);
+    const foundMember = (persistedGroup.members).find((member) => member.id == userProfile.user.id);
 
     if (!foundMember) {
-      group.members.push(myuser);
+      persistedGroup.members.push(userProfile.user);
     }
 
-    await this.groupsService.updateOne(id, group);
+    return super.update(id, persistedGroup);
   }
 
 
   @Get('membership')
-  public async getMembership(@User() user, @Query('name') name?: string, @Query('_id') id?: string) {
-    if (!user) return null;
+  public async getMembership(@User() userProfile) {
+    if (!userProfile) return null;
 
-    const myuser = await this.getMe(user);
-
-    console.log(JSON.stringify(myuser));
-    const filter = {};
-
-    filter['members'] = myuser._id;
-
-    const options: PaginateOptions = {
-      page: 1,
-      itemsPerPage: 10,
-      filter: filter
-    };
-    options.sortBy = {};
-
-    const results = await this.groupsService.search(options);
-    if (results && results.results) {
-      results.results.forEach(result => console.log(result));
+    const results = await this.groupsService.findAll({ 'members': userProfile.user.id });
+    if (results) {
+      results.forEach(result => console.log(result));
     }
-    return results.results;
+    return results;
 
   }
 
@@ -127,69 +119,32 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     description: 'Gets the groups that the currently logged-in user is an admin/manager of'
   })
   @Get('managing')
-  public async getManaging(@User() user, @FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion) {
+  public async getManaging(@User() userProfile) {
+    if (!userProfile) return null;
 
-    const myuser = await this.getMe(user);
-
-   // console.log(JSON.stringify(myuser));
-    const filter = {};
-
-    filter['managingUser'] = myuser._id;
-
-    const options: PaginateOptions = {
-      page: 1,
-      itemsPerPage: 10,
-      filter: filter
-    };
-    options.sortBy = {};
-
-    const results = await this.groupsService.search(options);
-    if (results && results.results) {
-      results.results.forEach(result => console.log(result));
+    const results = await this.groupsService.findAll({ 'managingUser': userProfile.user.id }, ["managingUser", "members"]);
+    if (results) {
+      results.forEach(result => console.log(result));
     }
-    return results.results;
+
+    return results;
 
   }
 
-
-  protected async getMe(user: ITofUser): Promise<UserDocument> {
-    if (!user) return null;
-
-    let identifier = user.sub;
-
-    const filter = {};
-
-    filter['authId'] = { $regex: identifier, $options: 'i' };
-
-    const options: PaginateOptions = {
-      page: 1,
-      itemsPerPage: 10,
-      filter: filter
-    };
-
-    options.sortBy = {};
-
-    const results = await this.usersService.search(options);
-    if (results && results.results) {
-      results.results.forEach(result => console.log(result));
-    }
-    return results.results[0];
-  }
 
   @ApiOperation({
     summary: 'deleteManagingGroup',
     description: 'Deletes a group that the user is an admin/manager of'
   })
   @Delete('managing/:id')
-  public async deleteManagingGroup(@User() user: ITofUser, @Param('id') id: string) {
+  public async deleteManagingGroup(@User() userProfile: ITofUser, @Param('id') id: string) {
 
-    const myuser = await this.getMe(user);
-    console.log(JSON.stringify(myuser));
+    console.log(JSON.stringify(userProfile));
     // get group first
-    const group  = await this.groupsService.findById(id);
+    const group = await this.groupsService.findById(id);
     console.log(JSON.stringify(group));
 
-    if (group.managingUser.toString() != myuser.id.toString()) {
+    if (group.managingUser.id !== userProfile.user.id) {
       throw new UnauthorizedException();
     }
 
@@ -202,13 +157,11 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     description: 'Removes the current user as a member from the group'
   })
   @Delete('membership/:id')
-  public async deleteMembershipGroup(@User() user: ITofUser, @Param('id') id: string) {
-
-    const myuser = await this.getMe(user);
+  public async deleteMembershipGroup(@User() userProfile: ITofUser, @Param('id') id: string) {
 
     // get group first
-    const persistedGroup  = await this.groupsService.findById(id);
-    const foundMember = (persistedGroup.members || []).find((member) => member = myuser.id);
+    const persistedGroup = await this.groupsService.findById(id);
+    const foundMember = (persistedGroup.members || []).find((member) => member.id = userProfile.user.id);
 
     if (foundMember) {
       const index = persistedGroup.members.indexOf(foundMember);

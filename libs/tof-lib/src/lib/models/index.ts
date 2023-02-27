@@ -35,10 +35,10 @@ export interface IUser {
 export interface IGroup {
   id?: string;
   migratedFrom?: string;
-  name: string;
+  name?: string;
   description?: string;
-  managingUser: IUser;
-  members: IUser[];
+  managingUser?: IUser;
+  members?: IUser[];
 }
 
 export interface IProjectResource {

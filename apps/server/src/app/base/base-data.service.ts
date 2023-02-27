@@ -16,7 +16,7 @@ export class BaseDataService<T extends HydratedDocument<BaseEntity>> {
     public getModel() : Model<T> {
         return this.model;
     }
-    
+
 
     public async search(options?: PaginateOptions): Promise<Paginated<T>> {
         const page = (options && options.page) ? options.page : 1;
@@ -33,15 +33,15 @@ export class BaseDataService<T extends HydratedDocument<BaseEntity>> {
             results: items,
             total: total
         };
-        
+
         return result;
     }
 
-    public async findAll(filter = {}): Promise<T[]> {        
-        return this.model.find(filter).exec();
+    public async findAll(filter = {}, populated = []): Promise<T[]> {
+        return this.model.find(filter).populate(populated).exec();
     }
 
-    public async findOne(filter = {}): Promise<T> {        
+    public async findOne(filter = {}): Promise<T> {
         return this.model.findOne(filter).exec();
     }
 
@@ -60,7 +60,7 @@ export class BaseDataService<T extends HydratedDocument<BaseEntity>> {
     public async updateOne(id: string, doc: BaseEntity) : Promise<T> {
         return await this.model.findByIdAndUpdate(id, doc, { new: true });
     }
-    
+
     public async delete(id: string) : Promise<T> {
         // TODO: soft delete
         return await this.model.findByIdAndRemove(id);

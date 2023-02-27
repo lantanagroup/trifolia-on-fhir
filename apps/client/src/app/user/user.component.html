@@ -97,12 +97,12 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let member of editGroup.member; let mi = index">
+                    <tr *ngFor="let member of editGroup.members; let mi = index">
                       <td>
-                        {{member.entity?.display || 'Unknown'}}
+                        {{member.name || 'Unknown'}}
                       </td>
                       <td>
-                        <button type="button" class="btn btn-default" title="Remove this member" [disabled]="isAdmin(editGroup, member)" (click)="editGroup.member.splice(mi, 1)">
+                        <button type="button" class="btn btn-default" title="Remove this member" [disabled]="isAdmin(editGroup, member)" (click)="editGroup.members.splice(mi, 1)">
                           <i class="fas fa-trash"></i>
                         </button>
                       </td>
@@ -132,10 +132,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let u of searchUserResults">
+                    <tr *ngFor="let u of searchUsersResults">
                       <td>{{u.id}}</td>
-                      <td>{{getHumanNamesDisplay(u.name)}}</td>
-                      <td>{{getPractitionerEmail(u)}}</td>
+                      <td>{{u.name}}</td>
+                      <td>{{u.email}}</td>
                       <td>
                         <button type="button" class="btn btn-default" title="Add this user as a member to the group" (click)="addMember(u)">
                           <i class="fas fa-plus"></i>

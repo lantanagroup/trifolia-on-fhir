@@ -8,17 +8,28 @@ export class UserService {
 
     constructor(public http: HttpClient) { }
 
-    public getUsers(): void {
-        this.http.get('/api/users')
-            .subscribe(data => {
-            },
-            error => {
-                console.error(error);
-            });
+    public getUsers(content?: string, name?: string, email?: string): Observable<IUser[]> {
+
+      let url = '/api/users?';
+
+      if (content) {
+        url += '_content=' + encodeURIComponent(content) + '&';
+      }
+
+      if (name) {
+        url += 'name=' + encodeURIComponent(name) + '&';
+      }
+
+      if (email) {
+        url += 'email=' + encodeURIComponent(email);
+      }
+
+      return this.http.get<IUser[]>(url);
+
     }
 
 
-    public getMe(): Observable<IUser> {        
+    public getMe(): Observable<IUser> {
         return this.http.get<IUser>('/api/users/me');
     }
 
@@ -27,7 +38,7 @@ export class UserService {
         return this.http.post<IUser>('/api/users', user);
     }
 
-    public update(user: IUser): Observable<IUser> {        
+    public update(user: IUser): Observable<IUser> {
         return this.http.put<IUser>(`/api/users/${user.id}`, user);
     }
 }
