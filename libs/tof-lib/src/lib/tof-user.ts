@@ -6,7 +6,7 @@ export interface ITofUser {
   name?: string;
   isAdmin: boolean;   // set by ToF
   roles?: string[];
-  user: IUser
+  user?: IUser
 }
 
 /*
