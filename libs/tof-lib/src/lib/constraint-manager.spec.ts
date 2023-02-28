@@ -674,13 +674,20 @@ describe('ConstraintManager', () => {
     });
 
     describe('elements should be constrained when Reference is constrained by type', () => {
-      const dataEnterer: IStructureDefinition = <IStructureDefinition>JSON.parse(JSON.stringify(compositionClinicalDocumentDataEnterer));
+      let cm;
+      let testData: IStructureDefinition;
 
       it('should not be constrained', async () => {
-        const dataEnter = <IStructureDefinition>fhir.parser.structureDefinitions.find(ext => ext.id === 'composition-clinicaldocument-dataEnterer');
+        const testData: IStructureDefinition = <IStructureDefinition>JSON.parse(JSON.stringify(compositionClinicalDocumentDataEnterer));
+        const extModel = <IStructureDefinition>fhir.parser.structureDefinitions.find(ext => ext.id === 'Extension');
+        cm = new ConstraintManager(ElementDefinition, extModel, testData, fhir.parser);
+        await cm.initializeRoot();
+
+        console.log(testData);
+        console.log(extModel);
+
       });
 
-      it('');
     });
 
     /*
