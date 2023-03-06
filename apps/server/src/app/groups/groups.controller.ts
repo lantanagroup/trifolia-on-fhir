@@ -106,7 +106,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
   public async getMembership(@User() userProfile) {
     if (!userProfile) return null;
 
-    const results = await this.groupsService.findAll({ 'members': userProfile.user.id });
+    const results = await this.groupsService.findAll({ 'members': userProfile.user.id }, ["managingUser", "members"]);
     if (results) {
       results.forEach(result => console.log(result));
     }
@@ -144,7 +144,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     const group = await this.groupsService.findById(id);
     console.log(JSON.stringify(group));
 
-    if (group.managingUser.id !== userProfile.user.id) {
+    if (group.managingUser.toString() !== userProfile.user.id) {
       throw new UnauthorizedException();
     }
 

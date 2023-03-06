@@ -49,7 +49,7 @@ export class UserComponent implements OnInit {
   }
 
   public addMember(user: IUser) {
-    const foundMember = this.editGroup.members.find((u) => u.id == user.id);
+    const foundMember = this.editGroup?.members?.find((u) => u.id == user.id);
 
     if (!foundMember) {
       this.editGroup.members.push( user );
@@ -59,6 +59,8 @@ export class UserComponent implements OnInit {
   public addGroup() {
     this.editGroup = { } ;
     const newMember = {name: this.user.name, id: this.user.id, managingUser: this.user  };
+    this.editGroup.managingUser = this.user;
+    this.editGroup.members = this.editGroup.members || [];
     this.editGroup.members.push(newMember);
   }
 
@@ -71,54 +73,36 @@ export class UserComponent implements OnInit {
       .catch((err) => this.message = getErrorString(err));
   }
 
+
   public isAdmin(group: IGroup, currentMember?: IUser) {
-   /* if (!currentMember) {
-      currentMember = {
-        entity: {
-          reference: 'Practitioner/' + this.user.id
-        }
-      };
+    console.log("CurrentMember is: " + currentMember);
+    if (!currentMember) {
+      currentMember = this.user;
     }
-
-    let groupAdmin: string;
-
-    if (this.configService.isFhirSTU3) {
-      const foundMemberAdmin = group.member.find((member) => {
-        return !!(member.extension || []).find((ext) => ext.url === Globals.extensionUrls['extension-group-manager'] && ext.valueBoolean);
-      });
-
-      if (foundMemberAdmin) {
-        groupAdmin = foundMemberAdmin.entity.reference;
-      }
-    } else if (this.configService.isFhirR4 && group.managingEntity) {
-      groupAdmin = group.managingEntity.reference;
-    }
-
-    return currentMember.admin === groupAdmin;*!/*/
-    return false;
+    let  admin = group.managingUser.id === currentMember.id
+    return admin;
   }
 
+
   public async saveGroup() {
+    let results;
     if (!this.editGroup.id) {
-      const results = await this.groupService.createManagingGroup(this.editGroup).toPromise();
-      this.managingGroups.push(results);
-      this.editGroup = null;
-      this.message = 'New group has been saved!';
+      results = await this.groupService.createManagingGroup(this.editGroup).toPromise();
     } else {
-      this.groupService.updateManagingGroup(this.editGroup).toPromise()
-        .then((u) => {
-          this.message = 'Group has been updated!';
-          this.editGroup = null;
-        })
-        .catch((err) => this.message = getErrorString(err));
+      results = await this.groupService.updateManagingGroup(this.editGroup).toPromise();
     }
+    this.managingGroups.push(results);
+    this.editGroup = null;
+    this.message = 'New group has been saved!';
+    await this.getGroups();
   }
 
   public deleteGroup(group: IGroup) {
     this.groupService.deleteManagingGroup(group).toPromise()
-      .then(() => {
+      .then(async () => {
         const index = this.managingGroups.indexOf(group);
         this.managingGroups.splice(index, 1);
+        await this.getGroups();
       })
       .catch((err) => this.message = getErrorString(err));
   }
