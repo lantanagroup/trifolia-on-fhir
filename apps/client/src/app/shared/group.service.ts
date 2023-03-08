@@ -26,21 +26,8 @@ export class GroupService {
     return this.http.delete('/api/group/membership' + group.id);
   }
 
-  public getMembership(name?: string, id?: string): Observable<Bundle> {
-    let url = '/api/group/membership?';
 
-    if (name) {
-      url += 'name=' + encodeURIComponent(name) + '&';
-    }
-
-    if (id) {
-      url += '_id=' + encodeURIComponent(id) + '&';
-    }
-
-    return this.http.get<Bundle>(url);
-  }
-
-  public getNewMembership(name?: string, id?: string): Observable<IGroup[]> {
+  public getMembership(name?: string, id?: string): Observable<IGroup[]> {
     let url = '/api/group/membership?';
 
     if (name) {

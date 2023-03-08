@@ -10,14 +10,14 @@ import {AuthConfig, OAuthErrorEvent, OAuthService} from 'angular-oauth2-oidc';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import { IBundle } from '@trifolia-fhir/tof-lib';
 import { UserService } from './user.service';
-import type { IUser } from '@trifolia-fhir/models';
+import type {IGroup, IUser} from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
   public userProfile: ITofUser;
   public user: IUser;
-  public groups: Group[] = [];
+  public groups: IGroup[] = [];
   public authChanged: EventEmitter<any>;
   public loggingIn = false;
 
@@ -208,11 +208,7 @@ export class AuthService {
     }
 
     try {
-      this.groups = await this.groupService.getMembership()
-        .pipe(map((groupsBundle: IBundle) =>
-          (groupsBundle.entry || []).map(entry => <Group>entry.resource)
-        ))
-        .toPromise();
+      this.groups = await this.groupService.getMembership().toPromise();
     } catch (ex) {
       console.error(ex);
       this.groups = [];
