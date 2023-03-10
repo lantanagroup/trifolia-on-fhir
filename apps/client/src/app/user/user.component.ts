@@ -117,7 +117,7 @@ export class UserComponent implements OnInit {
   private async getGroups() {
     const results = await Promise.all([
       this.groupService.getManaging().toPromise(),
-      this.groupService.getNewMembership().toPromise()
+      this.groupService.getMembership().toPromise()
     ]);
 
     this.managingGroups = results[0] || [];
