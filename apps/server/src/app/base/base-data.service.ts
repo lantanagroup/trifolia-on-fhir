@@ -9,7 +9,7 @@ export class BaseDataService<T extends HydratedDocument<BaseEntity>> {
     private readonly logger = new TofLogger(BaseDataService.name);
 
     constructor(
-        private model: Model<T>
+        protected model: Model<T>
     ) {}
 
 
@@ -25,6 +25,8 @@ export class BaseDataService<T extends HydratedDocument<BaseEntity>> {
         const skip = (page-1) * limit;
         const sortBy = (options && options.sortBy)  ? options.sortBy : {};
 
+        //console.log(`search filters: ${JSON.stringify(filters)}`);
+
         const items = await this.model.find(filters).sort(sortBy).limit(limit).skip(skip);
         const total = await this.model.countDocuments(filters);
 
@@ -34,7 +36,18 @@ export class BaseDataService<T extends HydratedDocument<BaseEntity>> {
             total: total
         };
 
+        //console.log(`Search filtered to ${result.total} of ${await this.collectionCount()} documents.`);
+
         return result;
+    }
+
+    
+    public async collectionCount(): Promise<number> {
+        return this.model.estimatedDocumentCount().exec();
+    }
+
+    public async count(filter = {}): Promise<number> {
+        return this.model.countDocuments(filter).exec();
     }
 
     public async findAll(filter = {}, populated = []): Promise<T[]> {

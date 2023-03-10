@@ -23,6 +23,7 @@ import os from 'os';
 import * as fs from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { PaginateOptions } from '@trifolia-fhir/tof-lib';
+import { AuthService } from './auth/auth.service';
 
 class PatchRequest {
   op: string;
@@ -45,7 +46,8 @@ export class ImplementationGuideController extends BaseFhirController {
 
   constructor(protected httpService: HttpService,
               protected configService: ConfigService,
-              protected projectService: ProjectsService) {
+              protected projectService: ProjectsService,
+              protected authService: AuthService) {
     super(httpService, configService);
   }
 
@@ -299,24 +301,30 @@ export class ImplementationGuideController extends BaseFhirController {
     //   }
     // };
 
-    console.log(`query: ${JSON.stringify(query)}`);
+    //console.log(`query: ${JSON.stringify(query)}`);
     //console.log(`options: ${JSON.stringify(options)}`);
 
     try {
       //const results = await this.httpService.request(options).toPromise();
       //const results = await this.db.collection('project').find().skip((query.page-1)*preparedQuery._count).limit(preparedQuery._count).toArray();
       
-      const filter = {};
+      const searchFilters = {};
 
       if ('name' in query) {
-        filter['ig.name'] = { $regex: query['name'], $options: 'i' };
+        searchFilters['ig.name'] = { $regex: query['name'], $options: 'i' };
       }
       if ('title' in query) {
-        filter['ig.title'] = { $regex: query['title'], $options: 'i' };
+        searchFilters['ig.title'] = { $regex: query['title'], $options: 'i' };
       }
       if ('_id' in query) {
-        filter['ig.id'] = { $regex: query['_id'], $options: 'i' };
+        searchFilters['ig.id'] = { $regex: query['_id'], $options: 'i' };
       }
+
+      const baseFilter = await this.authService.getPermissionFilterBase(user, 'read');
+
+      const filter = {
+        $and: [ baseFilter, searchFilters]
+      };
 
       const options: PaginateOptions = {
         page: query.page,
@@ -329,7 +337,7 @@ export class ImplementationGuideController extends BaseFhirController {
         options.sortBy[query['_sort']] = 'asc';
       }
 
-      console.log(`filter: ${JSON.stringify(filter)}`);
+      //console.log(`filter: ${JSON.stringify(filter)}`);
 
       const results = await this.projectService.search(options);
       

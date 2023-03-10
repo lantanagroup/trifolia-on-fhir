@@ -1,5 +1,5 @@
 import {BaseTools} from './baseTools';
-import {IAudit, IConformance, IExample, IGroup, IHistory, IProject, IProjectPermission, IProjectResource, IUser} from '@trifolia-fhir/models';
+import {IAudit, IConformance, IExample, IGroup, IHistory, IProject, IPermission, IProjectResource, IUser} from '@trifolia-fhir/models';
 import {IAuditEvent, IContactPoint, IDomainResource, IImplementationGuide, IPractitioner} from '@trifolia-fhir/tof-lib';
 import {Db, MongoClient} from 'mongodb';
 import {getHumanNamesDisplay} from '@trifolia-fhir/tof-lib';
@@ -550,12 +550,12 @@ export class MigrateDb extends BaseTools {
 
     this.projects = resources.map((groupedResource) => {
       const r = groupedResource.head as IImplementationGuide;
-      const permissions: IProjectPermission[] = [];
+      const permissions: IPermission[] = [];
 
       if (r.meta) {
         (r.meta.security || []).forEach((s: Coding) => {
           const codeSplit = s.code.split('^');
-          const permission: IProjectPermission = {
+          const permission: IPermission = {
             targetId: codeSplit.length === 2 ? undefined : codeSplit[1],
             type: codeSplit.length === 2 ? 'everyone' : codeSplit[0] as any,
             grant: 'read'
@@ -582,7 +582,7 @@ export class MigrateDb extends BaseTools {
         name: r.name,
         migratedFrom: this.options.migratedFromLabel,
         fhirVersion: this.options.fhirVersion,
-        permissions,
+        permissions: permissions,
         ig: r
       };
     });

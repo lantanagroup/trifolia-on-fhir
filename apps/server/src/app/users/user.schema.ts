@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IUser } from '@trifolia-fhir/models';
-import mongoose, { HydratedDocument } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 
 export type UserDocument = HydratedDocument<User>;

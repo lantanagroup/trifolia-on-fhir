@@ -108,7 +108,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
 
     const results = await this.groupsService.findAll({ 'members': userProfile.user.id }, ["managingUser", "members"]);
     if (results) {
-      results.forEach(result => console.log(result));
+      //results.forEach(result => console.log(result));
     }
     return results;
 

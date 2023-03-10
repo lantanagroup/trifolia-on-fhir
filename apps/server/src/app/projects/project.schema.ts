@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { IImplementationGuide } from '@trifolia-fhir/tof-lib';
-import { IProject, IProjectContributor, IProjectPermission } from '@trifolia-fhir/models';
+import { IProject, IProjectContributor, IPermission } from '@trifolia-fhir/models';
 import { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 
@@ -22,7 +22,7 @@ export class Project extends BaseEntity implements IProject {
     fhirVersion: 'stu3'|'r4'|'r5';
 
     @Prop()
-    permissions?: IProjectPermission[];
+    permissions?: IPermission[];
 
     @Prop({ type: Object })
     ig: IImplementationGuide;

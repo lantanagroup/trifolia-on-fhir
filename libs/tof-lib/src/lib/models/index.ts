@@ -1,6 +1,6 @@
 import type { IDomainResource, IImplementationGuide } from '../fhirInterfaces';
 
-export interface IProjectPermission {
+export interface IPermission {
   targetId?: string;    // no targetId means "everyone"
   type: 'user'|'group'|'everyone';
   grant: 'read'|'write';
@@ -18,7 +18,7 @@ export interface IProject {
   authorId: string;
   contributors?: IProjectContributor[];
   fhirVersion: 'stu3'|'r4'|'r5';
-  permissions?: IProjectPermission[];
+  permissions?: IPermission[];
   ig: IImplementationGuide;
 }
 

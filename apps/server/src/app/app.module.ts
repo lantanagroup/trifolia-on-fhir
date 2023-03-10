@@ -15,7 +15,6 @@ import { HttpStrategy } from './auth.strategy';
 import { OperationDefinitionController } from './operation-definition.controller';
 import { CodeSystemController } from './code-system.controller';
 import { QuestionnaireController } from './questionnaire.controller';
-//import { GroupController } from './group.controller';
 import { GithubController } from './github.controller';
 import { ExportService } from './export.service';
 import { SearchParameterController } from './search-parameter.controller';
@@ -25,7 +24,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { UsersModule } from './users/users.module';
 import { ManageModule } from './manage/manage.module';
 import { GroupsModule } from './groups/groups.module';
-import {GroupsController} from './groups/groups.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -34,7 +33,9 @@ import {GroupsController} from './groups/groups.controller';
     ProjectsModule,
     UsersModule,
     ManageModule,
-    GroupsModule],
+    GroupsModule,
+    AuthModule,
+  ],
   exports: [],
   controllers: [
     AuditEventController,
@@ -54,7 +55,6 @@ import {GroupsController} from './groups/groups.controller';
     GithubController,
     SearchParameterController,
     FshController,
-    GroupsController
   ],
   providers: [HttpStrategy, ExportService],
 })
