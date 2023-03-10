@@ -21,6 +21,7 @@ import {GroupService} from '../../shared/group.service';
 import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 import {IPractitioner} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IGroup} from '@trifolia-fhir/models';
 
 class ResourceSecurity {
   type: 'everyone'|'user'|'group';
@@ -56,9 +57,9 @@ export class ResourcePermissionsComponent implements OnInit {
 
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
-  public groupsBundle: Bundle;
+  public groupsArray: IGroup[];
   public usersBundle: Bundle;
-  public foundGroupsBundle: Bundle;
+  public foundGroupsArray: IGroup[];
   public foundUsersBundle: Bundle;
   public searchGroupsCriteria: string;
   public searchUsersCriteria: string;
@@ -149,11 +150,11 @@ export class ResourcePermissionsComponent implements OnInit {
       next.type = group[0].type;
       next.id = group[0].id;
 
-      if (next.type === 'group' && this.groupsBundle) {
-        const foundGroupEntry = (this.groupsBundle.entry || []).find((entry) => entry.resource.id === next.id);
+      if (next.type === 'group' && this.groupsArray) {
+        const foundGroupEntry = (this.groupsArray || []).find((entry) => entry.id === next.id);
 
         if (foundGroupEntry) {
-          next.display = (<Group>foundGroupEntry.resource).name;
+          next.display = (<Group>foundGroupEntry).name;
         }
       }
 
@@ -172,9 +173,9 @@ export class ResourcePermissionsComponent implements OnInit {
     });
   }
 
-  public get foundGroups(): Group[] {
-    if (this.foundGroupsBundle) {
-      return (this.foundGroupsBundle.entry || []).map((entry) => <Group> entry.resource);
+  public get foundGroups(): IGroup[] {
+    if (this.foundGroupsArray && this.foundGroupsArray.length > 0) {
+      return this.foundGroupsArray;
     }
 
     return [];
@@ -191,8 +192,8 @@ export class ResourcePermissionsComponent implements OnInit {
   public searchGroups() {
     this.isSearchingGroups = true;
     this.groupService.getMembership(this.searchGroupsCriteria).toPromise()
-      .then((results: Bundle) => {
-        this.foundGroupsBundle = results;
+      .then((results: IGroup[]) => {
+        this.foundGroupsArray = results;
         this.isSearchingGroups = false;
       })
       .catch((err) => {
@@ -236,7 +237,7 @@ export class ResourcePermissionsComponent implements OnInit {
 
     if (groupIds.length > 0) {
       this.groupService.getMembership(null, groupIds.join(',')).toPromise()
-        .then((results: Bundle) => this.groupsBundle = results)
+        .then((results: IGroup[]) => this.groupsArray = results)
         .catch((err) => this.message = getErrorString(err));
     }
 
@@ -257,9 +258,9 @@ export class ResourcePermissionsComponent implements OnInit {
 
       if (security.type === 'user' && security.id === this.currentUser.id) {
         return true;
-      } else if (security.type === 'group' && this.groupsBundle) {
-        return !!(this.groupsBundle.entry || []).find((entry) => {
-          const group = <Group>entry.resource;
+      } else if (security.type === 'group' && this.groupsArray) {
+        return !!(this.groupsArray || []).find((entry) => {
+          const group = <Group>entry;
           return !!(group.member || []).find((member) => {
             if (!member.inactive && member.entity && member.entity.reference) {
               return member.entity.reference === `Practitioner/${this.currentUser.id}`;

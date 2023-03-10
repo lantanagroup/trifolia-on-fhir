@@ -51,7 +51,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     persistedGroup.members = [];
 
     for (const m of newGroup.members) {
-      const persistedUser = await this.usersService.findById(userProfile.user.id);
+      const persistedUser = await this.usersService.findById(m.id);
       persistedGroup.members.push(persistedUser);
     }
 
