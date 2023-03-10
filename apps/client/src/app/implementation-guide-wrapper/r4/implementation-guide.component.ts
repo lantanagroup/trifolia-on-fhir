@@ -532,7 +532,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     if (!this.isNew) {
-      this.implementationGuide = null;
 
       this.implementationGuideService.getImplementationGuide(implementationGuideId)
         .subscribe((results: ImplementationGuide | OperationOutcome) => {

@@ -307,7 +307,7 @@ export class ImplementationGuideController extends BaseFhirController {
     try {
       //const results = await this.httpService.request(options).toPromise();
       //const results = await this.db.collection('project').find().skip((query.page-1)*preparedQuery._count).limit(preparedQuery._count).toArray();
-      
+
       const searchFilters = {};
 
       if ('name' in query) {
@@ -340,7 +340,7 @@ export class ImplementationGuideController extends BaseFhirController {
       //console.log(`filter: ${JSON.stringify(filter)}`);
 
       const results = await this.projectService.search(options);
-      
+
       const searchIGResponses: SearchImplementationGuideResponse[] = [];
       let total = 0;
 
@@ -349,7 +349,7 @@ export class ImplementationGuideController extends BaseFhirController {
           if (this.configService.server && this.configService.server.publishStatusPath) {
             searchIGResponses.push({
               data: bundle,
-              published: this.getPublishStatus(bundle.ig.id),
+              published: this.getPublishStatus(bundle.igs[0].id),
             });
           } else {
             searchIGResponses.push({

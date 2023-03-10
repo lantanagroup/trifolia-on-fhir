@@ -3,11 +3,9 @@ import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {
   ImplementationGuide as STU3ImplementationGuide,
-  OperationOutcome as STU3OperationOutcome
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
   ImplementationGuide as R4ImplementationGuide,
-  OperationOutcome as R4OperationOutcome
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './config.service';
@@ -99,14 +97,17 @@ export class ImplementationGuideService {
   }
 
   public getImplementationGuide(id: string) {
-    return this.http.get<STU3ImplementationGuide | STU3OperationOutcome | R4ImplementationGuide | R4OperationOutcome>(`/api/implementationGuide/${id}`);
+    const url = '/api/conformance/' + encodeURIComponent(id) + '/Resource';
+    return this.http.get(url);
   }
 
-  public saveImplementationGuide(implementationGuide: IImplementationGuide) {
-    if (implementationGuide.id) {
-      return this.http.put(`/api/implementationGuide/${implementationGuide.id}`, implementationGuide);
-    } else {
-      return this.http.post('/api/implementationGuide', implementationGuide);
+
+  public saveImplementationGuide(ig: IImplementationGuide) {
+    let confResource : any = {fhirVersion: this.configService.isFhirR4?"r4":"stu3", resource:ig};
+    if (confResource.id) {
+      return this.http.put(`/api/conformance/${confResource.id}`, confResource);
+    }else {
+      return this.http.post('/api/conformance', confResource);
     }
   }
 

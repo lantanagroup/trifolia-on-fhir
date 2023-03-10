@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import { IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { ImplementationGuide, ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { FhirService } from '../shared/fhir.service';
 import { ConfigService } from '../shared/config.service';
 import { Extension as STU3Extension, ImplementationGuide as STU3ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { identifyRelease } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { PublishingRequestModel } from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
-
+import {ProjectService} from '../shared/projects.service';
 @Component({
   templateUrl: './new-project.component.html',
   styleUrls: ['./new-project.component.css']
@@ -36,12 +36,14 @@ export class NewProjectComponent implements OnInit {
 
 
   constructor(private igService: ImplementationGuideService,
+              private projectService: ProjectService,
               private fhirService: FhirService,
               private configService: ConfigService,
               private router: Router) {
   }
 
   done() {
+
     let ig: IImplementationGuide;
 
     const publishingRequest = new PublishingRequestModel();
@@ -101,14 +103,21 @@ export class NewProjectComponent implements OnInit {
     }
 
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));
-
+    let project: any = { author: "" , fhirVersion: this.configService.isFhirR4?"r4":"stu3", name: ig.name };
+   // let res : any = {fhirVersion: this.configService.isFhirR4?"r4":"stu3", resource:ig};
     this.igService.saveImplementationGuide(ig)
-      .subscribe((implementationGuide: ImplementationGuide) => {
-        this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
+      .subscribe(async (ig: IImplementationGuide) => {
+        project.igs = project.igs || [];
+        project.igs.push(ig.id);
+        await this.projectService.save(project).toPromise().then((project) => {
+          console.log(project);
+          this.router.navigate([`/projects/${project.id}`]);
+        }).catch((err) => this.message = getErrorString(err));
+
+       // this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
       }, (err) => {
         this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
       });
-
 
   }
 

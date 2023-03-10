@@ -19,11 +19,17 @@
           <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/home">
             <i class="fa fa-home"></i> Home
           </a>
-          <a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/implementation-guide/new" *ngIf="authService.isAuthenticated() && !configService.project" title="Create a new project (implementation guide)">
-            <i class="fa fa-plus"></i> New Project
+          <a class="dropdown-item" routerLink="/projects/new" *ngIf="authService.isAuthenticated() && !configService.project" title="Create a new project">
+          <i class="fa fa-plus"></i> New Project
           </a>
-          <a class="dropdown-item" href="javascript:void(0)" routerLink="/{{configService.baseSessionUrl}}/implementation-guide/open" *ngIf="authService.isAuthenticated() && !configService.project" title="Open/select an implementation guide project to work on">
+          <!--<a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/implementation-guide/new" *ngIf="authService.isAuthenticated() && !configService.project" title="Create a new project (implementation guide)">
+            <i class="fa fa-plus"></i> New Project
+          </a>-->
+         <!-- <a class="dropdown-item" href="javascript:void(0)" routerLink="/{{configService.baseSessionUrl}}/implementation-guide/open" *ngIf="authService.isAuthenticated() && !configService.project" title="Open/select an implementation guide to work on">
             <i class="far fa-folder"></i> Open project
+          </a>-->
+           <a class="dropdown-item" href="javascript:void(0)" routerLink="/projects" *ngIf="authService.isAuthenticated() && !configService.project" title="Open/select an project to work on">
+             <i class="far fa-folder"></i> Open project
           </a>
           <a class="dropdown-item" href="javascript:void(0)" (click)="closeProject()" *ngIf="authService.isAuthenticated() && configService.project" title="Close the currently opened project implementation guide">
             <i class="fa fa-window-close"></i> Close project

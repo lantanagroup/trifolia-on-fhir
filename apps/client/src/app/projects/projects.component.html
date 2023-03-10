@@ -1,0 +1,111 @@
+<h1>Select a project</h1>
+<!--app-tooltip-icon tooltipKey="implementationguide.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon-->
+
+
+<div class="input-group">
+  <input type="text" class="form-control" [ngModel]="name" (ngModelChange)="nameChanged($event)" placeholder="Search name" />
+ <!-- <input (ngModelChange)="idChanged($event)" [ngModel]="id" class="form-control" placeholder="Search ID" type="text" />--><!-- <input (ngModelChange)="idChanged($event)" [ngModel]="id" class="form-control" placeholder="Search ID" type="text" />-->
+  <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
+    <i class="fa fa-times"></i> Clear
+  </button>
+  <button type="button" class="btn btn-primary" title="Refresh" (click)="getProjects()">
+    <i class="fa fa-search"></i> Search
+  </button>
+</div>
+
+<br />
+
+<div *ngIf="searchProjectResults && total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+  <ngb-pagination
+    class="d-flex justify-content-center"
+    [maxSize]="5"
+    [collectionSize]="total"
+    [(page)]="page"
+    [boundaryLinks]="true"
+    (pageChange)="criteriaChangedEvent.next()">
+  </ngb-pagination>
+</div>
+
+<table class="table table-striped" *ngIf="searchProjectResults">
+  <thead>
+  <tr>
+    <th>
+      ID
+      <app-tooltip-icon tooltipPath="Resource.id"></app-tooltip-icon>
+    </th>
+    <th>Name</th>
+    <th>Author</th>
+    <th>MigratedFrom</th>
+    <th>FhirVersion</th>
+    <th>Project Contributor</th>
+    <th class="actions-column-1">&nbsp;</th>
+  </tr>
+  </thead>
+  <tbody *ngIf="!configService.showingIntroduction">
+  <tr *ngFor="let pr of searchProjectResults">
+    <td>{{pr.id}}</td>
+    <td>{{pr.name}}</td>
+    <td>{{pr.author}}</td>
+    <td>{{pr.migratedFrom}}</td>
+    <td>{{pr.fhirVersion}}</td>
+    <td>
+      <table>
+        <tr *ngFor="let contr of pr.contributors">
+          <td>{{contr.user}}</td>
+        </tr>
+      </table>
+    </td>
+   <!-- <td>
+      <i *ngIf="ig.published === true" class="fas fa-check" style="color:green" title="Success"></i>
+      <i *ngIf="ig.published === false" class="fas fa-times" style="color:red" title="Failed"></i>
+      <i *ngIf="ig.published === null" class="fas fa-question" style="color:black" title="Not Published"></i>
+    </td>-->
+    <td class="actions-column-1">
+      <div class="btn-group pull-right">
+        <a  class="btn btn-primary" role="button" routerLink="/projects/{{pr.id}}"
+            title="Edit Project ">
+          <i class="fas fa-hand-pointer"></i>
+        </a>
+      </div>
+    </td>
+    <td class="actions-column-1">
+      <div class="btn-group pull-right">
+        <a  class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/{{pr.ig.id}}/implementation-guide"
+           title="Edit Project Implementation Guides ">
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+  <tbody *ngIf="configService.showingIntroduction">
+  <tr>
+    <td>DEMO-ID</td>
+    <td>Demo Name</td>
+    <td>Demo Title</td>
+    <td>
+      <div class="btn-group pull-right">
+        <a class="btn btn-primary" role="button" href="javascript:void(0)" title="Select this  project">
+          <i class="fas fa-hand-pointer"></i>
+        </a>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+  <tfoot>
+  <tr *ngIf="searchProjectResults && total === 0">
+    <td colspan="3">No project! Create one by clicking <a routerLink="/projects/new">here</a>...</td>
+  </tr>
+</table>
+<div *ngIf="searchProjectResults && total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+  <ngb-pagination
+    class="d-flex justify-content-center"
+    [maxSize]="5"
+    [collectionSize]="total"
+    [(page)]="page"
+    [boundaryLinks]="true"
+    (pageChange)="criteriaChangedEvent.next()">
+
+  </ngb-pagination>
+</div>
+
