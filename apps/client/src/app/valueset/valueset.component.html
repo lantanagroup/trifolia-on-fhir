@@ -28,7 +28,7 @@
                                        tooltipPath="ValueSet.status"></app-fhir-select-single-code>
 
           <app-fhir-boolean [allowUndefined]="true" [parentObject]="valueSet" [required]="true" propertyName="experimental" title="Experimental"></app-fhir-boolean>
-          <span *ngIf="!valueSet.experimental" class="help-block error">The ShareableValueSet profile says that the experimental element is mandatory, but it is not found.
+          <span *ngIf="!valueSet.hasOwnProperty('experimental')" class="help-block error">The ShareableValueSet profile says that the experimental element is mandatory, but it is not found.
             HL7 Published value sets SHALL conform to the ShareableValueSet profile</span>
         </div>
       </div>
