@@ -677,6 +677,18 @@ describe('ConstraintManager', () => {
       let cm;
       let testData: IStructureDefinition;
 
+      it('remove constraint', async () => {
+        const testData: IStructureDefinition = <IStructureDefinition>JSON.parse(JSON.stringify(compositionClinicalDocumentDataEnterer));
+        const extModel = <IStructureDefinition>fhir.parser.structureDefinitions.find(ext => ext.id === 'Extension');
+        cm = new ConstraintManager(ElementDefinition, extModel, testData, fhir.parser);
+        await cm.initializeRoot();
+
+        console.log(testData);
+        console.log(extModel);
+
+      });
+
+
       it('should not be constrained', async () => {
         const testData: IStructureDefinition = <IStructureDefinition>JSON.parse(JSON.stringify(compositionClinicalDocumentDataEnterer));
         const extModel = <IStructureDefinition>fhir.parser.structureDefinitions.find(ext => ext.id === 'Extension');
