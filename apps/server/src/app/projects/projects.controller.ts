@@ -6,9 +6,6 @@ import {BaseDataController} from '../base/base-data.controller';
 import {ProjectDocument} from './project.schema';
 import {IProject} from '@trifolia-fhir/models';
 import {User} from '../server.decorators';
-import {ITofUser} from '@trifolia-fhir/tof-lib';
-import {ObjectId} from 'mongodb';
-import {UsersService} from '../users/users.service';
 import {ConformanceService} from '../conformance/conformance.service';
 
 
@@ -41,7 +38,6 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
     project.contributors =  project.contributors || [];
     let contributor = {user: user.user.name}
     project.contributors.push(contributor);
-    // create the ig as well
 
     return await super.create(project);
 
@@ -69,10 +65,9 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
 
 
   @Get(':id')
-  public async getProject(@User() userProfile, @Param('id') id: string) {
+  public async getProject(@User() userProfile,  @Param('id') id: string) {
     if (!userProfile) return null;
 
     return await this.projectService.getProject(id);
   }
-
 }

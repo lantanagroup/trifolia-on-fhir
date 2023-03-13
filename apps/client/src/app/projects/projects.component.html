@@ -1,7 +1,6 @@
 <h1>Select a project</h1>
 <!--app-tooltip-icon tooltipKey="implementationguide.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon-->
 
-
 <div class="input-group">
   <input type="text" class="form-control" [ngModel]="name" (ngModelChange)="nameChanged($event)" placeholder="Search name" />
  <!-- <input (ngModelChange)="idChanged($event)" [ngModel]="id" class="form-control" placeholder="Search ID" type="text" />--><!-- <input (ngModelChange)="idChanged($event)" [ngModel]="id" class="form-control" placeholder="Search ID" type="text" />-->
@@ -38,7 +37,7 @@
     <th>MigratedFrom</th>
     <th>FhirVersion</th>
     <th>Project Contributor</th>
-    <th class="actions-column-1">&nbsp;</th>
+    <th class="actions-column-1">Impl Guide</th>
   </tr>
   </thead>
   <tbody *ngIf="!configService.showingIntroduction">
@@ -68,9 +67,9 @@
         </a>
       </div>
     </td>
-    <td class="actions-column-1">
+    <td class="actions-column-1" *ngIf = "pr.igs.length > 0">
       <div class="btn-group pull-right">
-        <a  class="btn btn-primary" role="button" routerLink="{{configService.baseSessionUrl}}/{{pr.ig.id}}/implementation-guide"
+        <a class="btn btn-primary" role="button" routerLink="/projects/{{pr.igs[0]}}/implementation-guide"
            title="Edit Project Implementation Guides ">
           <i class="fas fa-arrow-right"></i>
         </a>
@@ -105,7 +104,6 @@
     [(page)]="page"
     [boundaryLinks]="true"
     (pageChange)="criteriaChangedEvent.next()">
-
   </ngb-pagination>
 </div>
 

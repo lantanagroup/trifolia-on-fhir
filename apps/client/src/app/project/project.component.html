@@ -1,58 +1,78 @@
 <div class="row">
   <div class="col-md-6">
     <div class="mb-3">
-      <label>ID</label>
-      <div [class.input-group]="!isNew">
-        <input type="text" class="form-control" [disabled]="true" [ngModel]="project.id"  />
-
+      <h6>Project ID</h6>
+      <div>
+        {{project.id}}
       </div>
     </div>
     <div class="mb-3">
-      <label>Name</label>
+      <h6>Project Name</h6>
       <div [class.input-group]="true">
         <input type="text" class="form-control" [disabled]="false" [(ngModel)]="project.name"  />
       </div>
     </div>
     <div class="mb-3">
-      <label>Author</label>
-      <div [class.input-group]="false">
-        <input type="text" class="form-control" [disabled]="true" [ngModel]="project.author"  />
+      <h6>Author</h6>
+      <div>
+        {{project.author}}
       </div>
     </div>
     <div class="mb-3">
-      <label>MigratedFrom</label>
-      <div [class.input-group]="!isNew">
-        <input type="text" class="form-control" [disabled]="true" [ngModel]="project.migratedFrom"  />
+      <h6>MigratedFrom</h6>
+      <div>
+       {{project.migratedFrom}}
       </div>
     </div>
     <div class="mb-3">
-      <label>FhirVersion</label>
-      <div [class.input-group]="false">
-        <input type="text" class="form-control" [disabled]="true" [ngModel]="project.fhirVersion"  />
+      <h6>FhirVersion</h6>
+      <div>
+        {{project.fhirVersion}}
       </div>
     </div>
     <div class="mb-3">
-      <label>Project Contributors</label>
-      <div [class.input-group]="!isNew">
+      <h6>Project Contributors</h6>
+      <div [class.input-group]="true">
         <div *ngFor="let contr of project.contributors">
-          <input type="text" class="form-control" [disabled]="true" [ngModel]="contr.user"  />
+          <input type="text" class="form-control" [disabled]="false" [ngModel]="contr.user"  />
         </div>
-
       </div>
     </div>
     <div class="mb-3">
-      <label>Igs</label>
-      <div [class.input-group]="!isNew">
-        <div *ngFor="let ig of project.igs">
+       <table class="table table-striped" *ngIf="project.igs">
+          <thead>
+            <tr>
+              <th>
+                Implementation Guide ID
+                <app-tooltip-icon tooltipPath="Resource.id"></app-tooltip-icon>
+              </th>
+              <th>Implementation Guide Name</th>
+            </tr>
+          </thead>
+          <tr *ngFor="let ig of project.igs">
+            <td><a   role="button" routerLink="/projects/{{ig.id}}/implementation-guide"
+                     title="Edit Project Implementation Guides ">
+                     <i> {{ig.id}}</i>
+                </a>
+            </td>
+            <td>{{ig.resource.name}}</td>
+          </tr>
+        </table>
+    </div>
 
+   <!-- <div class="mb-3">
+      <label>Ig Id</label>
+      <label>Ig Name</label>
+      <div>
+        <div *ngFor="let ig of project.igs">
           <a   role="button" routerLink="/projects/{{ig.id}}/implementation-guide"
                title="Edit Project Implementation Guides ">
             <i> {{ig.id}}</i>
           </a>
+          {{ig.name}}
         </div>
-
       </div>
-    </div>
+    </div>-->
 
 <!--    <div class="mb-3">
       <a   role="button" routerLink="/projects/{{project.ig.id}}/implementation-guide"

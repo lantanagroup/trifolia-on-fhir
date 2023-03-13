@@ -87,13 +87,15 @@ export class NewProjectComponent implements OnInit {
       if (this.isHL7) {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
-        (<R4ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+        (<R4ImplementationGuide>ig).jurisdiction = [];
+        (<R4ImplementationGuide>ig).jurisdiction.push(this.selectedJurisdiction);
         (<R4ImplementationGuide>ig).packageId = this.packageId;
         (<R4ImplementationGuide>ig).title = this.igTitle;
       }
     } else if (this.configService.isFhirSTU3) {
       if (this.isHL7) {
-        (<STU3ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+        (<STU3ImplementationGuide>ig).jurisdiction =  [];
+        (<STU3ImplementationGuide>ig).jurisdiction.push(this.selectedJurisdiction);
         const packageIdExt = new STU3Extension();
         packageIdExt.url = Globals.extensionUrls['extension-ig-package-id'];
         packageIdExt.valueString = this.packageId;
@@ -104,7 +106,6 @@ export class NewProjectComponent implements OnInit {
 
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));
     let project: any = { author: "" , fhirVersion: this.configService.isFhirR4?"r4":"stu3", name: ig.name };
-   // let res : any = {fhirVersion: this.configService.isFhirR4?"r4":"stu3", resource:ig};
     this.igService.saveImplementationGuide(ig)
       .subscribe(async (ig: IImplementationGuide) => {
         project.igs = project.igs || [];
@@ -113,8 +114,6 @@ export class NewProjectComponent implements OnInit {
           console.log(project);
           this.router.navigate([`/projects/${project.id}`]);
         }).catch((err) => this.message = getErrorString(err));
-
-       // this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
       }, (err) => {
         this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
       });

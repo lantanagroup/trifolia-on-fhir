@@ -19,8 +19,7 @@ export interface IProject {
   contributors?: IProjectContributor[];
   fhirVersion: 'stu3'|'r4'|'r5';
   permissions?: IPermission[];
-  //ig: IImplementationGuide;
-  igs?: IConformance[];
+  igs: IConformance[];
 }
 
 export interface IUser {

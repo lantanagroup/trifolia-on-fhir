@@ -2,17 +2,17 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {
-  ImplementationGuide as STU3ImplementationGuide,
+  ImplementationGuide as STU3ImplementationGuide
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
-  ImplementationGuide as R4ImplementationGuide,
+  ImplementationGuide as R4ImplementationGuide
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {ConfigService} from './config.service';
 import {Router} from '@angular/router';
 import {SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {IBundle, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
+import {ConfigService} from './config.service';
 
 export class PublishedGuideModel {
   public name: string;
@@ -97,19 +97,19 @@ export class ImplementationGuideService {
   }
 
   public getImplementationGuide(id: string) {
-    const url = '/api/conformance/' + encodeURIComponent(id) + '/Resource';
+    const url = '/api/implementationGuide/' + encodeURIComponent(id);
     return this.http.get(url);
   }
 
 
-  public saveImplementationGuide(ig: IImplementationGuide) {
-    let confResource : any = {fhirVersion: this.configService.isFhirR4?"r4":"stu3", resource:ig};
-    if (confResource.id) {
-      return this.http.put(`/api/conformance/${confResource.id}`, confResource);
-    }else {
-      return this.http.post('/api/conformance', confResource);
+  public saveImplementationGuide(implementationGuide: IImplementationGuide) {
+    if (implementationGuide.id) {
+      return this.http.put(`/api/implementationGuide/${implementationGuide.id}`, implementationGuide);
+    } else {
+      return this.http.post('/api/implementationGuide', implementationGuide);
     }
   }
+
 
   public deleteImplementationGuide(ig: STU3ImplementationGuide | R4ImplementationGuide) {
     if (!confirm(`Are you sure you want to delete ${ig.name}?`)) {

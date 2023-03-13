@@ -4,11 +4,8 @@ import {Connection} from 'mongoose';
 import {BaseDataController} from '../base/base-data.controller';
 import {ConformanceService} from './conformance.service';
 import {AuthGuard} from '@nestjs/passport';
-import {Body, Controller, Delete, Get, Param, Put, UnauthorizedException, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, UnauthorizedException, UseGuards} from '@nestjs/common';
 import {ConformanceDocument} from './conformance.schema';
-import {IImplementationGuide} from '@trifolia-fhir/tof-lib';
-import {ImplementationGuide} from '@trifolia-fhir/r4';
-
 
 @Controller('api/conformance')
 @UseGuards(AuthGuard('bearer'))
@@ -32,12 +29,4 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
     return filter;
   }
 
-  @Get(':id/Resource')
-  public async getResource( @Param('id') id: string) : Promise<IImplementationGuide>
-  {
-    const results = await this.conformanceService.findById(id);
-    if(results.resource.resourceType == 'ImplementationGuide') {
-      return <IImplementationGuide>results.resource;
-    }
-  }
 }

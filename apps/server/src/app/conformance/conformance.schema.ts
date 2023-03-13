@@ -21,6 +21,15 @@ export class Conformance extends BaseEntity implements IConformance {
     @Prop ()
     projectId: string[];
 
+    @Prop ()
+    name?: string;
+
+    @Prop ()
+    groupingId?: string;
+
+    @Prop ()
+    description?: string;
+
 }
 
 export const ConformanceSchema = SchemaFactory.createForClass(Conformance);
