@@ -7,13 +7,14 @@ import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhir
 import {Globals} from './globals';
 
 export function identifyRelease(fhirVersion: string): Versions {
+  const modFhirVersion = fhirVersion ? fhirVersion.replace('-ballot', '') : fhirVersion;
   if (!fhirVersion) {
     return Versions.STU3;
-  } else if (semver.satisfies(fhirVersion, '>= 3.2.0 < 4.2.0')) {
+  } else if (semver.satisfies(modFhirVersion, '>= 3.2.0 < 4.2.0')) {
     return Versions.R4;
-  } else if (semver.satisfies(fhirVersion, '>= 1.1.0 <= 3.0.2')) {
+  } else if (semver.satisfies(modFhirVersion, '>= 1.1.0 <= 3.0.2')) {
     return Versions.STU3;
-  } else if (semver.satisfies(fhirVersion, '>= 4.2.0 < 5.0.0')) {
+  } else if (semver.satisfies(modFhirVersion, '>= 4.2.0 <= 5.0.0')) {
     return Versions.R5;
   } else {
     throw new Error('Unexpected FHIR Version ' + fhirVersion);

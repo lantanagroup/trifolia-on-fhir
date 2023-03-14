@@ -5,6 +5,7 @@ import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {CodeSystemService} from '../shared/code-system.service';
 import {CodeSystem as STU3CodeSystem, ConceptDefinitionComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {CodeSystem as R4CodeSystem } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {CodeSystem as R5CodeSystem } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {FhirService} from '../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
@@ -13,9 +14,9 @@ import {ConfigService} from '../shared/config.service';
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
-import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import {ICodeSystem} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {Subject} from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
 
 @Component({
   templateUrl: './codesystem.component.html',
@@ -52,7 +53,9 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     private fhirService: FhirService) {
 
     super(configService, authService);
-    if (this.configService.isFhirR4) {
+    if (this.configService.isFhirR5) {
+      this.codeSystem = new R5CodeSystem({ meta: this.authService.getDefaultMeta() });
+    } else if (this.configService.isFhirR4) {
       this.codeSystem = new R4CodeSystem({ meta: this.authService.getDefaultMeta() });
     } else if (this.configService.isFhirSTU3) {
       this.codeSystem = new STU3CodeSystem({ meta: this.authService.getDefaultMeta() });

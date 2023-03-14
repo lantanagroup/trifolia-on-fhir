@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { ImplementationGuide, ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { ImplementationGuide as R5ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { FhirService } from '../shared/fhir.service';
 import { ConfigService } from '../shared/config.service';
 import { Extension as STU3Extension, ImplementationGuide as STU3ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -57,14 +58,15 @@ export class NewProjectComponent implements OnInit {
     publishingRequest['ci-build'] = 'http://build.fhir.org/ig/';
     publishingRequest.introduction = 'New IG: ' + this.igTitle;
 
-    if (this.configService.isFhirR4) {
+    if (this.configService.isFhirR5) {
+      ig = new R5ImplementationGuide();
+    } else if (this.configService.isFhirR4) {
       ig = new R4ImplementationGuide();
     } else if (this.configService.isFhirSTU3) {
       ig = new STU3ImplementationGuide();
     } else {
       throw new Error('Unexpected FHIR version');
     }
-
 
     this.igId = this.projectCode.replace(/\./g, '-');
     ig.url = this.igUrl;
@@ -81,7 +83,15 @@ export class NewProjectComponent implements OnInit {
     }];
 
     // Create the implementation guide based on the FHIR server we're connected to
-    if (this.configService.isFhirR4) {
+    if (this.configService.isFhirR5) {
+      if (this.isHL7) {
+        //no option for Family, Project Code, Canonical URL in R4 IG Class
+        // TODO: set id to <project-code-with-dashes-instead-of-dots>
+        (<R5ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+        (<R5ImplementationGuide>ig).packageId = this.packageId;
+        (<R5ImplementationGuide>ig).title = this.igTitle;
+      }
+    } else if (this.configService.isFhirR4) {
       if (this.isHL7) {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
@@ -183,7 +193,7 @@ export class NewProjectComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.configService.isFhirR4) {
+    if (this.configService.isFhirR4 || this.configService.isFhirR5) {
       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
     } else if (this.configService.isFhirSTU3) {
       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/jurisdiction');

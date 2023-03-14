@@ -68,7 +68,8 @@ const primitiveTypes = {
   uuid: 'string',
   unsignedInt: 'number',
   positiveInt: 'number',
-  xhtml: 'string'
+  xhtml: 'string',
+  number: 'number'
 };
 
 const interfaces = {
@@ -430,6 +431,33 @@ export class GenerateTypescript extends BaseTools {
       });
   }
 
+  private generateConstructorContent(gt: GeneratedType): string {
+    let output = '';
+
+    gt.properties.forEach(p => {
+      output += `\t\tif (obj.hasOwnProperty('${p.name}')) {\n`;
+
+      if (p.multiple) {
+        output += `\t\t\tthis.${p.name} = [];\n`;
+        output += `\t\t\tfor (const o of obj.${p.name} || []) {\n`;
+
+        if (primitiveTypes[p.type] || this.generatedDeclaredTypes.find(dt => dt.name === p.type)) {
+          output += `\t\t\t\tthis.${p.name}.push(o);\n`;
+        } else {
+          output += `\t\t\t\tthis.${p.name}.push(new ${p.type}(o));\n`;
+        }
+
+        output += `\t\t\t}\n`;
+      } else {
+        output += `\t\t\tthis.${p.name} = obj.${p.name};\n`;
+      }
+
+      output += `\t\t}\n\n`;
+    });
+
+    return output;
+  }
+
   private generateOutput() {
     this.output += `import * as IFhir from '../fhirInterfaces';\n\n`;
 
@@ -450,7 +478,16 @@ export class GenerateTypescript extends BaseTools {
         this.output += ' implements IFhir.' + gt.implements;
       }
 
-      this.output += ' {\n';
+      this.output += ' {\n\tconstructor(obj?: any) {\n';
+
+      if (gt.extends) {
+        this.output += `\t\tsuper(obj);\n`;
+      }
+
+      // constructor obj
+      this.output += this.generateConstructorContent(gt);
+
+      this.output += '\t}\n\n'
 
       for (const property of gt.properties) {
         const optional = property.optional ? '?' : '';

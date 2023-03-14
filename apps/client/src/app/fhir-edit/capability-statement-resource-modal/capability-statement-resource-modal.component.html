@@ -25,6 +25,7 @@
     resourceType="StructureDefinition"
     [hideResourceType]="true"></app-fhir-reference>
 
+  <!-- TODO: isFhirR5 -->
   <div class="card" *ngIf="configService.isFhirR4">
     <div class="card-header">
       <input type="checkbox" [ngModel]="r4Resource.hasOwnProperty('supportedProfile')" (ngModelChange)="Globals.toggleProperty(r4Resource, 'supportedProfile', [''])"/>

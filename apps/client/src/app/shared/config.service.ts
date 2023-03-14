@@ -104,6 +104,9 @@ export class ConfigService {
     return identifyReleaseFunc(this.fhirConformanceVersion) === Versions.R4;
   }
 
+  public get isFhirR5() {
+    return identifyReleaseFunc(this.fhirConformanceVersion) === Versions.R5;
+  }
   public setTitle(value: string, isDirty: boolean = false) {
     const mainTitle = (isDirty ? "*" : "") + 'Trifolia-on-FHIR';
 
