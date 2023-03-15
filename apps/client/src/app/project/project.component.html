@@ -30,11 +30,12 @@
         {{project.fhirVersion}}
       </div>
     </div>
+
     <div class="mb-3">
       <h6>Project Contributors</h6>
       <div [class.input-group]="true">
         <div *ngFor="let contr of project.contributors">
-          <input type="text" class="form-control" [disabled]="false" [ngModel]="contr.user"  />
+          {{contr.user}}
         </div>
       </div>
     </div>
@@ -47,6 +48,7 @@
                 <app-tooltip-icon tooltipPath="Resource.id"></app-tooltip-icon>
               </th>
               <th>Implementation Guide Name</th>
+   <!--           <th>Published</th>-->
             </tr>
           </thead>
           <tr *ngFor="let ig of project.igs">
@@ -56,30 +58,15 @@
                 </a>
             </td>
             <td>{{ig.resource.name}}</td>
+           <!-- <td>
+                <i *ngIf="ig.resource.published === true" class="fas fa-check" style="color:green" title="Success"></i>
+                <i *ngIf="ig.resource.published === false" class="fas fa-times" style="color:red" title="Failed"></i>
+                <i *ngIf="ig.resource.published === null" class="fas fa-question" style="color:black" title="Not Published"></i>
+            </td>-->
           </tr>
         </table>
     </div>
 
-   <!-- <div class="mb-3">
-      <label>Ig Id</label>
-      <label>Ig Name</label>
-      <div>
-        <div *ngFor="let ig of project.igs">
-          <a   role="button" routerLink="/projects/{{ig.id}}/implementation-guide"
-               title="Edit Project Implementation Guides ">
-            <i> {{ig.id}}</i>
-          </a>
-          {{ig.name}}
-        </div>
-      </div>
-    </div>-->
-
-<!--    <div class="mb-3">
-      <a   role="button" routerLink="/projects/{{project.ig.id}}/implementation-guide"
-          title="Edit Project Implementation Guides ">
-        <i>Edit Implementation Guide</i>
-      </a>
-    </div>-->
   </div>
 </div>
 <footer class="footer">

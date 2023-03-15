@@ -1,9 +1,18 @@
 <h1>Select a project</h1>
 <!--app-tooltip-icon tooltipKey="implementationguide.description" [showAsAlert]="true" alertTitle="Description"></app-tooltip-icon-->
+<div *ngIf="recentProjects.length > 0">
+  <strong>Recent Projects:</strong>
+  <ul>
+    <li *ngFor="let pr of recentProjects">
+      <a (click)="projectReselected(pr)" routerLink="/projects/{{pr.id}}">{{ pr.name}}</a>
+    </li>
+  </ul>
+</div>
+
 
 <div class="input-group">
   <input type="text" class="form-control" [ngModel]="name" (ngModelChange)="nameChanged($event)" placeholder="Search name" />
- <!-- <input (ngModelChange)="idChanged($event)" [ngModel]="id" class="form-control" placeholder="Search ID" type="text" />--><!-- <input (ngModelChange)="idChanged($event)" [ngModel]="id" class="form-control" placeholder="Search ID" type="text" />-->
+  <input (ngModelChange)="authorChanged($event)" [ngModel]="author" class="form-control" placeholder="Search Author" type="text" />
   <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
     <i class="fa fa-times"></i> Clear
   </button>
@@ -37,7 +46,6 @@
     <th>MigratedFrom</th>
     <th>FhirVersion</th>
     <th>Project Contributor</th>
-    <th class="actions-column-1">Impl Guide</th>
   </tr>
   </thead>
   <tbody *ngIf="!configService.showingIntroduction">
@@ -54,14 +62,9 @@
         </tr>
       </table>
     </td>
-   <!-- <td>
-      <i *ngIf="ig.published === true" class="fas fa-check" style="color:green" title="Success"></i>
-      <i *ngIf="ig.published === false" class="fas fa-times" style="color:red" title="Failed"></i>
-      <i *ngIf="ig.published === null" class="fas fa-question" style="color:black" title="Not Published"></i>
-    </td>-->
     <td class="actions-column-1">
       <div class="btn-group pull-right">
-        <a  class="btn btn-primary" role="button" routerLink="/projects/{{pr.id}}"
+        <a  (click)="projectSelected(pr)"  class="btn btn-primary" role="button" routerLink="/projects/{{pr.id}}"
             title="Edit Project ">
           <i class="fas fa-hand-pointer"></i>
         </a>

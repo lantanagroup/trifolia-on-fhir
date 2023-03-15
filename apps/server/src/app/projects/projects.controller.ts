@@ -28,6 +28,9 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
     if ('name' in query) {
       filter['name'] = { $regex: query['name'], $options: 'i' };
     }
+    if ('author' in query) {
+      filter['author'] = { $regex: query['author'], $options: 'i' };
+    }
     return filter;
   }
 

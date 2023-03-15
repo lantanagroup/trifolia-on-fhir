@@ -9,7 +9,7 @@ export class ProjectService {
   constructor(private http: HttpClient) {
   }
 
-  public getProjects(page?: number, name?: string, Id?: string): Observable<IProject[]> {
+  public getProjects(page?: number, name?: string, author?:string, Id?: string): Observable<IProject[]> {
     let url = '/api/project?';
 
     if (page) {
@@ -18,6 +18,10 @@ export class ProjectService {
 
     if (name) {
       url += `name=${encodeURIComponent(name)}&`;
+    }
+
+    if (author) {
+      url += `author=${encodeURIComponent(author)}&`;
     }
 
     if (Id) {
