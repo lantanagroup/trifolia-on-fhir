@@ -31,8 +31,6 @@ RUN npm prune --production
 
 FROM lantanagroup/tof-base:latest
 
-RUN gem install kramdown-parser-gfm
-
 COPY --from=build-ToF /build/dist/. /ToF/
 COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/
 

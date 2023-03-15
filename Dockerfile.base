@@ -7,5 +7,6 @@ RUN apk add --no-cache fontconfig ttf-dejavu
 RUN gem install sassc -- --disable-march-tune-native
 RUN gem install rouge -v 3.30.0
 RUN gem install jekyll -v 3.9.3 --no-document
+RUN gem install kramdown-parser-gfm -v 1.1.0 --no-document
 RUN gem install bundler --no-document
 RUN jekyll -v
