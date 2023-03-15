@@ -29,7 +29,17 @@ RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build tools 
 
 RUN npm prune --production
 
-FROM lantanagroup/tof-base:latest
+FROM node:16-alpine
+
+# Install ruby, open-jdk
+RUN apk update && apk --update --no-cache add ruby-full ruby-dev build-base openjdk11-jre
+# Install fonts that are used by ig publisher. Without these, ig publisher throws a bunch of exceptions
+RUN apk add --no-cache fontconfig ttf-dejavu
+RUN gem install sassc -- --disable-march-tune-native
+RUN gem install rouge -v 3.30.0
+RUN gem install jekyll -v 3.9.3 --no-document
+RUN gem install bundler --no-document
+RUN jekyll -v
 
 COPY --from=build-ToF /build/dist/. /ToF/
 COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/
