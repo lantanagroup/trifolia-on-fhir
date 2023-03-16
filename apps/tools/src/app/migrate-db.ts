@@ -237,8 +237,9 @@ export class MigrateDb extends BaseTools {
 
         const history: IHistory = {
           content: resourceHistory,
-          targetId: groupedResource.projectResource._id,
-          timestamp: new Date(meta.lastUpdated),
+          fhirVersion: this.options.fhirVersion,
+          targetId: groupedResource.projectResource.id,
+          lastUpdated: new Date(meta.lastUpdated),
           type: type,
           versionId: parseInt(meta.versionId)
         };
@@ -365,9 +366,11 @@ export class MigrateDb extends BaseTools {
 
     const conformance: IConformance = {
       migratedFrom: this.options.migratedFromLabel,
+      versionId: resource.meta?.versionId,
+      lastUpdated: resource.meta?.lastUpdated,
       fhirVersion: this.options.fhirVersion,
       resource: resource,
-      projectId: projects.map(ig => ig._id)
+      projects: projects.map(ig => { return <IProject>{id: ig.id}})
     };
     groupedResource.projectResource = conformance;
 
@@ -385,8 +388,10 @@ export class MigrateDb extends BaseTools {
     const example: IExample = {
       migratedFrom: this.options.migratedFromLabel,
       fhirVersion: this.options.fhirVersion,
+      versionId: resource.meta?.versionId,
+      lastUpdated: resource.meta?.lastUpdated,
       content: resource,
-      projectId: projects.map(ig => ig._id)
+      projects: projects.map(ig => { return <IProject>{id: ig.id}})
     };
     groupedResource.projectResource = example;
 

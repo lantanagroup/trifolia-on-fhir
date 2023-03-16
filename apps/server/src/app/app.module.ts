@@ -25,6 +25,7 @@ import { UsersModule } from './users/users.module';
 import { ManageModule } from './manage/manage.module';
 import { GroupsModule } from './groups/groups.module';
 import { AuthModule } from './auth/auth.module';
+import { ResourcesModule } from './resources/resources.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { AuthModule } from './auth/auth.module';
     ManageModule,
     GroupsModule,
     AuthModule,
+    ResourcesModule,
   ],
   exports: [],
   controllers: [

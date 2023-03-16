@@ -5,6 +5,7 @@ export class PaginateOptions {
     public itemsPerPage?: number = 10;
     public filter?: any;
     public sortBy?: {[key: string]: 'asc'|'desc'};
+    public populate?: string[] = [];
 }
 
 export class Paginated<T> {

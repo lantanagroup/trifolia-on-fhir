@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb';
 import { ConfigService } from '../config.service';
 import { GroupsService } from '../groups/groups.service';
 import { ProjectsService } from '../projects/projects.service';
+import { ResourcesService } from '../resources/providers/resources.service';
 import { TofLogger } from '../tof-logger';
 
 @Injectable()
@@ -14,7 +15,8 @@ export class AuthService {
     constructor(
         private readonly configService: ConfigService,
         private readonly groupsService: GroupsService,
-        private readonly projectsService: ProjectsService
+        private readonly projectsService: ProjectsService,
+        private readonly resourcesService: ResourcesService
     ) {
     }
 
@@ -117,7 +119,7 @@ export class AuthService {
 
         // TODO: uncomment after implementing generic resource service
         //const service = type === 'resource' ? this.resourceService : this.projectsService;
-        const service = type === 'resource' ? null : this.projectsService;
+        const service = type === 'resource' ? this.resourcesService : this.projectsService;
 
         const resCount = await service.count(await this.getPermissionFilterBase(user, grant, targetId));
         //console.log(`Can ${grant} count: ${resCount}`);
@@ -134,12 +136,12 @@ export class AuthService {
         return this.userCan(user, projectId, 'project', 'write');
     }
 
-    public async userCanReadResource(user: ITofUser, projectId: string) {
-        return this.userCan(user, projectId, 'resource', 'read');
+    public async userCanReadResource(user: ITofUser, resourceId: string) {
+        return this.userCan(user, resourceId, 'resource', 'read');
     }
 
-    public async userCanWriteResource(user: ITofUser, projectId: string) {
-        return this.userCan(user, projectId, 'resource', 'write');
+    public async userCanWriteResource(user: ITofUser, resourceId: string) {
+        return this.userCan(user, resourceId, 'resource', 'write');
     }
 
 

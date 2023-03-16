@@ -2,9 +2,10 @@ import { Paginated, PaginateOptions } from "@trifolia-fhir/tof-lib";
 import { HydratedDocument, Model } from "mongoose";
 import { BaseEntity } from "./base.entity";
 import { TofLogger } from "../tof-logger";
+import type { IBaseDataService } from "./interfaces";
 
 
-export class BaseDataService<T extends HydratedDocument<BaseEntity>> {
+export class BaseDataService<T extends HydratedDocument<BaseEntity>> implements IBaseDataService {
 
     private readonly logger = new TofLogger(BaseDataService.name);
 
@@ -24,10 +25,11 @@ export class BaseDataService<T extends HydratedDocument<BaseEntity>> {
         const filters = (options && options.filter) ? options.filter : {};
         const skip = (page-1) * limit;
         const sortBy = (options && options.sortBy)  ? options.sortBy : {};
+        const populate = (options && options.populate)  ? options.populate : [];
 
         //console.log(`search filters: ${JSON.stringify(filters)}`);
 
-        const items = await this.model.find(filters).sort(sortBy).limit(limit).skip(skip);
+        const items = await this.model.find(filters).populate(populate).sort(sortBy).limit(limit).skip(skip);
         const total = await this.model.countDocuments(filters);
 
         const result: Paginated<T> = {

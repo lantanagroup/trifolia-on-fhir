@@ -12,7 +12,7 @@ export interface IProjectContributor {
 }
 
 export interface IProject {
-  _id?: string;
+  id?: string;
   migratedFrom?: string;
   name: string;
   authorId: string;
@@ -42,22 +42,34 @@ export interface IGroup {
 }
 
 export interface IProjectResource {
-  _id?: string;
-  migratedFrom?: string;
-  fhirVersion: 'stu3'|'r4'|'r5';
-  projectId?: string[];
+  id?: string;
   name?: string;
-  groupingId?: string;    // from ImplementationGuide.definition.grouping. Not used in STU3
   description?: string;
+  projects?: IProject[];
+  migratedFrom?: string;
+
+  versionId: number;
+  lastUpdated: Date;
+  permissions?: IPermission[];
 }
 
-export interface IConformance extends IProjectResource {
+export interface IConformance extends IProjectResource {  
+  //groupingId?: string;    // from ImplementationGuide.definition.grouping. Not used in STU3  
+  fhirVersion: 'stu3'|'r4'|'r5';
   resource: IDomainResource;
 }
 
 export interface IExample extends IProjectResource {
-  content: IDomainResource;     // Ideally this would be a resource OR a string, but not sure how we would populate IG.definition.resource.reference
+  fhirVersion?: 'stu3'|'r4'|'r5';
+  content?: IDomainResource|any;  // Ideally this would be a resource OR a string, but not sure how we would populate IG.definition.resource.reference
   exampleFor?: string;    // StructureDefinition in which this is a profile for
+}
+
+export interface IHistory extends IProjectResource {
+  fhirVersion?: 'stu3'|'r4'|'r5';
+  content?: IDomainResource|any;
+  targetId: string;
+  type: 'conformance'|'example';  
 }
 
 export interface IAudit {
@@ -68,14 +80,4 @@ export interface IAudit {
   what: string;
   note?: string;
   networkAddr?: string;
-}
-
-export class IHistory {
-  _id?: string;
-  migratedFrom?: string;
-  content: IDomainResource;
-  targetId: string;
-  timestamp: Date;
-  type: 'conformance'|'example';
-  versionId: number;
 }
