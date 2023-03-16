@@ -37,6 +37,9 @@ import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-mo
 import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
+import {IImplementationGuide} from '@trifolia-fhir/tof-lib';
+import {ProjectService} from '../../shared/projects.service';
+import {IConformance} from '@trifolia-fhir/models';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -67,7 +70,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public selectedPage: PageDefinition;
   public selectedResource: ImplementationGuideResourceComponent;
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
-
+  public implementationGuideId: string;
 
   constructor(
     private modal: NgbModal,
@@ -77,6 +80,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     private fhirService: FhirService,
     protected authService: AuthService,
     public configService: ConfigService,
+    public projectService: ProjectService,
     public route: ActivatedRoute) {
 
     super(configService, authService);
@@ -902,8 +906,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     // Watch the route parameters to see if the id of the implementation guide changes. Reload if it does.
     this.route.params.subscribe((params) => {
-      if (params.implementationGuideId && this.implementationGuide && params.implementationGuideId !== this.implementationGuide.id) {
-        this.getImplementationGuide();
+      if (!this.implementationGuideId) {
+        this.implementationGuideId = params.implementationGuideId;
+      }
+      if (params.implementationGuideId && this.implementationGuideId && params.implementationGuideId !== this.implementationGuideId) {
+          this.implementationGuideId = params.implementationGuideId
+          this.getImplementationGuide();
       }
     });
   }
@@ -1049,5 +1057,30 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (this.implementationGuide.dependsOn.length === 0) {
       delete this.implementationGuide.dependsOn;
     }
+  }
+
+  public  async delete(implementationGuideId) {
+    if (!confirm(`Are you sure you want to delete ${this.implementationGuide.name}?`)) {
+      return false;
+    }
+
+    const name = this.implementationGuide.name;
+    const id = this.implementationGuide.id;
+    if (!confirm(`Are you sure you want to delete`)) {
+      return false;
+    }
+
+    this.projectService.deleteIg(implementationGuideId)
+      .subscribe(async () => {
+        await this.implementationGuideService.removeImplementationGuide(this.implementationGuideId).toPromise().then((project) => {
+          console.log(project);
+          this.configService.project = null;
+          this.router.navigate([`${this.configService.fhirServer}/home`]);
+          alert(`IG ${name} with id ${this.implementationGuideId} has been deleted`);
+        }).catch((err) => this.message = getErrorString(err));
+      }, (err) => {
+        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
+      });
+
   }
 }

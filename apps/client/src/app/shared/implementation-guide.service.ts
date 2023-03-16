@@ -111,25 +111,6 @@ export class ImplementationGuideService {
   }
 
 
-  public deleteImplementationGuide(ig: STU3ImplementationGuide | R4ImplementationGuide) {
-    if (!confirm(`Are you sure you want to delete ${ig.name}?`)) {
-      return false;
-    }
-
-    const name = ig.name;
-    const id = ig.id;
-
-    this.removeImplementationGuide(ig.id)
-      .subscribe(() => {
-        this.configService.project = null;
-        // noinspection JSIgnoredPromiseFromCall
-        this.router.navigate([`${this.configService.fhirServer}/home`]);
-        alert(`IG ${name} with id ${id} has been deleted`);
-      }, (err) => {
-        console.log('Error while deleting the IG: ' + getErrorString(err));
-      });
-  }
-
   public removeImplementationGuide(id: string) {
     return this.http.delete(`/api/implementationGuide/${id}`);
   }

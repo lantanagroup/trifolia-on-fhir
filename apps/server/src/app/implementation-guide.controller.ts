@@ -24,7 +24,7 @@ import * as fs from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { PaginateOptions } from '@trifolia-fhir/tof-lib';
 import { AuthService } from './auth/auth.service';
-import { ConformanceService } from './resources/providers/conformance.service';
+import {ConformanceService} from './resources/providers/conformance.service';
 import {IConformance} from '@trifolia-fhir/models';
 
 class PatchRequest {
@@ -382,10 +382,11 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Get(':id')
-  public async get(@FhirServerBase() fhirServerBase: string, @Query() query, @User() user, @Param('id') id: string) {
-    const results = <IConformance>(await this.conformanceService.findById(id));
-    if(results.resource.resourceType == 'ImplementationGuide') {
-      return <IImplementationGuide>results.resource;
+  public async get(@Query() query, @User() user, @Param('id') id: string) {
+  //  const results = await this.conformanceService.findById(id);
+    const confResource: IConformance = <IConformance>(await this.conformanceService.findById(id));
+    if(confResource.resource.resourceType == 'ImplementationGuide') {
+      return <IImplementationGuide>confResource.resource;
     }
     return null;
   }
@@ -394,19 +395,19 @@ export class ImplementationGuideController extends BaseFhirController {
   public create(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
     ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
     let conformance: any = { fhirVersion: fhirServerVersion? "r4" : "stu3", resource: body };
-    return this.conformanceService.create(conformance);
+    return this.conformanceService.create(conformance, 'conformance');
   }
 
   @Put(':id')
   public update(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
     ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
     let conformance: any = { fhirVersion: fhirServerVersion? "r4" : "stu3", resource: body };
-    return this.conformanceService.updateOne(id, conformance);
+    return this.conformanceService.updateOne(id, conformance, 'conformance');
   }
 
   @Delete(':id')
   public delete(@FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
-    return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
+    return this.conformanceService.delete(id);
   }
 
   @Get(':id/list')

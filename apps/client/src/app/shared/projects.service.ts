@@ -1,4 +1,4 @@
-import {IGroup, IProject} from '@trifolia-fhir/models';
+import {IConformance, IGroup, IProject} from '@trifolia-fhir/models';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
@@ -48,7 +48,13 @@ export class ProjectService {
     }
   }
 
-  public delete(id: string) {
+  public deleteProject(id: string) {
+    const url = '/api/project/' + encodeURIComponent(id);
+    return this.http.delete<IProject>(url);
+  }
 
+  public deleteIg(id: string) {
+    const url = '/api/project/' + encodeURIComponent(id) + '/implementationGuide';
+    return this.http.delete<IConformance>(url);
   }
 }

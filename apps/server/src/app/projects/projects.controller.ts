@@ -1,13 +1,13 @@
-import {Body, Controller, Get, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ProjectsService} from './projects.service';
 import {BaseDataController} from '../base/base-data.controller';
 import {ProjectDocument} from './project.schema';
-import type {IConformance, IProject} from '@trifolia-fhir/models';
+import {IConformance, IProject} from '@trifolia-fhir/models';
 import {User} from '../server.decorators';
+import {Conformance, ConformanceDocument} from '../resources/schemas/conformance.schema';
 import {ConformanceService} from '../resources/providers/conformance.service';
-
 
 @Controller('api/project')
 @UseGuards(AuthGuard('bearer'))
@@ -35,19 +35,28 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
   }
 
   @Post()
-  public async createProject(@User() user, @Body() project: IProject) {
+  public async createProject(@User() userProfile, @Body() project: IProject) {
+    if (!userProfile) return null;
 
-    project.author = user.user.name;
+    project.author = userProfile.user.name;
     project.contributors =  project.contributors || [];
-    let contributor = {user: user.user.name}
+    let contributor = {user: userProfile.user.name}
     project.contributors.push(contributor);
 
-    return await super.create(project);
+    const createdProject = await super.create(project);
 
+    for (const id of createdProject.igs) {
+      const confResource: IConformance = <IConformance>(await this.conformanceService.findById(id.toString()));
+      confResource.projects = [];
+      confResource.projects.push(createdProject);
+      await this.conformanceService.updateOne(id.toString(), confResource, 'conformance');
+    }
+    return createdProject;
   }
 
   @Put(':id')
-  public async updateProject(@User() user, @Body() updatedProject: IProject, @Param('id') id: string) {
+  public async updateProject(@User() userProfile, @Body() updatedProject: IProject, @Param('id') id: string) {
+    if (!userProfile) return null;
 
     super.assertIdMatch(id, updatedProject);
 
@@ -70,7 +79,29 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
   @Get(':id')
   public async getProject(@User() userProfile,  @Param('id') id: string) {
     if (!userProfile) return null;
-
     return await this.projectService.getProject(id);
   }
+
+  @Delete('/:id/implementationGuide')
+  public async removeImplementationGuideFromProjects(@User() userProfile, @Param('id') id: string) {
+
+    if (!userProfile) return null;
+
+    let conformanceDoc = <ConformanceDocument>await this.conformanceService.findById(id);
+    if(!conformanceDoc ){
+      throw new NotFoundException("No resource found with that Id.");
+    }
+    // remove it from every project
+    for (const projectId of conformanceDoc.projects) {
+      let project =  await this.projectService.findById(projectId.toString());
+      project.igs.splice(project.igs.indexOf(conformanceDoc),1);
+      if (project.igs.length != 0) {
+        await this.projectService.updateOne(project.id, project);
+      } else {
+        await this.projectService.delete(project.id);
+      }
+    }
+  }
+
+
 }
