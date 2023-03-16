@@ -1,7 +1,7 @@
 import {BaseTools} from './baseTools';
 import {IAudit, IConformance, IExample, IGroup, IHistory, IProject, IPermission, IProjectResource, IUser} from '@trifolia-fhir/models';
 import {IAuditEvent, IContactPoint, IDomainResource, IImplementationGuide, IPractitioner} from '@trifolia-fhir/tof-lib';
-import {Db, MongoClient} from 'mongodb';
+import {Db, MongoClient, ObjectId} from 'mongodb';
 import {getHumanNamesDisplay} from '@trifolia-fhir/tof-lib';
 import {AuditEvent as R4AuditEvent, Coding, Group as R4Group, ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
 import {AuditEvent as STU3AuditEvent, Group as STU3Group, ImplementationGuide as STU3ImplementationGuide} from '@trifolia-fhir/stu3';
@@ -209,7 +209,7 @@ export class MigrateDb extends BaseTools {
       const resource = groupedResource.head;
 
       if (groupedResource.projectResource) continue;
-      if (resource.resourceType === 'ImplementationGuide' && this.projects.find(p => p.ig.id === resource.id)) continue;
+      if (resource.resourceType === 'ImplementationGuide' && this.projects.find(p => p.igs[0]?.id === resource.id)) continue;
 
       // Remove security tags from the resources because those were only needed in the FHIR server data layer
       if (resource.meta) {
@@ -271,7 +271,7 @@ export class MigrateDb extends BaseTools {
   private findImplementationGuides(resourceReference: string) {
     return this.projects.filter(p => {
       if (this.options.fhirVersion === 'r4') {
-        const r4ImplementationGuide = p.ig as R4ImplementationGuide;
+        const r4ImplementationGuide = p.igs[0].resource as R4ImplementationGuide;
 
         if (r4ImplementationGuide.definition && r4ImplementationGuide.definition.resource) {
           const foundRes = r4ImplementationGuide.definition.resource
@@ -281,7 +281,7 @@ export class MigrateDb extends BaseTools {
           return !!foundRes;
         }
       } else if (this.options.fhirVersion === 'stu3') {
-        const stu3ImplementationGuide = p.ig as STU3ImplementationGuide;
+        const stu3ImplementationGuide = p.igs[0].resource as STU3ImplementationGuide;
 
         const foundPackages = (stu3ImplementationGuide.package || []).filter(pack => {
           return pack.resource.find(pr => pr.sourceReference && pr.sourceReference.reference && pr.sourceReference.reference === resourceReference);
@@ -297,7 +297,7 @@ export class MigrateDb extends BaseTools {
 
     projects.forEach(p => {
       if (this.options.fhirVersion === 'r4') {
-        const r4ImplementationGuide = p.ig as R4ImplementationGuide;
+        const r4ImplementationGuide = p.igs[0].resource as R4ImplementationGuide;
 
         if (r4ImplementationGuide.definition && r4ImplementationGuide.definition.resource) {
           const foundRes = r4ImplementationGuide.definition.resource
@@ -312,7 +312,7 @@ export class MigrateDb extends BaseTools {
           }
         }
       } else if (this.options.fhirVersion === 'stu3') {
-        const stu3ImplementationGuide = p.ig as STU3ImplementationGuide;
+        const stu3ImplementationGuide = p.igs[0].resource as STU3ImplementationGuide;
 
         const foundPackages = (stu3ImplementationGuide.package || []).filter(p => {
           const foundRes = p.resource
@@ -587,16 +587,18 @@ export class MigrateDb extends BaseTools {
         name: r.name,
         migratedFrom: this.options.migratedFromLabel,
         fhirVersion: this.options.fhirVersion,
-        permissions: permissions,
-        ig: r
+        permissions: permissions
       };
     });
 
     this.log(`Storing ${this.projects.length} projects in the database`);
 
     for (const project of this.projects) {
-      const results = await this.db.collection('project').updateOne({ migratedFrom: project.migratedFrom, 'ig.id': project.ig.id }, { $set: project }, { upsert: true });
+      //const results = await this.db.collection('project').updateOne({ migratedFrom: project.migratedFrom, 'ig.id': project.ig.id }, { $set: project }, { upsert: true });
+      const results = await this.db.collection('project').updateOne({ _id: new ObjectId(project.id) }, { $set: project }, { upsert: true });
+      await this.db.collection('project').updateOne({_id: results.upsertedId}, {igs: [results.upsertedId]});
       this.reportResults(results);
     }
   }
 }
+

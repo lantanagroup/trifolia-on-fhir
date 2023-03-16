@@ -1,10 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type { IImplementationGuide } from '@trifolia-fhir/tof-lib';
-import {IProject, IProjectContributor, IPermission, IConformance} from '@trifolia-fhir/models';
+import type {IProject, IProjectContributor, IPermission} from '@trifolia-fhir/models';
+import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
-import mongoose from 'mongoose';
-import {Conformance} from '../conformance/conformance.schema';
+import { Conformance } from '../resources/schemas/conformance.schema';
 
 export type ProjectDocument = HydratedDocument<Project>;
 
@@ -29,7 +28,7 @@ export class Project extends BaseEntity implements IProject {
 /*    @Prop({ type: Object })
     ig: IImplementationGuide;*/
 
-    @Prop ([{type: mongoose.Schema.Types.ObjectId, ref: 'Conformance' }])
+    @Prop ([{type: ObjectId, ref: 'Conformance' }])
     igs: Conformance[];
 
 }

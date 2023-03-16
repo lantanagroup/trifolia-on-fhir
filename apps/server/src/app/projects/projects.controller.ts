@@ -4,9 +4,9 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ProjectsService} from './projects.service';
 import {BaseDataController} from '../base/base-data.controller';
 import {ProjectDocument} from './project.schema';
-import {IProject} from '@trifolia-fhir/models';
+import type {IConformance, IProject} from '@trifolia-fhir/models';
 import {User} from '../server.decorators';
-import {ConformanceService} from '../conformance/conformance.service';
+import {ConformanceService} from '../resources/providers/conformance.service';
 
 
 @Controller('api/project')
@@ -59,7 +59,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
     project.contributors = [...updatedProject.contributors];
     project.igs = [];
     for (const m of updatedProject.igs) {
-      const confResource = await this.conformanceService.findById(m.id);
+      const confResource: IConformance = <IConformance>(await this.conformanceService.findById(m.id));
       project.igs.push(confResource);
     }
     return await super.update(id, project);

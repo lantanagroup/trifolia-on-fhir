@@ -18,7 +18,7 @@ export class Conformance extends BaseEntity implements IConformance {
     description?: string;
 
     @Prop ([{type: ObjectId, ref: Project.name }])
-    projects: Project[];
+    projects?: Project[];
 
     @Prop()
     migratedFrom?: string;

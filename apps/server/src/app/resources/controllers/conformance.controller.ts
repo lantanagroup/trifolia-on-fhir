@@ -20,11 +20,24 @@ export class ConformanceController extends ResourcesController {
     constructor(
         protected readonly conformanceService: ConformanceService,
         protected readonly authService: AuthService
-        ) {
+    ) {
         super(conformanceService, authService);
     }
 
-    
+
+    protected getFilterFromQuery(query?: any): any {
+        let filter = super.getFilterFromQuery(query);
+
+        if (!query) {
+            return filter;
+        }
+        if ('resource.resourceType' in query) {
+            filter['resource.resourceType'] = { $regex: query['resource.resourceType'], $options: 'i' };
+        }
+        return filter;
+    }
+
+
     @Get()
     public async search(@User() user: ITofUser, @Query() query: any): Promise<Paginated<IConformance>> {
         return await this.searchResources(user, query, 'conformance');

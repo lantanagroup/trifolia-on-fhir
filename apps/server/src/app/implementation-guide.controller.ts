@@ -24,7 +24,7 @@ import * as fs from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { PaginateOptions } from '@trifolia-fhir/tof-lib';
 import { AuthService } from './auth/auth.service';
-import {ConformanceService} from './conformance/conformance.service';
+import { ConformanceService } from './resources/providers/conformance.service';
 import {IConformance} from '@trifolia-fhir/models';
 
 class PatchRequest {
@@ -383,7 +383,7 @@ export class ImplementationGuideController extends BaseFhirController {
 
   @Get(':id')
   public async get(@FhirServerBase() fhirServerBase: string, @Query() query, @User() user, @Param('id') id: string) {
-    const results = await this.conformanceService.findById(id);
+    const results = <IConformance>(await this.conformanceService.findById(id));
     if(results.resource.resourceType == 'ImplementationGuide') {
       return <IImplementationGuide>results.resource;
     }

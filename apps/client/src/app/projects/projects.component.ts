@@ -55,7 +55,7 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
     this.criteriaChangedEvent.next();
   }
 
-  private async getProjects() {
+  public async getProjects() {
     this.configService.setStatusMessage('Loading projects');
     await this.projectService.getProjects(this.page, this.name, this.author,  this.id).toPromise().then((results) => {
       this.projects = results;
