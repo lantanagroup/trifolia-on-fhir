@@ -7,7 +7,7 @@ export interface IPermission {
 }
 
 export interface IProjectContributor {
-  userId?: string;
+  user?: string;
   name?: string;
 }
 
@@ -15,11 +15,11 @@ export interface IProject {
   id?: string;
   migratedFrom?: string;
   name: string;
-  authorId: string;
+  author: string;
   contributors?: IProjectContributor[];
   fhirVersion: 'stu3'|'r4'|'r5';
   permissions?: IPermission[];
-  ig: IImplementationGuide;
+  igs: IConformance[];
 }
 
 export interface IUser {

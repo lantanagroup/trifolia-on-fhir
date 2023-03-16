@@ -99,7 +99,7 @@ export class AppComponent implements OnInit {
   public closeProject() {
     this.configService.project = null;
     // noinspection JSIgnoredPromiseFromCall
-    this.router.navigate([`${this.configService.fhirServer}/implementation-guide/open`]);
+    this.router.navigate(['/projects']);
   }
 
   public get fhirServerDisplay(): string {

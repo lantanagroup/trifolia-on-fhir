@@ -142,15 +142,21 @@ export class AuthService {
       }
 
       // Make sure the user is not sent back to the /login page, which is only used to active .handleAuthentication()
-      if (path.startsWith('/login')) {
+     /* if (path.startsWith('/login')) {
         //path = '/';
         path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/implementation-guide/open`;
+      }*/
+
+      if (path.startsWith('/login')) {
+        //path = '/';
+        path = this.activatedRoute.snapshot.queryParams.pathname || `/projects`;
       }
 
       if (path && path !== '/' && path !== '/logout' && path !== '/login' && !path.endsWith('/home')) {
         this.router.navigate([path]);
       } else if (window.location.pathname === '/' || path.endsWith('/home')) {
-        this.router.navigate([this.configService.fhirServer, 'implementation-guide', 'open']);
+        //this.router.navigate([this.configService.fhirServer, 'implementation-guide', 'open']);
+        this.router.navigate(['projects']);
       }
 
       this.authChanged.emit();

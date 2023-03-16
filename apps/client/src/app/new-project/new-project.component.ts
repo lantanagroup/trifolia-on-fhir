@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import { IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { ImplementationGuide, ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ICodeableConcept, ICoding, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { FhirService } from '../shared/fhir.service';
 import { ConfigService } from '../shared/config.service';
 import { Extension as STU3Extension, ImplementationGuide as STU3ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { identifyRelease } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { PublishingRequestModel } from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
-
+import {ProjectService} from '../shared/projects.service';
 @Component({
   templateUrl: './new-project.component.html',
   styleUrls: ['./new-project.component.css']
@@ -36,12 +36,14 @@ export class NewProjectComponent implements OnInit {
 
 
   constructor(private igService: ImplementationGuideService,
+              private projectService: ProjectService,
               private fhirService: FhirService,
               private configService: ConfigService,
               private router: Router) {
   }
 
   done() {
+
     let ig: IImplementationGuide;
 
     const publishingRequest = new PublishingRequestModel();
@@ -80,18 +82,20 @@ export class NewProjectComponent implements OnInit {
       }],
     }];
 
+    const jusrisdiction = this.selectedJurisdiction ? [{coding: [this.selectedJurisdiction]}] : this.selectedJurisdiction;
     // Create the implementation guide based on the FHIR server we're connected to
     if (this.configService.isFhirR4) {
       if (this.isHL7) {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
-        (<R4ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+        (<R4ImplementationGuide>ig).jurisdiction = jusrisdiction;
         (<R4ImplementationGuide>ig).packageId = this.packageId;
         (<R4ImplementationGuide>ig).title = this.igTitle;
       }
     } else if (this.configService.isFhirSTU3) {
       if (this.isHL7) {
-        (<STU3ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+
+        (<STU3ImplementationGuide>ig).jurisdiction.push(jusrisdiction);
         const packageIdExt = new STU3Extension();
         packageIdExt.url = Globals.extensionUrls['extension-ig-package-id'];
         packageIdExt.valueString = this.packageId;
@@ -101,14 +105,18 @@ export class NewProjectComponent implements OnInit {
     }
 
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));
-
+    let project: any = { author: "" , fhirVersion: this.configService.isFhirR4?"r4":"stu3", name: ig.name };
     this.igService.saveImplementationGuide(ig)
-      .subscribe((implementationGuide: ImplementationGuide) => {
-        this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
+      .subscribe(async (ig: IImplementationGuide) => {
+        project.igs = project.igs || [];
+        project.igs.push(ig.id);
+        await this.projectService.save(project).toPromise().then((project) => {
+          console.log(project);
+          this.router.navigate([`/projects/${project.id}`]);
+        }).catch((err) => this.message = getErrorString(err));
       }, (err) => {
         this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
       });
-
 
   }
 
@@ -182,6 +190,14 @@ export class NewProjectComponent implements OnInit {
     return !!(/https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}/.exec(url));
   }
 
+  /*addCoding(jurisdiction: ICodeableConcept, index: number) {
+    jurisdiction.coding = jurisdiction.coding || [];
+    jurisdiction.coding.push({});
+    if (jurisdiction.coding.length === 1) {
+      this.setJurisdictionCode(this.jurisdictions[index], 0, this.jurisdictionCodes[0]);
+    }
+  }
+  */
   ngOnInit() {
     if (this.configService.isFhirR4) {
       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
@@ -194,9 +210,28 @@ export class NewProjectComponent implements OnInit {
       display: 'Universal'
     });
 
+    //let jurisdictionCode: ICoding;
     this.selectedJurisdiction = this.jurisdictionCodes.find(jc => jc.code.toLowerCase() === 'us');
 
+/*    const u = <ICoding>{
+      system: 'http://unstats.un.org/unsd/methods/m49/m49.htm',
+      code: '001',
+      version: '2.2.0',
+      display: 'Universal'
+    };*/
+   /* if(jurisdictionCode) {
+      const universal = <ICodeableConcept>{
+        coding: jurisdictionCode
+      };
+      this.selectedJurisdiction = this.selectedJurisdiction || [];
+      this.selectedJurisdiction.push(universal);
+    }
 
+
+/!*    if(jurisdictionCode) {
+      this.selectedJurisdiction.coding = this.selectedJurisdiction.coding || [];
+      this.selectedJurisdiction.coding.push({ jurisdictionCode })
+    }*!/*/
     this.getFhirVersion();
   }
 }

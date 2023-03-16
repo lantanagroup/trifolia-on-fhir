@@ -90,6 +90,8 @@ import { NewProjectComponent } from './new-project/new-project.component';
 import { SearchParameterComponent } from './search-parameter/search-parameter.component';
 import { SearchParametersComponent } from './search-parameters/search-parameters.component';
 import { PublishingRequestComponent } from './implementation-guide-wrapper/publishing-request/publishing-request.component';
+import { ProjectsComponent } from './projects/projects.component';
+import { ProjectComponent } from './project/project.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -97,16 +99,24 @@ import { PublishingRequestComponent } from './implementation-guide-wrapper/publi
  */
 @Injectable()
 export class AddHeaderInterceptor implements HttpInterceptor {
-  constructor(private configService: ConfigService, private oauthService: OAuthService) {
-  }
+  constructor(
+    private configService: ConfigService,
+    private oauthService: OAuthService
+  ) {}
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
     const fhirServer = localStorage.getItem('fhirServer');
     let headers = req.headers;
 
     if (req.url.startsWith('/')) {
       if (this.oauthService.getIdToken()) {
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set(
+          'Authorization',
+          'Bearer ' + this.oauthService.getIdToken()
+        );
       }
     }
 
@@ -119,12 +129,21 @@ export class AddHeaderInterceptor implements HttpInterceptor {
 
       // Pass the implementation guide (project) to the request so that it knows this request
       // is within the context of the project
-      if (this.configService.project && this.configService.project.implementationGuideId) {
-        headers = headers.set('implementationGuideId', this.configService.project.implementationGuideId);
+      if (
+        this.configService.project &&
+        this.configService.project.implementationGuideId
+      ) {
+        headers = headers.set(
+          'implementationGuideId',
+          this.configService.project.implementationGuideId
+        );
       }
 
       // Remove the context if the request indicates the context should be ignored
-      if (headers.get('ignoreContext') && headers.get('implementationGuideId')) {
+      if (
+        headers.get('ignoreContext') &&
+        headers.get('implementationGuideId')
+      ) {
         headers = headers.delete('implementationGuideId');
         headers = headers.delete('ignoreContext');
       }
@@ -139,6 +158,10 @@ export class AddHeaderInterceptor implements HttpInterceptor {
  */
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
+  { path: 'projects', component: ProjectsComponent },
+  { path: 'projects/new', component: NewProjectComponent },
+  { path: 'projects/:id', component: ProjectComponent },
+  { path: 'projects/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
   {path: ':fhirServer/home', component: HomeComponent},
   {path: ':fhirServer/:implementationGuideId/home', component: HomeComponent},
   {path: ':fhirServer/implementation-guide/new', component: NewProjectComponent},
@@ -186,11 +209,16 @@ const appRoutes: Routes = [
  * 3. Loads assets for the remembered version of the FHIR server
  * 4. Gets the profile o f the currently logged-in user, if there is one
  */
-export function init(configService: ConfigService, authService: AuthService, fhirService: FhirService) {
+export function init(
+  configService: ConfigService,
+  authService: AuthService,
+  fhirService: FhirService
+) {
   const getConfig = () => {
     return new Promise<void>((resolve, reject) => {
       // Get the initial config for the server and get the FHIR server config
-      configService.getConfig(true)
+      configService
+        .getConfig(true)
         .then(() => {
           // Notify components and the FHIR server has changed (or in this case, has been loaded)
           return configService.changeFhirServer();
@@ -207,8 +235,8 @@ export function init(configService: ConfigService, authService: AuthService, fhi
           // The FHIR server should now be loaded, get the profile for the authenticated user (if any)
           return authService.getProfile();
         })
-        .then(() => resolve())              // Done
-        .catch((err) => reject(err));       // Error
+        .then(() => resolve()) // Done
+        .catch((err) => reject(err)); // Error
     });
   };
 
@@ -226,68 +254,124 @@ const authModuleConfig: OAuthModuleConfig = {
 
 // noinspection JSDeprecatedSymbols
 @NgModule({
-    declarations: [
-        AppComponent, ImplementationGuidesComponent,
-        HomeComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent, ExportComponent,
-        ImportComponent, StructureDefinitionComponent, ValuesetsComponent, ValuesetComponent, CodesystemsComponent,
-        CodesystemComponent, LoginComponent, StructureDefinitionsComponent, UsersComponent, UserComponent,
-        NewProfileComponent, ElementDefinitionPanelComponent, STU3TypeModalComponent, R4TypeModalComponent,
-        STU3PageComponentModalComponent, R4PageComponentModalComponent, CapabilityStatementsComponent,
-        CapabilityStatementWrapperComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
-        OperationDefinitionsComponent, OperationDefinitionComponent, ParameterModalComponent, ValuesetExpandComponent,
-        ConceptCardComponent, ImplementationGuideViewComponent,
-        OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
-        ImplementationGuideWrapperComponent, RouteTransformerDirective,
-        MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
-        ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
-        GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
-        ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, MergeUserModalComponent, NewProjectComponent, SearchParametersComponent, SearchParameterComponent, PublishingRequestComponent
-    ],
-    imports: [
-        RouterModule.forRoot(appRoutes, {
-    enableTracing: false,
-    onSameUrlNavigation: 'reload'
-}),
-        BrowserModule,
-        FormsModule,
-        HttpClientModule,
-        OAuthModule.forRoot(authModuleConfig),
-        NgbModule,
-        NgxFileDropModule,
-        // TreeModule,
-        SharedModule,
-        SharedUiModule,
-        FhirEditModule,
-        ModalsModule,
-        NgxDiffModule
-    ],
-    providers: [
-        CookieService,
-        {
-            provide: APP_INITIALIZER,
-            useFactory: init,
-            deps: [ConfigService, AuthService, FhirService],
-            multi: true
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: AddHeaderInterceptor,
-            multi: true
-        },
-        {
-            provide: OAuthModuleConfig,
-            useValue: authModuleConfig
-        },
-        {
-            provide: ValidationHandler,
-            useClass: JwksValidationHandler
-        },
-        {
-            provide: OAuthStorage,
-            useValue: localStorage
-        }
-    ],
-    bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    ImplementationGuidesComponent,
+    HomeComponent,
+    STU3ImplementationGuideComponent,
+    R4ImplementationGuideComponent,
+    ExportComponent,
+    ImportComponent,
+    StructureDefinitionComponent,
+    ValuesetsComponent,
+    ValuesetComponent,
+    CodesystemsComponent,
+    CodesystemComponent,
+    LoginComponent,
+    StructureDefinitionsComponent,
+    UsersComponent,
+    UserComponent,
+    NewProfileComponent,
+    ElementDefinitionPanelComponent,
+    STU3TypeModalComponent,
+    R4TypeModalComponent,
+    STU3PageComponentModalComponent,
+    R4PageComponentModalComponent,
+    CapabilityStatementsComponent,
+    CapabilityStatementWrapperComponent,
+    STU3CapabilityStatementComponent,
+    R4CapabilityStatementComponent,
+    OperationDefinitionsComponent,
+    OperationDefinitionComponent,
+    ParameterModalComponent,
+    ValuesetExpandComponent,
+    ConceptCardComponent,
+    ImplementationGuideViewComponent,
+    OtherResourcesComponent,
+    QuestionnairesComponent,
+    QuestionnaireComponent,
+    QuestionnaireItemModalComponent,
+    ImplementationGuideWrapperComponent,
+    RouteTransformerDirective,
+    MappingModalComponent,
+    ImportGithubPanelComponent,
+    ExportGithubPanelComponent,
+    ContextPanelWrapperComponent,
+    ContextPanelR4Component,
+    ContextPanelStu3Component,
+    PublishComponent,
+    IncludePanelComponent,
+    BindingPanelComponent,
+    R4ResourceModalComponent,
+    STU3ResourceModalComponent,
+    GroupModalComponent,
+    OtherResourcesResultComponent,
+    PackageListComponent,
+    ElementDefinitionConstraintComponent,
+    UpdateDiffComponent,
+    QueueComponent,
+    ExamplesComponent,
+    BulkEditComponent,
+    PageWrapperComponent,
+    R4PageComponent,
+    STU3PageComponent,
+    IgnoreWarningsComponent,
+    JiraSpecComponent,
+    CustomMenuComponent,
+    SecurityServicesComponent,
+    PublishingTemplateComponent,
+    MergeUserModalComponent,
+    NewProjectComponent,
+    SearchParametersComponent,
+    SearchParameterComponent,
+    PublishingRequestComponent,
+    ProjectsComponent,
+    ProjectComponent,
+  ],
+  imports: [
+    RouterModule.forRoot(appRoutes, {
+      enableTracing: false,
+      onSameUrlNavigation: 'reload',
+    }),
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    OAuthModule.forRoot(authModuleConfig),
+    NgbModule,
+    NgxFileDropModule,
+    // TreeModule,
+    SharedModule,
+    SharedUiModule,
+    FhirEditModule,
+    ModalsModule,
+    NgxDiffModule,
+  ],
+  providers: [
+    CookieService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: init,
+      deps: [ConfigService, AuthService, FhirService],
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AddHeaderInterceptor,
+      multi: true,
+    },
+    {
+      provide: OAuthModuleConfig,
+      useValue: authModuleConfig,
+    },
+    {
+      provide: ValidationHandler,
+      useClass: JwksValidationHandler,
+    },
+    {
+      provide: OAuthStorage,
+      useValue: localStorage,
+    },
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppModule {
-}
+export class AppModule {}

@@ -24,6 +24,8 @@ import * as fs from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { PaginateOptions } from '@trifolia-fhir/tof-lib';
 import { AuthService } from './auth/auth.service';
+import {ConformanceService} from './conformance/conformance.service';
+import {IConformance} from '@trifolia-fhir/models';
 
 class PatchRequest {
   op: string;
@@ -47,6 +49,7 @@ export class ImplementationGuideController extends BaseFhirController {
   constructor(protected httpService: HttpService,
               protected configService: ConfigService,
               protected projectService: ProjectsService,
+              protected conformanceService: ConformanceService,
               protected authService: AuthService) {
     super(httpService, configService);
   }
@@ -307,7 +310,7 @@ export class ImplementationGuideController extends BaseFhirController {
     try {
       //const results = await this.httpService.request(options).toPromise();
       //const results = await this.db.collection('project').find().skip((query.page-1)*preparedQuery._count).limit(preparedQuery._count).toArray();
-      
+
       const searchFilters = {};
 
       if ('name' in query) {
@@ -340,7 +343,7 @@ export class ImplementationGuideController extends BaseFhirController {
       //console.log(`filter: ${JSON.stringify(filter)}`);
 
       const results = await this.projectService.search(options);
-      
+
       const searchIGResponses: SearchImplementationGuideResponse[] = [];
       let total = 0;
 
@@ -349,7 +352,7 @@ export class ImplementationGuideController extends BaseFhirController {
           if (this.configService.server && this.configService.server.publishStatusPath) {
             searchIGResponses.push({
               data: bundle,
-              published: this.getPublishStatus(bundle.ig.id),
+              published: this.getPublishStatus(bundle.igs[0].id),
             });
           } else {
             searchIGResponses.push({
@@ -379,20 +382,26 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Get(':id')
-  public get(@FhirServerBase() fhirServerBase: string, @Query() query, @User() user, @Param('id') id: string) {
-    return super.baseGet(fhirServerBase, id, query, user);
+  public async get(@FhirServerBase() fhirServerBase: string, @Query() query, @User() user, @Param('id') id: string) {
+    const results = await this.conformanceService.findById(id);
+    if(results.resource.resourceType == 'ImplementationGuide') {
+      return <IImplementationGuide>results.resource;
+    }
+    return null;
   }
 
   @Post()
   public create(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
     ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
-    return super.baseCreate(fhirServerBase, fhirServerVersion, body, user);
+    let conformance: any = { fhirVersion: fhirServerVersion? "r4" : "stu3", resource: body };
+    return this.conformanceService.create(conformance);
   }
 
   @Put(':id')
   public update(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
     ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
-    return super.baseUpdate(fhirServerBase, fhirServerVersion, id, body, user);
+    let conformance: any = { fhirVersion: fhirServerVersion? "r4" : "stu3", resource: body };
+    return this.conformanceService.updateOne(id, conformance);
   }
 
   @Delete(':id')
