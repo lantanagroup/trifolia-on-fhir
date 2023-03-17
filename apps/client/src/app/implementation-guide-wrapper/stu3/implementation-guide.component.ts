@@ -27,6 +27,7 @@ import {STU3ResourceModalComponent} from './resource-modal.component';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import { CanComponentDeactivate } from '../../guards/resource.guard';
+import { ProjectService } from '../../shared/projects.service';
 
 class Parameter {
   public extension: Extension;
@@ -120,7 +121,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     private fileService: FileService,
     private fhirService: FhirService,
     protected authService: AuthService,
-    public configService: ConfigService) {
+    public configService: ConfigService,
+    public projectService: ProjectService) {
 
     super(configService, authService);
 
@@ -672,6 +674,31 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       }, (err) => {
         this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
       });
+  }
+
+  public  async delete(implementationGuideId) {
+    if (!confirm(`Are you sure you want to delete ${this.implementationGuide.name}?`)) {
+      return false;
+    }
+
+    const name = this.implementationGuide.name;
+    const id = this.implementationGuide.id;
+    if (!confirm(`Are you sure you want to delete`)) {
+      return false;
+    }
+
+    this.projectService.deleteIg(implementationGuideId)
+      .subscribe(async () => {
+        await this.implementationGuideService.removeImplementationGuide(this.implementationGuide.id).toPromise().then((project) => {
+          console.log(project);
+          this.configService.project = null;
+          this.router.navigate([`${this.configService.fhirServer}/home`]);
+          alert(`IG ${name} with id ${this.implementationGuide.id} has been deleted`);
+        }).catch((err) => this.message = getErrorString(err));
+      }, (err) => {
+        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
+      });
+
   }
 
   public editImplementationGuideResource(igResource: ImplementationGuideResource) {

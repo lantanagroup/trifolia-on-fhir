@@ -679,7 +679,7 @@
   </div>
   <span class="message">{{message}}</span>
   <div class="pull-right">
-    <button type="button" class="btn btn-danger" title="Delete this Implementation Guide" (click)="implementationGuideService.deleteImplementationGuide(implementationGuide)">
+    <button type="button" class="btn btn-danger" title="Delete this Implementation Guide" (click)="delete(implementationGuide?.id)">
       <i class="fa fa-trash"></i> Delete
     </button>
   </div>

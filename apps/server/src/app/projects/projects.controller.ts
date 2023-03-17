@@ -4,9 +4,9 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ProjectsService} from './projects.service';
 import {BaseDataController} from '../base/base-data.controller';
 import {ProjectDocument} from './project.schema';
-import {IConformance, IProject} from '@trifolia-fhir/models';
+import type {IConformance, IProject} from '@trifolia-fhir/models';
 import {User} from '../server.decorators';
-import {Conformance, ConformanceDocument} from '../resources/schemas/conformance.schema';
+import {Conformance} from '../resources/schemas/conformance.schema';
 import {ConformanceService} from '../resources/providers/conformance.service';
 
 @Controller('api/project')
@@ -87,7 +87,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
 
     if (!userProfile) return null;
 
-    let conformanceDoc = <ConformanceDocument>await this.conformanceService.findById(id);
+    let conformanceDoc = <Conformance>await this.conformanceService.findById(id);
     if(!conformanceDoc ){
       throw new NotFoundException("No resource found with that Id.");
     }
