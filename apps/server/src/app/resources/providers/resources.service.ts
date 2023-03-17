@@ -144,7 +144,7 @@ export class ResourcesService implements IBaseDataService {
             }
 
             let upConf = <IConformance>updatedDoc;
-                        
+
             // validate FHIR resource
             // TODO: actually use FHIR validator
             if (!(upConf.resource && upConf.resource instanceof Object) ) {
@@ -165,7 +165,7 @@ export class ResourcesService implements IBaseDataService {
             // default to using existing version+1 if present
             if (existing.versionId) {
                 versionId = existing.versionId + 1;
-            } 
+            }
             // otherwise check resource meta
             else if (existing.resource.meta.versionId) {
                 versionId = existing.resource.meta.versionId + 1;
@@ -178,7 +178,7 @@ export class ResourcesService implements IBaseDataService {
             existing.resource.meta.lastUpdated = lastUpdated;
             existing.versionId = versionId;
             existing.lastUpdated = lastUpdated;
-            
+
             await existing.save();
 
             let newHistory: IHistory = {
@@ -202,7 +202,7 @@ export class ResourcesService implements IBaseDataService {
 
     public async delete(id: string, type?: ProjectResourceType): Promise<IProjectResource> {
         // TODO: soft delete resource
-        throw await this.getModelForType(type).findByIdAndRemove(id);
+       return this.getModelForType(type).findByIdAndRemove(id);
     }
 
 
@@ -231,7 +231,7 @@ export class ResourcesService implements IBaseDataService {
         console.log(`Search filtered to ${result.total} of ${await this.collectionCount()} documents.`);
 
         return result;
-        
+
     }
 
 

@@ -407,7 +407,7 @@ export class ImplementationGuideController extends BaseFhirController {
 
   @Delete(':id')
   public delete(@FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
-    return this.conformanceService.delete(id);
+    return this.conformanceService.delete(id, 'conformance');
   }
 
   @Get(':id/list')

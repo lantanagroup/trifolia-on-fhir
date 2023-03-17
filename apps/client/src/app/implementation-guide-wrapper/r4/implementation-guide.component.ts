@@ -1066,9 +1066,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     const name = this.implementationGuide.name;
     const id = this.implementationGuide.id;
-    if (!confirm(`Are you sure you want to delete`)) {
-      return false;
-    }
 
     this.projectService.deleteIg(implementationGuideId)
       .subscribe(async () => {

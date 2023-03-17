@@ -1,8 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { IHistory, IPermission } from '@trifolia-fhir/models';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
-import { ObjectId } from 'mongodb';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../../base/base.entity';
 import { Project } from '../../projects/project.schema';
 
@@ -17,7 +16,7 @@ export class History extends BaseEntity implements IHistory {
     @Prop()
     description?: string;
 
-    @Prop ([{type: ObjectId, ref: Project.name }])
+    @Prop ([{type: mongoose.Schema.Types.ObjectId, ref: Project.name }])
     projects: Project[];
 
     @Prop()
@@ -35,7 +34,7 @@ export class History extends BaseEntity implements IHistory {
 
     @Prop()
     fhirVersion?: 'stu3'|'r4'|'r5';
-    
+
     @Prop({type: Object})
     content?: IDomainResource|any;
 
@@ -44,8 +43,8 @@ export class History extends BaseEntity implements IHistory {
 
     @Prop()
     type: 'conformance'|'example';
-      
-    
+
+
 }
 
 export const HistorySchema = SchemaFactory.createForClass(History);
