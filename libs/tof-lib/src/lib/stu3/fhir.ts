@@ -279,8 +279,8 @@ export class CodeableConcept extends Element implements ICodeableConcept {
 }
 
 export class Period extends Element {
-  public start?: Date;
-  public end?: Date;
+  public start?: string;
+  public end?: string;
 
   constructor(obj?: any) {
     super(obj);

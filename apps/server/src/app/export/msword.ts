@@ -6,6 +6,7 @@ import {
   StructureDefinition as R4StructureDefinition,
   ValueSet as R4ValueSet
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuide as R5ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {TofLogger} from '../tof-logger';
 import {
   Extension as STU3Extension,
@@ -110,6 +111,8 @@ export class MSWordExporter {
       implementationGuide = new STU3ImplementationGuide(implementationGuideEntry.resource);
     } else if (version === 'r4') {
       implementationGuide = new R4ImplementationGuide(implementationGuideEntry.resource);
+    } else if (version === 'r5') {
+      implementationGuide = new R5ImplementationGuide(implementationGuideEntry.resource);
     }
 
     if (implementationGuide) {
@@ -123,10 +126,10 @@ export class MSWordExporter {
       if (version === 'stu3') {
         const stu3ImplementationGuide = <STU3ImplementationGuide> implementationGuide;
         pageInfos = IgPageHelper.getSTU3PagesList([], stu3ImplementationGuide.page, stu3ImplementationGuide);
-      } else if (version === 'r4') {
-        const r4ImplementationGuide = <R4ImplementationGuide> implementationGuide;
-        if (r4ImplementationGuide.definition) {
-          pageInfos = IgPageHelper.getR4PagesList([], r4ImplementationGuide.definition.page, r4ImplementationGuide);
+      } else if (version === 'r4' || version === 'r5') {
+        const ig = <R4ImplementationGuide | R5ImplementationGuide> implementationGuide;
+        if (ig.definition) {
+          pageInfos = IgPageHelper.getR4andR5PagesList([], ig.definition.page, ig);
         }
       }
 

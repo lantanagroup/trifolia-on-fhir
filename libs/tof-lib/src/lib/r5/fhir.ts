@@ -374,11 +374,11 @@ export class Base {
 export class Element extends Base {
   constructor(obj?: any) {
 	super(obj);
-	
+
 	if (obj.hasOwnProperty('id')) {
-	  this.id = obj.id;	
+	  this.id = obj.id;
 	}
-	
+
     if (obj.hasOwnProperty('extension')) {
       this.extension = [];
       for (const o of obj.extension || []) {
@@ -394,7 +394,7 @@ export class Element extends Base {
 export class Address extends Element {
 	constructor(obj?: any) {
 		super(obj);
-		
+
 		if (obj.hasOwnProperty('use')) {
 			this.use = obj.use;
 		}
@@ -3485,7 +3485,7 @@ export class Narrative extends Element {
 
 	}
 
-  status: NarrativeStatus1;
+  status: string;
   div: string;
 }
 
