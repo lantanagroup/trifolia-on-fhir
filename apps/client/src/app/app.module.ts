@@ -157,17 +157,18 @@ export class AddHeaderInterceptor implements HttpInterceptor {
  * The routes in the client application.
  */
 const appRoutes: Routes = [
-  {path: 'login', component: LoginComponent},
+  {path:  'login', component: LoginComponent},
   { path: 'projects', component: ProjectsComponent },
   { path: 'projects/new', component: NewProjectComponent },
   { path: 'projects/:id', component: ProjectComponent },
   { path: 'projects/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
-  {path: ':fhirServer/home', component: HomeComponent},
-  {path: ':fhirServer/:implementationGuideId/home', component: HomeComponent},
-  {path: ':fhirServer/implementation-guide/new', component: NewProjectComponent},
-  {path: ':fhirServer/implementation-guide/open', component: ImplementationGuidesComponent},
-  {path: ':fhirServer/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
+  {path:  'projects/home', component: HomeComponent},
+  {path:  'projects/:implementationGuideId/home', component: HomeComponent},
+/*  {path: ':fhirServer/implementation-guide/new', component: NewProjectComponent},*/
+  {path:  'projects/implementation-guide/open', component: ImplementationGuidesComponent},
+  {path:  'projects/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
+/*  {path: ':fhirServer/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},*/
+
   {path: ':fhirServer/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},
   {path: ':fhirServer/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
   {path: ':fhirServer/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},

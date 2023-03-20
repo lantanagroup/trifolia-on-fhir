@@ -110,6 +110,9 @@ export class ConfigService {
 
   async getIgPublisherForDependencies() {
     const url = 'https://api.github.com/repos/hl7/fhir-ig-publisher/releases';
+    if(!this.httpService) {
+      this.httpService = new HttpService();
+    }
     const allVersions = await this.httpService.get<{ id: string, name: string }[]>(url).toPromise();
 
     const igPublisherDir = path.resolve(this.server.latestIgPublisherPath || 'assets/ig-publisher');

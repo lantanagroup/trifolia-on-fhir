@@ -101,12 +101,15 @@ export class ImplementationGuideService {
     return this.http.get(url);
   }
 
+  public saveImplementationGuide(implementationGuide: IImplementationGuide ) {
+    return this.http.post('/api/implementationGuide', implementationGuide);
+  }
 
-  public saveImplementationGuide(implementationGuide: IImplementationGuide) {
-    if (implementationGuide.id) {
-      return this.http.put(`/api/implementationGuide/${implementationGuide.id}`, implementationGuide);
+  public updateImplementationGuide(id: string, implementationGuide: IImplementationGuide) {
+    if (id) {
+      return this.http.put(`/api/implementationGuide/${id}`, implementationGuide);
     } else {
-      return this.http.post('/api/implementationGuide', implementationGuide);
+     return null;
     }
   }
 

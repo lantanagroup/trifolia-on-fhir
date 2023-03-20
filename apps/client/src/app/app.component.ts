@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router, RoutesRecognized} from '@angular/router';
 import {AuthService} from './shared/auth.service';
 import {ConfigService} from './shared/config.service';
-import {Globals} from '@trifolia-fhir/tof-lib';
+import {Globals, IImplementationGuide} from '@trifolia-fhir/tof-lib';
 import {FileService} from './shared/file.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FileOpenModalComponent} from './modals/file-open-modal/file-open-modal.component';
@@ -15,8 +15,8 @@ import {CookieService} from 'ngx-cookie-service';
 import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-message-modal.component';
 import introJs from 'intro.js/intro.js';
 import {Practitioner} from '@trifolia-fhir/stu3';
-import {getHumanNamesDisplay} from '@trifolia-fhir/tof-lib';
-import {Bundle, Coding, ImplementationGuide} from '@trifolia-fhir/r4';
+import {Coding} from '@trifolia-fhir/r4';
+import {ImplementationGuideService} from './shared/implementation-guide.service';
 
 @Component({
   selector: 'trifolia-fhir-root',
@@ -35,6 +35,7 @@ export class AppComponent implements OnInit {
     public githubService: GithubService,
     public configService: ConfigService,
     public fhirService: FhirService,
+    public implGuideService: ImplementationGuideService,
     private modalService: NgbModal,
     private fileService: FileService,
     private router: Router,
@@ -45,7 +46,7 @@ export class AppComponent implements OnInit {
       this.router.events.subscribe(async (event) => {
         this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
         if (event instanceof RoutesRecognized && event.state.root.firstChild) {
-          const fhirServer = event.state.root.firstChild.params.fhirServer;
+        //  const fhirServer = event.state.root.firstChild.params.fhirServer;
           const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
 
           if (implementationGuideId) {
@@ -57,11 +58,7 @@ export class AppComponent implements OnInit {
           } else {
             this.configService.project = null;
           }
-
-          if (fhirServer) {
-            await this.configService.changeFhirServer(fhirServer);
             this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
-          }
         }
       });
 
@@ -159,21 +156,15 @@ export class AppComponent implements OnInit {
     }
 
     return await new Promise((resolve, reject) => {
-      this.fhirService.search('ImplementationGuide', null, true, null, implementationGuideId, null, false, false, null, 10, true).toPromise()
-        .then((bundle: Bundle) => {
-          if (bundle && bundle.total === 1) {
-            const ig = <ImplementationGuide>bundle.entry[0].resource;
-
-            resolve({
-              implementationGuideId: implementationGuideId,
-              name: ig.title || ig.name,
-              securityTags: ig.meta && ig.meta.security ? ig.meta.security : []
-            });
-          } else {
-            resolve(null);
-          }
+      this.implGuideService.getImplementationGuide(implementationGuideId).toPromise()
+        .then((ig: IImplementationGuide) => {
+          resolve({
+            implementationGuideId: implementationGuideId,
+            name:  ig.name,
+            securityTags: ig.meta && ig.meta.security ? ig.meta.security : []
+          });
         })
-        .catch((err) => reject(err));
+      .catch((err) => reject(err));
     });
   }
 
@@ -204,8 +195,8 @@ export class AppComponent implements OnInit {
       modalRef.componentInstance.message = message;
     });
 
-    if (window.location.pathname === '/' && this.configService.fhirServer) {
-      await this.router.navigate([`/${this.configService.fhirServer}/home`]);
+    if (window.location.pathname === '/') {
+      await this.router.navigate([`/projects/home`]);
     }
   }
 }

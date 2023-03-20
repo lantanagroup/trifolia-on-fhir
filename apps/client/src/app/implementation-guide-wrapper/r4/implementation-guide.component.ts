@@ -37,9 +37,7 @@ import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-mo
 import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
-import {IImplementationGuide} from '@trifolia-fhir/tof-lib';
 import {ProjectService} from '../../shared/projects.service';
-import {IConformance} from '@trifolia-fhir/models';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -840,14 +838,14 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
-    this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
+    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.implementationGuide)
       .subscribe((implementationGuide: ImplementationGuide) => {
         if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
+          this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
         } else {
           // Copy the new permissions to the context so that we other resources create for the ig will adopt the new permissions
-          if (this.configService.project && this.configService.project.implementationGuideId === implementationGuide.id) {
+          if (this.configService.project && this.configService.project.implementationGuideId === this.implementationGuideId) {
             // only if the updated implementation guide has security tags
             if (implementationGuide.meta && implementationGuide.meta.security && implementationGuide.meta.security.length > 0) {
               this.configService.project.securityTags = implementationGuide.meta.security;

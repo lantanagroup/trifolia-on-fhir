@@ -75,12 +75,10 @@ export class ConfigService {
   }
 
   public get baseSessionUrl(): string {
-    if (this.fhirServer && this.project && this.project.implementationGuideId) {
-      return `/${this.fhirServer}/${this.project.implementationGuideId}`;
-    } else if (this.fhirServer) {
-      return `/${this.fhirServer}`;
+    if (this.project && this.project.implementationGuideId) {
+      return `/projects/${this.project.implementationGuideId}`;
     } else {
-      return '';
+      return `/projects`;
     }
   }
 

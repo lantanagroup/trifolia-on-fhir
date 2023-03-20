@@ -105,13 +105,13 @@ export class NewProjectComponent implements OnInit {
     }
 
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));
-    let project: any = { author: "" , fhirVersion: this.configService.isFhirR4?"r4":"stu3", name: ig.name };
+
     this.igService.saveImplementationGuide(ig)
       .subscribe(async (ig: IImplementationGuide) => {
+        let project: any = { author: "" , fhirVersion: this.configService.isFhirR4?"r4":"stu3", name: ig.name };
         project.igs = project.igs || [];
         project.igs.push(ig.id);
         await this.projectService.save(project).toPromise().then((project) => {
-          console.log(project);
           this.router.navigate([`/projects/${project.id}`]);
         }).catch((err) => this.message = getErrorString(err));
       }, (err) => {
