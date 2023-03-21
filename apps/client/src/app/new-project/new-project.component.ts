@@ -103,12 +103,12 @@ export class NewProjectComponent implements OnInit {
         ig.extension.push(packageIdExt);
       }
     }
-
+    let projectName = ig.name;
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));
 
     this.igService.saveImplementationGuide(ig)
       .subscribe(async (ig: IImplementationGuide) => {
-        let project: any = { author: "" , fhirVersion: this.configService.isFhirR4?"r4":"stu3", name: ig.name };
+        let project: any = { author: "" , fhirVersion: this.configService.isFhirR4?"r4":"stu3", name: projectName };
         project.igs = project.igs || [];
         project.igs.push(ig.id);
         await this.projectService.save(project).toPromise().then((project) => {
