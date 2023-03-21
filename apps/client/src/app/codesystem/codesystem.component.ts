@@ -59,6 +59,8 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       this.codeSystem = new R4CodeSystem({ meta: this.authService.getDefaultMeta() });
     } else if (this.configService.isFhirSTU3) {
       this.codeSystem = new STU3CodeSystem({ meta: this.authService.getDefaultMeta() });
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
     }
 
     this.idChangedEvent.pipe(debounceTime(500))

@@ -146,6 +146,11 @@ export class NarrativeComponent implements OnInit {
     const r5ImplementationGuide = this.configService.isFhirR5 ? <R5ImplementationGuide>resource : undefined;
     const r4ImplementationGuide = this.configService.isFhirR4 ? <R4ImplementationGuide>resource : undefined;
     const stu3ImplementationGuide = this.configService.isFhirSTU3 ? <STU3ImplementationGuide>resource : undefined;
+
+    if (!this.configService.isFhirR5 && !this.configService.isFhirR4 && !this.configService.isFhirSTU3) {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+    }
+    
     const getPages = (parent) => {
       if (parent.page) {
         view.pages = <any>view.pages.concat(parent.page);

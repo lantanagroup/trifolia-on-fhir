@@ -130,7 +130,7 @@ export class ImportComponent implements OnInit {
       };
       return media;
     } else {
-      throw new Error('Can\'t create media. Unexpected FHIR server version');
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
     }
   }
 

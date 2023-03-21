@@ -5,6 +5,7 @@ import {Bundle, StructureDefinition as STU3StructureDefinition} from '../../../.
 import {FhirService} from './fhir.service';
 import {FileService} from './file.service';
 import {StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {StructureDefinition as R5StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
 import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
 
@@ -66,17 +67,17 @@ export class StructureDefinitionService {
     return this.http.get<Bundle>(url);
   }
 
-  public getStructureDefinition(id: string): Observable<STU3StructureDefinition | R4StructureDefinition> {
+  public getStructureDefinition(id: string): Observable<STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition> {
     if (id === 'from-file') {
       if (this.fileService.file) {
-        return new Observable<STU3StructureDefinition | R4StructureDefinition>((observer) => {
-          observer.next(<STU3StructureDefinition | R4StructureDefinition> this.fileService.file.resource);
+        return new Observable<STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>((observer) => {
+          observer.next(<STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition> this.fileService.file.resource);
         });
       }
     }
 
     const url = '/api/structureDefinition/' + encodeURIComponent(id);
-    return this.http.get<STU3StructureDefinition | R4StructureDefinition>(url);
+    return this.http.get<STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>(url);
   }
 
   public getBaseStructureDefinition(baseDefinition: string, type?: string): Observable<BaseDefinitionResponseModel> {
@@ -89,7 +90,7 @@ export class StructureDefinitionService {
     return this.http.get<BaseDefinitionResponseModel>(url);
   }
 
-  public save(structureDefinition: STU3StructureDefinition | R4StructureDefinition): Observable<STU3StructureDefinition | R4StructureDefinition> {
+  public save(structureDefinition: STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition): Observable<STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition> {
     let url = '/api/structureDefinition';
 
     if(structureDefinition.text && structureDefinition.text.div && structureDefinition.text.div.indexOf("<br>") > 0){
@@ -98,9 +99,9 @@ export class StructureDefinitionService {
 
     if (structureDefinition.id) {
       url += '/' + encodeURIComponent(structureDefinition.id);
-      return this.http.put<STU3StructureDefinition | R4StructureDefinition>(url, structureDefinition);
+      return this.http.put<STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>(url, structureDefinition);
     } else {
-      return this.http.post<STU3StructureDefinition | R4StructureDefinition>(url, structureDefinition);
+      return this.http.post<STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>(url, structureDefinition);
     }
   }
 

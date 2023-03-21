@@ -65,7 +65,7 @@ export class NewProjectComponent implements OnInit {
     } else if (this.configService.isFhirSTU3) {
       ig = new STU3ImplementationGuide();
     } else {
-      throw new Error('Unexpected FHIR version');
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
     }
 
     this.igId = this.projectCode.replace(/\./g, '-');
@@ -108,6 +108,8 @@ export class NewProjectComponent implements OnInit {
         ig.extension = ig.extension || [];
         ig.extension.push(packageIdExt);
       }
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
     }
 
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));

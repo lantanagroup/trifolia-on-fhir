@@ -58,6 +58,8 @@ export class CustomMenuComponent implements OnInit, OnChanges {
       if (r5ImplementationGuide.definition) {
         pageInfos = IgPageHelper.getR4andR5PagesList([], r5ImplementationGuide.definition.page, r5ImplementationGuide);
       }
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
     }
 
     this.customMenuValue = IgPageHelper.getMenuContent(pageInfos);

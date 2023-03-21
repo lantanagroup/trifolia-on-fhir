@@ -935,7 +935,7 @@ export class DataRequirement extends Element {
 
 	}
 
-  type: DataRequirementType1;
+  type: string;
   profile?: string[];
   subjectCodeableConcept?: CodeableConcept;
   subjectReference?: Reference;
@@ -1559,7 +1559,7 @@ export class ElementDefinitionExample extends Element {
   valueDateTime?: string;
   valueDecimal?: number;
   valueId?: string;
-  valueInstant?: string;
+  valueInstant?: number;
   valueInteger?: number;
   valueMarkdown?: string;
   valueOid?: string;
@@ -1714,8 +1714,10 @@ export class ElementDefinitionSlicing implements IFhir.IElementDefinitionSlicing
   rules: ElementDefinitionRules1;
 }
 
-export class ElementDefinition implements IFhir.IElementDefinition {
+export class ElementDefinition extends Element implements IFhir.IElementDefinition {
 	constructor(obj?: any) {
+    super(obj);
+
 		if (obj.hasOwnProperty('path')) {
 			this.path = obj.path;
 		}
@@ -3084,7 +3086,7 @@ export class TriggerDefinition extends Element {
 
 	}
 
-  type: TriggerDefinitionType1;
+  type: string;
   name?: string;
   timingTiming?: Timing;
   timingReference?: Reference;
@@ -3348,7 +3350,7 @@ export class Extension implements IFhir.IExtension {
   valueDateTime?: string;
   valueDecimal?: number;
   valueId?: string;
-  valueInstant?: string;
+  valueInstant?: number;
   valueInteger?: number;
   valueMarkdown?: string;
   valueOid?: string;
@@ -29046,7 +29048,7 @@ export class ParametersParameter extends Element {
   valueDateTime?: string;
   valueDecimal?: number;
   valueId?: string;
-  valueInstant?: string;
+  valueInstant?: number;
   valueInteger?: number;
   valueMarkdown?: string;
   valueOid?: string;
@@ -36749,7 +36751,7 @@ export class TaskOutput extends Element {
   valueDateTime?: string;
   valueDecimal?: number;
   valueId?: string;
-  valueInstant?: string;
+  valueInstant?: number;
   valueInteger?: number;
   valueMarkdown?: string;
   valueOid?: string;
@@ -37012,7 +37014,7 @@ export class TaskInput extends Element {
   valueDateTime?: string;
   valueDecimal?: number;
   valueId?: string;
-  valueInstant?: string;
+  valueInstant?: number;
   valueInteger?: number;
   valueMarkdown?: string;
   valueOid?: string;

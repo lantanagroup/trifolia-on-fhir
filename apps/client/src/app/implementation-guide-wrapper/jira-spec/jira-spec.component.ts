@@ -239,7 +239,7 @@ export class JiraSpecComponent implements OnInit, OnChanges {
       jiraSpecArtifacts = this.getSTU3Artifacts();
       jiraSpecPages = this.getSTU3Pages();
     } else {
-      throw new Error('Unexpected FHIR server version!');
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
     }
 
     // Artifacts

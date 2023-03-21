@@ -1844,7 +1844,7 @@ export class Binary extends Resource {
 
 export class Signature extends Element {
   public type: Coding[];
-  public when: Date;
+  public when: string;
   public who: Element;
   public onBehalfOf?: Element;
   public contentType?: string;
