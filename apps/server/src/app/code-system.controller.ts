@@ -70,13 +70,13 @@ export class CodeSystemController extends BaseFhirController {
   @Post()
   public create( @FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = true) {
     let conformance: any = { fhirVersion: fhirServerVersion, resource: body };
-    this.conformanceService.createConformance(conformance, contextImplementationGuideId);
+    return this.conformanceService.createConformance(conformance, contextImplementationGuideId);
   }
 
   @Put(':id')
   public update( @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
     let conformance: any = { fhirVersion: fhirServerVersion, resource: body };
-    this.conformanceService.updateConformance(id, conformance);
+    return this.conformanceService.updateConformance(id, conformance);
   }
 
   @Delete(':id')

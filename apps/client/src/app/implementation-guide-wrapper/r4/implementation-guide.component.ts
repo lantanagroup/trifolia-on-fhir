@@ -1063,14 +1063,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     const name = this.implementationGuide.name;
-    const id = this.implementationGuide.id;
 
     this.projectService.deleteIg(implementationGuideId)
       .subscribe(async () => {
         await this.implementationGuideService.removeImplementationGuide(this.implementationGuideId).toPromise().then((project) => {
           console.log(project);
           this.configService.project = null;
-          this.router.navigate([`${this.configService.fhirServer}/home`]);
+          this.router.navigate([`${this.configService.baseSessionUrl}/home`]);
           alert(`IG ${name} with id ${this.implementationGuideId} has been deleted`);
         }).catch((err) => this.message = getErrorString(err));
       }, (err) => {

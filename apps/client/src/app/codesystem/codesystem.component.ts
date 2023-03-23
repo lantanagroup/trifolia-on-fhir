@@ -39,6 +39,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
+  public codeSystemId;
 
   constructor(
     public route: ActivatedRoute,
@@ -181,11 +182,12 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       return;
     }
 
-    this.codeSystemService.save(this.codeSystem)
-      .subscribe((codeSystem: ICodeSystem) => {
+    this.codeSystemService.save(this.codeSystemId, this.codeSystem)
+      .subscribe((codeSystem) => {
         if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`projects/code-system/${codeSystem.id}`]);
+          this.codeSystemId = codeSystem.id;
+          this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${codeSystem.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystem.id, codeSystem.name);
           setTimeout(() => {

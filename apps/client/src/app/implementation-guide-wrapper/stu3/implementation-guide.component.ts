@@ -29,6 +29,7 @@ import {BaseImplementationGuideComponent} from '../base-implementation-guide-com
 import { CanComponentDeactivate } from '../../guards/resource.guard';
 import { ProjectService } from '../../shared/projects.service';
 
+
 class Parameter {
   public extension: Extension;
 
@@ -108,7 +109,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   public ClientHelper = ClientHelper;
   public parameters: Parameter[] = [];
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
-
+  public implementationGuideId: string;
   private navSubscription: any;
   // noinspection JSMismatchedCollectionQueryUpdate
   private resources: ImplementationGuideResource[] = [];
@@ -659,11 +660,11 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       return;
     }
 
-    this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
+    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.implementationGuide)
       .subscribe((implementationGuide: ImplementationGuide) => {
         if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
+          this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
         } else {
           this.message = 'Your changes have been saved!';
           this.igChanging.emit(false);
@@ -783,7 +784,11 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
     // Watch the route parameters to see if the id of the implementation guide changes. Reload if it does.
     this.route.params.subscribe((params) => {
-      if (params.implementationGuideId && this.implementationGuide && params.implementationGuideId !== this.implementationGuide.id) {
+      if (!this.implementationGuideId) {
+        this.implementationGuideId = params.implementationGuideId;
+      }
+
+      if (params.implementationGuideId && this.implementationGuide && params.implementationGuideId !== this.implementationGuideId) {
         this.getImplementationGuide();
       }
     });
