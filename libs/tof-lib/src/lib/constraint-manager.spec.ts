@@ -675,28 +675,25 @@ describe('ConstraintManager', () => {
 
     describe('elements should be constrained when Reference is constrained by type', () => {
       let cm;
-      let testData: IStructureDefinition;
 
-      it('remove constraint', async () => {
+      it('should contain constrainedElement', async () => {
         const testData: IStructureDefinition = <IStructureDefinition>JSON.parse(JSON.stringify(compositionClinicalDocumentDataEnterer));
+        expect(testData.differential.element[2].id).toBe('Extension.value[x]:valueReference');
+
         const extModel = <IStructureDefinition>fhir.parser.structureDefinitions.find(ext => ext.id === 'Extension');
         cm = new ConstraintManager(ElementDefinition, extModel, testData, fhir.parser);
         await cm.initializeRoot();
 
-        console.log(testData);
-        console.log(extModel);
+        expect(cm.elements[4].constrainedElement).toBeTruthy();
+        expect(cm.elements[4].constrainedElement.id).toBe('Extension.value[x]:valueReference');
+        expect(cm.elements[4].constrainedElement.type[0].code).toBe('Reference');
+        expect(cm.elements[4].constrainedElement.type[0].targetProfile[0]).toBe('http://hl7.org/fhir/StructureDefinition/Practitioner');
+        expect(cm.elements[4].constrainedElement.type[0].targetProfile[1]).toBe('http://hl7.org/fhir/StructureDefinition/PractitionerRole');
+        expect(cm.elements[4].constrainedElement.type[0].targetProfile[2]).toBe('http://hl7.org/fhir/StructureDefinition/RelatedPerson');
 
-      });
-
-
-      it('should not be constrained', async () => {
-        const testData: IStructureDefinition = <IStructureDefinition>JSON.parse(JSON.stringify(compositionClinicalDocumentDataEnterer));
-        const extModel = <IStructureDefinition>fhir.parser.structureDefinitions.find(ext => ext.id === 'Extension');
-        cm = new ConstraintManager(ElementDefinition, extModel, testData, fhir.parser);
-        await cm.initializeRoot();
-
-        console.log(testData);
-        console.log(extModel);
+        // console.log(cm);
+        //console.log(testData);
+        //console.log(extModel);
 
       });
 
