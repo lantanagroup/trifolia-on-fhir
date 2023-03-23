@@ -25,7 +25,9 @@ import { UsersModule } from './users/users.module';
 import { ManageModule } from './manage/manage.module';
 import { GroupsModule } from './groups/groups.module';
 import { AuthModule } from './auth/auth.module';
-import { ResourcesModule } from './resources/resources.module';
+import { ConformanceModule } from './conformance/conformance.module';
+import { ExamplesModule } from './examples/examples.module';
+import { HistoryModule } from './history/history.module';
 
 @Module({
   imports: [
@@ -36,7 +38,9 @@ import { ResourcesModule } from './resources/resources.module';
     ManageModule,
     GroupsModule,
     AuthModule,
-    ResourcesModule
+    ConformanceModule,
+    ExamplesModule,
+    HistoryModule,
   ],
   exports: [],
   controllers: [

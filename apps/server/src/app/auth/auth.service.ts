@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import type { ITofUser } from '@trifolia-fhir/tof-lib';
 import { ObjectId } from 'mongodb';
+import { IBaseDataService } from '../base/interfaces';
 import { ConfigService } from '../config.service';
+import { ConformanceService } from '../conformance/conformance.service';
 import { GroupsService } from '../groups/groups.service';
 import { ProjectsService } from '../projects/projects.service';
-import { ResourcesService } from '../resources/providers/resources.service';
 import { TofLogger } from '../tof-logger';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class AuthService {
         private readonly configService: ConfigService,
         private readonly groupsService: GroupsService,
         private readonly projectsService: ProjectsService,
-        private readonly resourcesService: ResourcesService
+        private readonly conformanceService: ConformanceService
     ) {
     }
 
@@ -101,7 +102,15 @@ export class AuthService {
 
 
 
-    public async userCan(user: ITofUser, targetId: string, type: 'project' | 'resource', grant: 'read' | 'write'): Promise<boolean> {
+    public async userCanByType(user: ITofUser, targetId: string, type: 'project' | 'conformance', grant: 'read' | 'write'): Promise<boolean> {
+
+
+        const service = type === 'conformance' ? this.conformanceService : this.projectsService;
+
+        return this.userCanByService(user, targetId, service, grant);
+    }
+
+    public async userCanByService(user: ITofUser, targetId: string, dataService: IBaseDataService, grant: 'read' | 'write'): Promise<boolean> {
 
         
         if (!this.configService.server.enableSecurity || user?.isAdmin) {
@@ -117,31 +126,29 @@ export class AuthService {
             throw new BadRequestException("Invalid target provided");
         }
 
-        // TODO: uncomment after implementing generic resource service
-        //const service = type === 'resource' ? this.resourceService : this.projectsService;
-        const service = type === 'resource' ? this.resourcesService : this.projectsService;
-
-        const resCount = await service.count(await this.getPermissionFilterBase(user, grant, targetId));
-        //console.log(`Can ${grant} count: ${resCount}`);
+        const filter = await this.getPermissionFilterBase(user, grant, targetId);
+        //console.log('filter:', JSON.stringify(filter));
+        const resCount = await dataService.count(filter);
+        //console.log(`Can ${grant} for user ${userId} count: ${resCount} -- ${targetId}`);
 
         return resCount > 0;
     }
 
 
     public async userCanReadProject(user: ITofUser, projectId: string) {
-        return this.userCan(user, projectId, 'project', 'read');
+        return this.userCanByType(user, projectId, 'project', 'read');
     }
 
     public async userCanWriteProject(user: ITofUser, projectId: string) {
-        return this.userCan(user, projectId, 'project', 'write');
+        return this.userCanByType(user, projectId, 'project', 'write');
     }
 
-    public async userCanReadResource(user: ITofUser, resourceId: string) {
-        return this.userCan(user, resourceId, 'resource', 'read');
+    public async userCanReadConformance(user: ITofUser, conformanceId: string) {
+        return this.userCanByType(user, conformanceId, 'conformance', 'read');
     }
 
-    public async userCanWriteResource(user: ITofUser, resourceId: string) {
-        return this.userCan(user, resourceId, 'resource', 'write');
+    public async userCanWriteConformance(user: ITofUser, conformanceId: string) {
+        return this.userCanByType(user, conformanceId, 'conformance', 'write');
     }
 
 

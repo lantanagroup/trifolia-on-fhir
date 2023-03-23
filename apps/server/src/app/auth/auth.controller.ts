@@ -35,12 +35,12 @@ export class AuthController extends BaseController {
 
     @Get('resource/:resourceId/can-read')
     public async userCanReadResource(@User() user: ITofUser, @Param('resourceId') resourceId: string): Promise<boolean> {
-        return this.authService.userCanReadResource(user, resourceId);
+        return this.authService.userCanReadConformance(user, resourceId);
     }
 
     @Get('resource/:resourceId/can-write')
     public async userCanWriteResource(@User() user: ITofUser, @Param('resourceId') resourceId: string) : Promise<boolean> {
-        return this.authService.userCanWriteResource(user, resourceId);
+        return this.authService.userCanWriteConformance(user, resourceId);
     }
     
 

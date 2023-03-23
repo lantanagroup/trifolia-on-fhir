@@ -2,25 +2,45 @@ import { BaseController } from "./base.controller";
 import { BaseDataService } from "./base-data.service";
 import { BaseEntity } from "./base.entity";
 import { Paginated } from "@trifolia-fhir/tof-lib";
-import { BadRequestException, Body, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
+import { BadRequestException, Body, Delete, ForbiddenException, Get, Inject, Param, Post, Put, Query, UnauthorizedException } from "@nestjs/common";
 import { HydratedDocument } from "mongoose";
 import { TofNotFoundException } from "../../not-found-exception";
 import { TofLogger } from "../tof-logger";
+import { User } from "../server.decorators";
+import { AuthService } from "../auth/auth.service";
 
 
 export class BaseDataController<T extends HydratedDocument<BaseEntity>> extends BaseController {
 
     protected readonly logger = new TofLogger(BaseDataController.name);
 
+    @Inject(AuthService)
+    protected authService: AuthService;
+
     constructor(
-        private dataService: BaseDataService<T>
+        protected dataService: BaseDataService<T>
     ) {
         super();
     }
 
+
+    public async assertCanReadById(@User() user, id: string) {
+        if (!await this.authService.userCanByService(user, id, this.dataService, 'read')) {
+            throw new UnauthorizedException();
+        }
+    }
+
+    public async assertCanWriteById(@User() user, id: string) {
+        if (!await this.authService.userCanByService(user, id, this.dataService, 'write')) {
+            throw new UnauthorizedException();
+        }
+    }
+
+    
+
     @Get() 
     public async search(@Query() query?: any): Promise<Paginated<T>> {         
-        this.logger.debug(`search`);
+        //this.logger.debug(`search`);
         let options = this.getPaginateOptionsFromQuery(query);
         const res = await this.dataService.search(options);
         return res;

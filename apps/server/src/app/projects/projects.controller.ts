@@ -6,8 +6,8 @@ import {BaseDataController} from '../base/base-data.controller';
 import {ProjectDocument} from './project.schema';
 import type {IConformance, IProject} from '@trifolia-fhir/models';
 import {User} from '../server.decorators';
-import {Conformance} from '../resources/schemas/conformance.schema';
-import {ConformanceService} from '../resources/providers/conformance.service';
+import {Conformance} from '../conformance/conformance.schema';
+import {ConformanceService} from '../conformance/conformance.service';
 
 @Controller('api/project')
 @UseGuards(AuthGuard('bearer'))
@@ -49,7 +49,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
       const confResource: IConformance = <IConformance>(await this.conformanceService.findById(id.toString()));
       confResource.projects = [];
       confResource.projects.push(createdProject);
-      await this.conformanceService.updateOne(id.toString(), confResource, 'conformance');
+      await this.conformanceService.updateOne(id.toString(), confResource);
     }
     return createdProject;
   }

@@ -2,8 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { IConformance, IPermission } from '@trifolia-fhir/models';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { BaseEntity } from '../../base/base.entity';
-import { Project } from '../../projects/project.schema';
+import { BaseEntity } from '../base/base.entity';
+import { Project } from '../projects/project.schema';
 
 export type ConformanceDocument = HydratedDocument<Conformance>;
 

@@ -7,7 +7,7 @@ import type { IBaseDataService } from "./interfaces";
 
 export class BaseDataService<T extends HydratedDocument<BaseEntity>> implements IBaseDataService {
 
-    private readonly logger = new TofLogger(BaseDataService.name);
+    protected readonly logger = new TofLogger(BaseDataService.name);
 
     constructor(
         protected model: Model<T>

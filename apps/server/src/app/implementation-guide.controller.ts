@@ -24,7 +24,7 @@ import * as fs from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { PaginateOptions } from '@trifolia-fhir/tof-lib';
 import { AuthService } from './auth/auth.service';
-import {ConformanceService} from './resources/providers/conformance.service';
+import {ConformanceService} from './conformance/conformance.service';
 import {IConformance} from '@trifolia-fhir/models';
 
 
@@ -399,19 +399,19 @@ export class ImplementationGuideController extends BaseFhirController {
   public create(@FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
     ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
     let conformance: any = { fhirVersion: fhirServerVersion? "r4" : "stu3", resource: body };
-    return this.conformanceService.create(conformance, 'conformance');
+    return this.conformanceService.create(conformance);
   }
 
   @Put(':id')
   public update(@FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
     ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
     let conformance: any = { fhirVersion: fhirServerVersion? "r4" : "stu3", resource: body };
-    return this.conformanceService.updateOne(id, conformance, 'conformance');
+    return this.conformanceService.updateOne(id, conformance);
   }
 
   @Delete(':id')
   public delete(@FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
-    return this.conformanceService.delete(id, 'conformance');
+    return this.conformanceService.delete(id);
   }
 
   @Get(':id/list')

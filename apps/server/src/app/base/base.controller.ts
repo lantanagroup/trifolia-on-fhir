@@ -48,7 +48,7 @@ export class BaseController {
      * @returns object for use in PaginateOptions.filter
      */
     protected getFilterFromQuery(query?: any) : any {
-        this.logger.debug('getFilterFromQuery');
+        //this.logger.debug('getFilterFromQuery');
         return {};
     }
 
@@ -59,7 +59,7 @@ export class BaseController {
      * @returns PaginateOptions for use in the BaseDataController.search method
      */
     protected getPaginateOptionsFromQuery(query?: any) : PaginateOptions {
-        this.logger.debug('getPaginateOptionsFromQuery');
+        //this.logger.debug('getPaginateOptionsFromQuery');
 
         const options: PaginateOptions = {
             page: (query && query.page) ? query.page : 1,
