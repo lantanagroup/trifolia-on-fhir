@@ -34,7 +34,7 @@ export class CodeSystemController extends BaseFhirController {
     searchFilters['resource.resourceType'] = { $regex: 'CodeSystem', $options: 'i' };
     searchFilters['fhirVersion'] = { $regex: fhirServerVersion, $options: 'i' };
     if (headers && headers['implementationguideid'] ) {
-      searchFilters['igs'] =  { $regex: headers['implementationguideid'], $options: 'i' };
+      searchFilters['igIds'] =  { $regex: headers['implementationguideid'], $options: 'i' };
     }
     const baseFilter =  this.authService.getPermissionFilterBase(user, 'read');
 

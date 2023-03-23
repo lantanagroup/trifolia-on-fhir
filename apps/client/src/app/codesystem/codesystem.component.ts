@@ -185,7 +185,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       .subscribe((codeSystem: ICodeSystem) => {
         if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${codeSystem.id}`]);
+          this.router.navigate([`projects/code-system/${codeSystem.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystem.id, codeSystem.name);
           setTimeout(() => {

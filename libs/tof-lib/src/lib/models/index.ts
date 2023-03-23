@@ -56,7 +56,8 @@ export interface IProjectResource {
 export interface IConformance extends IProjectResource {
   //groupingId?: string;    // from ImplementationGuide.definition.grouping. Not used in STU3
   fhirVersion: 'stu3'|'r4'|'r5';
-  igs?: string[];
+  igIds?: string[];
+  references?: string[];
   resource: IDomainResource;
 }
 

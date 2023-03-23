@@ -47,9 +47,9 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         newConf.resource.meta.versionId = versionId;
         newConf.resource.meta.lastUpdated = lastUpdated;
 
-        if(implementationGuideId) {
-          newConf.igs = newConf.igs || [];
-          newConf.igs.push(implementationGuideId);
+        if(newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
+          newConf.igIds = newConf.igIds || [];
+          newConf.igIds.push(implementationGuideId);
         }
         newConf = await this.conformanceModel.create(newConf);
 
@@ -64,7 +64,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         await this.historyService.create(newHistory);
 
       //Add it to the implementation Guide
-      if (implementationGuideId) {
+      if (newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
         await addToImplementationGuideNew(this, newConf, implementationGuideId);
       }
 
@@ -80,9 +80,6 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         if (upConf.id && upConf.id !== id) {
             throw new BadRequestException();
         }
-
-
-
 
         let existing = await this.conformanceModel.findById(id);
         if (!existing) {

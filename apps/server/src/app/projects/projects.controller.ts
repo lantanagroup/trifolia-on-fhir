@@ -68,7 +68,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
     project.contributors = [...updatedProject.contributors];
     project.igs = [];
     for (const m of updatedProject.igs) {
-      const confResource: IConformance = <IConformance>(await this.conformanceService.findById(m.id));
+      const confResource: Conformance = <Conformance>(await this.conformanceService.findById(m.id));
       project.igs.push(confResource);
     }
     return await super.update(id, project);

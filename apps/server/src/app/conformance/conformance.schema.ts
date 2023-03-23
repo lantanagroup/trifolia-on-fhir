@@ -39,7 +39,10 @@ export class Conformance extends BaseEntity implements IConformance {
     resource: IDomainResource;
 
     @Prop()
-    igs: string[];
+    igIds: string[];
+
+    @Prop()
+    references: string[];
 }
 
 export const ConformanceSchema = SchemaFactory.createForClass(Conformance);

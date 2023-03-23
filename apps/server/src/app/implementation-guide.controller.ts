@@ -398,19 +398,19 @@ export class ImplementationGuideController extends BaseFhirController {
   @Post()
   public create(@FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
     ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
-    let conformance: any = { fhirVersion: fhirServerVersion? "r4" : "stu3", resource: body };
-    return this.conformanceService.create(conformance);
+    let conformance: any = { fhirVersion: fhirServerVersion, resource: body };
+    return this.conformanceService.createConformance(conformance);
   }
 
   @Put(':id')
   public update(@FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
     ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
-    let conformance: any = { fhirVersion: fhirServerVersion? "r4" : "stu3", resource: body };
-    return this.conformanceService.updateOne(id, conformance);
+    let conformance: any = { fhirVersion: fhirServerVersion, resource: body };
+    return this.conformanceService.updateConformance(id, conformance);
   }
 
   @Delete(':id')
-  public delete(@FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
+  public delete(@Param('id') id: string, @User() user) {
     return this.conformanceService.delete(id);
   }
 

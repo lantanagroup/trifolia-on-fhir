@@ -157,18 +157,17 @@ export class AddHeaderInterceptor implements HttpInterceptor {
  * The routes in the client application.
  */
 const appRoutes: Routes = [
-  {path:  'login', component: LoginComponent},
-  { path: 'projects', component: ProjectsComponent },
-  { path: 'projects/new', component: NewProjectComponent },
-  { path: 'projects/:id', component: ProjectComponent },
-  { path: 'projects/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
-  {path:  'projects/home', component: HomeComponent},
-  {path:  'projects/:implementationGuideId/home', component: HomeComponent},
-/*  {path: ':fhirServer/implementation-guide/new', component: NewProjectComponent},*/
-  {path:  'projects/implementation-guide/open', component: ImplementationGuidesComponent},
-  {path:  'projects/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
-/*  {path: ':fhirServer/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},*/
-
+  {path: 'login', component: LoginComponent},
+  {path: 'projects', component: ProjectsComponent },
+  {path: 'projects/new', component: NewProjectComponent },
+  {path: 'projects/:id', component: ProjectComponent },
+  {path: 'projects/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
+  {path: 'projects/home', component: HomeComponent},
+  {path: 'projects/:implementationGuideId/home', component: HomeComponent},
+  {path: 'projects/implementation-guide/open', component: ImplementationGuidesComponent},
+  {path: 'projects/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
+  {path: 'projects/:implementationGuideId/code-system', component: CodesystemsComponent },
+  {path: 'projects/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
   {path: ':fhirServer/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},
   {path: ':fhirServer/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
   {path: ':fhirServer/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
@@ -181,8 +180,8 @@ const appRoutes: Routes = [
   { path: ':fhirServer/:implementationGuideId/value-set', component: ValuesetsComponent },
   { path: ':fhirServer/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always' },
   { path: ':fhirServer/:implementationGuideId/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/:implementationGuideId/code-system', component: CodesystemsComponent },
-  { path: ':fhirServer/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
+ /* { path: ':fhirServer/:implementationGuideId/code-system', component: CodesystemsComponent },
+  { path: ':fhirServer/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },*/
   { path: ':fhirServer/:implementationGuideId/questionnaire', component: QuestionnairesComponent },
   { path: ':fhirServer/:implementationGuideId/questionnaire/new', component: QuestionnaireComponent },
   { path: ':fhirServer/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always' },
