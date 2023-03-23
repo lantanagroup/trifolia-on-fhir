@@ -3,6 +3,7 @@ import {Bundle, CodeSystem, OperationOutcome} from '../../../../../libs/tof-lib/
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IConformance, IProject} from '@trifolia-fhir/models';
 
 @Injectable()
 export class CodeSystemService {
@@ -21,7 +22,7 @@ export class CodeSystemService {
         }
     }
 
-    public search(page = 1, name?: string, implementationGuideId?: string) {
+    public search(page = 1, name?: string, implementationGuideId?: string) :  Observable<IConformance[]> {
         let url = '/api/codeSystem?page=' + page + '&';
 
         if (name) {
@@ -34,7 +35,7 @@ export class CodeSystemService {
 
         url += '_sort=name';
 
-        return this.http.get<Bundle>(url);
+        return this.http.get<IConformance[]>(url);
     }
 
     public get(id: string) {

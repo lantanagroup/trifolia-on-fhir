@@ -22,8 +22,11 @@ import {IUserSecurityInfo} from './base.controller';
 import {addPermission, findPermission, getErrorString, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {IAuditEvent, IDomainResource} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {TofLogger} from './tof-logger';
+import {IConformance} from '@trifolia-fhir/models';
+import {ConformanceService} from './conformance/conformance.service';
+
 
 declare var jasmine;
 
@@ -91,7 +94,7 @@ export const zip = async (p: string) => {
 
   return new Promise((resolve) => {
     const zipped = getZippedFolderSync(p);
-    zipped.generateAsync({type: "nodebuffer"}).then((content) => {
+    zipped.generateAsync({ type: 'nodebuffer' }).then((content) => {
       resolve(content);
     });
   });
@@ -148,8 +151,8 @@ export async function createAuditEvent(logger: TofLogger, httpService: HttpServi
     if (fhirServerVersion === 'stu3') {
       const stu3AuditEvent = new STU3AuditEvent();
       stu3AuditEvent.type = {
-        code: "110100",
-        display: "Application Activity"
+        code: '110100',
+        display: 'Application Activity'
       };
       stu3AuditEvent.action = action;
       stu3AuditEvent.recorded = new Date(Date.now()).formatFhir();
@@ -175,8 +178,8 @@ export async function createAuditEvent(logger: TofLogger, httpService: HttpServi
     } else if (fhirServerVersion === 'r4') {
       const r4AuditEvent = new R4AuditEvent();
       r4AuditEvent.type = {
-        code: "110100",
-        display: "Application Activity"
+        code: '110100',
+        display: 'Application Activity'
       };
       r4AuditEvent.action = action;
       r4AuditEvent.recorded = new Date(Date.now()).formatFhir();
@@ -201,7 +204,7 @@ export async function createAuditEvent(logger: TofLogger, httpService: HttpServi
       throw new Error(`Cannot create AuditEvent for unexpected FHIR server version ${fhirServerVersion}`);
     }
 
-    const url: string = buildUrl(fhirServerBase, "AuditEvent");
+    const url: string = buildUrl(fhirServerBase, 'AuditEvent');
 
     await httpService.post(url, auditEvent).toPromise();
   } catch (ex) {
@@ -213,7 +216,7 @@ export interface ParsedFhirUrl {
   resourceType?: string;
   id?: string;
   operation?: string;
-  query?: { [key: string]: string|boolean };
+  query?: { [key: string]: string | boolean };
   versionId?: string;
   isHistory: boolean;
 }
@@ -248,7 +251,7 @@ export function parseFhirUrl(url: string) {
     });
 
     parts = url.substring(0, url.indexOf('?')).split('/');
-  } else  {
+  } else {
     parts = url.split('/');
   }
 
@@ -313,7 +316,8 @@ export function getFhirStu3Instance(tool = false) {
     } else if (jasmine) {
       rootDir = path.join(__dirname, '../../../../libs/tof-lib/src');
     }
-  } catch (ex) {}
+  } catch (ex) {
+  }
 
   const parser = new ParseConformance(false, FhirVersions.STU3);
   const valueSets = getJsonFromFile(path.join(rootDir, 'assets/stu3/valuesets.json'));
@@ -338,7 +342,8 @@ export function getFhirR4Instance(tool = false) {
     } else if (jasmine) {
       rootDir = path.join(__dirname, '../../../../libs/tof-lib/src');
     }
-  } catch (ex) {}
+  } catch (ex) {
+  }
 
   const parser = new ParseConformance(false, FhirVersions.R4);
   const valueSets = getJsonFromFile(path.join(rootDir, 'assets/r4/valuesets.json'));
@@ -363,7 +368,8 @@ export function getFhirR5Instance(tool = false) {
     } else if (jasmine) {
       rootDir = path.join(__dirname, '../../../../libs/tof-lib/src');
     }
-  } catch (ex) {}
+  } catch (ex) {
+  }
 
   const parser = new ParseConformance(false, FhirVersions.R4);
   const valueSets = getJsonFromFile(path.join(rootDir, 'assets/r5/valuesets.json'));
@@ -390,7 +396,8 @@ export function getFhirR5Instance(tool = false) {
  * @param implementationGuide The id (or concrete resource) of the implementation guide to add the structure definition to
  * @param shouldPersistIg Indicates if the ig should be persisted/save during this operation, or if it will be taken care of elsewhere
  */
-export async function addToImplementationGuide(httpService: HttpService, configService: ConfigService, fhirServerBase: string, fhirServerVersion: string, resource: STU3DomainResource | R4DomainResource, userSecurityInfo: IUserSecurityInfo, implementationGuide: string|STU3ImplementationGuide|R4ImplementationGuide, shouldPersistIg: boolean): Promise<void> {
+
+export async function addToImplementationGuide(httpService: HttpService, configService: ConfigService, fhirServerBase: string, fhirServerVersion: string, resource: STU3DomainResource | R4DomainResource, userSecurityInfo: IUserSecurityInfo, implementationGuide: string | STU3ImplementationGuide | R4ImplementationGuide, shouldPersistIg: boolean): Promise<void> {
   if (typeof implementationGuide === 'string' && shouldPersistIg) {
     throw new Error('Cannot persist the IG when it is passed as a string. It will not persisted elsewhere.');
   }
@@ -428,7 +435,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
   if (fhirServerVersion !== 'stu3') {        // r4+
     const r4 = <R4ImplementationGuide>implementationGuide;
 
-    r4.definition = r4.definition || {resource: []};
+    r4.definition = r4.definition || { resource: [] };
     r4.definition.resource = r4.definition.resource || [];
 
     let foundResource = r4.definition.resource.find((r) => {
@@ -436,7 +443,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
         return r.reference.reference === resourceReferenceString;
       }
     });
-    if(foundResource) {
+    if (foundResource) {
       // remove existing
       const removeIndex = r4.definition.resource.findIndex(r => r.reference.reference === resourceReferenceString);
       r4.definition.resource.splice(removeIndex, 1);
@@ -444,7 +451,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     }
     if (!foundResource) {
       const display = (<any>resource).title || (<any>resource).name;
-      const description =  (<any>resource).description;
+      const description = (<any>resource).description;
 
       logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');
 
@@ -458,14 +465,14 @@ export async function addToImplementationGuide(httpService: HttpService, configS
           name: display
         } :
         {
-        reference: {
-          reference: resourceReferenceString,
-          display: display
-        },
-        exampleBoolean: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(resource.resourceType) < 0,
-        name: display,
-        description: description
-      });
+          reference: {
+            reference: resourceReferenceString,
+            display: display
+          },
+          exampleBoolean: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(resource.resourceType) < 0,
+          name: display,
+          description: description
+        });
       changed = true;
     }
   } else {                                        // stu3
@@ -483,7 +490,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
       return foundResources.length > 0;
     });
 
-    if(foundInPackages.length > 0) {
+    if (foundInPackages.length > 0) {
       // remove existing
       (stu3.package || []).filter((igPackage) => {
         const removeIndex = (igPackage.resource || []).findIndex((r) => {
@@ -492,12 +499,12 @@ export async function addToImplementationGuide(httpService: HttpService, configS
           }
         });
         igPackage.resource.splice(removeIndex, 1);
-      })
+      });
     }
 
     if (foundInPackages.length === 0) {
       const display = (<any>resource).title || (<any>resource).name;
-      const description =  (<any>resource).description;
+      const description = (<any>resource).description;
 
       const newResource: PackageResourceComponent = {
         name: display,
@@ -551,6 +558,138 @@ export async function addToImplementationGuide(httpService: HttpService, configS
     }
   }
 
+  return Promise.resolve();
+}
+
+export async function addToImplementationGuideNew(service: ConformanceService, resourceToAdd: IConformance, implementationGuideId: string): Promise<void> {
+
+  // Don't add implementation guides to other implementation guides (or itself).
+  if (resourceToAdd.resource.resourceType == 'ImplementationGuide') {
+    return Promise.resolve();
+  }
+
+  const logger = new Logger('Helper.addToImplementationGuide');
+
+  logger.verbose(`Adding resource ${resourceToAdd.resource.resourceType}/${resourceToAdd.resource.id} to context implementation guide.`);
+
+  let changed = false;
+  const resourceReferenceString = `${resourceToAdd.resource.resourceType}/${resourceToAdd.id}`;
+
+  // get the implementationguide
+  let implGuideResource = await service.findById(implementationGuideId);
+  let implementationGuide = <IImplementationGuide>implGuideResource.resource;
+
+  if (resourceToAdd.fhirVersion !== 'stu3') {        // r4+
+    const r4 = <R4ImplementationGuide>implementationGuide;
+
+    r4.definition = r4.definition || { resource: [] };
+    r4.definition.resource = r4.definition.resource || [];
+
+    let foundResource = r4.definition.resource.find((r) => {
+      if (r.reference) {
+        return r.reference.reference === resourceReferenceString;
+      }
+    });
+    if (foundResource) {
+      // remove existing
+      const removeIndex = r4.definition.resource.findIndex(r => r.reference.reference === resourceReferenceString);
+      r4.definition.resource.splice(removeIndex, 1);
+      foundResource = undefined;
+    }
+    if (!foundResource) {
+      const display = (<any>resourceToAdd).title || (<any>resourceToAdd).name;
+      const description = (<any>resourceToAdd).description;
+
+      logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');
+
+      r4.definition.resource.push(Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0 && implementationGuide.meta.profile ?
+        {
+          reference: {
+            reference: resourceReferenceString,
+            display: display
+          },
+          exampleCanonical: implementationGuide.meta.profile[0],
+          name: display
+        } :
+        {
+          reference: {
+            reference: resourceReferenceString,
+            display: display
+          },
+          exampleBoolean: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0,
+          name: display,
+          description: description
+        });
+      changed = true;
+    }
+  } else {                                        // stu3
+    const stu3 = <STU3ImplementationGuide>implementationGuide;
+
+    stu3.package = stu3.package || [];
+
+    const foundInPackages = (stu3.package || []).filter((igPackage) => {
+      const foundResources = (igPackage.resource || []).filter((r) => {
+        if (r.sourceReference && r.sourceReference.reference) {
+          return r.sourceReference.reference === resourceReferenceString;
+        }
+      });
+
+      return foundResources.length > 0;
+    });
+
+    if (foundInPackages.length > 0) {
+      // remove existing
+      (stu3.package || []).filter((igPackage) => {
+        const removeIndex = (igPackage.resource || []).findIndex((r) => {
+          if (r.sourceReference && r.sourceReference.reference) {
+            return r.sourceReference.reference === resourceReferenceString;
+          }
+        });
+        igPackage.resource.splice(removeIndex, 1);
+      });
+    }
+
+    if (foundInPackages.length === 0) {
+      const display = (<any>resourceToAdd).title || (<any>resourceToAdd).name;
+      const description = (<any>resourceToAdd).description;
+
+      const newResource: PackageResourceComponent = {
+        name: display,
+        description: description,
+        sourceReference: {
+          reference: resourceReferenceString,
+          display: display
+        },
+        example: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0
+      };
+
+      if (stu3.package.length === 0) {
+        logger.verbose('STU3 IG does not contain a package, adding a default package with the resource added to it.');
+
+        stu3.package.push({
+          name: 'Default Package',
+          resource: [newResource]
+        });
+        changed = true;
+      } else {
+        if (!stu3.package[0].resource) {
+          stu3.package[0].resource = [];
+        }
+
+        logger.verbose(`Adding resource to implementation guide's ${stu3.package[0].name} package.`);
+
+        stu3.package[0].resource.push(newResource);
+        changed = true;
+      }
+    }
+  }
+
+  // update the Ig
+
+  if (changed) {
+    let conf = await service.updateOne(implGuideResource.id, implGuideResource);
+    console.log('Conformance ' + conf);
+  }
   return Promise.resolve();
 }
 

@@ -53,9 +53,10 @@ export interface IProjectResource {
   permissions?: IPermission[];
 }
 
-export interface IConformance extends IProjectResource {  
-  //groupingId?: string;    // from ImplementationGuide.definition.grouping. Not used in STU3  
+export interface IConformance extends IProjectResource {
+  //groupingId?: string;    // from ImplementationGuide.definition.grouping. Not used in STU3
   fhirVersion: 'stu3'|'r4'|'r5';
+  igs?: string[];
   resource: IDomainResource;
 }
 
@@ -69,7 +70,7 @@ export interface IHistory extends IProjectResource {
   fhirVersion?: 'stu3'|'r4'|'r5';
   content?: IDomainResource|any;
   targetId: string;
-  type: 'conformance'|'example';  
+  type: 'conformance'|'example';
 }
 
 export interface IAudit {

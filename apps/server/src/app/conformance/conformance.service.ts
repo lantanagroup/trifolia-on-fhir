@@ -7,6 +7,8 @@ import { BaseDataService } from '../base/base-data.service';
 import { HistoryService } from '../history/history.service';
 import { TofLogger } from '../tof-logger';
 import { Conformance, ConformanceDocument } from './conformance.schema';
+import {addToImplementationGuideNew} from '../helper';
+import {ObjectId} from 'mongodb';
 
 @Injectable()
 export class ConformanceService extends BaseDataService<ConformanceDocument> {
@@ -23,7 +25,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
 
 
-    public async createConformance(newConf: IConformance): Promise<IConformance> {
+    public async createConformance(newConf: IConformance, implementationGuideId? : string): Promise<IConformance> {
 
         const lastUpdated = new Date();
         let versionId = 1;
@@ -45,6 +47,10 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         newConf.resource.meta.versionId = versionId;
         newConf.resource.meta.lastUpdated = lastUpdated;
 
+        if(implementationGuideId) {
+          newConf.igs = newConf.igs || [];
+          newConf.igs.push(implementationGuideId);
+        }
         newConf = await this.conformanceModel.create(newConf);
 
         let newHistory: IHistory = {
@@ -57,7 +63,12 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
         await this.historyService.create(newHistory);
 
-        return newConf;
+      //Add it to the implementation Guide
+      if (implementationGuideId) {
+        await addToImplementationGuideNew(this, newConf, implementationGuideId);
+      }
+
+      return newConf;
     }
 
 
@@ -114,9 +125,12 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         existing.versionId = versionId;
         existing.lastUpdated = lastUpdated;
 
-        await existing.save();
+        await this.conformanceModel.findByIdAndUpdate(existing.id, existing, {new:true}).then((ig) => {
+          console.log("Ig is: " + ig);
+        });
 
-        let newHistory: IHistory = {
+
+      let newHistory: IHistory = {
             content: existing.resource,
             versionId: versionId,
             lastUpdated: lastUpdated,

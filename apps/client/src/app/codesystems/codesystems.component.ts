@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CodeSystemService} from '../shared/code-system.service';
-import {Bundle, CodeSystem} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {CodeSystem} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../shared/config.service';
@@ -16,7 +16,8 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./codesystems.component.css']
 })
 export class CodesystemsComponent extends BaseComponent implements OnInit {
-  public codeSystemsBundle: Bundle;
+  public codeSystem;
+  public total: string;
   public nameText: string;
   public page = 1;
   public criteriaChangedEvent = new Subject<void>();
@@ -38,11 +39,11 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
   }
 
   public get codeSystems(): CodeSystem[] {
-    if (!this.codeSystemsBundle) {
+    if (!this.codeSystem) {
       return [];
     }
 
-    return (this.codeSystemsBundle.entry || []).map((entry) => <CodeSystem>entry.resource);
+    return (this.codeSystem.results || []).map((entry) => <CodeSystem>entry);
   }
 
   public isEditDisabled(codeSystem: CodeSystem) {
@@ -74,9 +75,9 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
 
     this.codeSystemService.delete(codeSystem.id)
       .subscribe(() => {
-        const entry = (this.codeSystemsBundle.entry || []).find((e) => e.resource.id === codeSystem.id);
-        const index = this.codeSystemsBundle.entry.indexOf(entry);
-        this.codeSystemsBundle.entry.splice(index, 1);
+        const entry = (this.codeSystem || []).find((e) => e.resource.id === codeSystem.id);
+        const index = this.codeSystem.entry.indexOf(entry);
+        this.codeSystem.splice(index, 1);
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while deleting the code system');
       });
@@ -95,15 +96,12 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
     return this.route.snapshot.paramMap.get('implementationGuideId');
   }
 
-  public getCodeSystems() {
-    this.codeSystemsBundle = null;
+  public async getCodeSystems() {
+    await this.codeSystemService.search(this.page, this.nameText, this.getImplementationGuideId()).toPromise().then((results) => {
+      this.codeSystem = results;
+      this.total = this.codeSystem.total;
+    }).catch((err) => console.log(err));
 
-    this.codeSystemService.search(this.page, this.nameText, this.getImplementationGuideId())
-      .subscribe((results) => {
-        this.codeSystemsBundle = results;
-      }, (err) => {
-        this.configService.handleError(err, 'An error occurred while searching for code systems');
-      });
   }
 
   ngOnInit() {
