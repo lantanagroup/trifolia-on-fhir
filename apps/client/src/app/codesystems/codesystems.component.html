@@ -40,7 +40,7 @@
     <tbody *ngIf="!configService.showingIntroduction">
     <tr *ngFor="let cs of codeSystems">
         <td>{{cs.id}}</td>
-        <td>{{cs.name}}</td>
+        <td>{{cs.resource.name}}</td>
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/code-system/{{cs.id}}" [class.disabled]="isEditDisabled(cs)" title="Edit this resource">
