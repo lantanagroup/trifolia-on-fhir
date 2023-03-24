@@ -573,7 +573,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   logger.verbose(`Adding resource ${resourceToAdd.resource.resourceType}/${resourceToAdd.resource.id} to context implementation guide.`);
 
   let changed = false;
-  const resourceReferenceString = `${resourceToAdd.resource.resourceType}/${resourceToAdd.resource.name?resourceToAdd.resource.name:resourceToAdd.id}`;
+  const resourceReferenceString = `${resourceToAdd.resource.resourceType}/${resourceToAdd.resource['name'] || resourceToAdd.id}`;
 
   // get the implementationguide
   let implGuideResource = await service.findById(implementationGuideId);

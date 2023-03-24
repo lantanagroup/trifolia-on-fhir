@@ -38,9 +38,9 @@ export class CodeSystemService {
         return this.http.get<IConformance[]>(url);
     }
 
-    public get(id: string) {
+    public get(id: string): Observable<IConformance> {
         const url = '/api/codeSystem/' + encodeURIComponent(id);
-        return this.http.get<CodeSystem | OperationOutcome>(url);
+        return this.http.get<IConformance>(url);
     }
 
     public delete(id: string) {

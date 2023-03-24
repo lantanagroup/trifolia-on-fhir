@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {StructureDefinitionService} from '../shared/structure-definition.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -13,8 +13,8 @@ import {ConfigService} from '../shared/config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {BaseComponent} from '../base.component';
-import { Observable, Subject } from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
+import { firstValueFrom, Observable, Subject } from 'rxjs';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
 import { PublishingRequestModel } from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
@@ -118,9 +118,9 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
   async ngOnInit() {
 
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    const implementationGuide = await this.implementationGuideService.getImplementationGuide(implementationGuideId).toPromise();
+    const implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
-    const url = (<ImplementationGuide> implementationGuide).url;
+    const url = implementationGuide.url;
     this.structureDefinition.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "StructureDefinition/" : "";
 
   }

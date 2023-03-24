@@ -46,6 +46,8 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         }
         newConf.resource.meta.versionId = versionId;
         newConf.resource.meta.lastUpdated = lastUpdated;
+        newConf.versionId = versionId;
+        newConf.lastUpdated = lastUpdated;
 
         if(newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
           newConf.igIds = newConf.igIds || [];

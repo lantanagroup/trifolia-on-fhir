@@ -1,19 +1,20 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {saveAs} from 'file-saver';
-import {ExportOptions, ExportService} from '../shared/export.service';
-import {ExportFormats} from '../models/export-formats.enum';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {CookieService} from 'ngx-cookie-service';
-import {ConfigService} from '../shared/config.service';
-import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Observable} from 'rxjs';
-import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
-import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
-import {NgbNavChangeEvent} from '@ng-bootstrap/ng-bootstrap';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {HttpClient} from '@angular/common/http';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import { saveAs } from 'file-saver';
+import { ExportOptions, ExportService } from '../shared/export.service';
+import { ExportFormats } from '../models/export-formats.enum';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { CookieService } from 'ngx-cookie-service';
+import { ConfigService } from '../shared/config.service';
+import { ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Observable } from 'rxjs';
+import { ExportGithubPanelComponent } from '../export-github-panel/export-github-panel.component';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { HttpClient } from '@angular/common/http';
 import { SearchImplementationGuideResponseContainer } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import { IConformance } from '@trifolia-fhir/models';
 
 @Component({
   templateUrl: './export.component.html',
@@ -153,7 +154,7 @@ export class ExportComponent implements OnInit {
       switchMap((term: string) => {
         return this.implementationGuideService.getImplementationGuides(1, term).pipe(
           map((response: SearchImplementationGuideResponseContainer) => {
-            return (response.responses || []).map((entry) => <ImplementationGuide> entry.data.resource);
+            return (response.responses || []).map((entry) => <ImplementationGuide>entry.data.resource);
           })
         );
       }),
@@ -177,7 +178,7 @@ export class ExportComponent implements OnInit {
   }
 
   public responseFormatChanged(format) {
-    if(format === 'application/json' || format === 'application/xml'){
+    if (format === 'application/json' || format === 'application/xml') {
       this.options.responseFormat = format;
     }
     this.cookieService.set(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
@@ -232,12 +233,12 @@ export class ExportComponent implements OnInit {
         case ExportFormats.HTML:
           //Need to discuss the difference between HTML vs Bundle
           this.exportService.exportHtml(this.options)
-              .subscribe((response) => {
-                saveAs(response.body, igName + '.zip');
-                this.message = 'Done exporting.';
-              }, (err) => {
-                this.message = getErrorString(err);
-              });
+            .subscribe((response) => {
+              saveAs(response.body, igName + '.zip');
+              this.message = 'Done exporting.';
+            }, (err) => {
+              this.message = getErrorString(err);
+            });
           break;
         case ExportFormats.Bundle:
           this.exportService.exportBundle(this.options)
@@ -250,14 +251,14 @@ export class ExportComponent implements OnInit {
             });
           break;
         case ExportFormats.MSWORD:
-            this.exportService.exportMsWord(this.options)
-              .subscribe((response) => {
-                saveAs(response.body, igName + '.docx');
-                this.message = 'Done exporting.';
-              }, (err) => {
-                this.message = getErrorString(err);
-              });
-            break;
+          this.exportService.exportMsWord(this.options)
+            .subscribe((response) => {
+              saveAs(response.body, igName + '.docx');
+              this.message = 'Done exporting.';
+            }, (err) => {
+              this.message = getErrorString(err);
+            });
+          break;
         case ExportFormats.GitHub:
           this.exportGithub();
           break;
@@ -274,17 +275,20 @@ export class ExportComponent implements OnInit {
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
-        .subscribe((implementationGuide: ImplementationGuide) => {
-          this.implementationGuideChanged(implementationGuide);
-        }, (err) => this.message = getErrorString(err));
+        .subscribe({
+          next: (res: IConformance) => {
+            this.implementationGuideChanged(<ImplementationGuide>res.resource);
+          },
+          error: (err) => this.message = getErrorString(err)
+        });
     }
 
     await this.templateChanged();
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
-        .subscribe((implementationGuide: ImplementationGuide) => {
-          this.selectedImplementationGuide = implementationGuide;
+        .subscribe((res: IConformance) => {
+          this.selectedImplementationGuide = <ImplementationGuide>res.resource;
         }, (err) => this.message = getErrorString(err));
     }
   }

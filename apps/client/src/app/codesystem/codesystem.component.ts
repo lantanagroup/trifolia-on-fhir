@@ -1,21 +1,22 @@
-import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {RecentItemService} from '../shared/recent-item.service';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {CodeSystemService} from '../shared/code-system.service';
-import {CodeSystem as STU3CodeSystem, ConceptDefinitionComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {CodeSystem as R4CodeSystem } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {FhirService} from '../shared/fhir.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
-import {FileService} from '../shared/file.service';
-import {ConfigService} from '../shared/config.service';
-import {AuthService} from '../shared/auth.service';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {BaseComponent} from '../base.component';
+import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { RecentItemService } from '../shared/recent-item.service';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { CodeSystemService } from '../shared/code-system.service';
+import { CodeSystem as STU3CodeSystem, ConceptDefinitionComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { CodeSystem as R4CodeSystem } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { FhirService } from '../shared/fhir.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FhirCodesystemConceptModalComponent } from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
+import { FileService } from '../shared/file.service';
+import { ConfigService } from '../shared/config.service';
+import { AuthService } from '../shared/auth.service';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { BaseComponent } from '../base.component';
 import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { IConformance } from '@trifolia-fhir/models';
 
 @Component({
   templateUrl: './codesystem.component.html',
@@ -62,13 +63,13 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         const isIdUnique = await this.fhirService.checkUniqueId(this.codeSystem);
-        if(!isIdUnique){
+        if (!isIdUnique) {
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.codeSystem.id  + " is already used.";
+          this.alreadyInUseIDMessage = "ID " + this.codeSystem.id + " is already used.";
         }
-        else{
+        else {
           this.isIdUnique = true;
-          this.alreadyInUseIDMessage="";
+          this.alreadyInUseIDMessage = "";
         }
       });
   }
@@ -200,7 +201,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       });
   }
 
-  private getCodeSystemID(){
+  private getCodeSystemID() {
     return this.route.snapshot.paramMap.get('id');
   }
 
@@ -223,23 +224,26 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       this.codeSystem = null;
 
       this.codeSystemService.get(codeSystemId)
-        .subscribe((cs) => {
-          if (cs.resourceType !== 'CodeSystem') {
-            this.message = 'The specified code system either does not exist or was deleted';
-            return;
-          }
+        .subscribe({
+          next: (conf: IConformance) => {
+            if (!conf || !conf.resource || conf.resource.resourceType !== 'CodeSystem') {
+              this.message = 'The specified code system either does not exist or was deleted';
+              return;
+            }
 
-          this.codeSystem = <ICodeSystem>cs;
-          this.nameChanged();
-          this.refreshConcepts();
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentCodeSystems,
-            this.codeSystem.id,
-            this.codeSystem.name || this.codeSystem.title);
-        }, (err) => {
-          this.csNotFound = err.status === 404;
-          this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystemId);
+            this.codeSystem = <ICodeSystem>conf.resource;
+            this.nameChanged();
+            this.refreshConcepts();
+            this.recentItemService.ensureRecentItem(
+              Globals.cookieKeys.recentCodeSystems,
+              this.codeSystem.id,
+              this.codeSystem.name || this.codeSystem.title);
+          },
+          error: (err) => {
+            this.csNotFound = err.status === 404;
+            this.message = getErrorString(err);
+            this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystemId);
+          }
         });
     }
   }

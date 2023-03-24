@@ -256,7 +256,7 @@ export class ImplementationGuideController extends BaseFhirController {
   // const implementationGuideUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
    // const implementationGuideResponse = await this.httpService.get<IImplementationGuide>(implementationGuideUrl).toPromise();
     //const implementationGuide = implementationGuideResponse.data;
-    const implementationGuide = await this.get(id);
+    const implementationGuide = (await this.get(id)).resource;
     switch (fhirServerVersion) {
       case 'stu3':
         return this.getSTU3Examples(<STU3ImplementationGuide> implementationGuide);
@@ -387,10 +387,9 @@ export class ImplementationGuideController extends BaseFhirController {
 
   @Get(':id')
   public async get(@Param('id') id: string) {
-  //  const results = await this.conformanceService.findById(id);
     const confResource: IConformance = <IConformance>(await this.conformanceService.findById(id));
     if(confResource.resource.resourceType == 'ImplementationGuide') {
-      return <IImplementationGuide>confResource.resource;
+      return confResource;
     }
     return null;
   }

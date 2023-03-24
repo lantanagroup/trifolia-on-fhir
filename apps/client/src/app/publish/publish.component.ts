@@ -14,6 +14,7 @@ import {NgbNav} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute} from '@angular/router';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import { SearchImplementationGuideResponseContainer } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import { IConformance } from '@trifolia-fhir/models';
 
 @Component({
   selector: 'ngbd-typeahead-basic',
@@ -218,8 +219,8 @@ export class PublishComponent implements OnInit {
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
-        .subscribe((implementationGuide: ImplementationGuide) => {
-          this.implementationGuideChanged(implementationGuide);
+        .subscribe((conf: IConformance) => {
+          this.implementationGuideChanged(<ImplementationGuide>conf?.resource);
         }, (err) => this.message = getErrorString(err));
     }
 

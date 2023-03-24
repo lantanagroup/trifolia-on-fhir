@@ -1,22 +1,23 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router, RoutesRecognized} from '@angular/router';
-import {AuthService} from './shared/auth.service';
-import {ConfigService} from './shared/config.service';
-import {Globals, IImplementationGuide} from '@trifolia-fhir/tof-lib';
-import {FileService} from './shared/file.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FileOpenModalComponent} from './modals/file-open-modal/file-open-modal.component';
-import {FileModel} from './models/file-model';
-import {FhirService} from './shared/fhir.service';
-import {SocketService} from './shared/socket.service';
-import {SettingsModalComponent} from './modals/settings-modal/settings-modal.component';
-import {GithubService} from './shared/github.service';
-import {CookieService} from 'ngx-cookie-service';
-import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-message-modal.component';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router, RoutesRecognized } from '@angular/router';
+import { AuthService } from './shared/auth.service';
+import { ConfigService } from './shared/config.service';
+import { Globals, IImplementationGuide } from '@trifolia-fhir/tof-lib';
+import { FileService } from './shared/file.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FileOpenModalComponent } from './modals/file-open-modal/file-open-modal.component';
+import { FileModel } from './models/file-model';
+import { FhirService } from './shared/fhir.service';
+import { SocketService } from './shared/socket.service';
+import { SettingsModalComponent } from './modals/settings-modal/settings-modal.component';
+import { GithubService } from './shared/github.service';
+import { CookieService } from 'ngx-cookie-service';
+import { AdminMessageModalComponent } from './modals/admin-message-modal/admin-message-modal.component';
 import introJs from 'intro.js/intro.js';
-import {Practitioner} from '@trifolia-fhir/stu3';
-import {Coding} from '@trifolia-fhir/r4';
-import {ImplementationGuideService} from './shared/implementation-guide.service';
+import { Practitioner } from '@trifolia-fhir/stu3';
+import { Coding } from '@trifolia-fhir/r4';
+import { ImplementationGuideService } from './shared/implementation-guide.service';
+import { IConformance } from '@trifolia-fhir/models';
 
 @Component({
   selector: 'trifolia-fhir-root',
@@ -27,8 +28,8 @@ export class AppComponent implements OnInit {
   public person: Practitioner;
   public initialized = false;
 
-  @ViewChild('navbarToggler', {read: ElementRef, static: true}) navbarToggler: ElementRef;
-  @ViewChild('navbarCollapse', {read: ElementRef, static: true}) navbarCollapse: ElementRef;
+  @ViewChild('navbarToggler', { read: ElementRef, static: true }) navbarToggler: ElementRef;
+  @ViewChild('navbarCollapse', { read: ElementRef, static: true }) navbarCollapse: ElementRef;
 
   constructor(
     public authService: AuthService,
@@ -43,24 +44,24 @@ export class AppComponent implements OnInit {
     private cookieService: CookieService,
     private socketService: SocketService) {
 
-      this.router.events.subscribe(async (event) => {
-        this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
-        if (event instanceof RoutesRecognized && event.state.root.firstChild) {
+    this.router.events.subscribe(async (event) => {
+      this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
+      if (event instanceof RoutesRecognized && event.state.root.firstChild) {
         //  const fhirServer = event.state.root.firstChild.params.fhirServer;
-          const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
+        const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
 
-          if (implementationGuideId) {
-            if (!this.configService.project || this.configService.project.implementationGuideId !== implementationGuideId) {
-              this.configService.project = {
-                implementationGuideId: implementationGuideId
-              };
-            }
-          } else {
-            this.configService.project = null;
+        if (implementationGuideId) {
+          if (!this.configService.project || this.configService.project.implementationGuideId !== implementationGuideId) {
+            this.configService.project = {
+              implementationGuideId: implementationGuideId
+            };
           }
-            this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
+        } else {
+          this.configService.project = null;
         }
-      });
+        this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
+      }
+    });
 
   }
 
@@ -124,7 +125,7 @@ export class AppComponent implements OnInit {
 
   public openFile() {
     console.log('openFile');
-    const modalRef = this.modalService.open(FileOpenModalComponent, {backdrop: 'static'});
+    const modalRef = this.modalService.open(FileOpenModalComponent, { backdrop: 'static' });
     console.log('openFile :: modal opened', modalRef);
 
     modalRef.result.then((results: FileModel) => {
@@ -134,7 +135,7 @@ export class AppComponent implements OnInit {
   }
 
   public editSettings() {
-    this.modalService.open(SettingsModalComponent, {size: 'lg', backdrop: 'static'});
+    this.modalService.open(SettingsModalComponent, { size: 'lg', backdrop: 'static' });
   }
 
   public supportButtonClicked() {
@@ -157,14 +158,15 @@ export class AppComponent implements OnInit {
 
     return await new Promise((resolve, reject) => {
       this.implGuideService.getImplementationGuide(implementationGuideId).toPromise()
-        .then((ig: IImplementationGuide) => {
+        .then((conf: IConformance) => {
+          const ig = <IImplementationGuide>conf.resource;
           resolve({
             implementationGuideId: implementationGuideId,
-            name:  ig.name,
+            name: ig.name,
             securityTags: ig.meta && ig.meta.security ? ig.meta.security : []
           });
         })
-      .catch((err) => reject(err));
+        .catch((err) => reject(err));
     });
   }
 
@@ -191,7 +193,7 @@ export class AppComponent implements OnInit {
     */
 
     this.socketService.onMessage.subscribe((message) => {
-      const modalRef = this.modalService.open(AdminMessageModalComponent, {backdrop: 'static'});
+      const modalRef = this.modalService.open(AdminMessageModalComponent, { backdrop: 'static' });
       modalRef.componentInstance.message = message;
     });
 

@@ -10,6 +10,7 @@ import {ICodeSystem, PaginateOptions} from '@trifolia-fhir/tof-lib';
 import {AuthService} from './auth/auth.service';
 import {IConformance} from '@trifolia-fhir/models';
 import {ConformanceService} from './conformance/conformance.service';
+import { ObjectId } from 'mongodb';
 
 @Controller('api/codeSystem')
 @UseGuards(AuthGuard('bearer'))
@@ -34,7 +35,7 @@ export class CodeSystemController extends BaseFhirController {
     searchFilters['resource.resourceType'] = { $regex: 'CodeSystem', $options: 'i' };
     searchFilters['fhirVersion'] = { $regex: fhirServerVersion, $options: 'i' };
     if (headers && headers['implementationguideid'] ) {
-      searchFilters['igIds'] =  { $regex: headers['implementationguideid'], $options: 'i' };
+      searchFilters['igIds'] =  new ObjectId(headers['implementationguideid']);
     }
     const baseFilter =  this.authService.getPermissionFilterBase(user, 'read');
 

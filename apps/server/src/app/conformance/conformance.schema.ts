@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { IConformance, IPermission } from '@trifolia-fhir/models';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 import { Project } from '../projects/project.schema';
 
 export type ConformanceDocument = HydratedDocument<Conformance>;
 
-@Schema({ collection: 'conformance' })
+@Schema({ collection: 'conformance', toJSON: { getters: true } })
 export class Conformance extends BaseEntity implements IConformance {
 
     @Prop()
@@ -28,7 +28,14 @@ export class Conformance extends BaseEntity implements IConformance {
     @Prop()
     lastUpdated: Date;
 
-    @Prop()
+    @Prop({
+        get: (permissions: IPermission[]) : IPermission[] => {
+            if (!permissions || permissions.length < 1) {
+                return [{type: 'everyone', grant: 'read'}, {type: 'everyone', grant: 'write'}];
+            }
+            return permissions;
+        }
+    })
     permissions?: IPermission[];
 
 
@@ -38,10 +45,10 @@ export class Conformance extends BaseEntity implements IConformance {
     @Prop({ type: Object })
     resource: IDomainResource;
 
-    @Prop()
+    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: 'Conformance' }])
     igIds: string[];
 
-    @Prop()
+    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: Model<ConformanceDocument> }])
     references: string[];
 }
 

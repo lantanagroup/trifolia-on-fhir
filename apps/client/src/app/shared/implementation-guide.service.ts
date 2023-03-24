@@ -13,6 +13,7 @@ import {SearchImplementationGuideResponseContainer} from '../../../../../libs/to
 import {IBundle, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
 import {ConfigService} from './config.service';
+import { IConformance } from '@trifolia-fhir/models';
 
 export class PublishedGuideModel {
   public name: string;
@@ -96,9 +97,9 @@ export class ImplementationGuideService {
     return this.http.get<SearchImplementationGuideResponseContainer>(url);
   }
 
-  public getImplementationGuide(id: string) {
+  public getImplementationGuide(id: string): Observable<IConformance> {
     const url = '/api/implementationGuide/' + encodeURIComponent(id);
-    return this.http.get(url);
+    return this.http.get<IConformance>(url);
   }
 
   public saveImplementationGuide(implementationGuide: IImplementationGuide ) {

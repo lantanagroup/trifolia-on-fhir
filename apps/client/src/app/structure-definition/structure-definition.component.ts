@@ -44,6 +44,7 @@ import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Versions} from 'fhir/fhir';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import { FshResourceComponent } from '../shared-ui/fsh-resource/fsh-resource.component';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -321,8 +322,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       });
 
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    const implementationGuide = await this.implementationGuideService.getImplementationGuide(implementationGuideId).toPromise();
-    const resources = (<ImplementationGuide> implementationGuide).definition.resource;
+    const implementationGuide: ImplementationGuide = <ImplementationGuide>(await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+    const resources = implementationGuide.definition.resource;
 
 
     const index = resources.findIndex(resource => {
@@ -331,10 +332,10 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
 
     if(index >= 0){
-      (<ImplementationGuide> implementationGuide).definition.resource[index].name =
+      implementationGuide.definition.resource[index].name =
         this.structureDefinition.title ? this.structureDefinition.title : this.structureDefinition.name;
 
-      await this.implementationGuideService.saveImplementationGuide(<ImplementationGuide> implementationGuide)
+      await this.implementationGuideService.saveImplementationGuide(implementationGuide)
         .toPromise()
         .catch(err => console.log(err));
     }
