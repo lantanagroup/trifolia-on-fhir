@@ -3,7 +3,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
 import type { IConformance } from '@trifolia-fhir/models';
 import type { ITofUser, Paginated } from '@trifolia-fhir/tof-lib';
-import { AuthService } from '../auth/auth.service';
 import { User } from '../server.decorators';
 import { ConformanceService } from './conformance.service';
 import { BaseDataController } from '../base/base-data.controller';
@@ -46,10 +45,15 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
                 baseFilter
             ]
         };
-        
+
         return await this.conformanceService.search(options);
     }
 
+    @Get(':id/references')
+    public async getWithReferences(@User() user: ITofUser, @Param('id') id: string): Promise<any> {
+      await this.assertCanReadById(user, id);
+      return await this.conformanceService.findAll({_id: new Object(id)}, ["references.value"]);
+    }
 
     @Get(':id')
     public async getById(@User() user: ITofUser, @Param('id') id: string): Promise<IConformance> {
