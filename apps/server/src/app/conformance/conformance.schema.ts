@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type {IConformance, IPermission, IProjectResource} from '@trifolia-fhir/models';
+import type {IConformance, IPermission} from '@trifolia-fhir/models';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
