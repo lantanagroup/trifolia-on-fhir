@@ -27,7 +27,6 @@ import {TofLogger} from './tof-logger';
 import {IConformance} from '@trifolia-fhir/models';
 import {ConformanceService} from './conformance/conformance.service';
 
-
 declare var jasmine;
 
 export class FhirInstances {
@@ -573,7 +572,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   logger.verbose(`Adding resource ${resourceToAdd.resource.resourceType}/${resourceToAdd.resource.id} to context implementation guide.`);
 
   let changed = false;
-  const resourceReferenceString = `${resourceToAdd.resource.resourceType}/${resourceToAdd.resource['name'] || resourceToAdd.id}`;
+  const resourceReferenceString = `${resourceToAdd.resource.resourceType}/${resourceToAdd.resource['id'] || resourceToAdd.id}`;
 
   // get the implementationguide
   let implGuideResource = await service.findById(implementationGuideId);
@@ -688,7 +687,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
   if (changed) {
     implGuideResource.references = implGuideResource.references || [];
-    implGuideResource.references.push(resourceToAdd.id);
+    implGuideResource.references.push({ value:resourceToAdd, valueType:'Conformance' });
     let conf = await service.updateOne(implGuideResource.id, implGuideResource);
     console.log('Conformance ' + conf);
   }
