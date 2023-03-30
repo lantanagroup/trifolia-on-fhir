@@ -545,8 +545,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
               return;
             }
             
-            this.conformance = results;
             this.implementationGuide = new ImplementationGuide(results.resource);
+            this.conformance = results;
+            this.conformance.resource = this.implementationGuide;
             this.igChanging.emit(false);
             this.initPagesAndGroups();
           },
