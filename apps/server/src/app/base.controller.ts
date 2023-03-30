@@ -11,6 +11,7 @@ import {AxiosRequestConfig} from 'axios';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { IProject, IProjectResource } from '@trifolia-fhir/models';
 
 export interface GenericResponse {
   status?: number;
@@ -191,16 +192,16 @@ export class BaseController {
     throw new UnauthorizedException();
   }
 
-  protected userHasPermission(userSecurityInfo: IUserSecurityInfo, permission: 'read'|'write', resource: DomainResource) {
+  protected userHasPermission(userSecurityInfo: IUserSecurityInfo, permission: 'read'|'write', resource: IProject|IProjectResource) {
     if (userSecurityInfo.user && userSecurityInfo.user.isAdmin) {
       return true;
     }
 
-    const foundEveryone = findPermission(resource.meta, 'everyone', permission);
+    const foundEveryone = findPermission(resource.permissions, 'everyone', permission);
     const foundGroup = userSecurityInfo.groups.find((group) => {
-      return findPermission(resource.meta, 'group', permission, group.id);
+      return findPermission(resource.permissions, 'group', permission, group.id);
     });
-    const foundUser = findPermission(resource.meta, 'user', permission, userSecurityInfo.practitioner.id);
+    const foundUser = findPermission(resource.permissions, 'user', permission, userSecurityInfo.practitioner.id);
 
     return foundEveryone || foundGroup || foundUser;
   }
@@ -211,7 +212,7 @@ export class BaseController {
    * @param userSecurityInfo
    * @param resource
    */
-  protected ensureUserCanEdit(userSecurityInfo: IUserSecurityInfo, resource: DomainResource) {
+  protected ensureUserCanEdit(userSecurityInfo: IUserSecurityInfo, resource: IProject|IProjectResource) {
     if (!this.configService.server.enableSecurity || !userSecurityInfo) {
       return;
     }
@@ -221,17 +222,16 @@ export class BaseController {
       return;
     }
 
-    resource.meta = resource.meta || {};
-    resource.meta.security = resource.meta.security || [];
+    resource.permissions = resource.permissions || [];
 
     // Make sure user can read
     if (!this.userHasPermission(userSecurityInfo, 'read', resource)) {
-      addPermission(resource.meta, 'user', 'read', userSecurityInfo.practitioner.id);
+      addPermission(resource, 'user', 'read', userSecurityInfo.practitioner.id);
     }
 
     // Make sure user can write
     if (!this.userHasPermission(userSecurityInfo, 'write', resource)) {
-      addPermission(resource.meta, 'user', 'write', userSecurityInfo.practitioner.id);
+      addPermission(resource, 'user', 'write', userSecurityInfo.practitioner.id);
     }
   }
 

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import {ICodeableConcept, ICoding, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { ICodeableConcept, ICoding, IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { FhirService } from '../shared/fhir.service';
 import { ConfigService } from '../shared/config.service';
@@ -10,7 +10,8 @@ import { Router } from '@angular/router';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { identifyRelease } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { PublishingRequestModel } from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
-import {ProjectService} from '../shared/projects.service';
+import { ProjectService } from '../shared/projects.service';
+import { IConformance, IProject } from '@trifolia-fhir/models';
 @Component({
   templateUrl: './new-project.component.html',
   styleUrls: ['./new-project.component.css']
@@ -36,15 +37,16 @@ export class NewProjectComponent implements OnInit {
 
 
   constructor(private igService: ImplementationGuideService,
-              private projectService: ProjectService,
-              private fhirService: FhirService,
-              private configService: ConfigService,
-              private router: Router) {
+    private projectService: ProjectService,
+    private fhirService: FhirService,
+    private configService: ConfigService,
+    private router: Router) {
   }
 
   done() {
 
     let ig: IImplementationGuide;
+    let fhirVersion: 'stu3'|'r4'|'r5';
 
     const publishingRequest = new PublishingRequestModel();
     publishingRequest['package-id'] = this.packageId;
@@ -61,7 +63,9 @@ export class NewProjectComponent implements OnInit {
 
     if (this.configService.isFhirR4) {
       ig = new R4ImplementationGuide();
+      fhirVersion = 'r4';
     } else if (this.configService.isFhirSTU3) {
+      fhirVersion = 'stu3';
       ig = new STU3ImplementationGuide();
     } else {
       throw new Error('Unexpected FHIR version');
@@ -82,7 +86,7 @@ export class NewProjectComponent implements OnInit {
       }],
     }];
 
-    const jusrisdiction = this.selectedJurisdiction ? [{coding: [this.selectedJurisdiction]}] : this.selectedJurisdiction;
+    const jusrisdiction = this.selectedJurisdiction ? [{ coding: [this.selectedJurisdiction] }] : this.selectedJurisdiction;
     // Create the implementation guide based on the FHIR server we're connected to
     if (this.configService.isFhirR4) {
       if (this.isHL7) {
@@ -105,17 +109,21 @@ export class NewProjectComponent implements OnInit {
     }
     let projectName = ig.name;
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));
-
-    this.igService.saveImplementationGuide(ig)
-      .subscribe(async (ig: IImplementationGuide) => {
-        let project: any = { author: "" , fhirVersion: this.configService.isFhirR4?"r4":"stu3", name: projectName };
-        project.igs = project.igs || [];
-        project.igs.push(ig.id);
-        await this.projectService.save(project).toPromise().then((project) => {
-          this.router.navigate([`/projects/${project.id}`]);
-        }).catch((err) => this.message = getErrorString(err));
-      }, (err) => {
-        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
+    
+    let newConf: IConformance = <IConformance>{fhirVersion: fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
+    this.igService.saveImplementationGuide(newConf)
+      .subscribe({
+        next: async (ig: IConformance) => {
+          let project: IProject = <IProject>{ author: "", fhirVersion: this.configService.isFhirR4 ? "r4" : "stu3", name: projectName };
+          project.igs = project.igs || [];
+          project.igs.push(ig);
+          await this.projectService.save(project).toPromise().then((project) => {
+            this.router.navigate([`/projects/${project.id}`]);
+          }).catch((err) => this.message = getErrorString(err));
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
+        }
       });
 
   }
@@ -213,25 +221,25 @@ export class NewProjectComponent implements OnInit {
     //let jurisdictionCode: ICoding;
     this.selectedJurisdiction = this.jurisdictionCodes.find(jc => jc.code.toLowerCase() === 'us');
 
-/*    const u = <ICoding>{
-      system: 'http://unstats.un.org/unsd/methods/m49/m49.htm',
-      code: '001',
-      version: '2.2.0',
-      display: 'Universal'
-    };*/
-   /* if(jurisdictionCode) {
-      const universal = <ICodeableConcept>{
-        coding: jurisdictionCode
-      };
-      this.selectedJurisdiction = this.selectedJurisdiction || [];
-      this.selectedJurisdiction.push(universal);
-    }
-
-
-/!*    if(jurisdictionCode) {
-      this.selectedJurisdiction.coding = this.selectedJurisdiction.coding || [];
-      this.selectedJurisdiction.coding.push({ jurisdictionCode })
-    }*!/*/
+    /*    const u = <ICoding>{
+          system: 'http://unstats.un.org/unsd/methods/m49/m49.htm',
+          code: '001',
+          version: '2.2.0',
+          display: 'Universal'
+        };*/
+    /* if(jurisdictionCode) {
+       const universal = <ICodeableConcept>{
+         coding: jurisdictionCode
+       };
+       this.selectedJurisdiction = this.selectedJurisdiction || [];
+       this.selectedJurisdiction.push(universal);
+     }
+ 
+ 
+ /!*    if(jurisdictionCode) {
+       this.selectedJurisdiction.coding = this.selectedJurisdiction.coding || [];
+       this.selectedJurisdiction.coding.push({ jurisdictionCode })
+     }*!/*/
     this.getFhirVersion();
   }
 }

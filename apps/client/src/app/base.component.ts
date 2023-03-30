@@ -2,6 +2,7 @@ import {AuthService} from './shared/auth.service';
 import {DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {findPermission} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './shared/config.service';
+import { IProject, IProjectResource } from '@trifolia-fhir/models';
 
 export class BaseComponent {
   protected _isDirty = false;
@@ -20,7 +21,7 @@ export class BaseComponent {
     this._isDirty = value;
   }
 
-  private canReadOrWrite(resource: DomainResource, permission: 'read'|'write') {
+  private canReadOrWrite(resource: IProject|IProjectResource, permission: 'read'|'write') {
     // Security is not enabled
     if (!this.configService.config.enableSecurity) {
       return true;
@@ -36,20 +37,20 @@ export class BaseComponent {
       return false;
     }
 
-    const foundEveryone = findPermission(resource.meta, 'everyone', permission);
-    const foundUser = findPermission(resource.meta, 'user', permission, this.authService.user.id);
+    const foundEveryone = findPermission(resource.permissions, 'everyone', permission);
+    const foundUser = findPermission(resource.permissions, 'user', permission, this.authService.user.id);
     const foundGroups = this.authService.groups.filter((group) => {
-      return findPermission(resource.meta, 'group', permission, group.id);
+      return findPermission(resource.permissions, 'group', permission, group.id);
     }).length > 0;
 
     return foundEveryone || foundUser || foundGroups;
   }
 
-  public canView(resource: DomainResource) {
-    return this.canReadOrWrite(resource, 'read');
+  public canView(resource: IProject|IProjectResource|DomainResource) {
+    return this.canReadOrWrite(<IProjectResource>resource, 'read');
   }
 
-  public canEdit(resource: DomainResource) {
-    return this.canReadOrWrite(resource, 'write');
+  public canEdit(resource: IProject|IProjectResource|DomainResource) {
+    return this.canReadOrWrite(<IProjectResource>resource, 'write');
   }
 }

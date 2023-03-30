@@ -322,7 +322,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       });
 
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    const implementationGuide: ImplementationGuide = <ImplementationGuide>(await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+    const conformance = await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))
+    const implementationGuide: ImplementationGuide = <ImplementationGuide>(conformance).resource;
     const resources = implementationGuide.definition.resource;
 
 
@@ -335,7 +336,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       implementationGuide.definition.resource[index].name =
         this.structureDefinition.title ? this.structureDefinition.title : this.structureDefinition.name;
 
-      await this.implementationGuideService.saveImplementationGuide(implementationGuide)
+      await this.implementationGuideService.saveImplementationGuide(conformance)
         .toPromise()
         .catch(err => console.log(err));
     }

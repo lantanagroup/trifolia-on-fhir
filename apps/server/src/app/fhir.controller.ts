@@ -728,9 +728,9 @@ export class FhirController extends BaseController {
 
         // Make sure the user has given themselves permissions to edit
         // the resource they are requesting to be updated
-        if (!originalResource && entry.resource) {
-          this.ensureUserCanEdit(userSecurityInfo, entry.resource);
-        }
+        // if (!originalResource && entry.resource) {
+        //   this.ensureUserCanEdit(userSecurityInfo, entry.resource);
+        // }
 
         // Copy the permissions from the context ig to the entry/resource
         if (applyContextPermissions) {

@@ -100,6 +100,7 @@ class ImplementationGuideResource {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class STU3ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
+  public conformance: IConformance;
   public implementationGuide: ImplementationGuide;
   public message: string;
   public currentResource: any;
@@ -454,7 +455,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
               this.message = 'The specified implementation guide either does not exist or was deleted';
               return;
             }
-
+            
+            this.conformance = results;
             this.implementationGuide = new ImplementationGuide(results.resource);
             this.igChanging.emit(false);
             this.initPages();
@@ -664,8 +666,9 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       return;
     }
 
-    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.implementationGuide)
-      .subscribe((implementationGuide: ImplementationGuide) => {
+    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
+      .subscribe({
+        next: (implementationGuide: IConformance) => {
         if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
@@ -676,9 +679,11 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
             this.message = '';
           }, 3000);
         }
-      }, (err) => {
+      }, 
+      error: (err) => {
         this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
-      });
+      }
+    });
   }
 
   public async delete(implementationGuideId) {

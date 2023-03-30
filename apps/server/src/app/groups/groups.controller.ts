@@ -11,6 +11,7 @@ import {UsersService} from '../users/users.service';
 import {AuthGuard} from '@nestjs/passport';
 import {Body, Controller, Delete, Get, Param, Put, UnauthorizedException, UseGuards} from '@nestjs/common';
 import type {IGroup} from '@trifolia-fhir/models';
+import { ObjectId } from 'mongodb';
 
 
 @Controller('api/group')
@@ -34,7 +35,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
       filter['description'] = { $regex: query['description'], $options: 'i' };
     }
     if ('_id' in query) {
-      filter['_id'] = { $regex: query['_id'], $options: 'i' };
+      filter['$or'] = query['_id'].split(',').map(id => { return {'_id': new ObjectId(id)} });
     }
     return filter;
   }

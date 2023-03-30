@@ -9,6 +9,7 @@ import { TofLogger } from '../tof-logger';
 import { UserDocument } from './user.schema';
 import { UsersService } from './users.service';
 import { User as UserModel } from './user.schema';
+import { ObjectId } from 'mongodb';
 
 @Controller('api/users')
 @UseGuards(AuthGuard('bearer'))
@@ -39,6 +40,10 @@ export class UsersController extends BaseDataController<UserDocument> {
         if ('email' in query) {
           filter['email'] = { $regex: query['email'], $options: 'i' };
         }
+        if ('_id' in query && query['_id']) {
+            filter['$or'] = query['_id'].split(',').map(id => { return {'_id': new ObjectId(id)} });
+        }
+        
         return filter;
     }
 

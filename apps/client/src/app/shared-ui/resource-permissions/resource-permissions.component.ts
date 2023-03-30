@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {Bundle, DomainResource, Group, Meta, Practitioner} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {Bundle, DomainResource, Group, Meta, Practitioner} from '@trifolia-fhir/stu3';
+import {Globals, Paginated} from '@trifolia-fhir/tof-lib';
 import {FhirService} from '../../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
@@ -14,14 +14,15 @@ import {
   getPractitionerEmail,
   groupBy,
   removePermission
-} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {Observable} from 'rxjs';
+} from '@trifolia-fhir/tof-lib';
+import {firstValueFrom, Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators';
 import {GroupService} from '../../shared/group.service';
 import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
-import {IPractitioner} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IGroup} from '@trifolia-fhir/models';
+import type {IPractitioner} from '@trifolia-fhir/tof-lib';
+import type {IGroup, IPermission, IProject, IProjectResource, IUser} from '@trifolia-fhir/models';
+import { UserService } from '../../shared/user.service';
 
 class ResourceSecurity {
   type: 'everyone'|'user'|'group';
@@ -53,12 +54,12 @@ class ResourceSecurity {
   styleUrls: ['./resource-permissions.component.css']
 })
 export class ResourcePermissionsComponent implements OnInit {
-  @Input() resource: DomainResource;
+  @Input() resource: IProject|IProjectResource;
 
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
   public groupsArray: IGroup[];
-  public usersBundle: Bundle;
+  public usersArray: IUser[];
   public foundGroupsArray: IGroup[];
   public foundUsersBundle: Bundle;
   public searchGroupsCriteria: string;
@@ -69,7 +70,7 @@ export class ResourcePermissionsComponent implements OnInit {
   public copyResource: DomainResource;
   public isSearchingGroups = false;
 
-  private currentUser: Practitioner;
+  private currentUser: IUser;
 
   public Globals = Globals;
   public getHumanNamesDisplay = getHumanNamesDisplay;
@@ -80,17 +81,17 @@ export class ResourcePermissionsComponent implements OnInit {
     public configService: ConfigService,
     private fhirService: FhirService,
     private groupService: GroupService,
-    private practitionerService: PractitionerService,
+    private userService: UserService,
     private implementationGuideService: ImplementationGuideService,
     private modal: NgbModal) {
 
   }
 
-  get meta(): Meta {
-    if (this.resource) {
-      return this.resource.meta;
-    }
-  }
+  // get meta(): Meta {
+  //   if (this.resource) {
+  //     return this.resource.meta;
+  //   }
+  // }
 
   copyTypeaheadSearch = (text$: Observable<string>) => {
     return text$.pipe(
@@ -139,38 +140,39 @@ export class ResourcePermissionsComponent implements OnInit {
   };
 
   public get security(): ResourceSecurity[] {
-    const resourceSecurity = getMetaSecurity(this.meta);
-    const filtered = resourceSecurity.filter((next) => !next.inactive);
-    const grouped = groupBy(filtered, (next) => next.type + next.id);
+    if (!this.resource) {
+      return [];
+    }
+    
+    const perms = this.resource.permissions || [];
+    const grouped = groupBy(perms, (next) => next.type + next.targetId);
     const groupedKeys = Object.keys(grouped);
 
     return groupedKeys.map((groupedKey) => {
-      const group = grouped[groupedKey];
+      const group: IPermission[] = grouped[groupedKey];
       const next = new ResourceSecurity();
       next.type = group[0].type;
-      next.id = group[0].id;
+      next.id = group[0].targetId;
 
       if (next.type === 'group' && this.groupsArray) {
-        const foundGroupEntry = (this.groupsArray || []).find((entry) => entry.id === next.id);
-
-        if (foundGroupEntry) {
-          next.display = (<Group>foundGroupEntry).name;
+        const found = (this.groupsArray || []).find((g: IGroup) => g.id === next.id);
+        if (found) {
+          next.display = found.name;
         }
       }
 
-      if (next.type === 'user' && this.usersBundle) {
-        const foundUserEntry = (this.usersBundle.entry || []).find((entry) => entry.resource.id === next.id);
-
-        if (foundUserEntry) {
-          const humanNames = (<Practitioner>foundUserEntry.resource).name;
-          next.display = getHumanNamesDisplay(humanNames);
+      if (next.type === 'user' && this.usersArray) {
+        const found = (this.usersArray || []).find((u: IUser) => u.id === next.id);
+        if (found) {
+          next.display = found.name;
         }
       }
 
-      next.canRead = !!group.find((nextSub) => nextSub.permission === 'read');
-      next.canWrite = !!group.find((nextSub) => nextSub.permission === 'write');
+      next.canRead = !!group.find((nextSub) => nextSub.grant === 'read');
+      next.canWrite = !!group.find((nextSub) => nextSub.grant === 'write');
       return next;
     });
+
   }
 
   public get foundGroups(): IGroup[] {
@@ -203,23 +205,23 @@ export class ResourcePermissionsComponent implements OnInit {
   }
 
   public searchUsers() {
-    this.practitionerService.getUsers(null, this.searchUsersCriteria).toPromise()
-      .then((results: Bundle) => this.foundUsersBundle = results)
+    firstValueFrom(this.userService.getUsers(this.searchUsersCriteria))
+      .then((res: Paginated<IUser>) => this.usersArray = res.results)
       .catch((err) => this.message = getErrorString(err));
   }
 
   public addPermission(type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
-    if (addPermission(this.meta, type, permission, id)) {
+    if (addPermission(this.resource, type, permission, id)) {
       this.getPermittedResources();
     }
   }
 
   public removePermission(type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
-    removePermission(this.meta, type, permission, id);
+    removePermission(this.resource, type, permission, id);
   }
 
   /**
-   * Gets all practitioners/users and groups that are assigned
+   * Gets all users and groups that are assigned
    * permissions to this resource. There is a possibility that
    * the user is not a member of one of the groups that are
    * permitted to the resource. In that case, the group will not
@@ -227,13 +229,13 @@ export class ResourcePermissionsComponent implements OnInit {
    * the ID of the group.
    */
   private getPermittedResources() {
-    const resourceSecurity = getMetaSecurity(this.meta);
-    const groupIds = resourceSecurity
-      .filter((security) => security.type === 'group')
-      .map((security) => security.id);
-    const userIds = resourceSecurity
-      .filter((security) => security.type === 'user')
-      .map((security) => security.id);
+    const permissions: IPermission[] = this.resource?.permissions ?? [];
+    const groupIds = permissions
+      .filter((p) => p.type === 'group')
+      .map((p) => p.targetId);
+    const userIds = permissions
+      .filter((p) => p.type === 'user')
+      .map((p) => p.targetId);
 
     if (groupIds.length > 0) {
       this.groupService.getMembership(null, groupIds.join(',')).toPromise()
@@ -242,34 +244,36 @@ export class ResourcePermissionsComponent implements OnInit {
     }
 
     if (userIds.length > 0) {
-      this.practitionerService.getUsers(null, null, null, userIds.join(',')).toPromise()
-        .then((results: Bundle) => this.usersBundle = results)
+      firstValueFrom(this.userService.getUsers(null, null, userIds.join(',')))
+        .then((res: Paginated<IUser>) => this.usersArray = res.results)
         .catch((err) => this.message = getErrorString(err));
     }
   }
 
   private findCurrentUserPermission(permission: 'read'|'write') {
-    const resourceSecurity = getMetaSecurity(this.meta);
+    
+    if (!this.resource.permissions) {
+      return false;
+    }
 
-    return resourceSecurity.find((security) => {
-      if (security.permission !== permission) {
+    return this.resource.permissions.find((perm: IPermission) => {
+      if (perm.grant !== permission) {
         return false;
       }
 
-      if (security.type === 'user' && security.id === this.currentUser.id) {
+      if (perm.type === 'user' && perm.targetId === this.currentUser.id) {
         return true;
-      } else if (security.type === 'group' && this.groupsArray) {
-        return !!(this.groupsArray || []).find((entry) => {
-          const group = <Group>entry;
-          return !!(group.member || []).find((member) => {
-            if (!member.inactive && member.entity && member.entity.reference) {
-              return member.entity.reference === `Practitioner/${this.currentUser.id}`;
+      } else if (perm.type === 'group' && this.groupsArray) {
+        return !!(this.groupsArray || []).find((group: IGroup) => {
+          
+          return !!(group.members || []).find((member: IUser|string) => {
+            if (member['id']) {
+              return member['id'] === this.currentUser.id;
             }
-
-            return false;
+            return member === this.currentUser.id;
           });
         });
-      } else if (security.type === 'everyone') {
+      } else if (perm.type === 'everyone') {
         return true;
       }
 
@@ -292,9 +296,6 @@ export class ResourcePermissionsComponent implements OnInit {
     }
 
     if (this.copyResource.meta && this.copyResource.meta.security && this.copyResource.meta.security.length > 0) {
-      ensureSecurity(this.meta);
-
-      this.meta.security = this.copyResource.meta.security;
 
       const meCanRead = this.findCurrentUserPermission('read');
       const meCanWrite = this.findCurrentUserPermission('write');
@@ -325,8 +326,8 @@ export class ResourcePermissionsComponent implements OnInit {
   ngOnInit() {
     this.getPermittedResources();
 
-    this.practitionerService.getMe().toPromise()
-      .then((currentUser: Practitioner) => this.currentUser = currentUser)
+    firstValueFrom(this.userService.getMe())
+      .then((currentUser: IUser) => this.currentUser = currentUser)
       .catch((err) => this.message = getErrorString(err));
   }
 }

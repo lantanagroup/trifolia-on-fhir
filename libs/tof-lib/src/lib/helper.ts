@@ -1,6 +1,7 @@
 import { ResourceSecurityModel } from './resource-security-model';
 import { Globals } from './globals';
 import { ICoding, IDomainResource, IHumanName, IIdentifier, IMeta, IPractitioner } from './fhirInterfaces';
+import { IPermission, IProject, IProjectResource } from './models';
 
 export class ParsedUrlModel {
   public resourceType: string;
@@ -230,73 +231,66 @@ export function parsePermissions(meta: IMeta): SecurityPermission[] {
     });
 }
 
-export function findPermission(meta: IMeta, type: 'user' | 'group' | 'everyone', permission: 'read' | 'write', id?: string) {
-  if (!meta) {
+export function findPermission(perms: IPermission[], type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string) {
+
+  if (!perms) {
     return false;
   }
 
-  const security = meta.security || [];
-  const delimiter = Globals.securityDelim;
-
-  return !!security.find((next) => {
-    if (next.system !== Globals.securitySystem) {
-      return false;
-    }
-
+  return !!perms.find((p: IPermission) => {
     if (type === 'everyone') {
-      return next.code === `${type}${delimiter}${permission}`;
+      return p.type === 'everyone' && p.grant == grant;
     } else {
-      return next.code === `${type}${delimiter}${id}${delimiter}${permission}`;
+      return p.type === type && p.grant == grant && p.targetId === targetId;
     }
   });
 }
 
-export function addPermission(meta: IMeta, type: 'user' | 'group' | 'everyone', permission: 'read' | 'write', id?: string): boolean {
-  ensureSecurity(meta);
-  const delim = Globals.securityDelim;
+export function addPermission(resource: IProject|IProjectResource, type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
 
   // Write permissions should always assume read permissions as well
-  if (permission === 'write' && !findPermission(meta, type, 'read', id)) {
-    addPermission(meta, type, 'read', id);
+  if (grant === 'write' && !findPermission(resource.permissions, type, 'read', targetId)) {
+    addPermission(resource, type, 'read', targetId);
   }
 
-  const securityValue = type === 'everyone' ? `${type}${delim}${permission}` : `${type}${delim}${id}${delim}${permission}`;
-  let found: ICoding;
-
-  if (meta && meta.security) {
-    found = meta.security.find((security) => security.system === Globals.securitySystem && security.code === securityValue);
+  let newPerm: IPermission = { type: type, grant: grant };
+  if (type !== 'everyone') {
+    newPerm.targetId = targetId;
   }
+  let found = false;
+
+  if (!resource.permissions) {
+    resource.permissions = [];
+  }
+
+  found = findPermission(resource.permissions, type, grant, targetId);
 
   if (!found) {
-    meta.security.push({
-      system: Globals.securitySystem,
-      code: securityValue
-    });
-
+    resource.permissions.push(newPerm);
     return true;
   }
 
   return false;
 }
 
-export function removePermission(meta: IMeta, type: 'user' | 'group' | 'everyone', permission: 'read' | 'write', id?: string): boolean {
+export function removePermission(resource: IProject|IProjectResource, type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
   const delim = Globals.securityDelim;
 
   // Assume that if we're removing read permission, they shouldn't have write permission either
-  if (permission === 'read') {
-    removePermission(meta, type, 'write', id);
+  if (grant === 'read') {
+    removePermission(resource, type, 'write', targetId);
   }
 
-  const securityValue = type === 'everyone' ? `${type}${delim}${permission}` : `${type}${delim}${id}${delim}${permission}`;
-  let found: ICoding;
+  let index = -1;
 
-  if (meta && meta.security) {
-    found = meta.security.find((security) => security.system === Globals.securitySystem && security.code === securityValue);
+  if (resource && resource.permissions) {
+    index = type === 'everyone' ? 
+      resource.permissions.findIndex((p: IPermission) => p.type === type && p.grant === grant) : 
+      resource.permissions.findIndex((p: IPermission) => p.type === type && p.grant === grant && p.targetId === targetId);
   }
 
-  if (found) {
-    const index = meta.security.indexOf(found);
-    meta.security.splice(index, 1);
+  if (index > -1) {
+    resource.permissions.splice(index, 1);
     return true;
   }
 

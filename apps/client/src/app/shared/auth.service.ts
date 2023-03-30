@@ -243,7 +243,7 @@ export class AuthService {
     }
 
     if (!meta.security || meta.security.length === 0) {
-      addPermission(meta, 'everyone', 'write');
+      //addPermission(meta, 'everyone', 'write');
     }
 
     return meta;

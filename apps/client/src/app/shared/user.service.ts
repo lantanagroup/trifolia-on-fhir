@@ -2,19 +2,16 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import { IUser } from '@trifolia-fhir/models';
 import { Observable } from 'rxjs';
+import { Paginated } from '@trifolia-fhir/tof-lib';
 
 @Injectable()
 export class UserService {
 
     constructor(public http: HttpClient) { }
 
-    public getUsers(content?: string, name?: string, email?: string): Observable<IUser[]> {
+    public getUsers(name?: string, email?: string, id?: string): Observable<Paginated<IUser>> {
 
       let url = '/api/users?';
-
-      if (content) {
-        url += '_content=' + encodeURIComponent(content) + '&';
-      }
 
       if (name) {
         url += 'name=' + encodeURIComponent(name) + '&';
@@ -24,7 +21,11 @@ export class UserService {
         url += 'email=' + encodeURIComponent(email);
       }
 
-      return this.http.get<IUser[]>(url);
+      if (id) {
+        url += '_id=' + encodeURIComponent(id);
+      }
+
+      return this.http.get<Paginated<IUser>>(url);
 
     }
 

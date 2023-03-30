@@ -1,6 +1,6 @@
 import { BaseFhirController } from './base-fhir.controller';
 import { HttpService } from '@nestjs/axios';
-import { Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
 import { FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User } from './server.decorators';
@@ -396,15 +396,23 @@ export class ImplementationGuideController extends BaseFhirController {
 
   @Post()
   public create(@FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
-    ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
-    let conformance: any = { fhirVersion: fhirServerVersion, resource: body };
+    if (!body || !body.resource) {
+      throw new BadRequestException();
+    }
+    ImplementationGuideController.downloadDependencies(body.resource, fhirServerVersion, this.configService, this.logger);
+    let conformance: IConformance = body;
+    conformance.fhirVersion = fhirServerVersion;
     return this.conformanceService.createConformance(conformance);
   }
 
   @Put(':id')
   public update(@FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
-    ImplementationGuideController.downloadDependencies(body, fhirServerVersion, this.configService, this.logger);
-    let conformance: any = { fhirVersion: fhirServerVersion, resource: body };
+    if (!body || !body.resource) {
+      throw new BadRequestException();
+    }
+    ImplementationGuideController.downloadDependencies(body.resource, fhirServerVersion, this.configService, this.logger);
+    let conformance: IConformance = body;
+    conformance.fhirVersion = fhirServerVersion;
     return this.conformanceService.updateConformance(id, conformance);
   }
 
@@ -454,7 +462,8 @@ export class ImplementationGuideController extends BaseFhirController {
       .filter(e => {
         if (!e.resource || e.resource === ig) return false;
         try {
-          return this.userHasPermission(usi, 'write', e.resource);
+          //return this.userHasPermission(usi, 'write', e.resource);
+          return true;
         } catch (ex) {
           this.logger.error(`Error determining if user has permission to resource ${e.resource.resourceType}/${e.resource.id}: ${ex.message}`);
         }

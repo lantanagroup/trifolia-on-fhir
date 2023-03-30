@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../shared/auth.service';
-import {getErrorString, Globals} from '@trifolia-fhir/tof-lib';
+import {getErrorString, Globals, Paginated} from '@trifolia-fhir/tof-lib';
 import {ConfigService} from '../shared/config.service';
 import {GroupService} from '../shared/group.service';
 import {IGroup, IUser} from '@trifolia-fhir/models';
 import { UserService } from '../shared/user.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   templateUrl: './user.component.html',
@@ -14,7 +15,7 @@ export class UserComponent implements OnInit {
   public user: IUser = {} as IUser;
   public searchUsersName: string;
   public searchUsersEmail: string;
-  public searchUsersBundle;
+  public searchUsersBundle: Paginated<IUser>;
   public editGroup: IGroup;
   public message: string;
   public Globals = Globals;
@@ -65,8 +66,8 @@ export class UserComponent implements OnInit {
   }
 
   public searchUsers() {
-    this.userService.getUsers(null, this.searchUsersName, this.searchUsersEmail).toPromise()
-      .then((results: IUser[]) => {
+    firstValueFrom(this.userService.getUsers(this.searchUsersName, this.searchUsersEmail))
+      .then((results: Paginated<IUser>) => {
         this.searchUsersBundle = results;
         console.log(results[0])
       })

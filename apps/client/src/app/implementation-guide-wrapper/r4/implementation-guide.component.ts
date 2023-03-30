@@ -51,7 +51,7 @@ class PageDefinition {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class R4ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
-  @Input() public conformance: IConformance;
+  public conformance: IConformance;
   public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
@@ -544,7 +544,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
               this.message = 'The specified implementation guide either does not exist or was deleted';
               return;
             }
-
+            
+            this.conformance = results;
             this.implementationGuide = new ImplementationGuide(results.resource);
             this.igChanging.emit(false);
             this.initPagesAndGroups();
@@ -843,29 +844,24 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
-    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.implementationGuide)
-      .subscribe((implementationGuide: ImplementationGuide) => {
+    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
+      .subscribe({
+        next: (implementationGuide: IConformance) => {
         if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
         } else {
-          // Copy the new permissions to the context so that we other resources create for the ig will adopt the new permissions
-          if (this.configService.project && this.configService.project.implementationGuideId === this.implementationGuideId) {
-            // only if the updated implementation guide has security tags
-            if (implementationGuide.meta && implementationGuide.meta.security && implementationGuide.meta.security.length > 0) {
-              this.configService.project.securityTags = implementationGuide.meta.security;
-            }
-          }
-
           this.message = 'Your changes have been saved!';
           this.igChanging.emit(false);
           setTimeout(() => {
             this.message = '';
           }, 3000);
         }
-      }, (err) => {
+      }, 
+      error: (err) => {
         this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
-      });
+      }
+    });
   }
 
   private initPage(page: ImplementationGuidePageComponent, level = 0, parent?: ImplementationGuidePageComponent) {

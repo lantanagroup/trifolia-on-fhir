@@ -157,7 +157,7 @@ export class BaseFhirController extends BaseController {
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
     const contextImplementationGuide = await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId);
 
-    this.ensureUserCanEdit(userSecurityInfo, data);
+    //this.ensureUserCanEdit(userSecurityInfo, data);
 
     if (!data.id) {
       data.id = generateId();

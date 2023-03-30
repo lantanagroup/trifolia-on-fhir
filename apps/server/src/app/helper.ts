@@ -762,6 +762,6 @@ export function copyPermissions(source: STU3DomainResource | R4DomainResource, d
   destination.meta = destination.meta || {};
 
   sourcePermissions.forEach((permission) => {
-    addPermission(destination.meta, permission.type, permission.permission, permission.id);
+    //addPermission(destination.meta, permission.type, permission.permission, permission.id);
   });
 }

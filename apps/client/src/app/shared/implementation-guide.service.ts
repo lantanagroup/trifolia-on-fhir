@@ -102,13 +102,13 @@ export class ImplementationGuideService {
     return this.http.get<IConformance>(url);
   }
 
-  public saveImplementationGuide(implementationGuide: IImplementationGuide ) {
-    return this.http.post('/api/implementationGuide', implementationGuide);
+  public saveImplementationGuide(implementationGuide: IConformance): Observable<IConformance> {
+    return this.http.post<IConformance>('/api/implementationGuide', implementationGuide);
   }
 
-  public updateImplementationGuide(id: string, implementationGuide: IImplementationGuide) {
+  public updateImplementationGuide(id: string, implementationGuide: IConformance): Observable<IConformance> {
     if (id) {
-      return this.http.put(`/api/implementationGuide/${id}`, implementationGuide);
+      return this.http.put<IConformance>(`/api/implementationGuide/${id}`, implementationGuide);
     } else {
      return null;
     }

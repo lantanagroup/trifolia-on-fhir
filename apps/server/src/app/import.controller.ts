@@ -69,11 +69,12 @@ export class ImportController extends BaseController {
       const resourceReference = requestBundle.entry[i].request.url;
 
       if (e.resource) {
-        if (this.userHasPermission(userSecurityInfo, 'write', e.resource)) {
-          response[resourceReference] = 'update';
-        } else {
-          response[resourceReference] = 'unauthorized';
-        }
+        response[resourceReference] = 'update';
+        // if (this.userHasPermission(userSecurityInfo, 'write', e.resource)) {
+        //   response[resourceReference] = 'update';
+        // } else {
+        //   response[resourceReference] = 'unauthorized';
+        // }
       } else if (e.response && e.response.status && e.response.status.startsWith('404')) {
         response[resourceReference] = 'add';
       } else {
