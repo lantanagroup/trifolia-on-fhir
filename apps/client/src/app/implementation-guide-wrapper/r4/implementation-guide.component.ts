@@ -117,6 +117,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     return (this.implementationGuide.definition.resource || [])
       .filter((resource: ImplementationGuideResourceComponent) => {
+        console.log('resource:', resource);
         if (!resource.reference || !resource.reference.reference) {
           return true;
         }

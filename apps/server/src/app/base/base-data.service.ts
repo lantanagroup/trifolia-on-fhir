@@ -1,8 +1,9 @@
 import { Paginated, PaginateOptions } from "@trifolia-fhir/tof-lib";
-import { HydratedDocument, Model } from "mongoose";
+import mongoose, { HydratedDocument, Model } from "mongoose";
 import { BaseEntity } from "./base.entity";
 import { TofLogger } from "../tof-logger";
 import type { IBaseDataService } from "./interfaces";
+import { Conformance, ConformanceSchema } from "../conformance/conformance.schema";
 
 
 export class BaseDataService<T extends HydratedDocument<BaseEntity>> implements IBaseDataService {
@@ -13,6 +14,10 @@ export class BaseDataService<T extends HydratedDocument<BaseEntity>> implements 
         protected model: Model<T>
     ) {}
 
+
+    public getEmpty(): T {
+        return this.model.hydrate({});
+    }
 
     public getModel() : Model<T> {
         return this.model;

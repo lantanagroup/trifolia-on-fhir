@@ -36,6 +36,12 @@ export class BaseDataController<T extends HydratedDocument<BaseEntity>> extends 
         }
     }
 
+    public assertIdMatch(id: string, entity: BaseEntity): void {
+        if (('id' in entity && entity['id'] !== id) || ('_id' in entity && entity['_id'] !== id)) {
+            throw new BadRequestException();
+        }
+    }
+
     
 
     @Get() 
@@ -45,10 +51,11 @@ export class BaseDataController<T extends HydratedDocument<BaseEntity>> extends 
         const res = await this.dataService.search(options);
         return res;
     }
-
+    
 
     @Get(':id')
     public async get(@Param('id') id: string): Promise<T> {
+        console.log('in controller get:', id);
         let res = await this.dataService.findById(id);
 
         if (!res) {
@@ -83,11 +90,7 @@ export class BaseDataController<T extends HydratedDocument<BaseEntity>> extends 
     }
 
 
-    public assertIdMatch(id: string, entity: BaseEntity): void {
-        if (('id' in entity && entity['id'] !== id) || ('_id' in entity && entity['_id'] !== id)) {
-            throw new BadRequestException();
-        }
-    }
+    
 
 
     

@@ -1,17 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {Bundle, DomainResource, Group, Meta, Practitioner} from '@trifolia-fhir/stu3';
-import {Globals, Paginated} from '@trifolia-fhir/tof-lib';
+import {Bundle, DomainResource} from '@trifolia-fhir/stu3';
+import {getAuthIdIdentifier, getAuthIdSource, Globals, Paginated} from '@trifolia-fhir/tof-lib';
 import {FhirService} from '../../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirReferenceModalComponent} from '../../fhir-edit/reference-modal/reference-modal.component';
-import {PractitionerService} from '../../shared/practitioner.service';
 import {
   addPermission,
-  ensureSecurity, getErrorString,
+  getErrorString,
   getHumanNameDisplay,
-  getHumanNamesDisplay, getIdentifierSource,
-  getMetaSecurity,
-  getPractitionerEmail,
+  getHumanNamesDisplay, 
+  getUserEmail,
   groupBy,
   removePermission
 } from '@trifolia-fhir/tof-lib';
@@ -61,7 +59,7 @@ export class ResourcePermissionsComponent implements OnInit {
   public groupsArray: IGroup[];
   public usersArray: IUser[];
   public foundGroupsArray: IGroup[];
-  public foundUsersBundle: Bundle;
+  public foundUsersArray: IUser[];
   public searchGroupsCriteria: string;
   public searchUsersCriteria: string;
   public message: string;
@@ -74,8 +72,10 @@ export class ResourcePermissionsComponent implements OnInit {
 
   public Globals = Globals;
   public getHumanNamesDisplay = getHumanNamesDisplay;
-  public getPractitionerEmail = getPractitionerEmail;
-  public getIdentifierSource = getIdentifierSource;
+
+  public getAuthIdIdentifier  = getAuthIdIdentifier;
+  public getAuthIdSource = getAuthIdSource;
+  public getUserEmail = getUserEmail;
 
   constructor(
     public configService: ConfigService,
@@ -183,9 +183,9 @@ export class ResourcePermissionsComponent implements OnInit {
     return [];
   }
 
-  public get foundUsers(): Practitioner[] {
-    if (this.foundUsersBundle) {
-      return (this.foundUsersBundle.entry || []).map((entry) => <Practitioner> entry.resource);
+  public get foundUsers(): IUser[] {
+    if (this.foundUsersArray && this.foundUsersArray.length > 0) {
+      return this.foundUsersArray;
     }
 
     return [];
@@ -206,7 +206,7 @@ export class ResourcePermissionsComponent implements OnInit {
 
   public searchUsers() {
     firstValueFrom(this.userService.getUsers(this.searchUsersCriteria))
-      .then((res: Paginated<IUser>) => this.usersArray = res.results)
+      .then((res: Paginated<IUser>) => this.foundUsersArray = res.results)
       .catch((err) => this.message = getErrorString(err));
   }
 

@@ -23,6 +23,7 @@ import { IConformance } from '@trifolia-fhir/models';
   styleUrls: ['./codesystem.component.css']
 })
 export class CodesystemComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+  public conformance: IConformance;
   public codeSystem: ICodeSystem;
   public filteredConcepts: ConceptDefinitionComponent[] = [];
   public pagedConcepts: ConceptDefinitionComponent[] = [];
@@ -59,6 +60,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     } else if (this.configService.isFhirSTU3) {
       this.codeSystem = new STU3CodeSystem({ meta: this.authService.getDefaultMeta() });
     }
+    this.conformance = <IConformance>{ resource: this.codeSystem, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -183,30 +185,35 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       return;
     }
 
-    this.codeSystemService.save(this.codeSystemId, this.codeSystem)
-      .subscribe((codeSystem) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.codeSystemId = codeSystem.id;
-          this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${codeSystem.id}`]);
-        } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystem.id, codeSystem.name);
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
+    this.codeSystemService.save(this.codeSystemId, this.conformance)
+      .subscribe({
+        next: (conf: IConformance) => {
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.codeSystemId = conf.id;
+            this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${conf.id}`]);
+          } else {
+            this.conformance = conf;
+            this.codeSystem = conf.resource;
+            this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, conf.id, conf.name);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
+          this.message = 'Your changes have been saved!';
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the code system: ' + getErrorString(err);
         }
-        this.message = 'Your changes have been saved!';
-      }, (err) => {
-        this.message = 'An error occurred while saving the code system: ' + getErrorString(err);
       });
   }
 
   private getCodeSystemID() {
-    return this.route.snapshot.paramMap.get('id');
+    return this.isNew ? null : this.route.snapshot.paramMap.get('id');
   }
 
   private getCodeSystem() {
-    const codeSystemId = this.getCodeSystemID();
+    this.codeSystemId = this.getCodeSystemID();
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -223,7 +230,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     if (!this.isNew) {
       this.codeSystem = null;
 
-      this.codeSystemService.get(codeSystemId)
+      this.codeSystemService.get(this.codeSystemId)
         .subscribe({
           next: (conf: IConformance) => {
             if (!conf || !conf.resource || conf.resource.resourceType !== 'CodeSystem') {
@@ -231,6 +238,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
               return;
             }
 
+            this.conformance = conf;
             this.codeSystem = <ICodeSystem>conf.resource;
             this.nameChanged();
             this.refreshConcepts();
@@ -242,7 +250,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
           error: (err) => {
             this.csNotFound = err.status === 404;
             this.message = getErrorString(err);
-            this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystemId);
+            this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCodeSystems, this.codeSystemId);
           }
         });
     }

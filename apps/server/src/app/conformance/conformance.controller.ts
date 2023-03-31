@@ -6,18 +6,27 @@ import type { ITofUser, Paginated } from '@trifolia-fhir/tof-lib';
 import { User } from '../server.decorators';
 import { ConformanceService } from './conformance.service';
 import { BaseDataController } from '../base/base-data.controller';
-import { ConformanceDocument } from './conformance.schema';
+import { Conformance, ConformanceDocument } from './conformance.schema';
+import { TofNotFoundException } from '../../not-found-exception';
 
 @Controller('api/conformance')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Conformance')
 @ApiOAuth2([])
 export class ConformanceController extends BaseDataController<ConformanceDocument> {
+    protected resourceType: string
 
     constructor(
         protected readonly conformanceService: ConformanceService
     ) {
         super(conformanceService);
+    }
+
+
+    protected assertResourceValid(conformance: IConformance) {
+        if (!conformance || conformance.resource.resourceType !== this.resourceType) {
+            throw new TofNotFoundException(`No valid resource of type ${this.resourceType} found`);
+        }
     }
 
 
@@ -31,6 +40,14 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
             filter['resource.resourceType'] = { $regex: query['resource.resourceType'], $options: 'i' };
         }
         return filter;
+    }
+
+
+    
+    
+    @Get('empty')
+    public async getEmpty(): Promise<IConformance> {
+        return await this.conformanceService.getEmpty();
     }
 
 
@@ -51,8 +68,8 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
 
     @Get(':id/references')
     public async getWithReferences(@User() user: ITofUser, @Param('id') id: string): Promise<any> {
-      await this.assertCanReadById(user, id);
-      return await this.conformanceService.findAll({_id: new Object(id)}, ["references.value"]);
+        await this.assertCanReadById(user, id);
+        return await this.conformanceService.findAll({ _id: new Object(id) }, ["references.value"]);
     }
 
     @Get(':id')

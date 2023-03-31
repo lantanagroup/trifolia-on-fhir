@@ -4,21 +4,22 @@ import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {IConformance, IProject} from '@trifolia-fhir/models';
+import { ConformanceService } from './conformance.service';
 
 @Injectable()
-export class CodeSystemService {
+export class CodeSystemService extends ConformanceService {
 
   constructor(
-      private http: HttpClient) {
-
+      protected http: HttpClient) {
+      super(http);
   }
 
-    public save(codeSystemId:string, codeSystem: ICodeSystem): Observable<ICodeSystem> {
+    public save(codeSystemId:string, codeSystem: IConformance): Observable<IConformance> {
         if (codeSystemId) {
             const url = '/api/codeSystem/' + encodeURIComponent(codeSystemId);
-            return this.http.put<ICodeSystem>(url, codeSystem);
+            return this.http.put<IConformance>(url, codeSystem);
         } else {
-            return this.http.post<ICodeSystem>('/api/codeSystem', codeSystem);
+            return this.http.post<IConformance>('/api/codeSystem', codeSystem);
         }
     }
 

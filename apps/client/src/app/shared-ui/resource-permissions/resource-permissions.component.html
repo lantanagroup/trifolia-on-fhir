@@ -161,8 +161,7 @@
             </button>
           </div>
         </div>
-
-        <table class="table table-striped" *ngIf="foundUsersBundle">
+        <table class="table table-striped" *ngIf="foundUsersArray">
           <thead>
           <tr>
             <th>ID</th>
@@ -174,14 +173,14 @@
           </thead>
           <tbody>
           <tr *ngFor="let u of foundUsers">
-            <td title="{{getIdentifierDisplay(u)}}">
+            <td title="{{getAuthIdIdentifier(u.authId)}}">
               <span>{{u.id}}</span>
-              <span *ngIf="getIdentifierSource(u.identifier)"> - {{getIdentifierSource(u.identifier)}}</span>
+              <span *ngIf="getAuthIdSource(u.authId)"> - {{getAuthIdSource(u.authId)}}</span>
             </td>
             <td>
-              {{getHumanNamesDisplay(u.name)}}
+              {{u.name}}
             </td>
-            <td>{{getPractitionerEmail(u)}}</td>
+            <td>{{getUserEmail(u)}}</td>
             <td class="actions-column-1">
               <button type="button" class="btn btn-primary" title="Add read/view permissions for this user" (click)="addPermission('user', 'read', u.id); change.emit();">
                 <i class="fas fa-plus"></i>

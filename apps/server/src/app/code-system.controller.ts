@@ -1,32 +1,32 @@
-import {BaseFhirController} from './base-fhir.controller';
 import {HttpService} from '@nestjs/axios';
-import {Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpException, NotFoundException, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import {ICodeSystem, PaginateOptions} from '@trifolia-fhir/tof-lib';
+import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
 import {AuthService} from './auth/auth.service';
 import {IConformance} from '@trifolia-fhir/models';
 import {ConformanceService} from './conformance/conformance.service';
 import { ObjectId } from 'mongodb';
+import { ConformanceController } from './conformance/conformance.controller';
 
 @Controller('api/codeSystem')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Code System')
 @ApiOAuth2([])
-export class CodeSystemController extends BaseFhirController {
+export class CodeSystemController extends ConformanceController {
   resourceType = 'CodeSystem';
 
   protected readonly logger = new TofLogger(CodeSystemController.name);
 
   constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
-    super(httpService, configService);
+    super(conformanceService);
   }
 
   @Get()
-  public async search(@User() user, @FhirServerVersion() fhirServerVersion, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
+  public async searchCodeSystem(@User() user, @FhirServerVersion() fhirServerVersion, @Query() query?: any, @RequestHeaders() headers?): Promise<Paginated<IConformance>> {
     const searchFilters = {};
 
     if ('name' in query) {
@@ -59,29 +59,28 @@ export class CodeSystemController extends BaseFhirController {
   }
 
   @Get(':id')
-  public async get(@FhirServerVersion() fhirServerVersion,  @Query() query, @User() user, @Param('id') id: string) {
+  public async getCodeSystem(@FhirServerVersion() fhirServerVersion,  @Query() query, @User() user, @Param('id') id: string): Promise<IConformance> {
     const confResource: IConformance = await this.conformanceService.findById(id);
-    if(confResource.resource.resourceType === 'CodeSystem')
-    {
-      return <ICodeSystem>confResource.resource;
-    }
-    return null;
+    this.assertResourceValid(confResource);
+    return confResource;
   }
 
   @Post()
-  public create( @FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = true) {
-    let conformance: any = { fhirVersion: fhirServerVersion, resource: body };
+  public createCodeSystem(@FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = true) {
+    let conformance: IConformance = body;
+    conformance.fhirVersion = fhirServerVersion;
     return this.conformanceService.createConformance(conformance, contextImplementationGuideId);
   }
 
   @Put(':id')
-  public update( @FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
-    let conformance: any = { fhirVersion: fhirServerVersion, resource: body };
+  public updateCodeSystem(@FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
+    let conformance: IConformance = body;
+    conformance.fhirVersion = fhirServerVersion;
     return this.conformanceService.updateConformance(id, conformance);
   }
 
   @Delete(':id')
-  public delete(@FhirServerVersion() fhirServerVersion: 'stu3'|'r4'|'r5', @Param('id') id: string, @User() user) {
+  public deleteCodeSystem(@FhirServerVersion() fhirServerVersion: 'stu3'|'r4'|'r5', @Param('id') id: string, @User() user) {
     return this.conformanceService.delete(id);
   }
 }

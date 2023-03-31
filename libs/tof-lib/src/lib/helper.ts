@@ -1,7 +1,7 @@
 import { ResourceSecurityModel } from './resource-security-model';
 import { Globals } from './globals';
 import { ICoding, IDomainResource, IHumanName, IIdentifier, IMeta, IPractitioner } from './fhirInterfaces';
-import { IPermission, IProject, IProjectResource } from './models';
+import { IPermission, IProject, IProjectResource, IUser } from './models';
 
 export class ParsedUrlModel {
   public resourceType: string;
@@ -335,6 +335,12 @@ export function getPractitionerEmail(practitioner: IPractitioner) {
 
   if (foundEmail && foundEmail.value) {
     return foundEmail.value.replace('mailto:', '');
+  }
+}
+
+export function getUserEmail(user: IUser) {
+  if (user && user.email) {
+    return user.email.replace('mailto:', '');
   }
 }
 

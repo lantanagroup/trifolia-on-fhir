@@ -44,7 +44,8 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         if (!newConf.resource.meta) {
             newConf.resource.meta = {};
         }
-        newConf.resource.meta.versionId = versionId;
+        delete newConf.resource.meta['security'];
+        newConf.resource.meta.versionId = versionId.toString();
         newConf.resource.meta.lastUpdated = lastUpdated;
         newConf.versionId = versionId;
         newConf.lastUpdated = lastUpdated;
@@ -99,9 +100,6 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             throw new BadRequestException(`Invalid conformance resource provided.`);
         }
 
-        for (let key in upConf) {
-            existing[key] = upConf[key];
-        }
 
         // ensure we have a resource metadata object
         if (!existing.resource.meta) {
@@ -114,12 +112,21 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         }
         // otherwise check resource meta
         else if (existing.resource.meta.versionId) {
-            versionId = existing.resource.meta.versionId + 1;
+            versionId = parseInt(existing.resource.meta.versionId) + 1;
         } else {
             versionId = 1;
         }
+        console.log('versionId:', existing.versionId, existing.resource?.meta?.versionId, versionId);
 
-        existing.resource.meta.versionId = versionId;
+    
+        // update every property supplied from updated object
+        for (let key in upConf) {
+            existing[key] = upConf[key];
+        }
+        
+        // set version and timestamp
+        delete existing.resource.meta['security'];
+        existing.resource.meta.versionId = versionId.toString();
         existing.resource.meta.lastUpdated = lastUpdated;
         existing.versionId = versionId;
         existing.lastUpdated = lastUpdated;

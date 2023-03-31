@@ -10,7 +10,7 @@ import {AuthConfig, OAuthErrorEvent, OAuthService} from 'angular-oauth2-oidc';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import { IBundle } from '@trifolia-fhir/tof-lib';
 import { UserService } from './user.service';
-import type {IGroup, IUser} from '@trifolia-fhir/models';
+import type {IConformance, IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
@@ -247,5 +247,12 @@ export class AuthService {
     }
 
     return meta;
+  }
+
+
+  public getDefaultPermissions(): IPermission[] {
+    let conf: IConformance|IProject = <IConformance|IProject>{}
+    addPermission(conf, 'everyone', 'write');
+    return conf.permissions;
   }
 }
