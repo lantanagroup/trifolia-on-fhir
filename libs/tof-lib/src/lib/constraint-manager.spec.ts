@@ -691,10 +691,28 @@ describe('ConstraintManager', () => {
         expect(cm.elements[4].constrainedElement.type[0].targetProfile[1]).toBe('http://hl7.org/fhir/StructureDefinition/PractitionerRole');
         expect(cm.elements[4].constrainedElement.type[0].targetProfile[2]).toBe('http://hl7.org/fhir/StructureDefinition/RelatedPerson');
 
-        // console.log(cm);
-        //console.log(testData);
-        //console.log(extModel);
 
+      });
+
+    });
+
+    describe('regex recognition methods should work correctly', () => {
+
+      it('should recognize the correct type', async () => {
+        const regExString1 = 'Extension.value[x]';
+        const regExString2 = 'Extension.valueReference';
+        const regExString3 = 'Extension.valueHumanName';
+        const regExString4 = 'Extension.valueTriggerDefinition';
+
+        const normalizedPath1 = ConstraintManager.normalizePath(regExString1);
+        const normalizedPath2 = ConstraintManager.normalizePath(regExString2);
+        const normalizedPath3 = ConstraintManager.normalizePath(regExString3);
+        const normalizedPath4 = ConstraintManager.normalizePath(regExString4);
+
+        expect(normalizedPath1).toBe('Extension.value[x]');
+        expect(normalizedPath2).toBe('Extension.value[x]');
+        expect(normalizedPath3).toBe('Extension.value[x]');
+        expect(normalizedPath4).toBe('Extension.value[x]');
       });
 
     });
@@ -720,5 +738,7 @@ describe('ConstraintManager', () => {
       expect(getStructureDefinitionCalled).toBe(true);
     });
        */
+
+
   });
 });
