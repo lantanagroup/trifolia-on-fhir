@@ -4,7 +4,7 @@
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
     <select class="form-control" [(ngModel)]="value">
-        <option *ngIf="!required" [ngValue]="undefined">Unspecified</option>
+        <option *ngIf="!required || allowUndefined" [ngValue]="undefined">Unspecified</option>
         <option [ngValue]="false">{{falseLabel}}</option>
         <option [ngValue]="true">{{trueLabel}}</option>
     </select>

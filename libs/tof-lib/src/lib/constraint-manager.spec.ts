@@ -11,6 +11,9 @@ import * as dentalCCDData from '../../../../test/data/dental-ccd.json';
 import * as fetalDeathReportdata from '../../../../test/data/composition-jurisdiction-fetal-death-report.json';
 import * as compositionClinicalDocumentDataEnterer from '../../../../test/data/composition-clinicaldocument-dataEnterer.json';
 
+import * as observationHowDeathInjuryOccured from '../../../../test/data/observationHowDeathInjuryOccured.profile.json';
+
+
 import { Fhir, Versions } from 'fhir/fhir';
 import { IElementDefinition, IStructureDefinition } from './fhirInterfaces';
 import { ParseConformance } from 'fhir/parseConformance';
@@ -739,6 +742,56 @@ describe('ConstraintManager', () => {
     });
        */
 
+
+  });
+
+  describe('maintain order after constraining', () => {
+    let cm;
+    let testData: IStructureDefinition;
+
+    it('constrain Observation.note', async () => {
+      testData = <IStructureDefinition>JSON.parse(JSON.stringify(observationHowDeathInjuryOccured));
+      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
+      cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+      await cm.initializeRoot();
+
+      expect(cm.elements.length).toBe(36);
+      expect(cm.elements[21].constrainedElement).toBe(testData.differential.element[7]);
+      expect(testData.differential.element[7].id).toBe('Observation.value[x]');
+      expect(testData.differential.element[8].id).toBe('Observation.value[x].text');
+
+      expect(testData.differential.element.length).toBe(23);
+      cm.constrain(cm.elements[24]);
+      expect(cm.elements.length).toBe(36);
+      expect(testData.differential.element.length).toBe(24);
+      expect(testData.differential.element[7].id).toBe('Observation.value[x]');
+      expect(testData.differential.element[8].id).toBe('Observation.value[x].text'); // should fail here
+      expect(testData.differential.element[9].id).toBe('Observation.note'); // also causes fail
+
+    });
+
+    it('constrain Observatione.note with must support', async () => {
+      testData = <IStructureDefinition>JSON.parse(JSON.stringify(observationHowDeathInjuryOccured));
+      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
+      cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+      await cm.initializeRoot();
+
+      expect(cm.elements.length).toBe(36);
+      expect(cm.elements[21].constrainedElement).toBe(testData.differential.element[7]);
+      expect(testData.differential.element[7].id).toBe('Observation.value[x]');
+      expect(testData.differential.element[8].id).toBe('Observation.value[x].text');
+
+      expect(testData.differential.element.length).toBe(23);
+      cm.constrain(cm.elements[24]);
+      testData.differential.element[8].mustSupport = true;
+      expect(cm.elements.length).toBe(36);
+      expect(testData.differential.element.length).toBe(24);
+      expect(testData.differential.element[7].id).toBe('Observation.value[x]');
+      expect(testData.differential.element[8].id).toBe('Observation.value[x].text'); // should fail here
+      expect(testData.differential.element[9].id).toBe('Observation.note'); // also causes fail
+
+
+    });
 
   });
 });
