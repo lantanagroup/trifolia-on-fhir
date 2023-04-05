@@ -1,6 +1,6 @@
 <div class="alert alert-warning" *ngIf="message">{{message}}</div>
 
-<div class="row" *ngIf="historyBundle && historyBundle.entry">
+<div class="row" *ngIf="historyBundle && historyBundle.results">
   <div [class.col-md-12]="!rightResource || !leftResource" [class.col-md-4]="!!rightResource && !!leftResource">
     <table class="table table-striped" *ngIf="historyBundle && historyBundle.total > 0">
       <thead>
@@ -13,15 +13,16 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let entry of historyBundle.entry; let ei = index">
-        <td><input [(ngModel)]="leftResource" [value]="entry.resource" name="leftSelect" type="radio" /></td>
-        <td><input [(ngModel)]="rightResource" [value]="entry.resource" name="rightSelect" type="radio" /></td>
-        <td>{{entry.resource?.meta?.versionId}}{{resource.meta?.versionId === entry.resource?.meta?.versionId ? ' (In Editor)' : ''}}</td>
-        <td>{{entry.resource?.meta?.lastUpdated}}</td>
+      <tr *ngFor="let entry of historyBundle.results; let ei = index">
+        <td><input [(ngModel)]="leftResource" [value]="entry.content" name="leftSelect" type="radio" /></td>
+        <td><input [(ngModel)]="rightResource" [value]="entry.content" name="rightSelect" type="radio" /></td>
+        <td>{{entry.content?.meta?.versionId}}{{historyResource?.resource.meta?.versionId === entry.content?.meta?.versionId ? ' (In Editor)' : ''}}</td>
+        <td>{{entry.content?.meta?.lastUpdated}}</td>
         <td>{{getActionDisplay(entry)}}</td>
       </tr>
       </tbody>
     </table>
+
     <ngb-pagination
     [(page)]="page"
     [pageSize]="20"
