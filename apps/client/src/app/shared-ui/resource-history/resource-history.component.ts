@@ -1,9 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FhirService} from '../../shared/fhir.service';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {IBundle, IBundleEntry, IDomainResource} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IConformance, IExample, IHistory, IProjectResource} from '@trifolia-fhir/models';
-import {Conformance} from '../../../../../server/src/app/conformance/conformance.schema';
+import {IDomainResource} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IConformance, IExample} from '@trifolia-fhir/models';
 import {HistoryService} from '../../shared/history.service';
 
 @Component({

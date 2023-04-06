@@ -330,7 +330,7 @@
     <li ngbNavItem="history" *ngIf="!isNew">
       <a ngbNavLink>History</a>
       <ng-template ngbNavContent>
-        <app-resource-history [resource]="conformance" (resourceChange) = "codeSystem = $event"></app-resource-history>
+        <app-resource-history [resource]="conformance" (resourceChange) = "codeSystem = $event; conformance.resource = $event;"></app-resource-history>
       </ng-template>
     </li>
   </ul>
