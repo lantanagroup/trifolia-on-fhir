@@ -26,7 +26,7 @@ export class HistoryController extends BaseDataController<HistoryDocument> {
     const searchFilters = {};
 
     searchFilters['type'] = { $regex: type,  $options: 'i' };
-    searchFilters['targetId'] = new ObjectId(id);
+    searchFilters['targetId'] = id;
 
     const baseFilter = this.authService.getPermissionFilterBase(user, 'read');
 

@@ -22,8 +22,10 @@ export class ResourceHistoryComponent implements OnInit {
   public rightResource: any;
   public isLeftResource = false;
   public page = 1;
+  public res: IDomainResource;
 
   constructor(private historyService: HistoryService) {
+
   }
 
   public getActionDisplay(entry) {
@@ -38,14 +40,14 @@ export class ResourceHistoryComponent implements OnInit {
     }
   }
 
-   public get historyResource(){
+  /* public get historyResource(){
      if(<IConformance>this.resource) {
        return <IConformance>this.resource;
      }
      else if(<IExample>this.resource) {
        return <IExample>this.resource;
      }
-   }
+   }*/
 
   public loadHistory(resource1: any, resource2: any, isLeft: boolean) {
     if (!confirm('Loading the history will overwrite any changes you have made to the resource that are not saved. Save to confirm reverting to the selected historical item. Are you sure want to continue?')) {
@@ -71,12 +73,23 @@ export class ResourceHistoryComponent implements OnInit {
     if (this.resource  && this.resource.id) {
       let type = "";
       try {
-        if(<IConformance>this.resource) {
+        if(this.resource.hasOwnProperty("resource")){
+          let res =  <IConformance>this.resource;
+          this.res = res.resource;
+          type = "conformance";
+        }
+        else if(this.resource.hasOwnProperty("content")){
+          let res =  <IExample>this.resource;
+          this.res = res.content;
+          type = "example";
+        }
+
+      /*  if(<IConformance>this.resource) {
           type = "conformance";
         }
         else if (<IExample>this.resource) {
           type = "example";
-        }
+        }*/
         await this.historyService.getHistory(type, this.resource.id, this.page).then((results) =>  {
           this.historyBundle = results;
         }).catch((err) => console.log(err));
