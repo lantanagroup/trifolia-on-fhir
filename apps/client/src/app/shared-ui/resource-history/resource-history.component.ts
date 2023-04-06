@@ -22,7 +22,7 @@ export class ResourceHistoryComponent implements OnInit {
   public rightResource: any;
   public isLeftResource = false;
   public page = 1;
-  public res: IDomainResource;
+  public domainResource: IDomainResource;
 
   constructor(private historyService: HistoryService) {
 
@@ -57,26 +57,27 @@ export class ResourceHistoryComponent implements OnInit {
     }
 
     this.resourceChange.emit(resource1);
+    this.domainResource = resource1;
     this.change.emit();
 
   }
 
   public async getHistory() {
     if (this.resource  && this.resource.id) {
-      let type = "";
+      let resourceType = "";
       try {
         if(this.resource.hasOwnProperty("resource")){
           let res =  <IConformance>this.resource;
-          this.res = res.resource;
-          type = "conformance";
+          this.domainResource = res.resource;
+          resourceType = "conformance";
         }
         else if(this.resource.hasOwnProperty("content")){
           let res =  <IExample>this.resource;
-          this.res = res.content;
-          type = "example";
+          this.domainResource = res.content;
+          resourceType = "example";
         }
 
-        await this.historyService.getHistory(type, this.resource.id, this.page).then((results) =>  {
+        await this.historyService.getHistory(resourceType, this.resource.id, this.page).then((results) =>  {
           this.historyBundle = results;
         }).catch((err) => console.log(err));
 
