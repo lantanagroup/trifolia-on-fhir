@@ -40,14 +40,6 @@ export class ResourceHistoryComponent implements OnInit {
     }
   }
 
-  /* public get historyResource(){
-     if(<IConformance>this.resource) {
-       return <IConformance>this.resource;
-     }
-     else if(<IExample>this.resource) {
-       return <IExample>this.resource;
-     }
-   }*/
 
   public loadHistory(resource1: any, resource2: any, isLeft: boolean) {
     if (!confirm('Loading the history will overwrite any changes you have made to the resource that are not saved. Save to confirm reverting to the selected historical item. Are you sure want to continue?')) {
@@ -84,12 +76,6 @@ export class ResourceHistoryComponent implements OnInit {
           type = "example";
         }
 
-      /*  if(<IConformance>this.resource) {
-          type = "conformance";
-        }
-        else if (<IExample>this.resource) {
-          type = "example";
-        }*/
         await this.historyService.getHistory(type, this.resource.id, this.page).then((results) =>  {
           this.historyBundle = results;
         }).catch((err) => console.log(err));
