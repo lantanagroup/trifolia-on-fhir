@@ -1,6 +1,6 @@
-import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
-import {ParseConformance} from 'fhir/parseConformance';
-import {ElementTreeModel} from './element-tree-model';
+import { IElementDefinition, IStructureDefinition } from './fhirInterfaces';
+import { ParseConformance } from 'fhir/parseConformance';
+import { ElementTreeModel } from './element-tree-model';
 
 export class ConstraintManager {
   static readonly primitiveTypes = ['instant', 'time', 'date', 'dateTime', 'decimal', 'boolean', 'integer', 'string', 'uri', 'base64Binary', 'code', 'id', 'oid', 'unsignedInt', 'positiveInt'];
@@ -19,7 +19,8 @@ export class ConstraintManager {
    * @param structureDefinition The child structure definition (the SD that is actively being created)
    * @param fhirParser An instance of the FHIR.js ParseConformance class that contains the core FHIR spec structures needed
    */
-  public constructor(elementDefinitionType: (new(obj?: any) => IElementDefinition), base: IStructureDefinition, structureDefinition: IStructureDefinition, fhirParser: ParseConformance) {
+
+  constructor(elementDefinitionType: (new(obj?: any) => IElementDefinition), base: IStructureDefinition, structureDefinition: IStructureDefinition, fhirParser: ParseConformance) {
     if (!base) throw new Error('base is required');
     if (!base.snapshot) throw new Error('base.snapshot is required');
     if (!base.snapshot.element) throw new Error('base.snapshot.element is required');
@@ -63,7 +64,7 @@ export class ConstraintManager {
   }
 
   static get pathNormalizer() {
-    return /(subject|timing|product|onset|value|collected|time|scheduled|occurrence|diagnosis|procedure|location|serviced|effective|content|target|source|abatement|topic|entity|legallyBinding|allowed|used|identified|manufacturer|code|definition|participantEffective|born|age|deceased|start|detail|due|module|doseNumber|seriesDoses|example|name|chargeItem|created|item|medication|rate|statusReason|indication|characteristic|reported|date|event|multipleBirth|offset|performed|occurred|answer|studyEffective|probability|when|quantity|asNeeded|fastingStatus|additive|minimumVolume|defaultValue|substance|amount|definingSubstance)(Instant|Time|Date|Datetime|Decimal|Boolean|Integer|String|Uri|Base64Binary|Code|Id|Oid|Unsignedint|Positiveint|Markdown|Element|Identifier|Humanname|Address|Contactpoint|Timing|Quantity|Simplequantity|Attachment|Range|Period|Ratio|Codeableconcept|Coding|Sampleddata|Age|Distance|Duration|Count|Money|Annotation|Signature)/gm;
+    return /(subject|timing|product|onset|value|collected|time|scheduled|occurrence|diagnosis|procedure|location|serviced|effective|content|target|source|abatement|topic|entity|legallyBinding|allowed|used|identified|manufacturer|code|definition|participantEffective|born|age|deceased|start|detail|due|module|doseNumber|seriesDoses|example|name|chargeItem|created|item|medication|rate|statusReason|indication|characteristic|reported|date|event|multipleBirth|offset|performed|occurred|answer|studyEffective|probability|when|quantity|asNeeded|fastingStatus|additive|minimumVolume|defaultValue|substance|amount|definingSubstance)(Instant|Time|Date|DateTime|Decimal|Boolean|Integer|String|Uri|Base64Binary|Code|Id|Oid|UnsignedInt|PositiveInt|Markdown|Element|Identifier|HumanName|Address|ContactPoint|Timing|Quantity|Simplequantity|Attachment|Range|Period|Ratio|CodeableConcept|Coding|SampledData|Age|Distance|Duration|Count|Money|Annotation|Signature|Reference|Canonical|Url|Uuid|ContactDetail|Contributor|DataRequirement|Experssion|ParameterDefinition|RelatedArtifact|TriggerDefinition|UsageContext|Dosage|Meta)/gm;
   }
 
   static normalizePath(value: string) {
@@ -329,6 +330,7 @@ export class ConstraintManager {
    * @param elementTreeModels The tree models to associate to constraints
    */
   public async associate(elementTreeModels: ElementTreeModel[]) {
+
     //const baseInfo = this.base.snapshot.element.map(e => e.id + ' - ' + e.path);
     //console.log(JSON.stringify(baseInfo, null, '\t'));
     const unassociated = this.structureDefinition.differential.element.filter(e => !this.elements.find(etm => etm.constrainedElement === e));

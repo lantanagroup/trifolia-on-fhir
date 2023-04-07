@@ -1,0 +1,127 @@
+{
+  "id": "composition-clinicaldocument-dataEnterer",
+  "meta": {
+    "versionId": "7",
+    "lastUpdated": "2021-12-09T17:43:44.773+00:00",
+    "source": "#aDmnIabOF2VcuVS8",
+    "security": [
+      {
+        "system": "https://trifolia-fhir.lantanagroup.com/security",
+        "code": "everyone^read"
+      },
+      {
+        "system": "https://trifolia-fhir.lantanagroup.com/security",
+        "code": "user^vMcr4CCd^write"
+      },
+      {
+        "system": "https://trifolia-fhir.lantanagroup.com/security",
+        "code": "user^KcJLXYWC^read"
+      },
+      {
+        "system": "https://trifolia-fhir.lantanagroup.com/security",
+        "code": "user^KcJLXYWC^write"
+      },
+      {
+        "system": "https://trifolia-fhir.lantanagroup.com/security",
+        "code": "everyone^write"
+      },
+      {
+        "system": "https://trifolia-fhir.lantanagroup.com/security",
+        "code": "user^vMcr4CCd^read"
+      }
+    ],
+    "tag": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationValue",
+        "code": "SUBSETTED",
+        "display": "Resource encoded in summary mode"
+      }
+    ]
+  },
+  "resourceType": "StructureDefinition",
+  "status": "active",
+  "kind": "complex-type",
+  "derivation": "constraint",
+  "url": "http://hl7.org/fhir/StructureDefinition/composition-clinicaldocument-dataEnterer",
+  "name": "DataEnterer",
+  "title": "Data Enterer",
+  "publisher": "Lantana Consulting Group",
+  "contact": [
+    {
+      "name": "Sarah Gaunt",
+      "telecom": [
+        {
+          "system": "phone",
+          "value": "+6 141-029-2506",
+          "use": "work"
+        },
+        {
+          "system": "email",
+          "value": "sarah.gaunt@lantanagroup.com",
+          "use": "work"
+        }
+      ]
+    },
+    {
+      "name": "Rick Geimer",
+      "telecom": [
+        {
+          "system": "email",
+          "value": "rick.geimer@lantanagroup.com",
+          "use": "work"
+        }
+      ]
+    }
+  ],
+  "description": "Represents the person who transferred the content, written or dictated, into the clinical document. To clarify, an author provides the content, subject to their own interpretation; a dataEnterer adds an author's information to the electronic system.",
+  "jurisdiction": [
+    {
+      "coding": [
+        {
+          "system": "urn:iso:std:iso:3166",
+          "code": "US"
+        }
+      ]
+    }
+  ],
+  "fhirVersion": "4.0.1",
+  "abstract": false,
+  "context": [
+    {
+      "type": "element",
+      "expression": "Composition"
+    }
+  ],
+  "type": "Extension",
+  "baseDefinition": "http://hl7.org/fhir/StructureDefinition/Extension",
+  "differential": {
+    "element": [
+      {
+        "id": "Extension",
+        "path": "Extension"
+      },
+      {
+        "id": "Extension.url",
+        "path": "Extension.url",
+        "fixedUri": "http://hl7.org/fhir/StructureDefinition/composition-clinicaldocument-dataEnterer"
+      },
+      {
+        "id": "Extension.value[x]:valueReference",
+        "path": "Extension.valueReference",
+        "sliceName": "valueReference",
+        "min": 1,
+        "type": [
+          {
+            "code": "Reference",
+            "targetProfile": [
+              "http://hl7.org/fhir/StructureDefinition/Practitioner",
+              "http://hl7.org/fhir/StructureDefinition/PractitionerRole",
+              "http://hl7.org/fhir/StructureDefinition/RelatedPerson"
+            ]
+          }
+        ],
+        "mustSupport": true
+      }
+    ]
+  }
+}
