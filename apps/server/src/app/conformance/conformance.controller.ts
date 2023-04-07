@@ -107,7 +107,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
 
                 options.sortBy[term] = dir;
             });
-            
+
         }
 
         return options;
@@ -137,7 +137,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
     }
 
     @Get(':id/references')
-    public async getWithReferences(@User() user: ITofUser, @Param('id') id: string): Promise<any> {
+    public async getReferences(@User() user: ITofUser, @Param('id') id: string): Promise<any> {
         await this.assertCanReadById(user, id);
         return await this.conformanceService.findAll({ _id: new Object(id) }, ["references.value"]);
     }
@@ -171,7 +171,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
 
     @Get(':id/reference-map')
     public async getReferenceMap(@User() user: ITofUser, @Param('id') id: string): Promise<IProjectResourceReferenceMap> {
-        await this.assertCanWriteById(user, id);
+        await this.assertCanReadById(user, id);
 
         let conformance = await this.conformanceService.getModel().findById(id).populate("references.value");
         this.assertResourceValid(conformance);
@@ -194,7 +194,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
                     key = `example/${val.content['id']}`;
                 }
             }
-            
+
             if (key) {
                 map[key] = r;
             }

@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Globals } from 'libs/tof-lib/src/lib/globals';
-import { Bundle, SearchParameter } from 'libs/tof-lib/src/lib/stu3/fhir';
-import { Subject } from 'rxjs';
+import {Bundle, CodeSystem, SearchParameter} from 'libs/tof-lib/src/lib/stu3/fhir';
+import {Observable, Subject} from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { AuthService } from '../shared/auth.service';
 import { ConfigService } from '../shared/config.service';
 import { SearchParameterService } from '../shared/search-parameter.service';
 import { ChangeResourceIdModalComponent } from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import { BaseComponent } from '../base.component';
+import {IConformance} from '@trifolia-fhir/models';
 
 @Component({
   templateUrl: './search-parameters.component.html',
@@ -16,7 +17,8 @@ import { BaseComponent } from '../base.component';
 })
 export class SearchParametersComponent extends BaseComponent implements OnInit {
 
-  public searchParameterBundle: Bundle;
+  public searchParameterBundle;
+  public total: string;
   public nameText: string;
   public criteriaChangedEvent = new Subject<void>();
   public page = 1;
@@ -36,12 +38,14 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
       });
   }
 
+
+
   public get searchParameter(): SearchParameter[] {
-    if (!this.searchParameterBundle || !this.searchParameterBundle.entry) {
+    if (!this.searchParameterBundle) {
       return [];
     }
 
-    return this.searchParameterBundle.entry.map((entry) => <SearchParameter>entry.resource);
+    return (this.searchParameterBundle.results || []).map((entry) => <SearchParameter>entry);
   }
 
   public remove(searchParameter: SearchParameter) {
@@ -74,12 +78,14 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
     });
   }
 
+
   public getSearchParameters() {
     this.searchParameterBundle = null;
 
     this.spService.search(this.page, this.nameText)
       .subscribe((results) => {
         this.searchParameterBundle = results;
+        this.total = this.searchParameterBundle.total;
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while searching for capability statements');
       });

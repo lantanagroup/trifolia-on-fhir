@@ -43,9 +43,9 @@
   <tbody *ngIf="!configService.showingIntroduction">
   <tr *ngFor="let sp of searchParameter">
     <td>{{sp.id}}</td>
-    <td>{{sp.name}}</td>
-    <td>{{sp.base}}</td>
-    <td>{{sp.type}}</td>
+    <td>{{sp.resource.name}}</td>
+    <td>{{sp.resource.base}}</td>
+    <td>{{sp.resource.type}}</td>
     <td>
       <div class="btn-group pull-right">
         <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/search-parameter/{{sp.id}}" title="Edit this resource">

@@ -60,10 +60,6 @@ export class CodeSystemController extends ConformanceController {
 
   @Get(':id')
   public async getCodeSystem(@FhirServerVersion() fhirServerVersion,  @Query() query, @User() user, @Param('id') id: string): Promise<IConformance> {
-    // await this.assertCanReadById(user, id);
-    // const confResource: IConformance = await this.conformanceService.findById(id);
-    // this.assertResourceValid(confResource);
-    // return confResource;
     return super.getById(user, id);
   }
 

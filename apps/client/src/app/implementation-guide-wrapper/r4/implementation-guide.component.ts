@@ -423,7 +423,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           this.resourceMap[newReference.reference] = newProjectResourceReference;
         }
 
-      });      
+      });
     });
   }
 
@@ -500,17 +500,19 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (this.implementationGuide.definition && this.implementationGuide.definition.resource) {
       let index = this.implementationGuide.definition.resource.indexOf(resource);
       this.implementationGuide.definition.resource.splice(index, 1);
-      
+
       let map = this.resourceMap[resource.reference.reference];
-      
+
       index = (this.conformance.references || []).findIndex((ref: IProjectResourceReference) => {
         return ref.value === map.value || ref.value === map.value['id']
       });
-      
+
       if (index > -1) {
         this.conformance.references.splice(index, 1);
         delete this.resourceMap[resource.reference.reference];
       }
+
+     // this.conformanceService.getImplementationGuide(implementationGuideId),
     }
   }
 
@@ -546,9 +548,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   private getImplementationGuide() {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-
-    this.conformance = <IConformance>{};
-    this.resourceMap = {};
 
     if (this.isFile) {
       if (this.fileService.file) {

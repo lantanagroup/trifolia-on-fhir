@@ -168,6 +168,10 @@ const appRoutes: Routes = [
   {path: 'projects/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
   {path: 'projects/:implementationGuideId/code-system', component: CodesystemsComponent },
   {path: 'projects/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/search-parameter', component: SearchParametersComponent },
+  { path: 'projects/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
+  { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent, runGuardsAndResolvers: 'always'},
+
   {path: ':fhirServer/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},
   {path: ':fhirServer/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
   {path: ':fhirServer/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
@@ -192,9 +196,9 @@ const appRoutes: Routes = [
   { path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent },
   { path: ':fhirServer/:implementationGuideId/examples', component: ExamplesComponent },
   { path: ':fhirServer/:implementationGuideId/bulk-edit', component: BulkEditComponent },
-  { path: ':fhirServer/:implementationGuideId/search-parameter', component: SearchParametersComponent },
+/*  { path: ':fhirServer/:implementationGuideId/search-parameter', component: SearchParametersComponent },
   { path: ':fhirServer/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
-  { path: ':fhirServer/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },
+  { path: ':fhirServer/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },*/
   { path: ':fhirServer/import', component: ImportComponent },
   { path: ':fhirServer/users/me', component: UserComponent },
   { path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },

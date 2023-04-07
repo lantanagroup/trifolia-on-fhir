@@ -1,27 +1,67 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { SearchParameter as R4SearchParameter, SearchParameter as STU3SearchParameter } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { Observable } from 'rxjs';
-import { Bundle, OperationOutcome } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Bundle} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {IConformance} from '@trifolia-fhir/models';
+import {ConformanceService} from './conformance.service';
 
 
-@Injectable({
-  providedIn: 'root'
-})
-export class SearchParameterService {
-  constructor(private http: HttpClient) {
+@Injectable()
+export class SearchParameterService  {
+
+  constructor(
+    protected http: HttpClient) {
+    //super(http);
   }
 
-  public save(searchParameter: STU3SearchParameter | R4SearchParameter): Observable<STU3SearchParameter | R4SearchParameter> {
-    if (searchParameter.id) {
-      const url = '/api/searchParameter/' + encodeURIComponent(searchParameter.id);
-      return this.http.put<STU3SearchParameter | R4SearchParameter>(url, searchParameter);
+  /*public save(codeSystemId:string, codeSystem: IConformance): Observable<IConformance> {
+    if (codeSystemId) {
+      const url = '/api/codeSystem/' + encodeURIComponent(codeSystemId);
+      return this.http.put<IConformance>(url, codeSystem);
     } else {
-      return this.http.post<STU3SearchParameter | R4SearchParameter>('api/searchParameter', searchParameter);
+      return this.http.post<IConformance>('/api/codeSystem', codeSystem);
+    }
+  }
+*/
+/*
+  public searchCodeSystem(page = 1, name?: string, implementationGuideId?: string) :  Observable<IConformance[]> {
+    let url = '/api/codeSystem?page=' + page + '&';
+
+    if (name) {
+      url += `name=${encodeURIComponent(name)}&`;
+    }
+
+    if (implementationGuideId) {
+      url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
+    }
+
+    url += '_sort=name';
+
+    return this.http.get<IConformance[]>(url);
+  }
+
+  public getCodeSystem(id: string): Observable<IConformance> {
+    const url = '/api/codeSystem/' + encodeURIComponent(id);
+    return this.http.get<IConformance>(url);
+  }
+
+  public delete(id: string) {
+    const url = '/api/codeSystem/' + encodeURIComponent(id);
+    return this.http.delete(url);
+  }
+*/
+
+
+  public save(searchParameterId: string, searchParameter: IConformance) : Observable<IConformance> {
+    if (searchParameterId) {
+      const url = '/api/searchParameter/' + encodeURIComponent(searchParameter.id);
+      return this.http.put<IConformance>(url, searchParameter);
+    } else {
+      return this.http.post<IConformance>('/api/searchParameter', searchParameter);
     }
   }
 
-  public search(page = 1, name?: string, implementationGuideId?: string) {
+  public search(page = 1, name?: string, implementationGuideId?: string) : Observable<IConformance[]> {
     let url = '/api/searchParameter?page=' + page + '&';
 
     if (name) {
@@ -34,12 +74,12 @@ export class SearchParameterService {
 
     url += '?_sort=name';
 
-    return this.http.get<Bundle>(url);
+    return this.http.get<IConformance[]>(url);
   }
 
   public get(id: string) {
     const url = '/api/searchParameter/' + encodeURIComponent(id);
-    return this.http.get<R4SearchParameter | STU3SearchParameter | OperationOutcome>(url);
+    return this.http.get<IConformance>(url);
   }
 
   public delete(id: string) {

@@ -26,6 +26,7 @@ import { FshService } from './fsh.service';
 import {ProjectService} from './projects.service';
 import { ConformanceService } from './conformance.service';
 import {HistoryService} from './history.service';
+import {SearchParameterService} from './search-parameter.service';
 
 @NgModule({
   declarations: [],
@@ -58,6 +59,7 @@ import {HistoryService} from './history.service';
     FshService,
     ProjectService,
     ConformanceService,
+    SearchParameterService,
     HistoryService
   ],
   exports: []
