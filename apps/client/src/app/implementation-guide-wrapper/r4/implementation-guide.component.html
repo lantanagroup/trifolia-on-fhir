@@ -648,7 +648,7 @@
         <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
       </a>
       <ng-template ngbNavContent>
-        <app-resource-history [(resource)]="implementationGuide"></app-resource-history>
+        <app-resource-history [resource]="conformance" (resourceChange) = "implementationGuide= $event; conformance.resource = $event;"></app-resource-history>
       </ng-template>
     </li>
   </ul>

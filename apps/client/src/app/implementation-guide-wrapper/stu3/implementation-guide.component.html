@@ -547,10 +547,10 @@
               <ng-template ngbNavContent></ng-template>
             </li>
           </ul>
-          <div [ngbNavOutlet]="packagesTabSet" class="mt-2"></div> 
+          <div [ngbNavOutlet]="packagesTabSet" class="mt-2"></div>
         </ng-container>
       </ng-template>
-    </li> 
+    </li>
 
     <!-- Binary -->
     <li ngbNavItem="binary">
@@ -628,7 +628,7 @@
         <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
       </a>
       <ng-template ngbNavContent>
-        <app-resource-history [(resource)]="implementationGuide" (change)="igChanging.emit(true);"></app-resource-history>
+        <app-resource-history [resource]="conformance"  (resourceChange) = "implementationGuide= $event" (change)="igChanging.emit(true);"></app-resource-history>
       </ng-template>
     </li>
   </ul>

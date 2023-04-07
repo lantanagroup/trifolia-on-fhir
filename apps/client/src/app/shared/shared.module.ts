@@ -25,6 +25,7 @@ import {ModalService} from './modal.service';
 import { FshService } from './fsh.service';
 import {ProjectService} from './projects.service';
 import { ConformanceService } from './conformance.service';
+import {HistoryService} from './history.service';
 
 @NgModule({
   declarations: [],
@@ -56,7 +57,8 @@ import { ConformanceService } from './conformance.service';
     ModalService,
     FshService,
     ProjectService,
-    ConformanceService
+    ConformanceService,
+    HistoryService
   ],
   exports: []
 })

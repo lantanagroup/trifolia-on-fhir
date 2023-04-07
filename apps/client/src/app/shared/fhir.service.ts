@@ -31,6 +31,7 @@ import {publishReplay, refCount} from 'rxjs/operators';
 import {IBundle, ICoding} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { forkJoin } from 'rxjs';
+import {IHistory} from '@trifolia-fhir/models';
 
 export interface IResourceGithubDetails {
   owner: string;
@@ -340,7 +341,7 @@ export class FhirService {
    * @param {string} resourceType
    * @param {string} id
    */
-  public getHistory(resourceType: string, id: string, page = 1) {
+  /*public getHistory(resourceType: string, id: string, page = 1) {
     let url = `/api/fhir/${resourceType}/${id}/_history?`;
 
     if (page > 1) {
@@ -348,7 +349,8 @@ export class FhirService {
     }
 
     return this.http.get<IBundle>(url).toPromise();
-  }
+  }*/
+
 
   /**
    * Retrieves a specific version of the resource from the FHIR server
