@@ -2,7 +2,7 @@ import { BaseController } from "./base.controller";
 import { BaseDataService } from "./base-data.service";
 import { BaseEntity } from "./base.entity";
 import { Paginated } from "@trifolia-fhir/tof-lib";
-import { BadRequestException, Body, Delete, ForbiddenException, Get, Inject, Param, Post, Put, Query, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Body, Delete, Get, Inject, Param, Post, Put, Request, UnauthorizedException } from "@nestjs/common";
 import { HydratedDocument } from "mongoose";
 import { TofNotFoundException } from "../../not-found-exception";
 import { TofLogger } from "../tof-logger";
@@ -45,9 +45,9 @@ export class BaseDataController<T extends HydratedDocument<BaseEntity>> extends 
     
 
     @Get() 
-    public async search(@Query() query?: any): Promise<Paginated<T>> {         
+    public async search(@Request() req?: any): Promise<Paginated<T>> {         
         //this.logger.debug(`search`);
-        let options = this.getPaginateOptionsFromQuery(query);
+        let options = this.getPaginateOptionsFromRequest(req);
         const res = await this.dataService.search(options);
         return res;
     }

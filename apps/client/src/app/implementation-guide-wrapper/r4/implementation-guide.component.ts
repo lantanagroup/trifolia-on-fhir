@@ -1,4 +1,4 @@
-import { Component, DoCheck, EventEmitter, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, DoCheck, EventEmitter, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../shared/auth.service';
 import {
   Coding,
@@ -9,7 +9,6 @@ import {
   ImplementationGuideGroupingComponent,
   ImplementationGuidePageComponent,
   ImplementationGuideResourceComponent,
-  OperationOutcome,
   ResourceReference,
   StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
@@ -38,7 +37,8 @@ import { GroupModalComponent } from './group-modal.component';
 import { BaseImplementationGuideComponent } from '../base-implementation-guide-component';
 import { CanComponentDeactivate } from '../../guards/resource.guard';
 import { ProjectService } from '../../shared/projects.service';
-import { IConformance } from '@trifolia-fhir/models';
+import { IConformance, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import { forkJoin } from 'rxjs';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -52,6 +52,7 @@ class PageDefinition {
 })
 export class R4ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   public conformance: IConformance;
+  public resourceMap: IProjectResourceReferenceMap = {};
   public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
@@ -117,7 +118,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     return (this.implementationGuide.definition.resource || [])
       .filter((resource: ImplementationGuideResourceComponent) => {
-        console.log('resource:', resource);
+
         if (!resource.reference || !resource.reference.reference) {
           return true;
         }
@@ -375,9 +376,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (!this.implementationGuide.definition.resource) this.implementationGuide.definition.resource = [];
 
     const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.fhirVersion = 'r4';
     modalRef.componentInstance.selectMultiple = true;
 
     modalRef.result.then((results: ResourceSelection[]) => {
+
+      if (!results) return;
+
       if (!this.implementationGuide.definition) {
         this.implementationGuide.definition = new ImplementationGuideDefinitionComponent();
         this.implementationGuide.definition.resource = [];
@@ -411,7 +416,14 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             exampleBoolean: allProfilingTypes.indexOf(result.resourceType) < 0
           }
         );
-      });
+
+        if (!this.conformance.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
+          const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'Conformance' };
+          this.conformance.references.push(newProjectResourceReference);
+          this.resourceMap[newReference.reference] = newProjectResourceReference;
+        }
+
+      });      
     });
   }
 
@@ -486,8 +498,19 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     if (this.implementationGuide.definition && this.implementationGuide.definition.resource) {
-      const index = this.implementationGuide.definition.resource.indexOf(resource);
+      let index = this.implementationGuide.definition.resource.indexOf(resource);
       this.implementationGuide.definition.resource.splice(index, 1);
+      
+      let map = this.resourceMap[resource.reference.reference];
+      
+      index = (this.conformance.references || []).findIndex((ref: IProjectResourceReference) => {
+        return ref.value === map.value || ref.value === map.value['id']
+      });
+      
+      if (index > -1) {
+        this.conformance.references.splice(index, 1);
+        delete this.resourceMap[resource.reference.reference];
+      }
     }
   }
 
@@ -524,6 +547,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   private getImplementationGuide() {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
+    this.conformance = <IConformance>{};
+    this.resourceMap = {};
+
     if (this.isFile) {
       if (this.fileService.file) {
         this.implementationGuide = new ImplementationGuide(this.fileService.file.resource);
@@ -538,17 +564,23 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     if (!this.isNew) {
 
-      this.implementationGuideService.getImplementationGuide(implementationGuideId)
+      forkJoin([
+        this.implementationGuideService.getImplementationGuide(implementationGuideId),
+        this.implementationGuideService.getReferenceMap(implementationGuideId)
+      ])
         .subscribe({
-          next: (results: IConformance) => {
-            if (!results || !results.resource || results.resource.resourceType !== 'ImplementationGuide') {
+          next: (results: [IConformance, IProjectResourceReferenceMap]) => {
+
+            const conf: IConformance = results[0];
+            if (!conf || !conf.resource || conf.resource.resourceType !== 'ImplementationGuide') {
               this.message = 'The specified implementation guide either does not exist or was deleted';
               return;
             }
-            
-            this.implementationGuide = new ImplementationGuide(results.resource);
-            this.conformance = results;
+
+            this.implementationGuide = new ImplementationGuide(conf.resource);
+            this.conformance = conf;
             this.conformance.resource = this.implementationGuide;
+            this.resourceMap = results[1];
             this.igChanging.emit(false);
             this.initPagesAndGroups();
           },
@@ -849,21 +881,21 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
       .subscribe({
         next: (implementationGuide: IConformance) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
-        } else {
-          this.message = 'Your changes have been saved!';
-          this.igChanging.emit(false);
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
+          } else {
+            this.message = 'Your changes have been saved!';
+            this.igChanging.emit(false);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
         }
-      }, 
-      error: (err) => {
-        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
-      }
-    });
+      });
   }
 
   private initPage(page: ImplementationGuidePageComponent, level = 0, parent?: ImplementationGuidePageComponent) {

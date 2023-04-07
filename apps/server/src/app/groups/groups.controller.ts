@@ -24,9 +24,14 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     super(groupsService);
   }
 
-  protected getFilterFromQuery(query?: any): any {
+  protected getFilterFromRequest(req?: any): any {
 
     const filter = {};
+    
+    if (!req) {
+      return filter;
+    }
+    const query = req.query;
 
     if ('name' in query) {
       filter['name'] = { $regex: query['name'], $options: 'i' };

@@ -23,7 +23,7 @@ export class CodeSystemService extends ConformanceService {
         }
     }
 
-    public search(page = 1, name?: string, implementationGuideId?: string) :  Observable<IConformance[]> {
+    public searchCodeSystem(page = 1, name?: string, implementationGuideId?: string) :  Observable<IConformance[]> {
         let url = '/api/codeSystem?page=' + page + '&';
 
         if (name) {
@@ -39,7 +39,7 @@ export class CodeSystemService extends ConformanceService {
         return this.http.get<IConformance[]>(url);
     }
 
-    public get(id: string): Observable<IConformance> {
+    public getCodeSystem(id: string): Observable<IConformance> {
         const url = '/api/codeSystem/' + encodeURIComponent(id);
         return this.http.get<IConformance>(url);
     }

@@ -19,12 +19,14 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
     super(projectService);
   }
 
-  protected getFilterFromQuery(query?: any) : any {
-    let filter = super.getFilterFromQuery(query);
+  protected getFilterFromRequest(req?: any) : any {
+    let filter = super.getFilterFromRequest(req);
 
-    if (!query) {
+    if (!req || !req.query) {
       return filter;
     }
+    let query = req.query;
+    
     if ('name' in query) {
       filter['name'] = { $regex: query['name'], $options: 'i' };
     }

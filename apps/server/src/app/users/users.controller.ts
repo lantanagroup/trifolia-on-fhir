@@ -23,12 +23,14 @@ export class UsersController extends BaseDataController<UserDocument> {
         super(usersService);
     }
 
-    protected getFilterFromQuery(query?: any) : any {
-        let filter = super.getFilterFromQuery(query);
+    protected getFilterFromRequest(req?: any) : any {
+        let filter = super.getFilterFromRequest(req);
 
-        if (!query) {
+        if (!req || !req.query) {
             return filter;
         }
+        let query = req.query;
+
         if ('name' in query) {
           filter = {
             $or: [

@@ -39,42 +39,55 @@ export class BaseController {
 
     }
 
-    
-    
+
+
     /**
      * Returns an object that is suitable to use in the filter property of PaginateOptions.
-     * Override this to provide any custom mapping of what the route handler @Query() parameter provides to data entity properties.
-     * @param query Query route handler parameter decorator
+     * Override this to provide any custom mapping of what the @Request() parameter provides to data entity properties.
+     * @param req Request parameter decorator
      * @returns object for use in PaginateOptions.filter
      */
-    protected getFilterFromQuery(query?: any) : any {
-        //this.logger.debug('getFilterFromQuery');
+    protected getFilterFromRequest(req?: any): any {
+        //this.logger.debug('getFilterFromRequest');
         return {};
     }
 
     /**
-     * Returns a valid PaginateOptions object from any provided Query route handler parameter decorator.
-     * Override this to provide any custom mapping of what the route handler @Query() parameter provides to data entity properties.
-     * @param query Query route handler parameter decorator 
+     * Returns a valid PaginateOptions object from any provided @Request() parameter decorator.
+     * Override this to provide any custom mapping of what the @Request() parameter provides to data entity properties.
+     * @param req Request parameter decorator
      * @returns PaginateOptions for use in the BaseDataController.search method
      */
-    protected getPaginateOptionsFromQuery(query?: any) : PaginateOptions {
-        //this.logger.debug('getPaginateOptionsFromQuery');
+    protected getPaginateOptionsFromRequest(req?: any): PaginateOptions {
+        this.logger.debug('getPaginateOptionsFromRequest:', req);
+
+        let query = req.query;
 
         const options: PaginateOptions = {
             page: (query && query.page) ? query.page : 1,
             itemsPerPage: (query && query.itemsPerPage) ? query.itemsPerPage : 10,
             sortBy: {},
-            filter: this.getFilterFromQuery(query)
-          };
+            filter: this.getFilterFromRequest(req)
+        };
 
-          
         if ('_sort' in query) {
-            options.sortBy[query['_sort']] = 'asc';
+            
+            const sortTerms = query['_sort'].split(',');
+            sortTerms.forEach(term => {
+                if (!term) return;
+
+                let dir: 'asc'|'desc' = 'asc';
+                if (term[0] === '-') {
+                    dir = 'desc';
+                    term = term.substring(1);
+                }
+
+                options.sortBy[term] = dir;
+            });
         }
 
         return options;
     }
-    
+
 
 }

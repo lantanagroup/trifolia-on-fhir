@@ -97,7 +97,7 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
   }
 
   public async getCodeSystems() {
-    await this.codeSystemService.search(this.page, this.nameText, this.getImplementationGuideId()).toPromise().then((results) => {
+    await this.codeSystemService.searchCodeSystem(this.page, this.nameText, this.getImplementationGuideId()).toPromise().then((results) => {
       this.codeSystem = results;
       this.total = this.codeSystem.total;
     }).catch((err) => console.log(err));

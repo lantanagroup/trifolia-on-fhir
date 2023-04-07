@@ -230,7 +230,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     if (!this.isNew) {
       this.codeSystem = null;
 
-      this.codeSystemService.get(this.codeSystemId)
+      this.codeSystemService.getCodeSystem(this.codeSystemId)
         .subscribe({
           next: (conf: IConformance) => {
             if (!conf || !conf.resource || conf.resource.resourceType !== 'CodeSystem') {

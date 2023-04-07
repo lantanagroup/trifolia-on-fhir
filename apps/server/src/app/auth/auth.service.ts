@@ -111,7 +111,6 @@ export class AuthService {
     }
 
     public async userCanByService(user: ITofUser, targetId: string, dataService: IBaseDataService, grant: 'read' | 'write'): Promise<boolean> {
-
         
         if (!this.configService.server.enableSecurity || user?.isAdmin) {
             return true;

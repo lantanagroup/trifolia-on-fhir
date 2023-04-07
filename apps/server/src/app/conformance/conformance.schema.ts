@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type {IConformance, IPermission} from '@trifolia-fhir/models';
+import type {IConformance, IPermission, IProjectResource, IProjectResourceReference} from '@trifolia-fhir/models';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
@@ -50,7 +50,7 @@ export class Conformance extends BaseEntity implements IConformance {
     igIds: string[];
 
     @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['Conformance', 'Example']}}])
-    references;
+    references: IProjectResourceReference[];
 
 }
 

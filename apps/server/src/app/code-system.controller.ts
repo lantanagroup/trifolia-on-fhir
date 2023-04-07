@@ -30,7 +30,7 @@ export class CodeSystemController extends ConformanceController {
     const searchFilters = {};
 
     if ('name' in query) {
-      searchFilters['name'] = { $regex: query['name'], $options: 'i' };
+      searchFilters['resource.name'] = { $regex: query['name'], $options: 'i' };
     }
     searchFilters['resource.resourceType'] = { $regex: 'CodeSystem', $options: 'i' };
     searchFilters['fhirVersion'] = { $regex: fhirServerVersion, $options: 'i' };
@@ -60,9 +60,11 @@ export class CodeSystemController extends ConformanceController {
 
   @Get(':id')
   public async getCodeSystem(@FhirServerVersion() fhirServerVersion,  @Query() query, @User() user, @Param('id') id: string): Promise<IConformance> {
-    const confResource: IConformance = await this.conformanceService.findById(id);
-    this.assertResourceValid(confResource);
-    return confResource;
+    // await this.assertCanReadById(user, id);
+    // const confResource: IConformance = await this.conformanceService.findById(id);
+    // this.assertResourceValid(confResource);
+    // return confResource;
+    return super.getById(user, id);
   }
 
   @Post()
@@ -73,14 +75,16 @@ export class CodeSystemController extends ConformanceController {
   }
 
   @Put(':id')
-  public updateCodeSystem(@FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
+  public async updateCodeSystem(@FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
+    await this.assertCanWriteById(user, id);
     let conformance: IConformance = body;
     conformance.fhirVersion = fhirServerVersion;
     return this.conformanceService.updateConformance(id, conformance);
   }
 
   @Delete(':id')
-  public deleteCodeSystem(@FhirServerVersion() fhirServerVersion: 'stu3'|'r4'|'r5', @Param('id') id: string, @User() user) {
+  public async deleteCodeSystem(@FhirServerVersion() fhirServerVersion: 'stu3'|'r4'|'r5', @Param('id') id: string, @User() user) {
+    await this.assertCanWriteById(user, id);
     return this.conformanceService.delete(id);
   }
 }

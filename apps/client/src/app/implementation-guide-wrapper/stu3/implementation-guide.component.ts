@@ -1,11 +1,9 @@
 import { Component, DoCheck, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../shared/auth.service';
 import {
-  Binary,
   Coding,
   Extension,
   ImplementationGuide,
-  OperationOutcome,
   PackageComponent,
   PackageResourceComponent,
   PageComponent
@@ -28,7 +26,8 @@ import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-
 import { BaseImplementationGuideComponent } from '../base-implementation-guide-component';
 import { CanComponentDeactivate } from '../../guards/resource.guard';
 import { ProjectService } from '../../shared/projects.service';
-import { IConformance } from '@trifolia-fhir/models';
+import { IConformance, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import { forkJoin } from 'rxjs';
 
 
 class Parameter {
@@ -101,6 +100,7 @@ class ImplementationGuideResource {
 })
 export class STU3ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   public conformance: IConformance;
+  public resourceMap: IProjectResourceReferenceMap = {};
   public implementationGuide: ImplementationGuide;
   public message: string;
   public currentResource: any;
@@ -231,9 +231,13 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
   public addResources(destPackage?: PackageComponent) {
     const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.fhirVersion = 'stu3';
     modalRef.componentInstance.selectMultiple = true;
 
     modalRef.result.then((results: ResourceSelection[]) => {
+
+      if (!results) return;
+
       if (!this.implementationGuide.package) {
         this.implementationGuide.package = [];
       }
@@ -281,6 +285,13 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
             example: allProfilingTypes.indexOf(result.resourceType) < 0
           });
         }
+
+        if (!this.conformance.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
+          const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'Conformance' };
+          this.conformance.references.push(newProjectResourceReference);
+          this.resourceMap[result.resourceType + '/' + result.id] = newProjectResourceReference;
+        }
+
       });
 
       this.initResources();
@@ -432,6 +443,9 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   private getImplementationGuide() {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
+    this.conformance = <IConformance>{};
+    this.resourceMap = {};
+
     if (this.isFile) {
       if (this.fileService.file) {
         this.implementationGuide = new ImplementationGuide(this.fileService.file.resource);
@@ -448,17 +462,24 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     if (!this.isNew) {
       this.implementationGuide = null;
 
-      this.implementationGuideService.getImplementationGuide(implementationGuideId)
+      //this.implementationGuideService.getImplementationGuide(implementationGuideId)
+      forkJoin([
+        this.implementationGuideService.getImplementationGuide(implementationGuideId),
+        this.implementationGuideService.getReferenceMap(implementationGuideId)
+      ])
         .subscribe({
-          next: (results: IConformance) => {
-            if (!results || !results.resource || results.resource.resourceType !== 'ImplementationGuide') {
+          next: (results: [IConformance, IProjectResourceReferenceMap]) => {
+
+            const conf: IConformance = results[0];
+            if (!conf || !conf.resource || conf.resource.resourceType !== 'ImplementationGuide') {
               this.message = 'The specified implementation guide either does not exist or was deleted';
               return;
             }
-            
-            this.implementationGuide = new ImplementationGuide(results.resource);
-            this.conformance = results;
+
+            this.implementationGuide = new ImplementationGuide(conf.resource);
+            this.conformance = conf;
             this.conformance.resource = this.implementationGuide;
+            this.resourceMap = results[1];
             this.igChanging.emit(false);
             this.initPages();
             this.initParameters();
@@ -670,21 +691,21 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
       .subscribe({
         next: (implementationGuide: IConformance) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
-        } else {
-          this.message = 'Your changes have been saved!';
-          this.igChanging.emit(false);
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
+          } else {
+            this.message = 'Your changes have been saved!';
+            this.igChanging.emit(false);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
         }
-      }, 
-      error: (err) => {
-        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
-      }
-    });
+      });
   }
 
   public async delete(implementationGuideId) {
@@ -746,6 +767,17 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     if (igResource.igPackage.resource.length === 0) {
       const packageIndex = this.implementationGuide.package.indexOf(igResource.igPackage);
       this.implementationGuide.package.splice(packageIndex, 1);
+    }
+
+    let map = this.resourceMap[igResource.resource.sourceReference.reference];
+
+    let index = (this.conformance.references || []).findIndex((ref: IProjectResourceReference) => {
+      return ref.value === map.value || ref.value === map.value['id']
+    });
+
+    if (index > -1) {
+      this.conformance.references.splice(index, 1);
+      delete this.resourceMap[igResource.resource.sourceReference.reference];
     }
 
     this.initResources();

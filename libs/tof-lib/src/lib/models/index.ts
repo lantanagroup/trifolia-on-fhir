@@ -1,4 +1,4 @@
-import type { IDomainResource, IImplementationGuide } from '../fhirInterfaces';
+import type { IDomainResource } from '../fhirInterfaces';
 
 export interface IPermission {
   targetId?: string;    // no targetId means "everyone"
@@ -53,11 +53,20 @@ export interface IProjectResource {
   permissions?: IPermission[];
 }
 
+export interface IProjectResourceReference {
+  value: IConformance|IExample|string;
+  valueType: 'Conformance'|'Example';
+}
+
+export interface IProjectResourceReferenceMap {
+  [key: string]: IProjectResourceReference;
+}
+
 export interface IConformance extends IProjectResource {
   //groupingId?: string;    // from ImplementationGuide.definition.grouping. Not used in STU3
   fhirVersion: 'stu3'|'r4'|'r5';
   igIds?: string[];
-  references?: IProjectResource[];
+  references?: IProjectResourceReference[];
   resource: IDomainResource;
 }
 

@@ -14,6 +14,7 @@ import {IBundle, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib
 import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
 import {ConfigService} from './config.service';
 import { IConformance } from '@trifolia-fhir/models';
+import { ConformanceService } from './conformance.service';
 
 export class PublishedGuideModel {
   public name: string;
@@ -37,11 +38,12 @@ export class PublishedGuideEditionsModel {
 }
 
 @Injectable()
-export class ImplementationGuideService {
+export class ImplementationGuideService extends ConformanceService {
 
-  constructor(private http: HttpClient,
+  constructor(protected http: HttpClient,
               public configService: ConfigService,
               public router: Router) {
+    super(http);
   }
 
   /*
@@ -122,4 +124,5 @@ export class ImplementationGuideService {
   public copyPermissions(id: string) {
     return this.http.post<number>(`/api/implementationGuide/${id}/copy-permissions`, null);
   }
+  
 }
