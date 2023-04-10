@@ -170,40 +170,37 @@ const appRoutes: Routes = [
   {path: 'projects/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
   { path: 'projects/:implementationGuideId/search-parameter', component: SearchParametersComponent },
   { path: 'projects/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
-  { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent, runGuardsAndResolvers: 'always'},
+  { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent},
 
-  {path: ':fhirServer/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},
-  {path: ':fhirServer/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
-  {path: ':fhirServer/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
-  {path: ':fhirServer/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent},
-  { path: ':fhirServer/:implementationGuideId/capability-statement/new', component: CapabilityStatementWrapperComponent },
-  { path: ':fhirServer/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/:implementationGuideId/operation-definition', component: OperationDefinitionsComponent },
-  { path: ':fhirServer/:implementationGuideId/operation-definition/new', component: OperationDefinitionComponent },
-  { path: ':fhirServer/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/:implementationGuideId/value-set', component: ValuesetsComponent },
-  { path: ':fhirServer/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/:implementationGuideId/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always' },
- /* { path: ':fhirServer/:implementationGuideId/code-system', component: CodesystemsComponent },
-  { path: ':fhirServer/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },*/
-  { path: ':fhirServer/:implementationGuideId/questionnaire', component: QuestionnairesComponent },
-  { path: ':fhirServer/:implementationGuideId/questionnaire/new', component: QuestionnaireComponent },
-  { path: ':fhirServer/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/:implementationGuideId/publish', component: PublishComponent },
-  { path: ':fhirServer/:implementationGuideId/export', component: ExportComponent },
-  { path: ':fhirServer/:implementationGuideId/import', component: ImportComponent },
-  { path: ':fhirServer/:implementationGuideId/other-resources', component: OtherResourcesComponent },
-  { path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent },
-  { path: ':fhirServer/:implementationGuideId/examples', component: ExamplesComponent },
-  { path: ':fhirServer/:implementationGuideId/bulk-edit', component: BulkEditComponent },
-/*  { path: ':fhirServer/:implementationGuideId/search-parameter', component: SearchParametersComponent },
-  { path: ':fhirServer/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
-  { path: ':fhirServer/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },*/
-  { path: ':fhirServer/import', component: ImportComponent },
-  { path: ':fhirServer/users/me', component: UserComponent },
-  { path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
+  {path:  'projects/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},
+  {path:  'projects/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
+  {path:  'projects/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
+  {path:  'projects/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent},
+  { path: 'projects/:implementationGuideId/capability-statement/new', component: CapabilityStatementWrapperComponent },
+  { path: 'projects/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/operation-definition', component: OperationDefinitionsComponent },
+  { path: 'projects/:implementationGuideId/operation-definition/new', component: OperationDefinitionComponent },
+  { path: 'projects/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/value-set', component: ValuesetsComponent },
+  { path: 'projects/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always' },
+
+  { path: 'projects/:implementationGuideId/questionnaire', component: QuestionnairesComponent },
+  { path: 'projects/:implementationGuideId/questionnaire/new', component: QuestionnaireComponent },
+  { path: 'projects/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/publish', component: PublishComponent },
+  { path: 'projects/:implementationGuideId/export', component: ExportComponent },
+  { path: 'projects/:implementationGuideId/import', component: ImportComponent },
+  { path: 'projects/:implementationGuideId/other-resources', component: OtherResourcesComponent },
+  { path: 'projects/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent },
+  { path: 'projects/:implementationGuideId/examples', component: ExamplesComponent },
+  { path: 'projects/:implementationGuideId/bulk-edit', component: BulkEditComponent },
+
+  { path: 'projects/import', component: ImportComponent },
+  { path: 'projects/users/me', component: UserComponent },
+  { path: 'projects/users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
 ];
 
 /**
@@ -223,10 +220,6 @@ export function init(
       // Get the initial config for the server and get the FHIR server config
       configService
         .getConfig(true)
-        .then(() => {
-          // Notify components and the FHIR server has changed (or in this case, has been loaded)
-          return configService.changeFhirServer();
-        })
         .then(() => {
           // Now that the config has been loaded, init the auth module
           authService.init();

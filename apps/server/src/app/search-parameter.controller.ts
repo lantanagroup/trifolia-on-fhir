@@ -83,6 +83,6 @@ export class SearchParameterController extends ConformanceController {
   @Delete(':id')
   public async deleteSearchParameter(@FhirServerVersion() fhirServerVersion: 'stu3'|'r4'|'r5', @Param('id') id: string, @User() user) {
     await this.assertCanWriteById(user, id);
-    return this.conformanceService.delete(id);
+    return this.conformanceService.deleteConformance(id);
   }
 }

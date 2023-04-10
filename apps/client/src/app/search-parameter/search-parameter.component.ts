@@ -126,31 +126,10 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
 
     if (!this.isNew) {
       this.searchParameter = null;
-
-     /* this.spService.get(this.searchParameterId)
-        .subscribe((conf: IConformance) => {
-          if (conf.resourceType !== 'SearchParameter') {
-            this.message = 'The specified search parameter either does not exist or was deleted';
-            return;
-          }
-
-          this.searchParameter = <SearchParameter>sp;
-          this.nameChanged();
-          this.afterSearchParameterInit();
-
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentSearchParameters,
-            this.searchParameter.id,
-            this.searchParameter.name);
-        }, (err) => {
-          this.spNotFound = err.status === 404;
-          this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentSearchParameters, searchParameterId);
-        });*/
       this.spService.get(this.searchParameterId)
         .subscribe({
           next: (conf: IConformance) => {
-            if (!conf || !conf.resource || conf.resource.resourceType !== 'CodeSystem') {
+            if (!conf || !conf.resource || conf.resource.resourceType !== 'SearchParameter') {
               this.message = 'The specified code system either does not exist or was deleted';
               return;
             }
@@ -215,22 +194,6 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
       this.fileService.saveFile();
       return;
     }
-
-    /*this.spService.save(this.searchParameterId, this.searchParameter)
-      .subscribe((results: SearchParameter) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/search-parameter/${results.id}`]);
-        } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentSearchParameters, results.id, results.name);
-          this.message = 'Your changes have been saved!';
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
-        }
-      }, (err) => {
-        this.message = `An error occurred while saving the search parameter: ${err.message}`;
-      });*/
 
     this.spService.save(this.searchParameterId, this.conformance)
       .subscribe({

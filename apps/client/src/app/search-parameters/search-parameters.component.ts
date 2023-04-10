@@ -1,15 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Globals } from 'libs/tof-lib/src/lib/globals';
-import {Bundle, CodeSystem, SearchParameter} from 'libs/tof-lib/src/lib/stu3/fhir';
-import {Observable, Subject} from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
-import { AuthService } from '../shared/auth.service';
-import { ConfigService } from '../shared/config.service';
-import { SearchParameterService } from '../shared/search-parameter.service';
-import { ChangeResourceIdModalComponent } from '../modals/change-resource-id-modal/change-resource-id-modal.component';
-import { BaseComponent } from '../base.component';
-import {IConformance} from '@trifolia-fhir/models';
+import {Component, OnInit} from '@angular/core';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {Globals} from 'libs/tof-lib/src/lib/globals';
+import {SearchParameter} from 'libs/tof-lib/src/lib/stu3/fhir';
+import {Subject} from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
+import {AuthService} from '../shared/auth.service';
+import {ConfigService} from '../shared/config.service';
+import {SearchParameterService} from '../shared/search-parameter.service';
+import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
+import {BaseComponent} from '../base.component';
 
 @Component({
   templateUrl: './search-parameters.component.html',
@@ -55,9 +54,9 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
 
     this.spService.delete(searchParameter.id)
       .subscribe(() => {
-        const entry = (this.searchParameterBundle.entry || []).find((e) => e.resource.id === searchParameter.id);
-        const index = this.searchParameterBundle.entry.indexOf(entry);
-        this.searchParameterBundle.entry.splice(index, 1);
+        const entry = (this.searchParameterBundle.results || []).find((e) => e.resource.id === searchParameter.id);
+        const index = this.searchParameterBundle.results.indexOf(entry);
+        this.searchParameterBundle.results.splice(index, 1);
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while deleting the capability statement');
       });

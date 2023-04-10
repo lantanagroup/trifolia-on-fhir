@@ -70,11 +70,11 @@ export class AppComponent implements OnInit {
   }
 
   get showNewUser() {
-    return this.authService.isAuthenticated() && !this.authService.user && !!this.configService.fhirConformance;
+    return this.authService.isAuthenticated() && !this.authService.user;
   }
 
   get showRouterOutlet() {
-    return this.authService.isAuthenticated() && !!this.authService.user && !!this.configService.fhirConformance;
+    return this.authService.isAuthenticated() && !!this.authService.user;
   }
 
   public startIntro() {
@@ -100,7 +100,7 @@ export class AppComponent implements OnInit {
     this.router.navigate(['/projects']);
   }
 
-  public get fhirServerDisplay(): string {
+/*  public get fhirServerDisplay(): string {
     if (this.configService.fhirServer) {
       const fhirServers = this.configService.config ?
         this.configService.config.fhirServers : [];
@@ -111,7 +111,7 @@ export class AppComponent implements OnInit {
         return found.short || found.name;
       }
     }
-  }
+  }*/
 
   public get displayName(): string {
     if (this.authService.user) {

@@ -30,7 +30,7 @@ export class PageWrapperComponent implements OnInit, OnChanges {
       let componentFactory: any;
       const version = this.configService.fhirConformanceVersion;
 
-      if (identifyRelease(version) === Versions.R4) {
+      if (identifyRelease(this.implementationGuide.fhirVersion[0]) === Versions.R4) {
         componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4PageComponent);
       } else {
         componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3PageComponent);
@@ -45,9 +45,9 @@ export class PageWrapperComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.configService.fhirServerChanged.subscribe(() => {
+  //  this.configService.fhirServerChanged.subscribe(() => {
       this.changed(true);
-    });
+  //  });
   }
 
   ngOnChanges(changes: SimpleChanges) {

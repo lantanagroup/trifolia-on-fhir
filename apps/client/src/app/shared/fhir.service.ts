@@ -120,8 +120,9 @@ export class FhirService {
 
   public loadAssets() {
     this.loaded = false;
-    const fhirVersion = identifyRelease(this.configService.fhirConformanceVersion);
-    const isFhirR4 = fhirVersion === Versions.R4;
+  //  const fhirVersion = identifyRelease(this.configService.fhirConformanceVersion);
+    const isFhirR4 = true;
+    const fhirVersion = 'r4';
     const loadDirectory = isFhirR4 ? 'r4' : 'stu3';
 
     const assetPromises = [
