@@ -81,6 +81,6 @@ export class CodeSystemController extends ConformanceController {
   @Delete(':id')
   public async deleteCodeSystem(@FhirServerVersion() fhirServerVersion: 'stu3'|'r4'|'r5', @Param('id') id: string, @User() user) {
     await this.assertCanWriteById(user, id);
-    return this.conformanceService.delete(id);
+    return this.conformanceService.deleteConformance(id);
   }
 }
