@@ -22,7 +22,7 @@ export class ImplementationGuideTypeaheadComponent implements OnInit, OnChanges 
   constructor(private implementationGuideService: ImplementationGuideService,
               private cookieService: CookieService,
               private configService: ConfigService) {
-    this.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
+    this.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion);
 
   }
 
@@ -54,7 +54,7 @@ export class ImplementationGuideTypeaheadComponent implements OnInit, OnChanges 
     }
 
 
-    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion;
 
     if (implementationGuide && implementationGuide.id) {
       this.cookieService.set(cookieKey, implementationGuide.id);

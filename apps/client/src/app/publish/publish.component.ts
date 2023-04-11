@@ -49,7 +49,7 @@ export class PublishComponent implements OnInit {
     private exportService: ExportService) {
 
     this.options.implementationGuideId = !this.route.snapshot.paramMap.get('id') ?
-    this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer) :
+    this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion) :
     this.route.snapshot.paramMap.get('id');
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
     this.options.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
@@ -67,10 +67,11 @@ export class PublishComponent implements OnInit {
     this.selectedImplementationGuide = implementationGuide;
     this.options.implementationGuideId = implementationGuide ? implementationGuide.id : undefined;
 
-    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion;
 
     if (implementationGuide && implementationGuide.id) {
       this.cookieService.set(cookieKey, implementationGuide.id);
+    } else if (this.cookieService.get(cookieKey)) {
     } else if (this.cookieService.get(cookieKey)) {
       this.cookieService.delete(cookieKey);
     }
@@ -117,7 +118,7 @@ export class PublishComponent implements OnInit {
   };
 
   public clearImplementationGuide() {
-    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion;
 
     this.selectedImplementationGuide =
       this.options.implementationGuideId = null;

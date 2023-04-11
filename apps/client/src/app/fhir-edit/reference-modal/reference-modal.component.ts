@@ -276,7 +276,7 @@ export class FhirReferenceModalComponent implements OnInit {
   ngOnInit() {
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.criteriaChanged();
-    this.nameSearchTypes = this.fhirService.findResourceTypesWithSearchParam('name');
-    this.titleSearchTypes = this.fhirService.findResourceTypesWithSearchParam('title');
+    //this.nameSearchTypes = this.fhirService.findResourceTypesWithSearchParam('name');
+   // this.titleSearchTypes = this.fhirService.findResourceTypesWithSearchParam('title');
   }
 }

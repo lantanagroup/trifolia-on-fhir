@@ -24,9 +24,8 @@ export class Project extends BaseEntity implements IProject {
     @Prop()
     permissions?: IPermission[];
 
-    @Prop ([{type: mongoose.Schema.Types.ObjectId, ref: Conformance.name }])
-    igs: Conformance[];
-
+    @Prop ([{type: mongoose.Schema.Types.ObjectId, ref: 'Conformance' }])
+    igs;
 }
 
 

@@ -9,6 +9,7 @@ import {User} from '../server.decorators';
 import {Conformance} from '../conformance/conformance.schema';
 import {ConformanceService} from '../conformance/conformance.service';
 
+
 @Controller('api/project')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Project')
@@ -26,7 +27,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
       return filter;
     }
     let query = req.query;
-    
+
     if ('name' in query) {
       filter['name'] = { $regex: query['name'], $options: 'i' };
     }
@@ -45,8 +46,9 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
     let contributor = {user: userProfile.user.name}
     project.contributors.push(contributor);
 
+    const confResource = await this.conformanceService.getModel().findById(project.igs[0].id);
+    project.igs[0] = confResource.id;
     const createdProject = await super.create(project);
-
     for (const id of createdProject.igs) {
       const confResource: IConformance = <IConformance>(await this.conformanceService.findById(id.toString()));
       confResource.projects = [];

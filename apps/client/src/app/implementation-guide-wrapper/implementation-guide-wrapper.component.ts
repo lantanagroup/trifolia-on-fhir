@@ -11,6 +11,7 @@ import {ImplementationGuideService} from '../shared/implementation-guide.service
 import {IConformance, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
 import {ImplementationGuide} from '@trifolia-fhir/r4';
 import {getErrorString} from '@trifolia-fhir/tof-lib';
+import {FhirService} from '../shared/fhir.service';
 
 /**
  * This class is responsible for determining which implementation-guide component to render
@@ -31,6 +32,7 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
     private route: ActivatedRoute,
     private fileService: FileService,
     private configService: ConfigService,
+    private fhirService: FhirService,
     private implementationGuideService: ImplementationGuideService) {
     this.versionChanged();
   }
@@ -53,17 +55,17 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
     .subscribe({
       next: (results) => {
         const conf: IConformance = results;
-        ig = new ImplementationGuide(conf.resource);
-        if(ig.hasOwnProperty ("fhirVersion")){
-          version = ig["fhirVersion"][0];
-        }
-        if (identifyRelease(version) === Versions.R4) {
-          componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4ImplementationGuideComponent);
-        } else {
-          componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3ImplementationGuideComponent);
-        }
-        this.viewContainerRef.clear();
-        this.igComponent = this.viewContainerRef.createComponent(componentFactory);
+        this.configService.setFhirVersion(conf.fhirVersion);
+        this.fhirService.setFhirVersion(conf.fhirVersion).then( () => {
+            if (conf.fhirVersion === Versions.R4.toLowerCase()) {
+              componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4ImplementationGuideComponent);
+            } else {
+              componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3ImplementationGuideComponent);
+            }
+            this.viewContainerRef.clear();
+            this.igComponent = this.viewContainerRef.createComponent(componentFactory);
+          }
+        );
       },
       error: (err) => {
         this.igNotFound = err.status === 404;

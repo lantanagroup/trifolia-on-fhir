@@ -126,6 +126,6 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getValueSets();
-    this.configService.fhirServerChanged.subscribe(() => this.getValueSets());
+  //  this.configService.fhirServerChanged.subscribe(() => this.getValueSets());
   }
 }

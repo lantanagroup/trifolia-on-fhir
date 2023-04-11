@@ -92,7 +92,8 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
   }
 
   public get selectCookie() {
-    if (this.configService.fhirServer) {
+    return "igsSelected";
+   /* if (this.configService.fhirServer) {
       if (this.configService.fhirServer === 'lantana_hapi_r4_prod') {
         return 'r4ProdRecentIgs';
       } else if (this.configService.fhirServer === 'lantana_hapi_r4') {
@@ -104,7 +105,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
       } else {
         return this.configService.fhirServer;
       }
-    }
+    }*/
   }
 
   public projectReselected(recentIg: RecentImplementationGuide) {
@@ -164,7 +165,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
 
   ngOnInit() {
     this.getImplementationGuides();
-    this.configService.fhirServerChanged.subscribe(() => this.getImplementationGuides());
+ //   this.configService.fhirServerChanged.subscribe(() => this.getImplementationGuides());
 
     if (!!this.cookieService.get(this.selectCookie)) {
       this.recentIgs = JSON.parse(this.cookieService.get(this.selectCookie));

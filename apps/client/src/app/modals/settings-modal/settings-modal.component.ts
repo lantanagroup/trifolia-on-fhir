@@ -42,7 +42,7 @@ export class SettingsModalComponent implements OnInit {
   }
 
   public ok() {
-    if (this.fhirServerId !== this.configService.fhirServer) {
+    if (this.fhirServerId !== this.configService.fhirVersion) {
       this.configService.project = null;
       this.authService.user = null;
       // noinspection JSIgnoredPromiseFromCall
@@ -53,6 +53,6 @@ export class SettingsModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.fhirServerId = this.configService.fhirServer;
+    this.fhirServerId = this.configService.fhirVersion;
   }
 }

@@ -58,7 +58,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     super(configService, authService);
 
     this.searchParameter = new SearchParameter({ meta: this.authService.getDefaultMeta() });
-    this.conformance = { resource: this.searchParameter, permissions: this.authService.getDefaultPermissions() };
+    this.conformance = { resource: this.searchParameter, fhirServerVersion: this.configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {

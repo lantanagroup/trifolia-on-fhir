@@ -48,7 +48,7 @@ export class NewUserModalComponent implements OnInit {
         setTimeout(() => {
           this.socketService.notifyAuthenticated(this.authService.userProfile, newUser);
           this.authService.authChanged.emit();
-          this.router.navigate([`/${this.configService.fhirServer}/home`]);
+          this.router.navigate([`/${this.configService.fhirVersion}/home`]);
         });
 
       },

@@ -724,7 +724,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
         await this.implementationGuideService.removeImplementationGuide(this.implementationGuide.id).toPromise().then((project) => {
           console.log(project);
           this.configService.project = null;
-          this.router.navigate([`${this.configService.fhirServer}/home`]);
+          this.router.navigate([`${this.configService.baseSessionUrl}/home`]);
           alert(`IG ${name} with id ${this.implementationGuide.id} has been deleted`);
         }).catch((err) => this.message = getErrorString(err));
       }, (err) => {
