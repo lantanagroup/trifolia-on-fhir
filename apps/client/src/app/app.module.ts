@@ -196,11 +196,12 @@ const appRoutes: Routes = [
   { path: 'projects/:implementationGuideId/examples', component: ExamplesComponent },
   { path: 'projects/:implementationGuideId/bulk-edit', component: BulkEditComponent },
 
+  { path: 'import', component: ImportComponent },
   { path: 'projects/import', component: ImportComponent },
-  { path: 'projects/users/me', component: UserComponent },
-  { path: 'projects/users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
-  { path: 'projects/manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
-  { path: 'projects/manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
+  { path: 'users/me', component: UserComponent },
+  { path: 'users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
+  { path: 'manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
+  { path: 'manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
 ];
 
 /**
