@@ -49,8 +49,6 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
       version = this.fileService.file.fhirVersion;
     }
 
-    let ig;
-    // get Ig version
     this.implementationGuideService.getImplementationGuide(id)
     .subscribe({
       next: (results) => {
@@ -75,7 +73,7 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
 
   }
 
-  ngOnInit() {// this.configService.fhirServerChanged.subscribe(() => {
+  ngOnInit() {
       this.versionChanged();
   }
 }

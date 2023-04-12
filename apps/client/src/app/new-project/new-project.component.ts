@@ -120,11 +120,11 @@ export class NewProjectComponent implements OnInit {
     let projectName = ig.name;
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirVersion));
 
-    let newConf: IConformance = <IConformance>{fhirVersion: this.configService.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
+    let newConf: IConformance = <IConformance>{fhirVersion: this.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
     this.igService.saveImplementationGuide(newConf)
       .subscribe({
         next: async (ig: IConformance) => {
-          let project: IProject = <IProject>{ author: "", fhirVersion: this.configService.fhirVersion, name: projectName };
+          let project: IProject = <IProject>{ author: "", fhirVersion: this.fhirVersion, name: projectName };
           project.igs = project.igs || [];
           project.igs.push(ig);
           await this.projectService.save(project).toPromise().then((project) => {

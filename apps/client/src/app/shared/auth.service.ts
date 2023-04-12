@@ -109,13 +109,13 @@ export class AuthService {
 
     // When the FHIR server changes, get the profile for the user on the FHIR server
     // and then notify the socket connection that the user has been authenticated
-    this.configService.fhirServerChanged.subscribe(async () => {
-      await this.getProfile();
+   // this.configService.fhirServerChanged.subscribe(async () => {
+     this.getProfile();
 
       if (this.isAuthenticated()) {
         this.socketService.notifyAuthenticated(this.userProfile, this.user);
       }
-    });
+   // });
   }
 
   public login(): void {
@@ -138,7 +138,7 @@ export class AuthService {
       if(!this.oauthService.state || this.oauthService.state !== 'undefined'){
         path = this.oauthService.state;
       }else{
-        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/implementation-guide/open`;
+        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.baseSessionUrl}/implementation-guide/open`;
       }
 
       // Make sure the user is not sent back to the /login page, which is only used to active .handleAuthentication()
@@ -176,7 +176,7 @@ export class AuthService {
     // Go back to the home route
     // noinspection JSIgnoredPromiseFromCall
 
-    this.router.navigate([`/${this.configService.fhirServer}/home`]);
+    this.router.navigate([`/${this.configService.baseSessionUrl}/home`]);
     this.authChanged.emit();
   }
 

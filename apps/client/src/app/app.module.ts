@@ -137,6 +137,10 @@ export class AddHeaderInterceptor implements HttpInterceptor {
           'implementationGuideId',
           this.configService.project.implementationGuideId
         );
+        headers = headers.set(
+          'fhirVersion',
+          this.configService.fhirVersion
+        );
       }
 
       // Remove the context if the request indicates the context should be ignored

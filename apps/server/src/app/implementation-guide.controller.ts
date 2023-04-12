@@ -396,7 +396,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
     }
     ImplementationGuideController.downloadDependencies(body.resource, body.fhirVersion, this.configService, this.logger);
     let conformance: IConformance = body;
-   // conformance.fhirVersion = fhirServerVersion;
+    //conformance.fhirVersion = fhirServerVersion;
     return this.conformanceService.createConformance(conformance);
   }
 

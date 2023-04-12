@@ -31,7 +31,7 @@ const loadTofRequest = (req: ITofRequest, res: Response, next) => {
 
   req.fhirServerId = req.headers['fhirserver'] || config.fhir.servers[0].id;
   req.fhirServerBase = config.fhir.servers[0].uri;
-  req.fhirServerVersion = config.fhir.servers[0].version;
+  req.fhirServerVersion = req.headers['fhirversion'] || config.fhir.servers[0].version;
   req.io = io;
   req.ioConnections = connections;
 
@@ -47,7 +47,7 @@ const loadTofRequest = (req: ITofRequest, res: Response, next) => {
     }
 
     req.fhirServerBase = foundFhirServer.uri;
-    req.fhirServerVersion = foundFhirServer.version;
+   // req.fhirServerVersion = foundFhirServer.version;
   }
 
   switch (req.fhirServerVersion) {

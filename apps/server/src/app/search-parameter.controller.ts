@@ -69,17 +69,17 @@ export class SearchParameterController extends ConformanceController {
   }
 
   @Post()
-  public createSearchParameter(@User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = true) {
+  public createSearchParameter(@FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = true) {
     let conformance: IConformance = body;
-   // conformance.fhirVersion = fhirServerVersion;
+    conformance.fhirVersion = fhirServerVersion;
     return this.conformanceService.createConformance(conformance, contextImplementationGuideId);
   }
 
   @Put(':id')
-  public async updateSearchParameter(@Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
+  public async updateSearchParameter(@FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
     await this.assertCanWriteById(user, id);
     let conformance: IConformance = body;
-    //conformance.fhirVersion = fhirServerVersion;
+    conformance.fhirVersion = fhirServerVersion;
     return this.conformanceService.updateConformance(id, conformance);
   }
 

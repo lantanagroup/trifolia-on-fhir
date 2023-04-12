@@ -11,9 +11,7 @@ import { identifyRelease as identifyReleaseFunc } from '../../../../../libs/tof-
 @Injectable()
 export class ConfigService {
   public config: ConfigModel;
-  public fhirServer: string;
-  public fhirVersion: string;
-  public fhirServerChanged: EventEmitter<string> = new EventEmitter<string>();
+  public fhirVersion: string = 'r4';
   public project?: {
     implementationGuideId: string,
     name?: string,
@@ -21,10 +19,10 @@ export class ConfigService {
   };
   public statusMessage: string;
   public showingIntroduction = false;
-  private fhirCapabilityStatements: { [fhirServiceId: string]: STU3CapabilityStatement | R4CapabilityStatement | boolean } = {};
+
 
   constructor(private injector: Injector) {
-  //  this.fhirServer = localStorage.getItem('fhirServer');
+
   }
 
   /*public async getBinaryResources(igId: string): Promise<Resource[]> {
@@ -83,9 +81,6 @@ export class ConfigService {
     }
   }
 
-  public get fhirConformance(): STU3CapabilityStatement | R4CapabilityStatement | boolean {
-    return this.fhirCapabilityStatements[this.fhirServer];
-  }
 
   public get titleService(): Title {
     return this.injector.get(Title);
@@ -95,12 +90,17 @@ export class ConfigService {
     return this.injector.get(HttpClient);
   }
 
+  public setFhirVersion(fhirVersion?: string) {
+    this.fhirVersion = fhirVersion;
+  }
+
+
   public get isFhirSTU3() {
-    return identifyReleaseFunc(this.fhirConformanceVersion) === Versions.STU3;
+    return this.fhirVersion === Versions.STU3.toLowerCase();
   }
 
   public get isFhirR4() {
-    return identifyReleaseFunc(this.fhirConformanceVersion) === Versions.R4;
+    return this.fhirVersion === Versions.R4.toLowerCase();
   }
 
   public setTitle(value: string, isDirty: boolean = false) {
@@ -120,76 +120,9 @@ export class ConfigService {
       .then((config: ConfigModel) => {
         this.config = config;
 
-       /* if(localStorage){
-          const currentFhirServer = localStorage.getItem('fhirServer');
-          const found = this.config.fhirServers.find(fhirServer => {
-            return fhirServer.id === currentFhirServer;
-          });
-
-          if(!found){
-            this.fhirServer = null;
-            localStorage.removeItem('fhirServer');
-          }
-        }*/
-
-     /*   if (!this.fhirServer && this.config.fhirServers.length > 0) {
-          this.fhirServer = this.config.fhirServers[0].id;
-        }
-
-        if (this.fhirServer) {
-          if (!init) {
-            // noinspection JSIgnoredPromiseFromCall
-            this.changeFhirServer(this.fhirServer);
-          }*/
-       /* } else {
-          throw new Error('No FHIR servers available for selection.');
-        }*/
       });
   }
 
-  /*public changeFhirServer(fhirServer?: string) {
-    // Don't do anything if the fhir server hasn't changed
-    if (this.fhirServer === fhirServer && this.fhirConformance) {
-      return Promise.resolve();
-    }
-
-    if (!fhirServer) {
-      if (!this.fhirServer) {
-        throw new Error('A fhir server must be specified to change the fhir server');
-      } else if (this.fhirConformance) {
-        this.fhirServerChanged.emit(this.fhirServer);
-        return Promise.resolve();
-      }
-    } else {
-      this.fhirServer = fhirServer;
-      localStorage.setItem('fhirServer', this.fhirServer);
-    }
-
-    // Get the conformance statement from the FHIR server and store it
-    return this.http.get('/api/config/fhir').toPromise()
-      .then((res: STU3CapabilityStatement | R4CapabilityStatement) => {
-        this.fhirCapabilityStatements[this.fhirServer] = res;
-        this.fhirServerChanged.emit(this.fhirServer);
-      })
-      .catch((err) => {
-        this.fhirCapabilityStatements[this.fhirServer] = false;
-      });
-  }*/
-
-  public identifyRelease(): Versions {
-    if (this.fhirConformanceVersion) {
-      return identifyReleaseFunc(this.fhirConformanceVersion);
-    }
-
-    return Versions.STU3;
-  }
-
-  public get fhirConformanceVersion(): string {
-    if (this.fhirConformance && typeof this.fhirConformance === 'object') {
-      const fhirConformance = <STU3CapabilityStatement | R4CapabilityStatement> this.fhirConformance;
-      return fhirConformance.fhirVersion;
-    }
-  }
 
   public setStatusMessage(message: string, timeout?: number) {
     this.statusMessage = message;

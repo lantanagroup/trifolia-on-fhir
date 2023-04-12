@@ -33,7 +33,10 @@ export class CodeSystemController extends ConformanceController {
       searchFilters['resource.name'] = { $regex: query['name'], $options: 'i' };
     }
     searchFilters['resource.resourceType'] = { $regex: 'CodeSystem', $options: 'i' };
-    searchFilters['fhirVersion'] = { $regex: fhirServerVersion, $options: 'i' };
+    //searchFilters['fhirVersion'] = { $regex: fhirServerVersion, $options: 'i' };
+    if (headers && headers['fhirversion'] ) {
+      searchFilters['fhirversion'] = { $regex: headers['fhirversion'] , $options: 'i' };
+    }
     if (headers && headers['implementationguideid'] ) {
       searchFilters['igIds'] =  new ObjectId(headers['implementationguideid']);
     }
@@ -79,7 +82,7 @@ export class CodeSystemController extends ConformanceController {
   }
 
   @Delete(':id')
-  public async deleteCodeSystem(@FhirServerVersion() fhirServerVersion: 'stu3'|'r4'|'r5', @Param('id') id: string, @User() user) {
+  public async deleteCodeSystem(@Param('id') id: string, @User() user) {
     await this.assertCanWriteById(user, id);
     return this.conformanceService.deleteConformance(id);
   }
