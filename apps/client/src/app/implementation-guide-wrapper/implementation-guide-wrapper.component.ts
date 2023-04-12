@@ -55,7 +55,7 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
     .subscribe({
       next: (results) => {
         const conf: IConformance = results;
-        this.configService.setFhirVersion(conf.fhirVersion);
+        this.configService.fhirVersion = conf.fhirVersion;
         this.fhirService.setFhirVersion(conf.fhirVersion).then( () => {
             if (conf.fhirVersion === Versions.R4.toLowerCase()) {
               componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4ImplementationGuideComponent);

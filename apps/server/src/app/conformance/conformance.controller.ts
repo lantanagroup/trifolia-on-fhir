@@ -139,7 +139,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
     @Get(':id/references')
     public async getReferences(@User() user: ITofUser, @Param('id') id: string): Promise<any> {
         await this.assertCanReadById(user, id);
-        return await this.conformanceService.findAll({ _id: new Object(id) }, ["references.value"]);
+        return await this.conformanceService.getWithReferences(id);
     }
 
     @Get(':id')

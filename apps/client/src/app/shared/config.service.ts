@@ -12,6 +12,7 @@ import { identifyRelease as identifyReleaseFunc } from '../../../../../libs/tof-
 export class ConfigService {
   public config: ConfigModel;
   public fhirServer: string;
+  public fhirVersion: string;
   public fhirServerChanged: EventEmitter<string> = new EventEmitter<string>();
   public project?: {
     implementationGuideId: string,
