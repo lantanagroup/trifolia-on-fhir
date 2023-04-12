@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IConformance, IHistory, IProject, IProjectResourceReference } from '@trifolia-fhir/models';
-import { IDomainResource } from '@trifolia-fhir/tof-lib';
+import { IBundle, IDomainResource } from '@trifolia-fhir/tof-lib';
 import { Model } from 'mongoose';
 import { BaseDataService } from '../base/base-data.service';
 import { HistoryService } from '../history/history.service';
@@ -9,6 +9,9 @@ import { TofLogger } from '../tof-logger';
 import { Conformance, ConformanceDocument } from './conformance.schema';
 import { addToImplementationGuideNew } from '../helper';
 import { ObjectId } from 'mongodb';
+import { TofNotFoundException } from '../../not-found-exception';
+import { Bundle as STU3Bundle, EntryComponent as STU3BundleEntryComponent } from '@trifolia-fhir/stu3';
+import { Bundle as R4Bundle, BundleEntryComponent as R4BundleEntryComponent } from '@trifolia-fhir/r4';
 
 @Injectable()
 export class ConformanceService extends BaseDataService<ConformanceDocument> {
@@ -171,12 +174,12 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
             await this.conformanceModel.updateMany(
                 { '_id': { $in: confIdsRemoved } },
-                { $pull: { igIds: existing.id }  }
+                { $pull: { igIds: existing.id } }
             );
 
             await this.conformanceModel.updateMany(
                 { '_id': { $in: confIdsAdded } },
-                { $push: { igIds: existing.id }  }
+                { $push: { igIds: existing.id } }
             );
 
         }
@@ -210,6 +213,72 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         await this.historyService.create(newHistory);
 
         return existing;
+
+    }
+
+
+
+    public async getWithReferences(conformanceId: string) {
+        return this.conformanceModel.findById(conformanceId).populate('references.value');
+    }
+
+
+    /**
+     * Returns a FHIR Bundle with the IG and its referenced resources
+     * @param implementationGuideId Database ID of the conformance resource for the implementation guide
+     * @returns FHIR Bundle containing the IG resource and all referenced resources
+     */
+    public async getBundleFromImplementationGuideId(implementationGuideId: string): Promise<IBundle> {
+        const conformance: IConformance = await this.getWithReferences(implementationGuideId);
+        return this.getBundleFromImplementationGuide(conformance);
+    }
+
+    /**
+     * Returns a FHIR Bundle with the requested IG and its referenced resources
+     * @param implementationGuide Cnformance resource representation of the implementation guide
+     * @returns FHIR Bundle containing the IG resource and all referenced resources
+     */
+    public async getBundleFromImplementationGuide(implementationGuide: IConformance): Promise<IBundle> {
+
+        if (!implementationGuide || !implementationGuide.resource || implementationGuide.resource.resourceType !== 'ImplementationGuide') {
+            throw new TofNotFoundException(`No valid implementation guide found.`);
+        }
+
+        let bundle: IBundle;
+        let entryType;
+        if (implementationGuide.fhirVersion === 'stu3') {
+            bundle = new STU3Bundle(implementationGuide);
+            entryType = STU3BundleEntryComponent;
+        }
+        else {
+            bundle = new R4Bundle(implementationGuide);
+            entryType = R4BundleEntryComponent;
+        }
+
+        bundle.entry = [];
+
+        let igEntry = new entryType();
+        igEntry.resource = implementationGuide.resource;
+        bundle.entry.push(igEntry);
+
+        (implementationGuide.references || []).forEach((r: IProjectResourceReference) => {
+            let entry = new entryType();
+            if (typeof r.value === typeof {}) {
+                if ('resource' in <any>r.value) {
+                    entry.resource = r.value['resource'];
+                }
+                else if ('content' in <any>r.value) {
+                    entry.resource = r.value['content'];
+                }
+
+                if (entry.resource) {
+                    bundle.entry.push(entry);
+                }
+            }
+        });
+
+
+        return bundle;
 
     }
 

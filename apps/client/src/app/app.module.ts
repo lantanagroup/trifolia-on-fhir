@@ -190,7 +190,7 @@ const appRoutes: Routes = [
   { path: ':fhirServer/:implementationGuideId/questionnaire/new', component: QuestionnaireComponent },
   { path: ':fhirServer/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always' },
   { path: ':fhirServer/:implementationGuideId/publish', component: PublishComponent },
-  { path: ':fhirServer/:implementationGuideId/export', component: ExportComponent },
+  { path: 'projects/:implementationGuideId/export', component: ExportComponent },
   { path: ':fhirServer/:implementationGuideId/import', component: ImportComponent },
   { path: ':fhirServer/:implementationGuideId/other-resources', component: OtherResourcesComponent },
   { path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent },

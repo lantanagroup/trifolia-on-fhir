@@ -3,17 +3,15 @@ import { ImplementationGuideService } from '../shared/implementation-guide.servi
 import { saveAs } from 'file-saver';
 import { ExportOptions, ExportService } from '../shared/export.service';
 import { ExportFormats } from '../models/export-formats.enum';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { CookieService } from 'ngx-cookie-service';
 import { ConfigService } from '../shared/config.service';
-import { ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { ImplementationGuide } from '@trifolia-fhir/stu3';
 import { Observable } from 'rxjs';
 import { ExportGithubPanelComponent } from '../export-github-panel/export-github-panel.component';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { getErrorString, Globals, SearchImplementationGuideResponseContainer } from '@trifolia-fhir/tof-lib';
 import { HttpClient } from '@angular/common/http';
-import { SearchImplementationGuideResponseContainer } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import { IConformance } from '@trifolia-fhir/models';
 
 @Component({
@@ -40,7 +38,7 @@ export class ExportComponent implements OnInit {
     public configService: ConfigService,
     public http: HttpClient) {
 
-    this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
+    this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId);
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/xml';
     this.options.downloadOutput = true;
     this.options.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
@@ -112,19 +110,19 @@ export class ExportComponent implements OnInit {
     }
   }
 
-  public async implementationGuideChanged(implementationGuide: ImplementationGuide) {
-    this.selectedImplementationGuide = implementationGuide;
-    this.options.implementationGuideId = implementationGuide ? implementationGuide.id : undefined;
+  public async implementationGuideChanged(igConf: IConformance) {
+    this.selectedImplementationGuide = <ImplementationGuide>igConf.resource;
+    this.options.implementationGuideId = igConf ? igConf.id : undefined;
 
-    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId;
 
-    if (implementationGuide && implementationGuide.id) {
-      this.cookieService.set(cookieKey, implementationGuide.id);
+    if (igConf && igConf.id) {
+      this.cookieService.set(cookieKey, igConf.id);
     } else if (this.cookieService.get(cookieKey)) {
       this.cookieService.delete(cookieKey);
     }
 
-    const pubTemplateExt = (implementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-pub-template']);
+    const pubTemplateExt = (igConf.resource.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-pub-template']);
 
     if (pubTemplateExt) {
       if (pubTemplateExt.valueUri) {
@@ -167,7 +165,7 @@ export class ExportComponent implements OnInit {
   };
 
   public clearImplementationGuide() {
-    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId;
 
     this.selectedImplementationGuide =
       this.options.implementationGuideId = null;
@@ -224,7 +222,7 @@ export class ExportComponent implements OnInit {
     this.socketOutput = '';
     this.message = 'Exporting...';
 
-    this.cookieService.set(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer, this.options.implementationGuideId);
+    this.cookieService.set(Globals.cookieKeys.exportLastImplementationGuideId, this.options.implementationGuideId);
 
     const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
 
@@ -233,30 +231,39 @@ export class ExportComponent implements OnInit {
         case ExportFormats.HTML:
           //Need to discuss the difference between HTML vs Bundle
           this.exportService.exportHtml(this.options)
-            .subscribe((response) => {
-              saveAs(response.body, igName + '.zip');
-              this.message = 'Done exporting.';
-            }, (err) => {
-              this.message = getErrorString(err);
+            .subscribe({
+              next: (response) => {
+                saveAs(response.body, igName + '.zip');
+                this.message = 'Done exporting.';
+              },
+              error: (err) => {
+                this.message = getErrorString(err);
+              }
             });
           break;
         case ExportFormats.Bundle:
           this.exportService.exportBundle(this.options)
-            .subscribe((response) => {
-              const extension = this.options.responseFormat === 'application/xml' ? '.xml' : '.json';
-              saveAs(response.body, igName + extension);
-              this.message = 'Done exporting.';
-            }, (err) => {
-              this.message = getErrorString(err);
+            .subscribe({
+              next: (response) => {
+                const extension = this.options.responseFormat === 'application/xml' ? '.xml' : '.json';
+                saveAs(response.body, igName + extension);
+                this.message = 'Done exporting.';
+              },
+              error: (err) => {
+                this.message = getErrorString(err);
+              }
             });
           break;
         case ExportFormats.MSWORD:
           this.exportService.exportMsWord(this.options)
-            .subscribe((response) => {
-              saveAs(response.body, igName + '.docx');
-              this.message = 'Done exporting.';
-            }, (err) => {
-              this.message = getErrorString(err);
+            .subscribe({
+              next: (response) => {
+                saveAs(response.body, igName + '.docx');
+                this.message = 'Done exporting.';
+              },
+              error: (err) => {
+                this.message = getErrorString(err);
+              }
             });
           break;
         case ExportFormats.GitHub:
@@ -277,7 +284,7 @@ export class ExportComponent implements OnInit {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe({
           next: (res: IConformance) => {
-            this.implementationGuideChanged(<ImplementationGuide>res.resource);
+            this.implementationGuideChanged(res);
           },
           error: (err) => this.message = getErrorString(err)
         });
@@ -287,9 +294,12 @@ export class ExportComponent implements OnInit {
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
-        .subscribe((res: IConformance) => {
-          this.selectedImplementationGuide = <ImplementationGuide>res.resource;
-        }, (err) => this.message = getErrorString(err));
+        .subscribe({
+          next: (res: IConformance) => {
+            this.selectedImplementationGuide = <ImplementationGuide>res.resource;
+          },
+          error: (err) => this.message = getErrorString(err)
+        });
     }
   }
 }

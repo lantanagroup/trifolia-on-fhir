@@ -1,50 +1,53 @@
-import {BaseController} from './base.controller';
-import {HttpService} from '@nestjs/axios';
-import {Controller, Get, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/common';
-import {BundleExporter} from './export/bundle';
-import type {ITofRequest} from './models/tof-request';
-import {Bundle, DomainResource, OperationOutcome} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {buildUrl, joinUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {ServerValidationResult} from '../../../../libs/tof-lib/src/lib/server-validation-result';
-import {emptydir, rmdir, zip} from './helper';
-import {ExportOptions} from './models/export-options';
-import {AuthGuard} from '@nestjs/passport';
-import {Response} from 'express';
-import {TofLogger} from './tof-logger';
-import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
-import {ConfigService} from './config.service';
-import {AxiosRequestConfig} from 'axios';
-import {createHtmlExporter} from './export/html.factory';
+import { HttpService } from '@nestjs/axios';
+import { Controller, Get, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { BundleExporter } from './export/bundle';
+import type { ITofRequest } from './models/tof-request';
+import type { IBundle, IDomainResource, IOperationOutcome, IStructureDefinition } from '@trifolia-fhir/tof-lib';
+import { buildUrl, joinUrl, ServerValidationResult } from '@trifolia-fhir/tof-lib';
+import { emptydir, rmdir, zip } from './helper';
+import { ExportOptions } from './models/export-options';
+import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
+import { TofLogger } from './tof-logger';
+import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
+import { ConfigService } from './config.service';
+import { AxiosRequestConfig } from 'axios';
+import { createHtmlExporter } from './export/html.factory';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import {MSWordExporter} from './export/msword';
-import {ExportService} from './export.service';
-import {FhirServerId, FhirServerVersion, User} from './server.decorators';
-import {HtmlExporter} from './export/html';
-import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
-import {IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { MSWordExporter } from './export/msword';
+import { ExportService } from './export.service';
+import { FhirServerId, User } from './server.decorators';
+import { HtmlExporter } from './export/html';
+import type { ITofUser } from '@trifolia-fhir/tof-lib';
 import nodemailer from 'nodemailer';
 import JSZip from "jszip";
+import { ConformanceController } from './conformance/conformance.controller';
+import { ConformanceService } from './conformance/conformance.service';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Export')
 @ApiOAuth2([])
-export class ExportController extends BaseController {
-  private readonly logger = new TofLogger(ExportController.name);
+export class ExportController extends ConformanceController {//BaseController {
+  protected logger = new TofLogger(ExportController.name);
   public jsZipObj = new JSZip();
 
-  constructor(protected httpService: HttpService, protected configService: ConfigService, private exportService: ExportService) {
-    super(configService, httpService);
+  constructor(
+    protected httpService: HttpService,
+    protected configService: ConfigService,
+    protected conformanceService: ConformanceService,
+    private exportService: ExportService) {
+    super(conformanceService);
   }
 
   @Get(':implementationGuideId/([$])validate')
   public validate(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId: string) {
     return new Promise((resolve, reject) => {
-      const bundleExporter = new BundleExporter(this.httpService, this.logger, request.fhirServerBase, request.fhirServerId, request.fhirServerVersion, request.fhir, implementationGuideId);
+      const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, request.fhir, implementationGuideId);
       let validationRequests = [];
 
-      const validateResource = (resource: DomainResource) => {
+      const validateResource = (resource: IDomainResource) => {
         return new Promise((innerResolve) => {
           const options: AxiosRequestConfig = {
             url: buildUrl(request.fhirServerBase, resource.resourceType, null, '$validate'),
@@ -63,7 +66,7 @@ export class ExportController extends BaseController {
       };
 
       bundleExporter.getBundle(true)
-        .then((results: Bundle) => {
+        .then((results: IBundle) => {
           validationRequests = (results.entry || []).map((entry) => {
             const options = {
               url: buildUrl(request.fhirServerBase, entry.resource.resourceType, null, '$validate'),
@@ -79,12 +82,12 @@ export class ExportController extends BaseController {
           const promises = validationRequests.map((validationRequest) => validationRequest.promise);
           return Promise.all(promises);
         })
-        .then((resultSets: OperationOutcome[]) => {
+        .then((resultSets: IOperationOutcome[]) => {
           let validationResults: ServerValidationResult[] = [];
 
           resultSets.forEach((resultSet: any, index) => {
             if (resultSet && resultSet.resourceType === 'OperationOutcome') {
-              const oo = <OperationOutcome>resultSet;
+              const oo = <IOperationOutcome>resultSet;
 
               if (oo.issue) {
                 const next = oo.issue.map((issue) => {
@@ -116,19 +119,20 @@ export class ExportController extends BaseController {
 
   @Post(':implementationGuideId/bundle')
   public async exportImplementationGuide(
+    @User() user: ITofUser,
     @Req() request: ITofRequest,
     @Res() response: Response,
     @Param('implementationGuideId') implementationGuideId: string,
     @Query('removeExtensions') removeExtensions: string,
     @Query('bundleType') bundleType: 'searchset' | 'transaction') {
 
+    this.assertCanReadById(user, implementationGuideId);
+
     const options = new ExportOptions(request.query);
     const exporter = new BundleExporter(
+      this.conformanceService,
       this.httpService,
       this.logger,
-      request.fhirServerBase,
-      request.fhirServerId,
-      request.fhirServerVersion,
       request.fhir,
       implementationGuideId);
 
@@ -146,12 +150,15 @@ export class ExportController extends BaseController {
   }
 
   @Post(':implementationGuideId/msword')
-  public async exportMSWordDocument(@Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string, @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4') {
-    const bundleExporter = new BundleExporter(this.httpService, this.logger, req.fhirServerBase, req.fhirServerId, req.fhirServerVersion, req.fhir, implementationGuideId);
+  public async exportMSWordDocument(@User() user: ITofUser, @Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string) {
+
+    this.assertCanReadById(user, implementationGuideId);
+
+    const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, req.fhir, implementationGuideId);
     const bundle = await bundleExporter.getBundle(false);
 
     const msWordExporter = new MSWordExporter();
-    const results = await msWordExporter.export(bundle, fhirServerVersion);
+    const results = await msWordExporter.export(bundle, bundleExporter.fhirVersion);
 
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Content-Disposition', 'attachment; filename=ig.docx');
@@ -165,14 +172,14 @@ export class ExportController extends BaseController {
     @User() user: ITofUser,
     @Param('implementationGuideId') implementationGuideId: string) {
 
+    this.assertCanReadById(user, implementationGuideId);
+
     const options = new ExportOptions(request.query);
     const exporter = await createHtmlExporter(
+      this.conformanceService,
       this.configService,
       this.httpService,
       this.logger,
-      request.fhirServerBase,
-      request.fhirServerId,
-      request.fhirServerVersion,
       request.fhir,
       request.io,
       options.socketId,
@@ -219,13 +226,15 @@ export class ExportController extends BaseController {
   @Get(':implementationGuideId/publish')
   public async publishImplementationGuide(@Req() request: ITofRequest, @User() user: ITofUser, @FhirServerId() fhirServerId: string, @Param('implementationGuideId') implementationGuideId) {
     const options = new ExportOptions(request.query);
+
+    let bundle: IBundle;
+    let fhirVersion: 'stu3' | 'r4' | 'r5';
+
     const exporter: HtmlExporter = await createHtmlExporter(
+      this.conformanceService,
       this.configService,
       this.httpService,
       this.logger,
-      request.fhirServerBase,
-      request.fhirServerId,
-      request.fhirServerVersion,
       request.fhir,
       request.io,
       options.socketId,
@@ -263,7 +272,7 @@ export class ExportController extends BaseController {
 
     try {
       await exporter.export(options.format, options.includeIgPublisherJar, options.version,
-        options.templateType, options.template, options.templateVersion, this.jsZipObj,null);
+        options.templateType, options.template, options.templateVersion, this.jsZipObj, null);
 
       runPublish();
 

@@ -7,37 +7,36 @@ import {
   Media,
   PackageResourceComponent,
   StructureDefinition as STU3StructureDefinition
-} from "../../../../../libs/tof-lib/src/lib/stu3/fhir";
+} from "@trifolia-fhir/stu3";
 import {
   ImplementationGuide as R4ImplementationGuide,
   ImplementationGuidePageComponent,
   ImplementationGuideResourceComponent,
   StructureDefinition as R4StructureDefinition
-} from "../../../../../libs/tof-lib/src/lib/r4/fhir";
+} from "@trifolia-fhir/r4";
 import { BundleExporter } from "./bundle";
 import { HttpService } from '@nestjs/axios';
-import { Logger, MethodNotAllowedException } from "@nestjs/common";
+import { MethodNotAllowedException } from "@nestjs/common";
 import { Formats } from "../models/export-options";
-import { IgPageHelper, PageInfo } from "../../../../../libs/tof-lib/src/lib/ig-page-helper";
+import { IgPageHelper, PageInfo } from "@trifolia-fhir/tof-lib";
 import {
   getCustomMenu,
   getDefaultImplementationGuideResourcePath,
   getIgnoreWarningsValue,
   setIgnoreWarningsValue,
   setJiraSpecValue
-} from "../../../../../libs/tof-lib/src/lib/fhirHelper";
-import { Globals } from "../../../../../libs/tof-lib/src/lib/globals";
-import { IBundle, IImplementationGuide } from "../../../../../libs/tof-lib/src/lib/fhirInterfaces";
+} from "@trifolia-fhir/tof-lib";
+import { getErrorString, Globals, PublishingRequestModel } from "@trifolia-fhir/tof-lib";
+import type { IBundle, IBundleEntry, IImplementationGuide, ITofUser } from "@trifolia-fhir/tof-lib";
 import { FhirInstances, unzip } from "../helper";
-import { getErrorString } from "../../../../../libs/tof-lib/src/lib/helper";
 import * as path from "path";
 import * as fs from "fs-extra";
 import * as tmp from "tmp";
 import * as vkbeautify from "vkbeautify";
-import type { ITofUser } from "../../../../../libs/tof-lib/src/lib/tof-user";
 import { ConfigService } from "../config.service";
 import JSZip from "jszip";
-import { PublishingRequestModel } from "../../../../../libs/tof-lib/src/lib/publishing-request-model";
+import { ConformanceService } from "../conformance/conformance.service";
+import { TofLogger } from "../tof-logger";
 
 export class HtmlExporter {
   public queuedAt: Date;
@@ -49,6 +48,7 @@ export class HtmlExporter {
   readonly homedir: string;
   public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
   public bundle: IBundle;
+  public fhirVersion: 'stu3'|'r4'|'r5';
   public packageId: string;
   public rootPath: string;
   public controlPath: string;
@@ -85,17 +85,15 @@ export class HtmlExporter {
 
   // TODO: Refactor so that there aren't so many constructor params
   constructor(
+    protected conformanceService: ConformanceService,
     protected configService: ConfigService,
     protected httpService: HttpService,
-    protected logger: Logger,
-    protected fhirServerBase: string,
-    protected fhirServerId: string,
-    protected fhirVersion: string,
+    protected logger: TofLogger,
     protected fhir: FhirModule,
     protected io: Server,
     protected socketId: string,
     protected implementationGuideId: string) {
-
+      
     this.homedir = require('os').homedir();
   }
 
@@ -111,11 +109,12 @@ export class HtmlExporter {
 
         this.logger.log(`Starting export of HTML package. Home directory is ${this.homedir}. Retrieving resources for export.`);
 
-        const bundleExporter = new BundleExporter(this.httpService, this.logger, this.fhirServerBase, this.fhirServerId, this.fhirVersion, this.fhir, this.implementationGuideId);
+        const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, this.fhir, this.implementationGuideId);
         this.bundle = await bundleExporter.getBundle();
+        this.fhirVersion = bundleExporter.fhirVersion;
 
-        const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide> this.bundle.entry
-          .find((e) => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === this.implementationGuideId)
+        const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide>this.bundle.entry
+          .find((e: IBundleEntry) => e.resource.resourceType === 'ImplementationGuide')// && e.resource.id === this.implementationGuideId)
           .resource;
 
         if (!implementationGuide) {
@@ -178,7 +177,7 @@ export class HtmlExporter {
     this.publishing = new Promise(async (resolve, reject) => {
       this.publishStartedAt = new Date();
 
-      const deployDir = path.resolve(this.configService.server.publishedIgsDirectory || __dirname, 'igs', this.fhirServerId, this.implementationGuide.id);
+      const deployDir = path.resolve(this.configService.server.publishedIgsDirectory || __dirname, 'igs', this.implementationGuide.id);
       fs.ensureDirSync(deployDir);
 
       if (!this.igPublisherLocation) {
@@ -280,7 +279,7 @@ export class HtmlExporter {
               this.publishLog('error', 'Error copying contents to deployment path.');
               reject(err);
             } else {
-              const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/${this.fhirServerId}/${this.implementationGuideId}/implementation-guide/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
+              const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/${this.implementationGuideId}/implementation-guide/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
               this.publishLog('complete', finalMessage, true);
               resolve();
             }
@@ -304,7 +303,7 @@ export class HtmlExporter {
     return this.publishing;
   }
 
-  public updatePublishStatuses(status: boolean){
+  public updatePublishStatuses(status: boolean) {
     let publishStatuses: { [implementationGuideId: string]: boolean } = {};
     if (fs.existsSync(this.configService.server.publishStatusPath)) {
       publishStatuses = JSON.parse(fs.readFileSync(this.configService.server.publishStatusPath));
@@ -314,8 +313,8 @@ export class HtmlExporter {
   }
 
   public async export(format: Formats, includeIgPublisherJar: boolean,
-                      version: string, templateType = 'official', template = 'hl7.fhir.template',
-                      templateVersion = 'current', zipper: JSZip, useTerminologyServer?: boolean): Promise<void> {
+    version: string, templateType = 'official', template = 'hl7.fhir.template',
+    templateVersion = 'current', zipper: JSZip, useTerminologyServer?: boolean): Promise<void> {
     if (!this.configService.fhir.servers) {
       throw new Error('This server is not configured with FHIR servers');
     }
@@ -370,7 +369,7 @@ export class HtmlExporter {
     // Go through all of the other resources and write them to the file system
     // Don't re-write the main implementation guide
     this.bundle.entry
-      .filter((e) => e.resource.resourceType !== 'ImplementationGuide' || e.resource.id !== this.implementationGuideId)
+      .filter((e) => e.resource.resourceType !== 'ImplementationGuide') // || e.resource.id !== this.implementationGuideId)
       .forEach((entry) => this.writeResourceContent(inputDir, entry.resource, isXml));
 
     this.logger.log('Done writing resources to file system.');
@@ -525,14 +524,14 @@ export class HtmlExporter {
     (this.bundle.entry || [])
       .filter(entry => entry.resource && entry.resource.resourceType === 'StructureDefinition')
       .forEach(entry => {
-        const structureDefinition = <STU3StructureDefinition | R4StructureDefinition> entry.resource;
+        const structureDefinition = <STU3StructureDefinition | R4StructureDefinition>entry.resource;
         structureDefinition.fhirVersion = this.getOfficialFhirVersion();
       });
 
     (this.bundle.entry || [])
       .filter(entry => entry.resource && ['StructureDefinition', 'CodeSystem', 'ValueSet', 'CapabilityStatement'].indexOf(entry.resource.resourceType) >= 0)
       .forEach(entry => {
-        const resource = <any> entry.resource;
+        const resource = <any>entry.resource;
 
         if (!resource.title && resource.name) {
           resource.title = resource.name;
@@ -554,7 +553,7 @@ export class HtmlExporter {
   protected createMenu(rootPath: string, bundle, customMenu?: string) {
     fs.ensureDirSync(path.join(rootPath, 'input/includes'));
 
-    if(customMenu){
+    if (customMenu) {
       fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), customMenu);
       return;
     }

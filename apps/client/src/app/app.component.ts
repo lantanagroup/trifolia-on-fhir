@@ -92,7 +92,7 @@ export class AppComponent implements OnInit {
     setTimeout(() => {
       intro.start();
     }, 200);
-  }z
+  }
 
   public closeProject() {
     this.configService.project = null;

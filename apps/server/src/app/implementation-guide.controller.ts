@@ -1,31 +1,26 @@
-import { BaseFhirController } from './base-fhir.controller';
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
-import { FhirInstance, FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User } from './server.decorators';
+import { FhirInstance, FhirServerBase, FhirServerVersion, RequestHeaders, User } from './server.decorators';
 import { ConfigService } from './config.service';
 import { BundleExporter } from './export/bundle';
-import { getErrorString, getHumanNameDisplay, getHumanNamesDisplay, parseReference } from '../../../../libs/tof-lib/src/lib/helper';
-import type { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
 import { copyPermissions } from './helper';
-import { ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { Bundle, ImplementationGuide as R4ImplementationGuide } from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import { buildUrl, getR4Dependencies, getSTU3Dependencies } from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import { SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer } from '../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import { ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent } from '@trifolia-fhir/stu3';
+import { Bundle as R4Bundle, ImplementationGuide as R4ImplementationGuide } from '@trifolia-fhir/r4';
+import { buildUrl, BulkUpdateRequest, getErrorString, getHumanNameDisplay, getHumanNamesDisplay, getR4Dependencies, getSTU3Dependencies, parseReference, SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer } from '@trifolia-fhir/tof-lib';
 import { AxiosRequestConfig } from 'axios';
-import { IBundle, IImplementationGuide, IResourceReference } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { IgExampleModel } from '../../../../libs/tof-lib/src/lib/ig-example-model';
+import type { IBundle, IgExampleModel, IImplementationGuide, IResourceReference, ITofUser } from '@trifolia-fhir/tof-lib';
 import { spawn } from 'child_process';
-import { BulkUpdateRequest } from '../../../../libs/tof-lib/src/lib/bulk-update-request';
 import path from 'path';
 import os from 'os';
-import * as fs from 'fs';
+import { existsSync } from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { PaginateOptions } from '@trifolia-fhir/tof-lib';
 import { AuthService } from './auth/auth.service';
-import {ConformanceService} from './conformance/conformance.service';
-import {IConformance} from '@trifolia-fhir/models';
+import { ConformanceService } from './conformance/conformance.service';
+import { IConformance } from '@trifolia-fhir/models';
+import { ConformanceController } from './conformance/conformance.controller';
 
 
 class PatchRequest {
@@ -44,7 +39,7 @@ class PatchRequest {
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Implementation Guide')
 @ApiOAuth2([])
-export class ImplementationGuideController extends BaseFhirController {
+export class ImplementationGuideController extends ConformanceController { // extends BaseFhirController {
   resourceType = 'ImplementationGuide';
   private readonly httpService1: HttpService;
 
@@ -54,7 +49,7 @@ export class ImplementationGuideController extends BaseFhirController {
               protected conformanceService: ConformanceService,
               protected authService: AuthService) {
 
-    super(httpService, configService);
+    super(conformanceService);
 
   }
 
@@ -74,7 +69,7 @@ export class ImplementationGuideController extends BaseFhirController {
       const packageIdsForDownload = packageIds
         .filter(packageId => {
           const dependencyDir = path.join(os.homedir(), '.fhir', 'packages', packageId, 'package');
-          return !fs.existsSync(dependencyDir);
+          return !existsSync(dependencyDir);
         });
 
       if (packageIdsForDownload.length === 0) return;
@@ -234,7 +229,7 @@ export class ImplementationGuideController extends BaseFhirController {
       profileReferences = this.getSTU3ProfileReferences(<STU3ImplementationGuide> ig);
     }
 
-    const batch = <Bundle> {
+    const batch = <R4Bundle> {
       resourceType: 'Bundle',
       type: 'batch',
       entry: profileReferences.map(pr => {
@@ -296,7 +291,7 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Get()
-  public async search(@User() user: ITofUser, @Query() query?: any, @RequestHeaders() headers?): Promise<SearchImplementationGuideResponseContainer> {
+  public async searchImplementationGuide(@User() user: ITofUser, @Query() query?: any, @RequestHeaders() headers?): Promise<SearchImplementationGuideResponseContainer> {
 
     //const preparedQuery = await this.prepareSearchQuery(user, fhirServerBase, query, headers);
 
@@ -356,7 +351,7 @@ export class ImplementationGuideController extends BaseFhirController {
           if (this.configService.server && this.configService.server.publishStatusPath) {
             searchIGResponses.push({
               data: bundle,
-              published: this.getPublishStatus(bundle.igs[0].id),
+              published: false //this.getPublishStatus(bundle.igs[0].id),
             });
           } else {
             searchIGResponses.push({
@@ -386,7 +381,7 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Get(':id')
-  public async get(@Param('id') id: string) {
+  public async getImplementationGuide(@Param('id') id: string) {
     const confResource: IConformance = <IConformance>(await this.conformanceService.findById(id));
     if(confResource.resource.resourceType == 'ImplementationGuide') {
       return confResource;
@@ -395,7 +390,7 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Post()
-  public create(@FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
+  public createImplementationGuide(@FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
     if (!body || !body.resource) {
       throw new BadRequestException();
     }
@@ -406,7 +401,7 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Put(':id')
-  public update(@FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
+  public updateImplementationGuide(@FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
     if (!body || !body.resource) {
       throw new BadRequestException();
     }
@@ -417,13 +412,13 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Delete(':id')
-  public delete(@Param('id') id: string, @User() user) {
+  public deleteImplementationGuide(@Param('id') id: string, @User() user) {
     return this.conformanceService.delete(id);
   }
 
   @Get(':id/list')
-  public async getResourceList(@FhirServerBase() fhirServerBase: string, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion: string, @FhirInstance() fhir, @Param('id') id: string) {
-    const exporter = new BundleExporter(this.httpService, this.logger, fhirServerBase, fhirServerId, fhirServerVersion, fhir, id);
+  public async getResourceList(@FhirInstance() fhir, @Param('id') id: string) {
+    const exporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, fhir, id);
     const bundle = await exporter.getBundle(false, true);
 
     return (bundle.entry || []).map((entry) => {
@@ -445,10 +440,10 @@ export class ImplementationGuideController extends BaseFhirController {
   }
 
   @Post(':id/copy-permissions')
-  public async copyPermissions(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @FhirServerId() fhirServerId: string, @FhirServerVersion() fhirServerVersion: string, @FhirInstance() fhir, @Param('id') id: string): Promise<number> {
-    const exporter = new BundleExporter(this.httpService, this.logger, fhirServerBase, fhirServerId, fhirServerVersion, fhir, id);
+  public async copyPermissions(@User() user: ITofUser, @FhirInstance() fhir, @Param('id') id: string): Promise<number> {
+    const exporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, fhir, id);
     const bundle = await exporter.getBundle(false, true);
-    const usi = await this.getUserSecurityInfo(user, fhirServerBase);
+    //const usi = await this.getUserSecurityInfo(user, fhirServerBase);
 
     const igEntry = (bundle.entry || []).find(e => e.resource.resourceType === 'ImplementationGuide' && e.resource.id === id);
 
@@ -487,7 +482,7 @@ export class ImplementationGuideController extends BaseFhirController {
     }
 
     try {
-      await this.httpService.post(fhirServerBase, updateBundle).toPromise();
+      //await this.httpService.post(fhirServerBase, updateBundle).toPromise();
     } catch (ex) {
       this.logger.error(`Error updating resources with a copy of permissions from IG ${ig.id}: ${ex.message}`);
       return 0;
@@ -495,6 +490,16 @@ export class ImplementationGuideController extends BaseFhirController {
 
     return resources.length;
   }
+
+
+  @Get(':id/bundle')
+  public async getBundle(@User() user: ITofUser, @Param('id') id: string) {
+    this.assertCanReadById(user, id);
+    let bundle = await this.conformanceService.getBundleFromImplementationGuideId(id);
+    return bundle;
+  }
+
+
 
   private getSTU3Examples(implementationGuide: STU3ImplementationGuide) {
     if (!implementationGuide || !implementationGuide.package || implementationGuide.package.length === 0) return [];
