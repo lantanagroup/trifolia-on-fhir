@@ -73,14 +73,22 @@ export class NewProjectComponent implements OnInit {
 
     if (this.fhirVersion == 'r4') {
       ig = new R4ImplementationGuide();
-    //  fhirVersion = 'r4';
+      this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
     } else if (this.fhirVersion == 'stu3') {
-     // fhirVersion = 'stu3';
       ig = new STU3ImplementationGuide();
+      this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/jurisdiction');
     } else {
       throw new Error('Unexpected FHIR version');
     }
 
+    this.jurisdictionCodes.splice(0, 0, {
+      system: 'http://unstats.un.org/unsd/methods/m49/m49.htm',
+      code: 'UV',
+      display: 'Universal'
+    });
+
+    //let jurisdictionCode: ICoding;
+    this.selectedJurisdiction = this.jurisdictionCodes.find(jc => jc.code.toLowerCase() === 'us');
 
     this.igId = this.projectCode.replace(/\./g, '-');
     ig.url = this.igUrl;
@@ -109,7 +117,7 @@ export class NewProjectComponent implements OnInit {
     } else if (this.fhirVersion == 'stu3') {
       if (this.isHL7) {
 
-        (<STU3ImplementationGuide>ig).jurisdiction.push(jusrisdiction);
+       // (<STU3ImplementationGuide>ig).jurisdiction = jusrisdiction;
         const packageIdExt = new STU3Extension();
         packageIdExt.url = Globals.extensionUrls['extension-ig-package-id'];
         packageIdExt.valueString = this.packageId;

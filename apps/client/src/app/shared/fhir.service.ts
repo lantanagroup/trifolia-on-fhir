@@ -133,9 +133,6 @@ export class FhirService {
   public loadAssets() {
     this.loaded = false;
     const loadDirectory = this.fhirVersion;
-    //const isFhirR4 = true;
-    //const fhirVersion = 'r4';
-   // const loadDirectory = isFhirR4 ? 'r4' : 'stu3';
 
     const assetPromises = [
       this.http.get('/assets/' + loadDirectory + '/codesystem-iso3166.json').pipe(publishReplay(1), refCount()),

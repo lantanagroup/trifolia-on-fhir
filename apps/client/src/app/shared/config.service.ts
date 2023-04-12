@@ -1,12 +1,10 @@
-import { EventEmitter, Injectable, Injector } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { ConfigModel } from '../../../../../libs/tof-lib/src/lib/config-model';
-import { Title } from '@angular/platform-browser';
-import { CapabilityStatement as STU3CapabilityStatement } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { CapabilityStatement as R4CapabilityStatement, Coding } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { Versions } from 'fhir/fhir';
-import { map } from 'rxjs/operators';
-import { identifyRelease as identifyReleaseFunc } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {Injectable, Injector} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {ConfigModel} from '../../../../../libs/tof-lib/src/lib/config-model';
+import {Title} from '@angular/platform-browser';
+import {Coding} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Versions} from 'fhir/fhir';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class ConfigService {
@@ -62,7 +60,7 @@ export class ConfigService {
           }
         }
       }
-    } catch(ex) {
+    } catch (ex) {
       templateVersions = ['current'];
     }
 
@@ -104,7 +102,7 @@ export class ConfigService {
   }
 
   public setTitle(value: string, isDirty: boolean = false) {
-    const mainTitle = (isDirty ? "*" : "") + 'Trifolia-on-FHIR';
+    const mainTitle = (isDirty ? '*' : '') + 'Trifolia-on-FHIR';
 
     if (value) {
       this.titleService.setTitle(`${mainTitle}: ${value}`);
