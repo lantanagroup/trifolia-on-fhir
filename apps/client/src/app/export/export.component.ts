@@ -38,7 +38,7 @@ export class ExportComponent implements OnInit {
     public configService: ConfigService,
     public http: HttpClient) {
 
-    this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId);
+    this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion);
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/xml';
     this.options.downloadOutput = true;
     this.options.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
@@ -114,7 +114,7 @@ export class ExportComponent implements OnInit {
     this.selectedImplementationGuide = <ImplementationGuide>igConf.resource;
     this.options.implementationGuideId = igConf ? igConf.id : undefined;
 
-    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId;
+    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion;
 
     if (igConf && igConf.id) {
       this.cookieService.set(cookieKey, igConf.id);
@@ -165,7 +165,7 @@ export class ExportComponent implements OnInit {
   };
 
   public clearImplementationGuide() {
-    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId;
+    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion;
 
     this.selectedImplementationGuide =
       this.options.implementationGuideId = null;
@@ -222,7 +222,7 @@ export class ExportComponent implements OnInit {
     this.socketOutput = '';
     this.message = 'Exporting...';
 
-    this.cookieService.set(Globals.cookieKeys.exportLastImplementationGuideId, this.options.implementationGuideId);
+    this.cookieService.set(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion, this.options.implementationGuideId);
 
     const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
 

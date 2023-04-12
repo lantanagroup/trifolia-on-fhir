@@ -24,7 +24,7 @@ import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {TofLogger} from './tof-logger';
-import {IConformance} from '@trifolia-fhir/models';
+import {IConformance, IExample, IProjectResourceReference} from '@trifolia-fhir/models';
 import {ConformanceService} from './conformance/conformance.service';
 
 declare var jasmine;
@@ -684,14 +684,58 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   }
 
   // update the Ig
-
   if (changed) {
     implGuideResource.references = implGuideResource.references || [];
-    implGuideResource.references.push({ value:resourceToAdd, valueType:'Conformance' });
+    implGuideResource.references.push({ value: resourceToAdd, valueType: 'Conformance' });
     let conf = await service.updateOne(implGuideResource.id, implGuideResource);
     console.log('Conformance ' + conf);
   }
   return Promise.resolve();
+}
+
+export async function removeFromImplementationGuideNew(service: ConformanceService, resourceToRemove: IConformance): Promise<void> {
+
+  let ref = `${resourceToRemove.resource.resourceType}/${resourceToRemove.resource.id ?? resourceToRemove.id}`;
+
+  // remove from all version 4 Ig-s that reference it  -- later based on permissions
+  let confRes = <IConformance[]>await service.findAll({ 'resource.definition.resource.reference.reference': ref });
+
+  async function updateReference(conf: IConformance) {
+    let conformance = await service.getModel().findById(conf.id).populate('references.value');
+    (conformance.references || []).forEach((r: IProjectResourceReference, index) => {
+      if (!r.value || typeof r.value === typeof '') return;
+      if (r.valueType === 'Conformance' || r.valueType === 'Example') {
+        const val: IConformance = <IConformance>r.value;
+        if (val.id === resourceToRemove.id) {
+          conf.references.splice(index, 1);
+        }
+      }
+    });
+  }
+
+  for (const conf of (confRes || [])) {
+    if(conf.resource.resourceType == 'ImplementationGuide') {
+      let ig = <R4ImplementationGuide>conf.resource;
+      ig.definition.resource.filter(res => res.reference && res.reference.reference === ref).forEach(res => ig.definition.resource.splice(ig.definition.resource.indexOf(res), 1));
+      // remove reference
+      await updateReference(conf);
+
+      await service.updateOne(conf.id, conf);
+    }
+  }
+
+  // remove from all version 3 Ig-s that reference it  - later based on permissions
+  confRes = <IConformance[]>await service.findAll({ 'resource.package.resource.sourceReference.reference': ref });
+  for (const conf of (confRes || [])) {
+    if(conf.resource.resourceType == 'ImplementationGuide') {
+      let ig = <STU3ImplementationGuide>conf.resource;
+      ig.package.forEach(pack => pack.resource.filter(res => res.sourceReference && res.sourceReference.reference === ref).forEach(res => pack.resource.splice(pack.resource.indexOf(res), 1)));
+      // remove reference
+      await updateReference(conf);
+
+      await service.updateOne(conf.id, conf);
+    }
+  }
 }
 
 /**

@@ -390,13 +390,13 @@ export class ImplementationGuideController extends ConformanceController { // ex
   }
 
   @Post()
-  public createImplementationGuide(@FhirServerVersion() fhirServerVersion, @User() user, @Body() body) {
+  public createImplementationGuide(@User() user, @Body() body) {
     if (!body || !body.resource) {
       throw new BadRequestException();
     }
-    ImplementationGuideController.downloadDependencies(body.resource, fhirServerVersion, this.configService, this.logger);
+    ImplementationGuideController.downloadDependencies(body.resource, body.fhirVersion, this.configService, this.logger);
     let conformance: IConformance = body;
-    conformance.fhirVersion = fhirServerVersion;
+   // conformance.fhirVersion = fhirServerVersion;
     return this.conformanceService.createConformance(conformance);
   }
 

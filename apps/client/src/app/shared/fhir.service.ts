@@ -54,6 +54,7 @@ export class ResourceGithubDetails implements IResourceGithubDetails {
 @Injectable()
 export class FhirService {
   public fhir: Fhir;
+  public fhirVersion: string = 'R4';
   public loaded: boolean;
   public profiles: StructureDefinition[] = [];
   public valueSets: (ValueSet | CodeSystem)[] = [];
@@ -65,7 +66,10 @@ export class FhirService {
     private configService: ConfigService) {
 
     this.customValidator = new CustomSTU3Validator();
-    this.configService.fhirServerChanged.subscribe(() => {
+
+    this.loadAssets();
+
+   /* this.configService.fhirServerChanged.subscribe(() => {
       if (this.loaded) {
         // noinspection JSIgnoredPromiseFromCall
         this.loadAssets();
@@ -76,7 +80,7 @@ export class FhirService {
       } else {            // Assume default of STU3
         this.customValidator = new CustomSTU3Validator();
       }
-    });
+    });*/
   }
 
   public get primitiveTypes(): string[] {
@@ -118,11 +122,20 @@ export class FhirService {
     return this.injector.get(HttpClient);
   }
 
+  public async setFhirVersion(fhirVersion?: string) {
+    if (this.fhirVersion === fhirVersion && this.loaded == true) {
+      return Promise.resolve();
+    }
+    this.fhirVersion = fhirVersion;
+    this.loadAssets();
+  }
+
   public loadAssets() {
     this.loaded = false;
-    const fhirVersion = identifyRelease(this.configService.fhirConformanceVersion);
-    const isFhirR4 = fhirVersion === Versions.R4;
-    const loadDirectory = isFhirR4 ? 'r4' : 'stu3';
+    const loadDirectory = this.fhirVersion;
+    //const isFhirR4 = true;
+    //const fhirVersion = 'r4';
+   // const loadDirectory = isFhirR4 ? 'r4' : 'stu3';
 
     const assetPromises = [
       this.http.get('/assets/' + loadDirectory + '/codesystem-iso3166.json').pipe(publishReplay(1), refCount()),
@@ -134,7 +147,7 @@ export class FhirService {
     return new Promise<void>((resolve, reject) => {
       forkJoin(assetPromises)
         .subscribe((allAssets) => {
-          const parser = new ParseConformance(false, fhirVersion);
+          const parser = new ParseConformance(false, this.configService.fhirVersion);
           parser.loadCodeSystem(allAssets[0]);
           parser.parseBundle(allAssets[1]);
           parser.parseBundle(allAssets[2]);
@@ -169,10 +182,10 @@ export class FhirService {
   }
 
   public getResourceGithubDetails(resource: DomainResource): ResourceGithubDetails {
-    const branchExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
+    const branchExtensionUrl = this.configService.fhirVersion === Versions.R4 ?
       Globals.extensionUrls['github-branch'] :
       Globals.extensionUrls['github-branch'];
-    const pathExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
+    const pathExtensionUrl = this.configService.fhirVersion === Versions.R4 ?
       Globals.extensionUrls['github-path'] :
       Globals.extensionUrls['github-path'];
 
@@ -194,10 +207,10 @@ export class FhirService {
       resource.extension = [];
     }
 
-    const branchExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
+    const branchExtensionUrl = this.configService.fhirVersion === Versions.R4 ?
       Globals.extensionUrls['github-branch'] :
       Globals.extensionUrls['github-branch'];
-    const pathExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
+    const pathExtensionUrl = this.configService.fhirVersion === Versions.R4 ?
       Globals.extensionUrls['github-path'] :
       Globals.extensionUrls['github-path'];
 
@@ -534,7 +547,7 @@ export class FhirService {
     }
   }
 
-  public findResourceTypesWithSearchParam(searchParamName: string): string[] {
+ /* public findResourceTypesWithSearchParam(searchParamName: string): string[] {
     const cs = <CapabilityStatement>this.configService.fhirConformance;
     const resourceTypes: string[] = [];
 
@@ -553,7 +566,7 @@ export class FhirService {
     });
 
     return resourceTypes;
-  }
+  }*/
 
   public async checkUniqueId(resource: DomainResource) {
     let url = `/api/fhir/${resource.resourceType}`;

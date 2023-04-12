@@ -91,6 +91,6 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
 
   ngOnInit() {
     this.getOperationDefinitions();
-    this.configService.fhirServerChanged.subscribe(() => this.getOperationDefinitions());
+   // this.configService.fhirServerChanged.subscribe(() => this.getOperationDefinitions());
   }
 }

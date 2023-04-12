@@ -46,7 +46,7 @@ export class NewProjectComponent implements OnInit {
   done() {
 
     let ig: IImplementationGuide;
-    let fhirVersion: 'stu3'|'r4'|'r5';
+    //let fhirVersion: 'stu3'|'r4'|'r5';
 
     const publishingRequest = new PublishingRequestModel();
     publishingRequest['package-id'] = this.packageId;
@@ -61,11 +61,21 @@ export class NewProjectComponent implements OnInit {
     publishingRequest['ci-build'] = 'http://build.fhir.org/ig/';
     publishingRequest.introduction = 'New IG: ' + this.igTitle;
 
-    if (this.configService.isFhirR4) {
+   /* if (this.configService.isFhirR4) {
       ig = new R4ImplementationGuide();
       fhirVersion = 'r4';
     } else if (this.configService.isFhirSTU3) {
       fhirVersion = 'stu3';
+      ig = new STU3ImplementationGuide();
+    } else {
+      throw new Error('Unexpected FHIR version');
+    }*/
+
+    if (this.fhirVersion == 'r4') {
+      ig = new R4ImplementationGuide();
+    //  fhirVersion = 'r4';
+    } else if (this.fhirVersion == 'stu3') {
+     // fhirVersion = 'stu3';
       ig = new STU3ImplementationGuide();
     } else {
       throw new Error('Unexpected FHIR version');
@@ -88,7 +98,7 @@ export class NewProjectComponent implements OnInit {
 
     const jusrisdiction = this.selectedJurisdiction ? [{ coding: [this.selectedJurisdiction] }] : this.selectedJurisdiction;
     // Create the implementation guide based on the FHIR server we're connected to
-    if (this.configService.isFhirR4) {
+    if (this.fhirVersion == 'r4') {
       if (this.isHL7) {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
@@ -96,7 +106,7 @@ export class NewProjectComponent implements OnInit {
         (<R4ImplementationGuide>ig).packageId = this.packageId;
         (<R4ImplementationGuide>ig).title = this.igTitle;
       }
-    } else if (this.configService.isFhirSTU3) {
+    } else if (this.fhirVersion == 'stu3') {
       if (this.isHL7) {
 
         (<STU3ImplementationGuide>ig).jurisdiction.push(jusrisdiction);
@@ -108,13 +118,13 @@ export class NewProjectComponent implements OnInit {
       }
     }
     let projectName = ig.name;
-    PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));
-    
-    let newConf: IConformance = <IConformance>{fhirVersion: fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
+    PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirVersion));
+
+    let newConf: IConformance = <IConformance>{fhirVersion: this.configService.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
     this.igService.saveImplementationGuide(newConf)
       .subscribe({
         next: async (ig: IConformance) => {
-          let project: IProject = <IProject>{ author: "", fhirVersion: this.configService.isFhirR4 ? "r4" : "stu3", name: projectName };
+          let project: IProject = <IProject>{ author: "", fhirVersion: this.configService.fhirVersion, name: projectName };
           project.igs = project.igs || [];
           project.igs.push(ig);
           await this.projectService.save(project).toPromise().then((project) => {
@@ -185,10 +195,10 @@ export class NewProjectComponent implements OnInit {
     this.igName = this.igTitle.replace(/[^a-zA-Z0-9]/g, '');
   }
 
-  getFhirVersion() {
+  /*getFhirVersion() {
     this.fhirVersion = this.configService.fhirConformanceVersion;
   }
-
+*/
   isValidId(id: string) {
     const results = /^[A-Za-z0-9\-\\.]{1,64}$/.exec(id);
     return !!results;
@@ -234,12 +244,12 @@ export class NewProjectComponent implements OnInit {
        this.selectedJurisdiction = this.selectedJurisdiction || [];
        this.selectedJurisdiction.push(universal);
      }
- 
- 
+
+
  /!*    if(jurisdictionCode) {
        this.selectedJurisdiction.coding = this.selectedJurisdiction.coding || [];
        this.selectedJurisdiction.coding.push({ jurisdictionCode })
      }*!/*/
-    this.getFhirVersion();
+    //this.getFhirVersion();
   }
 }

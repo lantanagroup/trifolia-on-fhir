@@ -5,13 +5,13 @@
 <div class="modal-body" *ngIf="configService.config">
   <p>Trifolia-on-FHIR Version <strong>{{configService.config.version}}</strong></p>
 
-  <div class="mb-3">
+ <!-- <div class="mb-3">
     <label>Selected FHIR Server</label>
     <select class="form-select" name="fhirServerSelect" [(ngModel)]="fhirServerId">
       <option *ngFor="let fs of configService.config.fhirServers" value="{{fs.id}}">{{fs.name}}</option>
     </select>
     <div class="help-block">{{fhirServerId}}</div>
-  </div>
+  </div>-->
 
   <div class="mb-3" *ngIf="authCode">
     <label>

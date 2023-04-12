@@ -41,9 +41,9 @@ export class ContextPanelWrapperComponent implements OnInit, OnChanges {
 
   versionChanged() {
     let componentFactory;
-    const version = this.configService.fhirConformanceVersion;
+   // const version = this.configService.fhirVersion;
 
-    if (identifyRelease(version) === Versions.R4) {
+    if (this.configService.fhirVersion  === Versions.R4.toLowerCase()) {
       componentFactory = this.componentFactoryResolver.resolveComponentFactory(ContextPanelR4Component);
     } else {
       componentFactory = this.componentFactoryResolver.resolveComponentFactory(ContextPanelStu3Component);
@@ -56,9 +56,9 @@ export class ContextPanelWrapperComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.configService.fhirServerChanged.subscribe(() => {
+    //this.configService.fhirServerChanged.subscribe(() => {
       this.versionChanged();
-    });
+   // });
     this.component.instance.change.subscribe(this.change);
   }
 

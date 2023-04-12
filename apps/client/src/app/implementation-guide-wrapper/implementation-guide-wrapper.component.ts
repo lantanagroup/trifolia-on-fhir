@@ -7,6 +7,11 @@ import {R4ImplementationGuideComponent} from './r4/implementation-guide.componen
 import {Versions} from 'fhir/fhir';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { CanComponentDeactivate } from '../guards/resource.guard';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import {IConformance, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
+import {ImplementationGuide} from '@trifolia-fhir/r4';
+import {getErrorString} from '@trifolia-fhir/tof-lib';
+import {FhirService} from '../shared/fhir.service';
 
 /**
  * This class is responsible for determining which implementation-guide component to render
@@ -18,13 +23,17 @@ import { CanComponentDeactivate } from '../guards/resource.guard';
 })
 export class ImplementationGuideWrapperComponent implements OnInit, CanComponentDeactivate {
   igComponent: ComponentRef<STU3ImplementationGuideComponent | R4ImplementationGuideComponent>;
+  private igNotFound: boolean;
+  private message: string;
 
   constructor(
     private viewContainerRef: ViewContainerRef,
     private componentFactoryResolver: ComponentFactoryResolver,
     private route: ActivatedRoute,
     private fileService: FileService,
-    private configService: ConfigService) {
+    private configService: ConfigService,
+    private fhirService: FhirService,
+    private implementationGuideService: ImplementationGuideService) {
     this.versionChanged();
   }
 
@@ -34,26 +43,39 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
 
   versionChanged() {
     let componentFactory: any;
-    let version = this.configService.fhirConformanceVersion;
-    const id = this.route.snapshot.paramMap.get('id');
-
+    let version = "";
+    const id = this.route.snapshot.paramMap.get('implementationGuideId');
     if (id === 'from-file' && this.fileService.file) {
       version = this.fileService.file.fhirVersion;
     }
 
-    if (identifyRelease(version) === Versions.R4) {
-      componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4ImplementationGuideComponent);
-    } else {
-      componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3ImplementationGuideComponent);
-    }
+    let ig;
+    // get Ig version
+    this.implementationGuideService.getImplementationGuide(id)
+    .subscribe({
+      next: (results) => {
+        const conf: IConformance = results;
+        this.configService.setFhirVersion(conf.fhirVersion);
+        this.fhirService.setFhirVersion(conf.fhirVersion).then( () => {
+            if (conf.fhirVersion === Versions.R4.toLowerCase()) {
+              componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4ImplementationGuideComponent);
+            } else {
+              componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3ImplementationGuideComponent);
+            }
+            this.viewContainerRef.clear();
+            this.igComponent = this.viewContainerRef.createComponent(componentFactory);
+          }
+        );
+      },
+      error: (err) => {
+        this.igNotFound = err.status === 404;
+        this.message = getErrorString(err);
+      }
+    });
 
-    this.viewContainerRef.clear();
-    this.igComponent = this.viewContainerRef.createComponent(componentFactory);
   }
 
-  ngOnInit() {
-    this.configService.fhirServerChanged.subscribe(() => {
+  ngOnInit() {// this.configService.fhirServerChanged.subscribe(() => {
       this.versionChanged();
-    });
   }
 }

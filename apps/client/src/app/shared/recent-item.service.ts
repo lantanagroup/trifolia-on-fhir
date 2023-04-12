@@ -17,12 +17,12 @@ export class RecentItemService {
     constructor(
         private cookieService: CookieService,
         private configService: ConfigService) {
-
-        this.configService.fhirServerChanged.subscribe(() => this.loadRecentItems());
+        this.loadRecentItems();
+        //this.configService.fhirServerChanged.subscribe(() => this.loadRecentItems());
     }
 
     private loadRecentItems() {
-        const fhirServer = this.configService.fhirServer;
+ /*       const fhirServer = this.configService.fhirVersion;
 
         const recentImplementationGuidesKey = Globals.cookieKeys.recentImplementationGuides + '-' + fhirServer;
         const recentStructureDefinitionsKey = Globals.cookieKeys.recentStructureDefinitions + '-' + fhirServer;
@@ -38,7 +38,7 @@ export class RecentItemService {
         this.recentOperationDefinitions = <RecentItemModel[]> JSON.parse(this.cookieService.get(recentOperationDefinitionsKey)) || [];
         this.recentValueSets = <RecentItemModel[]> JSON.parse(this.cookieService.get(recentValueSetsKey)) || [];
         this.recentCodeSystems = <RecentItemModel[]> JSON.parse(this.cookieService.get(recentCodeSystemsKey)) || [];
-        this.recentQuestionnaires = <RecentItemModel[]> JSON.parse(this.cookieService.get(recentQuestionnairesKey)) || [];
+        this.recentQuestionnaires = <RecentItemModel[]> JSON.parse(this.cookieService.get(recentQuestionnairesKey)) || [];*/
     }
 
     public ensureRecentItem(requestedCookieKey: string, id: string, display: string) {
@@ -46,7 +46,7 @@ export class RecentItemService {
             return;
         }
 
-        const fhirServer = this.configService.fhirServer;
+        const fhirServer = this.configService.fhirVersion;
         const cookieKey = requestedCookieKey + '-' + fhirServer;
         let items: RecentItemModel[] = this.getCollection(cookieKey);
         let foundItem = items.find((rig) => rig.id === id);
@@ -99,7 +99,7 @@ export class RecentItemService {
             return;
         }
 
-        const fhirServer = this.configService.fhirServer;
+        const fhirServer = this.configService.fhirVersion;
         const cookieKey = requestedCookieKey + '-' + fhirServer;
         const items: RecentItemModel[] = this.getCollection(cookieKey);
         const foundItem = items.find((rig) => rig.id === id);
@@ -141,7 +141,7 @@ export class RecentItemService {
     }
 
     private getRecentItem(cookieKey: string, id: string): RecentItemModel {
-        const fhirServer = this.configService.fhirServer;
+        const fhirServer = this.configService.fhirVersion;
         const coll = this.getCollection(cookieKey + '-' + fhirServer);
 
         if (coll) {
@@ -150,7 +150,7 @@ export class RecentItemService {
     }
 
     private getCollection(cookieKey: string): RecentItemModel[] {
-        const fhirServer = this.configService.fhirServer;
+        const fhirServer = this.configService.fhirVersion;
 
         switch (cookieKey) {
             case Globals.cookieKeys.recentImplementationGuides + '-' + fhirServer:

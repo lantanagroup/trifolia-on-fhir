@@ -23,7 +23,7 @@ export class ConfigService {
   private fhirCapabilityStatements: { [fhirServiceId: string]: STU3CapabilityStatement | R4CapabilityStatement | boolean } = {};
 
   constructor(private injector: Injector) {
-    this.fhirServer = localStorage.getItem('fhirServer');
+  //  this.fhirServer = localStorage.getItem('fhirServer');
   }
 
   /*public async getBinaryResources(igId: string): Promise<Resource[]> {
@@ -119,7 +119,7 @@ export class ConfigService {
       .then((config: ConfigModel) => {
         this.config = config;
 
-        if(localStorage){
+       /* if(localStorage){
           const currentFhirServer = localStorage.getItem('fhirServer');
           const found = this.config.fhirServers.find(fhirServer => {
             return fhirServer.id === currentFhirServer;
@@ -129,9 +129,9 @@ export class ConfigService {
             this.fhirServer = null;
             localStorage.removeItem('fhirServer');
           }
-        }
+        }*/
 
-        if (!this.fhirServer && this.config.fhirServers.length > 0) {
+     /*   if (!this.fhirServer && this.config.fhirServers.length > 0) {
           this.fhirServer = this.config.fhirServers[0].id;
         }
 
@@ -139,14 +139,14 @@ export class ConfigService {
           if (!init) {
             // noinspection JSIgnoredPromiseFromCall
             this.changeFhirServer(this.fhirServer);
-          }
-        } else {
+          }*/
+       /* } else {
           throw new Error('No FHIR servers available for selection.');
-        }
+        }*/
       });
   }
 
-  public changeFhirServer(fhirServer?: string) {
+  /*public changeFhirServer(fhirServer?: string) {
     // Don't do anything if the fhir server hasn't changed
     if (this.fhirServer === fhirServer && this.fhirConformance) {
       return Promise.resolve();
@@ -173,7 +173,7 @@ export class ConfigService {
       .catch((err) => {
         this.fhirCapabilityStatements[this.fhirServer] = false;
       });
-  }
+  }*/
 
   public identifyRelease(): Versions {
     if (this.fhirConformanceVersion) {

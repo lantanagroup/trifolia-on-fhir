@@ -220,7 +220,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
       delete sd.snapshot;
 
-      if (identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
+      if (this.configService.fhirVersion === Versions.R4.toString()) {
         this.structureDefinition = new R4StructureDefinition(sd);
       } else {
         this.structureDefinition = new STU3StructureDefinition(sd);

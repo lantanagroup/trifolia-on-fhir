@@ -92,6 +92,6 @@ export class QuestionnairesComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getQuestionnaires();
-    this.configService.fhirServerChanged.subscribe(() => this.getQuestionnaires());
+   // this.configService.fhirServerChanged.subscribe(() => this.getQuestionnaires());
   }
 }

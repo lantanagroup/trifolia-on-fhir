@@ -182,7 +182,7 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
   }
 
   ngOnInit() {
-    this.configService.fhirServerChanged.subscribe(() => this.initData());
+   // this.configService.fhirServerChanged.subscribe(() => this.initData());
     this.initData();
   }
 }

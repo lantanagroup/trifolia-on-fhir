@@ -7,7 +7,7 @@ import { BaseDataService } from '../base/base-data.service';
 import { HistoryService } from '../history/history.service';
 import { TofLogger } from '../tof-logger';
 import { Conformance, ConformanceDocument } from './conformance.schema';
-import { addToImplementationGuideNew } from '../helper';
+import { addToImplementationGuideNew, removeFromImplementationGuideNew } from '../helper';
 import { ObjectId } from 'mongodb';
 import { TofNotFoundException } from '../../not-found-exception';
 import { Bundle as STU3Bundle, EntryComponent as STU3BundleEntryComponent } from '@trifolia-fhir/stu3';
@@ -216,6 +216,12 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
     }
 
+    public async deleteConformance(id: string): Promise<IConformance> {
+        // remove from IG
+        let resource = await super.findById(id);
+        await removeFromImplementationGuideNew(this, resource);
+        return super.delete(id);
+    }
 
 
     public async getWithReferences(conformanceId: string) {

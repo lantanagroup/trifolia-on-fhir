@@ -75,9 +75,9 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
 
     this.codeSystemService.delete(codeSystem.id)
       .subscribe(() => {
-        const entry = (this.codeSystem || []).find((e) => e.resource.id === codeSystem.id);
-        const index = this.codeSystem.entry.indexOf(entry);
-        this.codeSystem.splice(index, 1);
+        const entry = (this.codeSystem.results || []).find((e) => e.id === codeSystem.id);
+        const index = this.codeSystem.results.indexOf(entry);
+        this.codeSystem.results.splice(index, 1);
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while deleting the code system');
       });
