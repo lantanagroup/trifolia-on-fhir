@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
-import { FhirInstance, FhirServerBase, FhirServerVersion, RequestHeaders, User } from './server.decorators';
+import { FhirInstance, FhirServerVersion, RequestHeaders, User } from './server.decorators';
 import { ConfigService } from './config.service';
 import { BundleExporter } from './export/bundle';
 import { copyPermissions } from './helper';
@@ -138,7 +138,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
     return profileReferences;
   }
 
-  @Post(':id/bulk-update')
+ /* @Post(':id/bulk-update')
   public async bulkUpdate(@Param('id') id: string, @Body() body: BulkUpdateRequest, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
     if (!body) return;
 
@@ -214,9 +214,9 @@ export class ImplementationGuideController extends ConformanceController { // ex
       this.logger.error(`Error while bulk updating: ${ex.message}`);
       throw ex;
     }
-  }
+  }*/
 
-  @Get(':id/profile')
+  /*@Get(':id/profile')
   public async getProfiles(@Param('id') id: string, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
     const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
     const igResults = await this.httpService.get<IImplementationGuide>(igUrl).toPromise();
@@ -244,7 +244,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
     const bundleResults = await this.httpService.post<IBundle>(fhirServerBase, batch).toPromise();
     return bundleResults.data;
-  }
+  }*/
 
   @Get(':id/example')
   public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {

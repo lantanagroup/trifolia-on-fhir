@@ -3,7 +3,6 @@ import {AppModule} from './app/app.module';
 import {Response} from 'express';
 import type {ITofRequest} from './app/models/tof-request';
 import socketIo from 'socket.io';
-import {BadRequestException} from '@nestjs/common';
 import {ISocketConnection} from './app/models/socket-connection';
 import {NotFoundExceptionFilter} from './not-found-exception-filter';
 import {TofLogger} from './app/tof-logger';
@@ -16,7 +15,6 @@ import modulePackage from '../../../package.json';
 import {ConfigService} from './app/config.service';
 import {NestExpressApplication} from '@nestjs/platform-express';
 import hpropagate from 'hpropagate';
-import {FhirInstances} from './app/helper';
 
 const config = ConfigService.create();
 
@@ -25,50 +23,10 @@ const connections: ISocketConnection[] = [];
 let io;
 
 const loadTofRequest = (req: ITofRequest, res: Response, next) => {
-  if (!config.fhir.servers || !config.fhir.servers.length) {
-    throw new Error('This server is not configured with any FHIR servers');
-  }
-
-  req.fhirServerId = req.headers['fhirserver'] || config.fhir.servers[0].id;
-  req.fhirServerBase = config.fhir.servers[0].uri;
-  req.fhirServerVersion = req.headers['fhirversion'] || config.fhir.servers[0].version;
   req.io = io;
   req.ioConnections = connections;
-
-  if (!config.fhir.servers) {
-    throw new Error('FHIR servers have not been configured on the server');
-  }
-
-  if (req.fhirServerId && req.originalUrl !== '/api/config') {
-    const foundFhirServer = config.fhir.servers.find((server) => server.id === req.fhirServerId);
-
-    if (!foundFhirServer) {
-      throw new BadRequestException('The ID of the fhir server specified by the "fhirserver" header is not valid.');
-    }
-
-    req.fhirServerBase = foundFhirServer.uri;
-   // req.fhirServerVersion = foundFhirServer.version;
-  }
-
-  switch (req.fhirServerVersion) {
-    case 'stu3':
-      req.fhir = FhirInstances.fhirStu3;
-      break;
-    case 'r4':
-      req.fhir = FhirInstances.fhirR4;
-      break;
-    case 'r5':
-      req.fhir = FhirInstances.fhirR5;
-      break;
-    default:
-      throw new Error(`Unsupported FHIR version ${req.fhirServerVersion}`);
-  }
-
-  if (req.fhirServerBase && !req.fhirServerBase.endsWith('/')) {
-    req.fhirServerBase += '/';
-  }
-
   next();
+
 };
 
 const parseFhirBody = (req: ITofRequest, res: Response, next) => {

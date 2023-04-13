@@ -24,7 +24,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { TofLogger } from './tof-logger';
 import { AxiosRequestConfig } from 'axios';
 import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { FhirServerBase, FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User } from './server.decorators';
+import { FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User } from './server.decorators';
 import { ConfigService } from './config.service';
 import { Globals } from '../../../../libs/tof-lib/src/lib/globals';
 import { addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl } from './helper';
@@ -57,7 +57,7 @@ export class FhirController extends BaseController {
   }
 
 
-  @Get(':resourceType/:id/([\$])validate-single-ig')
+  /*@Get(':resourceType/:id/([\$])validate-single-ig')
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
   @ApiOperation({ summary: 'validateSingleIg', description: 'Validate Single Ig', operationId: 'validateSingleIg' })
@@ -81,9 +81,9 @@ export class FhirController extends BaseController {
     }
 
     return true;
-  }
+  }*/
 
-  @Get(':resourceType/:id/([\$])check-id')
+ /* @Get(':resourceType/:id/([\$])check-id')
   @HttpCode(200)
   @ApiOperation({ summary: 'checkId', description: 'CheckId', operationId: 'checkId' })
   async checkUniqueId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string): Promise<boolean> {
@@ -105,9 +105,9 @@ export class FhirController extends BaseController {
 
     return true;
   }
+*/
 
-
-  @Post(':resourceType/:id/([\$])change-id')
+ /* @Post(':resourceType/:id/([\$])change-id')
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
   @ApiOperation({ summary: 'changeid', description: 'Changes the ID of a resource', operationId: 'changeId' })
@@ -297,9 +297,9 @@ export class FhirController extends BaseController {
 
     this.logger.log(`Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`);
     return `Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`;
-  }
+  }*/
 
-  @Get(':resourceType/:id/_history')
+ /* @Get(':resourceType/:id/_history')
   @ApiOperation({ summary: 'getHistory', description: 'Get history for a resource. Supports paging.', operationId: 'getHistory' })
   async getHistory(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string, @Query('page') page = 1) {
     const pageSize = 20;
@@ -316,7 +316,7 @@ export class FhirController extends BaseController {
     } catch (ex) {
       this.logger.error(`Error from FHIR server when getting current resource to change the resource's id: ${ex.message}`);
     }
-  }
+  }*/
 
   /**
    * Proxies the request through the selected/specified FHIR server
@@ -793,7 +793,7 @@ export class FhirController extends BaseController {
     return batchProcessingResponse;
   }
 
-  @Get('dependency')
+ /* @Get('dependency')
   public async searchDependency(
     @FhirServerBase() fhirServerBase,
     @Headers('implementationguideid') implementationGuideId: string,
@@ -912,8 +912,8 @@ export class FhirController extends BaseController {
 
     return responseBundle;
   }
-
-  @Get(['/', '*', '*/*', '*/*/_history', '*/*/_history/*'])
+*/
+  /*@Get(['/', '*', '*!/!*', '*!/!*!/_history', '*!/!*!/_history/!*'])
   public async proxyGetRequest(
     @RequestUrl() url: string,
     @Headers() headers: { [key: string]: any },
@@ -926,13 +926,13 @@ export class FhirController extends BaseController {
 
     await this.proxyRequest(url, headers, method, fhirServerBase, fhirServerVersion, response, user, body);
   }
-
+*/
   /*
   The @All() route attribute no longer works in NestJS. Have to explicitly state each of the supported routes, and direct them
   to the private method that proxy's the request to the internal FHIR server
   */
 
-  @Put('*/*')
+  /*@Put('*!/!*')
   public async proxyPutRequest(
     @RequestUrl() url: string,
     @Headers() headers: { [key: string]: any },
@@ -944,9 +944,9 @@ export class FhirController extends BaseController {
     @Body() body?) {
 
     await this.proxyRequest(url, headers, method, fhirServerBase, fhirServerVersion, response, user, body);
-  }
+  }*/
 
-  @Post(['/', '*'])
+ /* @Post(['/', '*'])
   public async proxyPostRequest(
     @RequestUrl() url: string,
     @Headers() headers: { [key: string]: any },
@@ -958,9 +958,9 @@ export class FhirController extends BaseController {
     @Body() body?) {
 
     await this.proxyRequest(url, headers, method, fhirServerBase, fhirServerVersion, response, user, body);
-  }
+  }*/
 
-  @Delete('*/*')
+  /*@Delete('*!/!*')
   public async proxyDeleteRequest(
     @RequestUrl() url: string,
     @Headers() headers: { [key: string]: any },
@@ -992,5 +992,5 @@ export class FhirController extends BaseController {
       response.contentType(results.contentType);
     }
     response.send(results.data);
-  }
+  }*/
 }

@@ -4,7 +4,7 @@ import {Body, Controller, Delete, Get, Param, Post, Put, Query, UnauthorizedExce
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {ApiOAuth2, ApiOperation, ApiTags} from '@nestjs/swagger';
-import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
+import {FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Bundle, Group as STU3Group} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -25,12 +25,12 @@ export class GroupController extends BaseFhirController {
     super(httpService, configService);
   }
 
-  @Get()
+ /* @Get()
   public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
     return super.baseSearch(user, fhirServerBase, query, headers);
   }
-
-  @ApiOperation({
+*/
+ /* @ApiOperation({
     summary: 'createManagingGroup',
     description: 'Creates a group where the currently logged-in user is the admin/manager'
   })
@@ -74,9 +74,9 @@ export class GroupController extends BaseFhirController {
     // Create the group on the FHIR server
     const url = buildUrl(fhirServerBase, 'Group');
     return (await this.httpService.post<Group>(url, body).toPromise()).data;
-  }
+  }*/
 
-  @ApiOperation({
+ /* @ApiOperation({
     summary: 'updateManagingGroup',
     description: 'Updates the specified group if the user is the admin/manager of the group'
   })
@@ -138,8 +138,8 @@ export class GroupController extends BaseFhirController {
     // Update Group in the FHIR server
     return (await this.httpService.put<Group>(url, body).toPromise()).data;
   }
-
-  @ApiOperation({
+*/
+ /* @ApiOperation({
     summary: 'deleteManagingGroup',
     description: 'Deletes a group that the user is an admin/manager of'
   })
@@ -167,7 +167,8 @@ export class GroupController extends BaseFhirController {
 
     return (await this.httpService.delete(url).toPromise()).data;
   }
-
+*/
+/*
   @ApiOperation({
     summary: 'deleteMembershipGroup',
     description: 'Removes the current user as a member from the group'
@@ -188,8 +189,9 @@ export class GroupController extends BaseFhirController {
       await this.httpService.put<Group>(url, persistedGroup).toPromise();
     }
   }
+*/
 
-  @ApiOperation({
+ /* @ApiOperation({
     summary: 'getMembership',
     description: 'Gets the groups that the currently logged-in user is a member of. This operation assumes that the user is not belonging to more than 50 groups.'
   })
@@ -225,9 +227,9 @@ export class GroupController extends BaseFhirController {
     bundle.total = (bundle.entry || []).length;
 
     return bundle;
-  }
+  }*/
 
-  @ApiOperation({
+ /* @ApiOperation({
     summary: 'getManaging',
     description: 'Gets the groups that the currently logged-in user is an admin/manager of'
   })
@@ -257,8 +259,8 @@ export class GroupController extends BaseFhirController {
       return response.data;
     }
   }
-
-  @Get(':id')
+*/
+ /* @Get(':id')
   public get(@FhirServerBase() fhirServerBase, @Query() query, @User() user, @Param('id') id: string) {
     return super.baseGet(fhirServerBase, id, query, user);
   }
@@ -278,5 +280,5 @@ export class GroupController extends BaseFhirController {
   @Delete(':id')
   public delete(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
     return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
-  }
+  }*/
 }

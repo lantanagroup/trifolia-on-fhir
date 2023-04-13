@@ -3,6 +3,7 @@ import { OperationOutcome, ValueSet } from '../../../../../libs/tof-lib/src/lib/
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import type { ExpandOptions } from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
+import {IConformance} from '@trifolia-fhir/models';
 
 @Injectable()
 export class ValueSetService {
@@ -12,17 +13,17 @@ export class ValueSetService {
 
   }
 
-  public save(valueSet: ValueSet): Observable<ValueSet> {
-    if (valueSet.id) {
-      const url = '/api/valueSet/' + encodeURIComponent(valueSet.id);
-      return this.http.put<ValueSet>(url, valueSet);
+  public save(valueSetId:string, valueSet: IConformance): Observable<IConformance> {
+    if (valueSetId) {
+      const url = '/api/valueSet/' + encodeURIComponent(valueSetId);
+      return this.http.put<IConformance>(url, valueSet);
     } else {
-      return this.http.post<ValueSet>('/api/valueSet', valueSet);
+      return this.http.post<IConformance>('/api/valueSet', valueSet);
     }
   }
 
-  public search(page = 1, name?: string, searchUrl?: string, id?: string, implementationGuideId?: string) {
-    let url = '/api/valueSet?page=' + encodeURIComponent(page) + '&';
+  public searchValueSet(page = 1, name?: string, searchUrl?: string, id?: string, implementationGuideId?: string) {
+    let url = '/api/valueSet?resourcetype=ValueSet&page=' + encodeURIComponent(page) + '&';
 
     if (name) {
       url += `name=${encodeURIComponent(name)}&`;
@@ -33,7 +34,7 @@ export class ValueSetService {
     }
 
     if (id) {
-      url += `_id=${encodeURIComponent(id)}&`;
+      url += `id=${encodeURIComponent(id)}&`;
     }
 
     if (implementationGuideId) {
@@ -45,12 +46,12 @@ export class ValueSetService {
     return this.http.get(url);
   }
 
-  public get(id: string) {
+  public getValueSet(id: string) {
     const url = '/api/valueSet/' + encodeURIComponent(id);
-    return this.http.get<ValueSet | OperationOutcome>(url);
+    return this.http.get<IConformance>(url);
   }
 
-  public expand(id: string, options: ExpandOptions, terminologyServer?: string): Observable<ValueSet> {
+ /* public expand(id: string, options: ExpandOptions, terminologyServer?: string): Observable<ValueSet> {
     if (!terminologyServer) {
       const url = '/api/valueSet/' + encodeURIComponent(id) + '/expand';
       return this.http.post<ValueSet>(url, options);
@@ -83,7 +84,7 @@ export class ValueSetService {
           });
       });
     }
-  }
+  }*/
 
   public delete(id: string) {
     const url = '/api/valueSet/' + encodeURIComponent(id);

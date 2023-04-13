@@ -38,7 +38,7 @@ export class ValuesetExpandComponent implements OnInit {
     this.message = 'Expanding... This may take a while.';
 
     const valueSetId = this.route.snapshot.paramMap.get('id');
-    this.valueSetService.expand(valueSetId, this.criteria, this.terminologyServer)
+   /* this.valueSetService.expand(valueSetId, this.criteria, this.terminologyServer)
       .subscribe((results) => {
         this.results = results;
         setTimeout(() => {
@@ -60,18 +60,18 @@ export class ValuesetExpandComponent implements OnInit {
           this.message = 'Expansion completed with errors';
           tabSet.select('results');
         });
-      });
+      });*/
   }
 
   ngOnInit() {
     const valueSetId = this.route.snapshot.paramMap.get('id');
-    this.valueSetService.get(valueSetId)
-      .subscribe((valueSet) => {
-        if (valueSet.resourceType !== 'ValueSet') {
+    this.valueSetService.getValueSet(valueSetId)
+      .subscribe((conf) => {
+        if (conf.resource.resourceType !== 'ValueSet') {
           throw new Error('The specified value set either does not exist or was deleted');
         }
 
-        this.valueSet = <ValueSet>valueSet;
+        this.valueSet = <ValueSet>conf.resource;
       }, (err) => {
         this.message = 'An error occurred while loading the value set: ' + getErrorString(err);
       });

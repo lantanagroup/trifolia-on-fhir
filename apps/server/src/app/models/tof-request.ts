@@ -5,15 +5,15 @@ import {ISocketConnection} from './socket-connection';
 import type {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
 
 export interface ITofRequest extends Request {
-  fhirServerId: string;
-  fhirServerBase: string;
+  //fhirServerId: string;
+  //fhirServerBase: string;
   fhirServerVersion: string;
   fhir: Fhir;
   io: SocketIO.Server;
   ioConnections: ISocketConnection[];
   user?: ITofUser;
   headers: {
-    fhirserver: string;
+    //fhirserver: string;
     'admin-code'?: string;
     [key: string]: string;
   }

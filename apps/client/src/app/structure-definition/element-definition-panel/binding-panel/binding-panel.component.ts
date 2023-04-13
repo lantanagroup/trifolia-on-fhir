@@ -117,7 +117,7 @@ export class BindingPanelComponent implements OnInit {
       distinctUntilChanged(),
       switchMap((term: string) => {
         if (term.length <= 2) return [];
-        return this.valueSetService.search(1, term).pipe(
+        return this.valueSetService.searchValueSet(1, term).pipe(
           map((bundle: IBundle) => (bundle.entry || []).map(entry => <IValueSet>entry.resource))
         );
       })

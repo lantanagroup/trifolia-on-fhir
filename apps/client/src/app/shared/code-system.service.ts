@@ -24,14 +24,14 @@ export class CodeSystemService extends ConformanceService {
     }
 
     public searchCodeSystem(page = 1, name?: string, implementationGuideId?: string) :  Observable<IConformance[]> {
-        let url = '/api/codeSystem?page=' + page + '&';
+        let url = '/api/codeSystem?resourcetype=CodeSystem&page=' + page + '&';
 
         if (name) {
             url += `name=${encodeURIComponent(name)}&`;
         }
 
         if (implementationGuideId) {
-          url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
+          url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;
         }
 
         url += '_sort=name';

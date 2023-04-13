@@ -58,7 +58,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     super(configService, authService);
 
     this.searchParameter = new SearchParameter({ meta: this.authService.getDefaultMeta() });
-    this.conformance = { resource: this.searchParameter, fhirServerVersion: this.configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.conformance = { resource: this.searchParameter, fhirVersion: <'stu3'|'r4'|'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -194,7 +194,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
       this.fileService.saveFile();
       return;
     }
-
+    this.conformance.fhirVersion = <'stu3'|'r4'|'r5'>this.configService.fhirVersion;
     this.spService.save(this.searchParameterId, this.conformance)
       .subscribe({
         next: (conf: IConformance) => {

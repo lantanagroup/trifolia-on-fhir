@@ -14,7 +14,7 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import {TofLogger} from './tof-logger';
 import {FhirController} from './fhir.controller';
-import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
+import {FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {TofNotFoundException} from '../not-found-exception';
 import {AxiosRequestConfig} from 'axios';
@@ -46,7 +46,7 @@ export class ImportController extends BaseController {
    * @param fhirServerBase The FHIR server's base URL that is currently in context
    * @param user The current user to determine authorization on each of the referenced resources
    */
-  @Post('resourcesStatus')
+  /*@Post('resourcesStatus')
   public async checkResourcesStatus(@Body() resourceReferences: string[], @FhirServerBase() fhirServerBase: string, @User() user: ITofUser) {
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
     const requestBundle = {
@@ -84,8 +84,8 @@ export class ImportController extends BaseController {
 
     return response;
   }
-
-  @Post('phinvads')
+*/
+ /* @Post('phinvads')
   public async importPhinVadsValueSet(@Body() importContent: string, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: string, @User() user: ITofUser, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
     const allLines = importContent.split('\n');
     const headerData = allLines[1].split('\t');
@@ -150,9 +150,9 @@ export class ImportController extends BaseController {
     }
 
     return results.data;
-  }
+  }*/
 
-  @Get('vsac/:id')
+  /*@Get('vsac/:id')
   public async importVsacValueSet(
     @FhirServerBase() fhirServerBase: string,
     @FhirServerVersion() fhirServerVersion,
@@ -209,5 +209,5 @@ export class ImportController extends BaseController {
       this.logger.error(`An error occurred while importing value set ${id} from VSAC: ${ex.message}`, ex.stack);
       throw ex;
     }
-  }
+  }*/
 }

@@ -9,7 +9,7 @@ import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {StructureDefinition as PCStructureDefinition} from 'fhir/model/structure-definition';
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
-import {FhirServerBase, FhirServerId, FhirServerVersion, RequestHeaders, User} from './server.decorators';
+import {FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 import {Fhir} from 'fhir/fhir';
@@ -37,7 +37,7 @@ export class StructureDefinitionController extends BaseFhirController {
    * @param request
    * @param type
    */
-  @Get('base/:type')
+ /* @Get('base/:type')
   public async getBaseStructureDefinitions(@Req() request: ITofRequest, @Param('type') type: string): Promise<string[]> {
     const url = buildUrl(request.fhirServerBase, 'StructureDefinition', null, null, { type: type });
     const results = await this.httpService.get<Bundle>(url).toPromise();
@@ -66,8 +66,8 @@ export class StructureDefinitionController extends BaseFhirController {
       this.logger.error(`Error while retrieving base structure definition ${url}: ${ex.message}`);
     }
   }
-
-  @Get('type')
+*/
+ /* @Get('type')
   public async getSupportedLogicalTypes(@Query('search') search: string, @FhirServerId() fhirServerId: string) {
     const typesConfigPath = path.join(__dirname, 'config/types.json');
     if (!fs.existsSync(typesConfigPath)) return [];
@@ -93,7 +93,7 @@ export class StructureDefinitionController extends BaseFhirController {
 
     return filtered.slice(0, 10);
   }
-
+*/
   /**
    * Gets the base structure definition specified by the url.
    * Ensures that the structure definition returned has a snapshot.
@@ -101,7 +101,7 @@ export class StructureDefinitionController extends BaseFhirController {
    * @param url {string} The url of the base profile to return
    * @param type {string}
    */
-  @Get('base')
+ /* @Get('base')
   public async getBaseStructureDefinition(@Req() request: ITofRequest, @Query('url') url: string, @Query('type') type: string, @RequestHeaders("implementationGuideId") implementationGuideId: string,
                                           @FhirServerVersion() fhirServerVersion: 'stu3'|'r4'): Promise<BaseDefinitionResponseModel> {
     const ret = new BaseDefinitionResponseModel();
@@ -160,9 +160,9 @@ export class StructureDefinitionController extends BaseFhirController {
     }
 
     return ret;
-  }
+  }*/
 
-  @Get()
+ /* @Get()
   public search(@User() user, @FhirServerBase() fhirServerBase?: string, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
     return super.baseSearch(user, fhirServerBase, query, headers);
   }
@@ -188,14 +188,14 @@ export class StructureDefinitionController extends BaseFhirController {
   public delete(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
     return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
   }
-
+*/
   /**
    * Collects all profiles related to the url specified and Uses the FHIR.js generateSnapshot() functionality to create a snapshot.
    * @param fhirServerBase
    * @param fhir
    * @param url
    */
-  private async generateInternalSnapshot(fhirServerBase: string, fhir: Fhir, url: string) {
+  /*private async generateInternalSnapshot(fhirServerBase: string, fhir: Fhir, url: string) {
     // Recursive function to get all base profiles for a given url
     const getNextBase = async (baseUrl: string, list: StructureDefinition[] = []) => {
       const foundBaseProfile = fhir.parser.structureDefinitions.find((sd) => sd.url === baseUrl);
@@ -235,7 +235,7 @@ export class StructureDefinitionController extends BaseFhirController {
     }
 
     return found;
-  }
+  }*/
   /**
    * Generates a snapshot for the specified profile if the FHIR server is configured to support snapshot
    * @param fhirServerId

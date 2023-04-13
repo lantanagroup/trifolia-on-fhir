@@ -41,7 +41,9 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
         }
         let query = req.query;
 
-        if (!query) {
+        let headers = req.headers;
+
+        if (!query || !headers ) {
             return filter;
         }
         if ('fhirversion' in query) {
@@ -62,6 +64,9 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
 
         if ('implementationguideid' in query) {
             filter['igIds'] = new ObjectId(query['implementationguideid']);
+        }
+        else if (headers && headers['implementationguideid'] ) {
+           filter['igIds'] =  new ObjectId(headers['implementationguideid']);
         }
 
         return filter;

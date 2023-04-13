@@ -1,17 +1,15 @@
-import { BaseFhirController } from './base-fhir.controller';
-import { HttpService } from '@nestjs/axios';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { TofLogger } from './tof-logger';
-import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
-import { FhirServerBase, FhirServerVersion, RequestHeaders, User } from './server.decorators';
-import { ConfigService } from './config.service';
+import {HttpService} from '@nestjs/axios';
+import {Body, Controller, Delete, Get, Param, Post, Put, Request, UseGuards} from '@nestjs/common';
+import {AuthGuard} from '@nestjs/passport';
+import {TofLogger} from './tof-logger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
+import {RequestHeaders, User} from './server.decorators';
+import {ConfigService} from './config.service';
 import {ConformanceController} from './conformance/conformance.controller';
 import {AuthService} from './auth/auth.service';
 import {ConformanceService} from './conformance/conformance.service';
 import {IConformance} from '@trifolia-fhir/models';
-import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
-import {ObjectId} from 'mongodb';
+import {Paginated} from '@trifolia-fhir/tof-lib';
 
 @Controller('api/searchParameter')
 @UseGuards(AuthGuard('bearer'))
@@ -28,63 +26,31 @@ export class SearchParameterController extends ConformanceController {
   }
 
   @Get()
-  public async searchParameter(@User() user, @Query() query?: any, @RequestHeaders() headers?): Promise<Paginated<IConformance>> {
-    const searchFilters = {};
-
-    if ('name' in query) {
-      searchFilters['resource.name'] = { $regex: query['name'], $options: 'i' };
-    }
-    searchFilters['resource.resourceType'] = { $regex: 'SearchParameter', $options: 'i' };
-    if (headers && headers['implementationguideid'] ) {
-      searchFilters['igIds'] =  new ObjectId(headers['implementationguideid']);
-    }
-    //searchFilters['fhirVersion'] = { $regex: fhirServerVersion, $options: 'i' };
-    if (headers && headers['fhirversion'] ) {
-      searchFilters['fhirversion'] = { $regex: headers['fhirversion'] , $options: 'i' };
-    }
-    const baseFilter =  this.authService.getPermissionFilterBase(user, 'read');
-
-    const filter = {
-      $and: [ baseFilter, searchFilters]
-    };
-
-    const options: PaginateOptions = {
-      page: query.page,
-      itemsPerPage: 10,
-      filter: filter
-    };
-
-    options.sortBy = {};
-    if ('_sort' in query) {
-      options.sortBy[query['_sort']] = 'asc';
-    }
-
-    return await this.conformanceService.search(options);
+  public async searchParameter(@User() user, @Request() req?: any): Promise<Paginated<IConformance>> {
+    return super.searchConformance(user, req);
 
   }
 
   @Get(':id')
-  public async getSearchParameter(@Query() query, @User() user, @Param('id') id: string): Promise<IConformance> {
+  public async getSearchParameter(@User() user, @Param('id') id: string): Promise<IConformance> {
     return super.getById(user, id);
   }
 
   @Post()
-  public createSearchParameter(@FhirServerVersion() fhirServerVersion, @User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = true) {
+  public createSearchParameter(@User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
     let conformance: IConformance = body;
-    conformance.fhirVersion = fhirServerVersion;
     return this.conformanceService.createConformance(conformance, contextImplementationGuideId);
   }
 
   @Put(':id')
-  public async updateSearchParameter(@FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Param('applyContextPermissions') applyContextPermissions = false) {
+  public async updateSearchParameter(@User() user, @Param('id') id: string, @Body() body) {
     await this.assertCanWriteById(user, id);
     let conformance: IConformance = body;
-    conformance.fhirVersion = fhirServerVersion;
     return this.conformanceService.updateConformance(id, conformance);
   }
 
   @Delete(':id')
-  public async deleteSearchParameter(@Param('id') id: string, @User() user) {
+  public async deleteSearchParameter(@User() user, @Param('id') id: string ) {
     await this.assertCanWriteById(user, id);
     return this.conformanceService.deleteConformance(id);
   }

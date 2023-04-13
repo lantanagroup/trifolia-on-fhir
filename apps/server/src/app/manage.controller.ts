@@ -1,24 +1,18 @@
 import {BaseController} from './base.controller';
 import {HttpService} from '@nestjs/axios';
-import {Body, Controller, Get, Header, Param, ParseIntPipe, Post, Query, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Req, UseGuards} from '@nestjs/common';
 import type {ITofRequest} from './models/tof-request';
 import {ISocketConnection} from './models/socket-connection';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
-import {FhirServerBase, User} from './server.decorators';
+import {User} from './server.decorators';
 import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Bundle, ContactPoint as R4ContactPoint, Practitioner as R4Practitioner} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {ContactPoint as STU3ContactPoint, Practitioner as STU3Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {UserModel} from '../../../../libs/tof-lib/src/lib/user-model';
-import {getDisplayIdentifier, getDisplayName} from '../../../../libs/tof-lib/src/lib/helper';
+import {Bundle} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ExportService} from './export.service';
 import {QueueInfo} from '../../../../libs/tof-lib/src/lib/queue-info';
-import {IAuditEvent, IBundle, IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {TofLogger} from './tof-logger';
-import { UsersService } from './users/users.service';
-import { IUser } from '@trifolia-fhir/models';
 
 interface MessageRequest {
   message: string;

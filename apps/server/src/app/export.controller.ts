@@ -17,7 +17,7 @@ import * as path from 'path';
 import * as tmp from 'tmp';
 import { MSWordExporter } from './export/msword';
 import { ExportService } from './export.service';
-import { FhirServerId, User } from './server.decorators';
+import {  User } from './server.decorators';
 import { HtmlExporter } from './export/html';
 import type { ITofUser } from '@trifolia-fhir/tof-lib';
 import nodemailer from 'nodemailer';
@@ -41,7 +41,7 @@ export class ExportController extends ConformanceController {//BaseController {
     super(conformanceService);
   }
 
-  @Get(':implementationGuideId/([$])validate')
+ /* @Get(':implementationGuideId/([$])validate')
   public validate(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId: string) {
     return new Promise((resolve, reject) => {
       const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, request.fhir, implementationGuideId);
@@ -115,7 +115,7 @@ export class ExportController extends ConformanceController {//BaseController {
           }
         });
     });
-  }
+  }*/
 
   @Post(':implementationGuideId/bundle')
   public async exportImplementationGuide(
@@ -223,7 +223,7 @@ export class ExportController extends ConformanceController {//BaseController {
     });
   }
 
-  @Get(':implementationGuideId/publish')
+/*  @Get(':implementationGuideId/publish')
   public async publishImplementationGuide(@Req() request: ITofRequest, @User() user: ITofUser, @FhirServerId() fhirServerId: string, @Param('implementationGuideId') implementationGuideId) {
     const options = new ExportOptions(request.query);
 
@@ -284,7 +284,7 @@ export class ExportController extends ConformanceController {//BaseController {
       this.logger.error(`Error while publishing implementation guide: ${ex.message}`, ex.stack);
       throw ex;
     }
-  }
+  }*/
 
   @Post(':packageId/cancel')
   public cancel(@Param('packageId') packageId: string) {

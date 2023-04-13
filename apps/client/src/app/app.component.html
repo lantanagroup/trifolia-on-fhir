@@ -22,12 +22,6 @@
           <a class="dropdown-item" routerLink="/projects/new" *ngIf="authService.isAuthenticated() && !configService.project" title="Create a new project">
           <i class="fa fa-plus"></i> New Project
           </a>
-          <!--<a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/implementation-guide/new" *ngIf="authService.isAuthenticated() && !configService.project" title="Create a new project (implementation guide)">
-            <i class="fa fa-plus"></i> New Project
-          </a>-->
-         <!-- <a class="dropdown-item" href="javascript:void(0)" routerLink="/{{configService.baseSessionUrl}}/implementation-guide/open" *ngIf="authService.isAuthenticated() && !configService.project" title="Open/select an implementation guide to work on">
-            <i class="far fa-folder"></i> Open project
-          </a>-->
            <a class="dropdown-item" href="javascript:void(0)" routerLink="/projects" *ngIf="authService.isAuthenticated() && !configService.project" title="Open/select an project to work on">
              <i class="far fa-folder"></i> Open project
           </a>
@@ -114,7 +108,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0)" (click)="editSettings()" title="The currently selected FHIR server">
+          <a class="nav-link" href="javascript:void(0)" (click)="editSettings()" title="Settings">
             <div class="badge bg-info"><i class="fa fa-info"></i></div>
           </a>
         </li>
@@ -122,7 +116,7 @@
           <a class="nav-link" href="javascript:void(0)" (click)="authService.login()">Login</a>
         </li>
         <li class="nav-item" *ngIf="authService.isAuthenticated()">
-          <a class="nav-link" routerLink="/{{configService.fhirServer}}/users/me">
+          <a class="nav-link" routerLink="/users/me">
             <img class="profile-picture" *ngIf="authService.userProfile && authService.userProfile.picture" src="{{authService.userProfile.picture}}" alt="Your profile picture"/>
             {{displayName}}
           </a>

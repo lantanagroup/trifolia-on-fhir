@@ -60,7 +60,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     } else if (this.configService.isFhirSTU3) {
       this.codeSystem = new STU3CodeSystem({ meta: this.authService.getDefaultMeta() });
     }
-    this.conformance = <IConformance>{ resource: this.codeSystem, permissions: this.authService.getDefaultPermissions() };
+    this.conformance = <IConformance>{ resource: this.codeSystem, fhirVersion: <'stu3'|'r4'|'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -184,7 +184,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       this.fileService.saveFile();
       return;
     }
-
+    this.conformance.fhirVersion = <'stu3'|'r4'|'r5'>this.configService.fhirVersion;
     this.codeSystemService.save(this.codeSystemId, this.conformance)
       .subscribe({
         next: (conf: IConformance) => {

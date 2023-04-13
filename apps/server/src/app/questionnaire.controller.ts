@@ -4,7 +4,7 @@ import {Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards} from 
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
-import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
+import { FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 
 @Controller('api/questionnaire')
@@ -20,7 +20,7 @@ export class QuestionnaireController extends BaseFhirController {
     super(httpService, configService);
   }
 
-  @Get()
+ /* @Get()
   public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
     return super.baseSearch(user, fhirServerBase, query, headers);
   }
@@ -43,5 +43,5 @@ export class QuestionnaireController extends BaseFhirController {
   @Delete(':id')
   public delete(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
     return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
-  }
+  }*/
 }
