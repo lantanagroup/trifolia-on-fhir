@@ -1103,7 +1103,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         await this.implementationGuideService.removeImplementationGuide(this.implementationGuideId).toPromise().then((project) => {
           console.log(project);
           this.configService.project = null;
-          this.router.navigate([`${this.configService.baseSessionUrl}/home`]);
+          this.router.navigate([`${this.configService.baseSessionUrl}`]);
           alert(`IG ${name} with id ${this.implementationGuideId} has been deleted`);
         }).catch((err) => this.message = getErrorString(err));
       }, (err) => {
