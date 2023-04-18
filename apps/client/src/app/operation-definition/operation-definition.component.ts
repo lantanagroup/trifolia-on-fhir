@@ -108,8 +108,6 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-
-    this.conformance.fhirVersion = <'stu3'|'r4'|'r5'>this.configService.fhirVersion;
     this.opDefService.save(this.operationDefinitionId, this.conformance)
       .subscribe({
         next: (conf: IConformance) => {
