@@ -35,6 +35,8 @@ export class CapabilityStatementWrapperComponent implements OnInit {
       version = this.fileService.file.fhirVersion;
     }
 
+    version = this.configService.fhirVersion;
+
     if (identifyRelease(version) === Versions.R4) {
       componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4CapabilityStatementComponent);
     } else {

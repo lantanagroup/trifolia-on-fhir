@@ -839,10 +839,10 @@
     <!-- Permissions -->
     <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
       <a ngbNavLink>
-        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(capabilityStatement)" title="No write permissions for current user specified!"></i>
+        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i>
       </a>
       <ng-template ngbNavContent>
-        <trifolia-fhir-resource-permissions [resource]="capabilityStatement"></trifolia-fhir-resource-permissions>
+        <trifolia-fhir-resource-permissions [resource]="conformance"></trifolia-fhir-resource-permissions>
       </ng-template>
     </li>
 
@@ -868,7 +868,7 @@
     <li ngbNavItem="history" *ngIf="!isNew">
       <a ngbNavLink>History</a>
       <ng-template ngbNavContent>
-        <app-resource-history [(resource)]="capabilityStatement"></app-resource-history>
+        <app-resource-history  [resource]="conformance" (resourceChange) = "capabilityStatement = $event; conformance.resource = $event;"></app-resource-history>
       </ng-template>
     </li>
   </ul>
@@ -877,7 +877,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="(capabilityStatement && !canEdit(capabilityStatement)) || wrongDateFormat || (isNew && !isIdUnique)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="(capabilityStatement && !canEdit(conformance)) || wrongDateFormat || (isNew && !isIdUnique)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

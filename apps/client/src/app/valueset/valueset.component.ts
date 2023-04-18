@@ -17,7 +17,7 @@ import {BaseComponent} from '../base.component';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import {IConformance} from '@trifolia-fhir/models';
-import {SearchParameter} from '@trifolia-fhir/r4';
+
 
 @Component({
   templateUrl: './valueset.component.html',
@@ -203,7 +203,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
       this.fileService.saveFile();
       return;
     }
-    //this.conformance.fhirVersion = <'stu3'|'r4'|'r5'>this.configService.fhirVersion;
+
     this.valueSetService.save(this.valueSetId, this.conformance)
       .subscribe((conf: IConformance) => {
         if (this.isNew) {

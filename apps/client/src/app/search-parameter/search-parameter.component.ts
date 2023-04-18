@@ -194,7 +194,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
       this.fileService.saveFile();
       return;
     }
-    this.conformance.fhirVersion = <'stu3'|'r4'|'r5'>this.configService.fhirVersion;
+
     this.spService.save(this.searchParameterId, this.conformance)
       .subscribe({
         next: (conf: IConformance) => {
