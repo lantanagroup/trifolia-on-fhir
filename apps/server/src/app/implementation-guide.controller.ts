@@ -216,8 +216,8 @@ export class ImplementationGuideController extends ConformanceController { // ex
     }
   }*/
 
-  /*@Get(':id/profile')
-  public async getProfiles(@Param('id') id: string, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
+ /* @Get(':id/profile')
+  public async getProfiles(@Param('id') id: string,  @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
     const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
     const igResults = await this.httpService.get<IImplementationGuide>(igUrl).toPromise();
     const ig = igResults.data;
@@ -244,8 +244,8 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
     const bundleResults = await this.httpService.post<IBundle>(fhirServerBase, batch).toPromise();
     return bundleResults.data;
-  }*/
-
+  }
+*/
   @Get(':id/example')
   public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
   // const implementationGuideUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
@@ -293,22 +293,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
   @Get()
   public async searchImplementationGuide(@User() user: ITofUser, @Query() query?: any, @RequestHeaders() headers?): Promise<SearchImplementationGuideResponseContainer> {
 
-    //const preparedQuery = await this.prepareSearchQuery(user, fhirServerBase, query, headers);
-
-    // const options = <AxiosRequestConfig> {
-    //   url: buildUrl(fhirServerBase, this.resourceType, null, null, preparedQuery),
-    //   method: 'GET',
-    //   headers: {
-    //     'Cache-Control': 'no-cache'
-    //   }
-    // };
-
-    //console.log(`query: ${JSON.stringify(query)}`);
-    //console.log(`options: ${JSON.stringify(options)}`);
-
     try {
-      //const results = await this.httpService.request(options).toPromise();
-      //const results = await this.db.collection('project').find().skip((query.page-1)*preparedQuery._count).limit(preparedQuery._count).toArray();
 
       const searchFilters = {};
 

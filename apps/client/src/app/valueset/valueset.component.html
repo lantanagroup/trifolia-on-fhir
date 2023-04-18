@@ -134,7 +134,7 @@
   <!-- Permissions -->
   <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
     <a ngbNavLink>
-      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(valueSet)" title="No write permissions for current user specified!"></i>
+      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i>
     </a>
     <ng-template ngbNavContent>
       <trifolia-fhir-resource-permissions  [resource]="conformance" ></trifolia-fhir-resource-permissions>
@@ -161,7 +161,7 @@
   <li ngbNavItem="history" *ngIf="!isNew">
     <a ngbNavLink>History</a>
     <ng-template ngbNavContent>
-      <app-resource-history [(resource)]="valueSet"></app-resource-history>
+      <app-resource-history  [resource]="conformance" (resourceChange) = "valueSet = $event; conformance.resource = $event;"></app-resource-history>
     </ng-template>
   </li>
 </ul>
