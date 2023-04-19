@@ -151,11 +151,7 @@
   </div>
   <div class="jumbotron" *ngIf="showNewUser">
     <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
-    <trifolia-fhir-new-user-modal *ngIf="configService.fhirConformance"></trifolia-fhir-new-user-modal>
-  </div>
-  <div class="jumbotron" *ngIf="configService.fhirConformance === false">
-    <h3>Error!</h3>
-    <p>Trifolia-on-FHIR cannot communicate with the selected FHIR server!</p>
+    <trifolia-fhir-new-user-modal></trifolia-fhir-new-user-modal>
   </div>
   <div class="jumbotron" *ngIf="showRouterOutlet">
     <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
