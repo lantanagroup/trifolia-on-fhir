@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Bundle, CodeSystem, OperationOutcome } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { IConformance, IProject, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import { Paginated } from '@trifolia-fhir/tof-lib';
 
@@ -48,6 +46,16 @@ export class ConformanceService {
         }
 
         return this.http.get<Paginated<IConformance>>(url);
+    }
+
+
+    public save(conformanceId: string, conformance: IConformance): Observable<IConformance> {
+        if (conformanceId) {
+            const url = '/api/conformance/' + encodeURIComponent(conformanceId);
+            return this.http.put<IConformance>(url, conformance);
+        } else {
+            return this.http.post<IConformance>('/api/conformance', conformance);
+        }
     }
 
 

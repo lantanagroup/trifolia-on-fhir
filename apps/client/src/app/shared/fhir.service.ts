@@ -54,7 +54,7 @@ export class ResourceGithubDetails implements IResourceGithubDetails {
 @Injectable()
 export class FhirService {
   public fhir: Fhir;
-  public fhirVersion: string = 'R4';
+  public fhirVersion: string = 'r4';
   public loaded: boolean;
   public profiles: StructureDefinition[] = [];
   public valueSets: (ValueSet | CodeSystem)[] = [];

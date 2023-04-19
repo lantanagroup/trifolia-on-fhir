@@ -40,6 +40,10 @@ export class Example extends BaseEntity implements IExample {
 
     @Prop()
     exampleFor?: string;
+
+    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: 'Conformance' }])
+    igIds: string[];
+    
 }
 
 export const ExampleSchema = SchemaFactory.createForClass(Example);

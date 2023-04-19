@@ -1,5 +1,5 @@
-import {BaseController} from './base.controller';
-import {HttpService} from '@nestjs/axios';
+import { BaseController } from './base.controller';
+import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException, Body,
   Controller,
@@ -9,23 +9,27 @@ import {
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import {AuthGuard} from '@nestjs/passport';
-import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
-import {ConfigService} from './config.service';
-import {TofLogger} from './tof-logger';
-import {FhirController} from './fhir.controller';
-import {FhirServerVersion, RequestHeaders, User} from './server.decorators';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {TofNotFoundException} from '../not-found-exception';
-import {AxiosRequestConfig} from 'axios';
-import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
+import { ConfigService } from './config.service';
+import { TofLogger } from './tof-logger';
+import { FhirController } from './fhir.controller';
+import { FhirServerVersion, RequestHeaders, User } from './server.decorators';
+import { buildUrl } from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import { TofNotFoundException } from '../not-found-exception';
+import { AxiosRequestConfig } from 'axios';
+import type { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
 import {
   ValueSet, ValueSetComposeComponent,
   ValueSetConceptReferenceComponent,
   ValueSetConceptSetComponent
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {addToImplementationGuide} from './helper';
-import {IBundle} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { addToImplementationGuide } from './helper';
+import { IBundle } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { ConformanceService } from './conformance/conformance.service';
+import { ExamplesService } from './examples/examples.service';
+import { ObjectId } from 'mongodb';
+import { IProjectResource } from '@trifolia-fhir/models';
 
 @Controller('api/import')
 @UseGuards(AuthGuard('bearer'))
@@ -35,122 +39,122 @@ export class ImportController extends BaseController {
   readonly vsacBaseUrl = 'https://cts.nlm.nih.gov/fhir/';
   readonly logger = new TofLogger(ImportController.name);
 
-  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+  constructor(
+    protected httpService: HttpService,
+    protected configService: ConfigService,
+    protected conformanceService: ConformanceService,
+    protected exampleService: ExamplesService) {
     super(configService, httpService);
   }
 
   /**
    * Checks on the status of each of the resources specified in the post to determine if
    * it exists (update), doesn't exist (add) or has an authorization issue for the currently logged in user.
-   * @param resourceReferences {string[]} A list of resource references to check on the FHIR server for
-   * @param fhirServerBase The FHIR server's base URL that is currently in context
+   * @param resourceReferences A list of resource references to check
    * @param user The current user to determine authorization on each of the referenced resources
    */
-  /*@Post('resourcesStatus')
-  public async checkResourcesStatus(@Body() resourceReferences: string[], @FhirServerBase() fhirServerBase: string, @User() user: ITofUser) {
-    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
-    const requestBundle = {
-      resourceType: 'Bundle',
-      type: 'transaction',
-      entry: resourceReferences.map(rr => {
-        return {
-          request: {
-            method: 'GET',
-            url: rr
-          }
-        };
-      })
-    };
+  @Post('resourcesStatus')
+  public async checkResourcesStatus(
+    @Body() resourceReferences: { resourceType: string, id: string, isExample: boolean }[],
+    @User() user: ITofUser, @Query('implementationguideid') implementationGuideId?: string)
+    : Promise<{ [resourceReference: string]: { resource?: IProjectResource, action: 'update' | 'add' | 'unknown' } }> {
 
-    const results = await this.httpService.post<IBundle>(fhirServerBase, requestBundle).toPromise();
-    const response: { [resourceReference: string]: string } = {};
+    
+    const response: { [resourceReference: string]: { resource?: IProjectResource, action: 'update' | 'add' | 'unknown' } } = {};
 
-    results.data.entry.forEach((e, i) => {
-      const resourceReference = requestBundle.entry[i].request.url;
+    for (const e of resourceReferences) {
 
-      if (e.resource) {
-        response[resourceReference] = 'update';
-        // if (this.userHasPermission(userSecurityInfo, 'write', e.resource)) {
-        //   response[resourceReference] = 'update';
-        // } else {
-        //   response[resourceReference] = 'unauthorized';
-        // }
-      } else if (e.response && e.response.status && e.response.status.startsWith('404')) {
-        response[resourceReference] = 'add';
+      let res: IProjectResource;
+      let path = `${e.resourceType}/${e.id}`;
+
+      if (e.isExample) {
+        res = await this.exampleService.findOne({});
       } else {
-        response[resourceReference] = 'unknown';
+        let filter = { 'resource.resourceType': e.resourceType, 'resource.id': e.id };
+        if (implementationGuideId) {
+          filter['igIds'] = new ObjectId(implementationGuideId);
+        }
+        res = await this.conformanceService.findOne(filter);
       }
-    });
+
+      // resource found
+      if (res) {
+        response[path] = { resource: res, action: 'update' };
+      } else {
+        response[path] = { resource: null, action: 'add' };
+      }
+
+    }
 
     return response;
   }
-*/
- /* @Post('phinvads')
-  public async importPhinVadsValueSet(@Body() importContent: string, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: string, @User() user: ITofUser, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
-    const allLines = importContent.split('\n');
-    const headerData = allLines[1].split('\t');
-    const name = headerData[0];
-    const oid = headerData[2];
-    const conceptLines = allLines.slice(4);
-    const contextImplementationGuide = await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId);
-    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
 
-    const valueSet = new ValueSet();
-    valueSet.id = oid;
-    valueSet.url = `urn:oid:${oid}`;
-    valueSet.name = name;
-    valueSet.compose = new ValueSetComposeComponent();
-    valueSet.compose.include = [];
-
-    if (contextImplementationGuide) {
-      // TODO: Determine a better URL
-    }
-
-    // Find distinct/unique code systems
-    const codeSystems = [];
-
-    conceptLines.forEach((line) => {
-      const lineData = line.split('\t');
-      const codeSystemOid = lineData[4];
-
-      if (!codeSystemOid) {
-        return;
-      }
-
-      const foundInclude = valueSet.compose.include.find((include) => include.system === `urn:oid:${codeSystemOid}`);
-
-      if (!foundInclude) {
-        const newInclude = new ValueSetConceptSetComponent();
-        newInclude.system = `urn:oid:${codeSystemOid}`;
-        valueSet.compose.include.push(newInclude);
-      }
-    });
-
-    valueSet.compose.include.forEach((include) => {
-      include.concept = conceptLines
-        .filter(line => {
-          const lineData = line.split('\t');
-          const system = `urn:oid:${lineData[4]}`;
-          return system === include.system;
-        })
-        .map(line => {
-          const lineData = line.split('\t');
-          const concept = new ValueSetConceptReferenceComponent();
-          concept.code = lineData[0];
-          concept.display = lineData[1];
-          return concept;
-        });
-    });
-
-    const url = buildUrl(fhirServerBase, 'ValueSet', valueSet.id);
-    const results = await this.httpService.put(url, valueSet).toPromise();
-
-    if (contextImplementationGuide) {
-      await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, valueSet, userSecurityInfo, contextImplementationGuide, true);
-    }
-
-    return results.data;
-  }*/
+  /* @Post('phinvads')
+   public async importPhinVadsValueSet(@Body() importContent: string, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: string, @User() user: ITofUser, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
+     const allLines = importContent.split('\n');
+     const headerData = allLines[1].split('\t');
+     const name = headerData[0];
+     const oid = headerData[2];
+     const conceptLines = allLines.slice(4);
+     const contextImplementationGuide = await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId);
+     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+ 
+     const valueSet = new ValueSet();
+     valueSet.id = oid;
+     valueSet.url = `urn:oid:${oid}`;
+     valueSet.name = name;
+     valueSet.compose = new ValueSetComposeComponent();
+     valueSet.compose.include = [];
+ 
+     if (contextImplementationGuide) {
+       // TODO: Determine a better URL
+     }
+ 
+     // Find distinct/unique code systems
+     const codeSystems = [];
+ 
+     conceptLines.forEach((line) => {
+       const lineData = line.split('\t');
+       const codeSystemOid = lineData[4];
+ 
+       if (!codeSystemOid) {
+         return;
+       }
+ 
+       const foundInclude = valueSet.compose.include.find((include) => include.system === `urn:oid:${codeSystemOid}`);
+ 
+       if (!foundInclude) {
+         const newInclude = new ValueSetConceptSetComponent();
+         newInclude.system = `urn:oid:${codeSystemOid}`;
+         valueSet.compose.include.push(newInclude);
+       }
+     });
+ 
+     valueSet.compose.include.forEach((include) => {
+       include.concept = conceptLines
+         .filter(line => {
+           const lineData = line.split('\t');
+           const system = `urn:oid:${lineData[4]}`;
+           return system === include.system;
+         })
+         .map(line => {
+           const lineData = line.split('\t');
+           const concept = new ValueSetConceptReferenceComponent();
+           concept.code = lineData[0];
+           concept.display = lineData[1];
+           return concept;
+         });
+     });
+ 
+     const url = buildUrl(fhirServerBase, 'ValueSet', valueSet.id);
+     const results = await this.httpService.put(url, valueSet).toPromise();
+ 
+     if (contextImplementationGuide) {
+       await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, valueSet, userSecurityInfo, contextImplementationGuide, true);
+     }
+ 
+     return results.data;
+   }*/
 
   /*@Get('vsac/:id')
   public async importVsacValueSet(

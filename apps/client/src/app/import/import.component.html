@@ -29,6 +29,7 @@
           <th>ID(s)</th>
           <th>Type</th>
           <th>Action</th>
+          <th>Example?</th>
           <th></th>
         </tr>
         </thead>
@@ -46,10 +47,13 @@
               <option value="store">Store</option>
               <option value="execute">Execute</option>
             </select>
-            <a *ngIf="f.status === 'update' && f.resource" href="javascript:void(0)" (click)="viewUpdateDiff(f.resource)">
+            <a *ngIf="f.status === 'update' && f.resource" href="javascript:void(0)" (click)="viewUpdateDiff(f)">
               <i class="fas fa-eye"></i>
             </a>
             <i *ngIf="!f.singleIg" class="fas fa-exclamation warning" style="padding-left:15px;" [ngbTooltip]="f.multipleIgMessage"></i>
+          </td>
+          <td>
+            <input type="checkbox" [(ngModel)]="f.isExample" />
           </td>
           <td class="actions-column-1">
             <div class="pull-right">
@@ -166,8 +170,7 @@
 </ul>
 <div [ngbNavOutlet]="t" class="mt-2"></div>
 
-<div class="card results" *ngIf="outcome || resultsBundle">
-  <div class="card-header">Results</div>
+<!-- <div class="card results" *ngIf="outcome || resultsBundle">
   <div class="card-body" *ngIf="outcome">
     <p *ngIf="outcome.text && outcome.text.div && (!outcome.issue || outcome.issue.length === 0)" [innerHTML]="outcome.text.div"></p>
     <ul>
@@ -192,7 +195,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <footer class="footer">
   <button type="button" class="btn btn-primary" (click)="import(t)" [disabled]="importDisabled()" [attr.data-intro]="Globals.introText['import.import-btn']">Import</button>

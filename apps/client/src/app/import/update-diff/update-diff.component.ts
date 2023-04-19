@@ -9,8 +9,8 @@ import {FhirService} from '../../shared/fhir.service';
   styleUrls: ['./update-diff.component.css']
 })
 export class UpdateDiffComponent implements OnInit {
-  @Input() importResource: IDomainResource;
-  currentResource: IDomainResource;
+  @Input() importResource: any;
+  @Input() existingResource: any;
   message: string;
   showJson = false;
   left: string;
@@ -19,13 +19,13 @@ export class UpdateDiffComponent implements OnInit {
   constructor(public activeModal: NgbActiveModal, private fhirService: FhirService) { }
 
   reSerialize() {
-    if (!this.currentResource || !this.importResource) return;
+    if (!this.existingResource || !this.importResource) return;
 
     if (!this.showJson) {
-      this.left = this.fhirService.serialize(this.currentResource).replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      this.right = this.fhirService.serialize(this.importResource).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      this.left = this.fhirService.serialize(this.existingResource);//.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      this.right = this.fhirService.serialize(this.importResource);//.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     } else {
-      this.left = JSON.stringify(this.currentResource, null, '\t');
+      this.left = JSON.stringify(this.existingResource, null, '\t');
       this.right = JSON.stringify(this.importResource, null, '\t');
     }
   }
@@ -36,11 +36,10 @@ export class UpdateDiffComponent implements OnInit {
       delete this.importResource.meta;
 
       this.message = 'Loading differences...';
-      this.currentResource = <IDomainResource>await this.fhirService.read(this.importResource.resourceType, this.importResource.id).toPromise();
       this.message = null;
 
-      if (this.currentResource) {
-        delete this.currentResource.meta;
+      if (this.existingResource) {
+        delete this.existingResource.meta;
       }
 
       this.reSerialize();

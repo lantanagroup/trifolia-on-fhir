@@ -7,7 +7,7 @@ import { FhirService } from '../shared/fhir.service';
 import { CookieService } from 'ngx-cookie-service';
 import { ContentModel, GithubService } from '../shared/github.service';
 import { ImportGithubPanelComponent } from './import-github-panel/import-github-panel.component';
-import { forkJoin } from 'rxjs';
+import { forkJoin, zip } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
@@ -17,6 +17,9 @@ import { ConfigService } from '../shared/config.service';
 import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import type { IDomainResource } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
+import { ConformanceService } from '../shared/conformance.service';
+import { IConformance, IExample, IProjectResource } from '@trifolia-fhir/models';
+import { ExamplesService } from '../shared/examples.service';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
@@ -30,11 +33,13 @@ enum ContentTypes {
 class ImportFileModel {
   public name: string;
   public contentType: ContentTypes = ContentTypes.Json;
+  public isExample: boolean = false;
   public content: string | Uint8Array;
   public resource?: DomainResource;
   public vsBundle?: Bundle;
   public message: string;
   public status: 'add' | 'update' | 'unauthorized' | 'pending' | 'unknown' = 'pending';
+  public existingResource?: IProjectResource;
   public bundleOperation: 'store' | 'execute';
   public singleIg = true;
   public multipleIgMessage: "";
@@ -76,6 +81,8 @@ export class ImportComponent implements OnInit {
     public configService: ConfigService,
     private httpClient: HttpClient,
     private importService: ImportService,
+    private conformanceService: ConformanceService,
+    private examplesService: ExamplesService,
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService,
     public githubService: GithubService,
@@ -89,9 +96,16 @@ export class ImportComponent implements OnInit {
     }
   }
 
-  viewUpdateDiff(resource: IDomainResource) {
+  viewUpdateDiff(fileModel: ImportFileModel) {
     const modalRef = this.modalService.open(UpdateDiffComponent, { backdrop: 'static', size: 'lg' });
-    modalRef.componentInstance.importResource = resource;
+    if (fileModel.isExample) {
+      modalRef.componentInstance.importResource = fileModel.resource;
+      modalRef.componentInstance.existingResource = (<IExample>fileModel.existingResource).content;
+    }
+    else {
+      modalRef.componentInstance.importResource = fileModel.resource;
+      modalRef.componentInstance.existingResource = (<IConformance>fileModel.existingResource).resource;
+    }
   }
 
   private createMedia(name: string, contentType: string, buffer: ArrayBuffer) {
@@ -201,7 +215,7 @@ export class ImportComponent implements OnInit {
     url += `/$validate-single-ig`;
 
     const singleIg = await this.httpClient.get(url).toPromise();
-    if(!singleIg){
+    if (!singleIg) {
       importFileModel.singleIg = false;
       importFileModel.multipleIgMessage = "This resource already belongs to another implementation guide. Continuing to import will add this resource to your current implementation guide, which may cause problems with the Publisher in the future."
     }
@@ -256,18 +270,24 @@ export class ImportComponent implements OnInit {
     const pendingResources = this.files
       .filter(f => !!f.resource && f.resource.id && f.status === 'pending');
 
-    const resourceReferences = pendingResources
-      .map(pr => `${pr.resource.resourceType}/${pr.resource.id}`);
+    const resourceReferences: { resourceType: string, id: string, isExample: boolean }[] = pendingResources
+      .map(pr => { return { resourceType: pr.resource.resourceType, id: pr.resource.id, isExample: pr.isExample } });
 
     this.files.filter(f => !!f.resource && !f.resource.id)
       .forEach(f => f.status = 'add');
 
     // Only ask the server if we have one or more resources with an ID that hasn't already been checked
     if (resourceReferences.length > 0) {
-      this.importService.checkResourcesStatus(resourceReferences)
+      let igId: string;
+      if (this.configService.project && this.configService.project.implementationGuideId) {
+        igId = this.configService.project.implementationGuideId
+      }
+      this.importService.checkResourcesStatus(resourceReferences, igId)
         .then((statuses) => {
           pendingResources.forEach(pr => {
-            pr.status = statuses[`${pr.resource.resourceType}/${pr.resource.id}`] || 'unknown';
+            const path = `${pr.resource.resourceType}/${pr.resource.id}`;
+            pr.status = statuses[path].action || 'unknown';
+            pr.existingResource = statuses[path].resource;
           });
         })
         .catch((err) => {
@@ -352,10 +372,10 @@ export class ImportComponent implements OnInit {
         if (this.errorMessage === '') {
           this.files.push(importFileModel);
         }
-        if (this.configService.project && this.configService.project.implementationGuideId) {
-          this.getList(importFileModel);
-        }
-        this.importBundle = this.getFileBundle();
+        // if (this.configService.project && this.configService.project.implementationGuideId) {
+        //   this.getList(importFileModel);
+        // }
+        // this.importBundle = this.getFileBundle();
         this.cdr.detectChanges();
 
         resolve();
@@ -369,18 +389,18 @@ export class ImportComponent implements OnInit {
     });
   }
 
-  public downloadBundle(format: 'json'|'xml') {
+  public downloadBundle(format: 'json' | 'xml') {
     let content, contentBlob;
 
     switch (format) {
       case 'json':
         content = JSON.stringify(this.importBundle, null, '\t');
-        contentBlob = new Blob([content], {type: 'application/json'});
+        contentBlob = new Blob([content], { type: 'application/json' });
         saveAs(contentBlob, 'importBundle.json');
         break;
       case 'xml':
         content = this.fhirService.serialize(this.importBundle);
-        contentBlob = new Blob([content], {type: 'application/xml'});
+        contentBlob = new Blob([content], { type: 'application/xml' });
         saveAs(contentBlob, 'importBundle.xml');
     }
   }
@@ -478,26 +498,46 @@ export class ImportComponent implements OnInit {
 
   private importFiles(tabSet: NgbNav) {
     const json = JSON.stringify(this.importBundle, null, '\t');
-    this.fhirService.batch(json, 'application/json', false, this.applyContextPermissions)
-      .subscribe((results: OperationOutcome | Bundle) => {
-        if (results.resourceType === 'OperationOutcome') {
-          this.outcome = <OperationOutcome>results;
-        } else if (results.resourceType === 'Bundle') {
-          this.resultsBundle = <Bundle>results;
-        }
 
+    let requests = [];
+
+    for (const file of this.files) {
+
+      // ensure current IG is in the IG list for the resource if it is new
+      // existing resources that are being updated already have the current IG in its list
+      if (!file.existingResource && this.configService.project && this.configService.project.implementationGuideId) {
+          file.existingResource = <IConformance | IExample>{ igIds: [this.configService.project.implementationGuideId] };
+      }
+
+      // add/update Example type
+      if (file.isExample) {
+        let example: IExample = <IExample>{ ...file.existingResource };
+        example.content = file.content;
+        requests.push(this.examplesService.save(example.id, example));
+      }
+
+      // add/update Conformance type
+      else {
+        let conformance: IConformance = <IConformance>{ ...file.existingResource };
+        conformance.resource = file.resource;
+        requests.push(this.conformanceService.save(conformance.id, conformance));
+      }
+    }
+
+    zip(requests).subscribe({
+      next: (res: IProjectResource[]) => {
         this.files = [];
         this.message = 'Done importing';
-        setTimeout(() => {
-          tabSet.select('results');
-        });
-      }, (err) => {
+      },
+      error: (err) => {
         if (err && err.message) {
           this.message = 'Error while importing: ' + err.message;
         } else {
           this.message = getErrorString(err);
         }
-      });
+      }
+    });
+    
   }
 
   private importVsac(tabSet: NgbNav) {
@@ -697,7 +737,7 @@ export class ImportComponent implements OnInit {
     if (this.activeTab) {
       if (this.activeTab === 'file') {
         const unauthorizedResources = this.files.filter(f => f.status === 'unauthorized');
-        return !this.files || this.files.length === 0 || !this.importBundle || !this.importBundle.entry || this.importBundle.entry.length === 0 || unauthorizedResources.length > 0;
+        return !this.files || this.files.length === 0 || unauthorizedResources.length > 0;
       } else if (this.activeTab === 'text') {
         return !this.textContent;
       } else if (this.activeTab === 'vsac') {

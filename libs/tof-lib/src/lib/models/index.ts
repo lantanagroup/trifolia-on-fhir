@@ -74,6 +74,7 @@ export interface IExample extends IProjectResource {
   fhirVersion?: 'stu3'|'r4'|'r5';
   content?: IDomainResource|any;  // Ideally this would be a resource OR a string, but not sure how we would populate IG.definition.resource.reference
   exampleFor?: string;    // StructureDefinition in which this is a profile for
+  igIds?: string[];
 }
 
 export interface IHistory extends IProjectResource {
