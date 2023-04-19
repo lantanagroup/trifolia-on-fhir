@@ -40,7 +40,7 @@
     <tbody *ngIf="!configService.showingIntroduction">
     <tr *ngFor="let od of operationDefinitions">
         <td>{{od.id}}</td>
-        <td>{{od.name}}</td>
+        <td>{{od.resource.name}}</td>
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/operation-definition/{{od.id}}">

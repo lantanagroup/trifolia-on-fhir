@@ -345,7 +345,7 @@
     <!-- Permissions -->
     <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
       <a ngbNavLink>
-        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(structureDefinition)" title="No write permissions for current user specified!"></i>
+        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i>
       </a>
       <ng-template ngbNavContent>
         <trifolia-fhir-resource-permissions [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></trifolia-fhir-resource-permissions>
@@ -429,7 +429,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(structureDefinition)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()">Revert</button>
     <button type="button" class="btn btn-primary" (click)="editFSH()">Edit FSH</button>
   </div>

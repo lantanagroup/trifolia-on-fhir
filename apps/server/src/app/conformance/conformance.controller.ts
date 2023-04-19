@@ -61,7 +61,12 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
         if ('resourceid' in query) {
             filter['resource.id'] = { $regex: query['resourceid'], $options: 'i' };
         }
-
+        if ('type' in query) {
+            filter['resource.type'] = { $regex: query['type'], $options: 'i' };
+        }
+        if ('url' in query) {
+            filter['resource.url'] = { $regex: query['url'], $options: 'i' };
+        }
         if ('implementationguideid' in query) {
             filter['igIds'] = new ObjectId(query['implementationguideid']);
         }

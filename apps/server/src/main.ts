@@ -23,6 +23,7 @@ const connections: ISocketConnection[] = [];
 let io;
 
 const loadTofRequest = (req: ITofRequest, res: Response, next) => {
+  req.fhirServerVersion = req.headers['fhirversion'] || 'r4';
   req.io = io;
   req.ioConnections = connections;
   next();

@@ -138,7 +138,7 @@ export class AddHeaderInterceptor implements HttpInterceptor {
           this.configService.project.implementationGuideId
         );
         headers = headers.set(
-          'fhirVersion',
+          'fhirversion',
           this.configService.fhirVersion
         );
       }

@@ -26,7 +26,9 @@ import { ImplementationGuideService } from '../shared/implementation-guide.servi
   styleUrls: ['./new-profile.component.css']
 })
 export class NewProfileComponent extends BaseComponent implements OnInit {
+  public conformance;
   public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
+  public structureDefinitionId: string;
   public message: string;
   public Globals = Globals;
   public selectedType: ILogicalTypeDefinition;
@@ -52,6 +54,8 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
     this.structureDefinition = this.configService.isFhirR4 ?
       new R4StructureDefinition({ meta: this.authService.getDefaultMeta() }) :
       new STU3StructureDefinition({meta: this.authService.getDefaultMeta()});
+
+    this.conformance =  { resource: this.structureDefinition, fhirVersion: <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -82,13 +86,14 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
         ((<StructureDefinitionContextComponent> this.structureDefinition.context[0]).type === ''
         || (<StructureDefinitionContextComponent> this.structureDefinition.context[0]).expression === '' )) ||
       !this.structureDefinition.hasOwnProperty('abstract') ||
-      !this.canEdit(this.structureDefinition) ||
+      !this.canEdit(this.conformance) ||
       !this.selectedType;
   }
 
   public save() {
-    this.strucDefService.save(this.structureDefinition)
+    this.strucDefService.save(this.structureDefinitionId, this.conformance)
       .subscribe((results) => {
+
         this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${results.id}`]);
       }, (err) => {
         this.message = getErrorString(err);

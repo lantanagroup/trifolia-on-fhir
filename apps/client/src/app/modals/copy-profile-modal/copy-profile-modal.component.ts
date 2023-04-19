@@ -21,7 +21,7 @@ export class CopyProfileModalComponent implements OnInit {
   public name: string;
   public url: string;
   public autoUrl = true;
-  public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
+  public structureDefinition;
   public Globals = Globals;
 
   @Input() originalID: string;
@@ -49,7 +49,8 @@ export class CopyProfileModalComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.structureDefinition = await this.structureDefinitionService.getStructureDefinition(this.originalID).toPromise();
+    let structureDefinitionConf = await this.structureDefinitionService.getStructureDefinition(this.originalID).toPromise();
+    this.structureDefinition = structureDefinitionConf.resource;
     this.url = this.structureDefinition.url.substring(0, this.structureDefinition.url.lastIndexOf("/") + 1);
   }
 
@@ -67,7 +68,7 @@ export class CopyProfileModalComponent implements OnInit {
     this.structureDefinition.url = this.url;
     this.structureDefinition.name = this.name;
     this.message = "Loading new copy...";
-    this.structureDefinitionService.save(this.structureDefinition)
+    this.structureDefinitionService.save( this.structureDefinition.id, this.structureDefinition)
       .subscribe((results) => {
         this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${results.id}`], {
           queryParams: {

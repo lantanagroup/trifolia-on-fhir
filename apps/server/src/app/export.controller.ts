@@ -11,7 +11,6 @@ import { Response } from 'express';
 import { TofLogger } from './tof-logger';
 import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from './config.service';
-import { AxiosRequestConfig } from 'axios';
 import { createHtmlExporter } from './export/html.factory';
 import * as path from 'path';
 import * as tmp from 'tmp';
@@ -41,81 +40,6 @@ export class ExportController extends ConformanceController {//BaseController {
     super(conformanceService);
   }
 
- /* @Get(':implementationGuideId/([$])validate')
-  public validate(@Req() request: ITofRequest, @Param('implementationGuideId') implementationGuideId: string) {
-    return new Promise((resolve, reject) => {
-      const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, request.fhir, implementationGuideId);
-      let validationRequests = [];
-
-      const validateResource = (resource: IDomainResource) => {
-        return new Promise((innerResolve) => {
-          const options: AxiosRequestConfig = {
-            url: buildUrl(request.fhirServerBase, resource.resourceType, null, '$validate'),
-            method: 'POST',
-            data: resource
-          };
-
-          this.httpService.request(options).toPromise()
-            .then((results) => resolve(results.data))
-            .catch((err) => {
-              if (err.response) {
-                innerResolve(err.response.data);
-              }
-            });
-        });
-      };
-
-      bundleExporter.getBundle(true)
-        .then((results: IBundle) => {
-          validationRequests = (results.entry || []).map((entry) => {
-            const options = {
-              url: buildUrl(request.fhirServerBase, entry.resource.resourceType, null, '$validate'),
-              method: 'POST',
-              data: entry.resource
-            };
-            return {
-              resourceReference: `${entry.resource.resourceType}/${entry.resource.id}`,
-              promise: validateResource(entry.resource)
-            };
-          });
-
-          const promises = validationRequests.map((validationRequest) => validationRequest.promise);
-          return Promise.all(promises);
-        })
-        .then((resultSets: IOperationOutcome[]) => {
-          let validationResults: ServerValidationResult[] = [];
-
-          resultSets.forEach((resultSet: any, index) => {
-            if (resultSet && resultSet.resourceType === 'OperationOutcome') {
-              const oo = <IOperationOutcome>resultSet;
-
-              if (oo.issue) {
-                const next = oo.issue.map((issue) => {
-                  return <ServerValidationResult>{
-                    resourceReference: validationRequests[index].resourceReference,
-                    severity: issue.severity,
-                    details: issue.diagnostics
-                  };
-                });
-
-                validationResults = validationResults.concat(next);
-              }
-            }
-          });
-
-          validationResults = validationResults.sort((a, b) => a.severity.localeCompare(b.severity));
-
-          resolve(validationResults);
-        })
-        .catch((err) => {
-          if (err.response && err.response.status === 412) {
-            resolve(err.response.data);
-          } else {
-            reject(err);
-          }
-        });
-    });
-  }*/
 
   @Post(':implementationGuideId/bundle')
   public async exportImplementationGuide(
@@ -223,8 +147,8 @@ export class ExportController extends ConformanceController {//BaseController {
     });
   }
 
-/*  @Get(':implementationGuideId/publish')
-  public async publishImplementationGuide(@Req() request: ITofRequest, @User() user: ITofUser, @FhirServerId() fhirServerId: string, @Param('implementationGuideId') implementationGuideId) {
+  @Get(':implementationGuideId/publish')
+  public async publishImplementationGuide(@Req() request: ITofRequest, @User() user: ITofUser,  @Param('implementationGuideId') implementationGuideId) {
     const options = new ExportOptions(request.query);
 
     let bundle: IBundle;
@@ -260,10 +184,10 @@ export class ExportController extends ConformanceController {//BaseController {
 
       try {
         await exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar, options.version);
-        this.sendNotification(options.notifyMe, user, true, implementationGuideId, fhirServerId);
+        this.sendNotification(options.notifyMe, user, true, implementationGuideId);
       } catch (ex) {
         this.logger.error(`Error while executing HtmlExporter.publish: ${ex.message}`);
-        this.sendNotification(options.notifyMe, user, false, implementationGuideId, fhirServerId, exporter.logs);
+        this.sendNotification(options.notifyMe, user, false, implementationGuideId, exporter.logs);
       } finally {
         const index = this.exportService.exports.indexOf(exporter);
         if (index >= 0) this.exportService.exports.splice(index, 1);
@@ -284,7 +208,7 @@ export class ExportController extends ConformanceController {//BaseController {
       this.logger.error(`Error while publishing implementation guide: ${ex.message}`, ex.stack);
       throw ex;
     }
-  }*/
+  }
 
   @Post(':packageId/cancel')
   public cancel(@Param('packageId') packageId: string) {
@@ -293,7 +217,7 @@ export class ExportController extends ConformanceController {//BaseController {
     if (res) this.logger.log(`Exporter with package id ${packageId} has been removed from the queue`);
   }
 
-  private async sendNotification(shouldNotify = false, user: ITofUser, success: boolean, implementationGuideId: string, fhirServerId: string, logs?: string) {
+  private async sendNotification(shouldNotify = false, user: ITofUser, success: boolean, implementationGuideId: string,  logs?: string) {
     // If the user does not have an email...
     if (!shouldNotify || !user || !user.email) return;
 
@@ -305,7 +229,7 @@ export class ExportController extends ConformanceController {//BaseController {
 
     try {
       const transporter = nodemailer.createTransport(this.configService.server.mailTransport);
-      const link = joinUrl(this.configService.server.mailOptions.hostUrl, fhirServerId, implementationGuideId, 'implementation-guide', 'view');
+      const link = joinUrl(this.configService.server.mailOptions.hostUrl, implementationGuideId, 'implementation-guide', 'view');
 
       this.logger.log(`Attempting to send email to ${user.email} indicating the publish of ${implementationGuideId} has completed.`);
 

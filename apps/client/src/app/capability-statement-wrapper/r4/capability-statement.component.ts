@@ -22,13 +22,17 @@ import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { FhirReferenceModalComponent, ResourceSelection } from '../../fhir-edit/reference-modal/reference-modal.component';
 import { BaseComponent } from '../../base.component';
 import { debounceTime } from 'rxjs/operators';
+import {IConformance} from '@trifolia-fhir/models';
 
 @Component({
   templateUrl: './capability-statement.component.html',
   styleUrls: ['./capability-statement.component.css']
 })
 export class R4CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  @Input() public capabilityStatement: CapabilityStatement;
+  @Input() public capabilityStatement;
+
+  public conformance;
+  public capabilityStatementId: string;
 
   public idChangedEvent = new Subject();
   public isIdUnique = true;
@@ -58,6 +62,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     super(configService, authService);
 
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
+    this.conformance =  { resource: this.capabilityStatement, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -188,22 +193,32 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
       return;
     }
 
-    this.csService.save(this.capabilityStatement)
-      .subscribe((results: CapabilityStatement) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${results.id}`]);
-        } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
+    this.csService.save(this.capabilityStatementId, this.conformance)
+      .subscribe({
+        next: (conf: IConformance) => {
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.capabilityStatementId = conf.id;
+            this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${conf.id}`]);
+          } else {
+            this.conformance = conf;
+            this.capabilityStatement = conf.resource;
+            this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, conf.id, conf.name);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
           }, 3000);
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the capability statement:' + getErrorString(err);
         }
-      }, (err) => {
-        this.message = `An error occurred while saving the capability statement: ${err.message}`;
       });
   }
+
 
   public editResource(resource: CapabilityStatementResourceComponent) {
     const modalRef = this.modal.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg', backdrop: 'static'});
@@ -254,7 +269,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
   }
 
   private getCapabilityStatement(): Observable<CapabilityStatement> {
-    const capabilityStatementId = this.route.snapshot.paramMap.get('id');
+    this.capabilityStatementId = this.route.snapshot.paramMap.get('id');
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -270,14 +285,14 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     if (!this.isNew) {
       this.capabilityStatement = null;
 
-      this.csService.get(capabilityStatementId)
-        .subscribe((cs) => {
-          if (cs.resourceType !== 'CapabilityStatement') {
+      this.csService.get(this.capabilityStatementId)
+        .subscribe((conf) => {
+          if (!conf || !conf.resource || conf.resource.resourceType !== 'CapabilityStatement') {
             this.message = 'The specified capability statement either does not exist or was deleted';
             return;
           }
-
-          this.capabilityStatement = <CapabilityStatement>cs;
+          this.conformance = conf;
+          this.capabilityStatement = <CapabilityStatement>conf.resource;
           this.nameChanged();
           this.recentItemService.ensureRecentItem(
             Globals.cookieKeys.recentCapabilityStatements,
@@ -286,7 +301,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
         }, (err) => {
           this.csNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
+          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, this.capabilityStatementId);
         });
     }
   }
@@ -315,7 +330,9 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
   }
 
   ngOnDestroy() {
-    this.navSubscription.unsubscribe();
+    if (this.navSubscription ) {
+      this.navSubscription.unsubscribe();
+    }
     this.configService.setTitle(null);
   }
 

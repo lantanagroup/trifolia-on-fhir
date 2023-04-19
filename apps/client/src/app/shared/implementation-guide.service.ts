@@ -65,7 +65,7 @@ export class ImplementationGuideService extends ConformanceService {
   }
 
   public getProfiles(implementationGuideId: string) {
-    return this.http.get<IBundle>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/profile`);
+    return this.http.get<any[]>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/profile`);
   }
 
   public getExamples(implementationGuideId: string) {
@@ -124,5 +124,5 @@ export class ImplementationGuideService extends ConformanceService {
   public copyPermissions(id: string) {
     return this.http.post<number>(`/api/implementationGuide/${id}/copy-permissions`, null);
   }
-  
+
 }

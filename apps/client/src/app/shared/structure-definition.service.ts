@@ -7,6 +7,7 @@ import {FileService} from './file.service';
 import {StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
 import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
+import {IConformance} from '@trifolia-fhir/models';
 
 @Injectable()
 export class StructureDefinitionService {
@@ -30,7 +31,7 @@ export class StructureDefinitionService {
     return this.http.get<ILogicalTypeDefinition[]>(url);
   }
 
-  public getStructureDefinitions(page?: number, nameText?: string, IDText?: string, urlText?: string, implementationGuideId?: string, titleText?: string, typeText?: string): Observable<Bundle> {
+  public getStructureDefinitions(page?: number, nameText?: string, IDText?: string, urlText?: string, implementationGuideId?: string, titleText?: string, typeText?: string): Observable<IConformance[]> {
     let url = '/api/structureDefinition?';
 
     if (page) {
@@ -42,7 +43,7 @@ export class StructureDefinitionService {
     }
 
     if(IDText){
-      url += `_id=${encodeURIComponent(IDText)}&`;
+      url += `id=${encodeURIComponent(IDText)}&`;
     }
 
     if (urlText) {
@@ -63,20 +64,20 @@ export class StructureDefinitionService {
 
     url += '_sort=name';
 
-    return this.http.get<Bundle>(url);
+    return this.http.get<IConformance[]>(url);
   }
 
-  public getStructureDefinition(id: string): Observable<STU3StructureDefinition | R4StructureDefinition> {
-    if (id === 'from-file') {
+  public getStructureDefinition(id: string): Observable<IConformance> {
+    /*if (id === 'from-file') {
       if (this.fileService.file) {
         return new Observable<STU3StructureDefinition | R4StructureDefinition>((observer) => {
           observer.next(<STU3StructureDefinition | R4StructureDefinition> this.fileService.file.resource);
         });
       }
     }
-
+*/
     const url = '/api/structureDefinition/' + encodeURIComponent(id);
-    return this.http.get<STU3StructureDefinition | R4StructureDefinition>(url);
+    return this.http.get<IConformance>(url);
   }
 
   public getBaseStructureDefinition(baseDefinition: string, type?: string): Observable<BaseDefinitionResponseModel> {
@@ -89,18 +90,18 @@ export class StructureDefinitionService {
     return this.http.get<BaseDefinitionResponseModel>(url);
   }
 
-  public save(structureDefinition: STU3StructureDefinition | R4StructureDefinition): Observable<STU3StructureDefinition | R4StructureDefinition> {
+  public save(structureDefinitionId : string, structureDefinition: IConformance): Observable<IConformance> {
     let url = '/api/structureDefinition';
 
-    if(structureDefinition.text && structureDefinition.text.div && structureDefinition.text.div.indexOf("<br>") > 0){
-      structureDefinition.text.div = structureDefinition.text.div.replace("<br>", "");
+    if(structureDefinition.resource.text && structureDefinition.resource.text.div && structureDefinition.resource.text.div.indexOf("<br>") > 0){
+      structureDefinition.resource.text.div = structureDefinition.resource.text.div.replace("<br>", "");
     }
 
     if (structureDefinition.id) {
       url += '/' + encodeURIComponent(structureDefinition.id);
-      return this.http.put<STU3StructureDefinition | R4StructureDefinition>(url, structureDefinition);
+      return this.http.put<IConformance>(url, structureDefinition);
     } else {
-      return this.http.post<STU3StructureDefinition | R4StructureDefinition>(url, structureDefinition);
+      return this.http.post<IConformance>(url, structureDefinition);
     }
   }
 

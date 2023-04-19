@@ -17,10 +17,6 @@ export class ConfigController extends BaseController {
 
   @Get()
   public getConfig() {
-   /* if (!this.configService.fhir.servers) {
-      throw new Error('FHIR servers have not been configured on this server');
-    }*/
-
     const retConfig: ConfigModel = {
       version: modulePackage.version,
       supportUrl: this.configService.server.supportUrl,
@@ -47,21 +43,4 @@ export class ConfigController extends BaseController {
     return retConfig;
   }
 
-/*  @Get('fhir')
-  public getFhirCapabilities(@Req() request: ITofRequest): Promise<CapabilityStatement> {
-    if (ConfigController.serverMetadata[request.fhirServerBase]) {
-      return Promise.resolve(ConfigController.serverMetadata[request.fhirServerBase]);
-    }
-
-    const options: AxiosRequestConfig = {
-      url: buildUrl(request.fhirServerBase, 'metadata'),
-      method: 'GET'
-    };
-
-    return this.httpService.request(options).toPromise()
-      .then((results) => {
-        ConfigController.serverMetadata[request.fhirServerBase] = results.data;
-        return results.data;
-      });
-  }*/
 }

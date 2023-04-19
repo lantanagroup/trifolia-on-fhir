@@ -96,7 +96,7 @@ export class BulkEditComponent implements OnInit {
     if (implementationGuideId) {
       const ig = await this.igService.getImplementationGuide(implementationGuideId).toPromise();
 
-      if (this.configService.fhirVersion === Versions.R4.toString()) {
+      if (identifyRelease(this.configService.fhirVersion) === Versions.R4) {
         this.originalImplementationGuide = new R4ImplementationGuide(ig);
         this.implementationGuide = new R4ImplementationGuide(ig);
       } else {
@@ -106,8 +106,8 @@ export class BulkEditComponent implements OnInit {
 
       const profilesBundle = await this.igService.getProfiles(implementationGuideId).toPromise();
 
-      if (profilesBundle && profilesBundle.entry) {
-        this.profiles = profilesBundle.entry.map(e => {
+      if (profilesBundle && profilesBundle) {
+        this.profiles = profilesBundle.map(e => {
           if (this.configService.isFhirSTU3) {
             return new STU3StructureDefinition(e.resource);
           } else if (this.configService.isFhirR4) {
