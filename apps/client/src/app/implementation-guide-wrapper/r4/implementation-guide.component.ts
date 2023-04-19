@@ -51,9 +51,9 @@ class PageDefinition {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class R4ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
-  public conformance: IConformance;
+  public conformance;
   public resourceMap: IProjectResourceReferenceMap = {};
-  public implementationGuide: ImplementationGuide;
+  public implementationGuide;
   public message: string;
   public validation: any;
   public pages: PageDefinition[];
@@ -87,6 +87,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     super(configService, authService);
 
     this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
+
+    this.conformance =  { resource: this.implementationGuide, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.igChanging.subscribe((value) => {
       this.isDirty = value;
@@ -879,11 +881,14 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
       .subscribe({
-        next: (implementationGuide: IConformance) => {
+        next: (conf: IConformance) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
+            this.implementationGuide = conf.resource;
             this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
           } else {
+            this.conformance = conf;
+            this.implementationGuide = conf.resource;
             this.message = 'Your changes have been saved!';
             this.igChanging.emit(false);
             setTimeout(() => {

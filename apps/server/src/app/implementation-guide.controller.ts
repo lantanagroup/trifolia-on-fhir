@@ -6,8 +6,8 @@ import { FhirInstance, FhirServerVersion, RequestHeaders, User } from './server.
 import { ConfigService } from './config.service';
 import { BundleExporter } from './export/bundle';
 import { copyPermissions } from './helper';
-import { ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent } from '@trifolia-fhir/stu3';
-import { Bundle as R4Bundle, ImplementationGuide as R4ImplementationGuide } from '@trifolia-fhir/r4';
+import {ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent, StructureDefinition as STU3StructureDefinition} from '@trifolia-fhir/stu3';
+import {Bundle as R4Bundle, ImplementationGuide as R4ImplementationGuide, StructureDefinition as R4StructureDefinition} from '@trifolia-fhir/r4';
 import { buildUrl, BulkUpdateRequest, getErrorString, getHumanNameDisplay, getHumanNamesDisplay, getR4Dependencies, getSTU3Dependencies, parseReference, SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer } from '@trifolia-fhir/tof-lib';
 import { AxiosRequestConfig } from 'axios';
 import type { IBundle, IgExampleModel, IImplementationGuide, IResourceReference, ITofUser } from '@trifolia-fhir/tof-lib';
@@ -19,7 +19,7 @@ import { ProjectsService } from './projects/projects.service';
 import { PaginateOptions } from '@trifolia-fhir/tof-lib';
 import { AuthService } from './auth/auth.service';
 import { ConformanceService } from './conformance/conformance.service';
-import { IConformance } from '@trifolia-fhir/models';
+import {IConformance, IProjectResourceReference} from '@trifolia-fhir/models';
 import { ConformanceController } from './conformance/conformance.controller';
 
 
@@ -53,7 +53,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
   }
 
-  public static async downloadDependencies(ig: IImplementationGuide, fhirServerVersion: 'stu3'|'r4', configService: ConfigService, logger: LoggerService) {
+  public static async downloadDependencies(ig: IImplementationGuide, fhirServerVersion: 'stu3'|'r4'|'r5', configService: ConfigService, logger: LoggerService) {
     try {
       const igPublisherLocation = await configService.getIgPublisherForDependencies();
 
@@ -216,20 +216,35 @@ export class ImplementationGuideController extends ConformanceController { // ex
     }
   }*/
 
- /* @Get(':id/profile')
-  public async getProfiles(@Param('id') id: string,  @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
-    const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
-    const igResults = await this.httpService.get<IImplementationGuide>(igUrl).toPromise();
-    const ig = igResults.data;
+  @Get(':id/profile')
+  public async getProfiles(@User() user: ITofUser, @Param('id') id: string) {
+   // const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
+
+    //const igResults = await this.httpService.get<IImplementationGuide>(igUrl).toPromise();
+
+    const ig = await super.getReferences(user, id);
     let profileReferences: IResourceReference[];
 
-    if (fhirServerVersion === 'r4') {
-      profileReferences = this.getR4ProfileReferences(<R4ImplementationGuide> ig);
-    } else {
-      profileReferences = this.getSTU3ProfileReferences(<STU3ImplementationGuide> ig);
+    if (ig.fhirVersion === 'r4') {
+      profileReferences = this.getR4ProfileReferences(<R4ImplementationGuide> ig.resource);
+    } else if(ig.fhirVersion === 'r3') {
+      profileReferences = this.getSTU3ProfileReferences(<STU3ImplementationGuide> ig.resource);
     }
 
-    const batch = <R4Bundle> {
+    let profiles = [];
+
+    (ig.references || []).forEach((r: IProjectResourceReference) => {
+      if (typeof r.value === typeof {}) {
+        if ('resource' in <any>r.value ) {
+          if (r.value['resource'].resourceType === 'StructureDefinition') {
+            profiles.push(r.value['resource']);
+          }
+        }
+      }
+    });
+    return profiles;
+
+  /*  const batch = <R4Bundle> {
       resourceType: 'Bundle',
       type: 'batch',
       entry: profileReferences.map(pr => {
@@ -243,9 +258,10 @@ export class ImplementationGuideController extends ConformanceController { // ex
     };
 
     const bundleResults = await this.httpService.post<IBundle>(fhirServerBase, batch).toPromise();
-    return bundleResults.data;
+    return bundleResults.data;*/
   }
-*/
+
+
   @Get(':id/example')
   public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
   // const implementationGuideUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
@@ -366,12 +382,8 @@ export class ImplementationGuideController extends ConformanceController { // ex
   }
 
   @Get(':id')
-  public async getImplementationGuide(@Param('id') id: string) {
-    const confResource: IConformance = <IConformance>(await this.conformanceService.findById(id));
-    if(confResource.resource.resourceType == 'ImplementationGuide') {
-      return confResource;
-    }
-    return null;
+  public async getImplementationGuide(@User() user, @Param('id') id: string) {
+    return super.getById(user, id);
   }
 
   @Post()
@@ -379,26 +391,26 @@ export class ImplementationGuideController extends ConformanceController { // ex
     if (!body || !body.resource) {
       throw new BadRequestException();
     }
-    ImplementationGuideController.downloadDependencies(body.resource, body.fhirVersion, this.configService, this.logger);
     let conformance: IConformance = body;
-    //conformance.fhirVersion = fhirServerVersion;
+    ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
     return this.conformanceService.createConformance(conformance);
   }
 
   @Put(':id')
-  public updateImplementationGuide(@FhirServerVersion() fhirServerVersion, @Param('id') id: string, @Body() body, @User() user) {
+  public async updateImplementationGuide(@Param('id') id: string, @Body() body, @User() user) {
     if (!body || !body.resource) {
       throw new BadRequestException();
     }
-    ImplementationGuideController.downloadDependencies(body.resource, fhirServerVersion, this.configService, this.logger);
+    await this.assertCanWriteById(user, id);
     let conformance: IConformance = body;
-    conformance.fhirVersion = fhirServerVersion;
+    ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
     return this.conformanceService.updateConformance(id, conformance);
   }
 
   @Delete(':id')
-  public deleteImplementationGuide(@Param('id') id: string, @User() user) {
-    return this.conformanceService.delete(id);
+  public async deleteImplementationGuide(@User() user, @Param('id') id: string ) {
+    await this.assertCanWriteById(user, id);
+    return this.conformanceService.deleteConformance(id);
   }
 
   @Get(':id/list')

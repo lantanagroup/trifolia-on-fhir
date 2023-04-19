@@ -37,7 +37,7 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
   }
 
   public get operationDefinitions(): OperationDefinition[] {
-    if (!this.operationDefinitionsBundle) {
+    if (!this.operationDefinitionsBundle || !this.operationDefinitionsBundle.results) {
       return [];
     }
 

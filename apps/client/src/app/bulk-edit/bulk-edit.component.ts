@@ -106,8 +106,8 @@ export class BulkEditComponent implements OnInit {
 
       const profilesBundle = await this.igService.getProfiles(implementationGuideId).toPromise();
 
-      if (profilesBundle && profilesBundle.entry) {
-        this.profiles = profilesBundle.entry.map(e => {
+      if (profilesBundle && profilesBundle) {
+        this.profiles = profilesBundle.map(e => {
           if (this.configService.isFhirSTU3) {
             return new STU3StructureDefinition(e.resource);
           } else if (this.configService.isFhirR4) {

@@ -45,6 +45,7 @@ import {Versions} from 'fhir/fhir';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import { FshResourceComponent } from '../shared-ui/fsh-resource/fsh-resource.component';
 import { firstValueFrom } from 'rxjs';
+import {StructureDefinition} from '@trifolia-fhir/r5';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -56,7 +57,9 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     'Reference', 'Meta', 'Dosage', 'Narrative', 'Extension', 'ElementDefinition', 'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact', 'UsageContext',
     'ParameterDefinition', 'Expression', 'TriggerDefinition'];
 
-  @Input() public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
+  @Input() public structureDefinition;
+  public conformance;
+  public sdId;
   public baseStructureDefinition;
   public selectedElement: ElementTreeModel;
   public validation: ValidatorResponse;
@@ -191,6 +194,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
     }
 
+
     this.constraintManager.getStructureDefinition = (url: string) => {
       return new Promise((resolve, reject) => {
         this.strucDefService.getBaseStructureDefinition(url).toPromise()
@@ -209,22 +213,24 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   }
 
   private async getStructureDefinition() {
-    const sdId = this.route.snapshot.paramMap.get('id');
+     this.sdId = this.route.snapshot.paramMap.get('id');
 
     this.message = 'Loading structure definition...';
     this.structureDefinition = null;
     this.constraintManager = null;
 
     try {
-      const sd = await this.strucDefService.getStructureDefinition(sdId).toPromise();
-
-      delete sd.snapshot;
+      this.conformance = await this.strucDefService.getStructureDefinition(this.sdId).toPromise();
+      const sdr = <StructureDefinition>this.conformance.resource;
+      delete sdr.snapshot;
 
       if (this.configService.fhirVersion === Versions.R4.toString()) {
-        this.structureDefinition = new R4StructureDefinition(sd);
+        this.structureDefinition = new R4StructureDefinition(sdr);
       } else {
-        this.structureDefinition = new STU3StructureDefinition(sd);
+        this.structureDefinition = new STU3StructureDefinition(sdr);
       }
+
+   //   this.conformance =  { resource: this.structureDefinition, fhirVersion: <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
       if (!this.structureDefinition.differential) {
         this.structureDefinition.differential = {
@@ -234,7 +240,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     } catch (err) {
       this.sdNotFound = err.status === 404;
       this.message = getErrorString(err);
-      this.recentItemService.removeRecentItem(Globals.cookieKeys.recentStructureDefinitions, sdId);
+      this.recentItemService.removeRecentItem(Globals.cookieKeys.recentStructureDefinitions, this.sdId);
       return;
     }
 
@@ -302,12 +308,14 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    await this.strucDefService.save(this.structureDefinition)
-      .subscribe((updatedStructureDefinition: STU3StructureDefinition | R4StructureDefinition) => {
+    await this.strucDefService.save(this.sdId, this.structureDefinition)
+      .subscribe((conf) => {
         if (!this.structureDefinition.id) {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${updatedStructureDefinition.id}`]);
+          this.sdId = conf.id;
+          this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${this.sdId}`]);
         } else {
+          let updatedStructureDefinition = <STU3StructureDefinition | R4StructureDefinition>conf.resource;
           this.structureDefinition.snapshot = updatedStructureDefinition.snapshot;
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, updatedStructureDefinition.id, updatedStructureDefinition.name);
           this.message = 'Your changes have been saved!';
