@@ -11,7 +11,6 @@ import { Response } from 'express';
 import { TofLogger } from './tof-logger';
 import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from './config.service';
-import { AxiosRequestConfig } from 'axios';
 import { createHtmlExporter } from './export/html.factory';
 import * as path from 'path';
 import * as tmp from 'tmp';

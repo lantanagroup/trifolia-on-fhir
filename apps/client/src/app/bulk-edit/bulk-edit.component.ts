@@ -96,7 +96,7 @@ export class BulkEditComponent implements OnInit {
     if (implementationGuideId) {
       const ig = await this.igService.getImplementationGuide(implementationGuideId).toPromise();
 
-      if (this.configService.fhirVersion === Versions.R4.toString()) {
+      if (identifyRelease(this.configService.fhirVersion) === Versions.R4) {
         this.originalImplementationGuide = new R4ImplementationGuide(ig);
         this.implementationGuide = new R4ImplementationGuide(ig);
       } else {

@@ -259,7 +259,9 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
   }
 
   ngOnDestroy() {
-    this.navSubscription.unsubscribe();
+    if(this.navSubscription) {
+      this.navSubscription.unsubscribe();
+    }
     this.configService.setTitle(null);
   }
 
@@ -270,7 +272,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
   }
 
   private getCapabilityStatement() {
-    const capabilityStatementId = this.route.snapshot.paramMap.get('id');
+    this.capabilityStatementId  = this.route.snapshot.paramMap.get('id');
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -288,8 +290,8 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
 
       this.csService.get(this.capabilityStatementId)
         .subscribe((conf) => {
-          if (!conf || !conf.resource || conf.resource.resourceType !== 'OperationDefinition') {
-            this.message = 'The specified operation Definition either does not exist or was deleted';
+          if (!conf || !conf.resource || conf.resource.resourceType !== 'CapabilityStatement') {
+            this.message = 'The specified capability statement either does not exist or was deleted';
             return;
           }
 

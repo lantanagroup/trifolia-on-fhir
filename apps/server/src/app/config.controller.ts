@@ -17,10 +17,6 @@ export class ConfigController extends BaseController {
 
   @Get()
   public getConfig() {
-   /* if (!this.configService.fhir.servers) {
-      throw new Error('FHIR servers have not been configured on this server');
-    }*/
-
     const retConfig: ConfigModel = {
       version: modulePackage.version,
       supportUrl: this.configService.server.supportUrl,

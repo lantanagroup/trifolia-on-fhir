@@ -94,8 +94,8 @@ describe('FhirController', () => {
         meta: {}
       });
 
-      addPermission(persistedResource.meta, 'everyone', 'write');
-      addPermission(implementationGuide.meta, 'everyone', 'write');
+      //addPermission(persistedResource.meta, 'everyone', 'write');
+      //addPermission(implementationGuide.meta, 'everyone', 'write');
 
       const req = nock(fhirServerBase)
         .get('/StructureDefinition/test')

@@ -28,14 +28,14 @@ export class CapabilityStatementWrapperComponent implements OnInit {
 
   versionChanged() {
     let componentFactory;
-    let version = this.configService.fhirVersion;
+    let version;
     const id = this.route.snapshot.paramMap.get('id');
-
     if (id === 'from-file' && this.fileService.file) {
       version = this.fileService.file.fhirVersion;
     }
-
-    version = this.configService.fhirVersion;
+    else {
+      version = this.configService.fhirVersion;
+    }
 
     if (identifyRelease(version) === Versions.R4) {
       componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4CapabilityStatementComponent);
