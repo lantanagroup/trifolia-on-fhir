@@ -7,7 +7,7 @@ import { FhirService } from '../shared/fhir.service';
 import { CookieService } from 'ngx-cookie-service';
 import { ContentModel, GithubService } from '../shared/github.service';
 import { ImportGithubPanelComponent } from './import-github-panel/import-github-panel.component';
-import { forkJoin, zip } from 'rxjs';
+import { Observable, forkJoin, zip } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
@@ -58,6 +58,7 @@ class GitHubImportContent {
 export class ImportComponent implements OnInit {
   public textContentType = ContentTypes.Json;
   public textContent: string;
+  public textContentIsExample: boolean = false;
   public files: ImportFileModel[] = [];
   public outcome: OperationOutcome;
   public importBundle: Bundle;
@@ -197,6 +198,7 @@ export class ImportComponent implements OnInit {
 
   public async filesChanged(event) {
     const files = event.target.files;
+    console.log('files:', files);
     if (files.length === 1) {
       try {
         await this.populateFile(files[0]);
@@ -430,21 +432,50 @@ export class ImportComponent implements OnInit {
         this.fhirService.fhir.xmlToObj(this.textContent) :
         JSON.parse(this.textContent);
     } catch (ex) {
-      this.outcome = {
-        resourceType: 'OperationOutcome',
-        text: {
-          status: 'generated',
-          div: 'An error occurred while parsing the text content: ' + getErrorString(ex)
-        },
-        issue: []
-      };
-      this.message = 'Done. Errors occurred.';
-      setTimeout(() => {
-        tabSet.select('results');
-      });
+      // this.outcome = {
+      //   resourceType: 'OperationOutcome',
+      //   text: {
+      //     status: 'generated',
+      //     div: 'An error occurred while parsing the text content: ' + getErrorString(ex)
+      //   },
+      //   issue: []
+      // };
+      this.message = 'Error: ' + getErrorString(ex);
+      // setTimeout(() => {
+      //   tabSet.select('results');
+      // });
       return;
     }
 
+    let newResource: IConformance | IExample = <IConformance | IExample>{};
+
+    if (this.configService.project && this.configService.project.implementationGuideId) {
+      newResource.igIds = [this.configService.project.implementationGuideId];
+    }
+
+    newResource.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
+
+    let req: Observable<IConformance | IExample>;
+
+    if (this.textContentIsExample) {
+      (<IExample>newResource).content = resource;
+      req = this.examplesService.save(null, <IExample>newResource);
+    } else {
+      (<IConformance>newResource).resource = resource;
+      req = this.conformanceService.save(null, <IConformance>newResource);
+    }
+
+    req.subscribe({
+      next: (res) => {
+        this.textContent = '';
+        this.message = 'Resource imported.';
+      },
+      error: (err) => {
+        this.message = 'Error: ' + getErrorString(err);
+      }
+    });
+
+    return;
     let url = `/api/fhir/${resource.resourceType}`;
 
     if (resource.id) {
@@ -506,8 +537,9 @@ export class ImportComponent implements OnInit {
       // ensure current IG is in the IG list for the resource if it is new
       // existing resources that are being updated already have the current IG in its list
       if (!file.existingResource && this.configService.project && this.configService.project.implementationGuideId) {
-          file.existingResource = <IConformance | IExample>{ igIds: [this.configService.project.implementationGuideId] };
+        file.existingResource = <IConformance | IExample>{ igIds: [this.configService.project.implementationGuideId] };
       }
+      (<IConformance | IExample>file.existingResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
 
       // add/update Example type
       if (file.isExample) {
@@ -537,7 +569,7 @@ export class ImportComponent implements OnInit {
         }
       }
     });
-    
+
   }
 
   private importVsac(tabSet: NgbNav) {
