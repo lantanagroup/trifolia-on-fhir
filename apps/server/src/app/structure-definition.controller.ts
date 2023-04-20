@@ -14,7 +14,7 @@ import {ConfigService} from './config.service';
 import {getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
 import {Fhir} from 'fhir/fhir';
 import {BaseDefinitionResponseModel} from '../../../../libs/tof-lib/src/lib/base-definition-response-model';
-import {IBundle, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import * as fs from 'fs';
 import * as path from 'path';
 import {ILogicalTypeDefinition} from '../../../../libs/tof-lib/src/lib/logical-type-definition';
@@ -83,9 +83,9 @@ export class StructureDefinitionController extends ConformanceController  {
 
     let supportedLogicalTypes = [];
 
-   if(fhirServerVersion == 'r4') {
+   if(fhirServerVersion === 'r4') {
      supportedLogicalTypes = ["FHIR-R4", "CDA-R2.1"];
-   }else if(fhirServerVersion == 'r3') {
+   }else if(fhirServerVersion === 'stu3') {
      supportedLogicalTypes = ["FHIR-STU3"];
    }
     const allTypes = supportedLogicalTypes

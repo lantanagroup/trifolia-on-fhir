@@ -15,6 +15,7 @@ import modulePackage from '../../../package.json';
 import {ConfigService} from './app/config.service';
 import {NestExpressApplication} from '@nestjs/platform-express';
 import hpropagate from 'hpropagate';
+import {FhirInstances} from './app/helper';
 
 const config = ConfigService.create();
 
@@ -26,6 +27,22 @@ const loadTofRequest = (req: ITofRequest, res: Response, next) => {
   req.fhirServerVersion = req.headers['fhirversion'] || 'r4';
   req.io = io;
   req.ioConnections = connections;
+
+
+  switch (req.fhirServerVersion) {
+    case 'stu3':
+      req.fhir = FhirInstances.fhirStu3;
+      break;
+    case 'r4':
+      req.fhir = FhirInstances.fhirR4;
+      break;
+    case 'r5':
+      req.fhir = FhirInstances.fhirR5;
+      break;
+    default:
+      throw new Error(`Unsupported FHIR version ${req.fhirServerVersion}`);
+  }
+
   next();
 
 };
