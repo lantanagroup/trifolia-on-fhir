@@ -38,7 +38,7 @@ export class ValueSetService {
     }
 
     if (implementationGuideId) {
-      url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
+      url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;
     }
 
     url += '_sort=name';

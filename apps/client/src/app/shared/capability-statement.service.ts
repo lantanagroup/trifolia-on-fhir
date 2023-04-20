@@ -21,17 +21,17 @@ export class CapabilityStatementService {
   }
 
   public search(page = 1, name?: string, implementationGuideId?: string) {
-    let url = '/api/capabilityStatement?page=' + page + '&';
+    let url = '/api/capabilityStatement?resourcetype=CapabilityStatement' + '&page=' + page + '&';
 
     if (name) {
       url += 'name=' + encodeURIComponent(name) + '&';
     }
 
     if (implementationGuideId) {
-      url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
+      url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;
     }
 
-    url += '?_sort=name';
+    url += '_sort=name';
 
     return this.http.get<Bundle>(url);
   }

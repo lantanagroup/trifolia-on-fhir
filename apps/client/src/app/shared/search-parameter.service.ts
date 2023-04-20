@@ -31,7 +31,7 @@ export class SearchParameterService  {
       url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;
     }
 
-    url += '?_sort=name';
+    url += '_sort=name';
 
     return this.http.get<IConformance[]>(url);
   }

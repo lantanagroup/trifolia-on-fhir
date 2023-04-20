@@ -9,6 +9,7 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   templateUrl: './operation-definitions.component.html',
@@ -26,7 +27,8 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
     public configService: ConfigService,
     protected authService: AuthService,
     private opDefService: OperationDefinitionService,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public route: ActivatedRoute) {
 
     super(configService, authService);
 
@@ -76,7 +78,9 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
   public getOperationDefinitions() {
     this.operationDefinitionsBundle = null;
 
-    this.opDefService.search(this.page, this.nameText)
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+
+    this.opDefService.search(this.page, this.nameText,  implementationGuideId )
       .subscribe((results) => {
         this.operationDefinitionsBundle = results;
         this.total = this.operationDefinitionsBundle.total;

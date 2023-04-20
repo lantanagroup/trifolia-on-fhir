@@ -383,7 +383,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
   @Get(':id')
   public async getImplementationGuide(@User() user, @Param('id') id: string) {
-    return super.getReferences(user, id);
+    return super.getById(user, id);
   }
 
   @Post()
