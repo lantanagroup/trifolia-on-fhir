@@ -55,7 +55,9 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
         if (newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
             newConf.igIds = newConf.igIds || [];
-            newConf.igIds.push(implementationGuideId);
+            if (newConf.igIds.indexOf(implementationGuideId) < 0) {
+                newConf.igIds.push(implementationGuideId);
+            }
         }
         newConf = await this.conformanceModel.create(newConf);
 
@@ -70,6 +72,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         await this.historyService.create(newHistory);
 
         //Add it to the implementation Guide
+        console.log('adding to ig:', newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId, implementationGuideId);
         if (newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
             await addToImplementationGuideNew(this, newConf, implementationGuideId);
         }
@@ -78,7 +81,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
     }
 
 
-    public async updateConformance(id: string, upConf: IConformance): Promise<IConformance> {
+    public async updateConformance(id: string, upConf: IConformance, implementationGuideId?: string): Promise<IConformance> {
 
         const lastUpdated = new Date();
         let versionId: number;
@@ -197,9 +200,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         existing.versionId = versionId;
         existing.lastUpdated = lastUpdated;
 
-        await this.conformanceModel.findByIdAndUpdate(existing.id, existing, { new: true }).then((ig) => {
-            //console.log("Ig is: " + ig);
-        });
+        await this.conformanceModel.findByIdAndUpdate(existing.id, existing, { new: true });
 
 
         let newHistory: IHistory = {
@@ -211,6 +212,11 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         }
 
         await this.historyService.create(newHistory);
+
+        //Add it to the implementation Guide
+        if (existing.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
+            await addToImplementationGuideNew(this, existing, implementationGuideId);
+        }
 
         return existing;
 

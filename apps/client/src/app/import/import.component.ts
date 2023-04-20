@@ -280,11 +280,7 @@ export class ImportComponent implements OnInit {
 
     // Only ask the server if we have one or more resources with an ID that hasn't already been checked
     if (resourceReferences.length > 0) {
-      let igId: string;
-      if (this.configService.project && this.configService.project.implementationGuideId) {
-        igId = this.configService.project.implementationGuideId
-      }
-      this.importService.checkResourcesStatus(resourceReferences, igId)
+      this.importService.checkResourcesStatus(resourceReferences, this.implementationGuideId)
         .then((statuses) => {
           pendingResources.forEach(pr => {
             const path = `${pr.resource.resourceType}/${pr.resource.id}`;
@@ -432,25 +428,14 @@ export class ImportComponent implements OnInit {
         this.fhirService.fhir.xmlToObj(this.textContent) :
         JSON.parse(this.textContent);
     } catch (ex) {
-      // this.outcome = {
-      //   resourceType: 'OperationOutcome',
-      //   text: {
-      //     status: 'generated',
-      //     div: 'An error occurred while parsing the text content: ' + getErrorString(ex)
-      //   },
-      //   issue: []
-      // };
       this.message = 'Error: ' + getErrorString(ex);
-      // setTimeout(() => {
-      //   tabSet.select('results');
-      // });
       return;
     }
 
     let newResource: IConformance | IExample = <IConformance | IExample>{};
 
-    if (this.configService.project && this.configService.project.implementationGuideId) {
-      newResource.igIds = [this.configService.project.implementationGuideId];
+    if (this.implementationGuideId) {
+      newResource.igIds = [this.implementationGuideId];
     }
 
     newResource.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
@@ -462,7 +447,7 @@ export class ImportComponent implements OnInit {
       req = this.examplesService.save(null, <IExample>newResource);
     } else {
       (<IConformance>newResource).resource = resource;
-      req = this.conformanceService.save(null, <IConformance>newResource);
+      req = this.conformanceService.save(null, <IConformance>newResource, this.implementationGuideId);
     }
 
     req.subscribe({
@@ -474,57 +459,7 @@ export class ImportComponent implements OnInit {
         this.message = 'Error: ' + getErrorString(err);
       }
     });
-
-    return;
-    let url = `/api/fhir/${resource.resourceType}`;
-
-    if (resource.id) {
-      url += `/${resource.id}`;
-    }
-
-    url += `?applyContextPermissions=${this.applyContextPermissions}`;
-
-    (resource.id ? this.httpClient.put(url, resource) : this.httpClient.post(url, resource))
-      .subscribe((results: OperationOutcome) => {
-        if (results.resourceType === 'OperationOutcome') {
-          this.outcome = <OperationOutcome>results;
-        } else {
-          const successOutcome = new OperationOutcome();
-          successOutcome.text = {
-            status: 'generated',
-            div: `<div><p>Successfully imported resource</p></div>`
-          };
-          successOutcome.issue = [{
-            severity: 'information',
-            code: 'success',
-            diagnostics: 'Successfully imported the resource.'
-          }];
-          this.outcome = successOutcome;
-        }
-
-        this.message = 'Done.';
-        setTimeout(() => {
-          tabSet.select('results');
-        });
-      }, (err) => {
-        if (err && err.error && err.error.resourceType === 'OperationOutcome') {
-          this.outcome = err.error;
-        } else {
-          this.outcome = {
-            resourceType: 'OperationOutcome',
-            text: {
-              status: 'generated',
-              div: 'An error occurred while importing the resource(s): ' + getErrorString(err)
-            },
-            issue: []
-          };
-        }
-
-        this.message = 'Done. Errors occurred: ' + getErrorString(err);
-        setTimeout(() => {
-          tabSet.select('results');
-        });
-      });
+    
   }
 
   private importFiles(tabSet: NgbNav) {
@@ -534,10 +469,8 @@ export class ImportComponent implements OnInit {
 
     for (const file of this.files) {
 
-      // ensure current IG is in the IG list for the resource if it is new
-      // existing resources that are being updated already have the current IG in its list
-      if (!file.existingResource && this.configService.project && this.configService.project.implementationGuideId) {
-        file.existingResource = <IConformance | IExample>{ igIds: [this.configService.project.implementationGuideId] };
+      if (!file.existingResource) {
+        file.existingResource = <IConformance | IExample>{};
       }
       (<IConformance | IExample>file.existingResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
 
@@ -552,7 +485,7 @@ export class ImportComponent implements OnInit {
       else {
         let conformance: IConformance = <IConformance>{ ...file.existingResource };
         conformance.resource = file.resource;
-        requests.push(this.conformanceService.save(conformance.id, conformance));
+        requests.push(this.conformanceService.save(conformance.id, conformance, this.implementationGuideId));
       }
     }
 
@@ -810,5 +743,10 @@ export class ImportComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    if (this.configService.project && this.configService.project.implementationGuideId){
+      this.implementationGuideId = this.configService.project.implementationGuideId;
+    }
+
   }
 }

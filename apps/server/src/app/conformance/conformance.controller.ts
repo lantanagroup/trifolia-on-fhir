@@ -161,15 +161,15 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
     }
 
     @Post()
-    public async createConformance(@User() user: ITofUser, @Body() conformance: IConformance): Promise<IConformance> {
-        return await this.conformanceService.createConformance(conformance);
+    public async createConformance(@User() user: ITofUser, @Body() conformance: IConformance, @Query('implementationguideid') implementationGuideId?: string): Promise<IConformance> {
+        return await this.conformanceService.createConformance(conformance, implementationGuideId);
     }
 
     @Put(':id')
-    public async updateConformance(@User() user: ITofUser, @Param('id') id: string, @Body() conformance: IConformance): Promise<IConformance> {
+    public async updateConformance(@User() user: ITofUser, @Param('id') id: string, @Body() conformance: IConformance, @Query('implementationguideid') implementationGuideId?: string): Promise<IConformance> {
         await this.assertIdMatch(id, conformance);
         await this.assertCanWriteById(user, id);
-        return await this.conformanceService.updateConformance(id, conformance);
+        return await this.conformanceService.updateConformance(id, conformance, implementationGuideId);
     }
 
     @Delete(':id')

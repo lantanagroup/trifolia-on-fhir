@@ -1,9 +1,5 @@
 <h1>Import</h1>
 
-<p *ngIf="configService.project">
-  <input type="checkbox" [(ngModel)]="applyContextPermissions" /> Apply permissions of context implementation guide to imported resources.
-</p>
-
 <ul ngbNav #t="ngbNav" class="nav-tabs" [activeId]="activeTab" (navChange)="activeTab = $event.nextId">
   <li ngbNavItem="file">
     <a ngbNavLink>
@@ -121,7 +117,7 @@
           </div>
         </div>
         <div class="col-md-2">
-          <label class="form-label" for="textContentIsExampleSwitch">Is Example? {{textContentIsExample}}</label>
+          <label class="form-label" for="textContentIsExampleSwitch">Is Example?</label>
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="textContentIsExampleSwitch" [(ngModel)]="textContentIsExample">
           </div>
