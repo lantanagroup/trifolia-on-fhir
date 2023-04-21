@@ -304,6 +304,7 @@ export class ConstraintManager {
 
     let prevConstrainedElementTreeModel: ElementTreeModel;
     let nextElementTreeModel = elementTreeModel;
+    let previousConstraintIndex: number = -1;
 
     while (!prevConstrainedElementTreeModel && nextElementTreeModel) {
       const previousSiblings = this.findPreviousSiblings(nextElementTreeModel);
@@ -311,16 +312,21 @@ export class ConstraintManager {
 
       if (previousConstraints.length === 0 && nextElementTreeModel.parent && nextElementTreeModel.parent.constrainedElement) {
         prevConstrainedElementTreeModel = nextElementTreeModel.parent;
+        previousConstraintIndex = this.structureDefinition.differential.element.indexOf(prevConstrainedElementTreeModel.constrainedElement);
         break;
       } else if (previousConstraints.length === 0) {
         nextElementTreeModel = nextElementTreeModel.parent;
       } else {
         prevConstrainedElementTreeModel = previousConstraints[previousConstraints.length - 1];
+
+        // find last constrained element from the current structure definition that starts with the ID we're trying to find
+        // Array.findLastIndex() still relatively new to use here so use slice().reverse() pattern instead
+        const lastConstrained = this.structureDefinition.differential.element.slice().reverse().find(e => e.id.startsWith(prevConstrainedElementTreeModel.constrainedElement.id));
+        previousConstraintIndex = this.structureDefinition.differential.element.indexOf(lastConstrained);
         break;
       }
     }
 
-    const previousConstraintIndex = this.structureDefinition.differential.element.indexOf(prevConstrainedElementTreeModel.constrainedElement);
     this.structureDefinition.differential.element.splice(previousConstraintIndex + 1, 0, elementTreeModel.constrainedElement);
   }
 

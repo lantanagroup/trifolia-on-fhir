@@ -29,7 +29,7 @@ export class JiraSpecComponent implements OnInit, OnChanges {
   public valueChanged = new EventEmitter();
   public value: string;
 
-  constructor(private configSerivce: ConfigService) {
+  constructor(private configService: ConfigService) {
     this.valueChanged
       .subscribe(() => {
         this.updateJiraSpecValue();
@@ -149,7 +149,7 @@ export class JiraSpecComponent implements OnInit, OnChanges {
       });
 
       for (const p of ig.definition.page.page || []) {
-        const page = this.configSerivce.isFhirR4 ? new ImplementationGuidePageComponent(p) : new ImplementationGuideDefinitionPage(p);
+        const page = this.configService.isFhirR4 ? new ImplementationGuidePageComponent(p) : new ImplementationGuideDefinitionPage(p);
         if (!page.fileName) continue;
         nextPage(page);
       }
@@ -229,13 +229,13 @@ export class JiraSpecComponent implements OnInit, OnChanges {
     let jiraSpecArtifacts: JiraSpecDef[];
     let jiraSpecPages: JiraSpecDef[];
 
-    if (this.configSerivce.isFhirR5) {
+    if (this.configService.isFhirR5) {
       jiraSpecArtifacts = this.getR4andR5Artifacts();
       jiraSpecPages = this.getR4andR5Pages();
-    } if (this.configSerivce.isFhirR4) {
+    } if (this.configService.isFhirR4) {
       jiraSpecArtifacts = this.getR4andR5Artifacts();
       jiraSpecPages = this.getR4andR5Pages();
-    } else if (this.configSerivce.isFhirSTU3) {
+    } else if (this.configService.isFhirSTU3) {
       jiraSpecArtifacts = this.getSTU3Artifacts();
       jiraSpecPages = this.getSTU3Pages();
     } else {
