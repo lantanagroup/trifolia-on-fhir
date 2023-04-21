@@ -9,6 +9,7 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   templateUrl: './capability-statements.component.html',
@@ -26,7 +27,8 @@ export class CapabilityStatementsComponent extends BaseComponent implements OnIn
     public configService: ConfigService,
     protected authService: AuthService,
     private csService: CapabilityStatementService,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public route: ActivatedRoute) {
 
     super(configService, authService);
 
@@ -74,10 +76,12 @@ export class CapabilityStatementsComponent extends BaseComponent implements OnIn
     });
   }
 
+
   public getCapabilityStatements() {
     this.capabilityStatementsBundle = null;
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
-    this.csService.search(this.page, this.nameText)
+    this.csService.search(this.page, this.nameText, implementationGuideId)
       .subscribe((results) => {
         this.capabilityStatementsBundle = results;
         this.total = this.capabilityStatementsBundle.total;

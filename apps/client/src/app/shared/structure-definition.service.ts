@@ -32,7 +32,7 @@ export class StructureDefinitionService {
   }
 
   public getStructureDefinitions(page?: number, nameText?: string, IDText?: string, urlText?: string, implementationGuideId?: string, titleText?: string, typeText?: string): Observable<IConformance[]> {
-    let url = '/api/structureDefinition?';
+    let url = '/api/structureDefinition?resourcetype=StructureDefinition&';
 
     if (page) {
       url += `page=${page.toString()}&`;
@@ -51,7 +51,7 @@ export class StructureDefinitionService {
     }
 
     if (implementationGuideId) {
-      url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
+      url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;
     }
 
     if (titleText) {
@@ -96,6 +96,7 @@ export class StructureDefinitionService {
     if(structureDefinition.resource.text && structureDefinition.resource.text.div && structureDefinition.resource.text.div.indexOf("<br>") > 0){
       structureDefinition.resource.text.div = structureDefinition.resource.text.div.replace("<br>", "");
     }
+
 
     if (structureDefinition.id) {
       url += '/' + encodeURIComponent(structureDefinition.id);

@@ -70,9 +70,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
         if ('implementationguideid' in query) {
             filter['igIds'] = new ObjectId(query['implementationguideid']);
         }
-        else if (headers && headers['implementationguideid'] ) {
-           filter['igIds'] =  new ObjectId(headers['implementationguideid']);
-        }
+
 
         return filter;
     }

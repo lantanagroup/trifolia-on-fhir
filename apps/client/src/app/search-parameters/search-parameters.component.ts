@@ -9,6 +9,7 @@ import {ConfigService} from '../shared/config.service';
 import {SearchParameterService} from '../shared/search-parameter.service';
 import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {BaseComponent} from '../base.component';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   templateUrl: './search-parameters.component.html',
@@ -27,7 +28,8 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
     public configService: ConfigService,
     protected authService: AuthService,
     private spService: SearchParameterService,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public route: ActivatedRoute) {
 
     super(configService, authService);
 
@@ -81,7 +83,9 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
   public getSearchParameters() {
     this.searchParameterBundle = null;
 
-    this.spService.search(this.page, this.nameText)
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+
+    this.spService.search(this.page, this.nameText, implementationGuideId)
       .subscribe((results) => {
         this.searchParameterBundle = results;
         this.total = this.searchParameterBundle.total;

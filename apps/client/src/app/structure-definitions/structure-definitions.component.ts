@@ -13,6 +13,7 @@ import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {CopyProfileModalComponent} from '../modals/copy-profile-modal/copy-profile-modal.component';
 import {debounceTime} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   templateUrl: './structure-definitions.component.html',
@@ -40,7 +41,8 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     private fhirService: FhirService,
     private implementationGuideService: ImplementationGuideService,
     private structureDefinitionService: StructureDefinitionService,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public route: ActivatedRoute) {
 
     super(configService, authService);
 
@@ -155,6 +157,8 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
   public getStructureDefinitions() {
     this.response = null;
     this.configService.setStatusMessage('Loading structure definitions');
+
+    this.implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
     this.structureDefinitionService.getStructureDefinitions(this.page, this.nameText, this.IDText, this.urlText, this.implementationGuideId, this.titleText, this.typeText)
       .subscribe((response ) => {

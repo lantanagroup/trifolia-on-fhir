@@ -26,10 +26,10 @@ export class OperationDefinitionService {
     }
 
     if (implementationGuideId) {
-      url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
+      url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;
     }
 
-    url += '?_sort=name';
+    url += '_sort=name';
 
     return this.http.get<IConformance>(url);
   }
