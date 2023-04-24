@@ -14,7 +14,8 @@
               ID <app-tooltip-icon tooltipPath="StructureDefinition.id"></app-tooltip-icon>
             </label>
             <input type="text" class="form-control" [(ngModel)]="structureDefinition.id" placeholder="Auto generate" (change)="idChangedEvent.next()" [class.is-invalid]="!isIdUnique" />
-            <div class="help-block" *ngIf="!isIdUnique">The specified ID already exists.</div>
+            <div class="help-block">{{alreadyInUseIDMessage}}</div>
+            </div>
           </div>
         </div>
         <div class="col-md-8">

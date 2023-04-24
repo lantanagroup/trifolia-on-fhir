@@ -6,9 +6,9 @@ export const User = createParamDecorator((data, ctx: ExecutionContext) => {
   return req.user;
 });
 
-export const FhirServerVersion = createParamDecorator((data, ctx: ExecutionContext): 'stu3'|'r4' => {
+export const FhirServerVersion = createParamDecorator((data, ctx: ExecutionContext): 'stu3'|'r4'|'r5' => {
   const req = ctx.switchToHttp().getRequest() as ITofRequest;
-  return <'stu3'|'r4'> req.fhirServerVersion;
+  return <'stu3'|'r4'|'r5'> req.fhirServerVersion;
 });
 
 export const FhirInstance = createParamDecorator((data, ctx: ExecutionContext) => {

@@ -66,10 +66,10 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
       return;
     }
 
-    this.valueSetService.delete(this.valueSetId)
+    this.valueSetService.delete(valueSet.id)
       .subscribe(() => {
         this.message = `Successfully deleted value set ${valueSet.title || valueSet.name || 'no-name'} (${valueSet.id})`;
-        const entry = this.valueSet.results.find((e) => e.resource.id === valueSet.id);
+        const entry = (this.valueSet.results || []).find((e) => e.id === valueSet.id);
         const index = this.valueSet.results.indexOf(entry);
         this.valueSet.results.splice(index, index >= 0 ? 1 : 0);
         setTimeout(() => this.message = '', 3000);

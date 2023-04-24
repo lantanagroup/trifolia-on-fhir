@@ -58,7 +58,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
         const isIdUnique = await this.fhirService.checkUniqueId(this.operationDefinition);
         if(!isIdUnique){
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.operationDefinition.id  + " is already used.";
+          this.alreadyInUseIDMessage = "ID " +  this.operationDefinition.id  + " is already used in this IG.";
         }
         else{
           this.isIdUnique = true;

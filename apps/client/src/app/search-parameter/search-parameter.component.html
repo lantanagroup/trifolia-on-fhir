@@ -35,9 +35,9 @@
 
           <div class="col-md-6">
             <div class="mb-3">
-              <label>ID</label>
               <div [class.input-group]="!isNew">
-                <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="searchParameter.id" placeholder="AUTO" />
+                <app-fhir-string [parentObject]="searchParameter" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)="idChangedEvent.next()"></app-fhir-string>
+                <div class="help-block">{{alreadyInUseIDMessage}}</div>
                 <div class="input-group-btn" *ngIf="!isNew">
                   <button type="button" class="btn btn-primary" (click)="changeId()">Change</button>
                 </div>

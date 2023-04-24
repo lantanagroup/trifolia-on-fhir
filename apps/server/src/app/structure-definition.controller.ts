@@ -22,7 +22,7 @@ import {ITypeConfig} from '../../../../libs/tof-lib/src/lib/type-config';
 import {ConformanceController} from './conformance/conformance.controller';
 import {AuthService} from './auth/auth.service';
 import {ConformanceService} from './conformance/conformance.service';
-import {Paginated} from '@trifolia-fhir/tof-lib';
+import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
 import {IConformance} from '@trifolia-fhir/models';
 
 
@@ -37,7 +37,7 @@ export class StructureDefinitionController extends ConformanceController  {
   constructor(protected authService: AuthService,  protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
 
     super(conformanceService);
-    this.fhirController = new FhirController(this.httpService, this.configService);
+    this.fhirController = new FhirController(this.httpService, this.configService, this.conformanceService);
   }
 
 
@@ -208,7 +208,21 @@ export class StructureDefinitionController extends ConformanceController  {
       if (foundBaseProfile) {
         list.push(foundBaseProfile);
       } else {
-        const results = await super.searchConformance(user, request);
+
+        const searchFilters = {};
+        searchFilters['resource.resourceType'] = { $regex: 'StructureDefinition', $options: 'i' };
+        searchFilters['url'] = { $regex: url, $options: 'i' };
+        const baseFilter =  this.authService.getPermissionFilterBase(user, 'read');
+        const filter = {
+          $and: [ baseFilter, searchFilters]
+        };
+
+        const options: PaginateOptions = {
+          page: 1,
+          itemsPerPage: 10,
+          filter: filter
+        };
+        const results =  await this.conformanceService.search(options);
 
         const base = <StructureDefinition>results.results[0].resource;
 

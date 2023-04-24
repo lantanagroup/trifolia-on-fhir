@@ -38,6 +38,7 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
 
   public publishingRequest: PublishingRequestModel;
   public publishingRequestJSON;
+  public alreadyInUseIDMessage = '';
 
   constructor(
     public route: ActivatedRoute,
@@ -48,6 +49,7 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
     protected authService: AuthService,
     private implementationGuideService: ImplementationGuideService,
     private strucDefService: StructureDefinitionService) {
+
 
     super(configService, authService);
 
@@ -60,6 +62,12 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         this.isIdUnique = await this.fhirService.checkUniqueId(this.structureDefinition);
+        if (!this.isIdUnique) {
+          this.alreadyInUseIDMessage = "ID " + this.structureDefinition.id + " is already used in this IG.";
+        }
+        else {
+          this.alreadyInUseIDMessage = "";
+        }
       });
   }
 

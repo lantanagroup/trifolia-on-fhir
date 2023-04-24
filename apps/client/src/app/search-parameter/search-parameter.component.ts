@@ -65,7 +65,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
         const isIdUnique = await this.fhirService.checkUniqueId(this.searchParameter);
         if (!isIdUnique) {
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = 'ID ' + this.searchParameter.id + ' is already used.';
+          this.alreadyInUseIDMessage = 'ID ' + this.searchParameter.id + ' is already used in this IG.';
         } else {
           this.isIdUnique = true;
           this.alreadyInUseIDMessage = '';
