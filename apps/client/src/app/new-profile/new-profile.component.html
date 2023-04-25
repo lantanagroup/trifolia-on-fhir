@@ -15,7 +15,6 @@
             </label>
             <input type="text" class="form-control" [(ngModel)]="structureDefinition.id" placeholder="Auto generate" (change)="idChangedEvent.next()" [class.is-invalid]="!isIdUnique" />
             <div class="help-block">{{alreadyInUseIDMessage}}</div>
-            </div>
           </div>
         </div>
         <div class="col-md-8">
