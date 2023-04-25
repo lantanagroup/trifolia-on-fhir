@@ -56,7 +56,7 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
 
     this.spService.delete(searchParameter.id)
       .subscribe(() => {
-        const entry = (this.searchParameterBundle.results || []).find((e) => e.resource.id === searchParameter.id);
+        const entry = (this.searchParameterBundle.results || []).find((e) => e.id === searchParameter.id);
         const index = this.searchParameterBundle.results.indexOf(entry);
         this.searchParameterBundle.results.splice(index, 1);
       }, (err) => {

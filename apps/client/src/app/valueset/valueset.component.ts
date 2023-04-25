@@ -60,7 +60,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
         const isIdUnique = await this.fhirService.checkUniqueId(this.valueSet);
         if(!isIdUnique){
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.valueSet.id  + " is already used.";
+          this.alreadyInUseIDMessage = "ID " +  this.valueSet.id  + " is already used in this IG.";
         }
         else{
           this.isIdUnique = true;

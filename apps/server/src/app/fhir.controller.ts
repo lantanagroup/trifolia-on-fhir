@@ -38,6 +38,8 @@ import os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import { ImplementationGuideController } from './implementation-guide.controller';
+import {ConformanceService} from './conformance/conformance.service';
+import {ObjectId} from 'mongodb';
 
 export interface ProxyResponse {
   status: number;
@@ -52,7 +54,7 @@ export interface ProxyResponse {
 export class FhirController extends BaseController {
   private readonly logger = new TofLogger(FhirController.name);
 
-  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+  constructor(protected httpService: HttpService, protected configService: ConfigService, protected conformanceService: ConformanceService) {
     super(configService, httpService);
   }
 
@@ -83,29 +85,21 @@ export class FhirController extends BaseController {
     return true;
   }*/
 
- /* @Get(':resourceType/:id/([\$])check-id')
+  @Get(':resourceType/:id/([\$])check-id')
   @HttpCode(200)
   @ApiOperation({ summary: 'checkId', description: 'CheckId', operationId: 'checkId' })
-  async checkUniqueId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string): Promise<boolean> {
-    const currentOptions: AxiosRequestConfig = {
-      url: buildUrl(fhirServerBase, resourceType, id),
-      method: 'GET'
-    };
+  async checkUniqueId(@Param('resourceType') resourceType: string, @Param('id') id: string, @RequestHeaders('fhirServerVersion') fhirVersion, @RequestHeaders('implementationGuideId') contextImplementationGuideId): Promise<boolean> {
 
-    // Get the resources by id
-    try {
-      await this.httpService.request(currentOptions).toPromise();
-      return false;
-    } catch (ex) {
-      if (ex.response && ex.response.status !== 404 && ex.response.status !== 410) {
-        this.logger.error(`Error checking if resource already exists with specified ie: ${ex.message}`);
-        throw ex;
-      }
+    let filter = { 'resource.resourceType': resourceType, 'resource.id': id };
+    if (contextImplementationGuideId) {
+      filter['igIds'] = new ObjectId(contextImplementationGuideId);
     }
-
+    const results = await this.conformanceService.findOne(filter);
+    if(results) {
+      return false;
+    }
     return true;
   }
-*/
 
  /* @Post(':resourceType/:id/([\$])change-id')
   @Header('Content-Type', 'text/plain')
@@ -117,7 +111,7 @@ export class FhirController extends BaseController {
     if (!newId) {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
-
+Constraint
     let resource;
     const currentOptions: AxiosRequestConfig = {
       url: buildUrl(fhirServerBase, resourceType, currentId),
@@ -335,7 +329,7 @@ export class FhirController extends BaseController {
     headers: { [key: string]: any },
     method: string,
     fhirServerBase: string,
-    fhirServerVersion: 'stu3' | 'r4',
+    fhirServerVersion: 'stu3' | 'r4' | 'r5',
     user: ITofUser,
     body?,
     applyContextPermissions = false): Promise<ProxyResponse> {
@@ -562,7 +556,7 @@ export class FhirController extends BaseController {
   private async processBatch(
     bundle: Bundle,
     fhirServerBase: string,
-    fhirServerVersion: 'stu3' | 'r4',
+    fhirServerVersion: 'stu3' | 'r4' | 'r5',
     userSecurityInfo: IUserSecurityInfo,
     contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
     shouldRemovePermissions = true,
@@ -652,7 +646,7 @@ export class FhirController extends BaseController {
   private async processBatchEntry(
     entry: EntryComponent,
     fhirServerBase: string,
-    fhirServerVersion: 'stu3' | 'r4',
+    fhirServerVersion: 'stu3' | 'r4' | 'r5',
     userSecurityInfo: IUserSecurityInfo,
     contextImplementationGuide?: STU3ImplementationGuide | R4ImplementationGuide,
     shouldRemovePermissions = true,
@@ -793,9 +787,8 @@ export class FhirController extends BaseController {
     return batchProcessingResponse;
   }
 
- /* @Get('dependency')
+  @Get('dependency')
   public async searchDependency(
-    @FhirServerBase() fhirServerBase,
     @Headers('implementationguideid') implementationGuideId: string,
     @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4',
     @Query('resourceType') resourceType?: string,
@@ -806,19 +799,19 @@ export class FhirController extends BaseController {
     @Query('type') structureDefinitionType?: string,
     @Query('url') structureDefinitionUrl?: string,
     @Query('isLightweight') isLightweight = true) {
-    const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', implementationGuideId);
-    const igResults = await this.httpService.get<IImplementationGuide>(igUrl).toPromise();
-    const ig = igResults.data;
+
+    const ig = await this.conformanceService.findById(implementationGuideId);
+
     let dependencies: string[];
 
-    await ImplementationGuideController.downloadDependencies(ig, fhirServerVersion, this.configService, this.logger);
+    await ImplementationGuideController.downloadDependencies(<IImplementationGuide>ig.resource, fhirServerVersion, this.configService, this.logger);
 
     switch (fhirServerVersion) {
       case 'stu3':
-        dependencies = getSTU3Dependencies(<STU3ImplementationGuide>ig);
+        dependencies = getSTU3Dependencies(<STU3ImplementationGuide>ig.resource);
         break;
       case 'r4':
-        dependencies = getR4Dependencies(<R4ImplementationGuide>ig);
+        dependencies = getR4Dependencies(<R4ImplementationGuide>ig.resource);
         break;
       default:
         throw new Error(`Unexpected FHIR server version ${fhirServerVersion}`);
@@ -912,7 +905,7 @@ export class FhirController extends BaseController {
 
     return responseBundle;
   }
-*/
+
   /*@Get(['/', '*', '*!/!*', '*!/!*!/_history', '*!/!*!/_history/!*'])
   public async proxyGetRequest(
     @RequestUrl() url: string,

@@ -69,7 +69,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
         const isIdUnique = await this.fhirService.checkUniqueId(this.capabilityStatement);
         if(!isIdUnique){
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.capabilityStatement.id  + " is already used.";
+          this.alreadyInUseIDMessage = "ID " +  this.capabilityStatement.id  + " is already used in this IG.";
         }
         else{
           this.isIdUnique = true;

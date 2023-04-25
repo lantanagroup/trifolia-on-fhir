@@ -70,7 +70,7 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.structureDefinitionService.delete(structureDefinition.id)
       .subscribe(() => {
         this.message = `Successfully deleted structure definition ${structureDefinition.name} (${structureDefinition.id})`;
-        const entry = (this.response.results || []).find((e) => e.resource.id === structureDefinition.id);
+        const entry = (this.response.results || []).find((e) => e.id === structureDefinition.id);
         const index = this.response.results.indexOf(entry);
         this.response.results.splice(index, index >= 0 ? 1 : 0);
         setTimeout(() => this.message = '', 3000);

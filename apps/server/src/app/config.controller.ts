@@ -5,13 +5,14 @@ import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
 import {ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import modulePackage from '../../../../package.json';
+import {ConformanceService} from './conformance/conformance.service';
 
 @Controller('api/config')
 @ApiTags('Config')
 export class ConfigController extends BaseController {
   private static serverMetadata = {};
 
-  constructor(protected httpService: HttpService, protected configService: ConfigService) {
+  constructor(protected httpService: HttpService, protected configService: ConfigService, protected conformanceService: ConformanceService) {
     super(configService, httpService);
   }
 
@@ -20,7 +21,6 @@ export class ConfigController extends BaseController {
     const retConfig: ConfigModel = {
       version: modulePackage.version,
       supportUrl: this.configService.server.supportUrl,
-      fhirServers: this.configService.fhir.servers.map((server) => ({ id: server.id, name: server.name, short: server.short })),
       enableSecurity: this.configService.server.enableSecurity,
       bannerMessage: this.configService.server.bannerMessage,
       auth: {

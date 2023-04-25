@@ -281,7 +281,7 @@ export class BaseController {
    * @param resourceType The resource type of the resource that we want to find references to
    * @param id The id of the resource that we want to find references to
    */
-  protected async removeReferencesToResource(baseUrl: string, fhirServerVersion: 'stu3'|'r4', resourceType: string, id: string) {
+  protected async removeReferencesToResource(baseUrl: string, fhirServerVersion: 'stu3'|'r4'|'r5', resourceType: string, id: string) {
     // Searches all properties of the object to find a property that has "reference" set to <resourceType>/<id>
     // The object/property that contains that "reference" property/value is returned.
     const findReference = (obj: any) => {

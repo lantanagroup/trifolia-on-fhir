@@ -67,7 +67,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
         const isIdUnique = await this.fhirService.checkUniqueId(this.codeSystem);
         if (!isIdUnique) {
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " + this.codeSystem.id + " is already used.";
+          this.alreadyInUseIDMessage = "ID " + this.codeSystem.id + " is already used in this IG";
         }
         else {
           this.isIdUnique = true;
