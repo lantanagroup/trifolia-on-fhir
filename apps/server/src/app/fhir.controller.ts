@@ -1,4 +1,3 @@
-import { BaseController, IUserSecurityInfo } from './base.controller';
 import {HttpService} from '@nestjs/axios';
 import {
   BadRequestException,
@@ -18,28 +17,33 @@ import {
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import { buildUrl, createOperationOutcome, generateId, getR4Dependencies, getSTU3Dependencies } from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import { Response } from 'express';
-import { AuthGuard } from '@nestjs/passport';
-import { TofLogger } from './tof-logger';
-import { AxiosRequestConfig } from 'axios';
-import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User } from './server.decorators';
-import { ConfigService } from './config.service';
-import { Globals } from '../../../../libs/tof-lib/src/lib/globals';
-import { addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl } from './helper';
-import { Bundle, DomainResource, EntryComponent, ImplementationGuide as STU3ImplementationGuide } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { ImplementationGuide as R4ImplementationGuide, OperationOutcome } from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import { format as formatUrl, parse as parseUrl, UrlWithStringQuery } from 'url';
-import type { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
+import {buildUrl, createOperationOutcome, generateId, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {Response} from 'express';
+import {AuthGuard} from '@nestjs/passport';
+import {TofLogger} from './tof-logger';
+import {AxiosRequestConfig} from 'axios';
+import {ApiOAuth2, ApiOperation, ApiTags} from '@nestjs/swagger';
+import {FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User} from './server.decorators';
+import {ConfigService} from './config.service';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl} from './helper';
+import {Bundle, DomainResource, EntryComponent, Group, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide as R4ImplementationGuide, OperationOutcome} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
+import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import PQueue from 'p-queue';
-import { IBundle, IImplementationGuide, IOperationOutcome, IStructureDefinition } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IImplementationGuide, IOperationOutcome, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
-import { ImplementationGuideController } from './implementation-guide.controller';
+import {ImplementationGuideController} from './implementation-guide.controller';
 import {ConformanceService} from './conformance/conformance.service';
 import {ObjectId} from 'mongodb';
+
+import {ConformanceController} from './conformance/conformance.controller';
+import {AuthService} from './auth/auth.service';
+import {IUserSecurityInfo} from './base.controller';
+
 
 export interface ProxyResponse {
   status: number;
@@ -51,184 +55,79 @@ export interface ProxyResponse {
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('FHIR Proxy')
 @ApiOAuth2([])
-export class FhirController extends BaseController {
-  private readonly logger = new TofLogger(FhirController.name);
+export class FhirController extends ConformanceController {
+  protected readonly logger = new TofLogger(FhirController.name);
 
-  constructor(protected httpService: HttpService, protected configService: ConfigService, protected conformanceService: ConformanceService) {
-    super(configService, httpService);
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
+    super(conformanceService);
   }
 
-
-  /*@Get(':resourceType/:id/([\$])validate-single-ig')
-  @Header('Content-Type', 'text/plain')
-  @HttpCode(200)
-  @ApiOperation({ summary: 'validateSingleIg', description: 'Validate Single Ig', operationId: 'validateSingleIg' })
-  async validateSingleIg(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string, @RequestHeaders('implementationGuideId') contextImplementationGuideId): Promise<boolean> {
-
-    const res = resourceType + '/' + id;
-    const currentOptions: AxiosRequestConfig = {
-      url: buildUrl(fhirServerBase, 'ImplementationGuide', null, null, { resource: res }),
-      method: 'GET'
-    };
-
-    // Get the all the implementation guides for that resource
-    try {
-      const getResponse = await this.httpService.request(currentOptions).toPromise();
-      const bundle: Bundle = getResponse.data;
-      if (bundle.entry && bundle.entry.length >= 1 && contextImplementationGuideId !== bundle.entry[0].resource.id) {
-        return false;
-      }
-    } catch (ex) {
-      this.logger.error(`Error from FHIR server when getting current resource to change the resource's id: ${ex.message}`);
-    }
-
-    return true;
-  }*/
 
   @Get(':resourceType/:id/([\$])check-id')
   @HttpCode(200)
   @ApiOperation({ summary: 'checkId', description: 'CheckId', operationId: 'checkId' })
   async checkUniqueId(@Param('resourceType') resourceType: string, @Param('id') id: string, @RequestHeaders('fhirServerVersion') fhirVersion, @RequestHeaders('implementationGuideId') contextImplementationGuideId): Promise<boolean> {
 
-    let filter = { 'resource.resourceType': resourceType, 'resource.id': id };
-    if (contextImplementationGuideId) {
+    let filter = { 'resource.resourceType': resourceType, 'resource.id': id, 'fhirVersion': fhirVersion };
+    /*if (contextImplementationGuideId) {
       filter['igIds'] = new ObjectId(contextImplementationGuideId);
-    }
+    }*/
     const results = await this.conformanceService.findOne(filter);
-    if(results) {
+    if (results) {
       return false;
     }
     return true;
   }
 
- /* @Post(':resourceType/:id/([\$])change-id')
+  @Post(':resourceType/:id/([\$])change-id')
   @Header('Content-Type', 'text/plain')
   @HttpCode(200)
   @ApiOperation({ summary: 'changeid', description: 'Changes the ID of a resource', operationId: 'changeId' })
-  async changeId(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') currentId: string,
+  async changeId(@Param('resourceType') resourceType: string, @Param('id') currentId: string,
                  @Query('newId') newId: string, @User() user: ITofUser, @RequestHeaders('implementationGuideId') contextImplementationGuideId,
-                 @FhirServerVersion() fhirVersion: 'stu3' | 'r4'): Promise<any> {
+                 @FhirServerVersion() fhirVersion: 'stu3' | 'r4' | 'r5'): Promise<any> {
     if (!newId) {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
-Constraint
-    let resource;
-    const currentOptions: AxiosRequestConfig = {
-      url: buildUrl(fhirServerBase, resourceType, currentId),
-      method: 'GET'
-    };
 
     this.logger.log(`Request to change id for resource ${resourceType}/${currentId} to ${newId}`);
 
-    // Get the current state of the resource
-    try {
-      const getResponse = await this.httpService.request(currentOptions).toPromise();
-      resource = getResponse.data;
-    } catch (ex) {
-      this.logger.error(`Error from FHIR server when getting current resource to change the resource's id: ${ex.message}`);
+    let filter = { 'resource.resourceType': resourceType, 'resource.id': currentId };
+    if (contextImplementationGuideId) {
+      filter['igIds'] = new ObjectId(contextImplementationGuideId);
     }
-
-    if (!resource || !resource.id) {
-      const msg = `No resource found for ${resourceType} with id ${currentId}`;
+    const conf = await this.conformanceService.findOne(filter);
+    if (!conf || !conf.resource.id) {
+      const msg = `No resource found for ${resourceType} with id ${currentId} `;
       this.logger.error(msg);
       throw new Error(msg);
     }
 
-    // Make sure the resource can be edited, by the user
-    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    // check if the resource can be changed
+    await this.assertCanWriteById(user, conf.id);
 
-    try {
-      assertUserCanEdit(this.configService, userSecurityInfo, resource);
-    } catch (ex) {
-      this.logger.error(`User ${userSecurityInfo.user.sub} does not have permissions to edit ${resource.resourceType}/${resource.id}`);
-    }
+    filter = { 'resource.resourceType': 'ImplementationGuide', 'references.value': conf.id };
+    const allResults = await this.conformanceService.findAll(filter);
 
-    // Change the id of the resource
-    resource.id = newId;
+    filter = { 'resource.resourceType': 'SearchParameter', 'resource.id': newId };
+    const allResults1 = await this.conformanceService.findAll(filter);
+    const results = allResults1.map(value => value.igIds);
+    const allIgs = results.reduce((prev, curr) => {
+      return prev.concat(curr);
+    }, []);
 
-    const createOptions: AxiosRequestConfig = {
-      url: buildUrl(fhirServerBase, resourceType, newId),
-      method: 'PUT',
-      data: resource
-    };
-    const checkOptions: AxiosRequestConfig = {
-      url: buildUrl(fhirServerBase, resourceType, newId),
-      method: 'GET'
-    };
-    const deleteOptions: AxiosRequestConfig = {
-      url: buildUrl(fhirServerBase, resourceType, currentId),
-      method: 'DELETE'
-    };
-
-    this.logger.log(`Sending GET request to FHIR server to check existence for new resource id of type ${resourceType}`);
-
-    try {
-      await this.httpService.request(checkOptions).toPromise();
-      this.logger.error(`Resource id ${newId} already exists`);
-      return `Resource id ${newId} already exists`;
-    } catch (ex) {
-      if (ex.response && ex.response.status !== 404 && ex.response.status !== 410) {
-        throw ex;
-      }
-    }
-
-    this.logger.log('Sending DELETE request to FHIR server for original resource');
-
-    // Delete the original resource with the original id
-    await this.httpService.request(deleteOptions).toPromise();
-
-    try {
-      // Create the new resource with the new id
-      await this.httpService.request(createOptions).toPromise();
-    } catch (ex) {
-      this.logger.error(`Error from FHIR server when creating the new resource to change the resource\'s id: ${ex.message}`);
-      throw ex;
-    }
-
-    const searchForReference = (searchResourceType: string, searchParameter: string) => {
-
-      return new Promise(async (resolve) => {
-        const params = {};    // DONT use _summary=true. The results may end up getting used to update the resource.
-        params[searchParameter] = `${resourceType}/${currentId}`;
-        const searchUrl = buildUrl(fhirServerBase, searchResourceType, null, null, params);
-
-        const results = await this.httpService.get(searchUrl).toPromise();
-        const bundle: Bundle = results.data;
-        const resources = (bundle.entry || []).map(entry => <DomainResource>entry.resource);
-
-        resolve(resources);
-      });
-    };
-
-    const allResults = [];
-    // These search parameters apply to both STU3 and R4 servers
-    allResults.push(await searchForReference('ImplementationGuide', 'resource'));
-    if (fhirVersion === 'r4') {
-      allResults.push(await searchForReference('ImplementationGuide', 'global'));
-    }
-
-    let igFound = false;
     allResults.forEach(result => {
-      if (!igFound) {
-        result.forEach(r => {
-          if (r.id === contextImplementationGuideId && r.resourceType === 'ImplementationGuide') {
-            igFound = true;
-          }
-        });
+      // check if all Ig-s can be changed
+      this.assertCanWriteById(user, result.id);
+      // check if the newId already exists for this resource type within the IG
+      const foundIg = allIgs.filter(ig => ig.toString() === result.id);
+      if (foundIg.length > 0) {
+        const msg = `The new Id ${newId} is already used in other Igs.`;
+        this.logger.error(msg);
+        throw new Error(msg);
       }
     });
 
-    if (contextImplementationGuideId && !igFound) {
-      try {
-        allResults.push(await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId));
-      } catch (ex) {
-        this.logger.error(`Context implementation guide ${contextImplementationGuideId} doesn't exist.`);
-      }
-    }
-
-    const allResources = allResults.reduce((prev, curr) => {
-      return prev.concat(curr);
-    }, []);
 
     let references: any[] = [];
     const findReferences = (obj: any) => {
@@ -250,11 +149,15 @@ Constraint
       return;
     };
 
+    const allResources = allResults.reduce((prev, curr) => {
+      return prev.concat(curr);
+    }, []);
+
     allResults.forEach(result => {
       references = [];
-      findReferences(result);
+      findReferences(result.resource);
       if (references.length > 0) {
-        const anyResource = <any>resource;
+        const anyResource = <any>conf.resource;
         references.forEach(foundReference => {
           foundReference.reference = `${resourceType}/${newId}`;
           if (anyResource.title) {
@@ -266,51 +169,21 @@ Constraint
       }
     });
 
-    // Persist the changes to the resources
-    if (allResources.length > 0) {
-      const transaction = new Bundle();
-      transaction.type = 'transaction';
-      transaction.entry = allResources.map((r) => {
-        return {
-          resource: r,
-          fullUrl: buildUrl(fhirServerBase, r.resourceType, r.id),
-          request: {
-            method: 'PUT',
-            url: `${r.resourceType}/${r.id}`
-          }
-        };
-      });
+    // Change the id of the resource
+    conf.resource.id = newId;
+    await this.conformanceService.updateOne(conf.id, conf);
 
-      try {
-        await this.httpService.post<Bundle>(fhirServerBase, transaction).toPromise();
-      } catch (ex) {
-        this.logger.error(`Error from FHIR server when persisting changes to the resources: ${ex.message}`);
-        throw ex;
-      }
-    }
+    // Persist the changes to the resources
+
+    allResources.map((conf) => {
+      this.conformanceService.updateConformance(conf.id, conf);
+    });
+
 
     this.logger.log(`Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`);
     return `Successfully changed the id of ${resourceType}/${currentId} to ${resourceType}/${newId}`;
-  }*/
+  }
 
- /* @Get(':resourceType/:id/_history')
-  @ApiOperation({ summary: 'getHistory', description: 'Get history for a resource. Supports paging.', operationId: 'getHistory' })
-  async getHistory(@FhirServerBase() fhirServerBase: string, @Param('resourceType') resourceType: string, @Param('id') id: string, @Query('page') page = 1) {
-    const pageSize = 20;
-    let url = buildUrl(fhirServerBase, resourceType, id) + '/_history?_count=' + pageSize.toString();
-
-    if (page !== 1) {
-      url += '&_getpagesoffset=' + (page - 1) * 20;
-    }
-
-    try {
-      const getResponse = await this.httpService.get(url).toPromise();
-      const bundle: IBundle = getResponse.data;
-      return bundle;
-    } catch (ex) {
-      this.logger.error(`Error from FHIR server when getting current resource to change the resource's id: ${ex.message}`);
-    }
-  }*/
 
   /**
    * Proxies the request through the selected/specified FHIR server
@@ -323,16 +196,16 @@ Constraint
    * @param body The data being proxied in the request
    * @param shouldRemovePermissions Indicates if permissions should be removed from resources in the batch if the original resource has permissions that aren't in the request
    * @param applyContextPermissions Indicates if created/updated resources should apply permissions from the context implementation guide
-   */
-  public async proxy(
-    url: string,
-    headers: { [key: string]: any },
-    method: string,
-    fhirServerBase: string,
-    fhirServerVersion: 'stu3' | 'r4' | 'r5',
-    user: ITofUser,
-    body?,
-    applyContextPermissions = false): Promise<ProxyResponse> {
+
+   public async proxy(
+   url: string,
+   headers: { [key: string]: any },
+   method: string,
+   fhirServerBase: string,
+   fhirServerVersion: 'stu3' | 'r4' | 'r5',
+   user: ITofUser,
+   body?,
+   applyContextPermissions = false): Promise<ProxyResponse> {
 
     const shouldRemovePermissions = headers['shouldremovepermissions'] ? headers['shouldremovepermissions'].toLowerCase() === 'true' : true;
 
@@ -542,7 +415,7 @@ Constraint
       }
     }
   }
-
+   */
   /**
    * Process a Bundle[type='batch'] of resources
    * @param bundle The bundle to process
@@ -553,7 +426,7 @@ Constraint
    * @param shouldRemovePermissions Indicates if permissions should be removed from resources in the batch if the original resource has permissions that aren't in the request
    * @param applyContextPermissions Indicates if created/updated resources should apply permissions from the context implementation guide
    */
-  private async processBatch(
+  /*private async processBatch(
     bundle: Bundle,
     fhirServerBase: string,
     fhirServerVersion: 'stu3' | 'r4' | 'r5',
@@ -630,7 +503,7 @@ Constraint
     });
 
     return responseBundle;
-  }
+  }*/
 
   /**
    * Processes an individual entry in the batch.
@@ -643,7 +516,7 @@ Constraint
    * @param shouldRemovePermissions Indicates if permissions should be removed as part of this batch process. Some scenarios (such as importing) don't want permissions removed.
    * @param applyContextPermissions Indicates if created/updated resources should apply permissions from the context implementation guide
    */
-  private async processBatchEntry(
+  /*private async processBatchEntry(
     entry: EntryComponent,
     fhirServerBase: string,
     fhirServerVersion: 'stu3' | 'r4' | 'r5',
@@ -785,7 +658,7 @@ Constraint
     createAuditEvent(this.logger, this.httpService, fhirServerVersion, fhirServerBase, action, userSecurityInfo, batchProcessingResponse.data);
 
     return batchProcessingResponse;
-  }
+  }*/
 
   @Get('dependency')
   public async searchDependency(
@@ -939,19 +812,19 @@ Constraint
     await this.proxyRequest(url, headers, method, fhirServerBase, fhirServerVersion, response, user, body);
   }*/
 
- /* @Post(['/', '*'])
-  public async proxyPostRequest(
-    @RequestUrl() url: string,
-    @Headers() headers: { [key: string]: any },
-    @RequestMethod() method: string,
-    @FhirServerBase() fhirServerBase: string,
-    @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4',
-    @Res() response: Response,
-    @User() user: ITofUser,
-    @Body() body?) {
+  /* @Post(['/', '*'])
+   public async proxyPostRequest(
+     @RequestUrl() url: string,
+     @Headers() headers: { [key: string]: any },
+     @RequestMethod() method: string,
+     @FhirServerBase() fhirServerBase: string,
+     @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4',
+     @Res() response: Response,
+     @User() user: ITofUser,
+     @Body() body?) {
 
-    await this.proxyRequest(url, headers, method, fhirServerBase, fhirServerVersion, response, user, body);
-  }*/
+     await this.proxyRequest(url, headers, method, fhirServerBase, fhirServerVersion, response, user, body);
+   }*/
 
   /*@Delete('*!/!*')
   public async proxyDeleteRequest(
@@ -985,5 +858,8 @@ Constraint
       response.contentType(results.contentType);
     }
     response.send(results.data);
-  }*/
+  }
+  */
 }
+
+
