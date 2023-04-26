@@ -279,8 +279,8 @@ export class CodeableConcept extends Element implements ICodeableConcept {
 }
 
 export class Period extends Element {
-  public start?: Date;
-  public end?: Date;
+  public start?: string;
+  public end?: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -1844,7 +1844,7 @@ export class Binary extends Resource {
 
 export class Signature extends Element {
   public type: Coding[];
-  public when: Date;
+  public when: string;
   public who: Element;
   public onBehalfOf?: Element;
   public contentType?: string;

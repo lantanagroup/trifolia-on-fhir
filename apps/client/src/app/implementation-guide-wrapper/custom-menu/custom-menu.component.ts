@@ -6,6 +6,7 @@ import { ConfigService } from '../../shared/config.service';
 import { ImplementationGuide as STU3ImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { IgPageHelper, PageInfo } from '../../../../../../libs/tof-lib/src/lib/ig-page-helper';
 import { ImplementationGuide as R4ImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { ImplementationGuide as R5ImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -50,8 +51,15 @@ export class CustomMenuComponent implements OnInit, OnChanges {
     } else if (this.configService.isFhirR4) {
       const r4ImplementationGuide = <R4ImplementationGuide> this.implementationGuide;
       if (r4ImplementationGuide.definition) {
-        pageInfos = IgPageHelper.getR4PagesList([], r4ImplementationGuide.definition.page, r4ImplementationGuide);
+        pageInfos = IgPageHelper.getR4andR5PagesList([], r4ImplementationGuide.definition.page, r4ImplementationGuide);
       }
+    } else if (this.configService.isFhirR5) {
+      const r5ImplementationGuide = <R5ImplementationGuide> this.implementationGuide;
+      if (r5ImplementationGuide.definition) {
+        pageInfos = IgPageHelper.getR4andR5PagesList([], r5ImplementationGuide.definition.page, r5ImplementationGuide);
+      }
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
     }
 
     this.customMenuValue = IgPageHelper.getMenuContent(pageInfos);

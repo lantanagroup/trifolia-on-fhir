@@ -6,6 +6,7 @@ import {generateId, getJiraSpecValue, setJiraSpecValue} from '../../../../../../
 import {js2xml, xml2js} from 'xml-js';
 import * as vkbeautify from 'vkbeautify';
 import {ConfigService} from '../../shared/config.service';
+import {ImplementationGuide as R5ImplementationGuide, ImplementationGuideDefinitionPage} from '../../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ImplementationGuide as STU3ImplementationGuide, PageComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {saveAs} from 'file-saver';
@@ -28,7 +29,7 @@ export class JiraSpecComponent implements OnInit, OnChanges {
   public valueChanged = new EventEmitter();
   public value: string;
 
-  constructor(private configSerivce: ConfigService) {
+  constructor(private configService: ConfigService) {
     this.valueChanged
       .subscribe(() => {
         this.updateJiraSpecValue();
@@ -78,26 +79,27 @@ export class JiraSpecComponent implements OnInit, OnChanges {
     return artifacts;
   }
 
-  private getR4Artifacts(): JiraSpecDef[] {
-    const ig = <R4ImplementationGuide> this.implementationGuide;
+  private getR4andR5Artifacts(): JiraSpecDef[] {
+    const ig = <R4ImplementationGuide|R5ImplementationGuide> this.implementationGuide;
 
     if (!ig || !ig.definition) return [];
 
-    return (ig.definition.resource || [])
-      .filter(resource => {
-        if (!resource.reference || !resource.reference.reference) return false;
-        const parsedRef = parseReference(resource.reference.reference);
-        const isMediaForIG = parsedRef.resourceType === 'Media' && !resource.exampleBoolean && !resource.exampleCanonical;
-        return !isMediaForIG;
-      })
-      .map(resource => {
-        const parsedRef = parseReference(resource.reference.reference);
-        return <JiraSpecDef> {
-          name: resource.name,
-          key: `${parsedRef.resourceType}-${parsedRef.id}`,
-          id: `${parsedRef.resourceType}/${parsedRef.id}`
-        };
-      });
+    const jiraSpecDefs = [];
+
+    for (const resource of ig.definition.resource) {
+      if (!resource.reference || !resource.reference.reference) continue;
+      const parsedRef = parseReference(resource.reference.reference);
+      const isMediaForIG = parsedRef.resourceType === 'Media' && !resource.exampleBoolean && !resource.exampleCanonical;
+      if (!!isMediaForIG) continue;
+      const jiraSpecDef: JiraSpecDef = {
+        name: resource.name,
+        key: `${parsedRef.resourceType}-${parsedRef.id}`,
+        id: `${parsedRef.resourceType}/${parsedRef.id}`
+      };
+      jiraSpecDefs.push(jiraSpecDef);
+    }
+
+    return jiraSpecDefs;
   }
 
   private getSTU3Pages(): JiraSpecDef[] {
@@ -127,11 +129,11 @@ export class JiraSpecComponent implements OnInit, OnChanges {
     return pageDefs;
   }
 
-  private getR4Pages(): JiraSpecDef[] {
+  private getR4andR5Pages(): JiraSpecDef[] {
     const pageDefs: JiraSpecDef[] = [];
-    const r4IG = <R4ImplementationGuide> this.implementationGuide;
+    const ig = <R4ImplementationGuide | R5ImplementationGuide> this.implementationGuide;
 
-    const nextPage = (page: ImplementationGuidePageComponent) => {
+    const nextPage = (page: ImplementationGuidePageComponent | ImplementationGuideDefinitionPage) => {
       pageDefs.push({
         name: page.title,
         key: JiraSpecComponent.getKey(page.fileName)
@@ -140,16 +142,17 @@ export class JiraSpecComponent implements OnInit, OnChanges {
       (page.page || []).forEach(p => nextPage(p));
     };
 
-    if (r4IG.definition && r4IG.definition.page) {
+    if (ig.definition && ig.definition.page) {
       pageDefs.push({
-        name: r4IG.definition.page.title,
+        name: ig.definition.page.title,
         key: 'index'
       });
 
-      (r4IG.definition.page.page || [])
-        .map(p => new ImplementationGuidePageComponent(p))    // Make sure we're using the class model with the extra functionality
-        .filter(p => !!p.fileName)
-        .forEach(p => nextPage(p));
+      for (const p of ig.definition.page.page || []) {
+        const page = this.configService.isFhirR4 ? new ImplementationGuidePageComponent(p) : new ImplementationGuideDefinitionPage(p);
+        if (!page.fileName) continue;
+        nextPage(page);
+      }
     }
 
     return pageDefs;
@@ -226,14 +229,17 @@ export class JiraSpecComponent implements OnInit, OnChanges {
     let jiraSpecArtifacts: JiraSpecDef[];
     let jiraSpecPages: JiraSpecDef[];
 
-    if (this.configSerivce.isFhirR4) {
-      jiraSpecArtifacts = this.getR4Artifacts();
-      jiraSpecPages = this.getR4Pages();
-    } else if (this.configSerivce.isFhirSTU3) {
+    if (this.configService.isFhirR5) {
+      jiraSpecArtifacts = this.getR4andR5Artifacts();
+      jiraSpecPages = this.getR4andR5Pages();
+    } if (this.configService.isFhirR4) {
+      jiraSpecArtifacts = this.getR4andR5Artifacts();
+      jiraSpecPages = this.getR4andR5Pages();
+    } else if (this.configService.isFhirSTU3) {
       jiraSpecArtifacts = this.getSTU3Artifacts();
       jiraSpecPages = this.getSTU3Pages();
     } else {
-      throw new Error('Unexpected FHIR server version!');
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
     }
 
     // Artifacts

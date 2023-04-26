@@ -4,6 +4,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Router} from '@angular/router';
 import {ConfigService} from '../../shared/config.service';
 import {FhirService} from '../../shared/fhir.service';
+import {StructureDefinition as R5StructureDefinition} from '../../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {StructureDefinition as R4StructureDefinition} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {StructureDefinition as STU3StructureDefinition} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
@@ -21,7 +22,7 @@ export class CopyProfileModalComponent implements OnInit {
   public name: string;
   public url: string;
   public autoUrl = true;
-  public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
+  public structureDefinition: STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition;
   public Globals = Globals;
 
   @Input() originalID: string;

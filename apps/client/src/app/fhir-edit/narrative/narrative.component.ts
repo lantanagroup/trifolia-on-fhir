@@ -5,6 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuide as STU3ImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ImplementationGuide as R4ImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuide as R5ImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {AngularEditorConfig} from '@kolkov/angular-editor';
 
 interface ResourceView {
@@ -142,8 +143,14 @@ export class NarrativeComponent implements OnInit {
   }
 
   private populateImplementationGuideView(view: ImplementationGuideView, resource: any) {
+    const r5ImplementationGuide = this.configService.isFhirR5 ? <R5ImplementationGuide>resource : undefined;
     const r4ImplementationGuide = this.configService.isFhirR4 ? <R4ImplementationGuide>resource : undefined;
     const stu3ImplementationGuide = this.configService.isFhirSTU3 ? <STU3ImplementationGuide>resource : undefined;
+
+    if (!this.configService.isFhirR5 && !this.configService.isFhirR4 && !this.configService.isFhirSTU3) {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+    }
+    
     const getPages = (parent) => {
       if (parent.page) {
         view.pages = <any>view.pages.concat(parent.page);
@@ -180,6 +187,24 @@ export class NarrativeComponent implements OnInit {
         if (r4ImplementationGuide.definition.resource && r4ImplementationGuide.definition.resource.length > 0) {
           view.hasResources = true;
           view.resources = <any> (r4ImplementationGuide.definition.resource || []).map((next) => {
+            return {
+              reference: next.reference ? next.reference.reference : undefined,
+              display: next.name ? next.name : (next.reference ? next.reference.display : undefined)
+            };
+          });
+        }
+      }
+    } else if (r5ImplementationGuide) {
+      if (r5ImplementationGuide.definition) {
+        if (r5ImplementationGuide.definition.page) {
+          view.hasPages = true;
+          view.pages = [r5ImplementationGuide.definition.page];
+          getPages(r5ImplementationGuide.definition.page);
+        }
+
+        if (r5ImplementationGuide.definition.resource && r5ImplementationGuide.definition.resource.length > 0) {
+          view.hasResources = true;
+          view.resources = <any> (r5ImplementationGuide.definition.resource || []).map((next) => {
             return {
               reference: next.reference ? next.reference.reference : undefined,
               display: next.name ? next.name : (next.reference ? next.reference.display : undefined)

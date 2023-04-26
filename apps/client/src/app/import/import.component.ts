@@ -15,6 +15,7 @@ import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { ConfigService } from '../shared/config.service';
 import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { Media as R5Media } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { IDomainResource } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
 
@@ -113,8 +114,8 @@ export class ImportComponent implements OnInit {
         data: b64content
       };
       return media;
-    } else if (this.configService.isFhirR4) {
-      const media = new R4Media();
+    } else if (this.configService.isFhirR4 || this.configService.isFhirR5) {
+      const media = this.configService.isFhirR4 ? new R4Media() : new R5Media();
       media.id = name
         .substring(0, name.lastIndexOf('.'))
         .replace(/[^a-z0-9_]/gi, '')
@@ -129,7 +130,7 @@ export class ImportComponent implements OnInit {
       };
       return media;
     } else {
-      throw new Error('Can\'t create media. Unexpected FHIR server version');
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
     }
   }
 

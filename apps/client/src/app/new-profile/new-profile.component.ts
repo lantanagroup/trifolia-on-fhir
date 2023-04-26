@@ -3,6 +3,7 @@ import {StructureDefinitionService} from '../shared/structure-definition.service
 import { ActivatedRoute, Router } from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../shared/fhir.service';
+import {StructureDefinition as R5StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {ImplementationGuide, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
   StructureDefinition as R4StructureDefinition,
@@ -19,14 +20,12 @@ import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logica
 import { PublishingRequestModel } from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 
-
-
 @Component({
   templateUrl: './new-profile.component.html',
   styleUrls: ['./new-profile.component.css']
 })
 export class NewProfileComponent extends BaseComponent implements OnInit {
-  public structureDefinition: STU3StructureDefinition | R4StructureDefinition;
+  public structureDefinition: STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition;
   public message: string;
   public Globals = Globals;
   public selectedType: ILogicalTypeDefinition;
@@ -49,9 +48,13 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
 
     super(configService, authService);
 
-    this.structureDefinition = this.configService.isFhirR4 ?
-      new R4StructureDefinition({ meta: this.authService.getDefaultMeta() }) :
-      new STU3StructureDefinition({meta: this.authService.getDefaultMeta()});
+    if (this.configService.isFhirR5) {
+      this.structureDefinition = new R5StructureDefinition({ meta: this.authService.getDefaultMeta() });
+    } else if (this.configService.isFhirR4) {
+      this.structureDefinition = new R4StructureDefinition({ meta: this.authService.getDefaultMeta() });
+    } else if (this.configService.isFhirSTU3) {
+      this.structureDefinition = new STU3StructureDefinition({meta: this.authService.getDefaultMeta()});
+    }
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {

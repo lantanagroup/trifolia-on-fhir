@@ -105,7 +105,11 @@ export class BaseController {
       throw ex;
     }
 
-    if (bundle.total === 0) {
+    if (!bundle.entry) {
+      throw new InternalServerErrorException('Expected to receive entries when searching for currently logged-in user within FHIR server');
+    }
+
+    if (bundle.entry.length === 0) {
       if (!resolveIfNotFound) {
         throw new BadRequestException('No practitioner was found associated with the authenticated user');
       } else {
@@ -113,11 +117,7 @@ export class BaseController {
       }
     }
 
-    if (!bundle.entry) {
-      throw new InternalServerErrorException('Expected to receive entries when searching for currently logged-in user within FHIR server');
-    }
-
-    if (bundle.total > 1) {
+    if (bundle.entry.length > 1) {
       new TofLogger('security.helper').error(`Expected a single Practitioner resource to be found with identifier ${system}|${identifier}`);
       throw new InternalServerErrorException();
     }

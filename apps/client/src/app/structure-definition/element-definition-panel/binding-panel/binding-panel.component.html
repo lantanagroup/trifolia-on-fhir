@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <div class="form-group" *ngIf="configService.isFhirR4">
+    <div class="form-group" *ngIf="configService.isFhirR4 || configService.isFhirR5">
       <label>
         Value Set
         <app-tooltip-icon tooltipPath="ElementDefinition.binding.valueSet"></app-tooltip-icon>

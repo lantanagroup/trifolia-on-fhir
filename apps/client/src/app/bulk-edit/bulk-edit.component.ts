@@ -7,6 +7,7 @@ import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Versions} from 'fhir/fhir';
 import {ImplementationGuide as R4ImplementationGuide, StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ImplementationGuide as STU3ImplementationGuide, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide as R5ImplementationGuide, StructureDefinition as R5StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {StructureDefinitionService} from '../shared/structure-definition.service';
 import {BulkUpdateRequest, BulkUpdateRequestProfile} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
@@ -112,8 +113,10 @@ export class BulkEditComponent implements OnInit {
             return new STU3StructureDefinition(e.resource);
           } else if (this.configService.isFhirR4) {
             return new R4StructureDefinition(e.resource);
+          } else if (this.configService.isFhirR5) {
+            return new R5StructureDefinition(e.resource);
           } else {
-            throw new Error('Unexpected FHIR version!');
+            throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
           }
         });
         this.originalProfiles = this.profiles.map(p => {
@@ -121,8 +124,10 @@ export class BulkEditComponent implements OnInit {
             return new STU3StructureDefinition(p);
           } else if (this.configService.isFhirR4) {
             return new R4StructureDefinition(p);
+          } else if (this.configService.isFhirR5) {
+            return new R5StructureDefinition(p);
           } else {
-            throw new Error('Unexpected FHIR version!');
+            throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
           }
         });
       }
@@ -157,7 +162,12 @@ export class BulkEditComponent implements OnInit {
     };
 
     try {
-      if (this.configService.isFhirR4) {
+      if (this.configService.isFhirR5) {
+        const originalIg = <R5ImplementationGuide> this.originalImplementationGuide;
+        const ig = <R5ImplementationGuide> this.implementationGuide;
+        bulkUpdateRequest.page = ig.definition.page;
+        bulkUpdateRequest.pageOp = getOp(originalIg.definition ? originalIg.definition.page : undefined, ig.definition ? ig.definition.page : undefined);
+      } else if (this.configService.isFhirR4) {
         const originalIg = <R4ImplementationGuide> this.originalImplementationGuide;
         const ig = <R4ImplementationGuide> this.implementationGuide;
         bulkUpdateRequest.page = ig.definition.page;
@@ -168,7 +178,7 @@ export class BulkEditComponent implements OnInit {
         bulkUpdateRequest.page = ig.page;
         bulkUpdateRequest.pageOp = getOp(originalIg.page, ig.page);
       } else {
-        throw new Error('Unexpected FHIR version');
+        throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
       }
 
       bulkUpdateRequest.profiles = this.profiles

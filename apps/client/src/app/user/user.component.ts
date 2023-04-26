@@ -86,7 +86,7 @@ export class UserComponent implements OnInit {
         url: Globals.extensionUrls['extension-group-manager'],
         valueBoolean: true
       }]
-    } else if (this.configService.isFhirR4) {
+    } else if (this.configService.isFhirR4 || this.configService.isFhirR5) {
       this.editGroup.managingEntity = meReference;
     }
 
@@ -119,6 +119,8 @@ export class UserComponent implements OnInit {
         groupAdmin = foundMemberAdmin.entity.reference;
       }
     } else if (this.configService.isFhirR4 && group.managingEntity) {
+      groupAdmin = group.managingEntity.reference;
+    } else if (this.configService.isFhirR5 && group.managingEntity) {
       groupAdmin = group.managingEntity.reference;
     }
 
