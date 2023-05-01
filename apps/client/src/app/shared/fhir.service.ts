@@ -92,6 +92,13 @@ export class FhirService {
       return ['instant', 'time', 'date', 'dateTime', 'base64Binary', 'decimal',
         'boolean', 'url', 'code', 'string', 'integer', 'uri', 'canonical', 'markdown',
         'id', 'oid', 'uuid', 'unsignedInt', 'positiveInt', 'Element'];
+    } else if (this.configService.isFhirR5) {
+      return ['instant','time','date','dateTime','base64Binary', 'decimal',
+        'integer64', 'boolean', 'url', 'code', 'string', 'integer', 'uri',
+        'canonical', 'markdown', 'id', 'oid', 'uuid', 'unsignedInt',
+      'positiveInt'];
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
   }
 
@@ -99,22 +106,39 @@ export class FhirService {
     if (this.configService.isFhirSTU3) {
       return ['Address', 'Age', 'Ratio', 'Period', 'Range', 'Attachment',
         'Identifier', 'Timing', 'HumanName', 'Coding', 'Annotation',
-        'Signature', 'CodeableConcept', 'Quantity', 'SampledData', 'ContactPoint',
-        'Distance', 'SimpleQuantity', 'Duration', 'Count', 'Money', 'instant',
-        'time', 'date', 'dateTime', 'base64Binary', 'decimal', 'boolean', 'code',
-        'string', 'integer', 'uri', 'markdown', 'id', 'oid', 'unsignedInt',
-        'positiveInt', 'Element'];
+        'Signature', 'CodeableConcept', 'Quantity', 'SampledData',
+        'ContactPoint', 'Distance', 'SimpleQuantity', 'Duration', 'Count',
+        'Money', 'instant', 'time', 'date', 'dateTime', 'base64Binary',
+        'decimal', 'boolean', 'code', 'string', 'integer', 'uri', 'markdown',
+        'id', 'oid', 'unsignedInt', 'positiveInt', 'Element'];
     } else if (this.configService.isFhirR4) {
-      return [ 'Ratio', 'Period', 'Range', 'Attachment', 'Identifier', 'Annotation',
-        'HumanName', 'CodeableConcept', 'ContactPoint', 'Coding', 'Money', 'Address',
-        'Timing', 'BackboneElement', 'Quantity', 'SampledData', 'Signature', 'Age',
-        'Distance', 'Duration', 'Count', 'MoneyQuantity', 'SimpleQuantity',
-        'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact',
-        'UsageContext', 'ParameterDefinition', 'Expression', 'TriggerDefinition',
-        'Reference', 'Meta', 'Dosage', 'xhtml', 'Narrative', 'Extension', 'ElementDefinition',
-        'instant', 'time', 'date', 'dateTime', 'base64Binary', 'decimal',
-        'boolean', 'url', 'code', 'string', 'integer', 'uri', 'canonical', 'markdown',
-        'id', 'oid', 'uuid', 'unsignedInt', 'positiveInt', 'Element'];
+      return ['Ratio', 'Period', 'Range', 'Attachment', 'Identifier',
+        'Annotation', 'HumanName', 'CodeableConcept', 'ContactPoint', 'Coding',
+        'Money', 'Address', 'Timing', 'BackboneElement', 'Quantity',
+        'SampledData', 'Signature', 'Age', 'Distance', 'Duration', 'Count',
+        'MoneyQuantity', 'SimpleQuantity', 'ContactDetail', 'Contributor',
+        'DataRequirement', 'RelatedArtifact', 'UsageContext',
+        'ParameterDefinition', 'Expression', 'TriggerDefinition', 'Reference',
+        'Meta', 'Dosage', 'xhtml', 'Narrative', 'Extension',
+        'ElementDefinition','instant', 'time', 'date', 'dateTime',
+        'base64Binary', 'decimal', 'boolean', 'url', 'code', 'string',
+        'integer', 'uri', 'canonical', 'markdown', 'id', 'oid', 'uuid',
+        'unsignedInt', 'positiveInt', 'Element'];
+    } else if (this.configService.isFhirR5) {
+      return ['instant', 'time', 'date', 'dateTime', 'base64Binary', 'decimal',
+        'integer64', 'boolean', 'url', 'code', 'string', 'integer', 'uri',
+        'canonical', 'markdown', 'id', 'oid', 'uuid', 'unsignedInt',
+        'positiveInt', 'Ratio', 'Period', 'Range', 'RatioRange', 'Attachment',
+        'Identifier', 'Annotation', 'HumanName', 'CodeableConcept',
+        'ContactPoint', 'Coding', 'Address', 'Timing', 'BackboneType',
+        'Quantity', 'SampledData', 'Signature', 'Age', 'Distance', 'Duration',
+        'Count', 'MoneyQuantity', 'SimpleQuantity', 'xhtml', 'ContactDetail',
+        'Contributor', 'DataRequirement', 'RelatedArtifact',
+        'TriggerDefinition', 'ParameterDefinition', 'ExtendedContactDetail',
+        'Availability', 'Expression', 'UsageContext', 'MonetaryComponent',
+        'VisualServiceDetail'];
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
   }
 

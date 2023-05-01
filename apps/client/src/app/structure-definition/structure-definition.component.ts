@@ -26,6 +26,10 @@ import {
   ElementDefinitionTypeRefComponent, ImplementationGuide,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {
+  ElementDefinition as R5ElementDefinition,
+  StructureDefinition as R5StructureDefinition
+} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { RecentItemService } from '../shared/recent-item.service';
 import { FhirService } from '../shared/fhir.service';
 import { FileService } from '../shared/file.service';
@@ -57,7 +61,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     'Reference', 'Meta', 'Dosage', 'Narrative', 'Extension', 'ElementDefinition', 'ContactDetail', 'Contributor', 'DataRequirement', 'RelatedArtifact', 'UsageContext',
     'ParameterDefinition', 'Expression', 'TriggerDefinition'];
 
-  @Input() public structureDefinition;
+  @Input() public structureDefinition: STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition;
   public conformance;
   public sdId;
   public baseStructureDefinition;
@@ -129,7 +133,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public toggleMappings() {
     if (this.structureDefinition.mapping) {
       if (this.structureDefinition.mapping.length > 0) {
-        const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+        const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.structureDefinition.differential.element;
         const foundElementsWithMappings = elements.filter(e => e.mapping && e.mapping.length > 0);
 
         if (foundElementsWithMappings.length > 0) {
@@ -192,6 +196,10 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       this.constraintManager = new ConstraintManager(STU3ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
     } else if (this.configService.isFhirR4) {
       this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else if (this.configService.isFhirR5) {
+      this.constraintManager = new ConstraintManager(R5ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
 
 
@@ -224,10 +232,14 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       const sdr = <StructureDefinition>this.conformance.resource;
       delete sdr.snapshot;
 
-      if (this.configService.fhirVersion === Versions.R4.toString()) {
+      if (this.configService.isFhirR5) {
+        this.structureDefinition = new R5StructureDefinition(sdr);
+      } else if (this.configService.isFhirR4) {
         this.structureDefinition = new R4StructureDefinition(sdr);
-      } else {
+      } else if (this.configService.isFhirSTU3) {
         this.structureDefinition = new STU3StructureDefinition(sdr);
+      } else {
+        throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
       }
 
    //   this.conformance =  { resource: this.structureDefinition, fhirVersion: <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
@@ -247,7 +259,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.nameChanged();
 
     if (this.structureDefinition.differential.element.length === 0) {
-      const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+      const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.structureDefinition.differential.element;
       elements.push({
         id: this.structureDefinition.type,
         path: this.structureDefinition.type
@@ -273,7 +285,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    const elements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.structureDefinition.differential.element;
+    const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.structureDefinition.differential.element;
     const found = (elements || []).filter((element) => {
       return element.id.indexOf(elementTreeModel.id + ':') === 0;
     });
@@ -308,14 +320,14 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    await this.strucDefService.save(this.sdId, this.structureDefinition)
+    await this.strucDefService.save(this.sdId, this.conformance)
       .subscribe((conf) => {
         if (!this.structureDefinition.id) {
           // noinspection JSIgnoredPromiseFromCall
           this.sdId = conf.id;
           this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${this.sdId}`]);
         } else {
-          let updatedStructureDefinition = <STU3StructureDefinition | R4StructureDefinition>conf.resource;
+          let updatedStructureDefinition = <STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>conf.resource;
           this.structureDefinition.snapshot = updatedStructureDefinition.snapshot;
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, updatedStructureDefinition.id, updatedStructureDefinition.name);
           this.message = 'Your changes have been saved!';
@@ -424,8 +436,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     if((<STU3ElementDefinition> element).binding && (<STU3ElementDefinition> element).binding.valueSetUri){
       checkBinding = (<STU3ElementDefinition> element).binding.valueSetUri.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
     }
-    else if((<R4ElementDefinition> element).binding && (<R4ElementDefinition> element).binding.valueSet){
-      checkBinding = (<R4ElementDefinition> element).binding.valueSet.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
+    else if((<R4ElementDefinition | R5ElementDefinition> element).binding && (<R4ElementDefinition | R5ElementDefinition> element).binding.valueSet){
+      checkBinding = (<R4ElementDefinition | R5ElementDefinition> element).binding.valueSet.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
     }
     if (checkBinding) return true;
 
@@ -469,7 +481,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     });
 
     if (!found) {
-      const baseStructDefElements = <(STU3ElementDefinition | R4ElementDefinition)[]> this.baseStructureDefinition.snapshot.element;
+      const baseStructDefElements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.baseStructureDefinition.snapshot.element;
       found = baseStructDefElements.find((element) => {
         return this.checkForMatchingElement(element);
       });

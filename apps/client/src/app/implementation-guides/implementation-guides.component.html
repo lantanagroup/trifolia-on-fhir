@@ -43,7 +43,7 @@
       <app-tooltip-icon tooltipPath="Resource.id"></app-tooltip-icon>
     </th>
     <th>Name</th>
-    <th *ngIf="configService.isFhirR4">Title</th>
+    <th *ngIf="configService.isFhirR4 || configService.isFhirR5">Title</th>
     <th>Successful Build</th>
     <th class="actions-column-1">&nbsp;</th>
   </tr>
@@ -52,7 +52,7 @@
   <tr *ngFor="let ig of implementationGuides">
     <td>{{ig.data.ig.id}}</td>
     <td>{{ig.data.ig.name}}</td>
-    <td *ngIf="configService.isFhirR4">{{ig.data.ig.title}}</td>
+    <td *ngIf="configService.isFhirR4 || configService.isFhirR5">{{ig.data.ig.title}}</td>
     <td>
       <i *ngIf="ig.published === true" class="fas fa-check" style="color:green" title="Success"></i>
       <i *ngIf="ig.published === false" class="fas fa-times" style="color:red" title="Failed"></i>

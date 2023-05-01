@@ -5,6 +5,7 @@ import {Bundle, StructureDefinition as STU3StructureDefinition} from '../../../.
 import {FhirService} from './fhir.service';
 import {FileService} from './file.service';
 import {StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {StructureDefinition as R5StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
 import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
 import {IConformance} from '@trifolia-fhir/models';
@@ -70,8 +71,8 @@ export class StructureDefinitionService {
   public getStructureDefinition(id: string): Observable<IConformance> {
     /*if (id === 'from-file') {
       if (this.fileService.file) {
-        return new Observable<STU3StructureDefinition | R4StructureDefinition>((observer) => {
-          observer.next(<STU3StructureDefinition | R4StructureDefinition> this.fileService.file.resource);
+        return new Observable<STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>((observer) => {
+          observer.next(<STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition> this.fileService.file.resource);
         });
       }
     }

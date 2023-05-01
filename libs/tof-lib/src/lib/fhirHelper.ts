@@ -6,6 +6,7 @@ import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhir
 import {Globals} from './globals';
 
 export function identifyRelease(fhirVersion: string): Versions {
+  const modFhirVersion = fhirVersion ? fhirVersion.replace('-ballot', '') : fhirVersion;
   if (!fhirVersion) {
     return Versions.R4;
   } else if (fhirVersion == Versions.R4.toLowerCase()) {

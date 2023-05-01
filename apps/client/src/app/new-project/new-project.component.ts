@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import { ICodeableConcept, ICoding, IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { ImplementationGuide, ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { ImplementationGuide as R5ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { FhirService } from '../shared/fhir.service';
 import { ConfigService } from '../shared/config.service';
 import { Extension as STU3Extension, ImplementationGuide as STU3ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -61,7 +62,9 @@ export class NewProjectComponent implements OnInit {
     publishingRequest['ci-build'] = 'http://build.fhir.org/ig/';
     publishingRequest.introduction = 'New IG: ' + this.igTitle;
 
-   /* if (this.configService.isFhirR4) {
+   /* if (this.configService.isFhirR5) {
+      ig = new R5ImplementationGuide();
+    } else if (this.configService.isFhirR4) {
       ig = new R4ImplementationGuide();
       fhirVersion = 'r4';
     } else if (this.configService.isFhirSTU3) {
@@ -71,24 +74,15 @@ export class NewProjectComponent implements OnInit {
       throw new Error('Unexpected FHIR version');
     }*/
 
-    if (this.fhirVersion == 'r4') {
+    if (this.fhirVersion == 'r4' || this.fhirVersion === 'r5') {
       ig = new R4ImplementationGuide();
       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
     } else if (this.fhirVersion == 'stu3') {
       ig = new STU3ImplementationGuide();
       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/jurisdiction');
     } else {
-      throw new Error('Unexpected FHIR version');
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
-
-    this.jurisdictionCodes.splice(0, 0, {
-      system: 'http://unstats.un.org/unsd/methods/m49/m49.htm',
-      code: 'UV',
-      display: 'Universal'
-    });
-
-    //let jurisdictionCode: ICoding;
-    this.selectedJurisdiction = this.jurisdictionCodes.find(jc => jc.code.toLowerCase() === 'us');
 
     this.igId = this.projectCode.replace(/\./g, '-');
     ig.url = this.igUrl;
@@ -106,7 +100,15 @@ export class NewProjectComponent implements OnInit {
 
     const jusrisdiction = this.selectedJurisdiction ? [{ coding: [this.selectedJurisdiction] }] : this.selectedJurisdiction;
     // Create the implementation guide based on the FHIR server we're connected to
-    if (this.fhirVersion == 'r4') {
+    if (this.configService.isFhirR5) {
+      if (this.isHL7) {
+        //no option for Family, Project Code, Canonical URL in R4 IG Class
+        // TODO: set id to <project-code-with-dashes-instead-of-dots>
+        (<R5ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+        (<R5ImplementationGuide>ig).packageId = this.packageId;
+        (<R5ImplementationGuide>ig).title = this.igTitle;
+      }
+    } else if (this.configService.isFhirR4) {
       if (this.isHL7) {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
@@ -124,6 +126,8 @@ export class NewProjectComponent implements OnInit {
         ig.extension = ig.extension || [];
         ig.extension.push(packageIdExt);
       }
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
     let projectName = ig.name;
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirVersion));
@@ -225,7 +229,7 @@ export class NewProjectComponent implements OnInit {
   }
   */
   ngOnInit() {
-    if (this.configService.isFhirR4) {
+    if (this.configService.isFhirR4 || this.configService.isFhirR5) {
       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
     } else if (this.configService.isFhirSTU3) {
       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/jurisdiction');

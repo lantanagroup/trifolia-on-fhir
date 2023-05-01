@@ -228,6 +228,9 @@ export class ElementDefinitionPanelComponent implements OnInit {
       modalRef = this.modalService.open(STU3TypeModalComponent, { size: 'lg', backdrop: 'static' });
     } else if (this.configService.isFhirR4) {
       modalRef = this.modalService.open(R4TypeModalComponent, { size: 'lg', backdrop: 'static' });
+    } else if (this.configService.isFhirR5) {
+      // TODO: isFhirR5
+      throw new Error('Unexpected FHIR version. Cannot open "type" modal popup.');
     } else {
       throw new Error('Unexpected FHIR version. Cannot open "type" modal popup.');
     }
