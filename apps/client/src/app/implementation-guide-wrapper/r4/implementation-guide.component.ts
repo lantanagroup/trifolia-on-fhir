@@ -938,7 +938,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   ngOnInit() {
     console.log('R4ImplementationGuideComponent::ngOnInit', this.route.snapshot.paramMap.get('implementationGuideId'));
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
-    //this.getImplementationGuide();
+    this.getImplementationGuide();
 
     // Watch the route parameters to see if the id of the implementation guide changes. Reload if it does.
     this.route.params.subscribe((params) => {
