@@ -51,9 +51,9 @@ class PageDefinition {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class R4ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
-  public conformance;
+  public conformance: IConformance;
   public resourceMap: IProjectResourceReferenceMap = {};
-  public implementationGuide;
+  public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
   public pages: PageDefinition[];
@@ -87,8 +87,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     super(configService, authService);
 
     this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
-
-    this.conformance =  { resource: this.implementationGuide, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.igChanging.subscribe((value) => {
       this.isDirty = value;
@@ -884,11 +882,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         next: (conf: IConformance) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
-            this.implementationGuide = conf.resource;
+            this.implementationGuide = <ImplementationGuide>conf.resource;
             this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
           } else {
             this.conformance = conf;
-            this.implementationGuide = conf.resource;
+            this.implementationGuide = <ImplementationGuide>conf.resource;
             this.message = 'Your changes have been saved!';
             this.igChanging.emit(false);
             setTimeout(() => {
@@ -938,8 +936,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   ngOnInit() {
+    console.log('R4ImplementationGuideComponent::ngOnInit', this.route.snapshot.paramMap.get('implementationGuideId'));
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
-    this.getImplementationGuide();
+    //this.getImplementationGuide();
 
     // Watch the route parameters to see if the id of the implementation guide changes. Reload if it does.
     this.route.params.subscribe((params) => {
@@ -947,7 +946,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         this.implementationGuideId = params.implementationGuideId;
       }
       if (params.implementationGuideId && this.implementationGuideId && params.implementationGuideId !== this.implementationGuideId) {
-        this.implementationGuideId = params.implementationGuideId
+        console.log('R4ImplementationGuideComponent::getImplementationGuide');
+        this.implementationGuideId = params.implementationGuideId;
         this.getImplementationGuide();
       }
     });

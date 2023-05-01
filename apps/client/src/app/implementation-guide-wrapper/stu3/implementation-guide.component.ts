@@ -131,8 +131,6 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
     this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
 
-    this.conformance =  { resource: this.implementationGuide, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
-
     this.igChanging.subscribe((value) => {
       this.isDirty = value;
       this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`, this.isDirty);
