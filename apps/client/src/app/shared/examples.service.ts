@@ -15,12 +15,12 @@ export class ExamplesService {
 
 
     public getEmpty(): Observable<IExample> {
-        const url = '/api/example/empty'
+        const url = '/api/examples/empty'
         return this.http.get<IExample>(url);
     }
 
     public get(id: string): Observable<IExample> {
-        const url = '/api/example/' + encodeURIComponent(id);
+        const url = '/api/examples/' + encodeURIComponent(id);
         return this.http.get<IExample>(url);
     }
 
@@ -51,12 +51,13 @@ export class ExamplesService {
     }
 
 
-    public save(exampleId: string, example: IExample): Observable<IExample> {
+    public save(exampleId: string, example: IExample, implementationGuideId?: string): Observable<IExample> {
         if (exampleId) {
-            const url = '/api/example/' + encodeURIComponent(exampleId);
+            const url = `/api/examples/${encodeURIComponent(exampleId)}${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
             return this.http.put<IExample>(url, example);
         } else {
-            return this.http.post<IExample>('/api/example', example);
+            const url = `/api/examples/${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
+            return this.http.post<IExample>(url, example);
         }
     }
     

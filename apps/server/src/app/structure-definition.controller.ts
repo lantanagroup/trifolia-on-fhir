@@ -37,7 +37,7 @@ export class StructureDefinitionController extends ConformanceController  {
   constructor(protected authService: AuthService,  protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
 
     super(conformanceService);
-    this.fhirController = new FhirController(this.httpService, this.configService, this.conformanceService);
+    this.fhirController = new FhirController(authService, this.httpService, this.conformanceService, this.configService);
   }
 
 

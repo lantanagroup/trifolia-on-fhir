@@ -234,7 +234,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
     let profiles = [];
 
     (ig.references || []).forEach((r: IProjectResourceReference) => {
-      if (typeof r.value === typeof {}) {
+      if (r.value && typeof r.value === typeof {}) {
         if ('resource' in <any>r.value ) {
           if (r.value['resource'].resourceType === 'StructureDefinition') {
             profiles.push(r.value['resource']);

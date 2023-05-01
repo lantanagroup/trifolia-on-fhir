@@ -1,31 +1,31 @@
-import {ParseConformance} from 'fhir/parseConformance';
-import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
+import { ParseConformance } from 'fhir/parseConformance';
+import { Fhir, Versions as FhirVersions } from 'fhir/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import JSZip from 'jszip';
-import {HttpService} from '@nestjs/axios';
-import {BadRequestException, Logger, UnauthorizedException} from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { BadRequestException, Logger, UnauthorizedException } from '@nestjs/common';
 import {
   AuditEvent as STU3AuditEvent,
   DomainResource as STU3DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
   PackageResourceComponent
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import { buildUrl } from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {
   AuditEvent as R4AuditEvent,
   DomainResource as R4DomainResource, ImplementationGuide,
   ImplementationGuide as R4ImplementationGuide
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {AxiosRequestConfig} from 'axios';
-import {IUserSecurityInfo} from './base.controller';
-import {addPermission, findPermission, getErrorString, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
-import {ConfigService} from './config.service';
-import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {TofLogger} from './tof-logger';
-import {IConformance, IExample, IProjectResourceReference} from '@trifolia-fhir/models';
-import {ConformanceService} from './conformance/conformance.service';
+import { AxiosRequestConfig } from 'axios';
+import { IUserSecurityInfo } from './base.controller';
+import { addPermission, findPermission, getErrorString, parsePermissions } from '../../../../libs/tof-lib/src/lib/helper';
+import { ConfigService } from './config.service';
+import { Globals } from '../../../../libs/tof-lib/src/lib/globals';
+import { IAuditEvent, IDomainResource, IImplementationGuide } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { TofLogger } from './tof-logger';
+import { IConformance, IExample, IProjectResourceReference } from '@trifolia-fhir/models';
+import { ConformanceService } from './conformance/conformance.service';
 
 declare var jasmine;
 
@@ -143,7 +143,7 @@ export const rmdir = (p): Promise<void> => {
 };
 
 export async function createAuditEvent(logger: TofLogger, httpService: HttpService, fhirServerVersion: string,
-                                       fhirServerBase: string, action: string, usi: IUserSecurityInfo, resource: IDomainResource) {
+  fhirServerBase: string, action: string, usi: IUserSecurityInfo, resource: IDomainResource) {
   try {
     let auditEvent: IAuditEvent;
 
@@ -560,23 +560,76 @@ export async function addToImplementationGuide(httpService: HttpService, configS
   return Promise.resolve();
 }
 
-export async function addToImplementationGuideNew(service: ConformanceService, resourceToAdd: IConformance, implementationGuideId: string): Promise<void> {
+export async function addToImplementationGuideNew(service: ConformanceService, resourceToAdd: IConformance | IExample, implementationGuideId: string, isExample: boolean = false): Promise<void> {
 
   // Don't add implementation guides to other implementation guides (or itself).
-  if (resourceToAdd.resource.resourceType == 'ImplementationGuide') {
+  if (!isExample && (<IConformance>resourceToAdd).resource.resourceType == 'ImplementationGuide') {
     return Promise.resolve();
   }
 
   const logger = new Logger('Helper.addToImplementationGuide');
 
-  logger.verbose(`Adding resource ${resourceToAdd.resource.resourceType}/${resourceToAdd.resource.id} to context implementation guide.`);
-
-  let changed = false;
-  const resourceReferenceString = `${resourceToAdd.resource.resourceType}/${resourceToAdd.resource['id'] || resourceToAdd.id}`;
-
   // get the implementationguide
   let implGuideResource = await service.findById(implementationGuideId);
   let implementationGuide = <IImplementationGuide>implGuideResource.resource;
+
+  let changed = false;
+  let resourceReferenceString;
+
+  // const resourceReferenceString = isExample ? 
+  //   `${resourceToAdd.}` :
+  //   `${(<IConformance>resourceToAdd).resource.resourceType}/${(<IConformance>resourceToAdd).resource['id'] || resourceToAdd.id}`;
+
+  // if new resource is not an example treat it as a conformance object
+  if (!isExample) {
+    if ('resource' in resourceToAdd && resourceToAdd.resource) {
+      resourceReferenceString = `${(<IConformance>resourceToAdd).resource.resourceType}/${(<IConformance>resourceToAdd).resource['id'] || resourceToAdd.id}`
+    } else {
+      throw new BadRequestException("Supplied conformance object does not have a valid resource property.");
+    }
+  } else {
+
+    // try to 
+    try {
+
+      let resourceType: string;
+      let resourceId: string;
+
+      // example content is probably a valid fhir resource so try that first
+      if ('content' in resourceToAdd && resourceToAdd.content) {
+        let content = resourceToAdd.content;
+        if (typeof resourceToAdd.content === typeof '') {
+          content = JSON.parse(resourceToAdd.content);
+        }
+        resourceType = content['resourceType'];
+        resourceId = content['id'] || resourceToAdd.id;
+      }
+      // received an object with a resource property set even though this is supposed to be an example type
+      else if ('resource' in resourceToAdd && resourceToAdd.resource) {
+        resourceType = resourceToAdd.resource.resourceType;
+        resourceId = resourceToAdd.resource['id'] || resourceToAdd.id;
+      }
+      // don't know how to process the supplied resource
+      else {
+        throw new BadRequestException();
+      }
+
+      if (!resourceType || !resourceId) {
+        throw new BadRequestException();
+      }
+
+      resourceReferenceString = `${resourceType}/${resourceId}`;
+
+    }
+    // no valid resource supplied
+    catch (e) {
+      throw new BadRequestException("Supplied example does not have a valid content property.");
+    }
+
+  }
+
+
+  logger.verbose(`Adding resource ${resourceReferenceString} to context implementation guide.`);
 
   if (resourceToAdd.fhirVersion !== 'stu3') {        // r4+
     const r4 = <R4ImplementationGuide>implementationGuide;
@@ -615,7 +668,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
             reference: resourceReferenceString,
             display: display
           },
-          exampleBoolean: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0,
+          exampleBoolean: isExample || Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0,
           name: display,
           description: description
         });
@@ -659,7 +712,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
           reference: resourceReferenceString,
           display: display
         },
-        example: Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0
+        example: isExample || Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0
       };
 
       if (stu3.package.length === 0) {
@@ -686,9 +739,15 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   // update the Ig
   if (changed) {
     implGuideResource.references = implGuideResource.references || [];
-    implGuideResource.references.push({ value: resourceToAdd, valueType: 'Conformance' });
+    // add to references if not already in the reference list
+    if (!implGuideResource.references.find((r: IProjectResourceReference) => {
+      if (r.valueType !== (isExample ? 'Example' : 'Conformance')) return false;
+      if (r.value === resourceToAdd.id) return true;
+    })) {
+      implGuideResource.references.push({ value: resourceToAdd, valueType: isExample ? 'Example' : 'Conformance' });
+    }
     let conf = await service.updateOne(implGuideResource.id, implGuideResource);
-    console.log('Conformance ' + conf);
+    //console.log('Conformance ' + conf);
   }
   return Promise.resolve();
 }
@@ -714,7 +773,7 @@ export async function removeFromImplementationGuideNew(service: ConformanceServi
   }
 
   for (const conf of (confRes || [])) {
-    if(conf.resource.resourceType == 'ImplementationGuide') {
+    if (conf.resource.resourceType == 'ImplementationGuide') {
       let ig = <R4ImplementationGuide>conf.resource;
       ig.definition.resource.filter(res => res.reference && res.reference.reference === ref).forEach(res => ig.definition.resource.splice(ig.definition.resource.indexOf(res), 1));
       // remove reference
@@ -727,7 +786,7 @@ export async function removeFromImplementationGuideNew(service: ConformanceServi
   // remove from all version 3 Ig-s that reference it  - later based on permissions
   confRes = <IConformance[]>await service.findAll({ 'resource.package.resource.sourceReference.reference': ref });
   for (const conf of (confRes || [])) {
-    if(conf.resource.resourceType == 'ImplementationGuide') {
+    if (conf.resource.resourceType == 'ImplementationGuide') {
       let ig = <STU3ImplementationGuide>conf.resource;
       ig.package.forEach(pack => pack.resource.filter(res => res.sourceReference && res.sourceReference.reference === ref).forEach(res => pack.resource.splice(pack.resource.indexOf(res), 1)));
       // remove reference

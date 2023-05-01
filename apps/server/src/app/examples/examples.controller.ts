@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
 import type { IExample } from '@trifolia-fhir/models';
@@ -27,13 +27,13 @@ export class ExamplesController extends BaseDataController<ExampleDocument> {
     }
 
     @Post()
-    public async createExample(@User() user: ITofUser, @Body() example: IExample): Promise<IExample> {
-        return await this.examplesService.create(example);
+    public async createExample(@User() user: ITofUser, @Body() example: IExample, @Query('implementationguideid') implementationGuideId?: string): Promise<IExample> {
+        return await this.examplesService.createExample(example, implementationGuideId);
     }
 
     @Put(':id')
-    public async updateExample(@User() user: ITofUser, @Param('id') id: string, @Body() example: IExample): Promise<IExample> {
-        return await this.examplesService.updateOne(id, example);
+    public async updateExample(@User() user: ITofUser, @Param('id') id: string, @Body() example: IExample, @Query('implementationguideid') implementationGuideId?: string): Promise<IExample> {
+        return await this.examplesService.updateExample(id, example, implementationGuideId);
     }
 
     @Delete(':id')

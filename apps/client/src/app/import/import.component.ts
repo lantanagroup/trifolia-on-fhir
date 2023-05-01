@@ -444,7 +444,7 @@ export class ImportComponent implements OnInit {
 
     if (this.textContentIsExample) {
       (<IExample>newResource).content = resource;
-      req = this.examplesService.save(null, <IExample>newResource);
+      req = this.examplesService.save(null, <IExample>newResource, this.implementationGuideId);
     } else {
       (<IConformance>newResource).resource = resource;
       req = this.conformanceService.save(null, <IConformance>newResource, this.implementationGuideId);
@@ -459,7 +459,7 @@ export class ImportComponent implements OnInit {
         this.message = 'Error: ' + getErrorString(err);
       }
     });
-    
+
   }
 
   private importFiles(tabSet: NgbNav) {
@@ -477,14 +477,15 @@ export class ImportComponent implements OnInit {
       // add/update Example type
       if (file.isExample) {
         let example: IExample = <IExample>{ ...file.existingResource };
-        example.content = file.content;
-        requests.push(this.examplesService.save(example.id, example));
+        example.content = file.resource;
+        requests.push(this.examplesService.save(example.id, example, this.implementationGuideId));
       }
 
       // add/update Conformance type
       else {
         let conformance: IConformance = <IConformance>{ ...file.existingResource };
         conformance.resource = file.resource;
+        console.log('conformance:', conformance);
         requests.push(this.conformanceService.save(conformance.id, conformance, this.implementationGuideId));
       }
     }

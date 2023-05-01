@@ -159,7 +159,7 @@ export class HtmlExporter {
   public getControl(bundle: any, format: Formats, template: string, templateVersion: string) {
     const templateVersionInfo = templateVersion ? `#${templateVersion}` : '';
     return '[IG]\n' +
-      `ig = input/${this.implementationGuideId}${HtmlExporter.getExtensionFromFormat(format)}\n` +
+      `ig = input/${this.implementationGuide.id}${HtmlExporter.getExtensionFromFormat(format)}\n` +
       `template = ${template}${templateVersionInfo}\n` +
       'usage-stats-opt-out = false\n';
   }

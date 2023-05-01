@@ -68,7 +68,7 @@ export class ImportController extends BaseController {
       let path = `${e.resourceType}/${e.id}`;
 
       if (e.isExample) {
-        res = await this.exampleService.findOne({});
+        res = await this.exampleService.findById(e.id);
       } else {
         let filter = { 'resource.resourceType': e.resourceType, 'resource.id': e.id };
         if (implementationGuideId) {

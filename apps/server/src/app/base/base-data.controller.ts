@@ -55,7 +55,7 @@ export class BaseDataController<T extends HydratedDocument<BaseEntity>> extends 
 
     @Get(':id')
     public async get(@Param('id') id: string): Promise<T> {
-        console.log('in controller get:', id);
+        //console.log('in controller get:', id);
         let res = await this.dataService.findById(id);
 
         if (!res) {

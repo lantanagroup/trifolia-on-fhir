@@ -72,7 +72,6 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         await this.historyService.create(newHistory);
 
         //Add it to the implementation Guide
-        console.log('adding to ig:', newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId, implementationGuideId);
         if (newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
             await addToImplementationGuideNew(this, newConf, implementationGuideId);
         }
@@ -84,7 +83,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
     public async updateConformance(id: string, upConf: IConformance, implementationGuideId?: string): Promise<IConformance> {
 
         const lastUpdated = new Date();
-        let versionId: number;
+        let versionId: number = 1;
 
         if (upConf.id && upConf.id !== id) {
             throw new BadRequestException();
@@ -275,7 +274,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
         (implementationGuide.references || []).forEach((r: IProjectResourceReference) => {
             let entry = new entryType();
-            if (typeof r.value === typeof {}) {
+            if (r.value && typeof r.value === typeof {}) {
                 if ('resource' in <any>r.value) {
                     entry.resource = r.value['resource'];
                 }

@@ -106,11 +106,9 @@ export class FhirController extends ConformanceController {
     // check if the resource can be changed
     await this.assertCanWriteById(user, conf.id);
 
-    filter = { 'resource.resourceType': 'ImplementationGuide', 'references.value': conf.id };
-    const allResults = await this.conformanceService.findAll(filter);
+    const allResults = await this.conformanceService.findAll({ 'resource.resourceType': 'ImplementationGuide', 'references.value': conf.id });
 
-    filter = { 'resource.resourceType': 'SearchParameter', 'resource.id': newId };
-    const allResults1 = await this.conformanceService.findAll(filter);
+    const allResults1 = await this.conformanceService.findAll({ 'resource.resourceType': 'SearchParameter', 'resource.id': newId });
     const results = allResults1.map(value => value.igIds);
     const allIgs = results.reduce((prev, curr) => {
       return prev.concat(curr);
