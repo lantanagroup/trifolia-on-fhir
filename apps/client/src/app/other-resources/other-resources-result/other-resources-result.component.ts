@@ -93,7 +93,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   ngOnInit() {
     this.message = 'Opening resource';
 
-    this.isExample = this.route.snapshot.url[this.route.snapshot.url.length-2].path.toLowerCase() === 'example';
+    this.isExample = this.route.snapshot.params.type === 'example';
 
     if (this.isExample) {
       this.examplesService.get(this.route.snapshot.params.id).subscribe({

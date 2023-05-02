@@ -9,23 +9,26 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   templateUrl: './questionnaires.component.html',
   styleUrls: ['./questionnaires.component.css']
 })
 export class QuestionnairesComponent extends BaseComponent implements OnInit {
-  public questionnairesBundle: Bundle;
+  public questionnairesBundle;
   public nameText: string;
   public criteriaChangedEvent = new Subject<void>();
   public page = 1;
   public Globals = Globals;
+  public total: string;
 
   constructor(
     public configService: ConfigService,
     protected authService: AuthService,
     private questionnaireService: QuestionnaireService,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public route: ActivatedRoute) {
 
     super(configService, authService);
 
@@ -40,7 +43,7 @@ export class QuestionnairesComponent extends BaseComponent implements OnInit {
       return [];
     }
 
-    return (this.questionnairesBundle.entry || []).map((entry) => <Questionnaire>entry.resource);
+    return (this.questionnairesBundle.results || []).map((entry) => <Questionnaire>entry);
   }
 
   public remove(questionnaire: Questionnaire) {
@@ -50,9 +53,9 @@ export class QuestionnairesComponent extends BaseComponent implements OnInit {
 
     this.questionnaireService.delete(questionnaire.id)
       .subscribe(() => {
-        const entry = (this.questionnairesBundle.entry || []).find((e) => e.resource.id === questionnaire.id);
-        const index = this.questionnairesBundle.entry.indexOf(entry);
-        this.questionnairesBundle.entry.splice(index, 1);
+        const entry = (this.questionnairesBundle.results || []).find((e) => e.id === questionnaire.id);
+        const index = this.questionnairesBundle.results.indexOf(entry);
+        this.questionnairesBundle.results.splice(index, 1);
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while deleting the questionnaire');
       });
@@ -82,9 +85,12 @@ export class QuestionnairesComponent extends BaseComponent implements OnInit {
   public getQuestionnaires() {
     this.questionnairesBundle = null;
 
-    this.questionnaireService.search(this.page, this.nameText)
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+
+    this.questionnaireService.search(this.page, this.nameText, implementationGuideId)
       .subscribe((results) => {
         this.questionnairesBundle = results;
+        this.total = this.questionnairesBundle.total;
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while searching for questionnaires');
       });
@@ -92,6 +98,5 @@ export class QuestionnairesComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getQuestionnaires();
-   // this.configService.fhirServerChanged.subscribe(() => this.getQuestionnaires());
   }
 }

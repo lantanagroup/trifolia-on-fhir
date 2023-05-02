@@ -30,7 +30,7 @@ import * as vkbeautify from 'vkbeautify';
 import {publishReplay, refCount} from 'rxjs/operators';
 import {IBundle, ICoding} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import { forkJoin } from 'rxjs';
+import {forkJoin} from 'rxjs';
 import {IConformance, IHistory} from '@trifolia-fhir/models';
 
 export interface IResourceGithubDetails {
@@ -69,18 +69,18 @@ export class FhirService {
 
     this.loadAssets();
 
-   /* this.configService.fhirServerChanged.subscribe(() => {
-      if (this.loaded) {
-        // noinspection JSIgnoredPromiseFromCall
-        this.loadAssets();
-      }
+    /* this.configService.fhirServerChanged.subscribe(() => {
+       if (this.loaded) {
+         // noinspection JSIgnoredPromiseFromCall
+         this.loadAssets();
+       }
 
-      if (identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
-        this.customValidator = new CustomR4Validator();
-      } else {            // Assume default of STU3
-        this.customValidator = new CustomSTU3Validator();
-      }
-    });*/
+       if (identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
+         this.customValidator = new CustomR4Validator();
+       } else {            // Assume default of STU3
+         this.customValidator = new CustomSTU3Validator();
+       }
+     });*/
   }
 
   public get primitiveTypes(): string[] {
@@ -93,10 +93,10 @@ export class FhirService {
         'boolean', 'url', 'code', 'string', 'integer', 'uri', 'canonical', 'markdown',
         'id', 'oid', 'uuid', 'unsignedInt', 'positiveInt', 'Element'];
     } else if (this.configService.isFhirR5) {
-      return ['instant','time','date','dateTime','base64Binary', 'decimal',
+      return ['instant', 'time', 'date', 'dateTime', 'base64Binary', 'decimal',
         'integer64', 'boolean', 'url', 'code', 'string', 'integer', 'uri',
         'canonical', 'markdown', 'id', 'oid', 'uuid', 'unsignedInt',
-      'positiveInt'];
+        'positiveInt'];
     } else {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
@@ -120,7 +120,7 @@ export class FhirService {
         'DataRequirement', 'RelatedArtifact', 'UsageContext',
         'ParameterDefinition', 'Expression', 'TriggerDefinition', 'Reference',
         'Meta', 'Dosage', 'xhtml', 'Narrative', 'Extension',
-        'ElementDefinition','instant', 'time', 'date', 'dateTime',
+        'ElementDefinition', 'instant', 'time', 'date', 'dateTime',
         'base64Binary', 'decimal', 'boolean', 'url', 'code', 'string',
         'integer', 'uri', 'canonical', 'markdown', 'id', 'oid', 'uuid',
         'unsignedInt', 'positiveInt', 'Element'];
@@ -176,11 +176,11 @@ export class FhirService {
 
           this.fhir = new Fhir(parser);
 
-          this.valueSets = (<Bundle>allAssets[1]).entry.map((entry) => <ValueSet> entry.resource);
+          this.valueSets = (<Bundle>allAssets[1]).entry.map((entry) => <ValueSet>entry.resource);
           this.valueSets.push(<CodeSystem>allAssets[0]);
           this.profiles = (<Bundle>allAssets[2]).entry
             .concat((<Bundle>allAssets[3]).entry)
-            .map((entry) => <StructureDefinition> entry.resource);
+            .map((entry) => <StructureDefinition>entry.resource);
 
           this.loaded = true;
           resolve();
@@ -239,12 +239,12 @@ export class FhirService {
     let pathExtension = (resource.extension || []).find((extension) => extension.url === pathExtensionUrl);
 
     if (!branchExtension) {
-      branchExtension = {url: branchExtensionUrl};
+      branchExtension = { url: branchExtensionUrl };
       resource.extension.push(branchExtension);
     }
 
     if (!pathExtension) {
-      pathExtension = {url: pathExtensionUrl};
+      pathExtension = { url: pathExtensionUrl };
       resource.extension.push(pathExtension);
     }
 
@@ -254,14 +254,14 @@ export class FhirService {
 
   public getValueSetCodes(valueSetUrl: string): Coding[] {
     let codes: Coding[] = [];
-    const foundValueSet = <ValueSet> this.valueSets
+    const foundValueSet = <ValueSet>this.valueSets
       .filter((item) => item.resourceType === 'ValueSet')
       .find((valueSet) => valueSet.url === valueSetUrl);
 
     if (foundValueSet) {
       if (foundValueSet.compose) {
         (foundValueSet.compose.include || []).forEach((include: ConceptSetComponent) => {
-          const foundSystem: CodeSystem = <CodeSystem><any> this.valueSets
+          const foundSystem: CodeSystem = <CodeSystem><any>this.valueSets
             .filter((item) => item.resourceType === 'CodeSystem')
             .find((codeSystem) => codeSystem.url === include.system);
 
@@ -287,7 +287,7 @@ export class FhirService {
 
   public changeResourceId(resourceType: string, originalId: string, newId: string): Observable<string> {
     const url = `/api/fhir/${resourceType}/${encodeURIComponent((originalId))}/$change-id?&newId=${encodeURIComponent(newId)}`;
-    return this.http.post(url, null, {responseType: 'text'});
+    return this.http.post(url, null, { responseType: 'text' });
   }
 
   /**
@@ -304,7 +304,7 @@ export class FhirService {
    * @param {number} [count]
    * @param ignoreContext Does *not* send the context implementation guide in the headers to limit the search results
    */
-  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, implementationGuideId?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false, page?: number) {
+  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, implementationGuideId?: string, additionalQuery?: { [id: string]: string | string[] }, separateArrayQuery = false, sortID = false, page?: number) {
     let url = '/api/conformance?resourcetype=' + resourceType + '&page=' + page + '&'; //+ `_count=${count}&`;
 
     if (searchContent) {
@@ -342,7 +342,7 @@ export class FhirService {
       });
     }
 
-    if(sortID) url += '_sort=resourceid&';
+    if (sortID) url += '_sort=resourceid&';
 
     return this.http.get<IConformance[]>(url);
   }
@@ -363,11 +363,15 @@ export class FhirService {
    * @param {string} resourceType
    * @param {string} id
    */
-  public readById(id: string) {
-      const url = '/api/conformance/' + encodeURIComponent(id);
-      return this.http.get<IConformance>(url);
+  public readById(resourceType: string, id: string) {
+    let url = '';
+    if (resourceType == 'conformance') {
+      url = '/api/conformance/' + encodeURIComponent(id);
+    } else if (resourceType == 'example') {
+      url = '/api/example/' + encodeURIComponent(id);
+    }
+    return this.http.get(url);
   }
-
 
 
   /**
@@ -375,6 +379,7 @@ export class FhirService {
    * @param {string} resourceType
    * @param {string} id
    */
+
   /*public getHistory(resourceType: string, id: string, page = 1) {
     let url = `/api/fhir/${resourceType}/${id}/_history?`;
 
@@ -402,7 +407,7 @@ export class FhirService {
    * @param {string} resourceType
    * @param {string} id
    */
-  public delete( id: string) {
+  public delete(id: string) {
     const url = `/api/conformance/${id}`;
     return this.http.delete(url);
   }
@@ -422,7 +427,7 @@ export class FhirService {
     }
   }
 
-  public patch(resourceType: string, id: string, patches: {op: string, path: string, value: any}[]) {
+  public patch(resourceType: string, id: string, patches: { op: string, path: string, value: any }[]) {
     const url = `/api/fhir/${resourceType}/${id}`;
     return this.http.patch(url, patches);
   }
@@ -502,7 +507,7 @@ export class FhirService {
     try {
       const results = this.fhir.validate(resource, {
         // inject custom validation into the FHIR module
-        onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData),
+        onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData)
         /*
         beforeCheckCode: (valueSetUrl: string, code: string, system?: string) => {
           if (system === 'https://trifolia-fhir.lantanagroup.com/security') {
@@ -572,26 +577,26 @@ export class FhirService {
     }
   }
 
- /* public findResourceTypesWithSearchParam(searchParamName: string): string[] {
-    const cs = <CapabilityStatement>this.configService.fhirConformance;
-    const resourceTypes: string[] = [];
+  /* public findResourceTypesWithSearchParam(searchParamName: string): string[] {
+     const cs = <CapabilityStatement>this.configService.fhirConformance;
+     const resourceTypes: string[] = [];
 
-    if (!cs) {
-      return resourceTypes;
-    }
+     if (!cs) {
+       return resourceTypes;
+     }
 
-    (cs.rest || []).forEach((rest: RestComponent) => {
-      (rest.resource || []).forEach((resource: ResourceComponent) => {
-        const found = (resource.searchParam || []).find((searchParam: SearchParamComponent) => searchParam.name === searchParamName);
+     (cs.rest || []).forEach((rest: RestComponent) => {
+       (rest.resource || []).forEach((resource: ResourceComponent) => {
+         const found = (resource.searchParam || []).find((searchParam: SearchParamComponent) => searchParam.name === searchParamName);
 
-        if (found) {
-          resourceTypes.push(resource.type);
-        }
-      });
-    });
+         if (found) {
+           resourceTypes.push(resource.type);
+         }
+       });
+     });
 
-    return resourceTypes;
-  }*/
+     return resourceTypes;
+   }*/
 
   public async checkUniqueId(resource: DomainResource) {
     let url = `/api/fhir/${resource.resourceType}`;

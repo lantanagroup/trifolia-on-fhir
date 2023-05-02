@@ -14,7 +14,7 @@
 
 <br />
 
-<div *ngIf="questionnairesBundle && questionnairesBundle.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+<div *ngIf="questionnairesBundle && total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
     <ngb-pagination class="d-flex justify-content-center"
                     [maxSize]="5"
                     [collectionSize]="questionnairesBundle.total"
@@ -40,7 +40,7 @@
     <tbody *ngIf="!configService.showingIntroduction">
     <tr *ngFor="let questionnaire of questionnaires">
         <td>{{questionnaire.id}}</td>
-        <td>{{questionnaire.name}}</td>
+        <td>{{questionnaire.resource.name}}</td>
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/questionnaire/{{questionnaire.id}}" title="Edit this questionnaire">
@@ -76,10 +76,10 @@
     </tr>
     </tbody>
     <tfoot>
-    <tr *ngIf="questionnairesBundle && questionnairesBundle.total === 0">
+    <tr *ngIf="questionnairesBundle && total === 0">
         <td colspan="3">No questionnaires! Create one by clicking <a routerLink="/{{configService.baseSessionUrl}}/questionnaire/new">here</a>...</td>
     </tr>
-    <tr *ngIf="questionnairesBundle && questionnairesBundle.total > 0">
+    <tr *ngIf="questionnairesBundle && total > 0">
         <td colspan="3">
             <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="questionnairesBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
         </td>
