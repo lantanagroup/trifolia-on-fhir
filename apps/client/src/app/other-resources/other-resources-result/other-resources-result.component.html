@@ -1,5 +1,6 @@
 <div *ngIf="data">
-  <h1>{{data.resourceType}} - {{data.id}}</h1>
+  <h1 *ngIf="!isExample">{{ data.resource.resourceType }} - {{ data.resource.id || data.id}}</h1>
+  <h1 *ngIf="isExample">{{ data.content.resourceType || 'Unknown' }} - {{ data.content.id || data.id}}</h1>
   <input type="file" style="display: none;" #fileUpload accept="application/json, application/xml" (change)="uploadFile($event)"/>
   <div class="btn-toolbar">
     <div class="btn-group me-2" role="group" aria-label="Generic actions for the resource">
@@ -34,7 +35,9 @@
     <li ngbNavItem="json/xml">
       <a ngbNavLink>JSON/XML</a>
       <ng-template ngbNavContent>
-        <textarea class="form-control other" [ngModel]="content" (keyup)="contentHasChanged($event.target.value)" #jsonXmlTextField></textarea>
+        <div class="form-group">
+          <textarea class="form-control other" [ngModel]="content" (keyup)="contentHasChanged($event.target.value)" #jsonXmlTextField></textarea>
+        </div>
       </ng-template>
     </li>
     <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">

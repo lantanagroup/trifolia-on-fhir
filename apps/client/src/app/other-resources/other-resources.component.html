@@ -69,13 +69,13 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let entry of results.entry">
-          <td>{{entry.resource?.id}}</td>
-          <td>{{getEntryUrl(entry)}}</td>
-          <td>{{getEntryName(entry)}}</td>
+        <tr *ngFor="let result of results.results">
+          <td>{{result.resource?.id}}</td>
+          <td>{{getEntryUrl(result)}}</td>
+          <td>{{getEntryName(result)}}</td>
           <td class="actions-column-1">
             <div class="pull-right">
-              <a class="btn btn-primary" title="View/Edit this resource" routerLink="{{configService.baseSessionUrl}}/other-resources/{{entry.resource.resourceType}}/{{entry.resource.id}}">
+              <a class="btn btn-primary" title="View/Edit this resource" routerLink="{{configService.baseSessionUrl}}/other-resources/conformance/{{result.id}}">
                 <i class="fa fa-search"></i>
               </a>
             </div>

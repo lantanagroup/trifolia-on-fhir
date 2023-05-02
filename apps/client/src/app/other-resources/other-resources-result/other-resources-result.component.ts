@@ -13,6 +13,9 @@ import { BaseComponent } from '../../base.component';
 import { AuthService } from '../../shared/auth.service';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { ConformanceService } from '../../shared/conformance.service';
+import { ExamplesService } from '../../shared/examples.service';
+import { IConformance, IExample } from '@trifolia-fhir/models';
 
 @Component({
   templateUrl: './other-resources-result.component.html',
@@ -21,7 +24,7 @@ import { Subject } from 'rxjs';
 export class OtherResourcesResultComponent extends BaseComponent implements OnInit {
   activeSub: 'json/xml' | 'permissions' = 'json/xml';
   message: string;
-  data: DomainResource;
+  data: IConformance|IExample;
   Globals = Globals;
   content: string;
   contentChanged = new Subject();
@@ -29,13 +32,16 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   validation: ValidatorResponse;
   selected = 'JSON';
   options: string[] = ['JSON', 'XML'];
+  isExample = false;
 
   constructor(private fhirService: FhirService,
               private route: ActivatedRoute,
               private router: Router,
               private modalService: NgbModal,
               public configService: ConfigService,
-              protected authService: AuthService) {
+              protected authService: AuthService,
+              protected conformanceService: ConformanceService,
+              protected examplesService: ExamplesService) {
 
     super(configService, authService);
 
@@ -51,7 +57,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
               this.data = JSON.parse(this.content);
               this.message = 'The content has been updated';
             } else if (this.activeSub === 'json/xml' && this.selected === 'XML') {
-              this.data = this.fhirService.deserialize(this.content);
+              //this.data = this.fhirService.deserialize(this.content);
               this.message = 'The content has been updated';
             }
 
@@ -81,19 +87,40 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   ngOnInit() {
     this.message = 'Opening resource';
 
-    this.fhirService.read(this.route.snapshot.params.type, this.route.snapshot.params.id)
-      .subscribe((results: DomainResource) => {
+    // this.fhirService.read(this.route.snapshot.params.type, this.route.snapshot.params.id)
+    //   .subscribe((results: DomainResource) => {
 
-        this.data = results;
-        this.content = JSON.stringify(this.data, null, '\t');
-        this.validation = this.fhirService.validate(this.data);
+    //     this.data = results;
+    //     this.content = JSON.stringify(this.data, null, '\t');
+    //     this.validation = this.fhirService.validate(this.data);
 
-        setTimeout(() => {
-          this.message = 'Resource opened.';
-        }, 100);
-      }, (err) => {
-        this.message = 'Error opening resource: ' + getErrorString(err);
+    //     setTimeout(() => {
+    //       this.message = 'Resource opened.';
+    //     }, 100);
+    //   }, (err) => {
+    //     this.message = 'Error opening resource: ' + getErrorString(err);
+    //   });
+
+    this.isExample = this.route.snapshot.url[this.route.snapshot.url.length-2].path.toLowerCase() === 'example';
+
+    if (this.isExample) {
+      this.examplesService.get(this.route.snapshot.params.id).subscribe({
+        next: (res: IExample) => {
+          this.data = res;
+          this.content = JSON.stringify(res.content, null, '\t');
+        },
+        error: (err) => {}
       });
+    } else {
+      this.conformanceService.get(this.route.snapshot.params.id).subscribe({
+        next: (res: IConformance) => {
+          this.data = res;
+          this.content = JSON.stringify(res.resource, null, '\t');
+        },
+        error: (err) => {}
+      });
+    }
+
   }
 
   changeType() {
@@ -159,15 +186,16 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     }
   }
 
-  public save(dr: DomainResource) {
-    this.fhirService.update(dr.resourceType, dr.id, dr).toPromise()
-      .then((updated) => {
-        Object.assign(dr, updated);
-        this.message = `Successfully updated resource ${dr.resourceType}/${dr.id}!`;
-      })
-      .catch((err) => {
-        this.message = getErrorString(err);
-      });
+  public save(resource: IConformance|IExample) {
+    // this.fhirService.update(resource.resourceType, resource.id, resource).toPromise()
+    //   .then((updated) => {
+    //     Object.assign(resource, updated);
+    //     this.message = `Successfully updated resource ${resource.resourceType}/${resource.id}!`;
+    //   })
+    //   .catch((err) => {
+    //     this.message = getErrorString(err);
+    //   });
+
   }
 
   public remove(dr: DomainResource) {

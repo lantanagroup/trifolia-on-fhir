@@ -1,13 +1,16 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {FhirService} from '../shared/fhir.service';
-import {Bundle, Coding} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FhirService } from '../shared/fhir.service';
+import { Bundle, Coding } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 
-import {NgbNav} from '@ng-bootstrap/ng-bootstrap';
-import {ConfigService} from '../shared/config.service';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import { NgbNav } from '@ng-bootstrap/ng-bootstrap';
+import { ConfigService } from '../shared/config.service';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { ConformanceService } from '../shared/conformance.service';
+import { Paginated } from '@trifolia-fhir/tof-lib';
+import { IConformance } from '@trifolia-fhir/models';
 
 @Component({
   templateUrl: './other-resources.component.html',
@@ -20,7 +23,7 @@ export class OtherResourcesComponent implements OnInit {
   public searchContent: string;
   public searchUrl: string;
   public message: string;
-  public results: Bundle;
+  public results: Paginated<IConformance>;
   public Globals = Globals;
   public page = 1;
   public ignoreContext = false;
@@ -29,8 +32,9 @@ export class OtherResourcesComponent implements OnInit {
   public tabSet: NgbNav;
 
 
-  constructor (
+  constructor(
     public configService: ConfigService,
+    private conformanceService: ConformanceService,
     private fhirService: FhirService) {
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
@@ -44,18 +48,34 @@ export class OtherResourcesComponent implements OnInit {
       return;
     }
 
-    if(this.tabSet.activeId === "criteria") this.page = 1;
+    if (this.tabSet.activeId === "criteria") this.page = 1;
 
     this.message = 'Searching...';
 
-    this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, null, null, true, this.page, 10, this.ignoreContext)
-      .subscribe((results: Bundle) => {
-        this.results = results;
+    // this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, null, null, true, this.page, 10, this.ignoreContext)
+    //   .subscribe((results: Bundle) => {
+    //     this.results = results;
+    //     this.message = 'Done searching.';
+    //     this.tabSet.select('results');
+    //   }, (err) => {
+    //     this.message = 'Error while searching for other resources: ' + getErrorString(err);
+    //   });
+
+    this.conformanceService.search(this.page, 'name', this.configService.fhirVersion,
+      this.ignoreContext ? null : this.configService.project.implementationGuideId,
+      this.searchResourceType
+    ).subscribe({
+      next: (res) => {
+        this.results = res;
         this.message = 'Done searching.';
         this.tabSet.select('results');
-      }, (err) => {
+      },
+      error: (err) => {
         this.message = 'Error while searching for other resources: ' + getErrorString(err);
-      });
+      }
+    });
+
+
   }
 
   public getEntryUrl(entry) {

@@ -203,10 +203,10 @@ export class FhirService {
   }
 
   public getResourceGithubDetails(resource: DomainResource): ResourceGithubDetails {
-    const branchExtensionUrl = this.configService.fhirVersion === Versions.R4 ?
+    const branchExtensionUrl = this.configService.fhirVersion === Versions.R4.toLowerCase() ?
       Globals.extensionUrls['github-branch'] :
       Globals.extensionUrls['github-branch'];
-    const pathExtensionUrl = this.configService.fhirVersion === Versions.R4 ?
+    const pathExtensionUrl = this.configService.fhirVersion === Versions.R4.toLowerCase() ?
       Globals.extensionUrls['github-path'] :
       Globals.extensionUrls['github-path'];
 
@@ -228,10 +228,10 @@ export class FhirService {
       resource.extension = [];
     }
 
-    const branchExtensionUrl = this.configService.fhirVersion === Versions.R4 ?
+    const branchExtensionUrl = this.configService.fhirVersion === Versions.R4.toLowerCase() ?
       Globals.extensionUrls['github-branch'] :
       Globals.extensionUrls['github-branch'];
-    const pathExtensionUrl = this.configService.fhirVersion === Versions.R4 ?
+    const pathExtensionUrl = this.configService.fhirVersion === Versions.R4.toLowerCase() ?
       Globals.extensionUrls['github-path'] :
       Globals.extensionUrls['github-path'];
 

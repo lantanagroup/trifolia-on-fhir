@@ -9,7 +9,7 @@ import {map} from 'rxjs/operators';
 @Injectable()
 export class ConfigService {
   public config: ConfigModel;
-  public fhirVersion: string = 'r4';
+  public fhirVersion: 'stu3'|'r4'|'r5' = 'r4';
   public project?: {
     implementationGuideId: string,
     name?: string,
@@ -88,7 +88,7 @@ export class ConfigService {
     return this.injector.get(HttpClient);
   }
 
-  public setFhirVersion(fhirVersion?: string) {
+  public setFhirVersion(fhirVersion?: 'stu3'|'r4'|'r5' ) {
     this.fhirVersion = fhirVersion;
   }
 
@@ -102,7 +102,7 @@ export class ConfigService {
   }
 
   public get isFhirR5() {
-    return this.fhirVersion === Versions.R5;
+    return this.fhirVersion === Versions.R5.toLowerCase();
   }
   public setTitle(value: string, isDirty: boolean = false) {
     const mainTitle = (isDirty ? '*' : '') + 'Trifolia-on-FHIR';

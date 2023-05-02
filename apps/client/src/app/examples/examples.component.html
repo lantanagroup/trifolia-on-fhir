@@ -27,11 +27,11 @@
   </thead>
   <tbody *ngIf="examples">
   <tr *ngFor="let example of filteredExamples">
-    <td>{{example.resourceType}}</td>
-    <td>{{example.id}}</td>
-    <td>{{example.name}}</td>
+    <td>{{example.content.resourceType || 'Unknown'}}</td>
+    <td>{{example.content.id || example.id}}</td>
+    <td>{{example.content.name}}</td>
     <td>
-      <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/other-resources/{{example.resourceType}}/{{example.id}}" [class.disabled]="!example.resourceType || !example.id">
+      <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/other-resources/example/{{example.id}}" [class.disabled]="!example.id">
         <i class="fa fa-edit"></i>
       </a>
     </td>

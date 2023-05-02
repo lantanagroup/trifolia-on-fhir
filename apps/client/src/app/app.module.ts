@@ -102,7 +102,7 @@ export class AddHeaderInterceptor implements HttpInterceptor {
   constructor(
     private configService: ConfigService,
     private oauthService: OAuthService
-  ) {}
+  ) { }
 
   intercept(
     req: HttpRequest<any>,
@@ -161,25 +161,26 @@ export class AddHeaderInterceptor implements HttpInterceptor {
  * The routes in the client application.
  */
 const appRoutes: Routes = [
-  {path: 'login', component: LoginComponent},
-  {path: 'projects', component: ProjectsComponent },
-  {path: 'projects/new', component: NewProjectComponent },
-  {path: 'projects/:id', component: ProjectComponent },
-  {path: 'projects/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
-  {path: 'projects/home', component: HomeComponent},
-  {path: 'projects/:implementationGuideId/home', component: HomeComponent},
-  {path: 'projects/implementation-guide/open', component: ImplementationGuidesComponent},
-  {path: 'projects/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
-  {path: 'projects/:implementationGuideId/code-system', component: CodesystemsComponent },
-  {path: 'projects/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
+  { path: 'login', component: LoginComponent },
+  { path: 'projects', component: ProjectsComponent },
+  { path: 'projects/new', component: NewProjectComponent },
+  { path: 'projects/home', component: HomeComponent },
+  { path: 'projects/import', component: ImportComponent },
+  { path: 'projects/:id', component: ProjectComponent },
+  { path: 'projects/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard] },
+  { path: 'projects/:implementationGuideId/home', component: HomeComponent },
+  { path: 'projects/implementation-guide/open', component: ImplementationGuidesComponent },
+  { path: 'projects/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/code-system', component: CodesystemsComponent },
+  { path: 'projects/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
   { path: 'projects/:implementationGuideId/search-parameter', component: SearchParametersComponent },
   { path: 'projects/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
-  { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent},
+  { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },
 
-  {path:  'projects/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},
-  {path:  'projects/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
-  {path:  'projects/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
-  {path:  'projects/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent},
+  { path: 'projects/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent },
+  { path: 'projects/:implementationGuideId/structure-definition/new', component: NewProfileComponent },
+  { path: 'projects/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard] },
+  { path: 'projects/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent },
   { path: 'projects/:implementationGuideId/capability-statement/new', component: CapabilityStatementWrapperComponent },
   { path: 'projects/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always' },
   { path: 'projects/:implementationGuideId/operation-definition', component: OperationDefinitionsComponent },
@@ -196,12 +197,12 @@ const appRoutes: Routes = [
   { path: 'projects/:implementationGuideId/export', component: ExportComponent },
   { path: 'projects/:implementationGuideId/import', component: ImportComponent },
   { path: 'projects/:implementationGuideId/other-resources', component: OtherResourcesComponent },
-  { path: 'projects/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent },
+  { path: 'projects/:implementationGuideId/other-resources/conformance/:id', component: OtherResourcesResultComponent },
+  { path: 'projects/:implementationGuideId/other-resources/example/:id', component: OtherResourcesResultComponent },
   { path: 'projects/:implementationGuideId/examples', component: ExamplesComponent },
   { path: 'projects/:implementationGuideId/bulk-edit', component: BulkEditComponent },
 
   { path: 'import', component: ImportComponent },
-  { path: 'projects/import', component: ImportComponent },
   { path: 'users/me', component: UserComponent },
   { path: 'users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
@@ -376,4 +377,4 @@ const authModuleConfig: OAuthModuleConfig = {
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

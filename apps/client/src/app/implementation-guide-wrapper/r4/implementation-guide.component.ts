@@ -946,7 +946,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         this.implementationGuideId = params.implementationGuideId;
       }
       if (params.implementationGuideId && this.implementationGuideId && params.implementationGuideId !== this.implementationGuideId) {
-        console.log('R4ImplementationGuideComponent::getImplementationGuide');
         this.implementationGuideId = params.implementationGuideId;
         this.getImplementationGuide();
       }

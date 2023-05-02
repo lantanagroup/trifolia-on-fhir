@@ -19,8 +19,9 @@ import { ProjectsService } from './projects/projects.service';
 import { PaginateOptions } from '@trifolia-fhir/tof-lib';
 import { AuthService } from './auth/auth.service';
 import { ConformanceService } from './conformance/conformance.service';
-import {IConformance, IProjectResourceReference} from '@trifolia-fhir/models';
+import {IConformance, IExample, IProjectResourceReference} from '@trifolia-fhir/models';
 import { ConformanceController } from './conformance/conformance.controller';
+import { ExamplesService } from './examples/examples.service';
 
 
 class PatchRequest {
@@ -45,6 +46,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
   constructor(protected httpService: HttpService,
               protected configService: ConfigService,
+              protected examplesService: ExamplesService,
               protected projectService: ProjectsService,
               protected conformanceService: ConformanceService,
               protected authService: AuthService) {
@@ -263,20 +265,22 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
 
   @Get(':id/example')
-  public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
+  public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4'): Promise<IExample[]> {
   // const implementationGuideUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
    // const implementationGuideResponse = await this.httpService.get<IImplementationGuide>(implementationGuideUrl).toPromise();
     //const implementationGuide = implementationGuideResponse.data;
-    const implementationGuide = (await this.get(id)).resource;
-    switch (fhirServerVersion) {
-      case 'stu3':
-        return this.getSTU3Examples(<STU3ImplementationGuide> implementationGuide);
-      case 'r4':
-        return this.getR4Examples(<R4ImplementationGuide> implementationGuide);
-      default:
-        this.logger.error(`Unexpected FHIR server version ${fhirServerVersion} when requesting IG examples`);
-        throw new InternalServerErrorException();
-    }
+    // const implementationGuide = (await this.get(id)).resource;
+    // switch (fhirServerVersion) {
+    //   case 'stu3':
+    //     return this.getSTU3Examples(<STU3ImplementationGuide> implementationGuide);
+    //   case 'r4':
+    //     return this.getR4Examples(<R4ImplementationGuide> implementationGuide);
+    //   default:
+    //     this.logger.error(`Unexpected FHIR server version ${fhirServerVersion} when requesting IG examples`);
+    //     throw new InternalServerErrorException();
+    // }
+
+    return this.examplesService.findAll({'igIds': id});
   }
 
   @Get('published')
