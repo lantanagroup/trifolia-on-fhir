@@ -14,6 +14,8 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
 import { config, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import {IConformance} from '@trifolia-fhir/models';
+import {SearchParameter} from '@trifolia-fhir/r4';
 
 export class ItemModel {
   public item: QuestionnaireItemComponent;
@@ -47,15 +49,17 @@ export class ItemModel {
   styleUrls: ['./questionnaire.component.css']
 })
 export class QuestionnaireComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+
   @Input() public questionnaire: Questionnaire;
   public message: string;
   public validation: any;
   public flattenedItems: ItemModel[];
   public qNotFound = false;
-
+  public conformance;
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
+  public questionnaireId;
 
   private navSubscription: any;
 
@@ -73,6 +77,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     super(configService, authService);
 
     this.questionnaire = new Questionnaire({ meta: this.authService.getDefaultMeta() });
+    this.conformance = { resource: this.questionnaire, fhirVersion: <'stu3'|'r4'|'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -123,16 +128,16 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
       return;
     }
 
-    this.questionnaireService.save(this.questionnaire)
-      .subscribe((results: Questionnaire) => {
+    this.questionnaireService.save(this.questionnaireId, this.conformance)
+      .subscribe((conf: IConformance) => {
         if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/questionnaire/${results.id}`]);
+          this.router.navigate([`${this.configService.baseSessionUrl}/questionnaire/${conf.id}`]);
         } else {
           this.recentItemService.ensureRecentItem(
             Globals.cookieKeys.recentQuestionnaires,
-            results.id,
-            results.name || results.title);
+            conf.id,
+            conf.name );
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
@@ -144,7 +149,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
   }
 
   private getQuestionnaire() {
-    const questionnaireId = this.route.snapshot.paramMap.get('id');
+    this.questionnaireId = this.route.snapshot.paramMap.get('id');
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -158,25 +163,26 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     }
 
     if (!this.isNew) {
-      this.questionnaireService.get(questionnaireId)
-        .subscribe((questionnaire: Questionnaire | OperationOutcome) => {
-          if (questionnaire.resourceType !== 'Questionnaire') {
-            this.message = 'The specified questionnaire either does not exist or was deleted';
-            return;
-          }
+      this.questionnaireService.get(this.questionnaireId)
+        .subscribe( (conf: IConformance) => {
+            if (!conf || !conf.resource || conf.resource.resourceType !== 'Questionnaire') {
+              this.message = 'The specified questionnaire either does not exist or was deleted';
+              return;
+            }
+            this.conformance = conf;
+            this.questionnaire = <Questionnaire>conf.resource;
+            this.nameChanged();
+            this.initFlattenedItems();
 
-          this.questionnaire = <Questionnaire>questionnaire;
-          this.nameChanged();
-          this.initFlattenedItems();
-
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentQuestionnaires,
-            questionnaire.id,
-            this.questionnaire.name || this.questionnaire.title);
+          /*  this.recentItemService.ensureRecentItem(
+              Globals.cookieKeys.recentQuestionnaires,
+              this.questionnaire,
+              this.questionnaire.name || this.questionnaire.title);*/
+       //   }
         }, (err) => {
           this.qNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentQuestionnaires, questionnaireId);
+          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentQuestionnaires, this.questionnaireId);
         });
     }
   }
