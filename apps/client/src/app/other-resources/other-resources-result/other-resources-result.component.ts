@@ -13,6 +13,7 @@ import { BaseComponent } from '../../base.component';
 import { AuthService } from '../../shared/auth.service';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import {Conformance} from '../../../../../server/src/app/conformance/conformance.schema';
 import { ConformanceService } from '../../shared/conformance.service';
 import { ExamplesService } from '../../shared/examples.service';
 import { IConformance, IExample } from '@trifolia-fhir/models';
@@ -22,6 +23,7 @@ import { IConformance, IExample } from '@trifolia-fhir/models';
   styleUrls: ['./other-resources-result.component.css']
 })
 export class OtherResourcesResultComponent extends BaseComponent implements OnInit {
+  public conformance: IConformance;
   activeSub: 'json/xml' | 'permissions' = 'json/xml';
   message: string;
   data: IConformance|IExample;
@@ -45,6 +47,8 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
     super(configService, authService);
 
+
+
     this.contentChanged
       .pipe(debounceTime(500))
       .subscribe(() => {
@@ -60,7 +64,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
               //this.data = this.fhirService.deserialize(this.content);
               this.message = 'The content has been updated';
             }
-
+            this.conformance.resource = this.data;
             this.validation = this.fhirService.validate(this.data);
 
             if (!this.validation.valid) {
@@ -198,19 +202,21 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
   }
 
-  public remove(dr: DomainResource) {
-    if (!confirm(`Are you sure you want to delete ${dr.resourceType}/${dr.id}?`)) {
-      return false;
+  public remove(data) {
+    if (!confirm(`Are you sure you want to delete the code system ${data.title || data.name || data.id}`)) {
+      return;
     }
 
-    this.fhirService.delete(dr.resourceType, dr.id)
+    this.fhirService.delete(data.id)
       .subscribe(() => {
-        this.router.navigate([`${this.configService.baseSessionUrl}/other-resources/`]);
-        alert(`Successfully removed resource ${dr.resourceType}/${dr.id}.`);
+        const entry = (this.data.results || []).find((e) => e.id === data.id);
+        const index = this.data.results.indexOf(entry);
+        this.data.results.splice(index, 1);
       }, (err) => {
-        this.message = 'Error while removing the resource: ' + getErrorString(err);
+        this.configService.handleError(err, 'An error occurred while deleting the code system');
       });
   }
+
 
   public changeId(dr: DomainResource) {
     const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { backdrop: 'static' });

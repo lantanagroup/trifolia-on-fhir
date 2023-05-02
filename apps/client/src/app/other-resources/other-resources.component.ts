@@ -8,6 +8,7 @@ import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
 import { ConformanceService } from '../shared/conformance.service';
 import { Paginated } from '@trifolia-fhir/tof-lib';
 import { IConformance } from '@trifolia-fhir/models';
@@ -27,6 +28,7 @@ export class OtherResourcesComponent implements OnInit {
   public Globals = Globals;
   public page = 1;
   public ignoreContext = false;
+  public total: string;
 
   @ViewChild('tabSet', { static: true })
   public tabSet: NgbNav;
@@ -35,7 +37,9 @@ export class OtherResourcesComponent implements OnInit {
   constructor(
     public configService: ConfigService,
     private conformanceService: ConformanceService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    public route: ActivatedRoute
+    ) {
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {
@@ -116,6 +120,10 @@ export class OtherResourcesComponent implements OnInit {
         }
       }
     }
+  }
+
+  public getImplementationGuideId(){
+    return this.route.snapshot.paramMap.get('implementationGuideId');
   }
 
   ngOnInit() {
