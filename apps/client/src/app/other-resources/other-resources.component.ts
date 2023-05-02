@@ -56,15 +56,6 @@ export class OtherResourcesComponent implements OnInit {
 
     this.message = 'Searching...';
 
-    // this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, null, null, true, this.page, 10, this.ignoreContext)
-    //   .subscribe((results: Bundle) => {
-    //     this.results = results;
-    //     this.message = 'Done searching.';
-    //     this.tabSet.select('results');
-    //   }, (err) => {
-    //     this.message = 'Error while searching for other resources: ' + getErrorString(err);
-    //   });
-
     this.conformanceService.search(this.page, 'name', this.configService.fhirVersion,
       this.ignoreContext ? null : this.configService.project.implementationGuideId,
       this.searchResourceType

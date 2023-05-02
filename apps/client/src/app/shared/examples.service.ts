@@ -60,6 +60,12 @@ export class ExamplesService {
             return this.http.post<IExample>(url, example);
         }
     }
+
+
+    public delete(exampleId: string): Observable<any> {
+        const url = `/api/examples/${encodeURIComponent(exampleId)}`;
+        return this.http.delete(url);
+    }
     
 
 }

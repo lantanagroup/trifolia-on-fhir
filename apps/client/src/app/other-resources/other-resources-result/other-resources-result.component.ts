@@ -1,19 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FhirService } from '../../shared/fhir.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DomainResource } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
+import { DomainResource } from '@trifolia-fhir/stu3';
+import { getErrorString } from '@trifolia-fhir/tof-lib';
 import { NgbModal, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { saveAs } from 'file-saver';
-import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import { ConfigService } from '../../shared/config.service';
-import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
+import { Globals } from '@trifolia-fhir/tof-lib';
 import { ValidatorResponse } from 'fhir/validator';
 import { BaseComponent } from '../../base.component';
 import { AuthService } from '../../shared/auth.service';
 import { debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import {Conformance} from '../../../../../server/src/app/conformance/conformance.schema';
+import { Observable, Subject } from 'rxjs';
 import { ConformanceService } from '../../shared/conformance.service';
 import { ExamplesService } from '../../shared/examples.service';
 import { IConformance, IExample } from '@trifolia-fhir/models';
@@ -23,10 +21,10 @@ import { IConformance, IExample } from '@trifolia-fhir/models';
   styleUrls: ['./other-resources-result.component.css']
 })
 export class OtherResourcesResultComponent extends BaseComponent implements OnInit {
-  public conformance: IConformance;
+  public resource: IConformance|IExample;
   activeSub: 'json/xml' | 'permissions' = 'json/xml';
   message: string;
-  data: IConformance|IExample;
+  data: any;
   Globals = Globals;
   content: string;
   contentChanged = new Subject();
@@ -50,9 +48,9 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
 
     this.contentChanged
-      .pipe(debounceTime(500))
+      .pipe(debounceTime(1000))
       .subscribe(() => {
-        if (this.data) {
+        if (this.resource) {
           this.serializationError = false;
           this.message = null;
           try {
@@ -61,10 +59,14 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
               this.data = JSON.parse(this.content);
               this.message = 'The content has been updated';
             } else if (this.activeSub === 'json/xml' && this.selected === 'XML') {
-              //this.data = this.fhirService.deserialize(this.content);
+              this.data = this.fhirService.deserialize(this.content);
               this.message = 'The content has been updated';
             }
-            this.conformance.resource = this.data;
+            if (this.isExample) {
+              (<IExample>this.resource).content = this.data;
+            } else {
+              (<IConformance>this.resource).resource = this.data;
+            }
             this.validation = this.fhirService.validate(this.data);
 
             if (!this.validation.valid) {
@@ -91,45 +93,43 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   ngOnInit() {
     this.message = 'Opening resource';
 
-    // this.fhirService.read(this.route.snapshot.params.type, this.route.snapshot.params.id)
-    //   .subscribe((results: DomainResource) => {
-
-    //     this.data = results;
-    //     this.content = JSON.stringify(this.data, null, '\t');
-    //     this.validation = this.fhirService.validate(this.data);
-
-    //     setTimeout(() => {
-    //       this.message = 'Resource opened.';
-    //     }, 100);
-    //   }, (err) => {
-    //     this.message = 'Error opening resource: ' + getErrorString(err);
-    //   });
-
     this.isExample = this.route.snapshot.url[this.route.snapshot.url.length-2].path.toLowerCase() === 'example';
 
     if (this.isExample) {
       this.examplesService.get(this.route.snapshot.params.id).subscribe({
         next: (res: IExample) => {
-          this.data = res;
+          this.resource = res;
           this.content = JSON.stringify(res.content, null, '\t');
+          this.validation = this.fhirService.validate((<IExample>this.resource).content);
+          setTimeout(() => {
+            this.message = 'Example opened.';
+          }, 100);
         },
-        error: (err) => {}
+        error: (err) => {
+          this.message = 'Error opening example: ' + getErrorString(err);
+        }
       });
     } else {
       this.conformanceService.get(this.route.snapshot.params.id).subscribe({
         next: (res: IConformance) => {
-          this.data = res;
+          this.resource = res;
           this.content = JSON.stringify(res.resource, null, '\t');
+          this.validation = this.fhirService.validate((<IConformance>this.resource).resource);
+          setTimeout(() => {
+            this.message = 'Resource opened.';
+          }, 100);
         },
-        error: (err) => {}
+        error: (err) => {
+          this.message = 'Error opening resource: ' + getErrorString(err);
+        }
       });
     }
 
   }
 
   changeType() {
-    console.log('Changing content type');
     setTimeout(() => {
+      this.data = this.isExample ? (<IExample>this.resource).content : (<IConformance>this.resource).resource;
       switch (this.selected) {
         case 'JSON':
           this.content = JSON.stringify(this.data, null, '\t');
@@ -190,41 +190,61 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     }
   }
 
-  public save(resource: IConformance|IExample) {
-    // this.fhirService.update(resource.resourceType, resource.id, resource).toPromise()
-    //   .then((updated) => {
-    //     Object.assign(resource, updated);
-    //     this.message = `Successfully updated resource ${resource.resourceType}/${resource.id}!`;
-    //   })
-    //   .catch((err) => {
-    //     this.message = getErrorString(err);
-    //   });
+  public save() {
+
+    let request: Observable<IConformance|IExample>;
+
+    if (this.isExample) {
+      request = this.examplesService.save(this.resource.id, <IExample>this.resource, this.configService.project?.implementationGuideId);
+    } else {
+      request = this.conformanceService.save(this.resource.id, <IConformance>this.resource, this.configService.project?.implementationGuideId);
+    }
+
+    request.subscribe({
+      next: (res: IConformance|IExample) => {
+        Object.assign(this.resource, res);
+        this.message = `Successfully updated resource!`;
+      },
+      error: (err) => {
+        this.message = getErrorString(err);
+      }
+    });
 
   }
 
-  public remove(data) {
-    if (!confirm(`Are you sure you want to delete the code system ${data.title || data.name || data.id}`)) {
+  public remove() {
+    if (!confirm(`Are you sure you want to delete the ${this.isExample ? 'example' : 'resource'}?`)) {
       return;
     }
 
-    this.fhirService.delete(data.id)
-      .subscribe(() => {
-        const entry = (this.data.results || []).find((e) => e.id === data.id);
-        const index = this.data.results.indexOf(entry);
-        this.data.results.splice(index, 1);
-      }, (err) => {
-        this.configService.handleError(err, 'An error occurred while deleting the code system');
-      });
+    let request: Observable<IConformance|IExample>;
+
+    if (this.isExample) {
+      request = this.examplesService.delete(this.resource.id);
+    } else {
+      request = this.conformanceService.delete(this.resource.id);
+    }
+
+    request.subscribe({
+      next: (res: IConformance|IExample) => {
+        this.router.navigate([`${this.configService.baseSessionUrl}/${this.isExample ? 'examples' : 'other-resources'}`]);
+        alert(`Successfully removed resource.`);
+      },
+      error: (err) => {
+        this.message = getErrorString(err);
+      }
+    });
+
   }
 
 
-  public changeId(dr: DomainResource) {
-    const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { backdrop: 'static' });
-    modalRef.componentInstance.resourceType = dr.resourceType;
-    modalRef.componentInstance.originalId = dr.id;
-    modalRef.result.then((newId) => {
-      // Update the resource
-      this.data.id = newId;
-    });
+  public changeId() {
+    // const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { backdrop: 'static' });
+    // modalRef.componentInstance.resourceType = dr.resourceType;
+    // modalRef.componentInstance.originalId = dr.id;
+    // modalRef.result.then((newId) => {
+    //   // Update the resource
+    //   this.data.id = newId;
+    // });
   }
 }

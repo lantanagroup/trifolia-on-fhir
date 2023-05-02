@@ -19,7 +19,7 @@ import {GroupService} from '../../shared/group.service';
 import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 import type {IPractitioner} from '@trifolia-fhir/tof-lib';
-import type {IGroup, IPermission, IProject, IProjectResource, IUser} from '@trifolia-fhir/models';
+import type {IConformance, IGroup, IPermission, IProject, IProjectResource, IUser} from '@trifolia-fhir/models';
 import { UserService } from '../../shared/user.service';
 
 class ResourceSecurity {
@@ -101,9 +101,7 @@ export class ResourcePermissionsComponent implements OnInit {
         this.fhirService
           .search(this.copyResourceType, term, true)
           .pipe(
-            map((bundle: Bundle) =>
-              (bundle.entry || []).map((entry) => entry.resource)
-            )
+            map((res: IConformance[]) => (res || []).map((conf) => conf.resource))
           )
       )
     );

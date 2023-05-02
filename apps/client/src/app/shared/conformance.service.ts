@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { IConformance, IProject, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import { IConformance, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import { Paginated } from '@trifolia-fhir/tof-lib';
 
 @Injectable()
@@ -57,6 +57,12 @@ export class ConformanceService {
             const url = `/api/conformance/${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
             return this.http.post<IConformance>(url, conformance);
         }
+    }
+
+
+    public delete(conformanceId: string): Observable<any> {
+        const url = `/api/conformance/${encodeURIComponent(conformanceId)}`;
+        return this.http.delete(url);
     }
 
 

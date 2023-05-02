@@ -7,7 +7,7 @@ import { Project } from '../projects/project.schema';
 
 export type ExampleDocument = HydratedDocument<Example>;
 
-@Schema({ collection: 'example' })
+@Schema({ collection: 'example', toJSON: { getters: true } })
 export class Example extends BaseEntity implements IExample {
 
     @Prop()
@@ -28,7 +28,14 @@ export class Example extends BaseEntity implements IExample {
     @Prop()
     lastUpdated: Date;
 
-    @Prop()
+    @Prop({
+        get: (permissions: IPermission[]) : IPermission[] => {
+            if (!permissions || permissions.length < 1) {
+                return [{type: 'everyone', grant: 'read'}, {type: 'everyone', grant: 'write'}];
+            }
+            return permissions;
+        }
+    })
     permissions?: IPermission[];
 
 
