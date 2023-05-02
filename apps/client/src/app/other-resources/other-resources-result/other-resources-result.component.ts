@@ -13,7 +13,7 @@ import { BaseComponent } from '../../base.component';
 import { AuthService } from '../../shared/auth.service';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import {IConformance} from '@trifolia-fhir/models';
+import {IConformance, IExample} from '@trifolia-fhir/models';
 import {Conformance} from '../../../../../server/src/app/conformance/conformance.schema';
 
 @Component({
@@ -21,7 +21,7 @@ import {Conformance} from '../../../../../server/src/app/conformance/conformance
   styleUrls: ['./other-resources-result.component.css']
 })
 export class OtherResourcesResultComponent extends BaseComponent implements OnInit {
-  public conformance: IConformance;
+  public conformance;
   activeSub: 'json/xml' | 'permissions' = 'json/xml';
   message: string;
   data;
@@ -86,11 +86,13 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   ngOnInit() {
     this.message = 'Opening resource';
 
-    this.fhirService.readById(this.route.snapshot.params.id)
-      .subscribe((conf: IConformance) => {
+    this.fhirService.readById(this.route.snapshot.params.type, this.route.snapshot.params.id)
+      .subscribe((conf) => {
         this.conformance = conf;
         this.conformance.permissions = this.authService.getDefaultPermissions() ;
-        this.data =  this.conformance.resource;
+        if(conf.hasOwnProperty('resource')) {
+          this.data = <IConformance>(this.conformance).resource;
+        }
         this.content = JSON.stringify(this.data, null, '\t');
         this.validation = this.fhirService.validate(this.data);
 
@@ -166,7 +168,6 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   }
 
   public save() {
-
     this.fhirService.update(this.conformance.id, this.conformance).subscribe({ next: (conf: IConformance) => {
           this.conformance = conf;
           this.data = conf.resource;
