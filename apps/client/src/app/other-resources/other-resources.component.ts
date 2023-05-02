@@ -8,6 +8,8 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import {IConformance} from '@trifolia-fhir/models';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   templateUrl: './other-resources.component.html',
@@ -20,10 +22,11 @@ export class OtherResourcesComponent implements OnInit {
   public searchContent: string;
   public searchUrl: string;
   public message: string;
-  public results: Bundle;
+  public results;
   public Globals = Globals;
   public page = 1;
   public ignoreContext = false;
+  public total: string;
 
   @ViewChild('tabSet', { static: true })
   public tabSet: NgbNav;
@@ -31,7 +34,9 @@ export class OtherResourcesComponent implements OnInit {
 
   constructor (
     public configService: ConfigService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    public route: ActivatedRoute
+    ) {
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {
@@ -48,9 +53,10 @@ export class OtherResourcesComponent implements OnInit {
 
     this.message = 'Searching...';
 
-    this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, null, null, true, this.page, 10, this.ignoreContext)
-      .subscribe((results: Bundle) => {
+    this.fhirService.search(this.searchResourceType, this.searchContent, true, this.searchUrl, null, !this.ignoreContext?this.getImplementationGuideId(): null, null, null, true, this.page)
+      .subscribe((results: IConformance[]) => {
         this.results = results;
+        this.total = this.results.total;
         this.message = 'Done searching.';
         this.tabSet.select('results');
       }, (err) => {
@@ -96,6 +102,10 @@ export class OtherResourcesComponent implements OnInit {
         }
       }
     }
+  }
+
+  public getImplementationGuideId(){
+    return this.route.snapshot.paramMap.get('implementationGuideId');
   }
 
   ngOnInit() {

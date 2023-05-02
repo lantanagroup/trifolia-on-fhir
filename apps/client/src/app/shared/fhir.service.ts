@@ -31,7 +31,7 @@ import {publishReplay, refCount} from 'rxjs/operators';
 import {IBundle, ICoding} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { forkJoin } from 'rxjs';
-import {IHistory} from '@trifolia-fhir/models';
+import {IConformance, IHistory} from '@trifolia-fhir/models';
 
 export interface IResourceGithubDetails {
   owner: string;
@@ -304,13 +304,8 @@ export class FhirService {
    * @param {number} [count]
    * @param ignoreContext Does *not* send the context implementation guide in the headers to limit the search results
    */
-  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false, page?: number, count = 10, ignoreContext = false) {
-    let url = '/api/fhir/' + resourceType + '?' + `_count=${count}&`;
-
-    if(page){
-      const offset = (page - 1) * count;
-      url += `_getpagesoffset=${offset.toString()}&`;
-    }
+  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, implementationGuideId?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false, page?: number) {
+    let url = '/api/conformance?resourcetype=' + resourceType + '&page=' + page + '&'; //+ `_count=${count}&`;
 
     if (searchContent) {
       url += `_content=${encodeURIComponent(searchContent)}&`;
@@ -321,7 +316,11 @@ export class FhirService {
     }
 
     if (id) {
-      url += `_id=${encodeURIComponent(id)}&`;
+      url += `id=${encodeURIComponent(id)}&`;
+    }
+
+    if (implementationGuideId) {
+      url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;
     }
 
     if (additionalQuery) {
@@ -343,21 +342,9 @@ export class FhirService {
       });
     }
 
-    if (summary === true) {
-      url += '_summary=true&';
-    }
+    if(sortID) url += '_sort=resourceid&';
 
-    if(sortID) url += '_sort=_id&';
-
-    const options = {
-      headers: {}
-    };
-
-    if (ignoreContext) {
-      options.headers['ignoreContext'] = 'true';
-    }
-
-    return this.http.get<IBundle>(url, options);
+    return this.http.get<IConformance[]>(url);
   }
 
   /**
@@ -369,6 +356,19 @@ export class FhirService {
     const url = '/api/fhir/' + resourceType + '/' + id;
     return this.http.get(url);
   }
+
+
+  /**
+   * Retrieves the specified resource id from the FHIR server
+   * @param {string} resourceType
+   * @param {string} id
+   */
+  public readById(id: string) {
+      const url = '/api/conformance/' + encodeURIComponent(id);
+      return this.http.get<IConformance>(url);
+  }
+
+
 
   /**
    * Retrieves all versions of the specified resource from the FHIR server
@@ -402,8 +402,8 @@ export class FhirService {
    * @param {string} resourceType
    * @param {string} id
    */
-  public delete(resourceType: string, id: string) {
-    const url = `/api/fhir/${resourceType}/${id}`;
+  public delete( id: string) {
+    const url = `/api/conformance/${id}`;
     return this.http.delete(url);
   }
 
@@ -413,9 +413,13 @@ export class FhirService {
    * @param {string} id
    * @param {Resource} resource
    */
-  public update(resourceType: string, id: string, resource: Resource): Observable<Resource> {
-    const url = '/api/fhir/' + resourceType + '/' + id;
-    return this.http.put<Resource>(url, resource);
+  public update(id: string, conformance: IConformance): Observable<IConformance> {
+    if (id) {
+      const url = '/api/conformance/' + encodeURIComponent(id);
+      return this.http.put<IConformance>(url, conformance);
+    } else {
+      return this.http.post<IConformance>('/api/codeSystem', conformance);
+    }
   }
 
   public patch(resourceType: string, id: string, patches: {op: string, path: string, value: any}[]) {

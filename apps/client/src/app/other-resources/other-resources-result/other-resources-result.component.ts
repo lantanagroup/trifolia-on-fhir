@@ -13,15 +13,18 @@ import { BaseComponent } from '../../base.component';
 import { AuthService } from '../../shared/auth.service';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import {IConformance} from '@trifolia-fhir/models';
+import {Conformance} from '../../../../../server/src/app/conformance/conformance.schema';
 
 @Component({
   templateUrl: './other-resources-result.component.html',
   styleUrls: ['./other-resources-result.component.css']
 })
 export class OtherResourcesResultComponent extends BaseComponent implements OnInit {
+  public conformance: IConformance;
   activeSub: 'json/xml' | 'permissions' = 'json/xml';
   message: string;
-  data: DomainResource;
+  data;
   Globals = Globals;
   content: string;
   contentChanged = new Subject();
@@ -39,6 +42,8 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
     super(configService, authService);
 
+
+
     this.contentChanged
       .pipe(debounceTime(500))
       .subscribe(() => {
@@ -54,7 +59,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
               this.data = this.fhirService.deserialize(this.content);
               this.message = 'The content has been updated';
             }
-
+            this.conformance.resource = this.data;
             this.validation = this.fhirService.validate(this.data);
 
             if (!this.validation.valid) {
@@ -81,10 +86,11 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   ngOnInit() {
     this.message = 'Opening resource';
 
-    this.fhirService.read(this.route.snapshot.params.type, this.route.snapshot.params.id)
-      .subscribe((results: DomainResource) => {
-
-        this.data = results;
+    this.fhirService.readById(this.route.snapshot.params.id)
+      .subscribe((conf: IConformance) => {
+        this.conformance = conf;
+        this.conformance.permissions = this.authService.getDefaultPermissions() ;
+        this.data =  this.conformance.resource;
         this.content = JSON.stringify(this.data, null, '\t');
         this.validation = this.fhirService.validate(this.data);
 
@@ -159,30 +165,34 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     }
   }
 
-  public save(dr: DomainResource) {
-    this.fhirService.update(dr.resourceType, dr.id, dr).toPromise()
-      .then((updated) => {
-        Object.assign(dr, updated);
-        this.message = `Successfully updated resource ${dr.resourceType}/${dr.id}!`;
-      })
-      .catch((err) => {
-        this.message = getErrorString(err);
+  public save() {
+
+    this.fhirService.update(this.conformance.id, this.conformance).subscribe({ next: (conf: IConformance) => {
+          this.conformance = conf;
+          this.data = conf.resource;
+          this.message = 'Your changes have been saved!';
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the code system: ' + getErrorString(err);
+        }
       });
   }
 
-  public remove(dr: DomainResource) {
-    if (!confirm(`Are you sure you want to delete ${dr.resourceType}/${dr.id}?`)) {
-      return false;
+  public remove(data) {
+    if (!confirm(`Are you sure you want to delete the code system ${data.title || data.name || data.id}`)) {
+      return;
     }
 
-    this.fhirService.delete(dr.resourceType, dr.id)
+    this.fhirService.delete(data.id)
       .subscribe(() => {
-        this.router.navigate([`${this.configService.baseSessionUrl}/other-resources/`]);
-        alert(`Successfully removed resource ${dr.resourceType}/${dr.id}.`);
+        const entry = (this.data.results || []).find((e) => e.id === data.id);
+        const index = this.data.results.indexOf(entry);
+        this.data.results.splice(index, 1);
       }, (err) => {
-        this.message = 'Error while removing the resource: ' + getErrorString(err);
+        this.configService.handleError(err, 'An error occurred while deleting the code system');
       });
   }
+
 
   public changeId(dr: DomainResource) {
     const modalRef = this.modalService.open(ChangeResourceIdModalComponent, { backdrop: 'static' });

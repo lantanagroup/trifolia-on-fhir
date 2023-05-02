@@ -196,7 +196,7 @@ const appRoutes: Routes = [
   { path: 'projects/:implementationGuideId/export', component: ExportComponent },
   { path: 'projects/:implementationGuideId/import', component: ImportComponent },
   { path: 'projects/:implementationGuideId/other-resources', component: OtherResourcesComponent },
-  { path: 'projects/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent },
+  { path: 'projects/:implementationGuideId/other-resources/:id', component: OtherResourcesResultComponent },
   { path: 'projects/:implementationGuideId/examples', component: ExamplesComponent },
   { path: 'projects/:implementationGuideId/bulk-edit', component: BulkEditComponent },
 
