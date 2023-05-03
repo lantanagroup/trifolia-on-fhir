@@ -21,7 +21,7 @@ export class QuestionnairesComponent extends BaseComponent implements OnInit {
   public criteriaChangedEvent = new Subject<void>();
   public page = 1;
   public Globals = Globals;
-  public total: string;
+  public total: number;
 
   constructor(
     public configService: ConfigService,
