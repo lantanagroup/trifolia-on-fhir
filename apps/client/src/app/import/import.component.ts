@@ -28,7 +28,8 @@ enum ContentTypes {
   Json = 0,
   Xml = 1,
   Xlsx = 2,
-  Image = 3
+  Image = 3,
+  CdaExample = 4
 }
 
 class ImportFileModel {
@@ -44,6 +45,9 @@ class ImportFileModel {
   public bundleOperation: 'store' | 'execute';
   public singleIg = true;
   public multipleIgMessage: "";
+  public cdaId?: string;
+  public cdaContent?: string;
+  public isCDAExample: boolean = false;
 }
 
 class GitHubImportContent {
@@ -279,6 +283,8 @@ export class ImportComponent implements OnInit {
     this.files.filter(f => !!f.resource && !f.resource.id)
       .forEach(f => f.status = 'add');
 
+    this.files.filter(f => f.isCDAExample && f.cdaContent).forEach(f => f.status = 'add');
+
     // Only ask the server if we have one or more resources with an ID that hasn't already been checked
     if (resourceReferences.length > 0) {
       this.importService.checkResourcesStatus(resourceReferences, this.implementationGuideId)
@@ -330,7 +336,22 @@ export class ImportComponent implements OnInit {
 
         try {
           if (importFileModel.contentType === ContentTypes.Xml) {
-            importFileModel.resource = this.fhirService.deserialize(result);
+
+            // try to deserialize XML imports into FHIR objects
+            try {
+              importFileModel.resource = this.fhirService.deserialize(result);
+            } catch (error) {
+              // if deserializing failed and this is a CDA IG we can store the XML as example content
+              if (this.configService.isCDA) {
+                importFileModel.cdaContent = result;
+                importFileModel.isCDAExample = true;
+                importFileModel.contentType = ContentTypes.CdaExample;
+                importFileModel.cdaId = this.getIdDisplay(importFileModel);
+              }
+              else {
+                throw error;
+              }
+            }
           } else if (importFileModel.contentType === ContentTypes.Json) {
             importFileModel.resource = JSON.parse(result);
           } else if (importFileModel.contentType === ContentTypes.Xlsx) {
@@ -476,9 +497,13 @@ export class ImportComponent implements OnInit {
       (<IConformance | IExample>file.existingResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
 
       // add/update Example type
-      if (file.isExample) {
+      if (file.isExample || file.isCDAExample) {
         let example: IExample = <IExample>{ ...file.existingResource };
-        example.content = file.resource;
+        example.content = file.isCDAExample ? file.cdaContent : file.resource;
+        if (file.isCDAExample) {
+          example.name = file.cdaId;
+        }
+        console.log('example:', example);
         requests.push(this.examplesService.save(example.id, example, this.implementationGuideId));
       }
 
@@ -722,6 +747,10 @@ export class ImportComponent implements OnInit {
         const ids = (file.vsBundle.entry || []).map((entry) => entry.resource.id);
         return ids.join(', ');
       }
+    } else if (file.contentType === ContentTypes.CdaExample) {
+      let name = file.name || '';
+      const regex = /[^\w\-\.]/g;
+      return name.substring(0, name.lastIndexOf('.')).toLowerCase().replace(regex, '');
     } else {
       if (file.resource) {
         return file.resource.id;
@@ -739,6 +768,8 @@ export class ImportComponent implements OnInit {
         return 'Value Set XLSX';
       case ContentTypes.Image:
         return 'Image';
+      case ContentTypes.CdaExample:
+        return 'CDA XML Example';
       default:
         return 'Unknown';
     }
