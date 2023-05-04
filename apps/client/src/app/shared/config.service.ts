@@ -13,7 +13,8 @@ export class ConfigService {
   public project?: {
     implementationGuideId: string,
     name?: string,
-    securityTags?: Coding[]
+    securityTags?: Coding[],
+    dependencies?: string[]
   };
   public statusMessage: string;
   public showingIntroduction = false;
@@ -92,16 +93,27 @@ export class ConfigService {
     this.fhirVersion = fhirVersion;
   }
 
+  public get isCDA(): boolean {
+    if (!this.project || !this.project.dependencies) {
+      return false;
+    }
 
-  public get isFhirSTU3() {
+    return (this.project.dependencies || []).findIndex((d: string) => {
+      return [
+        'hl7.fhir.cda'
+      ].includes((d || '').split('#')[0])
+    }) > -1;
+  }
+
+  public get isFhirSTU3(): boolean {
     return this.fhirVersion === Versions.STU3.toLowerCase();
   }
 
-  public get isFhirR4() {
+  public get isFhirR4(): boolean {
     return this.fhirVersion === Versions.R4.toLowerCase();
   }
 
-  public get isFhirR5() {
+  public get isFhirR5(): boolean {
     return this.fhirVersion === Versions.R5.toLowerCase();
   }
   public setTitle(value: string, isDirty: boolean = false) {

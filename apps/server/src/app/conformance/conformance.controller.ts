@@ -195,7 +195,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
             }
             else if (r.valueType === 'Example') {
                 const val: IExample = <IExample>r.value;
-                if ('resourceType' in val.content && 'id' in val.content) {
+                if (typeof val.content === typeof {} && 'resourceType' in val.content && 'id' in val.content) {
                     key = `${val.content['resourceType']}/${val.content['id'] ?? val.id}`;
                 }
                 else {

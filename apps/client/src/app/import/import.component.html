@@ -35,7 +35,7 @@
             {{f.name}}
             <i *ngIf="f.message" class="fas fa-exclamation warning"><span class="message">{{f.message}}</span></i>
           </td>
-          <td>{{getIdDisplay(f)}}</td>
+          <td>{{getIdDisplay(f) || f.name}}</td>
           <td>{{getContentTypeDisplay(f)}}</td>
           <td>
             <span *ngIf="f.resource?.resourceType !== 'Bundle'">{{f.status.substring(0, 1).toUpperCase()}}{{f.status.substring(1)}}&nbsp;</span>
@@ -49,7 +49,7 @@
             <i *ngIf="!f.singleIg" class="fas fa-exclamation warning" style="padding-left:15px;" [ngbTooltip]="f.multipleIgMessage"></i>
           </td>
           <td>
-            <input type="checkbox" [(ngModel)]="f.isExample" />
+            <input type="checkbox" [(ngModel)]="f.isExample || f.isCDAExample" [disabled]="f.isCDAExample" />
           </td>
           <td class="actions-column-1">
             <div class="pull-right">

@@ -11,7 +11,7 @@ import {
   ImplementationGuide as STU3ImplementationGuide,
   PackageResourceComponent
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { buildUrl } from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import { buildUrl, getR4Dependencies, getSTU3Dependencies } from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {
   AuditEvent as R4AuditEvent,
   DomainResource as R4DomainResource, ImplementationGuide,
@@ -575,6 +575,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
   let changed = false;
   let resourceReferenceString;
+  let isExampleCDA: boolean = false;
 
   // const resourceReferenceString = isExample ? 
   //   `${resourceToAdd.}` :
@@ -589,7 +590,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
     }
   } else {
 
-    // try to 
+    // try a few different ways to add an example
     try {
 
       let resourceType: string;
@@ -599,16 +600,33 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
       if ('content' in resourceToAdd && resourceToAdd.content) {
         let content = resourceToAdd.content;
         if (typeof resourceToAdd.content === typeof '') {
-          content = JSON.parse(resourceToAdd.content);
+          // try parsing the string to a valid JSON object
+          try {
+            content = JSON.parse(resourceToAdd.content);
+            resourceType = content['resourceType'];
+            resourceId = content['id'] || resourceToAdd.id;
+          }
+
+          // JSON parsing failed... if this is a CDA IG we'll add it as a special case
+          catch (error) {
+            if (implementationGuideIsCDA(implGuideResource)) {
+              resourceType = 'Binary';
+              resourceId = resourceToAdd.name;
+              isExampleCDA = true;
+            } else {
+              throw error;
+            }
+          }
+
         }
-        resourceType = content['resourceType'];
-        resourceId = content['id'] || resourceToAdd.id;
       }
+
       // received an object with a resource property set even though this is supposed to be an example type
       else if ('resource' in resourceToAdd && resourceToAdd.resource) {
         resourceType = resourceToAdd.resource.resourceType;
         resourceId = resourceToAdd.resource['id'] || resourceToAdd.id;
       }
+
       // don't know how to process the supplied resource
       else {
         throw new BadRequestException();
@@ -654,24 +672,43 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
       logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');
 
-      r4.definition.resource.push(Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0 && implementationGuide.meta.profile ?
-        {
+      // special case for adding CDA example
+      if (isExampleCDA) {
+
+        r4.definition.resource.push({
+          extension: [{
+            url: 'http://hl7.org/fhir/StructureDefinition/implementationguide-resource-format',
+            valueString: 'application/xml'
+          }],
           reference: {
             reference: resourceReferenceString,
             display: display
           },
-          exampleCanonical: implementationGuide.meta.profile[0],
+          exampleCanonical: implementationGuide.meta.profile ? implementationGuide.meta.profile[0] : `http://example.org/fhir/${resourceReferenceString}`,
           name: display
-        } :
-        {
-          reference: {
-            reference: resourceReferenceString,
-            display: display
-          },
-          exampleBoolean: isExample || Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0,
-          name: display,
-          description: description
         });
+
+      } else {
+        // otherwise do the usual...
+        r4.definition.resource.push(Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0 && implementationGuide.meta.profile ?
+          {
+            reference: {
+              reference: resourceReferenceString,
+              display: display
+            },
+            exampleCanonical: implementationGuide.meta.profile[0],
+            name: display
+          } :
+          {
+            reference: {
+              reference: resourceReferenceString,
+              display: display
+            },
+            exampleBoolean: isExample || Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0,
+            name: display,
+            description: description
+          });
+      }
       changed = true;
     }
   } else {                                        // stu3
@@ -796,6 +833,19 @@ export async function removeFromImplementationGuideNew(service: ConformanceServi
     }
   }
 }
+
+export function implementationGuideIsCDA(implementationGuide: IConformance): boolean {
+  let deps = implementationGuide.fhirVersion === 'stu3' ?
+    getSTU3Dependencies(<STU3ImplementationGuide>implementationGuide.resource) :
+    getR4Dependencies(<R4ImplementationGuide>implementationGuide.resource);
+
+  return (deps || []).findIndex((d: string) => {
+    return [
+      'hl7.fhir.cda'
+    ].includes((d || '').split('#')[0])
+  }) > -1;
+}
+
 
 /**
  * Asserts that the user has the permissions necessary on the resource to edit the resource.
