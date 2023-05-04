@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  trifolia-on-fhir:
+    build:
+      context: .
+    restart: on-failure
+    ports:
+      - 49366:49366
+    container_name: trifolia-on-fhir
+    depends_on:
+      - mongodb
+    environment:
+      - DATABASE_URI=mongodb://root:password@mongodb:27017/tof?authSource=admin
+      - SERVER_ENABLESECURITY=${SERVER_ENABLESECURITY}
+      - AUTH_CLIENTID=${AUTH_CLIENTID}
+      - AUTH_SCOPE=${AUTH_SCOPE}
+      - AUTH_LOGOUTURL=${AUTH_LOGOUTURL}
+      - AUTH_DOMAIN=${AUTH_DOMAIN}
+      - AUTH_SECRET=${AUTH_SECRET}
+      - AUTH_ISSUER=${AUTH_ISSUER}
+      - AUTH_JWKSURI=${AUTH_JWKSURI}
+    
+
+  mongodb:
+    image: mongo
+    restart: on-failure
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password

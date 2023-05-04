@@ -62,7 +62,9 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
       }
 
       const user = await this.userService.findOne({'authId' : profile.sub.startsWith('auth0|')? profile.sub.substring(6): profile.sub});
-      profile.user = user.$clone();
+      if (user) {
+        profile.user = user.$clone();
+      }
 
       //profile.isAdmin = true;
       return profile;
