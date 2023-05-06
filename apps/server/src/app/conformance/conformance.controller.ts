@@ -183,32 +183,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
 
         let conformance = await this.conformanceService.getModel().findById(id).populate("references.value");
         this.assertResourceValid(conformance);
-
-        let map: IProjectResourceReferenceMap = {};
-        (conformance.references || []).forEach((r: IProjectResourceReference) => {
-            if (!r.value || typeof r.value === typeof '') return;
-
-            let key: string;
-            if (r.valueType === 'Conformance') {
-                const val: IConformance = <IConformance>r.value;
-                key = `${val.resource.resourceType}/${val.resource.id ?? val.id}`;
-            }
-            else if (r.valueType === 'Example') {
-                const val: IExample = <IExample>r.value;
-                if (typeof val.content === typeof {} && 'resourceType' in val.content && 'id' in val.content) {
-                    key = `${val.content['resourceType']}/${val.content['id'] ?? val.id}`;
-                }
-                else {
-                    key = `example/${val.content['id'] ?? val.id}`;
-                }
-            }
-
-            if (key) {
-                map[key] = r;
-            }
-        });
-
-        return map;
+        return this.conformanceService.getReferenceMap(conformance);
     }
 
 }
