@@ -6,7 +6,8 @@ import {
   ImplementationGuide as STU3ImplementationGuide,
   Media,
   PackageResourceComponent,
-  StructureDefinition as STU3StructureDefinition
+  StructureDefinition as STU3StructureDefinition,
+  LinkComponent
 } from "@trifolia-fhir/stu3";
 import {
   ImplementationGuide as R4ImplementationGuide,
@@ -48,7 +49,7 @@ export class HtmlExporter {
   readonly homedir: string;
   public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
   public bundle: IBundle;
-  public fhirVersion: 'stu3'|'r4'|'r5';
+  public fhirVersion: 'stu3' | 'r4' | 'r5';
   public packageId: string;
   public rootPath: string;
   public controlPath: string;
@@ -93,7 +94,7 @@ export class HtmlExporter {
     protected io: Server,
     protected socketId: string,
     protected implementationGuideId: string) {
-      
+
     this.homedir = require('os').homedir();
   }
 
@@ -370,7 +371,16 @@ export class HtmlExporter {
     // Don't re-write the main implementation guide
     this.bundle.entry
       .filter((e) => e.resource.resourceType !== 'ImplementationGuide') // || e.resource.id !== this.implementationGuideId)
-      .forEach((entry) => this.writeResourceContent(inputDir, entry.resource, isXml));
+      .forEach((entry) => {
+
+        // CDA example 
+        if ((entry['link'] || []).find((l: LinkComponent) => { return l.relation === 'example-cda' })) {
+          this.writeResourceContent(inputDir, entry.resource, isXml, `${entry.resource.id}.xml`, entry.resource['data'] || entry.resource['content']);
+        } else {
+          // every other resource/example
+          this.writeResourceContent(inputDir, entry.resource, isXml);
+        }
+      });
 
     this.logger.log('Done writing resources to file system.');
 
@@ -667,11 +677,19 @@ export class HtmlExporter {
     }
   }
 
-  private getResourceFilePath(inputDir: string, resource: DomainResource, isXml: boolean) {
+  private getResourceFilePath(inputDir: string, resource: DomainResource, isXml: boolean, exampleFileName?: string) {
     // ImplementationGuide must be generated as an xml file for the IG Publisher in STU3.
     if (resource.resourceType === 'ImplementationGuide') {
       fs.ensureDirSync(inputDir);
       return path.join(inputDir, resource.id + (isXml ? '.xml' : '.json'));
+    }
+
+    if (exampleFileName) {
+      const fullResourcePath = path.join(inputDir, 'examples', exampleFileName);
+      const resourceDir = fullResourcePath.substring(0, fullResourcePath.lastIndexOf(path.sep));
+      this.logger.debug(`Ensuring resource directory ${resourceDir} exists for ${fullResourcePath}`);
+      fs.ensureDirSync(resourceDir);
+      return fullResourcePath;
     }
 
     const implementationGuideResource = <ImplementationGuideResourceComponent>this.getImplementationGuideResource(resource.resourceType, resource.id);
@@ -700,9 +718,16 @@ export class HtmlExporter {
     return fullResourcePath;
   }
 
-  private writeResourceContent(inputDir: string, resource: DomainResource, isXml: boolean) {
+  
+  private writeResourceContent(inputDir: string, resource: DomainResource, isXml: boolean, exampleFileName?: string, exampleContent?: string) {
     const cleanResource = BundleExporter.cleanupResource(resource);
-    const resourcePath = this.getResourceFilePath(inputDir, resource, isXml);
+    const resourcePath = this.getResourceFilePath(inputDir, resource, isXml, exampleFileName);
+
+    if (exampleContent) {
+      fs.writeFileSync(resourcePath, exampleContent);
+      return;
+    }
+
     let resourceContent;
 
     this.logger.log(`Writing ${resource.resourceType}/${resource.id} to "${resourcePath}.`);

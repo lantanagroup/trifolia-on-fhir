@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IConformance, IHistory, IProject, IProjectResourceReference } from '@trifolia-fhir/models';
+import { IConformance, IExample, IHistory, IProject, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import { IBundle, IDomainResource } from '@trifolia-fhir/tof-lib';
 import { Model } from 'mongoose';
 import { BaseDataService } from '../base/base-data.service';
@@ -10,8 +10,9 @@ import { Conformance, ConformanceDocument } from './conformance.schema';
 import { addToImplementationGuideNew, removeFromImplementationGuideNew } from '../helper';
 import { ObjectId } from 'mongodb';
 import { TofNotFoundException } from '../../not-found-exception';
-import { Bundle as STU3Bundle, EntryComponent as STU3BundleEntryComponent } from '@trifolia-fhir/stu3';
-import { Bundle as R4Bundle, BundleEntryComponent as R4BundleEntryComponent } from '@trifolia-fhir/r4';
+import { LinkComponent, Binary as STU3Binary, Bundle as STU3Bundle, EntryComponent as STU3BundleEntryComponent } from '@trifolia-fhir/stu3';
+import { Binary as R4Binary, Bundle as R4Bundle, BundleEntryComponent as R4BundleEntryComponent } from '@trifolia-fhir/r4';
+import { Binary as R5Binary, Bundle as R5Bundle, BundleEntry as R5BundleEntryComponent } from '@trifolia-fhir/r5';
 
 @Injectable()
 export class ConformanceService extends BaseDataService<ConformanceDocument> {
@@ -255,41 +256,103 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             throw new TofNotFoundException(`No valid implementation guide found.`);
         }
 
+        let referenceMap = this.getReferenceMap(implementationGuide);
+
         let bundle: IBundle;
         let entryType;
         if (implementationGuide.fhirVersion === 'stu3') {
             bundle = new STU3Bundle(implementationGuide);
             entryType = STU3BundleEntryComponent;
-        }
-        else {
+        } else if (implementationGuide.fhirVersion === 'r4') {
             bundle = new R4Bundle(implementationGuide);
             entryType = R4BundleEntryComponent;
+        }
+        else {
+            bundle = new R5Bundle(implementationGuide);
+            entryType = R5BundleEntryComponent;
         }
 
         bundle.entry = [];
 
-        let igEntry = new entryType();
+        let igEntry: STU3BundleEntryComponent|R4BundleEntryComponent|R5BundleEntryComponent = new entryType();
         igEntry.resource = implementationGuide.resource;
         bundle.entry.push(igEntry);
 
         (implementationGuide.references || []).forEach((r: IProjectResourceReference) => {
-            let entry = new entryType();
-            if (r.value && typeof r.value === typeof {}) {
-                if ('resource' in <any>r.value) {
-                    entry.resource = r.value['resource'];
-                }
-                else if ('content' in <any>r.value) {
-                    entry.resource = r.value['content'];
-                }
+            let entry: STU3BundleEntryComponent|R4BundleEntryComponent|R5BundleEntryComponent = new entryType();
 
-                if (entry.resource) {
-                    bundle.entry.push(entry);
+            if (!r.value) {
+                return;
+            }
+
+            if (r.valueType === 'Conformance') {
+                entry.resource = r.value['resource'];
+            }
+            else if (r.valueType === 'Example') {
+                // attempt to parse content for fhir resource... otherwise create a binary type for the content
+                try {
+                    entry.resource = JSON.parse(r.value['content']);
+                } catch (error) {
+                    let newBinary;//: STU3Binary|R4Binary|R5Binary;
+                    //let encoded: string = Buffer.from(r.value['content']).toString('base64');
+                    //console.log('encoded:', encoded);
+                    if (implementationGuide.fhirVersion === 'stu3') {
+                        newBinary = new STU3Binary();
+                        newBinary.content = r.value['content'];
+                    } else if (implementationGuide.fhirVersion === 'r4') {
+                        newBinary = new R4Binary();
+                        newBinary.data = r.value['content'];
+                    } else {
+                        newBinary = new R5Binary();
+                        newBinary.data = r.value['content'];
+                    }
+
+                    newBinary.id = r.value['name'];
+                    newBinary.contentType = 'application/xml';
+                    entry.link = [new LinkComponent({relation: 'example-cda'})];
+                    entry.resource = newBinary;
                 }
+                
+            }
+
+            if (entry.resource) {
+                bundle.entry.push(entry);
             }
         });
 
 
         return bundle;
+
+    }
+
+
+    public getReferenceMap(conformance: IConformance): IProjectResourceReferenceMap {
+
+        let map: IProjectResourceReferenceMap = {};
+        (conformance.references || []).forEach((r: IProjectResourceReference) => {
+            if (!r.value || typeof r.value === typeof '') return;
+
+            let key: string;
+            if (r.valueType === 'Conformance') {
+                const val: IConformance = <IConformance>r.value;
+                key = `${val.resource.resourceType}/${val.resource.id ?? val.id}`;
+            }
+            else if (r.valueType === 'Example') {
+                const val: IExample = <IExample>r.value;
+                if (typeof val.content === typeof {} && 'resourceType' in val.content && 'id' in val.content) {
+                    key = `${val.content['resourceType']}/${val.content['id'] ?? val.id}`;
+                }
+                else {
+                    key = `example/${val.content['id'] ?? val.id}`;
+                }
+            }
+
+            if (key) {
+                map[key] = r;
+            }
+        });
+
+        return map;
 
     }
 
