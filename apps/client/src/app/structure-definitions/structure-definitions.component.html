@@ -56,16 +56,16 @@
   <tr *ngFor="let structureDefinition of structureDefinitions">
     <td>{{structureDefinition.id}}</td>
     <td>
-      {{structureDefinition.title || structureDefinition.name}} <i class="fa fa-comment"
-                                                                   *ngIf="structureDefinition.description"
-                                                                   [ngbTooltip]="structureDefinition.description"></i>
+      {{structureDefinition.resource.title || structureDefinition.resource.name}} <i class="fa fa-comment"
+                                                                   *ngIf="structureDefinition.resource.description"
+                                                                   [ngbTooltip]="structureDefinition.resource.description"></i>
       <br/>
-      <sub *ngIf="structureDefinition.title">{{structureDefinition.name}}&nbsp;</sub>
+      <sub *ngIf="structureDefinition.resource.title">{{structureDefinition.resource.name}}&nbsp;</sub>
       <sub>{{structureDefinition.url}}</sub>
     </td>
-    <td class="experimental">{{structureDefinition.experimental ? "Yes" : "No"}}</td>
+    <td class="experimental">{{structureDefinition.resource.experimental ? "Yes" : "No"}}</td>
     <td>{{structureDefinition.type}}</td>
-    <td class="contact">{{getContactDisplay(structureDefinition)}}</td>
+    <td class="contact">{{getContactDisplay(structureDefinition.resource)}}</td>
     <td>
       <div class="pull-right btn-group">
         <a class="btn btn-primary"

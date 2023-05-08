@@ -242,7 +242,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
         throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
       }
 
-   //   this.conformance =  { resource: this.structureDefinition, fhirVersion: <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+      this.conformance.resource = this.structureDefinition;
 
       if (!this.structureDefinition.differential) {
         this.structureDefinition.differential = {
@@ -297,6 +297,12 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     return max !== '0' && max !== '1';
   }
 
+
+  public get isNew(): boolean {
+    const id = this.route.snapshot.paramMap.get('id');
+    return !id || id === 'new';
+  }
+
   public revert() {
     if (!confirm('Are you sure you want to revert your changes to the profile?')) {
       return;
@@ -322,7 +328,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
     await this.strucDefService.save(this.sdId, this.conformance)
       .subscribe((conf) => {
-        if (!this.structureDefinition.id) {
+        if (!this.sdId) {
           // noinspection JSIgnoredPromiseFromCall
           this.sdId = conf.id;
           this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${this.sdId}`]);

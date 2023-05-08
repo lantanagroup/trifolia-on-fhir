@@ -99,8 +99,8 @@ export class StructureDefinitionService {
     }
 
 
-    if (structureDefinition.id) {
-      url += '/' + encodeURIComponent(structureDefinition.id);
+    if (structureDefinitionId) {
+      url += '/' + encodeURIComponent(structureDefinitionId);
       return this.http.put<IConformance>(url, structureDefinition);
     } else {
       return this.http.post<IConformance>(url, structureDefinition);
