@@ -57,7 +57,7 @@
                 <button type="button" class="btn btn-secondary" (click)="remove(vs)" [disabled]="!canEdit(vs)" title="Remove this value set">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-secondary" (click)="changeId(vs)" [disabled]="!canEdit(vs)" title="Change this value set's ID">
+                <button type="button" class="btn btn-secondary" (click)="changeId(vs.resource)" [disabled]="!canEdit(vs)" title="Change this value set's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>

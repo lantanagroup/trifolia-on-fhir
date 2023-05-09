@@ -50,7 +50,7 @@
         <button type="button" class="btn btn-secondary" (click)="remove(cs)" [disabled]="!canEdit(cs)" title="Remove this resource">
           <i class="fas fa-trash-alt"></i>
         </button>
-        <button type="button" class="btn btn-secondary" (click)="changeId(cs)" [disabled]="!canEdit(cs)" title="Change this resource's ID">
+        <button type="button" class="btn btn-secondary" (click)="changeId(cs.resource)" [disabled]="!canEdit(cs)" title="Change this resource's ID">
           <i class="fa fa-id-badge"></i>
         </button>
       </div>
