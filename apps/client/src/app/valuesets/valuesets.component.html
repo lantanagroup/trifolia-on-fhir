@@ -93,7 +93,7 @@
     </tr>
     <tr *ngIf="valueSet && valueSet.total > 0">
         <td colspan="4">
-            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="8" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="8" [collectionSize]="total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
         </td>
     </tr>
     </tfoot>

@@ -54,7 +54,7 @@
   </thead>
   <tbody *ngIf="!configService.showingIntroduction">
   <tr *ngFor="let structureDefinition of structureDefinitions">
-    <td>{{structureDefinition.id}}</td>
+    <td>{{structureDefinition.resource.id?structureDefinition.resource.id: structureDefinition.id}}</td>
     <td>
       {{structureDefinition.resource.title || structureDefinition.resource.name}} <i class="fa fa-comment"
                                                                    *ngIf="structureDefinition.resource.description"

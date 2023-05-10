@@ -44,11 +44,11 @@ export class StructureDefinitionService {
     }
 
     if(IDText){
-      url += `id=${encodeURIComponent(IDText)}&`;
+      url += `resourceid=${encodeURIComponent(IDText)}&`;
     }
 
     if (urlText) {
-      url += `urlText=${encodeURIComponent(urlText)}&`;
+      url += `url=${encodeURIComponent(urlText)}&`;
     }
 
     if (implementationGuideId) {
@@ -69,16 +69,18 @@ export class StructureDefinitionService {
   }
 
   public getStructureDefinition(id: string): Observable<IConformance> {
-    /*if (id === 'from-file') {
+    if (id === 'from-file') {
       if (this.fileService.file) {
-        return new Observable<STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>((observer) => {
-          observer.next(<STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition> this.fileService.file.resource);
+        return new Observable<IConformance>((observer) => {
+          const conformance =  { resource: this.fileService.file.resource };
+          observer.next(<IConformance> conformance);
         });
       }
     }
-*/
-    const url = '/api/structureDefinition/' + encodeURIComponent(id);
-    return this.http.get<IConformance>(url);
+    else {
+      const url = '/api/structureDefinition/' + encodeURIComponent(id);
+      return this.http.get<IConformance>(url);
+    }
   }
 
   public getBaseStructureDefinition(baseDefinition: string, type?: string): Observable<BaseDefinitionResponseModel> {
