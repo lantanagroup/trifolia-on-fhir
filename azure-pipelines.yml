@@ -14,7 +14,7 @@ variables:
   imageRepository: 'tof'
   containerRegistry: 'lantanagroup.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: 
+  tags: 
     - 'mongodb-$(Build.BuildId)'
     - 'mongodb-latest'
 
