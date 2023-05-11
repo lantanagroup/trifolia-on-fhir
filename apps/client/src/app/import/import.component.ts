@@ -273,14 +273,14 @@ export class ImportComponent implements OnInit {
    * @private
    */
   private updateFileStatus() {
-    const pendingResources = this.files.filter(f => 
+    const pendingResources = this.files.filter(f =>
       (
-        (!f.isExample && !!f.resource && f.resource.id) || 
+        (!f.isExample && !!f.resource && f.resource.id) ||
         (f.isExample && !!f.content && this.getIdDisplay(f))
       ) && f.status === 'pending');
 
     const resourceReferences: { resourceType: string, id: string, isExample: boolean }[] = pendingResources
-      .map(pr => { 
+      .map(pr => {
         if (pr.isExample && !!pr.content) {
           let resourceType;
           let id;
@@ -288,9 +288,14 @@ export class ImportComponent implements OnInit {
             resourceType = 'Binary';
             id = this.getIdDisplay(pr);
           } else {
-            let resource = JSON.parse(pr.content.toString());
-            resourceType = resource['resourceType'];
-            id = resource['id'];
+            if (pr.resource && typeof pr.resource === typeof {}) {
+              resourceType = pr.resource.resourceType;
+              id = pr.resource.id;
+            } else {
+              let resource = JSON.parse(pr.content.toString());
+              resourceType = resource['resourceType'];
+              id = resource['id'];
+            }
           }
           return { resourceType: resourceType, id: id, isExample: true };
         }
@@ -830,7 +835,7 @@ export class ImportComponent implements OnInit {
       id = this.getIdDisplay(file);
     }
 
-    return {resourceType: resourceType, id: id};
+    return { resourceType: resourceType, id: id };
   }
 
   public getExamplePath(file: ImportFileModel) {
@@ -841,7 +846,7 @@ export class ImportComponent implements OnInit {
 
   ngOnInit() {
 
-    if (this.configService.project && this.configService.project.implementationGuideId){
+    if (this.configService.project && this.configService.project.implementationGuideId) {
       this.implementationGuideId = this.configService.project.implementationGuideId;
     }
 

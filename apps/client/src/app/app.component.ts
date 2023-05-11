@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RoutesRecognized } from '@angular/router';
 import { AuthService } from './shared/auth.service';
 import { ConfigService } from './shared/config.service';
-import { Globals, IImplementationGuide, getR4Dependencies, getSTU3Dependencies } from '@trifolia-fhir/tof-lib';
+import { Globals, IImplementationGuide, ImplementationGuideContext, getImplementationGuideContext, getR4Dependencies, getSTU3Dependencies } from '@trifolia-fhir/tof-lib';
 import { FileService } from './shared/file.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FileOpenModalComponent } from './modals/file-open-modal/file-open-modal.component';
@@ -59,7 +59,7 @@ export class AppComponent implements OnInit {
         } else {
           this.configService.project = null;
         }
-        this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
+        this.configService.project = await this.getContext(implementationGuideId);
       }
     });
 
@@ -147,7 +147,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private async getImplementationGuideContext(implementationGuideId: string): Promise<{ implementationGuideId: string, name?: string, securityTags?: Coding[], dependencies?: string[] }> {
+  private async getContext(implementationGuideId: string): Promise<ImplementationGuideContext> {
     if (!implementationGuideId) {
       return Promise.resolve(this.configService.project);
     }
@@ -159,13 +159,7 @@ export class AppComponent implements OnInit {
     return await new Promise((resolve, reject) => {
       this.implGuideService.getImplementationGuide(implementationGuideId).toPromise()
         .then((conf: IConformance) => {
-          const ig = <IImplementationGuide>conf.resource;
-          resolve({
-            implementationGuideId: implementationGuideId,
-            name: ig.name,
-            securityTags: ig.meta && ig.meta.security ? ig.meta.security : [],
-            dependencies: conf.fhirVersion === 'stu3' ? getSTU3Dependencies(<STU3ImplementationGuide>ig) : getR4Dependencies(<R4ImplementationGuide>ig)
-          });
+          resolve(getImplementationGuideContext(conf));
         })
         .catch((err) => reject(err));
     });

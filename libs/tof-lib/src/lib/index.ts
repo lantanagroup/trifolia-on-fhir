@@ -13,6 +13,7 @@ export * from './get-users-model';
 export * from './globals';
 export * from './helper';
 export * from './ig-example-model';
+export * from './ig-helper';
 export * from './ig-page-helper';
 export * from './logical-type-definition';
 export * from './package-list-model';

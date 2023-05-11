@@ -28,6 +28,7 @@ import { CanComponentDeactivate } from '../../guards/resource.guard';
 import { ProjectService } from '../../shared/projects.service';
 import { IConformance, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import { forkJoin } from 'rxjs';
+import { getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
 
 
 class Parameter {
@@ -698,6 +699,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
           } else {
             this.conformance = conf;
             this.implementationGuide = conf.resource;
+            this.configService.project = getImplementationGuideContext(conf);
             this.message = 'Your changes have been saved!';
             this.igChanging.emit(false);
             setTimeout(() => {
