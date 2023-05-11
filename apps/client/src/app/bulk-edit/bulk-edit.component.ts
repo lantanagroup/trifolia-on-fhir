@@ -20,6 +20,7 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 export class BulkEditComponent implements OnInit {
   public originalImplementationGuide: IImplementationGuide;
   public implementationGuide: IImplementationGuide;
+  public implementationGuideId: string;
   public originalProfiles: IStructureDefinition[];
   public profiles: IStructureDefinition[];
   public expandedElementsProfileId: string;
@@ -92,20 +93,24 @@ export class BulkEditComponent implements OnInit {
     this.editFields = {};
     this.changedProfiles = {};
 
-    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
-    if (implementationGuideId) {
-      const ig = await this.igService.getImplementationGuide(implementationGuideId).toPromise();
+    if (this.implementationGuideId ) {
+      const ig = await this.igService.getImplementationGuide(this.implementationGuideId ).toPromise();
 
-      if (identifyRelease(this.configService.fhirVersion) === Versions.R4) {
-        this.originalImplementationGuide = new R4ImplementationGuide(ig);
-        this.implementationGuide = new R4ImplementationGuide(ig);
+      if (identifyRelease(this.configService.fhirVersion) === Versions.R5) {
+        this.originalImplementationGuide = new R5ImplementationGuide(ig.resource);
+        this.implementationGuide = new R5ImplementationGuide(ig.resource);
+      }
+      else if (identifyRelease(this.configService.fhirVersion) === Versions.R4) {
+        this.originalImplementationGuide = new R4ImplementationGuide(ig.resource);
+        this.implementationGuide = new R4ImplementationGuide(ig.resource);
       } else {
-        this.originalImplementationGuide = new STU3ImplementationGuide(ig);
-        this.implementationGuide = new STU3ImplementationGuide(ig);
+        this.originalImplementationGuide = new STU3ImplementationGuide(ig.resource);
+        this.implementationGuide = new STU3ImplementationGuide(ig.resource);
       }
 
-      const profilesBundle = await this.igService.getProfiles(implementationGuideId).toPromise();
+      const profilesBundle = await this.igService.getProfiles(this.implementationGuideId).toPromise();
 
       if (profilesBundle && profilesBundle) {
         this.profiles = profilesBundle.map(e => {
@@ -198,7 +203,7 @@ export class BulkEditComponent implements OnInit {
           };
         });
 
-      await this.igService.bulkUpdate(this.implementationGuide.id, bulkUpdateRequest).toPromise();
+      await this.igService.bulkUpdate(this.implementationGuideId, bulkUpdateRequest).toPromise();
 
       this.changedProfiles = {};
       this.changedPages = {};

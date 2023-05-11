@@ -1,27 +1,39 @@
-import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
-import { FhirInstance, FhirServerVersion, RequestHeaders, User } from './server.decorators';
-import { ConfigService } from './config.service';
-import { BundleExporter } from './export/bundle';
-import { copyPermissions } from './helper';
-import {ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent, StructureDefinition as STU3StructureDefinition} from '@trifolia-fhir/stu3';
-import {Bundle as R4Bundle, ImplementationGuide as R4ImplementationGuide, StructureDefinition as R4StructureDefinition} from '@trifolia-fhir/r4';
-import { buildUrl, BulkUpdateRequest, getErrorString, getHumanNameDisplay, getHumanNamesDisplay, getR4Dependencies, getSTU3Dependencies, parseReference, SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer } from '@trifolia-fhir/tof-lib';
-import { AxiosRequestConfig } from 'axios';
-import type { IBundle, IgExampleModel, IImplementationGuide, IResourceReference, ITofUser } from '@trifolia-fhir/tof-lib';
-import { spawn } from 'child_process';
+import {HttpService} from '@nestjs/axios';
+import {BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
+import {AuthGuard} from '@nestjs/passport';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
+import {FhirInstance, FhirServerVersion, RequestHeaders, User} from './server.decorators';
+import {ConfigService} from './config.service';
+import {BundleExporter} from './export/bundle';
+import {copyPermissions} from './helper';
+import {ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent} from '@trifolia-fhir/stu3';
+import {ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
+import type {IBundle, IgExampleModel, IImplementationGuide, IResourceReference, ITofUser} from '@trifolia-fhir/tof-lib';
+import {
+  BulkUpdateRequest,
+  getErrorString,
+  getHumanNameDisplay,
+  getHumanNamesDisplay,
+  getR4Dependencies,
+  getSTU3Dependencies,
+  PaginateOptions,
+  parseReference,
+  SearchImplementationGuideResponse,
+  SearchImplementationGuideResponseContainer
+} from '@trifolia-fhir/tof-lib';
+import {AxiosRequestConfig} from 'axios';
+import {spawn} from 'child_process';
 import path from 'path';
 import os from 'os';
-import { existsSync } from 'fs';
-import { ProjectsService } from './projects/projects.service';
-import { PaginateOptions } from '@trifolia-fhir/tof-lib';
-import { AuthService } from './auth/auth.service';
-import { ConformanceService } from './conformance/conformance.service';
+import {existsSync} from 'fs';
+import {ProjectsService} from './projects/projects.service';
+import {AuthService} from './auth/auth.service';
+import {ConformanceService} from './conformance/conformance.service';
 import {IConformance, IExample, IProjectResourceReference} from '@trifolia-fhir/models';
-import { ConformanceController } from './conformance/conformance.controller';
-import { ExamplesService } from './examples/examples.service';
+import {ConformanceController} from './conformance/conformance.controller';
+import {ExamplesService} from './examples/examples.service';
+import {ImplementationGuide as R5ImplementationGuide, StructureDefinition} from '@trifolia-fhir/r5';
+import {ObjectId} from 'mongodb';
 
 
 class PatchRequest {
@@ -55,7 +67,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
   }
 
-  public static async downloadDependencies(ig: IImplementationGuide, fhirServerVersion: 'stu3'|'r4'|'r5', configService: ConfigService, logger: LoggerService) {
+  public static async downloadDependencies(ig: IImplementationGuide, fhirServerVersion: 'stu3' | 'r4' | 'r5', configService: ConfigService, logger: LoggerService) {
     try {
       const igPublisherLocation = await configService.getIgPublisherForDependencies();
 
@@ -140,147 +152,76 @@ export class ImplementationGuideController extends ConformanceController { // ex
     return profileReferences;
   }
 
- /* @Post(':id/bulk-update')
-  public async bulkUpdate(@Param('id') id: string, @Body() body: BulkUpdateRequest, @FhirServerBase() fhirServerBase: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4') {
+  @Post(':id/bulk-update')
+  public async bulkUpdate(@Param('id') id: string, @Body() body: BulkUpdateRequest, @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4' | 'r5') {
     if (!body) return;
 
-    const patchRequests: AxiosRequestConfig[] = [];
+    //update ig
+    let conf = <IConformance>await this.conformanceService.findById(id);
 
-    if (body.description || body.page) {
-      const igPatchRequests: PatchRequest[] = [];
-
-      if (body.descriptionOp) {
-        igPatchRequests.push(new PatchRequest(body.descriptionOp, '/description', body.description));
-      }
-
-      if (body.pageOp) {
-        if (fhirServerVersion === 'stu3') {
-          igPatchRequests.push(new PatchRequest(body.pageOp, '/page', body.page));
-        } else if (fhirServerVersion === 'r4') {
-          igPatchRequests.push(new PatchRequest(body.pageOp, '/definition/page', body.page));
-        }
-      }
-
-      patchRequests.push({
-        method: 'PATCH',
-        url: buildUrl(fhirServerBase, 'ImplementationGuide', id),
-        headers: {
-          'Content-Type': 'application/json-patch+json'
-        },
-        data: igPatchRequests
-      });
+    if (conf.fhirVersion === 'r4') {
+      const igResource = <R4ImplementationGuide>conf.resource;
+      igResource.definition.page = body.page;
+      igResource.description = body.description;
+    }
+    if (conf.fhirVersion === 'r5') {
+      const igResource = <R5ImplementationGuide>conf.resource;
+      igResource.definition.page = body.page;
+      igResource.description = body.description;
+    } else {
+      const igResource = <STU3ImplementationGuide>conf.resource;
+      igResource.page = body.page;
+      igResource.description = body.description;
     }
 
-    (body.profiles || []).forEach(profile => {
-      const profilePatchRequests: PatchRequest[] = [];
+    await this.conformanceService.updateConformance(conf.id, conf);
 
-      if (profile.descriptionOp) {
-        profilePatchRequests.push(new PatchRequest(profile.descriptionOp, '/description', profile.description));
+    //update profiles
+    for (const profile of (body.profiles || [])) {
+      let conf = await this.conformanceService.findOne({ 'resource.resourceType': 'StructureDefinition', 'resource.id': profile.id, 'igIds': id });
+      const sdr = <StructureDefinition>conf.resource;
+      sdr.description = profile.description;
+      sdr.extension = profile.extension?[...profile.extension]:[];
+      if(!sdr.differential ){
+        sdr.differential = { extension: [], element: []};
       }
+      sdr.differential.element = profile.diffElement?[...profile.diffElement]:[];
 
-      if (profile.extensionOp) {
-        profilePatchRequests.push(new PatchRequest(profile.extensionOp, '/extension', profile.extension));
-      }
-
-      if (profile.diffElementOp) {
-        profilePatchRequests.push(new PatchRequest(profile.diffElementOp, '/differential/element', profile.diffElement));
-      }
-
-      patchRequests.push({
-        method: 'PATCH',
-        url: buildUrl(fhirServerBase, 'StructureDefinition', profile.id),
-        headers: {
-          'Content-Type': 'application/json-patch+json'
-        },
-        data: profilePatchRequests
-      });
-    });
-
-    const processQueue = async () => {
-      if (patchRequests.length === 0) return;
-      const asyncCount = 5;
-
-      const nextPatchRequests = patchRequests.splice(0, asyncCount - 1);
-      const nextPromises = nextPatchRequests
-        .map(patchRequest => this.httpService.request(patchRequest).toPromise());
-
-      const results = await Promise.all(nextPromises);
-      console.log(results);
-      await processQueue();
-    };
-
-    try {
-      await processQueue();
-      this.logger.log(`Done bulk-updating implementation guide ${id}`);
-    } catch (ex) {
-      this.logger.error(`Error while bulk updating: ${ex.message}`);
-      throw ex;
+      await this.conformanceService.updateConformance(conf.id, conf);
     }
-  }*/
+  }
 
   @Get(':id/profile')
   public async getProfiles(@User() user: ITofUser, @Param('id') id: string) {
-   // const igUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
-
-    //const igResults = await this.httpService.get<IImplementationGuide>(igUrl).toPromise();
 
     const ig = await super.getReferences(user, id);
     let profileReferences: IResourceReference[];
 
     if (ig.fhirVersion === 'r4') {
-      profileReferences = this.getR4ProfileReferences(<R4ImplementationGuide> ig.resource);
-    } else if(ig.fhirVersion === 'r3') {
-      profileReferences = this.getSTU3ProfileReferences(<STU3ImplementationGuide> ig.resource);
+      profileReferences = this.getR4ProfileReferences(<R4ImplementationGuide>ig.resource);
+    } else if (ig.fhirVersion === 'r3') {
+      profileReferences = this.getSTU3ProfileReferences(<STU3ImplementationGuide>ig.resource);
     }
 
     let profiles = [];
 
     (ig.references || []).forEach((r: IProjectResourceReference) => {
       if (r.value && typeof r.value === typeof {}) {
-        if ('resource' in <any>r.value ) {
+        if ('resource' in <any>r.value) {
           if (r.value['resource'].resourceType === 'StructureDefinition') {
-            profiles.push(r.value['resource']);
+            profiles.push(r.value);
           }
         }
       }
     });
     return profiles;
 
-  /*  const batch = <R4Bundle> {
-      resourceType: 'Bundle',
-      type: 'batch',
-      entry: profileReferences.map(pr => {
-        return {
-          request: {
-            method: 'GET',
-            url: pr.reference
-          }
-        };
-      })
-    };
-
-    const bundleResults = await this.httpService.post<IBundle>(fhirServerBase, batch).toPromise();
-    return bundleResults.data;*/
   }
 
 
   @Get(':id/example')
-  public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4'): Promise<IExample[]> {
-  // const implementationGuideUrl = buildUrl(fhirServerBase, 'ImplementationGuide', id);
-   // const implementationGuideResponse = await this.httpService.get<IImplementationGuide>(implementationGuideUrl).toPromise();
-    //const implementationGuide = implementationGuideResponse.data;
-    // const implementationGuide = (await this.get(id)).resource;
-    // switch (fhirServerVersion) {
-    //   case 'stu3':
-    //     return this.getSTU3Examples(<STU3ImplementationGuide> implementationGuide);
-    //   case 'r4':
-    //     return this.getR4Examples(<R4ImplementationGuide> implementationGuide);
-    //   default:
-    //     this.logger.error(`Unexpected FHIR server version ${fhirServerVersion} when requesting IG examples`);
-    //     throw new InternalServerErrorException();
-    // }
-
-    return this.examplesService.findAll({'igIds': id});
+  public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4'): Promise<IExample[]> {
+    return this.examplesService.findAll({ 'igIds': id });
   }
 
   @Get('published')
@@ -307,7 +248,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
           });
         }
         return guides;
-      })
+      });
   }
 
   @Get()
@@ -330,7 +271,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
       const baseFilter = await this.authService.getPermissionFilterBase(user, 'read');
 
       const filter = {
-        $and: [ baseFilter, searchFilters]
+        $and: [baseFilter, searchFilters]
       };
 
       const options: PaginateOptions = {
@@ -412,7 +353,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
   }
 
   @Delete(':id')
-  public async deleteImplementationGuide(@User() user, @Param('id') id: string ) {
+  public async deleteImplementationGuide(@User() user, @Param('id') id: string) {
     await this.assertCanWriteById(user, id);
     return this.conformanceService.deleteConformance(id);
   }
@@ -423,7 +364,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
     const bundle = await exporter.getBundle(false, true);
 
     return (bundle.entry || []).map((entry) => {
-      const resource = <any> entry.resource;
+      const resource = <any>entry.resource;
       const ret = {
         resourceType: resource.resourceType,
         id: resource.id,
@@ -453,7 +394,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
       throw new InternalServerErrorException('Could not find the implementation guide requested');
     }
 
-    const ig = <STU3ImplementationGuide | R4ImplementationGuide> igEntry.resource;
+    const ig = <STU3ImplementationGuide | R4ImplementationGuide>igEntry.resource;
     const resources = (bundle.entry || [])
       .filter(e => {
         if (!e.resource || e.resource === ig) return false;
@@ -480,7 +421,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
           resource: r
         };
       })
-    }
+    };
 
     try {
       //await this.httpService.post(fhirServerBase, updateBundle).toPromise();
@@ -501,7 +442,6 @@ export class ImplementationGuideController extends ConformanceController { // ex
   }
 
 
-
   private getSTU3Examples(implementationGuide: STU3ImplementationGuide) {
     if (!implementationGuide || !implementationGuide.package || implementationGuide.package.length === 0) return [];
     const examples = implementationGuide.package.reduce((theList, p) => {
@@ -511,11 +451,11 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
     return examples.map((e: PackageResourceComponent) => {
       const parsedReference = parseReference(e.sourceReference.reference);
-      return <IgExampleModel> {
+      return <IgExampleModel>{
         id: parsedReference.id,
         resourceType: parsedReference.resourceType,
         name: e.name || `${parsedReference.resourceType}: ${parsedReference.id}`
-      }
+      };
     });
   }
 
@@ -527,7 +467,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
       .map(r => {
         const parsedReference = parseReference(r.reference.reference);
 
-        return <IgExampleModel> {
+        return <IgExampleModel>{
           resourceType: parsedReference.resourceType,
           id: parsedReference.id,
           name: r.name || r.reference.display || `${parsedReference.resourceType}: ${parsedReference.id}`
