@@ -59,7 +59,11 @@ export class ImportController extends BaseController {
     @User() user: ITofUser, @Query('implementationguideid') implementationGuideId?: string)
     : Promise<{ [resourceReference: string]: { resource?: IProjectResource, action: 'update' | 'add' | 'unknown' } }> {
 
-    
+    if (!resourceReferences || !resourceReferences.length || resourceReferences.length < 1) {
+      throw new BadRequestException();
+    }
+
+
     const response: { [resourceReference: string]: { resource?: IProjectResource, action: 'update' | 'add' | 'unknown' } } = {};
 
     for (const e of resourceReferences) {
@@ -67,13 +71,22 @@ export class ImportController extends BaseController {
       let res: IProjectResource;
       let path = `${e.resourceType}/${e.id}`;
 
+      let filter = {};
+      if (implementationGuideId) {
+        filter['igIds'] = new ObjectId(implementationGuideId);
+      }
+
       if (e.isExample) {
-        res = await this.exampleService.findById(e.id);
+        filter['$or'] = [ 
+          {'content.resourceType': e.resourceType, 'content.id': e.id},
+          {'name': e.id, 'content': {$type: 'string'}}
+        ];
+
+        res = await this.exampleService.findOne(filter);
       } else {
-        let filter = { 'resource.resourceType': e.resourceType, 'resource.id': e.id };
-        if (implementationGuideId) {
-          filter['igIds'] = new ObjectId(implementationGuideId);
-        }
+        filter['resource.resourceType'] = e.resourceType;
+        filter['resource.id'] = e.id;
+
         res = await this.conformanceService.findOne(filter);
       }
 

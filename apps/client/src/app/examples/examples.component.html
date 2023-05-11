@@ -28,8 +28,8 @@
   <tbody *ngIf="examples">
   <tr *ngFor="let example of filteredExamples">
     <td>{{example.content.resourceType || 'Unknown'}}</td>
-    <td>{{example.content.id || example.id}}</td>
-    <td>{{example.content.name}}</td>
+    <td>{{example.content.id || example.name || example.id}}</td>
+    <td>{{example.content.name || example.name }}</td>
     <td>
       <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/other-resources/example/{{example.id}}" [class.disabled]="!example.id">
         <i class="fa fa-edit"></i>

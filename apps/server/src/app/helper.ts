@@ -584,7 +584,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   // if new resource is not an example treat it as a conformance object
   if (!isExample) {
     if ('resource' in resourceToAdd && resourceToAdd.resource) {
-      resourceReferenceString = `${(<IConformance>resourceToAdd).resource.resourceType}/${(<IConformance>resourceToAdd).resource['id'] || resourceToAdd.id}`
+      resourceReferenceString = `${(<IConformance>resourceToAdd).resource.resourceType}/${(<IConformance>resourceToAdd).resource.id || resourceToAdd.id}`
     } else {
       throw new BadRequestException("Supplied conformance object does not have a valid resource property.");
     }
@@ -597,10 +597,12 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
       let resourceId: string;
 
       // example content is probably a valid fhir resource so try that first
-      if ('content' in resourceToAdd && resourceToAdd.content) {
-        let content = resourceToAdd.content;
-        if (typeof resourceToAdd.content === typeof '') {
+      if ('content' in resourceToAdd && !!resourceToAdd.content) {
           // try parsing the string to a valid JSON object
+          let content: any;
+          if (typeof resourceToAdd.content !== typeof '') {
+            resourceToAdd.content = JSON.stringify(resourceToAdd.content);
+          }
           try {
             content = JSON.parse(resourceToAdd.content);
             resourceType = content['resourceType'];
@@ -617,14 +619,13 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
               throw error;
             }
           }
-
-        }
+        
       }
 
       // received an object with a resource property set even though this is supposed to be an example type
-      else if ('resource' in resourceToAdd && resourceToAdd.resource) {
+      else if ('resource' in resourceToAdd && !!resourceToAdd.resource) {
         resourceType = resourceToAdd.resource.resourceType;
-        resourceId = resourceToAdd.resource['id'] || resourceToAdd.id;
+        resourceId = resourceToAdd.resource.id || resourceToAdd.id;
       }
 
       // don't know how to process the supplied resource

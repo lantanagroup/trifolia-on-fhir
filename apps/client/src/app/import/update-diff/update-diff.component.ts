@@ -1,7 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import type {IDomainResource} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {FhirService} from '../../shared/fhir.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import type { IDomainResource } from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { FhirService } from '../../shared/fhir.service';
 
 @Component({
   selector: 'trifolia-fhir-update-diff',
@@ -13,6 +13,7 @@ export class UpdateDiffComponent implements OnInit {
   @Input() existingResource: any;
   message: string;
   showJson = false;
+  canSerialize = false;
   left: string;
   right: string;
 
@@ -21,18 +22,34 @@ export class UpdateDiffComponent implements OnInit {
   reSerialize() {
     if (!this.existingResource || !this.importResource) return;
 
-    if (!this.showJson) {
+    if (!this.showJson && this.canSerialize) {
       this.left = this.fhirService.serialize(this.existingResource);//.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       this.right = this.fhirService.serialize(this.importResource);//.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     } else {
-      this.left = JSON.stringify(this.existingResource, null, '\t');
-      this.right = JSON.stringify(this.importResource, null, '\t');
+      this.left = (typeof this.existingResource === typeof '') ? this.existingResource : JSON.stringify(this.existingResource, null, '\t');
+      this.right = (typeof this.importResource === typeof '') ? this.importResource : JSON.stringify(this.importResource, null, '\t');
     }
   }
 
   async ngOnInit() {
+    this.canSerialize = false;
+
     if (this.importResource) {
-      this.importResource = JSON.parse(JSON.stringify(this.importResource));
+
+      let resourceString: string = this.importResource;
+
+      if (typeof this.importResource !== typeof '') {
+        resourceString = JSON.stringify(this.importResource);
+      }
+
+      try {
+        this.importResource = JSON.parse(resourceString);
+        this.canSerialize = true;
+      } catch (error) {
+        this.importResource = resourceString;
+        this.canSerialize = false;
+      }
+
       delete this.importResource.meta;
 
       this.message = 'Loading differences...';

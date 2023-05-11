@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IConformance, IExample, IHistory, IProject, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import { IConformance, IExample, IHistory, IProjectResource, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import { IBundle, IDomainResource } from '@trifolia-fhir/tof-lib';
 import { Model } from 'mongoose';
 import { BaseDataService } from '../base/base-data.service';
@@ -13,6 +13,8 @@ import { TofNotFoundException } from '../../not-found-exception';
 import { LinkComponent, Binary as STU3Binary, Bundle as STU3Bundle, EntryComponent as STU3BundleEntryComponent } from '@trifolia-fhir/stu3';
 import { Binary as R4Binary, Bundle as R4Bundle, BundleEntryComponent as R4BundleEntryComponent } from '@trifolia-fhir/r4';
 import { Binary as R5Binary, Bundle as R5Bundle, BundleEntry as R5BundleEntryComponent } from '@trifolia-fhir/r5';
+import { ExamplesService } from '../examples/examples.service';
+import { Example, ExampleDocument } from '../examples/example.schema';
 
 @Injectable()
 export class ConformanceService extends BaseDataService<ConformanceDocument> {
@@ -22,6 +24,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
     constructor(
         @InjectModel(Conformance.name) private conformanceModel: Model<ConformanceDocument>,
+        @InjectModel(Example.name) private examplesModel: Model<ExampleDocument>,
         private readonly historyService: HistoryService
     ) {
         super(conformanceModel);
@@ -131,59 +134,85 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
             // references removed -- references in existing but not in updated
             let confIdsRemoved: ObjectId[] = [];
+            let exampleIdsRemoved: ObjectId[] = [];
             if (existing.references && existing.references.length > 0) {
                 existing.references.forEach((exRef: IProjectResourceReference) => {
 
                     let exRefId: ObjectId = (typeof exRef.value === typeof '') ?
-                        new ObjectId(<string>exRef.value) : new ObjectId((<IConformance>exRef.value).id);
+                        new ObjectId(<string>exRef.value) : new ObjectId((<IProjectResource>exRef.value).id);
 
                     if (!(upConf.references || []).find(
                         (upRef: IProjectResourceReference) => {
                             let upRefId: ObjectId = (typeof upRef.value === typeof '') ?
-                                new ObjectId(<string>upRef.value) : new ObjectId((<IConformance>upRef.value).id);
+                                new ObjectId(<string>upRef.value) : new ObjectId((<IProjectResource>upRef.value).id);
 
                             return upRefId.equals(exRefId) && upRef.valueType === exRef.valueType;
                         }
                     )) {
-                        confIdsRemoved.push(exRefId);
+                        if (exRef.valueType == 'Example') {
+                            exampleIdsRemoved.push(exRefId);
+                        } else {
+                            confIdsRemoved.push(exRefId);
+                        }
                     }
                 });
             }
 
             // references added -- references not in existing but in updated
             let confIdsAdded: ObjectId[] = [];
+            let exampleIdsAdded: ObjectId[] = [];
             if (upConf.references && upConf.references.length > 0) {
                 upConf.references.forEach((upRef: IProjectResourceReference) => {
                     let upRefId: ObjectId = (typeof upRef.value === typeof '') ?
-                        new ObjectId(<string>upRef.value) : new ObjectId((<IConformance>upRef.value).id);
+                        new ObjectId(<string>upRef.value) : new ObjectId((<IProjectResource>upRef.value).id);
 
                     if (!(existing.references || []).find(
                         (exRef: IProjectResourceReference) => {
                             let exRefId: ObjectId = (typeof exRef.value === typeof '') ?
-                                new ObjectId(<string>exRef.value) : new ObjectId((<IConformance>exRef.value).id);
+                                new ObjectId(<string>exRef.value) : new ObjectId((<IProjectResource>exRef.value).id);
 
                             return exRefId.equals(upRefId) && exRef.valueType === upRef.valueType;
                         }
                     )) {
-                        confIdsAdded.push(upRefId);
+                        if (upRef.valueType == 'Example') {
+                            exampleIdsAdded.push(upRefId);
+                        }
+                        else {
+                            confIdsAdded.push(upRefId);
+                        }
+
                     }
 
                 });
 
             }
 
-            //console.log('confIdsRemoved:', confIdsRemoved);
-            //console.log('confIdsAdded:', confIdsAdded);
+            if (confIdsRemoved && confIdsRemoved.length > 0) {
+                await this.conformanceModel.updateMany(
+                    { '_id': { $in: confIdsRemoved } },
+                    { $pull: { igIds: existing.id } }
+                );
+            }
 
-            await this.conformanceModel.updateMany(
-                { '_id': { $in: confIdsRemoved } },
-                { $pull: { igIds: existing.id } }
-            );
+            if (exampleIdsRemoved && exampleIdsRemoved.length > 0) {
+                await this.examplesModel.updateMany(
+                    { '_id': { $in: exampleIdsRemoved } },
+                    { $pull: { igIds: existing.id } }
+                );
+            }
 
-            await this.conformanceModel.updateMany(
-                { '_id': { $in: confIdsAdded } },
-                { $push: { igIds: existing.id } }
-            );
+            if (confIdsAdded && confIdsAdded.length > 0) {
+                await this.conformanceModel.updateMany(
+                    { '_id': { $in: confIdsAdded } },
+                    { $push: { igIds: existing.id } }
+                );
+            }
+            if (exampleIdsAdded && exampleIdsAdded.length > 0) {
+                await this.examplesModel.updateMany(
+                    { '_id': { $in: exampleIdsAdded } },
+                    { $push: { igIds: existing.id } }
+                );
+            }
 
         }
 
@@ -274,12 +303,12 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
         bundle.entry = [];
 
-        let igEntry: STU3BundleEntryComponent|R4BundleEntryComponent|R5BundleEntryComponent = new entryType();
+        let igEntry: STU3BundleEntryComponent | R4BundleEntryComponent | R5BundleEntryComponent = new entryType();
         igEntry.resource = implementationGuide.resource;
         bundle.entry.push(igEntry);
 
         (implementationGuide.references || []).forEach((r: IProjectResourceReference) => {
-            let entry: STU3BundleEntryComponent|R4BundleEntryComponent|R5BundleEntryComponent = new entryType();
+            let entry: STU3BundleEntryComponent | R4BundleEntryComponent | R5BundleEntryComponent = new entryType();
 
             if (!r.value) {
                 return;
@@ -291,6 +320,9 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             else if (r.valueType === 'Example') {
                 // attempt to parse content for fhir resource... otherwise create a binary type for the content
                 try {
+                    if (typeof r.value['content'] !== typeof '') {
+                        r.value['content'] = JSON.stringify(r.value['content']);
+                    }
                     entry.resource = JSON.parse(r.value['content']);
                 } catch (error) {
                     let newBinary;//: STU3Binary|R4Binary|R5Binary;
@@ -309,10 +341,10 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
                     newBinary.id = r.value['name'];
                     newBinary.contentType = 'application/xml';
-                    entry.link = [new LinkComponent({relation: 'example-cda'})];
+                    entry.link = [new LinkComponent({ relation: 'example-cda' })];
                     entry.resource = newBinary;
                 }
-                
+
             }
 
             if (entry.resource) {
@@ -343,7 +375,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
                     key = `${val.content['resourceType']}/${val.content['id'] ?? val.id}`;
                 }
                 else {
-                    key = `example/${val.content['id'] ?? val.id}`;
+                    key = `Binary/${val.name || val.content['id'] || val.id}`;
                 }
             }
 

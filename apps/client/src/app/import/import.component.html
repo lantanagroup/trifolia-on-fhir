@@ -30,7 +30,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let f of files; let fi = index" [class.invalid]="(f.contentType === 0 || f.contentType === 1) && !f.resource">
+        <tr *ngFor="let f of files; let fi = index" [class.invalid]="fileIsInvalid(f)">
           <td>
             {{f.name}}
             <i *ngIf="f.message" class="fas fa-exclamation warning"><span class="message">{{f.message}}</span></i>
@@ -43,13 +43,13 @@
               <option value="store">Store</option>
               <option value="execute">Execute</option>
             </select>
-            <a *ngIf="f.status === 'update' && f.resource" href="javascript:void(0)" (click)="viewUpdateDiff(f)">
+            <a *ngIf="f.status === 'update' && (f.resource || f.content)" href="javascript:void(0)" (click)="viewUpdateDiff(f)">
               <i class="fas fa-eye"></i>
             </a>
             <i *ngIf="!f.singleIg" class="fas fa-exclamation warning" style="padding-left:15px;" [ngbTooltip]="f.multipleIgMessage"></i>
           </td>
           <td>
-            <input type="checkbox" [(ngModel)]="f.isExample || f.isCDAExample" [disabled]="f.isCDAExample" />
+            <input type="checkbox" (click)="toggleExample(f)" [disabled]="f.isCDAExample || f.status === 'pending'" [checked]="f.isExample" />
           </td>
           <td class="actions-column-1">
             <div class="pull-right">

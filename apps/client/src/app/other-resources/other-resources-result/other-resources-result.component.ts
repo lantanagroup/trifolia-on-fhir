@@ -30,6 +30,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   contentChanged = new Subject();
   serializationError = false;
   validation: ValidatorResponse;
+  isFhir = false;
   selected = 'JSON';
   options: string[] = ['JSON', 'XML'];
   isExample = false;
@@ -99,7 +100,20 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
       this.examplesService.get(this.route.snapshot.params.id).subscribe({
         next: (res: IExample) => {
           this.resource = res;
-          this.content = JSON.stringify(res.content, null, '\t');
+          this.content = res.content;
+
+          if (typeof res.content !== typeof '') {
+            this.content = JSON.stringify(res.content, null, '\t');
+          }
+
+          try {
+            let res = JSON.parse(this.content);
+            if (res['resourceType']) {
+              this.isFhir = true;
+            }
+          } catch (error) {
+            this.isFhir = false;
+          }
           this.validation = this.fhirService.validate((<IExample>this.resource).content);
           setTimeout(() => {
             this.message = 'Example opened.';
@@ -115,6 +129,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
           this.resource = res;
           this.content = JSON.stringify(res.resource, null, '\t');
           this.validation = this.fhirService.validate((<IConformance>this.resource).resource);
+          this.isFhir = true;
           setTimeout(() => {
             this.message = 'Resource opened.';
           }, 100);

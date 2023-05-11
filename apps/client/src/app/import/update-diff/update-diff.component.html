@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
   <div class="alert alert-info" *ngIf="message">{{message}}</div>
-  <select class="form-select" style="width: 100px; margin-bottom: 5px;" [(ngModel)]="showJson" (change)="reSerialize()">
+  <select class="form-select" style="width: 100px; margin-bottom: 5px;" [(ngModel)]="showJson" (change)="reSerialize()" *ngIf="canSerialize">
     <option [ngValue]="false">XML</option>
     <option [ngValue]="true">JSON</option>
   </select>

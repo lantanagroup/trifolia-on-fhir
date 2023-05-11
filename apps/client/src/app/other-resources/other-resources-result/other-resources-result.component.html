@@ -1,6 +1,6 @@
 <div *ngIf="resource">
   <h1 *ngIf="!isExample">{{ resource.resource.resourceType || 'Unknown' }} - {{ resource.resource.id || resource.id}}</h1>
-  <h1 *ngIf="isExample">{{ resource.content.resourceType || 'Unknown' }} - {{ resource.content.id || resource.id}}</h1>
+  <h1 *ngIf="isExample">{{ resource.content.resourceType || 'Unknown' }} - {{ resource.content.id || resource.name || resource.id}}</h1>
   <input type="file" style="display: none;" #fileUpload accept="application/json, application/xml" (change)="uploadFile($event)"/>
   <div class="btn-toolbar">
     <div class="btn-group me-2" role="group" aria-label="Generic actions for the resource">
@@ -24,7 +24,7 @@
       </button>
     </div>
     <div class="input-group" *ngIf="activeSub == 'json/xml'">
-      <select class="form-select" [(ngModel)]="selected" (change)="changeType()">
+      <select class="form-select" [(ngModel)]="selected" (change)="changeType()" *ngIf="isFhir">
         <option *ngFor="let option of options" value="{{option}}">
           {{option}}
         </option>
@@ -48,7 +48,7 @@
         <trifolia-fhir-resource-permissions [resource]="resource"></trifolia-fhir-resource-permissions>
       </ng-template>
     </li>
-    <li ngbNavItem="validation">
+    <li ngbNavItem="validation" *ngIf="isFhir">
       <a ngbNavLink>
         Validation <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
       </a>

@@ -45,7 +45,6 @@ class ImportFileModel {
   public bundleOperation: 'store' | 'execute';
   public singleIg = true;
   public multipleIgMessage: "";
-  public cdaId?: string;
   public cdaContent?: string;
   public isCDAExample: boolean = false;
 }
@@ -105,7 +104,7 @@ export class ImportComponent implements OnInit {
   viewUpdateDiff(fileModel: ImportFileModel) {
     const modalRef = this.modalService.open(UpdateDiffComponent, { backdrop: 'static', size: 'lg' });
     if (fileModel.isExample) {
-      modalRef.componentInstance.importResource = fileModel.resource;
+      modalRef.componentInstance.importResource = fileModel.content;
       modalRef.componentInstance.existingResource = (<IExample>fileModel.existingResource).content;
     }
     else {
@@ -274,23 +273,50 @@ export class ImportComponent implements OnInit {
    * @private
    */
   private updateFileStatus() {
-    const pendingResources = this.files
-      .filter(f => !!f.resource && f.resource.id && f.status === 'pending');
+    const pendingResources = this.files.filter(f => 
+      (
+        (!f.isExample && !!f.resource && f.resource.id) || 
+        (f.isExample && !!f.content && this.getIdDisplay(f))
+      ) && f.status === 'pending');
 
     const resourceReferences: { resourceType: string, id: string, isExample: boolean }[] = pendingResources
-      .map(pr => { return { resourceType: pr.resource.resourceType, id: pr.resource.id, isExample: pr.isExample } });
+      .map(pr => { 
+        if (pr.isExample && !!pr.content) {
+          let resourceType;
+          let id;
+          if (pr.isCDAExample) {
+            resourceType = 'Binary';
+            id = this.getIdDisplay(pr);
+          } else {
+            let resource = JSON.parse(pr.content.toString());
+            resourceType = resource['resourceType'];
+            id = resource['id'];
+          }
+          return { resourceType: resourceType, id: id, isExample: true };
+        }
+        return { resourceType: pr.resource.resourceType, id: pr.resource.id, isExample: pr.isExample };
+      });
 
     this.files.filter(f => !!f.resource && !f.resource.id)
       .forEach(f => f.status = 'add');
 
-    this.files.filter(f => f.isCDAExample && f.cdaContent).forEach(f => f.status = 'add');
+    this.files.filter(f => f.isCDAExample && f.cdaContent).forEach(f => {
+      f.status = 'add'
+    });
 
     // Only ask the server if we have one or more resources with an ID that hasn't already been checked
     if (resourceReferences.length > 0) {
       this.importService.checkResourcesStatus(resourceReferences, this.implementationGuideId)
         .then((statuses) => {
           pendingResources.forEach(pr => {
-            const path = `${pr.resource.resourceType}/${pr.resource.id}`;
+            let path = '';
+
+            if (pr.isExample) {
+              path = this.getExamplePath(pr);
+
+            } else {
+              path = `${pr.resource.resourceType}/${pr.resource.id}`;
+            }
             pr.status = statuses[path].action || 'unknown';
             pr.existingResource = statuses[path].resource;
           });
@@ -344,9 +370,9 @@ export class ImportComponent implements OnInit {
               // if deserializing failed and this is a CDA IG we can store the XML as example content
               if (this.configService.isCDA) {
                 importFileModel.cdaContent = result;
+                importFileModel.isExample = true;
                 importFileModel.isCDAExample = true;
                 importFileModel.contentType = ContentTypes.CdaExample;
-                importFileModel.cdaId = this.getIdDisplay(importFileModel);
               }
               else {
                 throw error;
@@ -354,6 +380,12 @@ export class ImportComponent implements OnInit {
             }
           } else if (importFileModel.contentType === ContentTypes.Json) {
             importFileModel.resource = JSON.parse(result);
+            try {
+              let ser = this.fhirService.serialize(importFileModel.resource);
+            } catch (error) {
+              importFileModel.resource = null;
+              throw new Error("File does not contain a valid resource.");
+            }
           } else if (importFileModel.contentType === ContentTypes.Xlsx) {
             const convertResults = this.importService.convertExcelToValueSetBundle(result);
             if (!convertResults.success) {
@@ -407,6 +439,12 @@ export class ImportComponent implements OnInit {
         reader.readAsArrayBuffer(file);
       }
     });
+  }
+
+  public toggleExample(file: ImportFileModel) {
+    file.status = 'pending';
+    file.isExample = !file.isExample;
+    this.updateFileStatus();
   }
 
   public downloadBundle(format: 'json' | 'xml') {
@@ -497,13 +535,12 @@ export class ImportComponent implements OnInit {
       (<IConformance | IExample>file.existingResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
 
       // add/update Example type
-      if (file.isExample || file.isCDAExample) {
+      if (file.isExample) {
         let example: IExample = <IExample>{ ...file.existingResource };
         example.content = file.isCDAExample ? file.cdaContent : file.resource;
         if (file.isCDAExample) {
-          example.name = file.cdaId;
+          example.name = this.getIdDisplay(file);
         }
-        console.log('example:', example);
         requests.push(this.examplesService.save(example.id, example, this.implementationGuideId));
       }
 
@@ -729,7 +766,8 @@ export class ImportComponent implements OnInit {
     if (this.activeTab) {
       if (this.activeTab === 'file') {
         const unauthorizedResources = this.files.filter(f => f.status === 'unauthorized');
-        return !this.files || this.files.length === 0 || unauthorizedResources.length > 0;
+        const invalidFiles = this.files.filter(f => this.fileIsInvalid(f));
+        return !this.files || this.files.length === 0 || unauthorizedResources.length > 0 || invalidFiles.length > 0;
       } else if (this.activeTab === 'text') {
         return !this.textContent;
       } else if (this.activeTab === 'vsac') {
@@ -740,6 +778,11 @@ export class ImportComponent implements OnInit {
     }
     return true;
   }
+
+  public fileIsInvalid(file: ImportFileModel) {
+    return (file.contentType === 0 || file.contentType === 1) && !file.resource;
+  }
+
 
   public getIdDisplay(file: ImportFileModel) {
     if (file.contentType === ContentTypes.Xlsx) {
@@ -774,6 +817,27 @@ export class ImportComponent implements OnInit {
         return 'Unknown';
     }
   }
+
+  public getExamplePathParts(file: ImportFileModel): { resourceType: string, id: string } {
+    let resourceType: string;
+    let id: string;
+
+    if (file.isCDAExample) {
+      resourceType = 'Binary';
+      id = this.getIdDisplay(file);
+    } else {
+      resourceType = JSON.parse(file.content.toString())['resourceType'];
+      id = this.getIdDisplay(file);
+    }
+
+    return {resourceType: resourceType, id: id};
+  }
+
+  public getExamplePath(file: ImportFileModel) {
+    const parts = this.getExamplePathParts(file);
+    return `${parts.resourceType}/${parts.id}`;
+  }
+
 
   ngOnInit() {
 
