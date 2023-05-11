@@ -88,6 +88,7 @@ export class NewProjectComponent implements OnInit {
     ig.url = this.igUrl;
     ig.version = '0.1.0';
     ig.name = this.igName;
+    ig.id =  ig.name.replace(/[^a-zA-Z0-9_]/gi, '').replace(/_/gi, '-');
     const wg = Globals.hl7WorkGroups.find(w => w.url === this.hl7WorkGroup);
     const wgName = wg ? `HL7 International - ${wg.name}` : 'HL7 International Working Group';
     ig.contact = [{
@@ -206,6 +207,11 @@ export class NewProjectComponent implements OnInit {
   igNameChanged() {
     this.igName = this.igTitle.replace(/[^a-zA-Z0-9]/g, '');
   }
+
+  igIdChanged() {
+    this.igId = this.igName.replace(/[^a-zA-Z0-9]/g, '');
+  }
+
 
   /*getFhirVersion() {
     this.fhirVersion = this.configService.fhirConformanceVersion;

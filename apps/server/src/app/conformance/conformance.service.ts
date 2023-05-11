@@ -63,6 +63,12 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
                 newConf.igIds.push(implementationGuideId);
             }
         }
+
+        if(!newConf.resource.id){
+           newConf.resource.id = new ObjectId().toHexString();
+          //newConf.resource.id = Math.floor(Math.random() * Date.now()).toString(16);
+        }
+
         newConf = await this.conformanceModel.create(newConf);
 
         let newHistory: IHistory = {

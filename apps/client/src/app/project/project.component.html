@@ -48,16 +48,18 @@
                 <app-tooltip-icon tooltipPath="Resource.id"></app-tooltip-icon>
               </th>
               <th>Implementation Guide Name</th>
+              <th>Implementation Guide Version</th>
    <!--           <th>Published</th>-->
             </tr>
           </thead>
           <tr *ngFor="let ig of project.igs">
             <td><a   role="button" routerLink="/projects/{{ig.id}}/implementation-guide"
                      title="Edit Project Implementation Guides ">
-                     <i> {{ig.id}}</i>
+                     <i> {{ig.resource.id}}</i>
                 </a>
             </td>
             <td>{{ig.resource.name}}</td>
+            <td>{{ig.fhirVersion}}</td>
            <!-- <td>
                 <i *ngIf="ig.resource.published === true" class="fas fa-check" style="color:green" title="Success"></i>
                 <i *ngIf="ig.resource.published === false" class="fas fa-times" style="color:red" title="Failed"></i>

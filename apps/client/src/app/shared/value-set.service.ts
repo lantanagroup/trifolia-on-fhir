@@ -34,7 +34,7 @@ export class ValueSetService {
     }
 
     if (id) {
-      url += `id=${encodeURIComponent(id)}&`;
+      url += `resourceid=${encodeURIComponent(id)}&`;
     }
 
     if (implementationGuideId) {

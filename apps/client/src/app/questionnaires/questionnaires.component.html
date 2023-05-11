@@ -49,7 +49,7 @@
                 <button type="button" class="btn btn-secondary" (click)="remove(questionnaire)" [disabled]="!canEdit(questionnaire)" title="Remove this questionnaire">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-secondary" (click)="changeId(questionnaire)" [disabled]="!canEdit(questionnaire)" title="Change this questionnaire's ID">
+                <button type="button" class="btn btn-secondary" (click)="changeId(questionnaire.resource)" [disabled]="!canEdit(questionnaire)" title="Change this questionnaire's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>

@@ -43,6 +43,7 @@ import {ObjectId} from 'mongodb';
 import {ConformanceController} from './conformance/conformance.controller';
 import {AuthService} from './auth/auth.service';
 import {IUserSecurityInfo} from './base.controller';
+import {IConformance} from '@trifolia-fhir/models';
 
 
 export interface ProxyResponse {
@@ -68,10 +69,10 @@ export class FhirController extends ConformanceController {
   @ApiOperation({ summary: 'checkId', description: 'CheckId', operationId: 'checkId' })
   async checkUniqueId(@Param('resourceType') resourceType: string, @Param('id') id: string, @RequestHeaders('fhirServerVersion') fhirVersion, @RequestHeaders('implementationGuideId') contextImplementationGuideId): Promise<boolean> {
 
-    let filter = { 'resource.resourceType': resourceType, 'resource.id': id, 'fhirVersion': fhirVersion };
-    /*if (contextImplementationGuideId) {
+    let filter = { 'resource.resourceType': resourceType, 'resource.id': id};
+    if (contextImplementationGuideId) {
       filter['igIds'] = new ObjectId(contextImplementationGuideId);
-    }*/
+    }
     const results = await this.conformanceService.findOne(filter);
     if (results) {
       return false;
@@ -90,10 +91,10 @@ export class FhirController extends ConformanceController {
       throw new BadRequestException('You must specify a "newId" to change the id of the resource');
     }
 
-    this.logger.log(`Request to change id for resource ${resourceType}/${currentId} to ${newId}`);
+    this.logger.log(`Request to change id for resource ${resourceType}/${currentId} to ${newId}`);4
 
     let filter = { 'resource.resourceType': resourceType, 'resource.id': currentId };
-    if (contextImplementationGuideId) {
+    if (resourceType !== 'ImplementationGuide' && contextImplementationGuideId) {
       filter['igIds'] = new ObjectId(contextImplementationGuideId);
     }
     const conf = await this.conformanceService.findOne(filter);

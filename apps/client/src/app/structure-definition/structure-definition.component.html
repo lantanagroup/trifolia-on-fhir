@@ -4,7 +4,7 @@
 
 <div class="sd-main" *ngIf="structureDefinition">
   <h2>
-    {{structureDefinition.name || 'No name'}} <span class="badge bg-warning" *ngIf="!canEdit(structureDefinition)">View-only</span>
+    {{structureDefinition.name || 'No name'}} <span class="badge bg-warning" *ngIf="!canEdit(conformance)">View-only</span>
     <button class="badge bg-danger" *ngIf="isDirty" (click)="isDirty=false">Changed!</button>
     <!--span class="badge bg-danger" *ngIf="isDirty">Changed!</span-->
   </h2>
@@ -348,7 +348,7 @@
         Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i>
       </a>
       <ng-template ngbNavContent>
-        <trifolia-fhir-resource-permissions [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></trifolia-fhir-resource-permissions>
+        <trifolia-fhir-resource-permissions [resource]="conformance" (change)="isDirty = true; nameChanged();"></trifolia-fhir-resource-permissions>
       </ng-template>
     </li>
 

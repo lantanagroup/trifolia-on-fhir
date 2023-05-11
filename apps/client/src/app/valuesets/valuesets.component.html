@@ -57,7 +57,7 @@
                 <button type="button" class="btn btn-secondary" (click)="remove(vs)" [disabled]="!canEdit(vs)" title="Remove this value set">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-secondary" (click)="changeId(vs)" [disabled]="!canEdit(vs)" title="Change this value set's ID">
+                <button type="button" class="btn btn-secondary" (click)="changeId(vs.resource)" [disabled]="!canEdit(vs)" title="Change this value set's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>
@@ -93,7 +93,7 @@
     </tr>
     <tr *ngIf="valueSet && valueSet.total > 0">
         <td colspan="4">
-            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="8" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="8" [collectionSize]="total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
         </td>
     </tr>
     </tfoot>

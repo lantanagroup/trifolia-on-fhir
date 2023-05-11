@@ -54,18 +54,18 @@
   </thead>
   <tbody *ngIf="!configService.showingIntroduction">
   <tr *ngFor="let structureDefinition of structureDefinitions">
-    <td>{{structureDefinition.id}}</td>
+    <td>{{structureDefinition.resource.id?structureDefinition.resource.id: structureDefinition.id}}</td>
     <td>
-      {{structureDefinition.title || structureDefinition.name}} <i class="fa fa-comment"
-                                                                   *ngIf="structureDefinition.description"
-                                                                   [ngbTooltip]="structureDefinition.description"></i>
+      {{structureDefinition.resource.title || structureDefinition.resource.name}} <i class="fa fa-comment"
+                                                                   *ngIf="structureDefinition.resource.description"
+                                                                   [ngbTooltip]="structureDefinition.resource.description"></i>
       <br/>
-      <sub *ngIf="structureDefinition.title">{{structureDefinition.name}}&nbsp;</sub>
+      <sub *ngIf="structureDefinition.resource.title">{{structureDefinition.resource.name}}&nbsp;</sub>
       <sub>{{structureDefinition.url}}</sub>
     </td>
-    <td class="experimental">{{structureDefinition.experimental ? "Yes" : "No"}}</td>
+    <td class="experimental">{{structureDefinition.resource.experimental ? "Yes" : "No"}}</td>
     <td>{{structureDefinition.type}}</td>
-    <td class="contact">{{getContactDisplay(structureDefinition)}}</td>
+    <td class="contact">{{getContactDisplay(structureDefinition.resource)}}</td>
     <td>
       <div class="pull-right btn-group">
         <a class="btn btn-primary"
@@ -80,7 +80,7 @@
                 [disabled]="!canEdit(structureDefinition)" title="Remove this resource">
           <i class="fas fa-trash-alt"></i>
         </button>
-        <button type="button" class="btn btn-secondary" (click)="changeId(structureDefinition)"
+        <button type="button" class="btn btn-secondary" (click)="changeId(structureDefinition.resource)"
                 [disabled]="!canEdit(structureDefinition)" title="Change this resource's ID">
           <i class="fa fa-id-badge"></i>
         </button>

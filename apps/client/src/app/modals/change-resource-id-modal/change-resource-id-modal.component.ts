@@ -3,7 +3,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../../shared/fhir.service';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from '../../shared/config.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Subject} from "rxjs";
 import {AuthService} from "../../shared/auth.service";
 import {StructureDefinition as R5StructureDefinition} from "../../../../../../libs/tof-lib/src/lib/r5/fhir";
@@ -21,7 +21,7 @@ export class ChangeResourceIdModalComponent implements OnInit {
   @Input() originalId: string;
   public newId: string;
   public message: string;
-
+  public implementationGuideId: string;
   public isIdUnique = true;
   public idChangedEvent = new Subject<void>();
 
@@ -64,11 +64,14 @@ export class ChangeResourceIdModalComponent implements OnInit {
     const newId = this.newId;
     this.fhirService.changeResourceId(this.resourceType, this.originalId, newId)
       .subscribe(() => {
-        if (this.resourceType === 'ImplementationGuide' && this.originalId === this.configService.project.implementationGuideId) {
+       // if (this.resourceType === 'ImplementationGuide' && this.igId === this.configService.project.implementationGuideId) {
           // noinspection JSIgnoredPromiseFromCall
-          this.configService.project.implementationGuideId = newId;
-          this.router.navigate([`${this.configService.fhirVersion}/${newId}/implementation-guide`]);
-        }
+          const url = this.router.url;
+          this.router.navigateByUrl('/',{skipLocationChange:true}).then(()=>{
+            this.router.navigate([`/${url}`]).then(()=>{
+              console.log(`After navigation I am on:${this.router.url}`)
+            })
+           })
 
         this.activeModal.close(this.newId);
       }, (err) => {
@@ -84,5 +87,6 @@ export class ChangeResourceIdModalComponent implements OnInit {
 
   ngOnInit() {
     this.newId = this.originalId;
+
   }
 }
