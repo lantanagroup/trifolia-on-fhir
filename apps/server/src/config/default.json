@@ -20,8 +20,8 @@
   "database": {
     "uri": "mongodb://user:pwd@localhost:27017/tof?authSource=admin"
   },
-  "privacyPolicy": "https://www.lantanagroup.com/trifolia-on-fhir-privacy-policy/",
-  "termsOfUse": "https://www.lantanagroup.com/terms-of-use/",
+  "privacyPolicy": "https://www.lantanagroup.com/privacypolicy/",
+  "termsOfUse": "https://www.lantanagroup.com/termsofuse/",
   "publish": {
     "queueLimit": 2,
     "timeout": 5000
