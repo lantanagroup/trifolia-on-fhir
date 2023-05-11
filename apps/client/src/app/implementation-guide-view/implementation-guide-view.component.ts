@@ -18,7 +18,7 @@ export class ImplementationGuideViewComponent implements OnInit {
 
   ngOnInit() {
     this.implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    this.implementationGuideOutputUrl = `/igs/projects/${this.implementationGuideId}/index.html`;
-    this.implementationGuideQAUrl = `/igs/projects/${this.implementationGuideId}/qa.html`;
+    this.implementationGuideOutputUrl = `/igs/${this.implementationGuideId}/index.html`;
+    this.implementationGuideQAUrl = `/igs/${this.implementationGuideId}/qa.html`;
   }
 }

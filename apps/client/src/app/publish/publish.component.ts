@@ -1,19 +1,16 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Observable} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
-import {ExportOptions, ExportService} from '../shared/export.service';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {ConfigService} from '../shared/config.service';
-import {CookieService} from 'ngx-cookie-service';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {FhirService} from '../shared/fhir.service';
-import {HtmlExportStatus, SocketService} from '../shared/socket.service';
-import {saveAs} from 'file-saver';
-import {NgbNav} from '@ng-bootstrap/ng-bootstrap';
-import {ActivatedRoute} from '@angular/router';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import { SearchImplementationGuideResponseContainer } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Observable, firstValueFrom } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { ExportOptions, ExportService } from '../shared/export.service';
+import { getErrorString, Globals, IImplementationGuide, SearchImplementationGuideResponseContainer } from '@trifolia-fhir/tof-lib';
+import { ConfigService } from '../shared/config.service';
+import { CookieService } from 'ngx-cookie-service';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import { FhirService } from '../shared/fhir.service';
+import { HtmlExportStatus, SocketService } from '../shared/socket.service';
+import { saveAs } from 'file-saver';
+import { NgbNav } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute } from '@angular/router';
 import { IConformance } from '@trifolia-fhir/models';
 
 @Component({
@@ -22,7 +19,7 @@ import { IConformance } from '@trifolia-fhir/models';
   styleUrls: ['./publish.component.css']
 })
 export class PublishComponent implements OnInit {
-  public selectedImplementationGuide: ImplementationGuide;
+  public selectedImplementationGuide: IImplementationGuide;
   public options = new ExportOptions();
   public searching = false;
   public message: string;
@@ -30,7 +27,7 @@ export class PublishComponent implements OnInit {
   public autoScroll = true;
   public Globals = Globals;
   public inProgress = false;
-  public templateVersions : string[] = [];
+  public templateVersions: string[] = [];
   private packageId;
 
   @ViewChild('tabs', { static: true })
@@ -49,8 +46,8 @@ export class PublishComponent implements OnInit {
     private exportService: ExportService) {
 
     this.options.implementationGuideId = !this.route.snapshot.paramMap.get('id') ?
-    this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion) :
-    this.route.snapshot.paramMap.get('id');
+      this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion) :
+      this.route.snapshot.paramMap.get('id');
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/json';
     this.options.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
     this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
@@ -63,14 +60,13 @@ export class PublishComponent implements OnInit {
     });
   }
 
-  public async implementationGuideChanged(implementationGuide: ImplementationGuide) {
+  public async implementationGuideChanged(implementationGuide: IImplementationGuide) {
     this.selectedImplementationGuide = implementationGuide;
-    this.options.implementationGuideId = implementationGuide ? implementationGuide.id : undefined;
 
     const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion;
 
-    if (implementationGuide && implementationGuide.id) {
-      this.cookieService.set(cookieKey, implementationGuide.id);
+    if (this.options.implementationGuideId) {
+      this.cookieService.set(cookieKey, this.options.implementationGuideId);
     } else if (this.cookieService.get(cookieKey)) {
     } else if (this.cookieService.get(cookieKey)) {
       this.cookieService.delete(cookieKey);
@@ -106,14 +102,14 @@ export class PublishComponent implements OnInit {
       switchMap((term: string) => {
         return this.implementationGuideService.getImplementationGuides(1, term)
           .pipe(map((bundle: SearchImplementationGuideResponseContainer) => {
-            return (bundle.responses || []).map((entry) => <ImplementationGuide>entry.data.resource);
+            return (bundle.responses || []).map((entry) => <IImplementationGuide>entry.data.resource);
           }));
       }),
       tap(() => this.searching = false)
     );
   };
 
-  public searchFormatter = (ig: ImplementationGuide) => {
+  public searchFormatter = (ig: IImplementationGuide) => {
     return `${ig.name} (id: ${ig.id})`;
   };
 
@@ -185,14 +181,14 @@ export class PublishComponent implements OnInit {
     this.tabs.select('status');
 
     try {
-      this.packageId = await this.exportService.publish(this.options).toPromise();
+      this.packageId = await firstValueFrom(this.exportService.publish(this.options));
     } catch (ex) {
       this.message = getErrorString(ex);
       this.inProgress = false;
     }
   }
 
-  public cancel(){
+  public cancel() {
     this.tabs.select('status');
 
     this.exportService.cancel(this.packageId)
@@ -201,15 +197,15 @@ export class PublishComponent implements OnInit {
         this.inProgress = false;
       }, (err) => {
         this.message = getErrorString(err);
-    });
+      });
   }
 
-  public get igSpecifiesTemplate(){
-    if (!this.selectedImplementationGuide.extension) return false;
-    return !!this.selectedImplementationGuide.extension.find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-pub-template');
+  public get igSpecifiesTemplate() {
+    if (!this.selectedImplementationGuide || !this.selectedImplementationGuide.extension) return false;
+    return !!(this.selectedImplementationGuide.extension || []).find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-pub-template');
   }
 
-  public getPackageId(){
+  public getPackageId() {
     return this.packageId;
   }
 
@@ -220,9 +216,10 @@ export class PublishComponent implements OnInit {
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
-        .subscribe((conf: IConformance) => {
-          this.implementationGuideChanged(<ImplementationGuide>conf?.resource);
-        }, (err) => this.message = getErrorString(err));
+        .subscribe({
+          next: (conf: IConformance) => { this.implementationGuideChanged(<IImplementationGuide>conf?.resource); },
+          error: (err) => this.message = getErrorString(err)
+        });
     }
 
     await this.templateChanged();

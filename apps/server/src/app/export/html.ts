@@ -178,7 +178,7 @@ export class HtmlExporter {
     this.publishing = new Promise(async (resolve, reject) => {
       this.publishStartedAt = new Date();
 
-      const deployDir = path.resolve(this.configService.server.publishedIgsDirectory || __dirname, 'igs', this.implementationGuide.id);
+      const deployDir = path.resolve(this.configService.server.publishedIgsDirectory || __dirname, 'igs', this.implementationGuideId);
       fs.ensureDirSync(deployDir);
 
       if (!this.igPublisherLocation) {
