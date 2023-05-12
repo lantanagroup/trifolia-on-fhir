@@ -47,11 +47,11 @@ export class ResourceHistoryComponent implements OnInit {
     if (isLeft === true) {
       this.leftResource = resource1;
       this.rightResource = resource2;
-      this.message = `Done loading version ${this.leftResource.meta.versionId}`;
+      this.message = `Done loading left resource`;
     } else {
       this.rightResource = resource1;
       this.leftResource = resource2;
-      this.message = `Done loading version ${this.rightResource.meta.versionId}`;
+      this.message = `Done loading right resource`;
     }
 
     this.resourceChange.emit(resource1);
@@ -81,7 +81,7 @@ export class ResourceHistoryComponent implements OnInit {
 
         if (this.historyBundle && this.historyBundle && this.historyBundle.results.length > 0) {
           if (this.leftResource) {
-            const foundLeft = this.historyBundle.results.find(e => e.content.meta.versionId === this.leftResource.meta.versionId);
+            const foundLeft = this.historyBundle.results.find(e => e.versionId === this.leftResource.meta.versionId);
 
             if (foundLeft) {
               this.leftResource = foundLeft.content;
@@ -89,7 +89,7 @@ export class ResourceHistoryComponent implements OnInit {
           }
 
           if (this.rightResource) {
-            const foundRight = this.historyBundle.results.find(e => e.content.meta.versionId === this.rightResource.meta.versionId);
+            const foundRight = this.historyBundle.results.find(e => e.versionId === this.rightResource.meta.versionId);
 
             if (foundRight) {
               this.rightResource = foundRight.content;

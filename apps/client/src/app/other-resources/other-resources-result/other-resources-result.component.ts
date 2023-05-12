@@ -21,7 +21,7 @@ import { IConformance, IExample } from '@trifolia-fhir/models';
   styleUrls: ['./other-resources-result.component.css']
 })
 export class OtherResourcesResultComponent extends BaseComponent implements OnInit {
-  public resource: IConformance|IExample;
+  public resource: IConformance | IExample;
   activeSub: 'json/xml' | 'permissions' = 'json/xml';
   message: string;
   data: any;
@@ -36,13 +36,13 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   isExample = false;
 
   constructor(private fhirService: FhirService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private modalService: NgbModal,
-              public configService: ConfigService,
-              protected authService: AuthService,
-              protected conformanceService: ConformanceService,
-              protected examplesService: ExamplesService) {
+    private route: ActivatedRoute,
+    private router: Router,
+    private modalService: NgbModal,
+    public configService: ConfigService,
+    protected authService: AuthService,
+    protected conformanceService: ConformanceService,
+    protected examplesService: ExamplesService) {
 
     super(configService, authService);
 
@@ -54,6 +54,12 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
         if (this.resource) {
           this.serializationError = false;
           this.message = null;
+
+          if (!this.isFhir) {
+            this.resource['content'] = this.content;
+            return;
+          }
+
           try {
             // deserialize the content back to data
             if (this.activeSub === 'json/xml' && this.selected === 'JSON') {
@@ -163,17 +169,23 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   public downloadFile() {
 
     const type: string = this.selected;
-    switch (type) {
-      case 'XML':
-        const xml = this.fhirService.serialize(this.data);
-        const xmlBlob = new Blob([xml], { type: 'application/xml' });
-        saveAs(xmlBlob, this.data.id + '.xml');
-        break;
-      case 'JSON':
-        const json = JSON.stringify(this.data, null, '\t');
-        const jsonBlob = new Blob([json], { type: 'application/json' });
-        saveAs(jsonBlob, this.data.id + '.json');
-        break;
+
+    if (this.data) {
+      switch (type) {
+        case 'XML':
+          const xml = this.fhirService.serialize(this.data);
+          const xmlBlob = new Blob([xml], { type: 'application/xml' });
+          saveAs(xmlBlob, this.data.id + '.xml');
+          break;
+        case 'JSON':
+          const json = JSON.stringify(this.data, null, '\t');
+          const jsonBlob = new Blob([json], { type: 'application/json' });
+          saveAs(jsonBlob, this.data.id + '.json');
+          break;
+      }
+    } else {
+      const fileName = this.resource['resource'] ? this.resource['resource'].id : this.resource['content']?.id || this.resource.name || 'resource' + '.xml';
+      saveAs(new Blob([this.content], { type: 'application/xml' }), fileName);
     }
   }
 
@@ -207,7 +219,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
   public save() {
 
-    let request: Observable<IConformance|IExample>;
+    let request: Observable<IConformance | IExample>;
 
     if (this.isExample) {
       request = this.examplesService.save(this.resource.id, <IExample>this.resource, this.configService.project?.implementationGuideId);
@@ -216,7 +228,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     }
 
     request.subscribe({
-      next: (res: IConformance|IExample) => {
+      next: (res: IConformance | IExample) => {
         Object.assign(this.resource, res);
         this.message = `Successfully updated resource!`;
       },
@@ -232,7 +244,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
       return;
     }
 
-    let request: Observable<IConformance|IExample>;
+    let request: Observable<IConformance | IExample>;
 
     if (this.isExample) {
       request = this.examplesService.delete(this.resource.id);
@@ -241,7 +253,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     }
 
     request.subscribe({
-      next: (res: IConformance|IExample) => {
+      next: (res: IConformance | IExample) => {
         this.router.navigate([`${this.configService.baseSessionUrl}/${this.isExample ? 'examples' : 'other-resources'}`]);
         alert(`Successfully removed resource.`);
       },

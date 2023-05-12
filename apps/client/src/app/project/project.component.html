@@ -55,7 +55,7 @@
           <tr *ngFor="let ig of project.igs">
             <td><a   role="button" routerLink="/projects/{{ig.id}}/implementation-guide"
                      title="Edit Project Implementation Guides ">
-                     <i> {{ig.resource.id}}</i>
+                     <i> {{ig.resource.id || ig.id}}</i>
                 </a>
             </td>
             <td>{{ig.resource.name}}</td>
