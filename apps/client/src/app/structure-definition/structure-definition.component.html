@@ -374,12 +374,11 @@
     <li ngbNavItem="history">
       <a ngbNavLink>History</a>
       <ng-template ngbNavContent>
-        <app-resource-history [(resource)]="structureDefinition" (resourceChange)="loadBaseDefinition()" (change)="isDirty = true; nameChanged();"></app-resource-history>
+        <app-resource-history [resource]="conformance" (resourceChange)="structureDefinition = $event; conformance.resource = $event; loadBaseDefinition()" (change)="isDirty = true; nameChanged();"></app-resource-history>
       </ng-template>
     </li>
   </ul>
   <div [ngbNavOutlet]="sdTabs" class="mt-2"></div>
-
   <div class="element-definition card" *ngIf="selectedElement">
     <div class="card-header">
       <span>Element Definition</span>
