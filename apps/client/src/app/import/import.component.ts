@@ -318,7 +318,6 @@ export class ImportComponent implements OnInit {
 
             if (pr.isExample) {
               path = this.getExamplePath(pr);
-
             } else {
               path = `${pr.resource.resourceType}/${pr.resource.id}`;
             }
@@ -432,7 +431,7 @@ export class ImportComponent implements OnInit {
         // if (this.configService.project && this.configService.project.implementationGuideId) {
         //   this.getList(importFileModel);
         // }
-        // this.importBundle = this.getFileBundle();
+        this.importBundle = this.getFileBundle();
         this.cdr.detectChanges();
 
         resolve();
@@ -829,11 +828,15 @@ export class ImportComponent implements OnInit {
 
     if (file.isCDAExample) {
       resourceType = 'Binary';
-      id = this.getIdDisplay(file);
     } else {
-      resourceType = JSON.parse(file.content.toString())['resourceType'];
-      id = this.getIdDisplay(file);
+      if (file.resource) {
+        resourceType = file.resource.resourceType;
+      } else {
+        resourceType = JSON.parse(file.content.toString())['resourceType'];
+      }
     }
+
+    id = this.getIdDisplay(file);
 
     return { resourceType: resourceType, id: id };
   }

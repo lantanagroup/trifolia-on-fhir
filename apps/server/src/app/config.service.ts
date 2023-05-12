@@ -1,5 +1,5 @@
 import {HttpService} from '@nestjs/axios';
-import {Logger} from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 import {IServerConfig} from './models/server-config';
 import {IFhirConfig} from './models/fhir-config';
 import {IDatabaseConfig} from './models/database-config';
@@ -12,7 +12,7 @@ import config from 'config';
 import {createWriteStream, ensureDirSync, existsSync, readdirSync, statSync, unlinkSync} from 'fs-extra';
 import semver from 'semver';
 
-//@Injectable()
+@Injectable()
 export class ConfigService {
   public server: IServerConfig = {
     supportUrl: 'http://test.com/support',

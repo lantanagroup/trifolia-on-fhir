@@ -280,7 +280,7 @@ export class HtmlExporter {
               this.publishLog('error', 'Error copying contents to deployment path.');
               reject(err);
             } else {
-              const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/${this.implementationGuideId}/implementation-guide/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
+              const finalMessage = `Done executing the FHIR IG Publisher. You may view the IG <a href="/projects/${this.implementationGuideId}/implementation-guide/view">here</a>.` + (downloadOutput ? ' You will be prompted to download the package in a moment.' : '');
               this.publishLog('complete', finalMessage, true);
               resolve();
             }
