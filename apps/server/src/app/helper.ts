@@ -778,7 +778,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
     if (!implGuideResource.references.find((r: IProjectResourceReference) => {
       if (r.valueType !== (isNotFhir ? 'Example' : 'Conformance')) return false;
     //  console.log('Id ' + r.value.toString());
-      if (r.value.toString() === resourceToAdd.id) return true;
+      if (r.value && r.value.toString() === resourceToAdd.id) return true;
     })) {
       implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'Example' : 'Conformance' });
 
