@@ -16,25 +16,84 @@
   </div>
 </div>
 
-<table class="table table-striped">
-  <thead>
-  <tr>
-    <th>Resource Type</th>
-    <th>ID</th>
-    <th>Name</th>
-    <th>&nbsp;</th>
-  </tr>
-  </thead>
-  <tbody *ngIf="examples">
-  <tr *ngFor="let example of filteredExamples">
-    <td>{{example.content.resourceType || 'Unknown'}}</td>
-    <td>{{example.content.id || example.name || example.id}}</td>
-    <td>{{example.content.name || example.name }}</td>
-    <td>
-      <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/other-resources/example/{{example.id}}" [class.disabled]="!example.id">
-        <i class="fa fa-edit"></i>
-      </a>
-    </td>
-  </tr>
-  </tbody>
-</table>
+
+<ul ngbNav #nav="ngbNav" class="nav-tabs">
+
+  <!-- FHIR examples -->
+  <li ngbNavItem>
+    <a ngbNavLink>FHIR Examples <span class="badge bg-primary">{{filteredFhirExamples?.length || 0}}</span></a>
+    <ng-template ngbNavContent>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Resource Type</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="examplesFhir">
+          <tr *ngFor="let example of filteredFhirExamples">
+            <td>{{example.resource.resourceType || 'Unknown'}}</td>
+            <td>{{example.resource.id || example.name || example.id}}</td>
+            <td>{{example.resource.name || example.name }}</td>
+            <td>
+              <a class="btn btn-primary"
+                routerLink="{{configService.baseSessionUrl}}/other-resources/conformance/{{example.id}}"
+                [class.disabled]="!example.id">
+                <i class="fa fa-edit"></i>
+              </a>
+            </td>
+          </tr>
+          <tr *ngIf="!filteredFhirExamples || filteredFhirExamples.length < 1">
+            <td colspan="4">No FHIR examples associated with this implementation guide
+              {{ searchText && searchText.length > 0 && examplesFhir && examplesFhir.length > 0 ? ' match the search text' : ''}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </ng-template>
+  </li>
+
+
+  <!-- Other (non-FHIR) examples -->
+  <li ngbNavItem>
+    <a ngbNavLink>Other Examples <span class="badge bg-primary">{{filteredOtherExamples?.length || 0}}</span></a>
+    <ng-template ngbNavContent>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Resource Type</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="examplesOther">
+          <tr *ngFor="let example of filteredOtherExamples">
+            <td>{{example.content.resourceType || 'Unknown'}}</td>
+            <td>{{example.content.id || example.name || example.id}}</td>
+            <td>{{example.content.name || example.name }}</td>
+            <td>
+              <a class="btn btn-primary"
+                routerLink="{{configService.baseSessionUrl}}/other-resources/example/{{example.id}}"
+                [class.disabled]="!example.id">
+                <i class="fa fa-edit"></i>
+              </a>
+            </td>
+          </tr>
+          <tr *ngIf="!filteredOtherExamples || filteredOtherExamples.length < 1">
+            <td colspan="4">No non-FHIR examples associated with this implementation guide
+              {{ searchText && searchText.length > 0 && examplesOther && examplesOther.length > 0 ? ' match the search text' : ''}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </ng-template>
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav"></div>

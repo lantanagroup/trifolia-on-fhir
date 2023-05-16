@@ -538,22 +538,19 @@ export class ImportComponent implements OnInit {
       }
       (<IConformance | IExample>file.existingResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
 
-      // add/update Example type
-      if (file.isExample) {
+      // add/update non-fhir example type
+      if (file.isExample && file.isCDAExample) {
         let example: IExample = <IExample>{ ...file.existingResource };
         example.content = file.isCDAExample ? file.cdaContent : file.resource;
-        if (file.isCDAExample) {
-          example.name = this.getIdDisplay(file);
-        }
+        example.name = this.getIdDisplay(file);
         requests.push(this.examplesService.save(example.id, example, this.implementationGuideId));
       }
 
-      // add/update Conformance type
+      // add/update fhir type
       else {
         let conformance: IConformance = <IConformance>{ ...file.existingResource };
         conformance.resource = file.resource;
-        console.log('conformance:', conformance);
-        requests.push(this.conformanceService.save(conformance.id, conformance, this.implementationGuideId));
+        requests.push(this.conformanceService.save(conformance.id, conformance, this.implementationGuideId, file.isExample));
       }
     }
 

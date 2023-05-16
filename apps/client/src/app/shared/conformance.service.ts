@@ -49,12 +49,12 @@ export class ConformanceService {
     }
 
 
-    public save(conformanceId: string, conformance: IConformance, implementationGuideId?: string): Observable<IConformance> {
+    public save(conformanceId: string, conformance: IConformance, implementationGuideId?: string, isExample?: boolean): Observable<IConformance> {
         if (conformanceId) {
-            const url = `/api/conformance/${encodeURIComponent(conformanceId)}${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
+            const url = `/api/conformance/${encodeURIComponent(conformanceId)}${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) + (isExample ? '&isexample=true' : '') : ''}`;
             return this.http.put<IConformance>(url, conformance);
         } else {
-            const url = `/api/conformance/${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
+            const url = `/api/conformance/${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) + (isExample ? '&isexample=true' : '') : ''}`;
             return this.http.post<IConformance>(url, conformance);
         }
     }

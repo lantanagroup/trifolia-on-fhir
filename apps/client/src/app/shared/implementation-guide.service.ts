@@ -68,7 +68,7 @@ export class ImplementationGuideService extends ConformanceService {
     return this.http.get<any[]>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/profile`);
   }
 
-  public getExamples(implementationGuideId: string): Observable<IExample[]> {
+  public getExamples(implementationGuideId: string): Observable<IConformance[]|IExample[]> {
     return this.http.get<any>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/example`);
   }
 

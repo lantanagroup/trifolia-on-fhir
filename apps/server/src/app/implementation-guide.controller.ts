@@ -1,14 +1,14 @@
-import {HttpService} from '@nestjs/axios';
-import {BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
-import {AuthGuard} from '@nestjs/passport';
-import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
-import {FhirInstance, FhirServerVersion, RequestHeaders, User} from './server.decorators';
-import {ConfigService} from './config.service';
-import {BundleExporter} from './export/bundle';
-import {copyPermissions} from './helper';
-import {ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent} from '@trifolia-fhir/stu3';
-import {ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
-import type {IBundle, IgExampleModel, IImplementationGuide, IResourceReference, ITofUser} from '@trifolia-fhir/tof-lib';
+import { HttpService } from '@nestjs/axios';
+import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
+import { FhirInstance, FhirServerVersion, RequestHeaders, User } from './server.decorators';
+import { ConfigService } from './config.service';
+import { BundleExporter } from './export/bundle';
+import { copyPermissions } from './helper';
+import { ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent } from '@trifolia-fhir/stu3';
+import { ImplementationGuide as R4ImplementationGuide } from '@trifolia-fhir/r4';
+import type { IBundle, IgExampleModel, IImplementationGuide, IResourceReference, ITofUser } from '@trifolia-fhir/tof-lib';
 import {
   BulkUpdateRequest,
   getErrorString,
@@ -21,19 +21,18 @@ import {
   SearchImplementationGuideResponse,
   SearchImplementationGuideResponseContainer
 } from '@trifolia-fhir/tof-lib';
-import {AxiosRequestConfig} from 'axios';
-import {spawn} from 'child_process';
+import { spawn } from 'child_process';
 import path from 'path';
 import os from 'os';
-import {existsSync} from 'fs';
-import {ProjectsService} from './projects/projects.service';
-import {AuthService} from './auth/auth.service';
-import {ConformanceService} from './conformance/conformance.service';
-import {IConformance, IExample, IProjectResourceReference} from '@trifolia-fhir/models';
-import {ConformanceController} from './conformance/conformance.controller';
-import {ExamplesService} from './examples/examples.service';
-import {ImplementationGuide as R5ImplementationGuide, StructureDefinition} from '@trifolia-fhir/r5';
-import {ObjectId} from 'mongodb';
+import { existsSync } from 'fs';
+import { ProjectsService } from './projects/projects.service';
+import { AuthService } from './auth/auth.service';
+import { ConformanceService } from './conformance/conformance.service';
+import { IConformance, IExample, IProjectResourceReference } from '@trifolia-fhir/models';
+import { ConformanceController } from './conformance/conformance.controller';
+import { ExamplesService } from './examples/examples.service';
+import { ImplementationGuide as R5ImplementationGuide, StructureDefinition } from '@trifolia-fhir/r5';
+import { forkJoin } from 'rxjs';
 
 
 class PatchRequest {
@@ -57,11 +56,11 @@ export class ImplementationGuideController extends ConformanceController { // ex
   private readonly httpService1: HttpService;
 
   constructor(protected httpService: HttpService,
-              protected configService: ConfigService,
-              protected examplesService: ExamplesService,
-              protected projectService: ProjectsService,
-              protected conformanceService: ConformanceService,
-              protected authService: AuthService) {
+    protected configService: ConfigService,
+    protected examplesService: ExamplesService,
+    protected projectService: ProjectsService,
+    protected conformanceService: ConformanceService,
+    protected authService: AuthService) {
 
     super(conformanceService);
 
@@ -181,11 +180,11 @@ export class ImplementationGuideController extends ConformanceController { // ex
       let conf = await this.conformanceService.findOne({ 'resource.resourceType': 'StructureDefinition', 'resource.id': profile.id, 'igIds': id });
       const sdr = <StructureDefinition>conf.resource;
       sdr.description = profile.description;
-      sdr.extension = profile.extension?[...profile.extension]:[];
-      if(!sdr.differential ){
-        sdr.differential = { extension: [], element: []};
+      sdr.extension = profile.extension ? [...profile.extension] : [];
+      if (!sdr.differential) {
+        sdr.differential = { extension: [], element: [] };
       }
-      sdr.differential.element = profile.diffElement?[...profile.diffElement]:[];
+      sdr.differential.element = profile.diffElement ? [...profile.diffElement] : [];
 
       await this.conformanceService.updateConformance(conf.id, conf);
     }
@@ -220,8 +219,60 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
 
   @Get(':id/example')
-  public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4'): Promise<IExample[]> {
-    return this.examplesService.findAll({ 'igIds': id });
+  public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4'): Promise<IConformance[] | IExample[]> {
+
+    let examples = [];
+
+    let igConf = await this.conformanceService.findById(id);
+    if (!igConf || igConf.resource.resourceType !== 'ImplementationGuide') {
+      throw new BadRequestException();
+    }
+
+    // fhir examples for this IG are stored in conformance collection
+    // find any example references from the IG
+    let resourceFilters: { 'resource.resourceType': string, 'resource.id': string }[] = [];
+
+    if (igConf.fhirVersion === 'stu3') {  // STU3 references
+
+      ((<STU3ImplementationGuide>igConf.resource).package || []).forEach(p => {
+        p.resource.forEach(r => {
+          if (r.example) {
+            let ref = (r.sourceReference.reference || '').split('/');
+            if (ref && ref.length === 2) {
+              resourceFilters.push({ 'resource.resourceType': ref[0], 'resource.id': ref[1] });
+            }
+          }
+        });
+      });
+
+    } else {  // R4+ references
+
+      let resources = (<R4ImplementationGuide>igConf.resource).definition?.resource;
+      if (resources) {
+        resources.forEach(r => {
+          if ((r.exampleBoolean || r.exampleCanonical) && r.reference && r.reference.reference) {
+            let ref = r.reference.reference.split('/');
+            if (ref && ref.length === 2) {
+              resourceFilters.push({ 'resource.resourceType': ref[0], 'resource.id': ref[1] });
+            }
+          }
+        });
+      }
+    }
+
+    // may not have to actually query the conformance collection
+    if (resourceFilters.length > 0) {
+      let filter = {
+        $and: [{ 'igIds': id }, { $or: resourceFilters }]
+      }
+      let res = await this.conformanceService.findAll(filter);
+      examples.push(... res);
+    }
+
+    // non-fhir examples for this ig come from the examples collection
+    examples.push(... await this.examplesService.findAll({ 'igIds': id }) );
+
+    return examples;
   }
 
   @Get('published')

@@ -32,7 +32,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
 
 
-    public async createConformance(newConf: IConformance, implementationGuideId?: string): Promise<IConformance> {
+    public async createConformance(newConf: IConformance, implementationGuideId?: string, isExample?: boolean): Promise<IConformance> {
 
         const lastUpdated = new Date();
         let versionId = 1;
@@ -83,14 +83,14 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
         //Add it to the implementation Guide
         if (newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
-            await addToImplementationGuideNew(this, newConf, implementationGuideId);
+            await addToImplementationGuideNew(this, newConf, implementationGuideId, isExample);
         }
 
         return newConf;
     }
 
 
-    public async updateConformance(id: string, upConf: IConformance, implementationGuideId?: string): Promise<IConformance> {
+    public async updateConformance(id: string, upConf: IConformance, implementationGuideId?: string, isExample?: boolean): Promise<IConformance> {
 
         const lastUpdated = new Date();
         let versionId: number = 1;
@@ -250,7 +250,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
         //Add it to the implementation Guide
         if (existing.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
-            await addToImplementationGuideNew(this, existing, implementationGuideId);
+            await addToImplementationGuideNew(this, existing, implementationGuideId, isExample);
         }
 
         return existing;

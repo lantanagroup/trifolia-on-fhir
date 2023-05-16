@@ -575,13 +575,9 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
   let changed = false;
   let resourceReferenceString;
-  let isExampleCDA: boolean = false;
+  let isNotFhir: boolean = false;
 
-  // const resourceReferenceString = isExample ? 
-  //   `${resourceToAdd.}` :
-  //   `${(<IConformance>resourceToAdd).resource.resourceType}/${(<IConformance>resourceToAdd).resource['id'] || resourceToAdd.id}`;
-
-  // if new resource is not an example treat it as a conformance object
+  // if new resource is not an example it can only be treated as a valid fhir resource
   if (!isExample) {
     if ('resource' in resourceToAdd && resourceToAdd.resource) {
       resourceReferenceString = `${(<IConformance>resourceToAdd).resource.resourceType}/${(<IConformance>resourceToAdd).resource.id || resourceToAdd.id}`
@@ -596,8 +592,14 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
       let resourceType: string;
       let resourceId: string;
 
+      // received an object with a resource property set so we'll use that and treat it as a valid fhir resource
+      if ('resource' in resourceToAdd && !!resourceToAdd.resource) {
+        resourceType = resourceToAdd.resource.resourceType;
+        resourceId = resourceToAdd.resource.id || resourceToAdd.id;
+      }
+
       // example content is probably a valid fhir resource so try that first
-      if ('content' in resourceToAdd && !!resourceToAdd.content) {
+      else if ('content' in resourceToAdd && !!resourceToAdd.content) {
           // try parsing the string to a valid JSON object
           let content: any;
           if (typeof resourceToAdd.content !== typeof '') {
@@ -614,18 +616,12 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
             if (implementationGuideIsCDA(implGuideResource)) {
               resourceType = 'Binary';
               resourceId = resourceToAdd.name;
-              isExampleCDA = true;
+              isNotFhir = true;
             } else {
               throw error;
             }
           }
         
-      }
-
-      // received an object with a resource property set even though this is supposed to be an example type
-      else if ('resource' in resourceToAdd && !!resourceToAdd.resource) {
-        resourceType = resourceToAdd.resource.resourceType;
-        resourceId = resourceToAdd.resource.id || resourceToAdd.id;
       }
 
       // don't know how to process the supplied resource
@@ -648,7 +644,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   }
 
 
-  logger.verbose(`Adding resource ${resourceReferenceString} to context implementation guide.`);
+  logger.verbose(`Adding resource ${resourceReferenceString} to context implementation guide.  Example? (${isExample} -- ${typeof isExample})`);
 
   if (resourceToAdd.fhirVersion !== 'stu3') {        // r4+
     const r4 = <R4ImplementationGuide>implementationGuide;
@@ -673,8 +669,8 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
       logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');
 
-      // special case for adding CDA example
-      if (isExampleCDA) {
+      // special case for adding non-fhir examples
+      if (isNotFhir) {
 
         r4.definition.resource.push({
           extension: [{
@@ -705,7 +701,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
               reference: resourceReferenceString,
               display: display
             },
-            exampleBoolean: isExample || Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0,
+            exampleBoolean: isExample ? true : Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0,
             name: display,
             description: description
           });
@@ -750,7 +746,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
           reference: resourceReferenceString,
           display: display
         },
-        example: isExample || Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0
+        example: isExample ? true : Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0
       };
 
       if (stu3.package.length === 0) {
@@ -779,10 +775,10 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
     implGuideResource.references = implGuideResource.references || [];
     // add to references if not already in the reference list
     if (!implGuideResource.references.find((r: IProjectResourceReference) => {
-      if (r.valueType !== (isExample ? 'Example' : 'Conformance')) return false;
+      if (r.valueType !== (isNotFhir ? 'Example' : 'Conformance')) return false;
       if (r.value === resourceToAdd.id) return true;
     })) {
-      implGuideResource.references.push({ value: resourceToAdd, valueType: isExample ? 'Example' : 'Conformance' });
+      implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'Example' : 'Conformance' });
     }
     let conf = await service.updateOne(implGuideResource.id, implGuideResource);
     //console.log('Conformance ' + conf);
