@@ -26,6 +26,7 @@ import { IAuditEvent, IDomainResource, IImplementationGuide } from '../../../../
 import { TofLogger } from './tof-logger';
 import { IConformance, IExample, IProjectResourceReference } from '@trifolia-fhir/models';
 import { ConformanceService } from './conformance/conformance.service';
+import { ObjectId } from 'mongodb';
 
 declare var jasmine;
 
@@ -621,7 +622,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
               throw error;
             }
           }
-        
+
       }
 
       // don't know how to process the supplied resource
@@ -776,9 +777,11 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
     // add to references if not already in the reference list
     if (!implGuideResource.references.find((r: IProjectResourceReference) => {
       if (r.valueType !== (isNotFhir ? 'Example' : 'Conformance')) return false;
-      if (r.value === resourceToAdd.id) return true;
+    //  console.log('Id ' + r.value.toString());
+      if (r.value.toString() === resourceToAdd.id) return true;
     })) {
       implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'Example' : 'Conformance' });
+
     }
     let conf = await service.updateOne(implGuideResource.id, implGuideResource);
     //console.log('Conformance ' + conf);

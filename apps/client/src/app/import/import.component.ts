@@ -297,9 +297,9 @@ export class ImportComponent implements OnInit {
               id = resource['id'];
             }
           }
-          return { resourceType: resourceType, id: id, isExample: true };
+          return { resourceType: resourceType, id: id, isExample:  pr.isCDAExample };
         }
-        return { resourceType: pr.resource.resourceType, id: pr.resource.id, isExample: pr.isExample };
+        return { resourceType: pr.resource.resourceType, id: pr.resource.id, isExample: pr.isCDAExample };
       });
 
     this.files.filter(f => !!f.resource && !f.resource.id)
