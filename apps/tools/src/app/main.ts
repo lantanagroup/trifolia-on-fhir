@@ -87,7 +87,7 @@ const argv = Yargs
       await migrator.migrate();
     } catch (ex) {
       console.error(ex.message);
-      console.error(ex.stack);
+      throw ex;
     }
   })
   .command(replacePackageListFormat, replacePackageListDescription, (yargs: Yargs.Argv) => {

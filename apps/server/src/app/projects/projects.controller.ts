@@ -1,13 +1,14 @@
-import {Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, Request, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ProjectsService} from './projects.service';
 import {BaseDataController} from '../base/base-data.controller';
 import {ProjectDocument} from './project.schema';
 import type {IConformance, IProject} from '@trifolia-fhir/models';
-import {User} from '../server.decorators';
+import {RequestHeaders, User} from '../server.decorators';
 import {Conformance} from '../conformance/conformance.schema';
 import {ConformanceService} from '../conformance/conformance.service';
+import { ITofUser, Paginated } from '@trifolia-fhir/tof-lib';
 
 
 @Controller('api/project')
@@ -35,6 +36,22 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
       filter['author'] = { $regex: query['author'], $options: 'i' };
     }
     return filter;
+  }
+
+
+  @Get()
+  public async searchProject(@User() user: ITofUser, @Query() query?: any, @Request() req?: any): Promise<Paginated<IProject>> {
+
+    let options = this.getPaginateOptionsFromRequest(req);
+    const baseFilter = await this.authService.getPermissionFilterBase(user, 'read');
+
+    const filter = {
+      $and: [baseFilter, this.getFilterFromRequest(req)]
+    };
+    options.filter = filter;
+
+    const res = await this.projectService.search(options);
+    return res;
   }
 
   @Post()

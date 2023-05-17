@@ -143,6 +143,8 @@ export class MigrateDb extends BaseTools {
     const allSecurityTags = await this.queryMysql(`select res_id, tag_code from hfj_res_tag rt join hfj_tag_def td on rt.tag_id=td.tag_id`);
     this.log(`Retrieved ${allSecurityTags.length} security tags`);
 
+    this.mysqlCon.destroy();
+
     for (let i = 0; i < resResults.length; i++) {
       const resResult = resResults[i];
       const resId = resResult['res_id'];
@@ -265,7 +267,7 @@ export class MigrateDb extends BaseTools {
         const stu3ImplementationGuide = <STU3ImplementationGuide>this.resourceMap[key].resource;
 
         const foundPackages = (stu3ImplementationGuide.package || []).filter(pack => {
-          return pack.resource.find(pr => pr.sourceReference && pr.sourceReference.reference && pr.sourceReference.reference === resourceReference);
+          return (pack.resource || []).find(pr => pr.sourceReference && pr.sourceReference.reference && pr.sourceReference.reference === resourceReference);
         });
 
         if (foundPackages.length > 0) {
@@ -408,7 +410,7 @@ export class MigrateDb extends BaseTools {
       case 'D':
         return 'delete';
       default:
-        throw new Error(`Unexpected audit action ${action}`);
+        this.log(`ERROR Unexpected audit action ${action}`);
     }
   }
 
@@ -562,13 +564,14 @@ export class MigrateDb extends BaseTools {
       this.groups = resources
         .filter(gr => {
           const r = gr.head as STU3Group;
-          const managers = r.member.filter(m => (m.extension || []).find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager' && e.valueBoolean === true));
+          const managers = (r.member || []).filter(m => (m.extension || []).find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager' && e.valueBoolean === true));
+          if (!managers || managers.length < 1) return false;
           const managingUser = this.findUser(managers[0].entity.reference.substring('Practitioner/'.length));
           return !!managingUser;
         })
         .map(gr => {
           const r = gr.head as STU3Group;
-          const managers = r.member.filter(m => (m.extension || []).find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager' && e.valueBoolean === true));
+          const managers = (r.member || []).filter(m => (m.extension || []).find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager' && e.valueBoolean === true));
           const managingUser = this.findUser(managers[0].entity.reference.substring('Practitioner/'.length));
 
           return <IGroup>{
@@ -576,7 +579,7 @@ export class MigrateDb extends BaseTools {
             migratedFrom: this.options.migratedFromLabel,
             originalGroupId: r.id, // for later mapping... not a real property on IGroup
             managingUser: managingUser['_id'],
-            members: r.member
+            members: (r.member || [])
               .filter(m => !(m.extension || []).find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager' && e.valueBoolean === true))
               .map(m => {
                 const user = this.findUser(m.entity.reference.substring('Practitioner/'.length));
@@ -680,7 +683,7 @@ export class MigrateDb extends BaseTools {
       };
 
       let newProject: IProject = <IProject>{
-        name: ig.name,
+        name: ig.name || 'Unnamed Project',
         migratedFrom: this.options.migratedFromLabel,
         fhirVersion: this.options.fhirVersion,
         permissions: permissions
