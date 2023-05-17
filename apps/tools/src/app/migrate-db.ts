@@ -1,20 +1,20 @@
-import {BaseTools} from './baseTools';
-import {IAudit, IConformance, IExample, IGroup, IHistory, IProject, IPermission, IProjectResource, IUser} from '@trifolia-fhir/models';
-import {IAuditEvent, IContactPoint, IDomainResource, IImplementationGuide, IPractitioner} from '@trifolia-fhir/tof-lib';
-import {Db, MongoClient, ObjectId} from 'mongodb';
-import {getHumanNamesDisplay} from '@trifolia-fhir/tof-lib';
-import {AuditEvent as R4AuditEvent, Coding, Group as R4Group, ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
-import {AuditEvent as STU3AuditEvent, Group as STU3Group, ImplementationGuide as STU3ImplementationGuide} from '@trifolia-fhir/stu3';
+import { BaseTools } from './baseTools';
+import { IAudit, IConformance, IGroup, IHistory, IProject, IPermission, IProjectResource, IUser, IProjectResourceReference } from '@trifolia-fhir/models';
+import { Globals, IAuditEvent, IContactPoint, IDomainResource, IImplementationGuide, IPractitioner } from '@trifolia-fhir/tof-lib';
+import { Db, MongoClient, ObjectId, ReturnDocument } from 'mongodb';
+import { getHumanNamesDisplay } from '@trifolia-fhir/tof-lib';
+import { AuditEvent as R4AuditEvent, Coding, Group as R4Group, ImplementationGuide as R4ImplementationGuide } from '@trifolia-fhir/r4';
+import { AuditEvent as STU3AuditEvent, Group as STU3Group, ImplementationGuide as STU3ImplementationGuide } from '@trifolia-fhir/stu3';
 import * as fs from 'fs';
-import {Connection, createConnection} from 'mysql';
-import {ungzip} from 'node-gzip';
+import { Connection, createConnection } from 'mysql';
+import { ungzip } from 'node-gzip';
 
 interface MigrateDbOptions {
   mysqlHost: string;
   mysqlDb: string;
   mysqlUser: string;
   mysqlPass: string;
-  fhirVersion: 'stu3'|'r4';
+  fhirVersion: 'stu3' | 'r4';
   dbServer: string;
   dbName: string;
   migratedFromLabel: string;
@@ -53,6 +53,10 @@ export class MigrateDb extends BaseTools {
   private users: IUser[];
   private groups: IGroup[];
   private projects: IProject[];
+  private implementationGuides: IConformance[];
+  private userMap: { [key: string]: IUser; } = {};
+  private groupMap: { [key: string]: IGroup; } = {};
+  private resourceMap: { [key: string]: IConformance; } = {};
 
   constructor(options: MigrateDbOptions) {
     super();
@@ -85,6 +89,12 @@ export class MigrateDb extends BaseTools {
       this.log(`Updated ${results.modifiedCount}`);
     } else if (results.upsertedCount) {
       this.log(`Inserted ${results.upsertedCount}`);
+    } else if (results.lastErrorObject) {
+      if (results.lastErrorObject.updatedExisting) {
+        this.log(`Updated ${results.lastErrorObject.n}`);
+      } else if (results.lastErrorObject.upserted) {
+        this.log(`Inserted ${results.lastErrorObject.n}`);
+      }
     }
   }
 
@@ -123,12 +133,15 @@ export class MigrateDb extends BaseTools {
     await this.connectMysql();
 
     this.log(`Retrieving resources from the database`);
-    const resResults: any[] = await this.queryMysql('select res_id, res_ver, res_type, forced_id from hfj_resource r join hfj_forced_id i on i.resource_pid = r.res_id where res_deleted_at is null');
+    const resResults: any[] = await this.queryMysql('select res_id, res_ver, res_type, forced_id from hfj_resource r left join hfj_forced_id i on i.resource_pid = r.res_id where res_deleted_at is null');
 
     this.log(`Retrieving history for ${resResults.length} resources from the database`);
 
     const allHistory = await this.queryMysql(`select res_id, res_ver, res_text, res_updated from hfj_res_ver order by res_id, res_ver`);
-    this.log(`Done retrieve ${allHistory.length} history items`);
+    this.log(`Retrieved ${allHistory.length} history items`);
+
+    const allSecurityTags = await this.queryMysql(`select res_id, tag_code from hfj_res_tag rt join hfj_tag_def td on rt.tag_id=td.tag_id`);
+    this.log(`Retrieved ${allSecurityTags.length} security tags`);
 
     for (let i = 0; i < resResults.length; i++) {
       const resResult = resResults[i];
@@ -138,17 +151,20 @@ export class MigrateDb extends BaseTools {
       const actualId = resResult['forced_id'] || resId;
 
       if (i % 100 === 0) {
-        this.log(`Grouping ${i+1} / ${resResults.length}`);
+        this.log(`Grouping ${i + 1} / ${resResults.length}`);
       }
 
       try {
         const headResult = allHistory.find(al => al.res_id === resId && al.res_ver === resVer);
         const history = allHistory.filter(al => al.res_id === resId && al.res_ver !== resVer);
+        const security = allSecurityTags.filter(s => s.res_id === resId).map(s => { return { 'system': Globals.securitySystem, 'code': s.tag_code }; });
         const head = await this.getJSON(headResult.res_text);
+
         head.id = actualId;
         head.meta = {
           lastUpdated: headResult['res_updated'].toISOString(),
-          versionId: headResult['res_ver']
+          versionId: headResult['res_ver'],
+          security: security
         };
 
         this.groupedResources[resType + '/' + actualId] = {
@@ -209,45 +225,16 @@ export class MigrateDb extends BaseTools {
       const resource = groupedResource.head;
 
       if (groupedResource.projectResource) continue;
+      if (['Practitioner', 'Group'].find(r => r === resource.resourceType)) continue;
       if (resource.resourceType === 'ImplementationGuide' && this.projects.find(p => p.igs[0]?.id === resource.id)) continue;
 
-      // Remove security tags from the resources because those were only needed in the FHIR server data layer
-      if (resource.meta) {
-        delete resource.meta.security;
-      }
-
-      const resourceReference = `${resource.resourceType}/${resource.id}`;
-      const projects = this.findImplementationGuides(resourceReference);
-      const examples = this.getExamples(projects, resourceReference);
-      let type: 'conformance'|'example';
-
-      if (conformanceResourceTypes.indexOf(resource.resourceType) >= 0) {
-        type = 'conformance';
-        await this.migrateConformance(groupedResource);
-      } else if (resource.resourceType === 'AuditEvent' && examples.length === 0) {
+      if (resource.resourceType === 'AuditEvent') {
         await this.migrateAudit(resource as any);
-      } else {
-        type = 'example';
-        await this.migrateExample(groupedResource);
+      }
+      else {
+        await this.migrateConformance(groupedResource);
       }
 
-      for (const resourceHistory of groupedResource.history) {
-        const meta = resourceHistory.meta;
-        delete resourceHistory.meta;
-
-        const history: IHistory = {
-          content: resourceHistory,
-          fhirVersion: this.options.fhirVersion,
-          targetId: groupedResource.projectResource.id,
-          lastUpdated: new Date(meta.lastUpdated),
-          type: type,
-          versionId: parseInt(meta.versionId)
-        };
-
-        this.log(`Inserting/updating history version ${meta.versionId} for ${resource.resourceType}/${resource.id}`);
-        const results = await this.db.collection('history').updateOne({ migratedFrom: this.options.migratedFromLabel, 'content.id': resourceHistory.id, versionId: history.versionId }, { $set: history }, { upsert: true });
-        this.reportResults(results);
-      }
     }
   }
 
@@ -268,28 +255,104 @@ export class MigrateDb extends BaseTools {
    * @param resourceReference
    * @private
    */
-  private findImplementationGuides(resourceReference: string) {
-    return this.projects.filter(p => {
-      if (this.options.fhirVersion === 'r4') {
-        const r4ImplementationGuide = p.igs[0].resource as R4ImplementationGuide;
+  private findImplementationGuides(resourceReference: string): IConformance[] {
+
+    let igs: IConformance[] = []
+
+    if (this.options.fhirVersion === 'stu3') {
+
+      Object.keys(this.resourceMap).forEach(key => {
+        const stu3ImplementationGuide = <STU3ImplementationGuide>this.resourceMap[key].resource;
+
+        const foundPackages = (stu3ImplementationGuide.package || []).filter(pack => {
+          return pack.resource.find(pr => pr.sourceReference && pr.sourceReference.reference && pr.sourceReference.reference === resourceReference);
+        });
+
+        if (foundPackages.length > 0) {
+          let foundIg = this.resourceMap[key];
+          if (!igs.find(ig => ig['_id'] === foundIg['_id'])) {
+            igs.push(this.resourceMap[key]);
+          }
+        }
+      });
+
+    } else {
+
+      Object.keys(this.resourceMap).forEach(key => {
+        const r4ImplementationGuide = <R4ImplementationGuide>this.resourceMap[key].resource;
 
         if (r4ImplementationGuide.definition && r4ImplementationGuide.definition.resource) {
           const foundRes = r4ImplementationGuide.definition.resource
             .find(r => r.reference &&
               r.reference.reference &&
               r.reference.reference === resourceReference);
-          return !!foundRes;
+
+          if (foundRes) {
+            let foundIg = this.resourceMap[key];
+            if (!igs.find(ig => ig['_id'] === foundIg['_id'])) {
+              igs.push(this.resourceMap[key]);
+            }
+          }
+
         }
-      } else if (this.options.fhirVersion === 'stu3') {
-        const stu3ImplementationGuide = p.igs[0].resource as STU3ImplementationGuide;
 
-        const foundPackages = (stu3ImplementationGuide.package || []).filter(pack => {
-          return pack.resource.find(pr => pr.sourceReference && pr.sourceReference.reference && pr.sourceReference.reference === resourceReference);
-        });
+      });
 
-        return foundPackages.length > 0;
+    }
+
+    return igs;
+
+  }
+
+  private getPermissions(metaSecurity: []): IPermission[] {
+
+    let permissions: IPermission[] = [];
+
+    (metaSecurity || []).forEach((s: Coding) => {
+      const codeSplit = s.code.split('^');
+      const type = codeSplit.length === 2 ? 'everyone' : codeSplit[0] as any;
+      let targetId = undefined;
+
+      if (codeSplit.length === 3) {
+        if (type === 'user') {
+          let user = this.userMap[codeSplit[1]];
+          if (!user) {
+            this.log(`ERROR: No user found in map for previous id: ${codeSplit[1]}`);
+            return;
+          }
+          targetId = user['_id']?.toString();
+        } else if (type === 'group') {
+          let group = this.groupMap[codeSplit[1]];
+          if (!group) {
+            this.log(`ERROR: No group found in map for previous id: ${codeSplit[1]}`);
+            return;
+          }
+          targetId = group['_id']?.toString();
+        }
+      }
+
+      const permission: IPermission = {
+        targetId: targetId,
+        type: type,
+        grant: 'read'
+      };
+
+      let found = permissions.find(p => p.type === permission.type && p.targetId === permission.targetId);
+
+      if (!found) {
+        found = permission;
+        permissions.push(found);
+      }
+
+      const isWrite = (codeSplit.length === 2 && codeSplit[1] === 'write') ||
+        (codeSplit.length === 3 && codeSplit[2] === 'write');
+
+      if (isWrite && found.grant !== 'write') {
+        found.grant = 'write';
       }
     });
+
+    return permissions;
   }
 
   private getExamples(projects: IProject[], resourceReference: string) {
@@ -362,7 +425,30 @@ export class MigrateDb extends BaseTools {
   private async migrateConformance(groupedResource: GroupedResource) {
     const resource = groupedResource.head;
     const resourceReference = `${resource.resourceType}/${resource.id}`;
-    const projects = this.findImplementationGuides(resourceReference);
+    const igs = this.findImplementationGuides(resourceReference);
+
+
+    let versionId = 1;
+    let lastUpdated = new Date();
+    let permissions: IPermission[] = [{ type: 'everyone', grant: 'read' }, { type: 'everyone', grant: 'write' }];
+
+    // Process meta property
+    if (resource.meta) {
+      permissions = this.getPermissions(resource.meta.security);
+      delete resource.meta.security;
+
+      if (resource.meta['versionId']) {
+        try {
+          versionId = parseInt(resource.meta['versionId']);
+        } catch (error) { }
+      }
+
+      if (resource.meta['lastUpdated']) {
+        try {
+          lastUpdated = new Date(resource.meta['lastUpdated']);
+        } catch (error) { }
+      }
+    }
 
     const conformance: IConformance = {
       migratedFrom: this.options.migratedFromLabel,
@@ -370,69 +456,55 @@ export class MigrateDb extends BaseTools {
       lastUpdated: resource.meta?.lastUpdated,
       fhirVersion: this.options.fhirVersion,
       resource: resource,
-      projects: projects.map(ig => { return <IProject>{id: ig.id}})
+      permissions: permissions,
+      igIds: igs.map(ig => { return ig['_id']; })
     };
-    groupedResource.projectResource = conformance;
 
-    this.log(`Inserting/updating conformance resource ${resource.resourceType}/${resource.id}`);
-    const results = await this.db.collection('conformance').updateOne({ migratedFrom: conformance.migratedFrom, 'resource.id': conformance.resource.id }, { $set: conformance }, { upsert: true });
+    this.log(`Inserting/updating resource ${resource.resourceType}/${resource.id}`);
+    const results = await this.db.collection('conformance').findOneAndUpdate(
+      { migratedFrom: conformance.migratedFrom, 'resource.id': conformance.resource.id },
+      { $set: conformance }, { upsert: true, returnDocument: ReturnDocument.AFTER }
+    );
+
+    groupedResource.projectResource = <IConformance><unknown>{ ...results.value };
+
+    // update IG-related db references for this resource
+    for (const ig of (igs || [])) {
+      let ref: IProjectResourceReference = { value: groupedResource.projectResource['_id'], valueType: 'Conformance' };
+      await this.db.collection('conformance').updateOne({ _id: ig['_id'] }, { $addToSet: { 'references': ref } });
+    };
+
     this.reportResults(results);
+
   }
 
-  private async migrateExample(groupedResource: GroupedResource) {
-    const resource = groupedResource.head;
-    const resourceReference = `${resource.resourceType}/${resource.id}`;
-    const projects = this.findImplementationGuides(resourceReference);
-    const examples = this.getExamples(projects, resourceReference);
-
-    const example: IExample = {
-      migratedFrom: this.options.migratedFromLabel,
-      fhirVersion: this.options.fhirVersion,
-      versionId: resource.meta?.versionId,
-      lastUpdated: resource.meta?.lastUpdated,
-      content: resource,
-      projects: projects.map(ig => { return <IProject>{id: ig.id}})
-    };
-    groupedResource.projectResource = example;
-
-    examples.forEach(e => {
-      if (e !== true) {
-        example.exampleFor = e;
-      }
-    });
-
-    this.log(`Inserting/updating example ${resource.resourceType}/${resource.id}`);
-    const results = await this.db.collection('example').updateOne({ migratedFrom: example.migratedFrom, 'content.id': example.content.id }, { $set: example }, { upsert: true });
-    this.reportResults(results);
-  }
 
   private async migrateAudit(auditEvent: IAuditEvent) {
     let audit: IAudit;
 
-    if (this.options.fhirVersion === 'r4') {
-      const r4AuditEvent = auditEvent as R4AuditEvent;
-      audit = {
-        _id: this.options.migratedFromLabel + '_' + auditEvent.id,
-        timestamp: new Date(r4AuditEvent.recorded),
-        who: r4AuditEvent.agent[0].who.reference.substring('Practitioner/'.length),
-        action: this.convertAuditAction(r4AuditEvent.action),
-        what: r4AuditEvent.entity[0].what.reference
-      };
-    } else if (this.options.fhirVersion === 'stu3') {
+    if (this.options.fhirVersion === 'stu3') {
       const stu3AuditEvent = auditEvent as STU3AuditEvent;
       audit = {
-        _id: this.options.migratedFromLabel + '_' + auditEvent.id,
         timestamp: new Date(stu3AuditEvent.recorded),
         who: stu3AuditEvent.agent[0].reference.reference.substring('Practitioner/'.length),
         action: this.convertAuditAction(stu3AuditEvent.action),
         what: stu3AuditEvent.entity[0].reference.reference
       };
     } else {
-      throw new Error(`Unexpected fhir version ${this.options.fhirVersion}`);
+      const r4AuditEvent = auditEvent as R4AuditEvent;
+      audit = {
+        timestamp: new Date(r4AuditEvent.recorded),
+        who: r4AuditEvent.agent[0].who.reference.substring('Practitioner/'.length),
+        action: this.convertAuditAction(r4AuditEvent.action),
+        what: r4AuditEvent.entity[0].what.reference
+      };
     }
 
     this.log(`Inserting/updating audit ${auditEvent.id}`);
-    const results = await this.db.collection('audit').updateOne({ _id: audit._id }, { $set: audit }, { upsert: true });
+    const results = await this.db.collection('audit').updateOne(
+      { timestamp: audit.timestamp, who: audit.who, action: audit.action, what: audit.what },
+      { $set: audit }, { upsert: true }
+    );
     this.reportResults(results);
   }
 
@@ -473,10 +545,11 @@ export class MigrateDb extends BaseTools {
           const r = gr.head as R4Group;
           const managingUser = this.findUser(r.managingEntity.reference.substring('Practitioner/'.length));
 
-          return <IGroup> {
+          return <IGroup>{
             name: r.name,
             migratedFrom: this.options.migratedFromLabel,
-            managingUser: managingUser,
+            originalGroupId: r.id, // for later mapping... not a real property on IGroup
+            managingUser: managingUser['_id'],
             members: r.member
               .map(m => {
                 const foundUser = this.findUser(m.entity.reference.substring('Practitioner/'.length));
@@ -498,10 +571,11 @@ export class MigrateDb extends BaseTools {
           const managers = r.member.filter(m => (m.extension || []).find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager' && e.valueBoolean === true));
           const managingUser = this.findUser(managers[0].entity.reference.substring('Practitioner/'.length));
 
-          return <IGroup> {
+          return <IGroup>{
             name: r.name,
             migratedFrom: this.options.migratedFromLabel,
-            managingUser: managingUser,
+            originalGroupId: r.id, // for later mapping... not a real property on IGroup
+            managingUser: managingUser['_id'],
             members: r.member
               .filter(m => !(m.extension || []).find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-group-manager' && e.valueBoolean === true))
               .map(m => {
@@ -516,89 +590,172 @@ export class MigrateDb extends BaseTools {
     this.log(`Storing ${this.groups.length} groups in the database`);
 
     for (const group of this.groups) {
-      const results = await this.db.collection('group').updateOne({ migratedFrom: group.migratedFrom, name: group.name }, { $set: group }, { upsert: true });
+      const results = await this.db.collection('group').findOneAndUpdate({ migratedFrom: group.migratedFrom, name: group.name }, { $set: group }, { upsert: true, returnDocument: ReturnDocument.AFTER });
       this.reportResults(results);
+      this.groupMap[group['originalGroupId']] = <IGroup>results.value;
     }
+
   }
 
   private async migrateUsers() {
     this.users = (await this.db.collection<IUser>('user').find({}).toArray()).map(u => u);
 
     const resources = this.getGroupedResources('Practitioner');
+    this.log(`Retrieved ${resources.length} Practitioner records`);
 
     for (const gr of resources) {
       const r = gr.head as IPractitioner;
 
       const identifier = (r.identifier || []).find(i => i.system === 'https://trifolia-fhir.lantanagroup.com' || i.system === 'https://auth0.com');
-      if (!identifier) continue;
+      if (!identifier || !identifier.value) {
+        this.log(`Skipping migration of user ${gr.head.id} -- missing or invalid identifier`);
+        continue;
+      }
 
       const foundUser = this.users.find(u => u.authId.indexOf(identifier.value) >= 0);
-      if (foundUser) continue;
+      if (foundUser) {
+        this.userMap[r.id] = foundUser;
+        continue;
+      };
 
-      const newUser: IUser = {
-        name: getHumanNamesDisplay(r.name),
+      const names = getHumanNamesDisplay(r.name).split(',');
+      const newUser: IUser = <IUser>{
+        firstName: names && names.length > 1 ? names[1].trim() : '',
+        lastName: names && names.length > 0 ? names[0].trim() : '',
         authId: [identifier.value],
         phone: this.getPhone(r.telecom),
         email: this.getEmail(r.telecom)
       };
 
-      this.log(`Adding user ${newUser.name} with authId ${newUser.authId[0]} to database`);
-      await this.db.collection<IUser>('user').insertOne(newUser);
+      this.log(`Adding user ${newUser.firstName} ${newUser.lastName} with authId ${newUser.authId[0]} to database`);
+      let result = await this.db.collection<IUser>('user').insertOne(newUser);
+      newUser['_id'] = result.insertedId.toString();
+      newUser.id = result.insertedId.toString();
       this.users.push(newUser);
+      this.userMap[r.id] = newUser;
     }
 
     this.log(`Done migrating users`);
   }
 
+  /**
+   * Inserts projects and implementation guide conformance objects for existing implementation guides
+   */
   private async migrateProjects() {
     const resources = this.getGroupedResources('ImplementationGuide');
 
-    this.projects = resources.map((groupedResource) => {
-      const r = groupedResource.head as IImplementationGuide;
-      const permissions: IPermission[] = [];
+    this.projects = [];
+    this.implementationGuides = [];
 
-      if (r.meta) {
-        (r.meta.security || []).forEach((s: Coding) => {
-          const codeSplit = s.code.split('^');
-          const permission: IPermission = {
-            targetId: codeSplit.length === 2 ? undefined : codeSplit[1],
-            type: codeSplit.length === 2 ? 'everyone' : codeSplit[0] as any,
-            grant: 'read'
-          };
+    resources.forEach((groupedResource) => {
+      const ig = groupedResource.head as IImplementationGuide;
+      let versionId = 1;
+      let lastUpdated = new Date();
+      let permissions: IPermission[] = [{ type: 'everyone', grant: 'read' }, { type: 'everyone', grant: 'write' }];
 
-          let found = permissions.find(p => p.type === permission.type && p.targetId === permission.targetId);
+      if (ig.meta) {
+        permissions = this.getPermissions(ig.meta.security);
+        delete ig.meta.security;
 
-          if (!found) {
-            found = permission;
-            permissions.push(found);
-          }
+        if (ig.meta['versionId']) {
+          try {
+            versionId = parseInt(ig.meta['versionId']);
+          } catch (error) { }
+        }
 
-          const isWrite = (codeSplit.length === 2 && codeSplit[1] === 'write') ||
-            (codeSplit.length === 3 && codeSplit[2] === 'write');
-
-          if (isWrite && found.grant !== 'write') {
-            found.grant = 'write';
-          }
-        });
-        delete r.meta.security;
+        if (ig.meta['lastUpdated']) {
+          try {
+            lastUpdated = new Date(ig.meta['lastUpdated']);
+          } catch (error) { }
+        }
       }
 
-      return <IProject> {
-        name: r.name,
+      let newIgConf: IConformance = {
+        versionId: versionId,
+        lastUpdated: lastUpdated,
+        migratedFrom: this.options.migratedFromLabel,
+        fhirVersion: this.options.fhirVersion,
+        permissions: permissions,
+        resource: ig
+      };
+
+      let newProject: IProject = <IProject>{
+        name: ig.name,
         migratedFrom: this.options.migratedFromLabel,
         fhirVersion: this.options.fhirVersion,
         permissions: permissions
       };
+
+      groupedResource.projectResource = newIgConf;
+      this.implementationGuides.push(newIgConf);
+      this.projects.push(newProject);
     });
+
+    // shouldn't happen... but...
+    if (this.implementationGuides.length !== this.projects.length) {
+      throw new Error(`ImplementationGuide count of (${this.implementationGuides.length}) does not match Project count of (${this.projects.length})`);
+    }
 
     this.log(`Storing ${this.projects.length} projects in the database`);
 
-    for (const project of this.projects) {
-      //const results = await this.db.collection('project').updateOne({ migratedFrom: project.migratedFrom, 'ig.id': project.ig.id }, { $set: project }, { upsert: true });
-      const results = await this.db.collection('project').updateOne({ _id: new ObjectId(project.id) }, { $set: project }, { upsert: true });
-      await this.db.collection('project').updateOne({_id: results.upsertedId}, {igs: [results.upsertedId]});
+
+    for (let i = 0; i < this.projects.length; i++) {
+
+      let newIg = this.implementationGuides[i];
+      let newProject = this.projects[i];
+
+      // Add/update IG conformance      
+      let igResult = await this.db.collection('conformance').findOneAndUpdate(
+        { migratedFrom: newIg.migratedFrom, 'resource.resourceType': 'ImplementationGuide', 'resource.id': newIg.resource.id },
+        { $set: newIg }, { upsert: true, returnDocument: ReturnDocument.AFTER }
+      );
+
+      newIg = <IConformance><unknown>{ ...igResult.value };
+      let newIgId = igResult.value._id?.toString() || newIg['_id'];
+      let igPath = `ImplementationGuide/${newIg.resource.id}`;
+
+      this.resourceMap[igPath] = newIg;
+
+
+      // Add/update project
+      newProject.igs = [newIgId];
+      let projResult = await this.db.collection('project').findOneAndUpdate(
+        { migratedFrom: newIg.migratedFrom, 'igs': newIgId },
+        { $set: newProject }, { upsert: true, returnDocument: ReturnDocument.AFTER }
+      );
+
+      newProject = <IProject><unknown>{ ...projResult.value };
+      let newProjectId = projResult.value._id.toString();
+
+      // Update IG conformance resource to include new project ID
+      let results = await this.db.collection('conformance').findOneAndUpdate({ _id: new ObjectId(newIgId) }, { $set: { 'projects': [newProjectId] } });
       this.reportResults(results);
+
+
+      // Add any history for the existing IG
+      let historyList = resources.find(r => r.head.resourceType === 'ImplementationGuide' && r.head?.id === newIg.resource?.id)?.history;
+      for (const resourceHistory of (historyList || [])) {
+
+        const meta = resourceHistory.meta;
+        delete resourceHistory.meta;
+
+        const history: IHistory = {
+          content: resourceHistory,
+          fhirVersion: this.options.fhirVersion,
+          targetId: newIgId,
+          lastUpdated: new Date(meta.lastUpdated),
+          type: 'conformance',
+          versionId: parseInt(meta.versionId)
+        };
+
+        this.log(`Inserting/updating history version ${meta.versionId} for ${resourceHistory.resourceType}/${resourceHistory.id}`);
+        const results = await this.db.collection('history').updateOne({ migratedFrom: this.options.migratedFromLabel, 'content.id': resourceHistory.id, versionId: history.versionId }, { $set: history }, { upsert: true });
+        this.reportResults(results);
+
+      }
+
     }
+
   }
 }
 
