@@ -1,14 +1,15 @@
-import {Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, Request, UseGuards} from '@nestjs/common';
-import {AuthGuard} from '@nestjs/passport';
-import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
-import {ProjectsService} from './projects.service';
-import {BaseDataController} from '../base/base-data.controller';
-import {ProjectDocument} from './project.schema';
-import type {IConformance, IProject} from '@trifolia-fhir/models';
-import {RequestHeaders, User} from '../server.decorators';
-import {Conformance} from '../conformance/conformance.schema';
-import {ConformanceService} from '../conformance/conformance.service';
-import { ITofUser, Paginated } from '@trifolia-fhir/tof-lib';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
+import { ProjectsService } from './projects.service';
+import { BaseDataController } from '../base/base-data.controller';
+import { ProjectDocument } from './project.schema';
+import type { IConformance, IProject } from '@trifolia-fhir/models';
+import { User } from '../server.decorators';
+import { Conformance } from '../conformance/conformance.schema';
+import { ConformanceService } from '../conformance/conformance.service';
+import { Paginated } from '@trifolia-fhir/tof-lib';
+import type { ITofUser } from '@trifolia-fhir/tof-lib';
 
 
 @Controller('api/project')
@@ -21,7 +22,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
     super(projectService);
   }
 
-  protected getFilterFromRequest(req?: any) : any {
+  protected getFilterFromRequest(req?: any): any {
     let filter = super.getFilterFromRequest(req);
 
     if (!req || !req.query) {
@@ -59,8 +60,8 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
     if (!userProfile) return null;
 
     project.author = userProfile.user.name;
-    project.contributors =  project.contributors || [];
-    let contributor = {user: userProfile.user.name}
+    project.contributors = project.contributors || [];
+    let contributor = { user: userProfile.user.name }
     project.contributors.push(contributor);
 
     const confResource = await this.conformanceService.getModel().findById(project.igs[0].id);
@@ -98,7 +99,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
 
 
   @Get(':id')
-  public async getProject(@User() userProfile,  @Param('id') id: string) {
+  public async getProject(@User() userProfile, @Param('id') id: string) {
     if (!userProfile) return null;
     return await this.projectService.getProject(id);
   }
@@ -109,13 +110,13 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
     if (!userProfile) return null;
 
     let conformanceDoc = <Conformance>await this.conformanceService.findById(id);
-    if(!conformanceDoc ){
+    if (!conformanceDoc) {
       throw new NotFoundException("No resource found with that Id.");
     }
     // remove it from every project
     for (const projectId of conformanceDoc.projects) {
-      let project =  await this.projectService.findById(projectId.toString());
-      project.igs.splice(project.igs.indexOf(conformanceDoc),1);
+      let project = await this.projectService.findById(projectId.toString());
+      project.igs.splice(project.igs.indexOf(conformanceDoc), 1);
       if (project.igs.length != 0) {
         await this.projectService.updateOne(project.id, project);
       } else {

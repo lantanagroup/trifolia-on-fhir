@@ -214,6 +214,7 @@ export class MigrateDb extends BaseTools {
     await this.migrateGroups();
     await this.migrateProjects();
     await this.migrateResources();
+    await this.migrateAuditEvents();
 
     this.log(`Done`);
     process.exit(0);
@@ -227,15 +228,51 @@ export class MigrateDb extends BaseTools {
       const resource = groupedResource.head;
 
       if (groupedResource.projectResource) continue;
-      if (['Practitioner', 'Group'].find(r => r === resource.resourceType)) continue;
+      if (['Practitioner', 'Group', 'AuditEvent'].find(r => r === resource.resourceType)) continue;
       if (resource.resourceType === 'ImplementationGuide' && this.projects.find(p => p.igs[0]?.id === resource.id)) continue;
 
-      if (resource.resourceType === 'AuditEvent') {
-        await this.migrateAudit(resource as any);
+      await this.migrateConformance(groupedResource);
+
+    }
+  }
+
+
+  private async migrateAuditEvents() {
+    const resources = this.getGroupedResources('AuditEvent');
+
+    for (const groupedResource of resources) {
+      const auditEvent = groupedResource.head;
+
+      let audit: IAudit;
+
+      if (this.options.fhirVersion === 'stu3') {
+        const stu3AuditEvent = auditEvent as STU3AuditEvent;
+        let user = this.userMap[stu3AuditEvent.agent[0].reference.reference.substring('Practitioner/'.length)];
+        let what = this.resourceMap[stu3AuditEvent.entity[0].reference.reference];
+        audit = {
+          timestamp: new Date(stu3AuditEvent.recorded),
+          who: user ? user['_id']?.toString() : null,
+          action: this.convertAuditAction(stu3AuditEvent.action),
+          what: what ? what['_id']?.toString() : null
+        };
+      } else {
+        const r4AuditEvent = auditEvent as R4AuditEvent;
+        let user = this.userMap[r4AuditEvent.agent[0].who.reference.substring('Practitioner/'.length)];
+        let what = this.resourceMap[r4AuditEvent.entity[0].what.reference];
+        audit = {
+          timestamp: new Date(r4AuditEvent.recorded),
+          who: user ? user['_id']?.toString() : null,
+          action: this.convertAuditAction(r4AuditEvent.action),
+          what: what ? what['_id']?.toString() : null
+        };
       }
-      else {
-        await this.migrateConformance(groupedResource);
-      }
+
+      this.log(`Inserting/updating audit ${auditEvent.id}`);
+      const results = await this.db.collection('audit').updateOne(
+        { timestamp: audit.timestamp, who: audit.who, action: audit.action, what: audit.what },
+        { $set: audit }, { upsert: true }
+      );
+      this.reportResults(results);
 
     }
   }
@@ -261,9 +298,11 @@ export class MigrateDb extends BaseTools {
 
     let igs: IConformance[] = []
 
+    let igKeys = Object.keys(this.resourceMap).filter(k => this.resourceMap[k].resource.resourceType === 'ImplementationGuide');
+
     if (this.options.fhirVersion === 'stu3') {
 
-      Object.keys(this.resourceMap).forEach(key => {
+      igKeys.forEach(key => {
         const stu3ImplementationGuide = <STU3ImplementationGuide>this.resourceMap[key].resource;
 
         const foundPackages = (stu3ImplementationGuide.package || []).filter(pack => {
@@ -280,7 +319,7 @@ export class MigrateDb extends BaseTools {
 
     } else {
 
-      Object.keys(this.resourceMap).forEach(key => {
+      igKeys.forEach(key => {
         const r4ImplementationGuide = <R4ImplementationGuide>this.resourceMap[key].resource;
 
         if (r4ImplementationGuide.definition && r4ImplementationGuide.definition.resource) {
@@ -467,8 +506,9 @@ export class MigrateDb extends BaseTools {
       { migratedFrom: conformance.migratedFrom, 'resource.id': conformance.resource.id },
       { $set: conformance }, { upsert: true, returnDocument: ReturnDocument.AFTER }
     );
-
     groupedResource.projectResource = <IConformance><unknown>{ ...results.value };
+    const newId = groupedResource.projectResource['_id'].toString();
+    this.resourceMap[resourceReference] = <IConformance>groupedResource.projectResource;
 
     // update IG-related db references for this resource
     for (const ig of (igs || [])) {
@@ -478,37 +518,30 @@ export class MigrateDb extends BaseTools {
 
     this.reportResults(results);
 
-  }
 
+    // import resource history
+    for (const resourceHistory of (groupedResource.history || [])) {
 
-  private async migrateAudit(auditEvent: IAuditEvent) {
-    let audit: IAudit;
+      const meta = resourceHistory.meta;
+      delete resourceHistory.meta;
 
-    if (this.options.fhirVersion === 'stu3') {
-      const stu3AuditEvent = auditEvent as STU3AuditEvent;
-      audit = {
-        timestamp: new Date(stu3AuditEvent.recorded),
-        who: stu3AuditEvent.agent[0].reference.reference.substring('Practitioner/'.length),
-        action: this.convertAuditAction(stu3AuditEvent.action),
-        what: stu3AuditEvent.entity[0].reference.reference
+      const history: IHistory = {
+        content: resourceHistory,
+        fhirVersion: this.options.fhirVersion,
+        targetId: newId,
+        lastUpdated: new Date(meta.lastUpdated),
+        type: 'conformance',
+        versionId: parseInt(meta.versionId)
       };
-    } else {
-      const r4AuditEvent = auditEvent as R4AuditEvent;
-      audit = {
-        timestamp: new Date(r4AuditEvent.recorded),
-        who: r4AuditEvent.agent[0].who.reference.substring('Practitioner/'.length),
-        action: this.convertAuditAction(r4AuditEvent.action),
-        what: r4AuditEvent.entity[0].what.reference
-      };
+
+      this.log(`Inserting/updating history version ${meta.versionId} for ${resourceHistory.resourceType}/${resourceHistory.id}`);
+      const results = await this.db.collection('history').updateOne({ migratedFrom: this.options.migratedFromLabel, 'content.id': resourceHistory.id, versionId: history.versionId }, { $set: history }, { upsert: true });
+      this.reportResults(results);
+
     }
 
-    this.log(`Inserting/updating audit ${auditEvent.id}`);
-    const results = await this.db.collection('audit').updateOne(
-      { timestamp: audit.timestamp, who: audit.who, action: audit.action, what: audit.what },
-      { $set: audit }, { upsert: true }
-    );
-    this.reportResults(results);
   }
+
 
   private findUser(id: string) {
     const foundGroupedResource = this.groupedResources['Practitioner/' + id];
