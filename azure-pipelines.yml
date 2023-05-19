@@ -39,8 +39,7 @@ stages:
           $(tag)
   - job: Update
     displayName: Update ToF
-    pool:
-      vmImage: 'docker-dev2'
+    pool: 'docker-dev2'
     steps:
     - task: Docker@2
       inputs:
