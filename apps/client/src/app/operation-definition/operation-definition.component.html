@@ -232,12 +232,12 @@
     </li>
 
     <!-- RAW JSON/XML -->
-    <ngb-tab ngbNavItem="raw">
+    <li ngbNavItem="raw">
       <a ngbNavLink>RAW</a>
       <ng-template ngbNavContent>
         <app-raw-resource [resource]="operationDefinition" [shown]="odTabs.activeId === 'raw'"></app-raw-resource>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Version History -->
     <li ngbNavItem="history" *ngIf="!isNew">

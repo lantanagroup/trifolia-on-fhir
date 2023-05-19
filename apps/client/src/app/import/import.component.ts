@@ -103,13 +103,13 @@ export class ImportComponent implements OnInit {
 
   viewUpdateDiff(fileModel: ImportFileModel) {
     const modalRef = this.modalService.open(UpdateDiffComponent, { backdrop: 'static', size: 'lg' });
-    if (fileModel.isExample) {
-      modalRef.componentInstance.importResource = fileModel.content;
-      modalRef.componentInstance.existingResource = (<IExample>fileModel.existingResource).content;
-    }
-    else {
+    if (fileModel.resource) {
       modalRef.componentInstance.importResource = fileModel.resource;
       modalRef.componentInstance.existingResource = (<IConformance>fileModel.existingResource).resource;
+    }
+    else {
+      modalRef.componentInstance.importResource = fileModel.content;
+      modalRef.componentInstance.existingResource = (<IExample>fileModel.existingResource).content;
     }
   }
 
@@ -407,8 +407,16 @@ export class ImportComponent implements OnInit {
           importFileModel.message = ex.message;
         }
 
+        // TODO: add support for splitting bundles into individual resources to import
         if (importFileModel.resource && importFileModel.resource.resourceType === 'Bundle') {
-          importFileModel.bundleOperation = 'execute';
+          //importFileModel.bundleOperation = 'execute';
+          this.errorMessage = 'Bundle import is not supported.';
+        }
+
+        // default to treating this as an example if it is not a profile/terminology resource type
+        if (importFileModel.resource && importFileModel.resource.resourceType 
+          && Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(importFileModel.resource.resourceType) < 0) {
+          importFileModel.isExample = true;
         }
 
         // First find a matching file based on the file name. If it has the same file name as one that already exists, replace it

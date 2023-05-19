@@ -165,7 +165,6 @@ const appRoutes: Routes = [
   { path: 'projects', component: ProjectsComponent },
   { path: 'projects/new', component: NewProjectComponent },
   { path: 'projects/home', component: HomeComponent },
-  { path: 'projects/import', component: ImportComponent },
   { path: 'projects/:id', component: ProjectComponent },
   { path: 'projects/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard] },
   { path: 'projects/:implementationGuideId/home', component: HomeComponent },
@@ -201,7 +200,6 @@ const appRoutes: Routes = [
   { path: 'projects/:implementationGuideId/examples', component: ExamplesComponent },
   { path: 'projects/:implementationGuideId/bulk-edit', component: BulkEditComponent },
 
-  { path: 'import', component: ImportComponent },
   { path: 'users/me', component: UserComponent },
   { path: 'users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },

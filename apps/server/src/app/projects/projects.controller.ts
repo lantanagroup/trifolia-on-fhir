@@ -10,6 +10,7 @@ import { Conformance } from '../conformance/conformance.schema';
 import { ConformanceService } from '../conformance/conformance.service';
 import { Paginated } from '@trifolia-fhir/tof-lib';
 import type { ITofUser } from '@trifolia-fhir/tof-lib';
+import { TofNotFoundException } from '../../not-found-exception';
 
 
 @Controller('api/project')
@@ -101,7 +102,12 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
   @Get(':id')
   public async getProject(@User() userProfile, @Param('id') id: string) {
     if (!userProfile) return null;
-    return await this.projectService.getProject(id);
+    this.assertCanReadById(userProfile, id);
+    let proj = await this.projectService.getProject(id);
+    if(!proj) {
+      throw new TofNotFoundException();
+    }
+    return proj;
   }
 
   @Delete('/:id/implementationGuide')
@@ -111,7 +117,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
 
     let conformanceDoc = <Conformance>await this.conformanceService.findById(id);
     if (!conformanceDoc) {
-      throw new NotFoundException("No resource found with that Id.");
+      throw new TofNotFoundException("No resource found with that Id.");
     }
     // remove it from every project
     for (const projectId of conformanceDoc.projects) {

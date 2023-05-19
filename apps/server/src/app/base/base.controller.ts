@@ -58,7 +58,6 @@ export class BaseController {
      * @returns PaginateOptions for use in the BaseDataController.search method
      */
     protected getPaginateOptionsFromRequest(req?: any): PaginateOptions {
-        this.logger.debug('getPaginateOptionsFromRequest:', req);
 
         let query = req.query;
 

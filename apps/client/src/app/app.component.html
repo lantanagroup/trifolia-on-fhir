@@ -57,7 +57,7 @@
           <a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/other-resources">Other Resources</a>
         </div>
       </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated()">
+      <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.project">
         <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/import">Import</a>
       </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.project">

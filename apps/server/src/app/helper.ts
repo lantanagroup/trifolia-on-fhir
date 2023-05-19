@@ -644,8 +644,21 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
   }
 
+  
+  let exampleFor: string;
+  let isNotProfileOrTermType: boolean = false;
+  if (resourceToAdd['resource']) {
+    let profile = (<IConformance>resourceToAdd).resource?.meta?.profile;
+    console.log('profile:', profile);
+    if (profile) {
+      exampleFor = profile[0];
+    }
+    isNotProfileOrTermType = Globals.profileTypes.concat(Globals.terminologyTypes).indexOf((<IConformance>resourceToAdd).resource?.resourceType) < 0;
+  }
 
-  logger.verbose(`Adding resource ${resourceReferenceString} to context implementation guide.  Example? (${isExample} -- ${typeof isExample})`);
+
+  logger.verbose(`Adding resource ${resourceReferenceString} to context implementation guide.  Example? (${isExample})  ExampleFor: "${exampleFor}"`);
+
 
   if (resourceToAdd.fhirVersion !== 'stu3') {        // r4+
     const r4 = <R4ImplementationGuide>implementationGuide;
@@ -682,19 +695,19 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
             reference: resourceReferenceString,
             display: display
           },
-          exampleCanonical: implementationGuide.meta.profile ? implementationGuide.meta.profile[0] : `http://example.org/fhir/${resourceReferenceString}`,
+          exampleCanonical: exampleFor,
           name: display
         });
 
       } else {
         // otherwise do the usual...
-        r4.definition.resource.push(Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0 && implementationGuide.meta.profile ?
+        r4.definition.resource.push((isExample || isNotProfileOrTermType) && exampleFor ?
           {
             reference: {
               reference: resourceReferenceString,
               display: display
             },
-            exampleCanonical: implementationGuide.meta.profile[0],
+            exampleCanonical: exampleFor,
             name: display
           } :
           {
@@ -702,7 +715,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
               reference: resourceReferenceString,
               display: display
             },
-            exampleBoolean: isExample ? true : Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0,
+            exampleBoolean: isExample ? true : isNotProfileOrTermType,
             name: display,
             description: description
           });
@@ -747,7 +760,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
           reference: resourceReferenceString,
           display: display
         },
-        example: isExample ? true : Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(implementationGuide.resourceType) < 0
+        example: isExample ? true : isNotProfileOrTermType
       };
 
       if (stu3.package.length === 0) {

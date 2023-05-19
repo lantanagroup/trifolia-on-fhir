@@ -50,13 +50,13 @@ export class UpdateDiffComponent implements OnInit {
         this.canSerialize = false;
       }
 
-      delete this.importResource.meta;
+      Object.keys(this.importResource.meta || []).forEach(k => { if (k !== 'profile') { delete this.importResource.meta[k]; } });
 
       this.message = 'Loading differences...';
       this.message = null;
 
       if (this.existingResource) {
-        delete this.existingResource.meta;
+        Object.keys(this.existingResource.meta || []).forEach(k => { if (k !== 'profile') { delete this.existingResource.meta[k]; } });
       }
 
       this.reSerialize();
