@@ -37,3 +37,13 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+  - job: Update
+    displayName: Update ToF
+    pool: 'docker-dev2'
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'LCG ACR'
+        repository: 'tof'
+        command: 'service'
+        arguments: 'update tof_web --image=lantanagroup.azurecr.io/tof:$(tag) --with-registry-auth'
