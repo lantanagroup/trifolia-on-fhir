@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { TofLogger } from '../tof-logger';
 import { Example, ExampleDocument } from './example.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -8,6 +8,7 @@ import { BaseDataService } from '../base/base-data.service';
 import { addToImplementationGuideNew } from '../helper';
 import { HistoryService } from '../history/history.service';
 import { ConformanceService } from '../conformance/conformance.service';
+import { TofNotFoundException } from '../../not-found-exception';
 
 @Injectable()
 export class ExamplesService extends BaseDataService<ExampleDocument> {
@@ -74,7 +75,7 @@ export class ExamplesService extends BaseDataService<ExampleDocument> {
         let existing = await this.examplesModel.findById(id);
 
         if (!existing) {
-            throw new NotFoundException();
+            throw new TofNotFoundException();
         }
 
         if (!upExample.content) {

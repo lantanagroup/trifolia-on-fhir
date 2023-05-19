@@ -489,7 +489,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
   @Get(':id/bundle')
   public async getBundle(@User() user: ITofUser, @Param('id') id: string) {
-    this.assertCanReadById(user, id);
+    await this.assertCanReadById(user, id);
     let bundle = await this.conformanceService.getBundleFromImplementationGuideId(id);
     return bundle;
   }

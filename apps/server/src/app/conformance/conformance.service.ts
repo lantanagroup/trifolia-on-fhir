@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IConformance, IExample, IHistory, IProjectResource, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import { IBundle, IDomainResource } from '@trifolia-fhir/tof-lib';
@@ -13,7 +13,6 @@ import { TofNotFoundException } from '../../not-found-exception';
 import { LinkComponent, Binary as STU3Binary, Bundle as STU3Bundle, EntryComponent as STU3BundleEntryComponent } from '@trifolia-fhir/stu3';
 import { Binary as R4Binary, Bundle as R4Bundle, BundleEntryComponent as R4BundleEntryComponent } from '@trifolia-fhir/r4';
 import { Binary as R5Binary, Bundle as R5Bundle, BundleEntry as R5BundleEntryComponent } from '@trifolia-fhir/r5';
-import { ExamplesService } from '../examples/examples.service';
 import { Example, ExampleDocument } from '../examples/example.schema';
 
 @Injectable()
@@ -102,7 +101,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         let existing = await this.conformanceModel.findById(id);
 
         if (!existing) {
-            throw new NotFoundException();
+            throw new TofNotFoundException();
         }
 
         // most likely isn't empty, but...

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
 import { ProjectsService } from './projects.service';
@@ -102,7 +102,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument>{
   @Get(':id')
   public async getProject(@User() userProfile, @Param('id') id: string) {
     if (!userProfile) return null;
-    this.assertCanReadById(userProfile, id);
+    await this.assertCanReadById(userProfile, id);
     let proj = await this.projectService.getProject(id);
     if(!proj) {
       throw new TofNotFoundException();

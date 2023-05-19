@@ -50,7 +50,7 @@ export class ExportController extends ConformanceController {//BaseController {
     @Query('removeExtensions') removeExtensions: string,
     @Query('bundleType') bundleType: 'searchset' | 'transaction') {
 
-    this.assertCanReadById(user, implementationGuideId);
+    await this.assertCanReadById(user, implementationGuideId);
 
     const options = new ExportOptions(request.query);
     const exporter = new BundleExporter(
@@ -76,7 +76,7 @@ export class ExportController extends ConformanceController {//BaseController {
   @Post(':implementationGuideId/msword')
   public async exportMSWordDocument(@User() user: ITofUser, @Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string) {
 
-    this.assertCanReadById(user, implementationGuideId);
+    await this.assertCanReadById(user, implementationGuideId);
 
     const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, req.fhir, implementationGuideId);
     const bundle = await bundleExporter.getBundle(false);
@@ -96,7 +96,7 @@ export class ExportController extends ConformanceController {//BaseController {
     @User() user: ITofUser,
     @Param('implementationGuideId') implementationGuideId: string) {
 
-    this.assertCanReadById(user, implementationGuideId);
+      await this.assertCanReadById(user, implementationGuideId);
 
     const options = new ExportOptions(request.query);
     const exporter = await createHtmlExporter(

@@ -28,11 +28,21 @@ export class ExamplesController extends BaseDataController<ExampleDocument> {
 
     @Post()
     public async createExample(@User() user: ITofUser, @Body() example: IExample, @Query('implementationguideid') implementationGuideId?: string): Promise<IExample> {
+        console.log('POST -- checking perms on IG:', implementationGuideId);
+        if (implementationGuideId) {
+            await this.assertCanWriteById(user, implementationGuideId);
+        }
         return await this.examplesService.createExample(example, implementationGuideId);
     }
 
     @Put(':id')
     public async updateExample(@User() user: ITofUser, @Param('id') id: string, @Body() example: IExample, @Query('implementationguideid') implementationGuideId?: string): Promise<IExample> {
+        console.log('PUT -- checking perms on IG:', implementationGuideId);
+        await this.assertIdMatch(id, example);
+        await this.assertCanWriteById(user, id);
+        if (implementationGuideId) {
+            await this.assertCanWriteById(user, implementationGuideId);
+        }
         return await this.examplesService.updateExample(id, example, implementationGuideId);
     }
 
