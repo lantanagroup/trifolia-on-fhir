@@ -141,6 +141,8 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             // references removed -- references in existing but not in updated
             let confIdsRemoved: ObjectId[] = [];
             let exampleIdsRemoved: ObjectId[] = [];
+
+
             if (existing.references && existing.references.length > 0) {
                 existing.references.forEach((exRef: IProjectResourceReference) => {
 
@@ -151,6 +153,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
                         (upRef: IProjectResourceReference) => {
                             let upRefId: ObjectId = (typeof upRef.value === typeof '') ?
                                 new ObjectId(<string>upRef.value) : new ObjectId((<IProjectResource>upRef.value).id);
+                            upRef.value = upRefId.toString();
 
                             return upRefId.equals(exRefId) && upRef.valueType === exRef.valueType;
                         }
@@ -171,6 +174,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
                 upConf.references.forEach((upRef: IProjectResourceReference) => {
                     let upRefId: ObjectId = (typeof upRef.value === typeof '') ?
                         new ObjectId(<string>upRef.value) : new ObjectId((<IProjectResource>upRef.value).id);
+                    upRef.value = upRefId.toString();
 
                     if (!(existing.references || []).find(
                         (exRef: IProjectResourceReference) => {

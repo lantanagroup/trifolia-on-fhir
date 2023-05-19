@@ -383,13 +383,14 @@ export class ImplementationGuideController extends ConformanceController { // ex
   }
 
   @Post()
-  public createImplementationGuide(@User() user, @Body() body) {
+  public async createImplementationGuide(@User() user, @Body() body) {
     if (!body || !body.resource) {
       throw new BadRequestException();
     }
     let conformance: IConformance = body;
     ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
-    return this.conformanceService.createConformance(conformance);
+    let conf = await this.conformanceService.createConformance(conformance);
+    return await this.conformanceService.getWithReferences(conf.id);
   }
 
   @Put(':id')
@@ -400,7 +401,8 @@ export class ImplementationGuideController extends ConformanceController { // ex
     await this.assertCanWriteById(user, id);
     let conformance: IConformance = body;
     ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
-    return this.conformanceService.updateConformance(id, conformance);
+    await this.conformanceService.updateConformance(id, conformance);
+    return await this.conformanceService.getWithReferences(id);
   }
 
   @Delete(':id')

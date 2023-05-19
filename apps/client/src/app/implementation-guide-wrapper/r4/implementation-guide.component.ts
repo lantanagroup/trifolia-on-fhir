@@ -1,5 +1,5 @@
-import { Component, DoCheck, EventEmitter, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { AuthService } from '../../shared/auth.service';
+import {Component, DoCheck, EventEmitter, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {AuthService} from '../../shared/auth.service';
 import {
   Coding,
   Extension,
@@ -12,34 +12,28 @@ import {
   ResourceReference,
   StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ImplementationGuideService, PublishedGuideModel } from '../../shared/implementation-guide.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
-import { PageComponentModalComponent } from './page-component-modal.component';
-import { FhirService } from '../../shared/fhir.service';
-import { FileService } from '../../shared/file.service';
-import { ConfigService } from '../../shared/config.service';
-import { PublishedIgSelectModalComponent } from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
-import {
-  FhirReferenceModalComponent,
-  ResourceSelection
-} from '../../fhir-edit/reference-modal/reference-modal.component';
-import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
-import { R4ResourceModalComponent } from './resource-modal.component';
-import {
-  getDefaultImplementationGuideResourcePath,
-  getImplementationGuideMediaReferences,
-  MediaReference
-} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
-import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
-import { GroupModalComponent } from './group-modal.component';
-import { BaseImplementationGuideComponent } from '../base-implementation-guide-component';
-import { CanComponentDeactivate } from '../../guards/resource.guard';
-import { ProjectService } from '../../shared/projects.service';
-import { IConformance, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
-import { forkJoin } from 'rxjs';
-import { getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ImplementationGuideService, PublishedGuideModel} from '../../shared/implementation-guide.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {PageComponentModalComponent} from './page-component-modal.component';
+import {FhirService} from '../../shared/fhir.service';
+import {FileService} from '../../shared/file.service';
+import {ConfigService} from '../../shared/config.service';
+import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
+import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {getErrorString, parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {R4ResourceModalComponent} from './resource-modal.component';
+import {getDefaultImplementationGuideResourcePath, getImplementationGuideMediaReferences, MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
+import {GroupModalComponent} from './group-modal.component';
+import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
+import {CanComponentDeactivate} from '../../guards/resource.guard';
+import {ProjectService} from '../../shared/projects.service';
+import {IConformance, IExample, IProjectResource, IProjectResourceReference} from '@trifolia-fhir/models';
+import {getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
+import {ObjectId} from 'mongodb';
+import {Conformance} from '../../../../../server/src/app/conformance/conformance.schema';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -53,7 +47,6 @@ class PageDefinition {
 })
 export class R4ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   public conformance: IConformance;
-  public resourceMap: IProjectResourceReferenceMap = {};
   public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
@@ -335,8 +328,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
     modalRef.result.then(() => {
-      this.igChanging.emit(true)
-    })
+      this.igChanging.emit(true);
+    });
   }
 
   public changeId() {
@@ -349,7 +342,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.componentInstance.originalId = this.implementationGuide.id;
 
     modalRef.result.then(() => {
-      this.igChanging.emit(true)
+      this.igChanging.emit(true);
     });
   }
 
@@ -419,9 +412,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         );
 
         if (!this.conformance.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
-          const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'Conformance' };
+          const conf = <IConformance>{ id: result.projectResourceId, resource: result.resource };
+          const newProjectResourceReference: IProjectResourceReference = { value: conf, valueType: 'Conformance' };
           this.conformance.references.push(newProjectResourceReference);
-          this.resourceMap[newReference.reference] = newProjectResourceReference;
         }
 
       });
@@ -501,19 +494,32 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (this.implementationGuide.definition && this.implementationGuide.definition.resource) {
       let index = this.implementationGuide.definition.resource.indexOf(resource);
       this.implementationGuide.definition.resource.splice(index, 1);
-
-      let map = this.resourceMap[resource.reference.reference];
+      let resourceType = resource.reference.reference.split('/')[0];
+      let resourceId = resource.reference.reference.split('/')[1];
 
       index = (this.conformance.references || []).findIndex((ref: IProjectResourceReference) => {
-        return ref.value === map.value || ref.value === map.value['id']
+        if (ref.valueType === 'Conformance') {
+          const val: IConformance = <IConformance>ref.value;
+          let refResourceId = `${val.resource.id ?? val.id}`;
+          let refResourceType = val.resource.resourceType;
+          return refResourceType == resourceType && refResourceId == resourceId;
+        } else if (ref.valueType === 'Example') {
+          const val: IExample = <IExample>ref.value;
+          if (typeof val.content === typeof {} && 'resourceType' in val.content && 'id' in val.content) {
+            let refResourceId = `${val.content['id]'] ?? val.id}`;
+            let refResourceType = `${val.content['resourceType']}`;
+            return refResourceType == resourceType && refResourceId == resourceId;
+          } else {
+            let refResourceId = `${val.name || val.content['id'] || val.id}`;
+            let refResourceType = `Binary`;
+            return refResourceType == resourceType && refResourceId == resourceId;
+          }
+        }
       });
-
       if (index > -1) {
         this.conformance.references.splice(index, 1);
-        delete this.resourceMap[resource.reference.reference];
       }
 
-     // this.conformanceService.getImplementationGuide(implementationGuideId),
     }
   }
 
@@ -564,14 +570,10 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     if (!this.isNew) {
 
-      forkJoin([
-        this.implementationGuideService.getImplementationGuide(implementationGuideId),
-        this.implementationGuideService.getReferenceMap(implementationGuideId)
-      ])
+      this.implementationGuideService.getImplementationGuideWithReferences(implementationGuideId)
         .subscribe({
-          next: (results: [IConformance, IProjectResourceReferenceMap]) => {
+          next: (conf: IConformance) => {
 
-            const conf: IConformance = results[0];
             if (!conf || !conf.resource || conf.resource.resourceType !== 'ImplementationGuide') {
               this.message = 'The specified implementation guide either does not exist or was deleted';
               return;
@@ -580,7 +582,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             this.implementationGuide = new ImplementationGuide(conf.resource);
             this.conformance = conf;
             this.conformance.resource = this.implementationGuide;
-            this.resourceMap = results[1];
             this.igChanging.emit(false);
             this.initPagesAndGroups();
           },
@@ -1090,7 +1091,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public removeDependency(index: number) {
-    this.implementationGuide.dependsOn.splice(index, 1)
+    this.implementationGuide.dependsOn.splice(index, 1);
     if (this.implementationGuide.dependsOn.length === 0) {
       delete this.implementationGuide.dependsOn;
     }

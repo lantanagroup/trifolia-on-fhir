@@ -26,7 +26,7 @@ import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-
 import { BaseImplementationGuideComponent } from '../base-implementation-guide-component';
 import { CanComponentDeactivate } from '../../guards/resource.guard';
 import { ProjectService } from '../../shared/projects.service';
-import { IConformance, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import {IConformance, IExample, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
 import { forkJoin } from 'rxjs';
 import { getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
 
@@ -101,7 +101,6 @@ class ImplementationGuideResource {
 })
 export class STU3ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   public conformance;
-  public resourceMap: IProjectResourceReferenceMap = {};
   public implementationGuide;
   public message: string;
   public currentResource: any;
@@ -288,9 +287,9 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
         }
 
         if (!this.conformance.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
-          const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'Conformance' };
+          const conf = <IConformance>{ id: result.projectResourceId, resource: result.resource };
+          const newProjectResourceReference: IProjectResourceReference = { value: conf, valueType: 'Conformance' };
           this.conformance.references.push(newProjectResourceReference);
-          this.resourceMap[result.resourceType + '/' + result.id] = newProjectResourceReference;
         }
 
       });
@@ -445,7 +444,6 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
     this.conformance = <IConformance>{};
-    this.resourceMap = {};
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -463,15 +461,10 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     if (!this.isNew) {
       this.implementationGuide = null;
 
-      //this.implementationGuideService.getImplementationGuide(implementationGuideId)
-      forkJoin([
-        this.implementationGuideService.getImplementationGuide(implementationGuideId),
-        this.implementationGuideService.getReferenceMap(implementationGuideId)
-      ])
+      this.implementationGuideService.getImplementationGuideWithReferences(implementationGuideId)
         .subscribe({
-          next: (results: [IConformance, IProjectResourceReferenceMap]) => {
+          next: (conf: IConformance) => {
 
-            const conf: IConformance = results[0];
             if (!conf || !conf.resource || conf.resource.resourceType !== 'ImplementationGuide') {
               this.message = 'The specified implementation guide either does not exist or was deleted';
               return;
@@ -480,7 +473,6 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
             this.implementationGuide = new ImplementationGuide(conf.resource);
             this.conformance = conf;
             this.conformance.resource = this.implementationGuide;
-            this.resourceMap = results[1];
             this.igChanging.emit(false);
             this.initPages();
             this.initParameters();
@@ -774,15 +766,31 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       this.implementationGuide.package.splice(packageIndex, 1);
     }
 
-    let map = this.resourceMap[igResource.resource.sourceReference.reference];
+    let resourceType = igResource.resource.sourceReference.reference.split('/')[0];
+    let resourceId = igResource.resource.sourceReference.reference.split('/')[1];
 
     let index = (this.conformance.references || []).findIndex((ref: IProjectResourceReference) => {
-      return ref.value === map.value || ref.value === map.value['id']
+      if (ref.valueType === 'Conformance') {
+        const val: IConformance = <IConformance>ref.value;
+        let refResourceId = `${val.resource.id ?? val.id}`;
+        let refResourceType = val.resource.resourceType;
+        return refResourceType == resourceType && refResourceId == resourceId;
+      } else if (ref.valueType === 'Example') {
+        const val: IExample = <IExample>ref.value;
+        if (typeof val.content === typeof {} && 'resourceType' in val.content && 'id' in val.content) {
+          let refResourceId = `${val.content['id]'] ?? val.id}`;
+          let refResourceType = `${val.content['resourceType']}`;
+          return refResourceType == resourceType && refResourceId == resourceId;
+        } else {
+          let refResourceId = `${val.name || val.content['id'] || val.id}`;
+          let refResourceType = `Binary`;
+          return refResourceType == resourceType && refResourceId == resourceId;
+        }
+      }
     });
 
     if (index > -1) {
       this.conformance.references.splice(index, 1);
-      delete this.resourceMap[igResource.resource.sourceReference.reference];
     }
 
     this.initResources();

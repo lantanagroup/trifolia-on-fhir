@@ -104,6 +104,12 @@ export class ImplementationGuideService extends ConformanceService {
     return this.http.get<IConformance>(url);
   }
 
+  public getImplementationGuideWithReferences(id: string): Observable<IConformance> {
+    const url = '/api/implementationGuide/' + encodeURIComponent(id) + "/references";
+    return this.http.get<IConformance>(url);
+  }
+
+
   public saveImplementationGuide(implementationGuide: IConformance): Observable<IConformance> {
     return this.http.post<IConformance>('/api/implementationGuide', implementationGuide);
   }
