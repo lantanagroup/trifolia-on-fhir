@@ -5,7 +5,7 @@
 <div  *ngIf="structureDefinition" [class.has-element-definition]="selectedElement">
   <h2>
     {{structureDefinition.name || 'No name'}} <span class="badge bg-warning" *ngIf="!canEdit(conformance)">View-only</span>
-    <button class="badge bg-danger" *ngIf="isDirty" (click)="isDirty=false">Changed!</button>
+    <span class="badge bg-danger" *ngIf="isDirty" (click)="isDirty=false">Changed!</span>
     <!--span class="badge bg-danger" *ngIf="isDirty">Changed!</span-->
   </h2>
 

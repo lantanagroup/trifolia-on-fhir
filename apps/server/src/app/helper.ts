@@ -646,14 +646,12 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
   
   let exampleFor: string;
-  let isNotProfileOrTermType: boolean = false;
   if (resourceToAdd['resource']) {
     let profile = (<IConformance>resourceToAdd).resource?.meta?.profile;
     console.log('profile:', profile);
     if (profile) {
       exampleFor = profile[0];
     }
-    isNotProfileOrTermType = Globals.profileTypes.concat(Globals.terminologyTypes).indexOf((<IConformance>resourceToAdd).resource?.resourceType) < 0;
   }
 
 
@@ -701,7 +699,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
       } else {
         // otherwise do the usual...
-        r4.definition.resource.push((isExample || isNotProfileOrTermType) && exampleFor ?
+        r4.definition.resource.push(isExample && exampleFor ?
           {
             reference: {
               reference: resourceReferenceString,
@@ -715,7 +713,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
               reference: resourceReferenceString,
               display: display
             },
-            exampleBoolean: isExample ? true : isNotProfileOrTermType,
+            exampleBoolean: isExample,
             name: display,
             description: description
           });
@@ -760,7 +758,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
           reference: resourceReferenceString,
           display: display
         },
-        example: isExample ? true : isNotProfileOrTermType
+        example: isExample
       };
 
       if (stu3.package.length === 0) {

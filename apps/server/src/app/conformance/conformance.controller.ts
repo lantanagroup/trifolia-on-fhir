@@ -160,6 +160,9 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
 
     @Post()
     public async createConformance(@User() user: ITofUser, @Body() conformance: IConformance, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IConformance> {
+        if (implementationGuideId) {
+            this.assertCanWriteById(user, implementationGuideId);
+        }
         return await this.conformanceService.createConformance(conformance, implementationGuideId, isExample);
     }
 
@@ -167,6 +170,9 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
     public async updateConformance(@User() user: ITofUser, @Param('id') id: string, @Body() conformance: IConformance, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IConformance> {
         await this.assertIdMatch(id, conformance);
         await this.assertCanWriteById(user, id);
+        if (implementationGuideId) {
+            this.assertCanWriteById(user, implementationGuideId);
+        }
         return await this.conformanceService.updateConformance(id, conformance, implementationGuideId, isExample);
     }
 
