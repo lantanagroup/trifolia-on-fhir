@@ -8,8 +8,8 @@ import { User } from '../server.decorators';
 import { TofLogger } from '../tof-logger';
 import { UserDocument } from './user.schema';
 import { UsersService } from './users.service';
-import { User as UserModel } from './user.schema';
 import { ObjectId } from 'mongodb';
+import { TofNotFoundException } from '../../not-found-exception';
 
 @Controller('api/users')
 @UseGuards(AuthGuard('bearer'))
@@ -52,7 +52,7 @@ export class UsersController extends BaseDataController<UserDocument> {
 
     @Get('me')
     public async getMe(@User() user: ITofUser) : Promise<IUser> {
-
+        
         if (!user || !user.sub) {
             throw new BadRequestException("No authenticated user provided.");
         }
@@ -68,7 +68,7 @@ export class UsersController extends BaseDataController<UserDocument> {
         let res = await this.usersService.findOne({authId: authId});
 
         if (!res) {
-            throw new NotFoundException("No user found with the provided credentials.");
+            throw new TofNotFoundException("No user found with the provided credentials.");
         }
 
         return res;

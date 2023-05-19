@@ -108,7 +108,6 @@ export class AddHeaderInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const fhirServer = localStorage.getItem('fhirServer');
     let headers = req.headers;
 
     if (req.url.startsWith('/')) {
@@ -122,10 +121,6 @@ export class AddHeaderInterceptor implements HttpInterceptor {
 
     if (req.url.startsWith('/api/')) {
       headers = headers.set('Cache-Control', 'no-cache');
-
-      if (fhirServer) {
-        headers = headers.set('fhirServer', fhirServer);
-      }
 
       // Pass the implementation guide (project) to the request so that it knows this request
       // is within the context of the project

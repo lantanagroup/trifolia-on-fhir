@@ -1,14 +1,12 @@
 import {EventEmitter, Injectable, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Group, Meta} from '@trifolia-fhir/stu3';
+import {Meta} from '@trifolia-fhir/stu3';
 import {ConfigService} from './config.service';
 import {SocketService} from './socket.service';
 import {addPermission} from '@trifolia-fhir/tof-lib';
 import {GroupService} from './group.service';
-import {map} from 'rxjs/operators';
-import {AuthConfig, OAuthErrorEvent, OAuthService} from 'angular-oauth2-oidc';
+import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
-import { IBundle } from '@trifolia-fhir/tof-lib';
 import { UserService } from './user.service';
 import type {IConformance, IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
@@ -122,11 +120,10 @@ export class AuthService {
     if (!this.oauthService) {
       return;
     }
-    console.log('authservice::login', this.router.url);
     this.oauthService.initImplicitFlow();
   }
 
-  public handleAuthentication(): void {
+  public handleAuthentication(): Promise<void> {
     if (!this.oauthService) {
       return;
     }
@@ -135,18 +132,13 @@ export class AuthService {
 
       window.location.hash = '';
       let path;
-      if(!this.oauthService.state || this.oauthService.state !== 'undefined'){
+      if (!this.oauthService.state || this.oauthService.state !== 'undefined'){
         path = this.oauthService.state;
-      }else{
+      } else{
         path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.baseSessionUrl}/implementation-guide/open`;
       }
 
       // Make sure the user is not sent back to the /login page, which is only used to active .handleAuthentication()
-     /* if (path.startsWith('/login')) {
-        //path = '/';
-        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/implementation-guide/open`;
-      }*/
-
       if (path.startsWith('/login')) {
         //path = '/';
         path = this.activatedRoute.snapshot.queryParams.pathname || `/projects`;
@@ -156,7 +148,7 @@ export class AuthService {
         this.router.navigate([path]);
       } else if (window.location.pathname === '/' || path.endsWith('/home')) {
         //this.router.navigate([this.configService.fhirServer, 'implementation-guide', 'open']);
-        this.router.navigate(['projects']);
+        this.router.navigate(['/projects'])
       }
 
       this.authChanged.emit();
@@ -205,19 +197,14 @@ export class AuthService {
     }
 
     this.userProfile = this.getAuthUserInfo();
+    this.groups = [];
 
     try {
       this.user = await firstValueFrom(this.userService.getMe());
+      this.groups = await firstValueFrom(this.groupService.getMembership());
     } catch (ex) {
       console.error(ex);
       this.user = null;
-    }
-
-    try {
-      this.groups = await this.groupService.getMembership().toPromise();
-    } catch (ex) {
-      console.error(ex);
-      this.groups = [];
     }
 
     // This also triggers a notification to the socket

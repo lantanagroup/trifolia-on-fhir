@@ -110,14 +110,8 @@ export class GroupsController extends BaseDataController<GroupDocument> {
 
   @Get('membership')
   public async getMembership(@User() userProfile) {
-    if (!userProfile) return null;
-
-    const results = await this.groupsService.findAll({ 'members': userProfile.user.id }, ["managingUser", "members"]);
-    if (results) {
-      //results.forEach(result => console.log(result));
-    }
-    return results;
-
+    if (!userProfile || !userProfile.user) return null;
+    return await this.groupsService.findAll({ 'members': userProfile.user.id }, ["managingUser", "members"]);;
   }
 
   @ApiOperation({
