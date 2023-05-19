@@ -2,14 +2,14 @@
 
 <div class="alert alert-danger" *ngIf="sdNotFound">Structure Definition with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<div class="sd-main" *ngIf="structureDefinition">
+<div  *ngIf="structureDefinition" [class.has-element-definition]="selectedElement">
   <h2>
     {{structureDefinition.name || 'No name'}} <span class="badge bg-warning" *ngIf="!canEdit(conformance)">View-only</span>
     <button class="badge bg-danger" *ngIf="isDirty" (click)="isDirty=false">Changed!</button>
     <!--span class="badge bg-danger" *ngIf="isDirty">Changed!</span-->
   </h2>
 
-  <ul ngbNav #sdTabs="ngbNav" class="nav-tabs" (navChange)="beforeTabChange($event)" [class.has-element-definition]="selectedElement">
+  <ul ngbNav #sdTabs="ngbNav" class="nav-tabs" (navChange)="beforeTabChange($event)" >
     <li ngbNavItem="general">
       <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general-tab'] : undefined">General</span>

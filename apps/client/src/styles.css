@@ -186,16 +186,15 @@ button.angular-editor-button[title='Insert Image'] {
 
 /*** PROFILE EDITOR ***/
 
-ngb-tabset.has-element-definition > .tab-content {
+div.has-element-definition > .tab-content {
   width: 66%;
 }
 
 @media screen and (max-width: 1024px) {
-  ngb-tabset.has-element-definition > .tab-content {
+  div.has-element-definition > .tab-content {
     width: 100%;
   }
 }
-
 .scrollable-menu {
   height: auto;
   max-height: 200px;
