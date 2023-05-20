@@ -40,6 +40,7 @@ stages:
   - job: Update
     displayName: Update ToF
     pool: 'docker-dev2'
+    dependsOn: Build
     steps:
     - task: Docker@2
       inputs:
