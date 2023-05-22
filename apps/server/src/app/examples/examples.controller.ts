@@ -7,6 +7,7 @@ import { BaseDataController } from '../base/base-data.controller';
 import { ExamplesService } from './examples.service';
 import { ExampleDocument } from './example.schema';
 import { User } from '../server.decorators';
+import {ConformanceService} from '../conformance/conformance.service';
 
 @Controller('api/examples')
 @UseGuards(AuthGuard('bearer'))
@@ -15,7 +16,7 @@ import { User } from '../server.decorators';
 export class ExamplesController extends BaseDataController<ExampleDocument> {
 
     constructor(
-        protected readonly examplesService: ExamplesService
+        protected readonly examplesService: ExamplesService, protected readonly conformanceService: ConformanceService
         ) {
         super(examplesService);
     }
@@ -30,7 +31,8 @@ export class ExamplesController extends BaseDataController<ExampleDocument> {
     public async createExample(@User() user: ITofUser, @Body() example: IExample, @Query('implementationguideid') implementationGuideId?: string): Promise<IExample> {
         console.log('POST -- checking perms on IG:', implementationGuideId);
         if (implementationGuideId) {
-            await this.assertCanWriteById(user, implementationGuideId);
+          await this.authService.userCanByService(user, implementationGuideId, this.conformanceService, 'write')
+           // await this.assertCanWriteById(user, implementationGuideId);
         }
         return await this.examplesService.createExample(example, implementationGuideId);
     }
@@ -41,7 +43,8 @@ export class ExamplesController extends BaseDataController<ExampleDocument> {
         await this.assertIdMatch(id, example);
         await this.assertCanWriteById(user, id);
         if (implementationGuideId) {
-            await this.assertCanWriteById(user, implementationGuideId);
+            await this.authService.userCanByService(user, implementationGuideId, this.conformanceService, 'write')
+          //  await this.assertCanWriteById(user, implementationGuideId);
         }
         return await this.examplesService.updateExample(id, example, implementationGuideId);
     }

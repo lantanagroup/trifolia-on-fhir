@@ -414,7 +414,7 @@ export class ImportComponent implements OnInit {
         }
 
         // default to treating this as an example if it is not a profile/terminology resource type
-        if (importFileModel.resource && importFileModel.resource.resourceType 
+        if (importFileModel.resource && importFileModel.resource.resourceType
           && Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(importFileModel.resource.resourceType) < 0) {
           importFileModel.isExample = true;
         }
@@ -802,7 +802,7 @@ export class ImportComponent implements OnInit {
     } else if (file.contentType === ContentTypes.CdaExample) {
       let name = file.name || '';
       const regex = /[^\w\-\.]/g;
-      return name.substring(0, name.lastIndexOf('.')).toLowerCase().replace(regex, '');
+      return name.substring(0, name.lastIndexOf('.')).toLowerCase().replace(regex, '').replace(/_/gi, '-');;
     } else {
       if (file.resource) {
         return file.resource.id;

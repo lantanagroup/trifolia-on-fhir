@@ -37,14 +37,20 @@ export class OperationDefinitionController extends ConformanceController {
   }
 
   @Post()
-  public createOperationDefinition(@User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
+  public async createOperationDefinition(@User() user, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
+    if (implementationGuideId) {
+      await this.assertCanWriteById(user, implementationGuideId);
+    }
     let conformance: IConformance = body;
-    return this.conformanceService.createConformance(conformance, contextImplementationGuideId);
+    return this.conformanceService.createConformance(conformance, implementationGuideId);
   }
 
   @Put(':id')
-  public async updateOperationDefinition(@User() user, @Param('id') id: string, @Body() body) {
+  public async updateOperationDefinition(@User() user, @Param('id') id: string, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     await this.assertCanWriteById(user, id);
+    if (implementationGuideId) {
+      await this.assertCanWriteById(user, implementationGuideId);
+    }
     let conformance: IConformance = body;
     return this.conformanceService.updateConformance(id, conformance);
   }

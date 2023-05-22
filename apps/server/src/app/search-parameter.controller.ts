@@ -37,14 +37,20 @@ export class SearchParameterController extends ConformanceController {
   }
 
   @Post()
-  public createSearchParameter(@User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
+  public async createSearchParameter(@User() user, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
+    if (implementationGuideId) {
+      await this.assertCanWriteById(user, implementationGuideId);
+    }
     let conformance: IConformance = body;
-    return this.conformanceService.createConformance(conformance, contextImplementationGuideId);
+    return this.conformanceService.createConformance(conformance, implementationGuideId);
   }
 
   @Put(':id')
-  public async updateSearchParameter(@User() user, @Param('id') id: string, @Body() body) {
+  public async updateSearchParameter(@User() user, @Param('id') id: string, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     await this.assertCanWriteById(user, id);
+    if (implementationGuideId) {
+      await this.assertCanWriteById(user, implementationGuideId);
+    }
     let conformance: IConformance = body;
     return this.conformanceService.updateConformance(id, conformance);
   }

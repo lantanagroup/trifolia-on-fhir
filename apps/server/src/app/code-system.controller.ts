@@ -35,14 +35,20 @@ export class CodeSystemController extends ConformanceController {
   }
 
   @Post()
-  public createCodeSystem(@User() user, @Body() body, @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
+  public async createCodeSystem(@User() user, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
+    if (implementationGuideId) {
+      await this.assertCanWriteById(user, implementationGuideId);
+    }
     let conformance: IConformance = body;
-    return this.conformanceService.createConformance(conformance, contextImplementationGuideId);
+    return this.conformanceService.createConformance(conformance, implementationGuideId);
   }
 
   @Put(':id')
-  public async updateCodeSystem(@User() user, @Param('id') id: string, @Body() body ) {
+  public async updateCodeSystem(@User() user, @Param('id') id: string, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId ) {
     await this.assertCanWriteById(user, id);
+    if (implementationGuideId) {
+      await this.assertCanWriteById(user, implementationGuideId);
+    }
     let conformance: IConformance = body;
     return this.conformanceService.updateConformance(id, conformance);
   }
