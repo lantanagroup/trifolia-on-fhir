@@ -408,7 +408,7 @@ export class ImportComponent implements OnInit {
         }
 
         // TODO: add support for splitting bundles into individual resources to import
-        if (importFileModel.resource && importFileModel.resource.resourceType === 'Bundle') {
+        if (importFileModel.resource && importFileModel.resource.resourceType === 'Bundle' ) {
           //importFileModel.bundleOperation = 'execute';
           this.errorMessage = 'Bundle import is not supported.';
         }
@@ -496,12 +496,18 @@ export class ImportComponent implements OnInit {
     let resource;
 
     try {
-      resource = this.textContentType === ContentTypes.Xml ?
+        resource = this.textContentType === ContentTypes.Xml ?
         this.fhirService.fhir.xmlToObj(this.textContent) :
         JSON.parse(this.textContent);
     } catch (ex) {
-      this.message = 'Error: ' + getErrorString(ex);
-      return;
+      if (this.configService.isCDA && this.textContentType === ContentTypes.Xml) {
+        resource = this.textContent;
+        this.textContentIsExample = true;
+      }
+      else {
+        this.message = 'Error: ' + getErrorString(ex);
+        return;
+      }
     }
 
     let newResource: IConformance | IExample = <IConformance | IExample>{};

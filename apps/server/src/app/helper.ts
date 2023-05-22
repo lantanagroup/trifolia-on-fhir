@@ -616,7 +616,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
           catch (error) {
             if (implementationGuideIsCDA(implGuideResource)) {
               resourceType = 'Binary';
-              resourceId = resourceToAdd.name;
+              resourceId = resourceToAdd.name?resourceToAdd.name:resourceToAdd.id;
               isNotFhir = true;
             } else {
               throw error;
@@ -644,7 +644,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
   }
 
-  
+
   let exampleFor: string;
   if (resourceToAdd['resource']) {
     let profile = (<IConformance>resourceToAdd).resource?.meta?.profile;
