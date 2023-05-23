@@ -676,7 +676,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
       foundResource = undefined;
     }
     if (!foundResource) {
-      const display = (<any>resourceToAdd).title || (<any>resourceToAdd).name;
+      const display = (<any>resourceToAdd).title || (<any>resourceToAdd).name || (<any>resourceToAdd).id;
       const description = (<any>resourceToAdd).description;
 
       logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');

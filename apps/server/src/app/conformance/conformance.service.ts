@@ -348,7 +348,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
                         newBinary.data = r.value['content'];
                     }
 
-                    newBinary.id = r.value['name'];
+                    newBinary.id = r.value['name'] ? r.value['name'] : r.value['id'];
                     newBinary.contentType = 'application/xml';
                     entry.link = [new LinkComponent({ relation: 'example-cda' })];
                     entry.resource = newBinary;
