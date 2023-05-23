@@ -95,7 +95,7 @@ export class NewProjectComponent implements OnInit {
       name: wgName,
       telecom: [{
         system: 'url',
-        value: "http://www.hl7.org/Special/committees/",
+        value: wg.url,
       }],
     }];
 
