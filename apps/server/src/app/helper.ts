@@ -676,14 +676,12 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
       foundResource = undefined;
     }
     if (!foundResource) {
-      const display = (<any>resourceToAdd).title || (<any>resourceToAdd).name || (<any>resourceToAdd).id;
-      const description = (<any>resourceToAdd).description;
 
       logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');
 
       // special case for adding non-fhir examples
       if (isNotFhir) {
-
+        const display = (<any>resourceToAdd).name || (<any>resourceToAdd).id;
         r4.definition.resource.push({
           extension: [{
             url: 'http://hl7.org/fhir/StructureDefinition/implementationguide-resource-format',
@@ -699,6 +697,8 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
       } else {
         // otherwise do the usual...
+        const display = (<any>resourceToAdd).resource.name || (<any>resourceToAdd).resource.title;
+        const description = (<any>resourceToAdd).resource.description;
         r4.definition.resource.push(isExample && exampleFor ?
           {
             reference: {
@@ -748,10 +748,18 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
     }
 
     if (foundInPackages.length === 0) {
-      const display = (<any>resourceToAdd).title || (<any>resourceToAdd).name;
-      const description = (<any>resourceToAdd).description;
+      let display;
+      let description;
 
-      const newResource: PackageResourceComponent = {
+      if (isNotFhir) {
+         display = (<any>resourceToAdd).name || (<any>resourceToAdd).id;
+      }
+      else {
+        display =  (<any>resourceToAdd).resource.name || (<any>resourceToAdd).resource.title ;
+        description = (<any>resourceToAdd).resource.description;
+      }
+
+      const newResource : PackageResourceComponent = {
         name: display,
         description: description,
         sourceReference: {
@@ -759,7 +767,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
           display: display
         },
         example: isExample
-      };
+      }
 
       if (stu3.package.length === 0) {
         logger.verbose('STU3 IG does not contain a package, adding a default package with the resource added to it.');
