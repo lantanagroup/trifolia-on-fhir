@@ -84,11 +84,12 @@ export class NewProjectComponent implements OnInit {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
 
-    this.igId = this.projectCode.replace(/\./g, '-');
-    ig.url = this.igUrl;
+  //  this.igId = this.projectCode.replace(/\./g, '-');
     ig.version = '0.1.0';
-    ig.name = this.igName;
-    ig.id =  ig.name.replace(/[^a-zA-Z0-9_]/gi, '').replace(/_/gi, '-');
+    ig.name = this.igName.replace(/[^a-zA-Z0-9_]/g, '');
+    ig.name  = ig.name.charAt(0).toUpperCase() + ig.name.slice(1);
+    ig.id =  ig.name.replace(/_/gi, '-');
+    ig.url = `${this.igUrl}/${ig.id}`;
     const wg = Globals.hl7WorkGroups.find(w => w.url === this.hl7WorkGroup);
     const wgName = wg ? `HL7 International - ${wg.name}` : 'HL7 International Working Group';
     ig.contact = [{
@@ -184,10 +185,12 @@ export class NewProjectComponent implements OnInit {
     this.packageIdCriteriaChanged();
   }
 
+
   packageIdCriteriaChanged() {
-    this.packageId = `hl7.${this.isFHIR ? 'fhir' : 'cda'}.${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}.${this.projectCode || 'unknown'}`;
-    this.canonicalURL = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}/${this.projectCode || 'unknown'}`;
-    this.igUrl = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'us'}/${this.projectCode || 'unknown'}/ImplementationGuide/${this.projectCode || 'unknown'}`;
+    const projectCode = this.projectCode.replace(/[^a-zA-Z0-9_-]/gi, '');
+    this.packageId = `hl7.${this.isFHIR ? 'fhir' : 'cda'}.${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}.${projectCode|| 'unknown'}`;
+    this.canonicalURL = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}/${projectCode || 'unknown'}`;
+    this.igUrl = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'us'}/${projectCode || 'unknown'}/ImplementationGuide`;
   }
 
   setIgCanonicalUrl(value: string) {
@@ -205,7 +208,7 @@ export class NewProjectComponent implements OnInit {
   }
 
   igNameChanged() {
-    this.igName = this.igTitle.replace(/[^a-zA-Z0-9]/g, '');
+    this.igName = this.igTitle.replace(/[^a-zA-Z0-9_]/g, '');
   }
 
   igIdChanged() {
