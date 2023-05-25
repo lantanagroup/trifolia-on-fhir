@@ -52,7 +52,7 @@ export class MediaSelectionModalComponent implements OnInit {
     }
 
     try {
-      metadataResult = await this.fhirService.search('Media', null, true, null, null, this.configService.project.implementationGuideId, null, false, null, 1).toPromise();
+      metadataResult = await this.fhirService.search('Media', null, true, null, null, this.configService.project.implementationGuideId, null, false, null, page).toPromise();
     } catch (ex) {
       this.message = getErrorString(ex);
       console.error('Error loading images from server: ' + this.message);
