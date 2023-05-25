@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Query, UnauthorizedException, UseGuards} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
 import type { IExample } from '@trifolia-fhir/models';
@@ -31,7 +31,9 @@ export class ExamplesController extends BaseDataController<ExampleDocument> {
     public async createExample(@User() user: ITofUser, @Body() example: IExample, @Query('implementationguideid') implementationGuideId?: string): Promise<IExample> {
         console.log('POST -- checking perms on IG:', implementationGuideId);
         if (implementationGuideId) {
-          await this.authService.userCanByService(user, implementationGuideId, this.conformanceService, 'write')
+          if (! await this.authService.userCanWriteConformance(user, implementationGuideId)) {
+            throw new UnauthorizedException();
+          }
            // await this.assertCanWriteById(user, implementationGuideId);
         }
         return await this.examplesService.createExample(example, implementationGuideId);
@@ -43,8 +45,10 @@ export class ExamplesController extends BaseDataController<ExampleDocument> {
         await this.assertIdMatch(id, example);
         await this.assertCanWriteById(user, id);
         if (implementationGuideId) {
-            await this.authService.userCanByService(user, implementationGuideId, this.conformanceService, 'write')
-          //  await this.assertCanWriteById(user, implementationGuideId);
+          if (! await this.authService.userCanWriteConformance(user, implementationGuideId)) {
+            throw new UnauthorizedException();
+          }
+         // await this.assertCanWriteById(user, implementationGuideId);
         }
         return await this.examplesService.updateExample(id, example, implementationGuideId);
     }
