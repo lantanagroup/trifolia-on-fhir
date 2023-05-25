@@ -35,7 +35,7 @@ export class MediaSelectionModalComponent implements OnInit {
   }
 
   async loadImages(page = 1) {
-    let results: IConformance[];
+    let metadataResult;
     const query = {};
 
     if (page === 1) {
@@ -52,15 +52,15 @@ export class MediaSelectionModalComponent implements OnInit {
     }
 
     try {
-      results = await this.fhirService.search('Media', null, true, null, null, this.configService.project.implementationGuideId, null, false, null).toPromise();
+      metadataResult = await this.fhirService.search('Media', null, true, null, null, this.configService.project.implementationGuideId, null, false, null, 1).toPromise();
     } catch (ex) {
       this.message = getErrorString(ex);
       console.error('Error loading images from server: ' + this.message);
       return;
     }
-
+    let results = metadataResult.results;
     if (results) {
-      //this.totalImages = results.total;
+      this.totalImages = metadataResult.total;
 
       const nextImages = (results|| []).map((entry) => {
         const media = <STU3Media | R4Media>entry.resource;
