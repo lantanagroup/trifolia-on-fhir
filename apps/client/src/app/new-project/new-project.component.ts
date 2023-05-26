@@ -190,7 +190,7 @@ export class NewProjectComponent implements OnInit {
     const projectCode = this.projectCode.replace(/[^a-zA-Z0-9_-]/gi, '');
     this.packageId = `hl7.${this.isFHIR ? 'fhir' : 'cda'}.${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}.${projectCode|| 'unknown'}`;
     this.canonicalURL = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}/${projectCode || 'unknown'}`;
-    this.igUrl = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'us'}/${projectCode || 'unknown'}/ImplementationGuide`;
+    this.igUrl = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}/${projectCode || 'unknown'}/ImplementationGuide`;
   }
 
   setIgCanonicalUrl(value: string) {
