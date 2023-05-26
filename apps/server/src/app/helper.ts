@@ -697,7 +697,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
       } else {
         // otherwise do the usual...
-        let name = ""
+        let name;
         if(typeof (<any>resourceToAdd).resource.name == typeof ''){
           name = (<any>resourceToAdd).resource.name;
         }
@@ -759,7 +759,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
          display = (<any>resourceToAdd).name || (<any>resourceToAdd).id;
       }
       else {
-        let name = ""
+        let name;
         if(typeof (<any>resourceToAdd).resource.name == typeof ''){
           name = (<any>resourceToAdd).resource.name;
         }

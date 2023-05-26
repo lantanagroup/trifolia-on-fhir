@@ -28,6 +28,7 @@
   <tr>
     <th>ID</th>
     <th>Name</th>
+    <th>Url</th>
     <th class="actions-column-3">
       <div class="pull-right">
         <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/capability-statement/new" title="Create a new capability statement"
@@ -42,6 +43,7 @@
   <tr *ngFor="let cs of capabilityStatements">
     <td>{{cs.id}}</td>
     <td>{{cs.resource.name}}</td>
+    <td>{{cs.resource.url}}</td>
     <td>
       <div class="btn-group pull-right">
         <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/capability-statement/{{cs.id}}" title="Edit this resource">

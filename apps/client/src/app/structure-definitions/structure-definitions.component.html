@@ -56,12 +56,12 @@
   <tr *ngFor="let structureDefinition of structureDefinitions">
     <td>{{structureDefinition.resource.id?structureDefinition.resource.id: structureDefinition.id}}</td>
     <td>
-      {{structureDefinition.resource.title || structureDefinition.resource.name}} <i class="fa fa-comment"
+      {{structureDefinition.resource.title || structureDefinition.resource.name}}<i class="fa fa-comment"
                                                                    *ngIf="structureDefinition.resource.description"
                                                                    [ngbTooltip]="structureDefinition.resource.description"></i>
       <br/>
       <sub *ngIf="structureDefinition.resource.title">{{structureDefinition.resource.name}}&nbsp;</sub>
-      <sub>{{structureDefinition.url}}</sub>
+      <sub>{{structureDefinition.resource.url}}</sub>
     </td>
     <td class="experimental">{{structureDefinition.resource.experimental ? "Yes" : "No"}}</td>
     <td>{{structureDefinition.type}}</td>

@@ -28,6 +28,7 @@
     <tr>
         <th>ID</th>
         <th>Name</th>
+        <th>Url</th>
         <th class="actions-column-3">
             <div class="pull-right">
                 <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/questionnaire/new" title="Create a new questionnaire" [attr.data-intro]="Globals.introText['browse.add']">
@@ -41,6 +42,7 @@
     <tr *ngFor="let questionnaire of questionnaires">
         <td>{{questionnaire.id}}</td>
         <td>{{questionnaire.resource.name}}</td>
+        <td>{{questionnaire.resource.url}}</td>
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/questionnaire/{{questionnaire.id}}" title="Edit this questionnaire">

@@ -28,6 +28,7 @@
   <tr>
     <th>ID</th>
     <th>Name</th>
+    <th>Url</th>
     <th>Base</th>
     <th>Type</th>
     <th class="actions-column-3">
@@ -44,6 +45,7 @@
   <tr *ngFor="let sp of searchParameter">
     <td>{{sp.id}}</td>
     <td>{{sp.resource.name}}</td>
+    <td>{{sp.resource.url}}</td>
     <td>{{sp.resource.base}}</td>
     <td>{{sp.resource.type}}</td>
     <td>

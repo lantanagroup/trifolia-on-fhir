@@ -410,7 +410,7 @@
                 </app-fhir-reference>
               </td>
               <td>
-                <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false" (change)="igChanging.emit(true)"></app-fhir-string>
+                <app-fhir-string [parentObject]="resource" propertyName="name" [required]="true" [isFormGroup]="false" (change)="igChanging.emit(true)"></app-fhir-string>
               </td>
               <td>
                 <select class="form-select" [(ngModel)]="resource.groupingId" (change)="igChanging.emit(true)">
