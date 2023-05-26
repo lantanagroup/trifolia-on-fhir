@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit} from '@angular/core';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { ImplementationGuide, ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
@@ -215,11 +215,12 @@ export class NewProjectComponent implements OnInit {
     this.igId = this.igName.replace(/[^a-zA-Z0-9]/g, '');
   }
 
-
-  /*getFhirVersion() {
-    this.fhirVersion = this.configService.fhirConformanceVersion;
+  isValidName(name: string) {
+    const results = /^[A-Z][A-Za-z0-9_]+$/.exec(name);
+    return !!results;
   }
-*/
+
+
   isValidId(id: string) {
     const results = /^[A-Za-z0-9\-\\.]{1,64}$/.exec(id);
     return !!results;

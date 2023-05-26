@@ -79,8 +79,9 @@
 
   <div class="mb-3">
     <label>IG Name: </label>
-    <input type="text" class="form-control standard" [(ngModel)]="igName" [class.is-invalid]="!igName" />
+    <input type="text" class="form-control standard" [(ngModel)]="igName" [class.is-invalid]="!igName || !isValidName(igName)" />
     <div class="help-block" *ngIf="!igName">Name is required</div>
+    <div class="help-block" *ngIf="igName && !isValidName(igName)">{{Globals.tooltips['name.validation.failed']}}</div>
   </div>
 
   <div class="mb-3">
