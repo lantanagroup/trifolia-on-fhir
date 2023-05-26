@@ -697,7 +697,11 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
       } else {
         // otherwise do the usual...
-        const display = (<any>resourceToAdd).resource.name || (<any>resourceToAdd).resource.title;
+        let name = ""
+        if(typeof (<any>resourceToAdd).resource.name == typeof ''){
+          name = (<any>resourceToAdd).resource.name;
+        }
+        const display = name || (<any>resourceToAdd).resource.title;
         const description = (<any>resourceToAdd).resource.description;
         r4.definition.resource.push(isExample && exampleFor ?
           {
@@ -755,7 +759,11 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
          display = (<any>resourceToAdd).name || (<any>resourceToAdd).id;
       }
       else {
-        display =  (<any>resourceToAdd).resource.name || (<any>resourceToAdd).resource.title ;
+        let name = ""
+        if(typeof (<any>resourceToAdd).resource.name == typeof ''){
+          name = (<any>resourceToAdd).resource.name;
+        }
+        display =  name || (<any>resourceToAdd).resource.title ;
         description = (<any>resourceToAdd).resource.description;
       }
 
