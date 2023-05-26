@@ -1,21 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {
-  ImplementationGuide,
-  ImplementationGuideResourceComponent
-} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {
-  getDefaultImplementationGuideResourcePath,
-  getExtensionString,
-  setExtensionString
-} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {
-  FhirReferenceModalComponent,
-  ResourceSelection
-} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {ImplementationGuide, ImplementationGuideResourceComponent} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {FhirService} from '../../shared/fhir.service';
+import {ConformanceService} from '../../shared/conformance.service';
 
 @Component({
   templateUrl: './resource-modal.component.html',
@@ -24,8 +12,9 @@ import {FhirService} from '../../shared/fhir.service';
 export class R4ResourceModalComponent {
   @Input() resource: ImplementationGuideResourceComponent;
   @Input() implementationGuide: ImplementationGuide;
+  @Input() implementationGuideID: string;
 
-  constructor(public activeModal: NgbActiveModal, private modalService: NgbModal, private fhirService: FhirService) {
+  constructor(public activeModal: NgbActiveModal, private modalService: NgbModal, private conformanceService: ConformanceService) {
 
   }
 
@@ -65,17 +54,24 @@ export class R4ResourceModalComponent {
       }
 
       this.resource.exampleCanonical = result.resource.url;
-    })
+    });
   }
 
   async copyDescription() {
     try {
+      let results: any = [];
+      let result = [];
       const parsedReference = parseReference(this.resource.reference.reference);
-      const results: any = await this.fhirService.read(parsedReference.resourceType, parsedReference.id).toPromise();
-
-      if (results) {
-        if (results.description) {
-          this.resource.description = results.description;
+      if (parsedReference.resourceType !== 'Binary') {
+        results = await this.conformanceService.search(1, null, 'r4', this.implementationGuideID, parsedReference.resourceType, null, null, parsedReference.id).toPromise();
+        result = results.results;
+      }
+      else{
+        alert('The target resource does not have a "Description"');
+      }
+      if (result.length > 0) {
+        if (result[0].resource.description) {
+          this.resource.description = result[0].resource.description;
         } else {
           alert('The target resource does not have a "Description"');
         }

@@ -347,19 +347,9 @@ export class FhirService {
     return this.http.get<IConformance[]>(url);
   }
 
-  /**
-   * Retrieves the specified resource id from the FHIR server
-   * @param {string} resourceType
-   * @param {string} id
-   */
-  public read(resourceType: string, id: string) {
-    const url = '/api/fhir/' + resourceType + '/' + id;
-    return this.http.get(url);
-  }
-
 
   /**
-   * Retrieves the specified resource id from the FHIR server
+   * Retrieves the specified resource id
    * @param {string} resourceType
    * @param {string} id
    */
@@ -370,35 +360,6 @@ export class FhirService {
     } else if (resourceType == 'example') {
       url = '/api/example/' + encodeURIComponent(id);
     }
-    return this.http.get(url);
-  }
-
-
-  /**
-   * Retrieves all versions of the specified resource from the FHIR server
-   * @param {string} resourceType
-   * @param {string} id
-   */
-
-  /*public getHistory(resourceType: string, id: string, page = 1) {
-    let url = `/api/fhir/${resourceType}/${id}/_history?`;
-
-    if (page > 1) {
-      url += `page=${page}`;
-    }
-
-    return this.http.get<IBundle>(url).toPromise();
-  }*/
-
-
-  /**
-   * Retrieves a specific version of the resource from the FHIR server
-   * @param {string} resourceType
-   * @param {string} id
-   * @param {string} versionId
-   */
-  public vread(resourceType: string, id: string, versionId: string) {
-    const url = `/api/fhir/${resourceType}/${id}/_history/${versionId}`;
     return this.http.get(url);
   }
 

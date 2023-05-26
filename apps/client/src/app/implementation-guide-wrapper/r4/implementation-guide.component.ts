@@ -327,6 +327,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
+    modalRef.componentInstance.implementationGuideID = this.implementationGuideId;
     modalRef.result.then(() => {
       this.igChanging.emit(true);
     });
