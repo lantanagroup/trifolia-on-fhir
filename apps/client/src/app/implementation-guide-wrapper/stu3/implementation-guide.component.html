@@ -2,7 +2,7 @@
 
 <div class="alert alert-danger" *ngIf="igNotFound">Implementation Guide with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<div class="ig-main" *ngIf="conformance">
+<div class="ig-main" *ngIf="conformance && implementationGuide">
   <h2>
     {{implementationGuide.name || 'no-name'}} <span class="badge bg-warning" *ngIf="!canEdit(conformance)">View-only</span>
     <span class="badge bg-danger" *ngIf="isDirty">Changed!</span>
