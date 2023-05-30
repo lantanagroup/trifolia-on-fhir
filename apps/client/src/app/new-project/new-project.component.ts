@@ -96,7 +96,7 @@ export class NewProjectComponent implements OnInit {
       name: wgName,
       telecom: [{
         system: 'url',
-        value: wg.url,
+        value: wg ? wg.url : "",
       }],
     }];
 

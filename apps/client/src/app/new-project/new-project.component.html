@@ -132,8 +132,14 @@
 
   <div class="mb-3">
     <label>FHIR Version: </label>
-    <input type="text" class="form-control standard" [(ngModel)]="fhirVersion"/>
+    <select class="form-select family" [(ngModel)]="fhirVersion" >
+      <option value ="r4">R4</option>
+      <option value ="stu3">STU3</option>
+      <option value ="r5">R5</option>
+    </select>
+    <!-- <input type="text" class="form-control standard" [(ngModel)]="fhirVersion" />-->
   </div>
+
 
   <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
   <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!canonicalURL || !projectCode || !igUrl || !igName || !isValidId(projectCode) || !isValidUrl(canonicalURL) || !isValidUrl(igUrl)">Finish</button>
