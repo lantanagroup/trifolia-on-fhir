@@ -9,7 +9,7 @@ import {
   StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
-import { Observable, Subject } from 'rxjs';
+import {firstValueFrom, Observable, Subject} from 'rxjs';
 import { RecentItemService } from '../../shared/recent-item.service';
 import { FhirService } from '../../shared/fhir.service';
 import { NgbModal, NgbNav } from '@ng-bootstrap/ng-bootstrap';
@@ -23,6 +23,8 @@ import { FhirReferenceModalComponent, ResourceSelection } from '../../fhir-edit/
 import { BaseComponent } from '../../base.component';
 import { debounceTime } from 'rxjs/operators';
 import {IConformance} from '@trifolia-fhir/models';
+import {ImplementationGuide} from '@trifolia-fhir/stu3';
+import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 
 @Component({
   templateUrl: './capability-statement.component.html',
@@ -47,6 +49,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
   public ClientHelper = ClientHelper;
   public codes: Coding[] = [];
   private navSubscription: any;
+  public implementationGuide;
 
   constructor(
     public route: ActivatedRoute,
@@ -57,7 +60,8 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     private router: Router,
     private fileService: FileService,
     private recentItemService: RecentItemService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    private implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
 
@@ -268,9 +272,12 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     }, 50);
   }
 
-  private getCapabilityStatement(): Observable<CapabilityStatement> {
+  private  getCapabilityStatement(): Observable<CapabilityStatement> {
     this.capabilityStatementId = this.route.snapshot.paramMap.get('id');
-
+    if(this.implementationGuide.fhirVersion.length > 0) {
+      this.conformance.resource.fhirVersion = this.implementationGuide.fhirVersion[0];
+      this.capabilityStatement.fhirVersion = this.implementationGuide.fhirVersion[0];
+    }
     if (this.isFile) {
       if (this.fileService.file) {
         this.capabilityStatement = <CapabilityStatement>this.fileService.file.resource;
@@ -317,16 +324,22 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     this.configService.setTitle(`CapabilityStatement - ${this.capabilityStatement.title || this.capabilityStatement.name || 'no-name'}`);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.messageTransportCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-transport');
     this.codes =  this.codes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.messageEventCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-events');
+
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/capability-statement/')) {
         this.getCapabilityStatement();
       }
     });
+
     this.getCapabilityStatement();
+
   }
 
   ngOnDestroy() {
