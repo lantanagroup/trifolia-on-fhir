@@ -11,7 +11,7 @@
    [placement]="tooltipPlacement"></i>
 
 <div *ngIf="tooltip && showAsAlert" class="alert alert-info tooltip-alert">
-  <button aria-label="Show/Hide" class="close" type="button" (click)="toggle()">
+  <button aria-label="Show/Hide" class="btn-close" type="button" (click)="toggle()">
         <span aria-hidden="true">
             <i class="fa" [class.fa-compress]="!hidden" [class.fa-expand]="hidden"></i>
         </span>

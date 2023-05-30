@@ -2,5 +2,8 @@
   "extends": "../../tslint.json",
   "rules": {
     "nx-enforce-module-boundaries": false
+  },
+  "linterOptions": {
+    "exclude": ["!**/*", "!**/*", "!**/*"]
   }
 }

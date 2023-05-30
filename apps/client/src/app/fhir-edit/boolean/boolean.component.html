@@ -1,9 +1,9 @@
-<div class="form-group" *ngIf="isFormGroup">
+<div class="mb-3" *ngIf="isFormGroup">
     <label>
         {{title}}
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </label>
-    <select class="form-control" [(ngModel)]="value">
+    <select class="form-select" [(ngModel)]="value">
         <option *ngIf="!required || allowUndefined" [ngValue]="undefined">Unspecified</option>
         <option [ngValue]="false">{{falseLabel}}</option>
         <option [ngValue]="true">{{trueLabel}}</option>
@@ -14,7 +14,7 @@
         {{title}}
         <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
     </div>
-    <select class="form-control" [(ngModel)]="value">
+    <select class="form-select" [(ngModel)]="value">
         <option *ngIf="!required" [ngValue]="undefined">Unspecified</option>
         <option [ngValue]="false">{{falseLabel}}</option>
         <option [ngValue]="true">{{trueLabel}}</option>

@@ -1,10 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {getAliasName, getDisplayIdentifier, getDisplayName, getIdentifierSource} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {getAuthIdIdentifier, getAuthIdSource, Paginated} from '@trifolia-fhir/tof-lib';
 import {ManageService} from '../../shared/manage.service';
-import {GetUsersModel} from '../../../../../../libs/tof-lib/src/lib/get-users-model';
-import {UserModel} from '../../../../../../libs/tof-lib/src/lib/user-model';
-import {FhirService} from '../../shared/fhir.service';
+import { IUser } from '@trifolia-fhir/models';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'trifolia-fhir-merge-user-modal',
@@ -12,18 +11,21 @@ import {FhirService} from '../../shared/fhir.service';
   styleUrls: ['./merge-user-modal.component.css']
 })
 export class MergeUserModalComponent implements OnInit {
-  @Input() sourceUser: UserModel;
-  targetUser: UserModel;
+  @Input() sourceUser: IUser;
+  targetUser: IUser;
+  usersPage = 1;
+  usersPageChanged = new Subject();
+  usersPageSize = 5;
   searchUsersName: string;
-  searchUsersResults: GetUsersModel;
+  searchUsersResults: Paginated<IUser>;
   message: string;
+  
+  getAuthIdIdentifier = getAuthIdIdentifier;
+  getAuthIdSource = getAuthIdSource;
 
-  getDisplayName = getDisplayName;
-  getDisplayIdentifier = getDisplayIdentifier;
-  getAliasName = getAliasName;
-  getIdentifierSource = getIdentifierSource;
-
-  constructor(public activeModal: NgbActiveModal, private manageService: ManageService, private fhirService: FhirService) { }
+  constructor(public activeModal: NgbActiveModal, private manageService: ManageService) { 
+    this.usersPageChanged.subscribe(() => this.searchUsers());
+  }
 
   async ok() {
     try {
@@ -45,12 +47,10 @@ export class MergeUserModalComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const official = (this.sourceUser.name || []).find(n => n.use === 'official' || !n.use);
 
-    if (official && official.family) {
-      this.searchUsersName = official.family;
-      await this.searchUsers();
-    }
+    this.searchUsersName = this.sourceUser.lastName;
+    await this.searchUsers();
+
   }
 
 }

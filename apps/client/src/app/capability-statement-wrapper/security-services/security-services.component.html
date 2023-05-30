@@ -1,10 +1,10 @@
 
-<div class="form-group">
+<div class="mb-3">
   <label>Services</label>
   <ul>
     <li *ngFor="let service of security.service || []; let serviceIndex = index">
       <div class="input-group">
-        <select class="form-control" style="max-width: 300px" [ngModel]="getServiceText(service)" (ngModelChange)="setServiceText(service, $event)">
+        <select class="form-select" style="max-width: 300px" [ngModel]="getServiceText(service)" (ngModelChange)="setServiceText(service, $event)">
           <option>OAuth</option>
           <option>SMART-on-FHIR</option>
           <option>NTLM</option>
@@ -13,14 +13,12 @@
           <option>Certificates</option>
           <option>Other</option>
         </select>
-        <div class="input-group-append">
-          <button type="button" class="btn btn-primary" (click)="editService(service)">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button type="button" class="btn btn-primary" (click)="security.service.splice(serviceIndex, 1)">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
+        <button type="button" class="btn btn-primary" (click)="editService(service)">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button type="button" class="btn btn-primary" (click)="security.service.splice(serviceIndex, 1)">
+          <i class="fas fa-trash"></i>
+        </button>
       </div>
     </li>
     <li *ngIf="!security.service?.length">No services defined...</li>

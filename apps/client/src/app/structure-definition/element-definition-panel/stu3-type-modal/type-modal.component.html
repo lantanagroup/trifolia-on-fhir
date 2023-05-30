@@ -1,22 +1,20 @@
 <div class="modal-header">
   <h4 class="modal-title">{{element ? element.path : 'Unknown'}}'s Type</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 
 <div class="modal-body">
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       Code
       <app-tooltip-icon tooltipPath="ElementDefinition.type.code"></app-tooltip-icon>
     </label>
-    <select class="form-control" [(ngModel)]="type.code">
+    <select class="form-select" [(ngModel)]="type.code">
       <option *ngFor="let o of definedTypeCodes" [ngValue]="o.code">{{o.display}}</option>
     </select>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       Profile
       <app-tooltip-icon tooltipKey="ed.type.profile"></app-tooltip-icon>
@@ -24,36 +22,32 @@
     <div class="input-group">
       <input type="text" class="form-control" [(ngModel)]="type.profile"/>
       <input type="text" class="form-control" [(ngModel)]="profileElement" placeholder="Profile Element"/>
-      <div class="input-group-append">
-        <button type="button" class="btn btn-primary" title="Select a profile" (click)="selectProfile('profile')">
-          <i class="fas fa-hand-pointer"></i>
-        </button>
-      </div>
+      <button type="button" class="btn btn-primary" title="Select a profile" (click)="selectProfile('profile')">
+        <i class="fas fa-hand-pointer"></i>
+      </button>
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       Target Profile
       <app-tooltip-icon tooltipKey="ed.type.targetProfile"></app-tooltip-icon>
     </label>
     <div class="input-group">
       <input type="text" class="form-control" [(ngModel)]="type.targetProfile"/>
-      <div class="input-group-append">
-        <button type="button" class="btn btn-primary" title="Select a target profile" (click)="selectProfile('targetProfile')">
-          <i class="fas fa-hand-pointer"></i>
-        </button>
-      </div>
+      <button type="button" class="btn btn-primary" title="Select a target profile" (click)="selectProfile('targetProfile')">
+        <i class="fas fa-hand-pointer"></i>
+      </button>
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       Aggregation
       <app-tooltip-icon tooltipPath="ElementDefinition.type.aggregation"></app-tooltip-icon>
     </label>
     <div class="input-group">
-      <select class="form-control" [(ngModel)]="type.aggregation">
+      <select class="form-select" [(ngModel)]="type.aggregation">
         <option [ngValue]="undefined">NONE</option>
         <option>contained</option>
         <option>referenced</option>
@@ -62,13 +56,13 @@
     </div>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       Versioning
       <app-tooltip-icon tooltipPath="ElementDefinition.type.versioning"></app-tooltip-icon>
     </label>
     <div class="input-group">
-      <select class="form-control" [(ngModel)]="type.versioning">
+      <select class="form-select" [(ngModel)]="type.versioning">
         <option [ngValue]="undefined">NONE</option>
         <option>either</option>
         <option>independent</option>

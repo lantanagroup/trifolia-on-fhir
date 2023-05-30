@@ -1,46 +1,42 @@
 <div class="input-group identifier">
-  <div class="input-group-prepend">
-    <div class="input-group-text">Internal ID</div>
-    <input type="text" class="form-control" [ngModel]="practitioner.id" readonly="readonly" />
-  </div>
+  <div class="input-group-text">Internal ID</div>
+  <input type="text" class="form-control" [ngModel]="practitioner.id" readonly="readonly" />
 </div>
 <div class="input-group identifier" *ngFor="let i of practitioner.identifier; let ii = index">
-  <div class="input-group-prepend">
-    <div class="input-group-text" title="{{i.system}}">Other #{{ii + 1}}</div>
-    <input type="text" class="form-control" value="{{i.value}}" readonly="readonly" />
-  </div>
+  <div class="input-group-text" title="{{i.system}}">Other #{{ii + 1}}</div>
+  <input type="text" class="form-control" value="{{i.value}}" readonly="readonly" />
 </div>
 
 <div class="row">
   <div class="col-md-6">
-    <div class="form-group">
+    <div class="mb-3">
       <label>First Name</label>
       <input type="text" class="form-control" [(ngModel)]="firstName" required [class.is-invalid]="!firstName" />
     </div>
 
-    <div class="form-group">
+    <div class="mb-3">
       <label>Last Name</label>
       <input type="text" class="form-control" [(ngModel)]="lastName" required [class.is-invalid]="!lastName" />
     </div>
 
-    <div class="form-group">
+    <div class="mb-3">
       <label>Alias</label>
       <input type="text" class="form-control" [(ngModel)]="alias" />
     </div>
   </div>
   <div class="col-md-6">
-    <div class="form-group">
+    <div class="mb-3">
       <label>Email</label>
       <input type="text" class="form-control" [(ngModel)]="email" required email [class.is-invalid]="!email" />
     </div>
 
-    <div class="form-group">
+    <div class="mb-3">
       <label>Phone</label>
       <input type="text" class="form-control" [(ngModel)]="phone" />
     </div>
   </div>
 </div>
 
-<div class="form-group" *ngIf="configService.config?.announcementService">
+<div class="mb-3" *ngIf="configService.config?.announcementService">
   <input type="checkbox" [(ngModel)]="announcements" /> Send me announcements regarding Trifolia-on-FHIR!
 </div>

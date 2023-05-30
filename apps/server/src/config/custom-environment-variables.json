@@ -1,0 +1,17 @@
+{
+    "server": {
+        "enableSecurity": "SERVER_ENABLESECURITY"
+    },
+    "auth": {
+        "clientId": "AUTH_CLIENTID",
+        "scope": "AUTH_SCOPE",
+        "logoutUrl": "AUTH_LOGOUTURL",
+        "domain": "AUTH_DOMAIN",
+        "secret": "AUTH_SECRET",
+        "issuer": "AUTH_ISSUER",
+        "jwksUri": "AUTH_JWKSURI"
+    },
+    "database": {
+        "uri": "DATABASE_URI"
+    }
+}

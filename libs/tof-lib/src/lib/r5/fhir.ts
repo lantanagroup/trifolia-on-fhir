@@ -3642,8 +3642,6 @@ export class SimpleQuantity extends Quantity {
 		}
 
 	}
-
-  comparator: QuantityComparator1;
 }
 
 export class Resource extends Base implements IFhir.IResource {

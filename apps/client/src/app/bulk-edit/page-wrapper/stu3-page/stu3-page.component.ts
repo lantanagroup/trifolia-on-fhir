@@ -20,7 +20,7 @@ export class STU3PageComponent implements OnInit {
   }
 
   private populatePages(parent?: PageComponent) {
-    if (!parent) {
+    if (!parent && this.implementationGuide.page) {
       this.pages = [this.implementationGuide.page];
       this.populatePages(this.implementationGuide.page);
 
@@ -29,7 +29,7 @@ export class STU3PageComponent implements OnInit {
         this.implementationGuide.page.setTitle(this.implementationGuide.page.title, true);
         this.changedPages[this.implementationGuide.page.source] = true;
       }
-    } else if (parent.page) {
+    } else if (parent && parent.page) {
       parent.page.forEach(p => {
         this.pages.push(p);
         this.populatePages(p);

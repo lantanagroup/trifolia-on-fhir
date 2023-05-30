@@ -14,6 +14,7 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChangeResourceIdModalComponent } from '../modals/change-resource-id-modal/change-resource-id-modal.component';
+import { IConformance } from '@trifolia-fhir/models';
 
 @Component({
   selector: 'trifolia-fhir-search-parameter',
@@ -22,8 +23,8 @@ import { ChangeResourceIdModalComponent } from '../modals/change-resource-id-mod
 })
 export class SearchParameterComponent extends BaseComponent implements OnInit, DoCheck {
   @Input() public implementationGuide: ImplementationGuide;
-  @Input() public searchParameter: SearchParameter;
-
+  @Input() public searchParameter;
+  public conformance;
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
@@ -41,6 +42,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
   public name: string;
   public xml: string;
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
+  public searchParameterId;
 
   constructor(
     public configService: ConfigService,
@@ -56,13 +58,14 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     super(configService, authService);
 
     this.searchParameter = new SearchParameter({ meta: this.authService.getDefaultMeta() });
+    this.conformance = { resource: this.searchParameter, fhirVersion: <'stu3'|'r4'|'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         const isIdUnique = await this.fhirService.checkUniqueId(this.searchParameter);
         if (!isIdUnique) {
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = 'ID ' + this.searchParameter.id + ' is already used.';
+          this.alreadyInUseIDMessage = 'ID ' + this.searchParameter.id + ' is already used in this IG.';
         } else {
           this.isIdUnique = true;
           this.alreadyInUseIDMessage = '';
@@ -108,7 +111,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
   }
 
   public getSearchParameter() {
-    const searchParameterId = this.route.snapshot.paramMap.get('id');
+    this.searchParameterId = this.route.snapshot.paramMap.get('id');
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -123,27 +126,30 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
 
     if (!this.isNew) {
       this.searchParameter = null;
+      this.spService.get(this.searchParameterId)
+        .subscribe({
+          next: (conf: IConformance) => {
+            if (!conf || !conf.resource || conf.resource.resourceType !== 'SearchParameter') {
+              this.message = 'The specified code system either does not exist or was deleted';
+              return;
+            }
 
-      this.spService.get(searchParameterId)
-        .subscribe((sp) => {
-          if (sp.resourceType !== 'SearchParameter') {
-            this.message = 'The specified search parameter either does not exist or was deleted';
-            return;
+            this.conformance = conf;
+            this.searchParameter = <SearchParameter>conf.resource;
+            this.nameChanged();
+            this.afterSearchParameterInit();
+            this.recentItemService.ensureRecentItem(
+              Globals.cookieKeys.recentCodeSystems,
+              this.searchParameter.id,
+              this.searchParameter.name);
+          },
+          error: (err) => {
+            this.spNotFound = err.status === 404;
+            this.message = getErrorString(err);
+            this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCodeSystems, this.searchParameterId);
           }
-
-          this.searchParameter = <SearchParameter>sp;
-          this.nameChanged();
-          this.afterSearchParameterInit();
-
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentSearchParameters,
-            this.searchParameter.id,
-            this.searchParameter.name);
-        }, (err) => {
-          this.spNotFound = err.status === 404;
-          this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentSearchParameters, searchParameterId);
         });
+
     } else {
       this.afterSearchParameterInit();
     }
@@ -189,21 +195,28 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
       return;
     }
 
-    this.spService.save(this.searchParameter)
-      .subscribe((results: SearchParameter) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/search-parameter/${results.id}`]);
-        } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentSearchParameters, results.id, results.name);
+    this.spService.save(this.searchParameterId, this.conformance)
+      .subscribe({
+        next: (conf: IConformance) => {
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.searchParameterId = conf.id;
+            this.router.navigate([`${this.configService.baseSessionUrl}/search-parameter/${conf.id}`]);
+          } else {
+            this.conformance = conf;
+            this.searchParameter = conf.resource;
+            this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, conf.id, conf.name);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
           this.message = 'Your changes have been saved!';
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the search Parameter: ' + getErrorString(err);
         }
-      }, (err) => {
-        this.message = `An error occurred while saving the search parameter: ${err.message}`;
       });
+
   }
 
 

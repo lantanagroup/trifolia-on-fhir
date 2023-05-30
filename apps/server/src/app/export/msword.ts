@@ -1,11 +1,10 @@
 import {Document, HeadingLevel, IParagraphOptions, Packer, Paragraph, Table, TableCell, TableOfContents, TableRow, TextRun, VerticalAlign} from 'docx';
 import {
-  Bundle,
   Extension as R4Extension,
   ImplementationGuide as R4ImplementationGuide,
   StructureDefinition as R4StructureDefinition,
   ValueSet as R4ValueSet
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+} from '@trifolia-fhir/r4';
 import {ImplementationGuide as R5ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {TofLogger} from '../tof-logger';
 import {
@@ -13,11 +12,11 @@ import {
   ImplementationGuide as STU3ImplementationGuide,
   StructureDefinition as STU3StructureDefinition,
   ValueSet as STU3ValueSet
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import * as fs from 'fs';
-import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IgPageHelper, PageInfo} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
+} from '@trifolia-fhir/stu3';
+import {Globals, IgPageHelper, PageInfo} from '@trifolia-fhir/tof-lib';
+import type {IBundle, IImplementationGuide} from '@trifolia-fhir/tof-lib';
+import {readFileSync} from 'fs';
+
 
 /**
  * This class is responsible for creating an MSWord DOCX document from a bundle of
@@ -89,9 +88,9 @@ export class MSWordExporter {
     ];
   }
 
-  async export(bundle: Bundle, version: 'stu3'|'r4') {
+  async export(bundle: IBundle, version: 'stu3'|'r4'|'r5') {
     this.doc = new Document({
-      externalStyles: fs.readFileSync('./assets/msword-styles.xml').toString()
+      externalStyles: readFileSync('./assets/msword-styles.xml').toString()
     });
     this.body = [];
 

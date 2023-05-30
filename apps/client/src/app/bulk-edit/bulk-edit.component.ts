@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {IImplementationGuide, IStructureDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IImplementationGuide, IStructureDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {ConfigService} from '../shared/config.service';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
@@ -20,6 +20,7 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 export class BulkEditComponent implements OnInit {
   public originalImplementationGuide: IImplementationGuide;
   public implementationGuide: IImplementationGuide;
+  public implementationGuideId: string;
   public originalProfiles: IStructureDefinition[];
   public profiles: IStructureDefinition[];
   public expandedElementsProfileId: string;
@@ -59,7 +60,7 @@ export class BulkEditComponent implements OnInit {
   }
 
   private editFieldWithWait(profileId: string, field: string, elementId?: string) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       setTimeout(() => {
         this.editFields[profileId + (elementId || '') + field] = true;
         resolve();
@@ -92,23 +93,27 @@ export class BulkEditComponent implements OnInit {
     this.editFields = {};
     this.changedProfiles = {};
 
-    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
-    if (implementationGuideId) {
-      const ig = await this.igService.getImplementationGuide(implementationGuideId).toPromise();
+    if (this.implementationGuideId ) {
+      const ig = await this.igService.getImplementationGuide(this.implementationGuideId ).toPromise();
 
-      if (identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
-        this.originalImplementationGuide = new R4ImplementationGuide(ig);
-        this.implementationGuide = new R4ImplementationGuide(ig);
+      if (identifyRelease(this.configService.fhirVersion) === Versions.R5) {
+        this.originalImplementationGuide = new R5ImplementationGuide(ig.resource);
+        this.implementationGuide = new R5ImplementationGuide(ig.resource);
+      }
+      else if (identifyRelease(this.configService.fhirVersion) === Versions.R4) {
+        this.originalImplementationGuide = new R4ImplementationGuide(ig.resource);
+        this.implementationGuide = new R4ImplementationGuide(ig.resource);
       } else {
-        this.originalImplementationGuide = new STU3ImplementationGuide(ig);
-        this.implementationGuide = new STU3ImplementationGuide(ig);
+        this.originalImplementationGuide = new STU3ImplementationGuide(ig.resource);
+        this.implementationGuide = new STU3ImplementationGuide(ig.resource);
       }
 
-      const profilesBundle = await this.igService.getProfiles(implementationGuideId).toPromise();
+      const profilesBundle = await this.igService.getProfiles(this.implementationGuideId).toPromise();
 
-      if (profilesBundle && profilesBundle.entry) {
-        this.profiles = profilesBundle.entry.map(e => {
+      if (profilesBundle && profilesBundle) {
+        this.profiles = profilesBundle.map(e => {
           if (this.configService.isFhirSTU3) {
             return new STU3StructureDefinition(e.resource);
           } else if (this.configService.isFhirR4) {
@@ -116,7 +121,7 @@ export class BulkEditComponent implements OnInit {
           } else if (this.configService.isFhirR5) {
             return new R5StructureDefinition(e.resource);
           } else {
-            throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+            throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
           }
         });
         this.originalProfiles = this.profiles.map(p => {
@@ -127,7 +132,7 @@ export class BulkEditComponent implements OnInit {
           } else if (this.configService.isFhirR5) {
             return new R5StructureDefinition(p);
           } else {
-            throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+            throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
           }
         });
       }
@@ -178,7 +183,7 @@ export class BulkEditComponent implements OnInit {
         bulkUpdateRequest.page = ig.page;
         bulkUpdateRequest.pageOp = getOp(originalIg.page, ig.page);
       } else {
-        throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+        throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
       }
 
       bulkUpdateRequest.profiles = this.profiles
@@ -198,7 +203,7 @@ export class BulkEditComponent implements OnInit {
           };
         });
 
-      await this.igService.bulkUpdate(this.implementationGuide.id, bulkUpdateRequest).toPromise();
+      await this.igService.bulkUpdate(this.implementationGuideId, bulkUpdateRequest).toPromise();
 
       this.changedProfiles = {};
       this.changedPages = {};

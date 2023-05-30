@@ -1,8 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">Edit Resource</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body" *ngIf="resource">
   <app-fhir-select-single-code
@@ -49,12 +47,10 @@
         <td>
           <div class="input-group">
             <input type="text" class="form-control" [(ngModel)]="r4Resource.supportedProfile[spi]" />
-            <div class="input-group-append">
-              <div class="input-group-btn">
-                <button type="button" class="btn btn-primary" title="Select a profile" (click)="selectSupportedProfile(spi)">
-                  <i class="fas fa-hand-pointer"></i>
-                </button>
-              </div>
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-primary" title="Select a profile" (click)="selectSupportedProfile(spi)">
+                <i class="fas fa-hand-pointer"></i>
+              </button>
             </div>
           </div>
         </td>
@@ -104,7 +100,7 @@
               <input type="checkbox" [ngModel]="interactionHasExpectation(i)"
                      (ngModelChange)="toggleInteractionExpectation(i)"/>
             </div>
-            <select class="form-control" [ngModel]="getInteractionExpectation(i)"
+            <select class="form-select" [ngModel]="getInteractionExpectation(i)"
                     (ngModelChange)="setInteractionExpectation(i, $event)">
               <option>SHALL</option>
               <option>SHOULD</option>

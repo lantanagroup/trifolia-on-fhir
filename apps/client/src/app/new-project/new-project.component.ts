@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit} from '@angular/core';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { ImplementationGuide, ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
@@ -11,7 +11,8 @@ import { Router } from '@angular/router';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { identifyRelease } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { PublishingRequestModel } from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
-
+import { ProjectService } from '../shared/projects.service';
+import { IConformance, IProject } from '@trifolia-fhir/models';
 @Component({
   templateUrl: './new-project.component.html',
   styleUrls: ['./new-project.component.css']
@@ -37,12 +38,14 @@ export class NewProjectComponent implements OnInit {
 
 
   constructor(private igService: ImplementationGuideService,
-              private fhirService: FhirService,
-              private configService: ConfigService,
-              private router: Router) {
+    private projectService: ProjectService,
+    private fhirService: FhirService,
+    private configService: ConfigService,
+    private router: Router) {
   }
 
   done() {
+
     let ig: IImplementationGuide;
 
     const publishingRequest = new PublishingRequestModel();
@@ -58,32 +61,36 @@ export class NewProjectComponent implements OnInit {
     publishingRequest['ci-build'] = 'http://build.fhir.org/ig/';
     publishingRequest.introduction = 'New IG: ' + this.igTitle;
 
-    if (this.configService.isFhirR5) {
-      ig = new R5ImplementationGuide();
-    } else if (this.configService.isFhirR4) {
+
+    if (this.fhirVersion == 'r4' || this.fhirVersion === 'r5') {
       ig = new R4ImplementationGuide();
-    } else if (this.configService.isFhirSTU3) {
+      this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
+    } else if (this.fhirVersion == 'stu3') {
       ig = new STU3ImplementationGuide();
+      this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/jurisdiction');
     } else {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
 
-    this.igId = this.projectCode.replace(/\./g, '-');
-    ig.url = this.igUrl;
+  //  this.igId = this.projectCode.replace(/\./g, '-');
     ig.version = '0.1.0';
-    ig.name = this.igName;
+    ig.name = this.igName.replace(/[^a-zA-Z0-9_]/g, '');
+    ig.name  = ig.name.charAt(0).toUpperCase() + ig.name.slice(1);
+    ig.id =  ig.name.replace(/_/gi, '-');
+    ig.url = `${this.igUrl}/${ig.id}`;
     const wg = Globals.hl7WorkGroups.find(w => w.url === this.hl7WorkGroup);
     const wgName = wg ? `HL7 International - ${wg.name}` : 'HL7 International Working Group';
     ig.contact = [{
       name: wgName,
       telecom: [{
         system: 'url',
-        value: "http://www.hl7.org/Special/committees/",
+        value: wg ? wg.url : "",
       }],
     }];
 
+    const jusrisdiction = this.selectedJurisdiction ? [{ coding: [this.selectedJurisdiction] }] : this.selectedJurisdiction;
     // Create the implementation guide based on the FHIR server we're connected to
-    if (this.configService.isFhirR5) {
+    if (this.fhirVersion === 'r5') {
       if (this.isHL7) {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
@@ -91,17 +98,18 @@ export class NewProjectComponent implements OnInit {
         (<R5ImplementationGuide>ig).packageId = this.packageId;
         (<R5ImplementationGuide>ig).title = this.igTitle;
       }
-    } else if (this.configService.isFhirR4) {
+    } else if (this.fhirVersion === 'r4') {
       if (this.isHL7) {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
-        (<R4ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+        (<R4ImplementationGuide>ig).jurisdiction = jusrisdiction;
         (<R4ImplementationGuide>ig).packageId = this.packageId;
         (<R4ImplementationGuide>ig).title = this.igTitle;
       }
-    } else if (this.configService.isFhirSTU3) {
+    } else if (this.fhirVersion == 'stu3') {
       if (this.isHL7) {
-        (<STU3ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+
+       // (<STU3ImplementationGuide>ig).jurisdiction = jusrisdiction;
         const packageIdExt = new STU3Extension();
         packageIdExt.url = Globals.extensionUrls['extension-ig-package-id'];
         packageIdExt.valueString = this.packageId;
@@ -109,18 +117,26 @@ export class NewProjectComponent implements OnInit {
         ig.extension.push(packageIdExt);
       }
     } else {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
+    let projectName = ig.name;
+    PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirVersion));
 
-    PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));
-
-    this.igService.saveImplementationGuide(ig)
-      .subscribe((implementationGuide: ImplementationGuide) => {
-        this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
-      }, (err) => {
-        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
+    let newConf: IConformance = <IConformance>{fhirVersion: this.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
+    this.igService.saveImplementationGuide(newConf)
+      .subscribe({
+        next: async (ig: IConformance) => {
+          let project: IProject = <IProject>{ author: "", fhirVersion: this.fhirVersion, name: projectName };
+          project.igs = project.igs || [];
+          project.igs.push(ig);
+          await this.projectService.save(project).toPromise().then((project) => {
+            this.router.navigate([`/projects/${project.id}`]);
+          }).catch((err) => this.message = getErrorString(err));
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
+        }
       });
-
 
   }
 
@@ -157,10 +173,12 @@ export class NewProjectComponent implements OnInit {
     this.packageIdCriteriaChanged();
   }
 
+
   packageIdCriteriaChanged() {
-    this.packageId = `hl7.${this.isFHIR ? 'fhir' : 'cda'}.${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}.${this.projectCode || 'unknown'}`;
-    this.canonicalURL = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}/${this.projectCode || 'unknown'}`;
-    this.igUrl = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code : 'us'}/${this.projectCode || 'unknown'}/ImplementationGuide/${this.projectCode || 'unknown'}`;
+    const projectCode = this.projectCode.replace(/[^a-zA-Z0-9_-]/gi, '');
+    this.packageId = `hl7.${this.isFHIR ? 'fhir' : 'cda'}.${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}.${projectCode|| 'unknown'}`;
+    this.canonicalURL = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}/${projectCode || 'unknown'}`;
+    this.igUrl = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}/${projectCode || 'unknown'}/ImplementationGuide`;
   }
 
   setIgCanonicalUrl(value: string) {
@@ -178,12 +196,18 @@ export class NewProjectComponent implements OnInit {
   }
 
   igNameChanged() {
-    this.igName = this.igTitle.replace(/[^a-zA-Z0-9]/g, '');
+    this.igName = this.igTitle.replace(/[^a-zA-Z0-9_]/g, '');
   }
 
-  getFhirVersion() {
-    this.fhirVersion = this.configService.fhirConformanceVersion;
+  igIdChanged() {
+    this.igId = this.igName.replace(/[^a-zA-Z0-9]/g, '');
   }
+
+  isValidName(name: string) {
+    const results = /^[A-Z][A-Za-z0-9_]+$/.exec(name);
+    return !!results;
+  }
+
 
   isValidId(id: string) {
     const results = /^[A-Za-z0-9\-\\.]{1,64}$/.exec(id);
@@ -194,6 +218,14 @@ export class NewProjectComponent implements OnInit {
     return !!(/https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}/.exec(url));
   }
 
+  /*addCoding(jurisdiction: ICodeableConcept, index: number) {
+    jurisdiction.coding = jurisdiction.coding || [];
+    jurisdiction.coding.push({});
+    if (jurisdiction.coding.length === 1) {
+      this.setJurisdictionCode(this.jurisdictions[index], 0, this.jurisdictionCodes[0]);
+    }
+  }
+  */
   ngOnInit() {
     if (this.configService.isFhirR4 || this.configService.isFhirR5) {
       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
@@ -206,9 +238,28 @@ export class NewProjectComponent implements OnInit {
       display: 'Universal'
     });
 
+    //let jurisdictionCode: ICoding;
     this.selectedJurisdiction = this.jurisdictionCodes.find(jc => jc.code.toLowerCase() === 'us');
 
+    /*    const u = <ICoding>{
+          system: 'http://unstats.un.org/unsd/methods/m49/m49.htm',
+          code: '001',
+          version: '2.2.0',
+          display: 'Universal'
+        };*/
+    /* if(jurisdictionCode) {
+       const universal = <ICodeableConcept>{
+         coding: jurisdictionCode
+       };
+       this.selectedJurisdiction = this.selectedJurisdiction || [];
+       this.selectedJurisdiction.push(universal);
+     }
 
-    this.getFhirVersion();
+
+ /!*    if(jurisdictionCode) {
+       this.selectedJurisdiction.coding = this.selectedJurisdiction.coding || [];
+       this.selectedJurisdiction.coding.push({ jurisdictionCode })
+     }*!/*/
+    //this.getFhirVersion();
   }
 }

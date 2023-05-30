@@ -1,9 +1,10 @@
 <h1>Expand Value Set</h1>
-<p class="badge badge-info" *ngIf="valueSet">{{valueSet.url}}</p>
+<p class="badge bg-info" *ngIf="valueSet">{{valueSet.url}}</p>
 
-<ngb-tabset #t="ngbTabset" [destroyOnHide]="false">
-    <ngb-tab id="options" title="Options">
-        <ng-template ngbTabContent>
+<ul ngbNav #t="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+    <li ngbNavItem="options">
+        <a ngbNavLink>Options</a>
+        <ng-template ngbNavContent>
             <div class="row" *ngIf="valueSet">
                 <div class="col-md-6">
                     <app-fhir-string [parentObject]="this" propertyName="terminologyServer" placeholder="BUILT-IN" tooltipKey="external.terminology.server" cookieKey="terminology.server"></app-fhir-string>
@@ -37,9 +38,10 @@
                 </div>
             </div>
         </ng-template>
-    </ngb-tab>
-    <ngb-tab id="results" title="Results" [disabled]="!results">
-        <ng-template ngbTabContent>
+    </li>
+    <li ngbNavItem="results" [disabled]="!results">
+        <a ngbNavLink>Results</a>
+        <ng-template ngbNavContent>
             <div *ngIf="results">
                 <div *ngIf="isOperationOutcome">
                     <div *ngIf="results.text" [innerHTML]="results.text.div"></div>
@@ -49,8 +51,9 @@
                 </div>
             </div>
         </ng-template>
-    </ngb-tab>
-</ngb-tabset>
+    </li>
+</ul>
+<div [ngbNavOutlet]="t" class="mt-2"></div>
 
 <footer class="footer">
     <button type="button" class="btn btn-primary" (click)="expand(t)" [disabled]="expanding">Expand</button>

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {OperationDefinitionService} from '../shared/operation-definition.service';
-import {Bundle, OperationDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {OperationDefinition, SearchParameter} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../shared/config.service';
@@ -9,23 +9,26 @@ import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   templateUrl: './operation-definitions.component.html',
   styleUrls: ['./operation-definitions.component.css']
 })
 export class OperationDefinitionsComponent extends BaseComponent implements OnInit {
-  public operationDefinitionsBundle: Bundle;
+  public operationDefinitionsBundle;
   public nameText: string;
-  public criteriaChangedEvent = new Subject();
+  public criteriaChangedEvent = new Subject<void>();
   public page = 1;
   public Globals = Globals;
+  public total: string;
 
   constructor(
     public configService: ConfigService,
     protected authService: AuthService,
     private opDefService: OperationDefinitionService,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public route: ActivatedRoute) {
 
     super(configService, authService);
 
@@ -36,11 +39,11 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
   }
 
   public get operationDefinitions(): OperationDefinition[] {
-    if (!this.operationDefinitionsBundle) {
+    if (!this.operationDefinitionsBundle || !this.operationDefinitionsBundle.results) {
       return [];
     }
 
-    return (this.operationDefinitionsBundle.entry || []).map((entry) => <OperationDefinition>entry.resource);
+    return (this.operationDefinitionsBundle.results || []).map((entry) => <OperationDefinition>entry);
   }
 
   public nameTextChanged(value: string) {
@@ -55,9 +58,9 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
 
     this.opDefService.delete(operationDefinition.id)
       .subscribe(() => {
-        const entry = (this.operationDefinitionsBundle.entry || []).find((e) => e.resource.id === operationDefinition.id);
-        const index = this.operationDefinitionsBundle.entry.indexOf(entry);
-        this.operationDefinitionsBundle.entry.splice(index, 1);
+        const entry = (this.operationDefinitionsBundle.results || []).find((e) => e.resource.id === operationDefinition.id);
+        const index = this.operationDefinitionsBundle.results.indexOf(entry);
+        this.operationDefinitionsBundle.results.splice(index, 1);
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while deleting the operation definition');
       });
@@ -75,9 +78,12 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
   public getOperationDefinitions() {
     this.operationDefinitionsBundle = null;
 
-    this.opDefService.search(this.page, this.nameText)
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+
+    this.opDefService.search(this.page, this.nameText,  implementationGuideId )
       .subscribe((results) => {
         this.operationDefinitionsBundle = results;
+        this.total = this.operationDefinitionsBundle.total;
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while searching for operation definitions');
       });
@@ -91,6 +97,5 @@ export class OperationDefinitionsComponent extends BaseComponent implements OnIn
 
   ngOnInit() {
     this.getOperationDefinitions();
-    this.configService.fhirServerChanged.subscribe(() => this.getOperationDefinitions());
   }
 }

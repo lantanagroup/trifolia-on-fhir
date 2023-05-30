@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { StructureDefinitionService } from '../shared/structure-definition.service';
-import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { ElementTreeModel } from '../../../../../libs/tof-lib/src/lib/element-tree-model';
 import {
@@ -48,6 +48,8 @@ import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Versions} from 'fhir/fhir';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import { FshResourceComponent } from '../shared-ui/fsh-resource/fsh-resource.component';
+import { firstValueFrom } from 'rxjs';
+import {StructureDefinition} from '@trifolia-fhir/r5';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -60,6 +62,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     'ParameterDefinition', 'Expression', 'TriggerDefinition'];
 
   @Input() public structureDefinition: STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition;
+  public conformance;
+  public sdId;
   public baseStructureDefinition;
   public selectedElement: ElementTreeModel;
   public validation: ValidatorResponse;
@@ -71,7 +75,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public showUpdateFromFSH = false;
 
   @ViewChild('edPanel', { static: true }) edPanel: ElementDefinitionPanelComponent;
-  @ViewChild('sdTabs', { static: true }) sdTabs: NgbTabset;
+  @ViewChild('sdTabs', { static: true }) sdTabs: NgbNav;
 
   private navSubscription: any;
   private baseDefResponse: BaseDefinitionResponseModel;
@@ -195,8 +199,9 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     } else if (this.configService.isFhirR5) {
       this.constraintManager = new ConstraintManager(R5ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
     } else {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
+
 
     this.constraintManager.getStructureDefinition = (url: string) => {
       return new Promise((resolve, reject) => {
@@ -216,26 +221,28 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   }
 
   private async getStructureDefinition() {
-    const sdId = this.route.snapshot.paramMap.get('id');
+     this.sdId = this.route.snapshot.paramMap.get('id');
 
     this.message = 'Loading structure definition...';
     this.structureDefinition = null;
     this.constraintManager = null;
 
     try {
-      const sd = await this.strucDefService.getStructureDefinition(sdId).toPromise();
-
-      delete sd.snapshot;
+      this.conformance = await this.strucDefService.getStructureDefinition(this.sdId).toPromise();
+      const sdr = <StructureDefinition>this.conformance.resource;
+      delete sdr.snapshot;
 
       if (this.configService.isFhirR5) {
-        this.structureDefinition = new R5StructureDefinition(sd);
+        this.structureDefinition = new R5StructureDefinition(sdr);
       } else if (this.configService.isFhirR4) {
-        this.structureDefinition = new R4StructureDefinition(sd);
+        this.structureDefinition = new R4StructureDefinition(sdr);
       } else if (this.configService.isFhirSTU3) {
-        this.structureDefinition = new STU3StructureDefinition(sd);
+        this.structureDefinition = new STU3StructureDefinition(sdr);
       } else {
-        throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+        throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
       }
+
+      this.conformance.resource = this.structureDefinition;
 
       if (!this.structureDefinition.differential) {
         this.structureDefinition.differential = {
@@ -245,7 +252,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     } catch (err) {
       this.sdNotFound = err.status === 404;
       this.message = getErrorString(err);
-      this.recentItemService.removeRecentItem(Globals.cookieKeys.recentStructureDefinitions, sdId);
+      this.recentItemService.removeRecentItem(Globals.cookieKeys.recentStructureDefinitions, this.sdId);
       return;
     }
 
@@ -290,6 +297,12 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     return max !== '0' && max !== '1';
   }
 
+
+  public get isNew(): boolean {
+    const id = this.route.snapshot.paramMap.get('id');
+    return !id || id === 'new';
+  }
+
   public revert() {
     if (!confirm('Are you sure you want to revert your changes to the profile?')) {
       return;
@@ -313,12 +326,14 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    await this.strucDefService.save(this.structureDefinition)
-      .subscribe((updatedStructureDefinition: STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition) => {
-        if (!this.structureDefinition.id) {
+    await this.strucDefService.save(this.sdId, this.conformance)
+      .subscribe((conf) => {
+        if (!this.sdId) {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${updatedStructureDefinition.id}`]);
+          this.sdId = conf.id;
+          this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${this.sdId}`]);
         } else {
+          let updatedStructureDefinition = <STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>conf.resource;
           this.structureDefinition.snapshot = updatedStructureDefinition.snapshot;
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, updatedStructureDefinition.id, updatedStructureDefinition.name);
           this.message = 'Your changes have been saved!';
@@ -333,8 +348,9 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       });
 
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    const implementationGuide = await this.implementationGuideService.getImplementationGuide(implementationGuideId).toPromise();
-    const resources = (<ImplementationGuide> implementationGuide).definition.resource;
+    const conformance = await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))
+    const implementationGuide: ImplementationGuide = <ImplementationGuide>(conformance).resource;
+    const resources = implementationGuide.definition.resource;
 
 
     const index = resources.findIndex(resource => {
@@ -343,10 +359,10 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
 
     if(index >= 0){
-      (<ImplementationGuide> implementationGuide).definition.resource[index].name =
+      implementationGuide.definition.resource[index].name =
         this.structureDefinition.title ? this.structureDefinition.title : this.structureDefinition.name;
 
-      await this.implementationGuideService.saveImplementationGuide(<ImplementationGuide> implementationGuide)
+      await this.implementationGuideService.saveImplementationGuide(conformance)
         .toPromise()
         .catch(err => console.log(err));
     }

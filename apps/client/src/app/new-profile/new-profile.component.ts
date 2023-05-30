@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {StructureDefinitionService} from '../shared/structure-definition.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -14,8 +14,8 @@ import {ConfigService} from '../shared/config.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {BaseComponent} from '../base.component';
-import { Observable, Subject } from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
+import { firstValueFrom, Observable, Subject } from 'rxjs';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
 import { PublishingRequestModel } from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
@@ -25,16 +25,20 @@ import { ImplementationGuideService } from '../shared/implementation-guide.servi
   styleUrls: ['./new-profile.component.css']
 })
 export class NewProfileComponent extends BaseComponent implements OnInit {
+  public conformance;
   public structureDefinition: STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition;
+  public structureDefinitionId: string;
   public message: string;
   public Globals = Globals;
   public selectedType: ILogicalTypeDefinition;
 
   public isIdUnique = true;
-  public idChangedEvent = new Subject();
+  public idChangedEvent = new Subject<void>();
 
   public publishingRequest: PublishingRequestModel;
   public publishingRequestJSON;
+  public alreadyInUseIDMessage = '';
+  public implementationGuide;
 
   constructor(
     public route: ActivatedRoute,
@@ -46,6 +50,7 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
     private implementationGuideService: ImplementationGuideService,
     private strucDefService: StructureDefinitionService) {
 
+
     super(configService, authService);
 
     if (this.configService.isFhirR5) {
@@ -56,9 +61,17 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
       this.structureDefinition = new STU3StructureDefinition({meta: this.authService.getDefaultMeta()});
     }
 
+    this.conformance =  { resource: this.structureDefinition, fhirVersion: <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         this.isIdUnique = await this.fhirService.checkUniqueId(this.structureDefinition);
+        if (!this.isIdUnique) {
+          this.alreadyInUseIDMessage = "ID " + this.structureDefinition.id + " is already used in this IG.";
+        }
+        else {
+          this.alreadyInUseIDMessage = "";
+        }
       });
   }
 
@@ -85,13 +98,17 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
         ((<StructureDefinitionContextComponent> this.structureDefinition.context[0]).type === ''
         || (<StructureDefinitionContextComponent> this.structureDefinition.context[0]).expression === '' )) ||
       !this.structureDefinition.hasOwnProperty('abstract') ||
-      !this.canEdit(this.structureDefinition) ||
+      !this.canEdit(this.conformance) ||
       !this.selectedType;
   }
 
   public save() {
-    this.strucDefService.save(this.structureDefinition)
+    if(this.implementationGuide.fhirVersion.length > 0) {
+      this.conformance.resource.fhirVersion = this.implementationGuide.fhirVersion[0];
+    }
+    this.strucDefService.save(this.structureDefinitionId, this.conformance)
       .subscribe((results) => {
+
         this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${results.id}`]);
       }, (err) => {
         this.message = getErrorString(err);
@@ -121,9 +138,9 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
   async ngOnInit() {
 
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    const implementationGuide = await this.implementationGuideService.getImplementationGuide(implementationGuideId).toPromise();
+    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
-    const url = (<ImplementationGuide> implementationGuide).url;
+    const url =  this.implementationGuide.url;
     this.structureDefinition.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "StructureDefinition/" : "";
 
   }

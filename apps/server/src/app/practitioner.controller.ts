@@ -1,17 +1,11 @@
 import {BaseFhirController} from './base-fhir.controller';
-import {Body, Controller, Delete, Get, HttpService, NotFoundException, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
-import {buildUrl, generateId} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Bundle, Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {HttpService} from '@nestjs/axios';
+import {Controller, UseGuards} from '@nestjs/common';
+import {Practitioner} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
-import {AxiosRequestConfig} from 'axios';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
-import {FhirServerBase, FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
-import {IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {ApiImplicitQuery} from '@nestjs/swagger/dist/decorators/api-implicit-query.decorator';
 
 @Controller('api/practitioner')
 @UseGuards(AuthGuard('bearer'))
@@ -116,7 +110,7 @@ export class PractitionerController extends BaseFhirController {
     }
   }
 
-  @Post('me')
+ /* @Post('me')
   public async updateMyPractitioner(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Body() practitioner: Practitioner): Promise<any> {
     const existingPractitioner = await this.getMyPractitioner(user, fhirServerBase, true);
     const authUser = user.sub;
@@ -182,8 +176,8 @@ export class PractitionerController extends BaseFhirController {
 
     return updatedPractitioner;
   }
-
-  @Get('me')
+*/
+/*  @Get('me')
   public getMe(@User() user: ITofUser, @FhirServerBase() fhirServerBase: string, @Query('resolveIfNotFound') resolveIfNotFound = false): Promise<IPractitioner> {
     return super.getMyPractitioner(user, fhirServerBase, resolveIfNotFound);
   }
@@ -198,9 +192,9 @@ export class PractitionerController extends BaseFhirController {
     const url = buildUrl(fhirServerBase, 'Practitioner', null, null, query);
     const results = await this.httpService.get<Bundle>(url).toPromise();
     return results.data;
-  }
+  }*/
 
-  @Get()
+ /* @Get()
   @ApiImplicitQuery({ name: 'name', type: 'string', required: false, description: 'Filter results by name' })
   public search(@User() user, @FhirServerBase() fhirServerBase, @Query() query?: any, @RequestHeaders() headers?): Promise<any> {
     return super.baseSearch(user, fhirServerBase, query, headers);
@@ -224,5 +218,5 @@ export class PractitionerController extends BaseFhirController {
   @Delete(':id')
   public delete(@FhirServerBase() fhirServerBase, @FhirServerVersion() fhirServerVersion: 'stu3'|'r4', @Param('id') id: string, @User() user) {
     return super.baseDelete(fhirServerBase, fhirServerVersion, id, user);
-  }
+  }*/
 }

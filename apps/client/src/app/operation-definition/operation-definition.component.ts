@@ -14,13 +14,17 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import {IConformance} from '@trifolia-fhir/models';
+
 
 @Component({
   templateUrl: './operation-definition.component.html',
   styleUrls: ['./operation-definition.component.css']
 })
 export class OperationDefinitionComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  public operationDefinition: OperationDefinition;
+  public conformance;
+  public operationDefinitionId: string;
+  public operationDefinition;
   public message: string;
   public validation: any;
   public odNotFound = false;
@@ -29,7 +33,6 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
-
 
   private navSubscription: any;
 
@@ -48,12 +51,14 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
 
     this.operationDefinition = new OperationDefinition({ meta: this.authService.getDefaultMeta() });
 
+    this.conformance =  { resource: this.operationDefinition, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         const isIdUnique = await this.fhirService.checkUniqueId(this.operationDefinition);
         if(!isIdUnique){
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.operationDefinition.id  + " is already used.";
+          this.alreadyInUseIDMessage = "ID " +  this.operationDefinition.id  + " is already used in this IG.";
         }
         else{
           this.isIdUnique = true;
@@ -103,25 +108,31 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    this.opDefService.save(this.operationDefinition)
-      .subscribe((results: OperationDefinition) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/operation-definition/${results.id}`]);
-        } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentOperationDefinitions, results.id, results.name);
+    this.opDefService.save(this.operationDefinitionId, this.conformance)
+      .subscribe({
+        next: (conf: IConformance) => {
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.operationDefinitionId = conf.id;
+            this.router.navigate([`${this.configService.baseSessionUrl}/operation-definition/${conf.id}`]);
+          } else {
+            this.conformance = conf;
+            this.operationDefinition = conf.resource;
+            this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, conf.id, conf.name);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
           this.message = 'Your changes have been saved!';
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the operation definition:' + getErrorString(err);
         }
-      }, (err) => {
-        this.message = `An error occurred while saving the operation definition: ${err.message}`;
       });
   }
 
   private getOperationDefinition() {
-    const operationDefinitionId = this.route.snapshot.paramMap.get('id');
+    this.operationDefinitionId = this.isNew ? null : this.route.snapshot.paramMap.get('id');
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -137,14 +148,14 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
     if (!this.isNew) {
       this.operationDefinition = null;
 
-      this.opDefService.get(operationDefinitionId)
-        .subscribe((opDef: OperationDefinition | OperationOutcome) => {
-          if (opDef.resourceType !== 'OperationDefinition') {
-            this.message = 'The specified operation definition either does not exist or was deleted';
+      this.opDefService.get(this.operationDefinitionId)
+        .subscribe((conf: IConformance) => {
+          if (!conf || !conf.resource || conf.resource.resourceType !== 'OperationDefinition') {
+            this.message = 'The specified operation Definition either does not exist or was deleted';
             return;
           }
-
-          this.operationDefinition = <OperationDefinition>opDef;
+          this.conformance = conf;
+          this.operationDefinition = <OperationDefinition>conf.resource;
           this.nameChanged();
           this.recentItemService.ensureRecentItem(
             Globals.cookieKeys.recentOperationDefinitions,
@@ -153,7 +164,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
         }, (err) => {
           this.odNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentOperationDefinitions, operationDefinitionId);
+          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentOperationDefinitions, this.operationDefinitionId);
         });
     }
   }

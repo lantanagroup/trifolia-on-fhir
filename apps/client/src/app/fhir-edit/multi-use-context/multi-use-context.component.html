@@ -31,13 +31,13 @@
         <tbody>
         <tr *ngFor="let uc of parentObject[propertyName]; let uci = index">
             <td>
-                <select class="form-control" [ngModel]="Globals.getSelectCoding(uc.code, usageContextTypeCodes)"
+                <select class="form-select" [ngModel]="Globals.getSelectCoding(uc.code, usageContextTypeCodes)"
                         (ngModelChange)="uc.code = $event; change.emit()">
                     <option *ngFor="let c of usageContextTypeCodes" [ngValue]="c">{{c.display}}</option>
                 </select>
             </td>
             <td>
-                <select class="form-control" [ngModel]="getUseContextCodeType(uc)"
+                <select class="form-select" [ngModel]="getUseContextCodeType(uc)"
                         (ngModelChange)="setUseContextCodeType(uc, $event); change.emit()">
                     <option value="CodeableConcept">Code(s)</option>
                     <option value="Quantity">Quantity</option>

@@ -30,7 +30,8 @@ import * as vkbeautify from 'vkbeautify';
 import {publishReplay, refCount} from 'rxjs/operators';
 import {IBundle, ICoding} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import { forkJoin } from 'rxjs';
+import {forkJoin} from 'rxjs';
+import {IConformance, IHistory} from '@trifolia-fhir/models';
 
 export interface IResourceGithubDetails {
   owner: string;
@@ -53,6 +54,7 @@ export class ResourceGithubDetails implements IResourceGithubDetails {
 @Injectable()
 export class FhirService {
   public fhir: Fhir;
+  public fhirVersion: string = 'r4';
   public loaded: boolean;
   public profiles: StructureDefinition[] = [];
   public valueSets: (ValueSet | CodeSystem)[] = [];
@@ -64,18 +66,21 @@ export class FhirService {
     private configService: ConfigService) {
 
     this.customValidator = new CustomSTU3Validator();
-    this.configService.fhirServerChanged.subscribe(() => {
-      if (this.loaded) {
-        // noinspection JSIgnoredPromiseFromCall
-        this.loadAssets();
-      }
 
-      if (identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
-        this.customValidator = new CustomR4Validator();
-      } else {            // Assume default of STU3
-        this.customValidator = new CustomSTU3Validator();
-      }
-    });
+    this.loadAssets();
+
+    /* this.configService.fhirServerChanged.subscribe(() => {
+       if (this.loaded) {
+         // noinspection JSIgnoredPromiseFromCall
+         this.loadAssets();
+       }
+
+       if (identifyRelease(this.configService.fhirConformanceVersion) === Versions.R4) {
+         this.customValidator = new CustomR4Validator();
+       } else {            // Assume default of STU3
+         this.customValidator = new CustomSTU3Validator();
+       }
+     });*/
   }
 
   public get primitiveTypes(): string[] {
@@ -88,12 +93,12 @@ export class FhirService {
         'boolean', 'url', 'code', 'string', 'integer', 'uri', 'canonical', 'markdown',
         'id', 'oid', 'uuid', 'unsignedInt', 'positiveInt', 'Element'];
     } else if (this.configService.isFhirR5) {
-      return ['instant','time','date','dateTime','base64Binary', 'decimal',
+      return ['instant', 'time', 'date', 'dateTime', 'base64Binary', 'decimal',
         'integer64', 'boolean', 'url', 'code', 'string', 'integer', 'uri',
         'canonical', 'markdown', 'id', 'oid', 'uuid', 'unsignedInt',
-      'positiveInt'];
+        'positiveInt'];
     } else {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
   }
 
@@ -115,7 +120,7 @@ export class FhirService {
         'DataRequirement', 'RelatedArtifact', 'UsageContext',
         'ParameterDefinition', 'Expression', 'TriggerDefinition', 'Reference',
         'Meta', 'Dosage', 'xhtml', 'Narrative', 'Extension',
-        'ElementDefinition','instant', 'time', 'date', 'dateTime',
+        'ElementDefinition', 'instant', 'time', 'date', 'dateTime',
         'base64Binary', 'decimal', 'boolean', 'url', 'code', 'string',
         'integer', 'uri', 'canonical', 'markdown', 'id', 'oid', 'uuid',
         'unsignedInt', 'positiveInt', 'Element'];
@@ -133,7 +138,7 @@ export class FhirService {
         'Availability', 'Expression', 'UsageContext', 'MonetaryComponent',
         'VisualServiceDetail'];
     } else {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
   }
 
@@ -141,11 +146,17 @@ export class FhirService {
     return this.injector.get(HttpClient);
   }
 
+  public async setFhirVersion(fhirVersion?: string) {
+    if (this.fhirVersion === fhirVersion && this.loaded == true) {
+      return Promise.resolve();
+    }
+    this.fhirVersion = fhirVersion;
+    this.loadAssets();
+  }
+
   public loadAssets() {
     this.loaded = false;
-    const fhirVersion = identifyRelease(this.configService.fhirConformanceVersion);
-    const isFhirR4 = fhirVersion === Versions.R4;
-    const loadDirectory = isFhirR4 ? 'r4' : 'stu3';
+    const loadDirectory = this.fhirVersion;
 
     const assetPromises = [
       this.http.get('/assets/' + loadDirectory + '/codesystem-iso3166.json').pipe(publishReplay(1), refCount()),
@@ -154,10 +165,10 @@ export class FhirService {
       this.http.get('/assets/' + loadDirectory + '/profiles-resources.json').pipe(publishReplay(1), refCount())
     ];
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       forkJoin(assetPromises)
         .subscribe((allAssets) => {
-          const parser = new ParseConformance(false, fhirVersion);
+          const parser = new ParseConformance(false, this.configService.fhirVersion);
           parser.loadCodeSystem(allAssets[0]);
           parser.parseBundle(allAssets[1]);
           parser.parseBundle(allAssets[2]);
@@ -165,11 +176,11 @@ export class FhirService {
 
           this.fhir = new Fhir(parser);
 
-          this.valueSets = (<Bundle>allAssets[1]).entry.map((entry) => <ValueSet> entry.resource);
+          this.valueSets = (<Bundle>allAssets[1]).entry.map((entry) => <ValueSet>entry.resource);
           this.valueSets.push(<CodeSystem>allAssets[0]);
           this.profiles = (<Bundle>allAssets[2]).entry
             .concat((<Bundle>allAssets[3]).entry)
-            .map((entry) => <StructureDefinition> entry.resource);
+            .map((entry) => <StructureDefinition>entry.resource);
 
           this.loaded = true;
           resolve();
@@ -192,10 +203,10 @@ export class FhirService {
   }
 
   public getResourceGithubDetails(resource: DomainResource): ResourceGithubDetails {
-    const branchExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
+    const branchExtensionUrl = this.configService.fhirVersion === Versions.R4.toLowerCase() ?
       Globals.extensionUrls['github-branch'] :
       Globals.extensionUrls['github-branch'];
-    const pathExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
+    const pathExtensionUrl = this.configService.fhirVersion === Versions.R4.toLowerCase() ?
       Globals.extensionUrls['github-path'] :
       Globals.extensionUrls['github-path'];
 
@@ -217,10 +228,10 @@ export class FhirService {
       resource.extension = [];
     }
 
-    const branchExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
+    const branchExtensionUrl = this.configService.fhirVersion === Versions.R4.toLowerCase() ?
       Globals.extensionUrls['github-branch'] :
       Globals.extensionUrls['github-branch'];
-    const pathExtensionUrl = this.configService.identifyRelease() === Versions.R4 ?
+    const pathExtensionUrl = this.configService.fhirVersion === Versions.R4.toLowerCase() ?
       Globals.extensionUrls['github-path'] :
       Globals.extensionUrls['github-path'];
 
@@ -228,12 +239,12 @@ export class FhirService {
     let pathExtension = (resource.extension || []).find((extension) => extension.url === pathExtensionUrl);
 
     if (!branchExtension) {
-      branchExtension = {url: branchExtensionUrl};
+      branchExtension = { url: branchExtensionUrl };
       resource.extension.push(branchExtension);
     }
 
     if (!pathExtension) {
-      pathExtension = {url: pathExtensionUrl};
+      pathExtension = { url: pathExtensionUrl };
       resource.extension.push(pathExtension);
     }
 
@@ -243,14 +254,14 @@ export class FhirService {
 
   public getValueSetCodes(valueSetUrl: string): Coding[] {
     let codes: Coding[] = [];
-    const foundValueSet = <ValueSet> this.valueSets
+    const foundValueSet = <ValueSet>this.valueSets
       .filter((item) => item.resourceType === 'ValueSet')
       .find((valueSet) => valueSet.url === valueSetUrl);
 
     if (foundValueSet) {
       if (foundValueSet.compose) {
         (foundValueSet.compose.include || []).forEach((include: ConceptSetComponent) => {
-          const foundSystem: CodeSystem = <CodeSystem><any> this.valueSets
+          const foundSystem: CodeSystem = <CodeSystem><any>this.valueSets
             .filter((item) => item.resourceType === 'CodeSystem')
             .find((codeSystem) => codeSystem.url === include.system);
 
@@ -276,7 +287,7 @@ export class FhirService {
 
   public changeResourceId(resourceType: string, originalId: string, newId: string): Observable<string> {
     const url = `/api/fhir/${resourceType}/${encodeURIComponent((originalId))}/$change-id?&newId=${encodeURIComponent(newId)}`;
-    return this.http.post(url, null, {responseType: 'text'});
+    return this.http.post(url, null, { responseType: 'text' });
   }
 
   /**
@@ -293,13 +304,8 @@ export class FhirService {
    * @param {number} [count]
    * @param ignoreContext Does *not* send the context implementation guide in the headers to limit the search results
    */
-  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, additionalQuery?: { [id: string]: string|string[] }, separateArrayQuery = false, sortID = false, page?: number, count = 10, ignoreContext = false) {
-    let url = '/api/fhir/' + resourceType + '?' + `_count=${count}&`;
-
-    if(page){
-      const offset = (page - 1) * count;
-      url += `_getpagesoffset=${offset.toString()}&`;
-    }
+  public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, implementationGuideId?: string, additionalQuery?: { [id: string]: string | string[] }, separateArrayQuery = false, sortID = false, page?: number) {
+    let url = '/api/conformance?resourcetype=' + resourceType + '&page=' + page + '&'; //+ `_count=${count}&`;
 
     if (searchContent) {
       url += `_content=${encodeURIComponent(searchContent)}&`;
@@ -310,7 +316,11 @@ export class FhirService {
     }
 
     if (id) {
-      url += `_id=${encodeURIComponent(id)}&`;
+      url += `id=${encodeURIComponent(id)}&`;
+    }
+
+    if (implementationGuideId) {
+      url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;
     }
 
     if (additionalQuery) {
@@ -332,56 +342,24 @@ export class FhirService {
       });
     }
 
-    if (summary === true) {
-      url += '_summary=true&';
-    }
+    if (sortID) url += '_sort=resourceid&';
 
-    if(sortID) url += '_sort=_id&';
-
-    const options = {
-      headers: {}
-    };
-
-    if (ignoreContext) {
-      options.headers['ignoreContext'] = 'true';
-    }
-
-    return this.http.get<IBundle>(url, options);
+    return this.http.get<IConformance[]>(url);
   }
 
+
   /**
-   * Retrieves the specified resource id from the FHIR server
+   * Retrieves the specified resource id
    * @param {string} resourceType
    * @param {string} id
    */
-  public read(resourceType: string, id: string) {
-    const url = '/api/fhir/' + resourceType + '/' + id;
-    return this.http.get(url);
-  }
-
-  /**
-   * Retrieves all versions of the specified resource from the FHIR server
-   * @param {string} resourceType
-   * @param {string} id
-   */
-  public getHistory(resourceType: string, id: string, page = 1) {
-    let url = `/api/fhir/${resourceType}/${id}/_history?`;
-
-    if (page > 1) {
-      url += `page=${page}`;
+  public readById(resourceType: string, id: string) {
+    let url = '';
+    if (resourceType == 'conformance') {
+      url = '/api/conformance/' + encodeURIComponent(id);
+    } else if (resourceType == 'example') {
+      url = '/api/example/' + encodeURIComponent(id);
     }
-
-    return this.http.get<IBundle>(url).toPromise();
-  }
-
-  /**
-   * Retrieves a specific version of the resource from the FHIR server
-   * @param {string} resourceType
-   * @param {string} id
-   * @param {string} versionId
-   */
-  public vread(resourceType: string, id: string, versionId: string) {
-    const url = `/api/fhir/${resourceType}/${id}/_history/${versionId}`;
     return this.http.get(url);
   }
 
@@ -390,8 +368,8 @@ export class FhirService {
    * @param {string} resourceType
    * @param {string} id
    */
-  public delete(resourceType: string, id: string) {
-    const url = `/api/fhir/${resourceType}/${id}`;
+  public delete(id: string) {
+    const url = `/api/conformance/${id}`;
     return this.http.delete(url);
   }
 
@@ -401,12 +379,16 @@ export class FhirService {
    * @param {string} id
    * @param {Resource} resource
    */
-  public update(resourceType: string, id: string, resource: Resource): Observable<Resource> {
-    const url = '/api/fhir/' + resourceType + '/' + id;
-    return this.http.put<Resource>(url, resource);
+  public update(id: string, conformance: IConformance): Observable<IConformance> {
+    if (id) {
+      const url = '/api/conformance/' + encodeURIComponent(id);
+      return this.http.put<IConformance>(url, conformance);
+    } else {
+      return this.http.post<IConformance>('/api/codeSystem', conformance);
+    }
   }
 
-  public patch(resourceType: string, id: string, patches: {op: string, path: string, value: any}[]) {
+  public patch(resourceType: string, id: string, patches: { op: string, path: string, value: any }[]) {
     const url = `/api/fhir/${resourceType}/${id}`;
     return this.http.patch(url, patches);
   }
@@ -486,7 +468,7 @@ export class FhirService {
     try {
       const results = this.fhir.validate(resource, {
         // inject custom validation into the FHIR module
-        onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData),
+        onBeforeValidateResource: (nextResource) => this.validateResource(nextResource, extraData)
         /*
         beforeCheckCode: (valueSetUrl: string, code: string, system?: string) => {
           if (system === 'https://trifolia-fhir.lantanagroup.com/security') {
@@ -556,26 +538,26 @@ export class FhirService {
     }
   }
 
-  public findResourceTypesWithSearchParam(searchParamName: string): string[] {
-    const cs = <CapabilityStatement>this.configService.fhirConformance;
-    const resourceTypes: string[] = [];
+  /* public findResourceTypesWithSearchParam(searchParamName: string): string[] {
+     const cs = <CapabilityStatement>this.configService.fhirConformance;
+     const resourceTypes: string[] = [];
 
-    if (!cs) {
-      return resourceTypes;
-    }
+     if (!cs) {
+       return resourceTypes;
+     }
 
-    (cs.rest || []).forEach((rest: RestComponent) => {
-      (rest.resource || []).forEach((resource: ResourceComponent) => {
-        const found = (resource.searchParam || []).find((searchParam: SearchParamComponent) => searchParam.name === searchParamName);
+     (cs.rest || []).forEach((rest: RestComponent) => {
+       (rest.resource || []).forEach((resource: ResourceComponent) => {
+         const found = (resource.searchParam || []).find((searchParam: SearchParamComponent) => searchParam.name === searchParamName);
 
-        if (found) {
-          resourceTypes.push(resource.type);
-        }
-      });
-    });
+         if (found) {
+           resourceTypes.push(resource.type);
+         }
+       });
+     });
 
-    return resourceTypes;
-  }
+     return resourceTypes;
+   }*/
 
   public async checkUniqueId(resource: DomainResource) {
     let url = `/api/fhir/${resource.resourceType}`;

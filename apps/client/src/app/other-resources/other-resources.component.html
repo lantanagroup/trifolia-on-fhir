@@ -1,34 +1,34 @@
 <h1>Other Resources</h1>
 
-<ngb-tabset #tabSet="ngbTabset" [destroyOnHide]="false">
-  <ngb-tab id="criteria">
-    <ng-template ngbTabTitle>
+<ul ngbNav #tabSet="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+  <li ngbNavItem="criteria">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['other.search-criteria']">Criteria</span>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <div class="col-md-6">
-        <div class="form-group" [attr.data-intro]="tabSet.activeId === 'criteria' ? Globals.introText['other.search.resource-type'] : undefined">
+        <div class="mb-3" [attr.data-intro]="tabSet.activeId === 'criteria' ? Globals.introText['other.search.resource-type'] : undefined">
           <label>Resource Type</label>
-          <select class="form-control" [(ngModel)]="searchResourceType" [class.is-invalid]="!searchResourceType" (keyup.enter)="search()">
+          <select class="form-select" [(ngModel)]="searchResourceType" [class.is-invalid]="!searchResourceType" (keyup.enter)="search()">
             <option *ngFor="let o of resourceTypes" [ngValue]="o.code">{{o.display}}</option>
           </select>
         </div>
 
-        <div class="form-group" *ngIf="configService.project">
+        <div class="mb-3" *ngIf="configService.project">
           <label>Only show resources for the project (the context implementation guide)?</label>
-          <select class="form-control" [(ngModel)]="ignoreContext">
+          <select class="form-select" [(ngModel)]="ignoreContext">
             <option [ngValue]="false">Yes</option>
             <option [ngValue]="true">No</option>
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <label>Content</label>
           <input type="text" class="form-control" [(ngModel)]="searchContent" (keyup.enter)="search()" />
           <span class="help-block">This field searches the entire content of the resource.</span>
         </div>
 
-        <div class="form-group">
+        <div class="mb-3">
           <label>Resource URL</label>
           <input type="text" class="form-control" [(ngModel)]="searchUrl" (keyup.enter)="search()" />
           <span class="help-block">This field only applies if the selected resource type has a "URL" field. Searching by URL requires an exact match.</span>
@@ -44,12 +44,12 @@
         </p>
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab id="results">
-    <ng-template ngbTabTitle>
+  </li>
+  <li ngbNavItem="results">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['other.search-results-tab']">Search Results</span>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <div *ngIf="results && results.total > 0" [attr.data-intro]="Globals.introText['other.search-results-paging']">
         <ngb-pagination class="d-flex justify-content-center"
                         *ngIf="results && results.total > 0"
@@ -69,13 +69,13 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let entry of results.entry">
-          <td>{{entry.resource?.id}}</td>
-          <td>{{getEntryUrl(entry)}}</td>
-          <td>{{getEntryName(entry)}}</td>
+        <tr *ngFor="let result of results.results">
+          <td>{{result.resource?.id}}</td>
+          <td>{{getEntryUrl(result)}}</td>
+          <td>{{getEntryName(result)}}</td>
           <td class="actions-column-1">
             <div class="pull-right">
-              <a class="btn btn-primary" title="View/Edit this resource" routerLink="{{configService.baseSessionUrl}}/other-resources/{{entry.resource.resourceType}}/{{entry.resource.id}}">
+              <a class="btn btn-primary" title="View/Edit this resource" routerLink="{{configService.baseSessionUrl}}/other-resources/conformance/{{result.id}}">
                 <i class="fa fa-search"></i>
               </a>
             </div>
@@ -96,9 +96,10 @@
         </tfoot>
       </table>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-</ngb-tabset>
+</ul>
+<div [ngbNavOutlet]="tabSet" class="mt-2"></div>
 
 <footer class="footer">
   <span class="message">{{message}}</span>

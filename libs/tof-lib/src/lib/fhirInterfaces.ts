@@ -281,7 +281,7 @@ export interface IStructureDefinition extends IDomainResource {
   notes: string;
 }
 
-export interface IAuditEvent {
+export interface IAuditEvent extends IDomainResource {
   type: ICoding;
   subtype?: ICoding[];
   action?: string;

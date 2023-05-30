@@ -1,11 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ManageService} from '../../shared/manage.service';
-import {ActiveUserModel} from '../../../../../../libs/tof-lib/src/lib/active-user-model';
-import {UserModel} from '../../../../../../libs/tof-lib/src/lib/user-model';
-import {getAliasName, getDisplayIdentifier, getDisplayName, getIdentifierSource} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {ActiveUserModel, getAuthIdIdentifier, getAuthIdSource} from '@trifolia-fhir/tof-lib';
 import {Subject} from 'rxjs';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MergeUserModalComponent} from '../merge-user-modal/merge-user-modal.component';
+import type { IUser } from '@trifolia-fhir/models';
 
 @Component({
   selector: 'trifolia-fhir-users',
@@ -14,16 +13,14 @@ import {MergeUserModalComponent} from '../merge-user-modal/merge-user-modal.comp
 })
 export class UsersComponent implements OnInit {
   activeUsers: ActiveUserModel[];
-  users: UserModel[];
+  users: IUser[];
   totalUsers: number;
   usersPage = 1;
   usersPageChanged = new Subject();
   searchUsersName: string;
 
-  getDisplayName = getDisplayName;
-  getDisplayIdentifier = getDisplayIdentifier;
-  getIdentifierSource = getIdentifierSource;
-  getAliasName = getAliasName;
+  getAuthIdIdentifier = getAuthIdIdentifier;
+  getAuthIdSource = getAuthIdSource;
 
   constructor(private manageService: ManageService, private modal: NgbModal) {
     this.usersPageChanged.subscribe(() => this.refreshUsers());
@@ -34,7 +31,7 @@ export class UsersComponent implements OnInit {
     await this.refreshUsers();
   }
 
-  mergeUser(user: UserModel) {
+  mergeUser(user: IUser) {
     const modalRef = this.modal.open(MergeUserModalComponent, { size: 'lg' });
     modalRef.componentInstance.sourceUser = user;
     modalRef.result.then(() => this.refreshUsers());
@@ -42,14 +39,11 @@ export class UsersComponent implements OnInit {
 
   async refreshUsers() {
     this.users = [];
-    const userResults = await this.manageService.getUsers(this.searchUsersName, 10, this.usersPage);
-    this.users = userResults.users;
 
-    if (!userResults.hasOwnProperty('total') && userResults.hasMore) {
-      this.totalUsers = (this.users.length * this.usersPage) + 10;
-    } else {
-      this.totalUsers = userResults.total;
-    }
+    const res = await this.manageService.getUsers(this.searchUsersName, 10, this.usersPage);
+
+    this.users = res.results;
+    this.totalUsers = res.total;
   }
 
   async refresh() {

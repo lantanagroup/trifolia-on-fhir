@@ -1,22 +1,21 @@
 import {EventEmitter, Injectable, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {PractitionerService} from './practitioner.service';
-import {Group, Meta, Practitioner} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Meta} from '@trifolia-fhir/stu3';
 import {ConfigService} from './config.service';
 import {SocketService} from './socket.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {addPermission} from '../../../../../libs/tof-lib/src/lib/helper';
+import {addPermission} from '@trifolia-fhir/tof-lib';
 import {GroupService} from './group.service';
-import {map} from 'rxjs/operators';
 import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
-import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
-import { IBundle } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {ITofUser} from '@trifolia-fhir/tof-lib';
+import { UserService } from './user.service';
+import type {IConformance, IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
   public userProfile: ITofUser;
-  public practitioner: Practitioner;
-  public groups: Group[] = [];
+  public user: IUser;
+  public groups: IGroup[] = [];
   public authChanged: EventEmitter<any>;
   public loggingIn = false;
 
@@ -24,8 +23,7 @@ export class AuthService {
     private injector: Injector,
     private socketService: SocketService,
     private configService: ConfigService,
-    private modalService: NgbModal,
-    private practitionerService: PractitionerService,
+    private userService: UserService,
     private groupService: GroupService,
     private oauthService: OAuthService) {
 
@@ -76,6 +74,7 @@ export class AuthService {
     authConfig.scope = this.configService.config.auth.scope;
     authConfig.requireHttps = false;
     authConfig.requestAccessToken = true;
+    //authConfig.showDebugInformation = true;
 
     this.oauthService.configure(authConfig);
 
@@ -95,36 +94,36 @@ export class AuthService {
 
     this.authChanged.subscribe(() => {
       if (this.isAuthenticated()) {
-        this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
+        this.socketService.notifyAuthenticated(this.userProfile, this.user);
       }
     });
 
     // If the socket re-connects, then re-send the authentication information for the connection
     this.socketService.onConnected.subscribe(() => {
       if (this.isAuthenticated()) {
-        this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
+        this.socketService.notifyAuthenticated(this.userProfile, this.user);
       }
     });
 
     // When the FHIR server changes, get the profile for the user on the FHIR server
     // and then notify the socket connection that the user has been authenticated
-    this.configService.fhirServerChanged.subscribe(async () => {
-      await this.getProfile();
+   // this.configService.fhirServerChanged.subscribe(async () => {
+     this.getProfile();
 
       if (this.isAuthenticated()) {
-        this.socketService.notifyAuthenticated(this.userProfile, this.practitioner);
+        this.socketService.notifyAuthenticated(this.userProfile, this.user);
       }
-    });
+   // });
   }
 
   public login(): void {
     if (!this.oauthService) {
       return;
     }
-    this.oauthService.initImplicitFlow(encodeURIComponent(this.router.url));
+    this.oauthService.initImplicitFlow();
   }
 
-  public handleAuthentication(): void {
+  public handleAuthentication(): Promise<void> {
     if (!this.oauthService) {
       return;
     }
@@ -133,29 +132,30 @@ export class AuthService {
 
       window.location.hash = '';
       let path;
-      if(!this.oauthService.state || this.oauthService.state !== 'undefined'){
+      if (!this.oauthService.state || this.oauthService.state !== 'undefined'){
         path = this.oauthService.state;
-      }else{
-        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/implementation-guide/open`;
+      } else{
+        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.baseSessionUrl}/implementation-guide/open`;
       }
 
       // Make sure the user is not sent back to the /login page, which is only used to active .handleAuthentication()
       if (path.startsWith('/login')) {
         //path = '/';
-        path = this.activatedRoute.snapshot.queryParams.pathname || `/${this.configService.fhirServer}/implementation-guide/open`;
+        path = this.activatedRoute.snapshot.queryParams.pathname || `/projects`;
       }
 
       if (path && path !== '/' && path !== '/logout' && path !== '/login' && !path.endsWith('/home')) {
         this.router.navigate([path]);
       } else if (window.location.pathname === '/' || path.endsWith('/home')) {
-        this.router.navigate([this.configService.fhirServer, 'implementation-guide', 'open']);
+        //this.router.navigate([this.configService.fhirServer, 'implementation-guide', 'open']);
+        this.router.navigate(['/projects'])
       }
 
       this.authChanged.emit();
       this.getProfile();
       this.socketService.notifyAuthenticated({
         userProfile: this.userProfile,
-        practitioner: this.practitioner
+        user: this.user
       });
     }
   }
@@ -168,7 +168,7 @@ export class AuthService {
     // Go back to the home route
     // noinspection JSIgnoredPromiseFromCall
 
-    this.router.navigate([`/${this.configService.fhirServer}/home`]);
+    this.router.navigate([`/${this.configService.baseSessionUrl}/home`]);
     this.authChanged.emit();
   }
 
@@ -186,33 +186,25 @@ export class AuthService {
         userProfile.isAdmin = false;
       }
 
+      //userProfile.isAdmin = true;
       return userProfile;
     }
   }
 
-  public async getProfile(): Promise<{ userProfile: any, practitioner: Practitioner }> {
+  public async getProfile(): Promise<{ userProfile: any, user: IUser }> {
     if (!this.isAuthenticated()) {
-      return Promise.resolve({ userProfile: null, practitioner: null });
+      return Promise.resolve({ userProfile: null, user: null });
     }
 
     this.userProfile = this.getAuthUserInfo();
+    this.groups = [];
 
     try {
-      this.practitioner = await this.practitionerService.getMe().toPromise();
+      this.user = await firstValueFrom(this.userService.getMe());
+      this.groups = await firstValueFrom(this.groupService.getMembership());
     } catch (ex) {
       console.error(ex);
-      this.practitioner = null;
-    }
-
-    try {
-      this.groups = await this.groupService.getMembership()
-        .pipe(map((groupsBundle: IBundle) =>
-          (groupsBundle.entry || []).map(entry => <Group>entry.resource)
-        ))
-        .toPromise();
-    } catch (ex) {
-      console.error(ex);
-      this.groups = [];
+      this.user = null;
     }
 
     // This also triggers a notification to the socket
@@ -220,7 +212,7 @@ export class AuthService {
 
     return {
       userProfile: this.userProfile,
-      practitioner: this.practitioner
+      user: this.user
     };
   }
 
@@ -238,9 +230,16 @@ export class AuthService {
     }
 
     if (!meta.security || meta.security.length === 0) {
-      addPermission(meta, 'everyone', 'write');
+      //addPermission(meta, 'everyone', 'write');
     }
 
     return meta;
+  }
+
+
+  public getDefaultPermissions(): IPermission[] {
+    let conf: IConformance|IProject = <IConformance|IProject>{}
+    addPermission(conf, 'everyone', 'write');
+    return conf.permissions;
   }
 }

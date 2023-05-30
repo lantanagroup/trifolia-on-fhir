@@ -1,8 +1,6 @@
 <div class="modal-header">
     <h4 class="modal-title">Edit Concept</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body" *ngIf="concept">
     <app-fhir-string [parentObject]="concept" propertyName="code" title="Code" [required]="true" tooltipPath="CodeSystem.concept.code"></app-fhir-string>
@@ -42,8 +40,8 @@
                         <div class="input-group-addon">
                             <input type="checkbox" [ngModel]="c.hasOwnProperty('use')" (ngModelChange)="Globals.toggleProperty(c, 'use', Globals.designationUseCodes[0])" />
                         </div>
-                        <select class="form-control" *ngIf="!c.hasOwnProperty('use')" disabled="disabled"></select>
-                        <select class="form-control" *ngIf="c.hasOwnProperty('use')" [ngModel]="Globals.getSelectCoding(c.use, Globals.designationUseCodes, true, true)" (ngModelChange)="c.use = $event">
+                        <select class="form-select" *ngIf="!c.hasOwnProperty('use')" disabled="disabled"></select>
+                        <select class="form-select" *ngIf="c.hasOwnProperty('use')" [ngModel]="Globals.getSelectCoding(c.use, Globals.designationUseCodes, true, true)" (ngModelChange)="c.use = $event">
                             <option *ngFor="let duc of Globals.designationUseCodes" [ngValue]="duc">{{duc.display || duc.code}}</option>
                         </select>
                     </div>
@@ -90,7 +88,7 @@
                     <app-fhir-string [parentObject]="c" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
                 </td>
                 <td>
-                    <select class="form-control" [ngModel]="getPropertyType(c)" (ngModelChange)="setPropertyType(c, $event)">
+                    <select class="form-select" [ngModel]="getPropertyType(c)" (ngModelChange)="setPropertyType(c, $event)">
                         <option value=""></option>
                         <option value="Code">Code</option>
                         <option value="Coding">Coding</option>

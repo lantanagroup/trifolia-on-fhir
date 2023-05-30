@@ -1,11 +1,9 @@
 <div class="modal-header">
     <h4 class="modal-title">Edit Attachment</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body" *ngIf="attachment">
-    <div class="form-group">
+    <div class="mb-3">
         <label>From File</label>
         <input type="file" class="form-control" (change)="attachmentUpload($event)"/>
         <span class="help-block">Select a file to override this attachment data.</span>
@@ -15,7 +13,7 @@
     <!-- language class is defined in select-single-code.component.css -->
     <app-fhir-select-single-code [parentObject]="attachment" propertyName="language" customClass="language" title="Language" [isTypeahead]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/all-languages" defaultCode="en-US"></app-fhir-select-single-code>
 
-    <div class="form-group">
+    <div class="mb-3">
         <label>
             <input type="checkbox" [ngModel]="attachment.hasOwnProperty('data')" (ngModelChange)="Globals.toggleProperty(attachment, 'data', '')"/>
             Data
@@ -26,7 +24,7 @@
 
     <app-fhir-string [parentObject]="attachment" propertyName="url" title="Url"></app-fhir-string>
 
-    <div class="form-group">
+    <div class="mb-3">
         <label>
             <input type="checkbox" [ngModel]="attachment.hasOwnProperty('size')" (ngModelChange)="Globals.toggleProperty(attachment, 'size', '')"/>
             Size

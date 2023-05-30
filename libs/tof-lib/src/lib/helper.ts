@@ -1,6 +1,7 @@
 import { ResourceSecurityModel } from './resource-security-model';
 import { Globals } from './globals';
 import { ICoding, IDomainResource, IHumanName, IIdentifier, IMeta, IPractitioner } from './fhirInterfaces';
+import { IPermission, IProject, IProjectResource, IUser } from './models';
 
 export class ParsedUrlModel {
   public resourceType: string;
@@ -24,7 +25,7 @@ export function escapeForXml(value: string) {
     .replace(/>/g, '&gt;');
 }
 
-export function getFhirVersion(releaseVersion: 'stu3'|'r4') {
+export function getFhirVersion(releaseVersion: 'stu3' | 'r4') {
   switch (releaseVersion) {
     case 'stu3':
       return '3.0.2';
@@ -113,7 +114,7 @@ export function reduceDistinct<T>(callback: (next: T) => any) {
  * @param items The items to group
  * @param callback The callback whose return value indicates what the key of each item is
  */
-export function groupBy<T>(items: T[], callback: (next: T) => any): { [key: string]: any} {
+export function groupBy<T>(items: T[], callback: (next: T) => any): { [key: string]: any } {
   const groups = {};
 
   (items || []).forEach((next) => {
@@ -141,12 +142,12 @@ export function getResourceSecurity(resource: IDomainResource): ResourceSecurity
         const split = security.code.split('|');
 
         if (split[0] === 'everyone') {
-          return <ResourceSecurityModel> {
+          return <ResourceSecurityModel>{
             type: 'everyone',
             permission: split[1]
           };
         } else if (split.length === 3) {
-          return <ResourceSecurityModel> {
+          return <ResourceSecurityModel>{
             type: split[0],
             id: split[1],
             permission: split[2]
@@ -202,8 +203,8 @@ export function ensureSecurity(meta: IMeta) {
 }
 
 export interface SecurityPermission {
-  type: 'user'|'group'|'everyone';
-  permission: 'read'|'write';
+  type: 'user' | 'group' | 'everyone';
+  permission: 'read' | 'write';
   id?: string;
 }
 
@@ -217,86 +218,79 @@ export function parsePermissions(meta: IMeta): SecurityPermission[] {
 
       if (parts.length === 2) {
         return {
-          type: <any> parts[0],
-          permission: <any> parts[1]
+          type: <any>parts[0],
+          permission: <any>parts[1]
         };
       } else if (parts.length === 3) {
         return {
-          type: <any> parts[0],
+          type: <any>parts[0],
           id: parts[1],
-          permission: <any> parts[2]
+          permission: <any>parts[2]
         };
       }
     });
 }
 
-export function findPermission(meta: IMeta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
-  if (!meta) {
+export function findPermission(perms: IPermission[], type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string) {
+
+  if (!perms) {
     return false;
   }
 
-  const security = meta.security || [];
-  const delimiter = Globals.securityDelim;
-
-  return !!security.find((next) => {
-    if (next.system !== Globals.securitySystem) {
-      return false;
-    }
-
+  return !!perms.find((p: IPermission) => {
     if (type === 'everyone') {
-      return next.code === `${type}${delimiter}${permission}`;
+      return p.type === 'everyone' && p.grant == grant;
     } else {
-      return next.code === `${type}${delimiter}${id}${delimiter}${permission}`;
+      return p.type === type && p.grant == grant && p.targetId === targetId;
     }
   });
 }
 
-export function addPermission(meta: IMeta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
-  ensureSecurity(meta);
-  const delim = Globals.securityDelim;
+export function addPermission(resource: IProject|IProjectResource, type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
 
   // Write permissions should always assume read permissions as well
-  if (permission === 'write' && !findPermission(meta, type, 'read', id)) {
-    addPermission(meta, type, 'read', id);
+  if (grant === 'write' && !findPermission(resource.permissions, type, 'read', targetId)) {
+    addPermission(resource, type, 'read', targetId);
   }
 
-  const securityValue = type === 'everyone' ? `${type}${delim}${permission}` : `${type}${delim}${id}${delim}${permission}`;
-  let found: ICoding;
-
-  if (meta && meta.security) {
-    found = meta.security.find((security) => security.system === Globals.securitySystem && security.code === securityValue);
+  let newPerm: IPermission = { type: type, grant: grant };
+  if (type !== 'everyone') {
+    newPerm.targetId = targetId;
   }
+  let found = false;
+
+  if (!resource.permissions) {
+    resource.permissions = [];
+  }
+
+  found = findPermission(resource.permissions, type, grant, targetId);
 
   if (!found) {
-    meta.security.push({
-      system: Globals.securitySystem,
-      code: securityValue
-    });
-
+    resource.permissions.push(newPerm);
     return true;
   }
 
   return false;
 }
 
-export function removePermission(meta: IMeta, type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string): boolean {
+export function removePermission(resource: IProject|IProjectResource, type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
   const delim = Globals.securityDelim;
 
   // Assume that if we're removing read permission, they shouldn't have write permission either
-  if (permission === 'read') {
-    removePermission(meta, type, 'write', id);
+  if (grant === 'read') {
+    removePermission(resource, type, 'write', targetId);
   }
 
-  const securityValue = type === 'everyone' ? `${type}${delim}${permission}` : `${type}${delim}${id}${delim}${permission}`;
-  let found: ICoding;
+  let index = -1;
 
-  if (meta && meta.security) {
-    found = meta.security.find((security) => security.system === Globals.securitySystem && security.code === securityValue);
+  if (resource && resource.permissions) {
+    index = type === 'everyone' ? 
+      resource.permissions.findIndex((p: IPermission) => p.type === type && p.grant === grant) : 
+      resource.permissions.findIndex((p: IPermission) => p.type === type && p.grant === grant && p.targetId === targetId);
   }
 
-  if (found) {
-    const index = meta.security.indexOf(found);
-    meta.security.splice(index, 1);
+  if (index > -1) {
+    resource.permissions.splice(index, 1);
     return true;
   }
 
@@ -317,13 +311,13 @@ export function getMetaSecurity(meta: IMeta): ResourceSecurityModel[] {
         const inactiveExtension = (security.extension || []).find((extension) => extension.url === Globals.extensionUrls['extension-coding-inactive']);
 
         if (split[0] === 'everyone') {
-          return <ResourceSecurityModel> {
+          return <ResourceSecurityModel>{
             type: 'everyone',
             permission: split[1],
             inactive: inactiveExtension && inactiveExtension.valueBoolean === true
           };
         } else if (split.length === 3) {
-          return <ResourceSecurityModel> {
+          return <ResourceSecurityModel>{
             type: split[0],
             id: split[1],
             permission: split[2],
@@ -344,12 +338,18 @@ export function getPractitionerEmail(practitioner: IPractitioner) {
   }
 }
 
+export function getUserEmail(user: IUser) {
+  if (user && user.email) {
+    return user.email.replace('mailto:', '');
+  }
+}
+
 export function getStringFromBlob(theBlob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
       const reader = new FileReader();
       reader.onload = function () {
-        resolve(<string> reader.result);
+        resolve(<string>reader.result);
       };
       reader.readAsText(theBlob);
     } catch (ex) {
@@ -392,7 +392,7 @@ export function getAliasName(names: IHumanName[]) {
   }
 }
 
- export function getDisplayName(name: string | IHumanName | IHumanName[]): string {
+export function getDisplayName(name: string | IHumanName | IHumanName[]): string {
   if (!name) {
     return;
   }
@@ -460,7 +460,7 @@ export function getDisplayIdentifier(identifier: IIdentifier | IIdentifier[], ig
     return getDisplayIdentifier(identifier[0], ignoreSystem);
   }
 
-  const obj = <IIdentifier> identifier;
+  const obj = <IIdentifier>identifier;
   let value = obj.value;
 
   if (value) {
@@ -493,4 +493,59 @@ export function parseReference(reference: string): ParsedUrlModel {
       historyId: match[5]
     };
   }
+}
+
+
+
+export function getAuthIdIdentifier(authId: string | string[]): string {
+  if (!authId) {
+    return '';
+  }
+
+  if (authId instanceof Array) {
+    if (authId.length > 0) {
+      return getAuthIdIdentifier(authId[0]);
+    }
+    return '';
+  }
+
+  let value = authId;
+
+  const parts = authId.split('|');
+  if (parts.length === 2) {
+    value = parts[1];
+  }
+
+  return value;
+}
+
+export function getAuthIdSource(authId: string | string[]): string {
+  if (!authId) {
+    return '';
+  }
+
+  if (authId instanceof Array) {
+    if (authId.length > 0) {
+      return getAuthIdSource(authId[0]);
+    }
+    return '';
+  }
+
+  const parts = authId.split('|');
+
+  switch (parts[0]) {
+    case 'waad':
+      return 'User/Pass';
+    case 'google-oauth2':
+      return 'Google';
+    case 'windowslive':
+      return 'Microsoft';
+    case 'github':
+      return 'GitHub';
+    case 'facebook':
+      return 'Facebook';
+    default:
+      return '';
+  }
+
 }

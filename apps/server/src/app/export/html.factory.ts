@@ -1,39 +1,37 @@
 import {STU3HtmlExporter} from './html.stu3';
 import {R4HtmlExporter} from './html.r4';
-import {IFhirConfigServer} from '../models/fhir-config';
-import {HttpService} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
 import {Fhir as FhirModule} from 'fhir/fhir';
 import {Server} from 'socket.io';
-import {ITofUser} from '../../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {ConfigService} from '../config.service';
 import {TofLogger} from '../tof-logger';
+import { ConformanceService } from '../conformance/conformance.service';
 
 export async function createHtmlExporter(
+  conformanceService: ConformanceService,
   configService: ConfigService,
   httpService: HttpService,
   logger: TofLogger,
-  fhirServerBase: string,
-  fhirServerId: string,
-  fhirVersion: string,
   fhir: FhirModule,
   io: Server,
   socketId: string,
   user: ITofUser,
-  implementationGuideId: string) {
+  implementationGuideId: string): Promise<STU3HtmlExporter|R4HtmlExporter> {
 
-  const fhirServerConfig = configService.fhir.servers.find((server: IFhirConfigServer) => server.id === fhirServerId);
+  //const fhirServerConfig = configService.fhir.servers.find((server: IFhirConfigServer) => server.id === fhirServerId);
+  let fhirVersion = (await conformanceService.findById(implementationGuideId)).fhirVersion;
 
-  let theClass;
-  switch (fhirServerConfig.version) {
+  let exporter: STU3HtmlExporter|R4HtmlExporter;
+  switch (fhirVersion) {
     case 'stu3':
-      theClass = STU3HtmlExporter;
+      exporter = new STU3HtmlExporter(conformanceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
       break;
     case 'r4':
-      theClass = R4HtmlExporter;
+      exporter = new R4HtmlExporter(conformanceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
       break;
   }
 
-  const exporter = new theClass(configService, httpService, logger, fhirServerBase, fhirServerId, fhirVersion, fhir, io, socketId, implementationGuideId);
   exporter.user = user;
   await exporter.init();
   return exporter;

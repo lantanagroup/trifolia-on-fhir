@@ -6,7 +6,7 @@
   <div class="card-body" *ngIf="expanded[page.source]">
     <app-fhir-string [parentObject]="page" propertyName="title" title="Title" (change)="changedPages[page.source] = true"></app-fhir-string>
 
-    <div class="form-group">
+    <div class="mb-3">
       <label>Content</label>
       <trifolia-fhir-markdown [(value)]="page.contentMarkdown" (change)="changedPages[page.source] = true"></trifolia-fhir-markdown>
     </div>

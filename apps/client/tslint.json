@@ -1,13 +1,11 @@
 {
   "extends": "../../tslint.json",
   "rules": {
-    "directive-selector": [
-      true,
-      "attribute",
-      "trifolia-fhir",
-      "camelCase"
-    ],
+    "directive-selector": [true, "attribute", "trifolia-fhir", "camelCase"],
     "component-selector": false,
     "nx-enforce-module-boundaries": false
+  },
+  "linterOptions": {
+    "exclude": ["!**/*", "!**/*", "!**/*"]
   }
 }

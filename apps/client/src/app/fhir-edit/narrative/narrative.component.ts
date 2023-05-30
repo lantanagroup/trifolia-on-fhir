@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {DomainResource} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import * as Mustache from 'mustache';
+import Mustache from 'mustache';
 import {HttpClient} from '@angular/common/http';
 import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuide as STU3ImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -148,7 +148,7 @@ export class NarrativeComponent implements OnInit {
     const stu3ImplementationGuide = this.configService.isFhirSTU3 ? <STU3ImplementationGuide>resource : undefined;
 
     if (!this.configService.isFhirR5 && !this.configService.isFhirR4 && !this.configService.isFhirSTU3) {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
     
     const getPages = (parent) => {

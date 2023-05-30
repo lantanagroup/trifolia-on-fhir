@@ -2,19 +2,19 @@
 
 <div class="alert alert-danger" *ngIf="sdNotFound">Structure Definition with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<div class="sd-main" *ngIf="structureDefinition">
+<div  *ngIf="structureDefinition" [class.has-element-definition]="selectedElement">
   <h2>
-    {{structureDefinition.name || 'No name'}} <span class="badge badge-warning" *ngIf="!canEdit(structureDefinition)">View-only</span>
-    <button class="badge badge-danger" *ngIf="isDirty" (click)="isDirty=false">Changed!</button>
-    <!--span class="badge badge-danger" *ngIf="isDirty">Changed!</span-->
+    {{structureDefinition.name || 'No name'}} <span class="badge bg-warning" *ngIf="!canEdit(conformance)">View-only</span>
+    <span class="badge bg-danger" *ngIf="isDirty" (click)="isDirty=false">Changed!</span>
+    <!--span class="badge bg-danger" *ngIf="isDirty">Changed!</span-->
   </h2>
 
-  <ngb-tabset (tabChange)="beforeTabChange($event)" [class.has-element-definition]="selectedElement" #sdTabs>
-    <ngb-tab id="general">
-      <ng-template ngbTabTitle>
+  <ul ngbNav #sdTabs="ngbNav" class="nav-tabs" (navChange)="beforeTabChange($event)" >
+    <li ngbNavItem="general">
+      <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general-tab'] : undefined">General</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <fieldset>
           <div class="row">
             <div class="col-md-6">
@@ -40,8 +40,8 @@
               <app-fhir-string [parentObject]="structureDefinition" propertyName="version" title="Version" tooltipPath="StructureDefinition.version"
                                (change)="isDirty = true; nameChanged();"></app-fhir-string>
 
-              <app-fhir-string [parentObject]="structureDefinition" propertyName="fhirVersion" title="FHIR Version" tooltipPath="StructureDefinition.fhirVersion"
-                               (change)="isDirty = true; nameChanged();"></app-fhir-string>
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="fhirVersion"  title="FHIR Version" tooltipPath="StructureDefinition.fhirVersion"
+                               (change)="isDirty = true; nameChanged();" [disabled] = true ></app-fhir-string>
 
               <app-fhir-string [parentObject]="structureDefinition" propertyName="publisher" title="Publisher" tooltipPath="StructureDefinition.publisher"
                                (change)="isDirty = true; nameChanged();"></app-fhir-string>
@@ -54,18 +54,18 @@
             </div>
 
             <div class="col-md-3">
-              <div class="form-group">
+              <div class="mb-3">
                 <label>ID
                   <app-tooltip-icon tooltipKey="resource.move"></app-tooltip-icon>
                 </label>
                 <input type="text" class="form-control" [disabled]="true" [ngModel]="structureDefinition.id" (change)="isDirty = true; nameChanged();"/>
               </div>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label>Type
                   <app-tooltip-icon tooltipKey="sd.type"></app-tooltip-icon>
                 </label>
-                <select class="form-control" [ngModel]="structureDefinition.type" [disabled]="true"
+                <select class="form-select" [ngModel]="structureDefinition.type" [disabled]="true"
                         title="The type cannot be changed because the Elements tab relies on it. Delete and re-create the profile if you need to change the type." (change)="isDirty = true; nameChanged();">
                   <option>{{structureDefinition.type}}</option>
                 </select>
@@ -89,13 +89,13 @@
           </div>
         </fieldset>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="narrative">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="narrative">
+      <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.narrative-tab'] : undefined">Narrative</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-fhir-narrative [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></app-fhir-narrative>
 
         <app-fhir-markdown [parentObject]="structureDefinition" propertyName="description" title="Description" tooltipKey="structureDefinition.description"
@@ -111,13 +111,13 @@
         <app-fhir-markdown [parentObject]="structureDefinition" propertyName="copyright" title="Copyright" tooltipPath="StructureDefinition.copyright"
                            (valueChangeEmitter)="isDirty = true; nameChanged();"></app-fhir-markdown>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="additional">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="additional">
+      <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.additional-tab'] : undefined">Additional</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-6">
             <app-fhir-multi-identifier [parentObject]="structureDefinition" propertyName="identifier" tooltipPath="StructureDefinition.identifier"
@@ -180,13 +180,13 @@
           </div>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="mapping">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="mapping">
+      <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.mappings-tab'] : undefined">Mapping(s)</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <p>
           <input type="checkbox" [ngModel]="structureDefinition.hasOwnProperty('mapping')" (ngModelChange)="toggleMappings(); isDirty = true; nameChanged();"/>
           This structure definition includes mappings
@@ -246,13 +246,13 @@
           </tbody>
         </table>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="elements" *ngIf="constraintManager && constraintManager.elements">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="elements" *ngIf="constraintManager && constraintManager.elements">
+      <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.elements-tab'] : undefined">Elements</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <div class="elements">
           <div class="element" *ngFor="let e of constraintManager.elements">
             <span class="white-space" style="white-space: pre;">{{e.tabs}}</span>
@@ -263,11 +263,11 @@
               <a *ngIf="e.constrainedElement" href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.displayId}}</a>
               <span *ngIf="!e.constrainedElement">{{e.displayId}}</span>
 
-              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types">?</span>
-              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ</span>
-              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?!</span>
-              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S</span>
-              <span class="property badge badge-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types">?</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?!</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I</span>
               <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constraintManager.constrain(e); isDirty = true; nameChanged();"></i> </span>
               <span class="action" *ngIf="e.constrainedElement && e.depth > 0 && cardinalityAllowsMultiple(e.baseElement.max) && e.constrainedElement.slicing">
                 <i class="fa fa-cut" title="Slice this element" (click)="constraintManager.slice(e); isDirty = true; nameChanged();"></i>
@@ -325,9 +325,7 @@
             <td class="element-cardinality">
               <div class="input-group">
                 <input type="text" class="form-control" [(ngModel)]="e.minString" [disabled]="!e.constrainedElement" (change)="isDirty = true; nameChanged();"/>
-                <div class="input-group-append">
-                  <span class="input-group-text">...</span>
-                </div>
+                <span class="input-group-text">...</span>
                 <input type="text" class="form-control" [(ngModel)]="e.max" [disabled]="!e.constrainedElement" (change)="isDirty = true; nameChanged();"/>
               </div>
             </td>
@@ -342,49 +340,51 @@
           </tbody>
         </table>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Permissions -->
-    <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
-      <ng-template ngbTabTitle>
-        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(structureDefinition)" title="No write permissions for current user specified!"></i>
+    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+      <a ngbNavLink>
+        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i>
+      </a>
+      <ng-template ngbNavContent>
+        <trifolia-fhir-resource-permissions [resource]="conformance" (change)="isDirty = true; nameChanged();"></trifolia-fhir-resource-permissions>
       </ng-template>
-      <ng-template ngbTabContent>
-        <trifolia-fhir-resource-permissions [resource]="structureDefinition" (change)="isDirty = true; nameChanged();"></trifolia-fhir-resource-permissions>
-      </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Validation -->
-    <ngb-tab id="validation">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="validation">
+      <a ngbNavLink>
         Validation ({{validation?.messages?.length || 0}})
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- RAW JSON/XML -->
-    <ngb-tab id="raw" title="RAW">
-      <ng-template ngbTabContent>
+    <li ngbNavItem="raw">
+      <a ngbNavLink>RAW</a>
+      <ng-template ngbNavContent>
         <app-raw-resource [resource]="structureDefinition" [shown]="sdTabs.activeId === 'raw'"></app-raw-resource>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Version History -->
-    <ngb-tab id="history" title="History">
-      <ng-template ngbTabContent>
-        <app-resource-history [(resource)]="structureDefinition" (resourceChange)="loadBaseDefinition()" (change)="isDirty = true; nameChanged();"></app-resource-history>
+    <li ngbNavItem="history">
+      <a ngbNavLink>History</a>
+      <ng-template ngbNavContent>
+        <app-resource-history [resource]="conformance" (resourceChange)="structureDefinition = $event; conformance.resource = $event; loadBaseDefinition()" (change)="isDirty = true; nameChanged();"></app-resource-history>
       </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
-
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="sdTabs" class="mt-2"></div>
   <div class="element-definition card" *ngIf="selectedElement">
     <div class="card-header">
       <span>Element Definition</span>
 
       <div class="btn-toolbar" style="float: right">
-        <div class="btn-group mr-2">
+        <div class="btn-group me-2">
           <button type="button" class="btn btn-primary btn-sm" title="Slice this element"
                   [disabled]="!selectedElement.constrainedElement || selectedElement.depth === 0 || !cardinalityAllowsMultiple(selectedElement.baseElement.max)"
                   (click)="constraintManager.slice(selectedElement); isDirty = true; nameChanged();">
@@ -428,7 +428,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(structureDefinition)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()">Revert</button>
     <button type="button" class="btn btn-primary" (click)="editFSH()">Edit FSH</button>
   </div>

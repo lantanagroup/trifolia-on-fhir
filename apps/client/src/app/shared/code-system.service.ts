@@ -3,43 +3,45 @@ import {Bundle, CodeSystem, OperationOutcome} from '../../../../../libs/tof-lib/
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IConformance, IProject} from '@trifolia-fhir/models';
+import { ConformanceService } from './conformance.service';
 
 @Injectable()
-export class CodeSystemService {
+export class CodeSystemService extends ConformanceService {
 
   constructor(
-      private http: HttpClient) {
-
+      protected http: HttpClient) {
+      super(http);
   }
 
-    public save(codeSystem: ICodeSystem): Observable<ICodeSystem> {
-        if (codeSystem.id) {
-            const url = '/api/codeSystem/' + encodeURIComponent(codeSystem.id);
-            return this.http.put<ICodeSystem>(url, codeSystem);
+    public save(codeSystemId:string, codeSystem: IConformance): Observable<IConformance> {
+        if (codeSystemId) {
+            const url = '/api/codeSystem/' + encodeURIComponent(codeSystemId);
+            return this.http.put<IConformance>(url, codeSystem);
         } else {
-            return this.http.post<ICodeSystem>('/api/codeSystem', codeSystem);
+            return this.http.post<IConformance>('/api/codeSystem', codeSystem);
         }
     }
 
-    public search(page = 1, name?: string, implementationGuideId?: string) {
-        let url = '/api/codeSystem?page=' + page + '&';
+    public searchCodeSystem(page = 1, name?: string, implementationGuideId?: string) :  Observable<IConformance[]> {
+        let url = '/api/codeSystem?resourcetype=CodeSystem&page=' + page + '&';
 
         if (name) {
             url += `name=${encodeURIComponent(name)}&`;
         }
 
         if (implementationGuideId) {
-          url += `implementationGuideId=${encodeURIComponent(implementationGuideId)}&`;
+          url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;
         }
 
         url += '_sort=name';
 
-        return this.http.get<Bundle>(url);
+        return this.http.get<IConformance[]>(url);
     }
 
-    public get(id: string) {
+    public getCodeSystem(id: string): Observable<IConformance> {
         const url = '/api/codeSystem/' + encodeURIComponent(id);
-        return this.http.get<CodeSystem | OperationOutcome>(url);
+        return this.http.get<IConformance>(url);
     }
 
     public delete(id: string) {

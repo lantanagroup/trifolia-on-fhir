@@ -1,7 +1,6 @@
 import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, ResourceReference} from './r4/fhir';
 import {Extension, ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
 import { customAlphabet } from 'nanoid';
-import * as semver from 'semver';
 import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
 import {Globals} from './globals';
@@ -9,12 +8,12 @@ import {Globals} from './globals';
 export function identifyRelease(fhirVersion: string): Versions {
   const modFhirVersion = fhirVersion ? fhirVersion.replace('-ballot', '') : fhirVersion;
   if (!fhirVersion) {
-    return Versions.STU3;
-  } else if (semver.satisfies(modFhirVersion, '>= 3.2.0 < 4.2.0')) {
     return Versions.R4;
-  } else if (semver.satisfies(modFhirVersion, '>= 1.1.0 <= 3.0.2')) {
+  } else if (fhirVersion == Versions.R4.toLowerCase()) {
+    return Versions.R4;
+  } else if (fhirVersion == Versions.STU3.toLowerCase()) {
     return Versions.STU3;
-  } else if (semver.satisfies(modFhirVersion, '>= 4.2.0 <= 5.0.0')) {
+  } else if (fhirVersion == Versions.R5.toLowerCase()) {
     return Versions.R5;
   } else {
     throw new Error('Unexpected FHIR Version ' + fhirVersion);

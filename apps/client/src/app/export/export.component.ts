@@ -1,19 +1,18 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {saveAs} from 'file-saver';
-import {ExportOptions, ExportService} from '../shared/export.service';
-import {ExportFormats} from '../models/export-formats.enum';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {CookieService} from 'angular2-cookie/core';
-import {ConfigService} from '../shared/config.service';
-import {ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Observable} from 'rxjs';
-import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
-import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
-import {NgbTabChangeEvent} from '@ng-bootstrap/ng-bootstrap';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {HttpClient} from '@angular/common/http';
-import { SearchImplementationGuideResponseContainer } from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import { saveAs } from 'file-saver';
+import { ExportOptions, ExportService } from '../shared/export.service';
+import { ExportFormats } from '../models/export-formats.enum';
+import { CookieService } from 'ngx-cookie-service';
+import { ConfigService } from '../shared/config.service';
+import { ImplementationGuide } from '@trifolia-fhir/stu3';
+import { Observable } from 'rxjs';
+import { ExportGithubPanelComponent } from '../export-github-panel/export-github-panel.component';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { getErrorString, Globals, SearchImplementationGuideResponseContainer } from '@trifolia-fhir/tof-lib';
+import { HttpClient } from '@angular/common/http';
+import { IConformance } from '@trifolia-fhir/models';
 
 @Component({
   templateUrl: './export.component.html',
@@ -27,7 +26,7 @@ export class ExportComponent implements OnInit {
   public Globals = Globals;
   public templateVersions: string[] = [];
 
-  @ViewChild('githubPanel', { static: false }) githubPanel: ExportGithubPanelComponent;
+  @ViewChild('githubPanel') githubPanel: ExportGithubPanelComponent;
 
   public options = new ExportOptions();
   public selectedImplementationGuide: ImplementationGuide;
@@ -39,7 +38,7 @@ export class ExportComponent implements OnInit {
     public configService: ConfigService,
     public http: HttpClient) {
 
-    this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer);
+    this.options.implementationGuideId = this.cookieService.get(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion);
     this.options.responseFormat = <any>this.cookieService.get(Globals.cookieKeys.lastResponseFormat) || 'application/xml';
     this.options.downloadOutput = true;
     this.options.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
@@ -55,12 +54,12 @@ export class ExportComponent implements OnInit {
       this.options.template = '';
     }
 
-    this.cookieService.put(Globals.cookieKeys.lastTemplateType, this.options.templateType);
+    this.cookieService.set(Globals.cookieKeys.lastTemplateType, this.options.templateType);
     await this.templateChanged();
   }
 
   public async templateChanged() {
-    this.cookieService.put(Globals.cookieKeys.lastTemplate, this.options.template);
+    this.cookieService.set(Globals.cookieKeys.lastTemplate, this.options.template);
 
     if (this.options.templateType === 'official') {
       this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
@@ -83,14 +82,14 @@ export class ExportComponent implements OnInit {
   public templateVersionChanged() {
     if (!this.options.templateVersion) {
       if (this.cookieService.get(Globals.cookieKeys.lastTemplateVersion)) {
-        this.cookieService.remove(Globals.cookieKeys.lastTemplateVersion);
+        this.cookieService.delete(Globals.cookieKeys.lastTemplateVersion);
       }
     } else {
-      this.cookieService.put(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
+      this.cookieService.set(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
     }
   }
 
-  public onTabChange(event: NgbTabChangeEvent) {
+  public onTabChange(event: NgbNavChangeEvent) {
     this.activeTabId = event.nextId;
 
     switch (this.activeTabId) {
@@ -111,19 +110,19 @@ export class ExportComponent implements OnInit {
     }
   }
 
-  public async implementationGuideChanged(implementationGuide: ImplementationGuide) {
-    this.selectedImplementationGuide = implementationGuide;
-    this.options.implementationGuideId = implementationGuide ? implementationGuide.id : undefined;
+  public async implementationGuideChanged(igConf: IConformance) {
+    this.selectedImplementationGuide = <ImplementationGuide>igConf.resource;
+    this.options.implementationGuideId = igConf ? igConf.id : undefined;
 
-    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion;
 
-    if (implementationGuide && implementationGuide.id) {
-      this.cookieService.put(cookieKey, implementationGuide.id);
+    if (igConf && igConf.id) {
+      this.cookieService.set(cookieKey, igConf.id);
     } else if (this.cookieService.get(cookieKey)) {
-      this.cookieService.remove(cookieKey);
+      this.cookieService.delete(cookieKey);
     }
 
-    const pubTemplateExt = (implementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-pub-template']);
+    const pubTemplateExt = (igConf.resource.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-pub-template']);
 
     if (pubTemplateExt) {
       if (pubTemplateExt.valueUri) {
@@ -153,7 +152,7 @@ export class ExportComponent implements OnInit {
       switchMap((term: string) => {
         return this.implementationGuideService.getImplementationGuides(1, term).pipe(
           map((response: SearchImplementationGuideResponseContainer) => {
-            return (response.responses || []).map((entry) => <ImplementationGuide> entry.data.resource);
+            return (response.responses || []).map((entry) => <ImplementationGuide>entry.data.resource);
           })
         );
       }),
@@ -166,21 +165,21 @@ export class ExportComponent implements OnInit {
   };
 
   public clearImplementationGuide() {
-    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer;
+    const cookieKey = Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion;
 
     this.selectedImplementationGuide =
       this.options.implementationGuideId = null;
 
     if (this.cookieService.get(cookieKey)) {
-      this.cookieService.remove(cookieKey);
+      this.cookieService.delete(cookieKey);
     }
   }
 
   public responseFormatChanged(format) {
-    if(format === 'application/json' || format === 'application/xml'){
+    if (format === 'application/json' || format === 'application/xml') {
       this.options.responseFormat = format;
     }
-    this.cookieService.put(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
+    this.cookieService.set(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
   }
 
   public get exportDisabled(): boolean {
@@ -223,7 +222,7 @@ export class ExportComponent implements OnInit {
     this.socketOutput = '';
     this.message = 'Exporting...';
 
-    this.cookieService.put(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirServer, this.options.implementationGuideId);
+    this.cookieService.set(Globals.cookieKeys.exportLastImplementationGuideId + '_' + this.configService.fhirVersion, this.options.implementationGuideId);
 
     const igName = this.selectedImplementationGuide.name.replace(/\s/g, '_');
 
@@ -232,32 +231,41 @@ export class ExportComponent implements OnInit {
         case ExportFormats.HTML:
           //Need to discuss the difference between HTML vs Bundle
           this.exportService.exportHtml(this.options)
-              .subscribe((response) => {
+            .subscribe({
+              next: (response) => {
                 saveAs(response.body, igName + '.zip');
                 this.message = 'Done exporting.';
-              }, (err) => {
+              },
+              error: (err) => {
                 this.message = getErrorString(err);
-              });
+              }
+            });
           break;
         case ExportFormats.Bundle:
           this.exportService.exportBundle(this.options)
-            .subscribe((response) => {
-              const extension = this.options.responseFormat === 'application/xml' ? '.xml' : '.json';
-              saveAs(response.body, igName + extension);
-              this.message = 'Done exporting.';
-            }, (err) => {
-              this.message = getErrorString(err);
+            .subscribe({
+              next: (response) => {
+                const extension = this.options.responseFormat === 'application/xml' ? '.xml' : '.json';
+                saveAs(response.body, igName + extension);
+                this.message = 'Done exporting.';
+              },
+              error: (err) => {
+                this.message = getErrorString(err);
+              }
             });
           break;
         case ExportFormats.MSWORD:
-            this.exportService.exportMsWord(this.options)
-              .subscribe((response) => {
+          this.exportService.exportMsWord(this.options)
+            .subscribe({
+              next: (response) => {
                 saveAs(response.body, igName + '.docx');
                 this.message = 'Done exporting.';
-              }, (err) => {
+              },
+              error: (err) => {
                 this.message = getErrorString(err);
-              });
-            break;
+              }
+            });
+          break;
         case ExportFormats.GitHub:
           this.exportGithub();
           break;
@@ -274,18 +282,24 @@ export class ExportComponent implements OnInit {
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
-        .subscribe((implementationGuide: ImplementationGuide) => {
-          this.implementationGuideChanged(implementationGuide);
-        }, (err) => this.message = getErrorString(err));
+        .subscribe({
+          next: (res: IConformance) => {
+            this.implementationGuideChanged(res);
+          },
+          error: (err) => this.message = getErrorString(err)
+        });
     }
 
     await this.templateChanged();
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
-        .subscribe((implementationGuide: ImplementationGuide) => {
-          this.selectedImplementationGuide = implementationGuide;
-        }, (err) => this.message = getErrorString(err));
+        .subscribe({
+          next: (res: IConformance) => {
+            this.selectedImplementationGuide = <ImplementationGuide>res.resource;
+          },
+          error: (err) => this.message = getErrorString(err)
+        });
     }
   }
 }

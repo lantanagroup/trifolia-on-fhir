@@ -28,11 +28,13 @@ export class CapabilityStatementWrapperComponent implements OnInit {
 
   versionChanged() {
     let componentFactory;
-    let version = this.configService.fhirConformanceVersion;
+    let version;
     const id = this.route.snapshot.paramMap.get('id');
-
     if (id === 'from-file' && this.fileService.file) {
       version = this.fileService.file.fhirVersion;
+    }
+    else {
+      version = this.configService.fhirVersion;
     }
 
     if (identifyRelease(version) === Versions.R4) {
@@ -46,8 +48,6 @@ export class CapabilityStatementWrapperComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.configService.fhirServerChanged.subscribe(() => {
       this.versionChanged();
-    });
   }
 }

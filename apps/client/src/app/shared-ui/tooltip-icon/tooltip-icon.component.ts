@@ -1,7 +1,7 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {FhirService} from '../../shared/fhir.service';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {CookieService} from 'angular2-cookie/core';
+import {CookieService} from 'ngx-cookie-service';
 import {HttpClient} from '@angular/common/http';
 
 @Component({
@@ -34,7 +34,7 @@ export class TooltipIconComponent implements OnInit {
 
   public toggle() {
     this.hidden = !this.hidden;
-    this.cookieService.put(this.cookieName, this.hidden.toString());
+    this.cookieService.set(this.cookieName, this.hidden.toString());
   }
 
   async ngOnInit() {

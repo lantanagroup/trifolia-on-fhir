@@ -1,17 +1,23 @@
-<ngb-tabset [destroyOnHide]="false">
-  <ngb-tab title="Output">
-    <ng-template ngbTabContent>
-      <a href="{{implementationGuideOutputUrl}}" target="_new">Open in new tab</a>
-      <a *ngIf="implementationGuideId" class="nav-link" routerLink="{{configService.baseSessionUrl}}/publish">Publish/Re-Publish</a>
+<ul ngbNav #nav="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+  <li ngbNavItem>
+    <a ngbNavLink>Output</a>
+    <ng-template ngbNavContent>
+      <div class="my-2">
+        <a href="{{implementationGuideOutputUrl}}" target="_new" class="btn btn-primary">Open in New Tab <i class="fas fa-external-link-alt"></i></a> 
+        <a *ngIf="implementationGuideId" class="btn btn-primary m-2" routerLink="{{configService.baseSessionUrl}}/publish">Publish/Re-Publish</a>
+      </div>
       <iframe *ngIf="implementationGuideId" [src]="implementationGuideOutputUrl | safe"></iframe>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab title="QA">
-    <ng-template ngbTabContent>
-      <a href="{{implementationGuideQAUrl}}" target="_new">Open in new tab</a>
-      <a *ngIf="implementationGuideId" class="nav-link" routerLink="{{configService.baseSessionUrl}}/publish">Publish/Re-Publish</a>
+  </li>
+  <li ngbNavItem>
+    <a ngbNavLink>QA</a>
+    <ng-template ngbNavContent>
+      <div class="my-2">
+        <a href="{{implementationGuideQAUrl}}" target="_new" class="btn btn-primary">Open in New Tab <i class="fas fa-external-link-alt"></i></a>
+        <a *ngIf="implementationGuideId"  class="btn btn-primary m-2" routerLink="{{configService.baseSessionUrl}}/publish">Publish/Re-Publish</a>
+      </div>
       <iframe *ngIf="implementationGuideId" [src]="implementationGuideQAUrl | safe"></iframe>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
--
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav" class="mt-2"></div>

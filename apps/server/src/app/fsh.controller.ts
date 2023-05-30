@@ -1,12 +1,11 @@
 import { Body, Controller, Header, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOAuth2, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { IDomainResource } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type { IDomainResource } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { fhirToFsh } from 'gofsh/dist/api';
 import { fshToFhir } from 'fsh-sushi/dist/run';
 import { FromFSHModel, ToFSHModel } from '../../../../libs/tof-lib/src/lib/fsh';
 import { FhirServerVersion } from './server.decorators';
-import { isSupportedFHIRVersion } from 'fsh-sushi/dist/utils';
 import { getFhirVersion } from '../../../../libs/tof-lib/src/lib/helper';
 
 @Controller('api/fsh')

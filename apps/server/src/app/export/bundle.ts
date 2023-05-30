@@ -1,32 +1,37 @@
 import { Fhir } from 'fhir/fhir';
-import { Bundle, DomainResource } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { ImplementationGuidePageComponent } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
-import { HttpService, LoggerService } from '@nestjs/common';
-import { buildUrl } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import { IExtension, IStructureDefinition } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { response } from 'express';
+import { DomainResource } from '@trifolia-fhir/stu3';
+import { ImplementationGuidePageComponent } from '@trifolia-fhir/r4';
+import { Globals } from '@trifolia-fhir/tof-lib';
+import { HttpService } from '@nestjs/axios';
+import { LoggerService } from '@nestjs/common';
+import type { IBundle, IExtension, IStructureDefinition } from '@trifolia-fhir/tof-lib';
+import { ConformanceService } from '../conformance/conformance.service';
 
 export type FormatTypes = 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml';
-export type BundleTypes = 'searchset'|'transaction';
+export type BundleTypes = 'searchset' | 'transaction';
 
 export class BundleExporter {
   readonly httpService: HttpService;
-  readonly fhirServerBase: string;
-  readonly fhirServerId: string;
-  readonly fhirVersion: string;
+  readonly conformanceService: ConformanceService;
+  readonly logger: LoggerService;
   readonly fhir: Fhir;
   readonly implementationGuideId: string;
-  readonly logger: LoggerService;
 
-  constructor(httpService: HttpService, logger: LoggerService, fhirServerBase: string, fhirServerId: string, fhirVersion: string, fhir: Fhir, implementationGuideId: string) {
+  public fhirVersion: 'stu3'|'r4'|'r5';
+
+  constructor(
+    conformanceService: ConformanceService,
+    httpService: HttpService,
+    logger: LoggerService,
+    fhir: Fhir,
+    implementationGuideId: string) {
+
+    this.conformanceService = conformanceService;
     this.httpService = httpService;
     this.logger = logger;
-    this.fhirServerBase = fhirServerBase;
-    this.fhirServerId = fhirServerId;
-    this.fhirVersion = fhirVersion;
     this.fhir = fhir;
     this.implementationGuideId = implementationGuideId;
+
   }
 
   /**
@@ -147,32 +152,21 @@ export class BundleExporter {
     return obj;
   }
 
-  public async getBundle(cleanup = false, summary = false, type: BundleTypes = 'searchset'): Promise<Bundle> {
-    const params = {
-      _id: this.implementationGuideId,
-      _include: [
-        'ImplementationGuide:resource',
-        'ImplementationGuide:global'
-      ]
-    };
+  public async getBundle(cleanup = false, summary = false, type: BundleTypes = 'searchset'): Promise<IBundle> {
 
-    if (summary) {
-      params['_summary'] = true;
-    }
+    this.logger.log(`Getting bundle of resources for implementation guide ${this.implementationGuideId}`);
 
-    const url = buildUrl(this.fhirServerBase, 'ImplementationGuide', null, null, params, true);
-
-    this.logger.log(`Getting bundle of resources for implementation guide ${this.implementationGuideId} using URL ${url}`);
-
-    const results = await this.httpService.get<Bundle>(url).toPromise();
-    const bundle = results.data;
+    const conf = await this.conformanceService.getWithReferences(this.implementationGuideId);
+    const bundle: IBundle = await this.conformanceService.getBundleFromImplementationGuide(conf);
+    this.fhirVersion = conf.fhirVersion;
 
     bundle.total = (bundle.entry || []).length;
     bundle.type = type;
-    if(bundle.entry){
+    
+    if (bundle.entry) {
       bundle.entry.forEach(entry => {
-        if(entry.resource.resourceType && entry.resource.resourceType === "StructureDefinition"){
-          delete (<IStructureDefinition> entry.resource).snapshot;
+        if (entry.resource.resourceType && entry.resource.resourceType === "StructureDefinition") {
+          delete (<IStructureDefinition>entry.resource).snapshot;
         }
       });
     }
@@ -195,11 +189,11 @@ export class BundleExporter {
     return bundle;
   }
 
-  public export(format: FormatTypes  = 'json', removeExtensions = false, type: BundleTypes = 'searchset') {
+  public export(format: FormatTypes = 'json', removeExtensions = false, type: BundleTypes = 'searchset') {
     return new Promise((resolve, reject) => {
       this.getBundle(removeExtensions, false, type)
         .then((results) => {
-          let response: Bundle | string = results;
+          let response: IBundle | string = results;
 
           if (results.entry) {
             results.entry.forEach(entry => {

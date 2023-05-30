@@ -5,7 +5,7 @@ import {Subject} from 'rxjs';
 import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {Bundle, StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirService} from '../shared/fhir.service';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {BaseComponent} from '../base.component';
@@ -13,13 +13,15 @@ import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {CopyProfileModalComponent} from '../modals/copy-profile-modal/copy-profile-modal.component';
 import {debounceTime} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   templateUrl: './structure-definitions.component.html',
   styleUrls: ['./structure-definitions.component.css']
 })
 export class StructureDefinitionsComponent extends BaseComponent implements OnInit {
-  public response: Bundle;
+  public response;
+  public structureDefinitionId: string;
   public message: string;
   public page = 1;
   public nameText: string;
@@ -27,10 +29,11 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
   public urlText: string;
   public typeText: string;
   public titleText: string;
-  public criteriaChangedEvent = new Subject();
+  public criteriaChangedEvent = new Subject<void>();
   public implementationGuideId: string = null;
   public showMoreSearch = false;
   public Globals = Globals;
+  public total: string;
 
   constructor(
     public configService: ConfigService,
@@ -38,7 +41,8 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     private fhirService: FhirService,
     private implementationGuideService: ImplementationGuideService,
     private structureDefinitionService: StructureDefinitionService,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public route: ActivatedRoute) {
 
     super(configService, authService);
 
@@ -49,12 +53,12 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
   }
 
   public get structureDefinitions(): StructureDefinition[] {
-    if (!this.response || !this.response.entry) {
+    if (!this.response || !this.response.results) {
       return [];
     }
 
-    return this.response.entry.map((entry) => {
-      return <StructureDefinition>entry.resource;
+    return (this.response.results || []).map((entry) => {
+      return <StructureDefinition>entry;
     });
   }
 
@@ -66,9 +70,9 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.structureDefinitionService.delete(structureDefinition.id)
       .subscribe(() => {
         this.message = `Successfully deleted structure definition ${structureDefinition.name} (${structureDefinition.id})`;
-        const entry = (this.response.entry || []).find((e) => e.resource.id === structureDefinition.id);
-        const index = this.response.entry.indexOf(entry);
-        this.response.entry.splice(index, index >= 0 ? 1 : 0);
+        const entry = (this.response.results || []).find((e) => e.id === structureDefinition.id);
+        const index = this.response.results.indexOf(entry);
+        this.response.results.splice(index, index >= 0 ? 1 : 0);
         setTimeout(() => this.message = '', 3000);
       }, (err) => {
         this.message = getErrorString(err);
@@ -154,9 +158,12 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
     this.response = null;
     this.configService.setStatusMessage('Loading structure definitions');
 
+    this.implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+
     this.structureDefinitionService.getStructureDefinitions(this.page, this.nameText, this.IDText, this.urlText, this.implementationGuideId, this.titleText, this.typeText)
-      .subscribe((response: Bundle) => {
+      .subscribe((response ) => {
         this.response = response;
+        this.total = this.response.total;
         this.configService.setStatusMessage('');
       }, (err) => {
         this.configService.handleError(err, 'Error loading structure definitions.');
@@ -182,7 +189,6 @@ export class StructureDefinitionsComponent extends BaseComponent implements OnIn
   }
 
   ngOnInit() {
-    this.configService.fhirServerChanged.subscribe(() => this.initData());
     this.initData();
   }
 }

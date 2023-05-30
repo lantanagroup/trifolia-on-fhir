@@ -12,13 +12,14 @@ import {FhirDisplayPipe} from './fhir-display-pipe';
 import {KeysPipe} from './keys-pipe';
 import {SafePipe} from './safe-pipe';
 import {XmlPipe} from './xml-pipe';
-import {DiffMatchPatchModule} from 'ng-diff-match-patch';
+import { NgxDiffModule } from 'ngx-diff';
 import {FormsModule} from '@angular/forms';
 import {ResourcePermissionsComponent} from './resource-permissions/resource-permissions.component';
 import {ImplementationGuideTypeaheadComponent} from './implementation-guide-typeahead/implementation-guide-typeahead.component';
 import {SimplemdeModule} from 'ngx-simplemde';
 import { IgPublisherSelectionComponent } from './ig-publisher-selection/ig-publisher-selection.component';
 import { FshResourceComponent } from './fsh-resource/fsh-resource.component';
+import { UserEditComponent } from './user-edit/user-edit.component';
 
 const components = [
   MarkdownComponent,
@@ -34,23 +35,21 @@ const components = [
   ResourcePermissionsComponent,
   ImplementationGuideTypeaheadComponent,
   IgPublisherSelectionComponent,
-  FshResourceComponent
+  FshResourceComponent,
+  UserEditComponent
 ];
 
 @NgModule({
-  entryComponents: [
-    FshResourceComponent
-  ],
-  declarations: components,
-  exports: components,
-  imports: [
-    CommonModule,
-    NgbModule,
-    FormsModule,
-    SharedModule,
-    DiffMatchPatchModule,
-    SimplemdeModule.forRoot({ })
-  ]
+    declarations: components,
+    exports: components,
+    imports: [
+        CommonModule,
+        NgbModule,
+        FormsModule,
+        SharedModule,
+        NgxDiffModule,
+        SimplemdeModule.forRoot({})
+    ]
 })
 export class SharedUiModule {
 }

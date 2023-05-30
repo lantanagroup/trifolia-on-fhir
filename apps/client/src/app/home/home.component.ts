@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {Http, ResponseContentType} from '@angular/http';
+import { HttpClient } from '@angular/common/http';
+//import {Http, ResponseContentType} from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -10,13 +11,13 @@ export class HomeComponent implements OnInit {
   public welcomeContent: string;
   public whatsNewContent: string;
 
-  constructor(private http: Http) {
+  constructor(private http: HttpClient) {
   }
 
   ngOnInit() {
-    this.http.get('/help/Welcome.html', {responseType: ResponseContentType.Text})
+    this.http.get('/help/Welcome.html', {responseType: 'text'})
       .subscribe((results) => {
-        const content = results.text();
+        const content = results;
         const parser = new DOMParser();
         const parsedContent = parser.parseFromString(content, 'text/html');
         const topicContentDiv = parsedContent.querySelector('#topic-content');
@@ -26,9 +27,9 @@ export class HomeComponent implements OnInit {
       }, (err) => {
         console.log(err);
       });
-    this.http.get('/help/WhatsNew.html', {responseType: ResponseContentType.Text})
+    this.http.get('/help/WhatsNew.html', {responseType: 'text'})
       .subscribe((results) => {
-        const content = results.text();
+        const content = results;
         const parser = new DOMParser();
         const parsedContent = parser.parseFromString(content, 'text/html');
         const topicContentDiv = parsedContent.querySelector('#topic-content');

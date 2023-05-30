@@ -14,10 +14,10 @@
 
 <br/>
 
-<div *ngIf="codeSystemsBundle && codeSystemsBundle.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+<div *ngIf="codeSystem && codeSystem.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
     <ngb-pagination class="d-flex justify-content-center"
                     [maxSize]="5"
-                    [collectionSize]="codeSystemsBundle.total"
+                    [collectionSize]="codeSystem.total"
                     [(page)]="page"
                     [boundaryLinks]="true"
                     (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
@@ -28,6 +28,7 @@
     <tr>
         <th>ID</th>
         <th>Name</th>
+        <th>Url</th>
         <th class="actions-column-3">
             <div class="pull-right">
                 <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/code-system/new" title="Create a new code system" [attr.data-intro]="Globals.introText['browse.add']">
@@ -40,7 +41,8 @@
     <tbody *ngIf="!configService.showingIntroduction">
     <tr *ngFor="let cs of codeSystems">
         <td>{{cs.id}}</td>
-        <td>{{cs.name}}</td>
+        <td>{{cs.resource.name}}</td>
+        <td>{{cs.resource.url}}</td>
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/code-system/{{cs.id}}" [class.disabled]="isEditDisabled(cs)" title="Edit this resource">
@@ -49,7 +51,7 @@
                 <button type="button" class="btn btn-secondary" (click)="remove(cs)" [disabled]="isEditDisabled(cs)" title="Remove this resource">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-secondary" (click)="changeId(cs)" [disabled]="isEditDisabled(cs)" title="Change this resource's ID">
+                <button type="button" class="btn btn-secondary" (click)="changeId(cs.resource)" [disabled]="isEditDisabled(cs)" title="Change this resource's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>
@@ -76,13 +78,13 @@
     </tr>
     </tbody>
     <tfoot>
-    <tr *ngIf="codeSystemsBundle && codeSystemsBundle.total === 0">
+    <tr *ngIf="codeSystem && codeSystem.total === 0">
         <td colspan="3">No code systems! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/code-system/new">here</a>...</td>
     </tr>
-    <tr *ngIf="codeSystemsBundle && codeSystemsBundle.total > 0">
+    <tr *ngIf="codeSystem && codeSystem.total > 0">
         <td colspan="3">
             <ngb-pagination class="d-flex justify-content-center" [maxSize]="5"
-                            [collectionSize]="codeSystemsBundle.total" [(page)]="page" [boundaryLinks]="true"
+                            [collectionSize]="codeSystem.total" [(page)]="page" [boundaryLinks]="true"
                             (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
         </td>
     </tr>

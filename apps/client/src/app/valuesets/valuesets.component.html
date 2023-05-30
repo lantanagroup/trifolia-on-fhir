@@ -16,17 +16,17 @@
 
 <br />
 
-<div *ngIf="results && results.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+<div *ngIf="valueSet && valueSet.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
     <ngb-pagination class="d-flex justify-content-center"
                     [maxSize]="5"
-                    [collectionSize]="results.total"
+                    [collectionSize]="valueSet.total"
                     [(page)]="page"
                     [pageSize]="8"
                     [boundaryLinks]="true"
                     (pageChange)="criteriaChanged()"></ngb-pagination>
 </div>
 
-<table class="table table-striped" *ngIf="results">
+<table class="table table-striped" *ngIf="valueSet">
     <thead>
     <tr>
         <th>ID</th>
@@ -44,8 +44,8 @@
     <tbody *ngIf="!configService.showingIntroduction">
     <tr *ngFor="let vs of valueSets">
         <td>{{vs.id}}</td>
-        <td>{{vs.name}}</td>
-        <td>{{vs.url}}</td>
+        <td>{{vs.resource.name}}</td>
+        <td>{{vs.resource.url}}</td>
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/value-set/{{vs.id}}" title="Edit this value set">
@@ -57,7 +57,7 @@
                 <button type="button" class="btn btn-secondary" (click)="remove(vs)" [disabled]="!canEdit(vs)" title="Remove this value set">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-secondary" (click)="changeId(vs)" [disabled]="!canEdit(vs)" title="Change this value set's ID">
+                <button type="button" class="btn btn-secondary" (click)="changeId(vs.resource)" [disabled]="!canEdit(vs)" title="Change this value set's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>
@@ -88,12 +88,12 @@
     </tr>
     </tbody>
     <tfoot>
-    <tr *ngIf="results && results.total === 0">
+    <tr *ngIf="valueSet && valueSet.total === 0">
         <td colspan="3">No value sets! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/value-set/new">here</a>...</td>
     </tr>
-    <tr *ngIf="results && results.total > 0">
+    <tr *ngIf="valueSet && valueSet.total > 0">
         <td colspan="4">
-            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="8" [collectionSize]="results.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="8" [collectionSize]="total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChanged()"></ngb-pagination>
         </td>
     </tr>
     </tfoot>

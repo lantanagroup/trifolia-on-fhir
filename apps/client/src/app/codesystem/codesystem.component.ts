@@ -1,28 +1,30 @@
-import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {RecentItemService} from '../shared/recent-item.service';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {CodeSystemService} from '../shared/code-system.service';
-import {CodeSystem as STU3CodeSystem, ConceptDefinitionComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {CodeSystem as R4CodeSystem } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { RecentItemService } from '../shared/recent-item.service';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { CodeSystemService } from '../shared/code-system.service';
+import { CodeSystem as STU3CodeSystem, ConceptDefinitionComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { CodeSystem as R4CodeSystem } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {CodeSystem as R5CodeSystem } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
-import {FhirService} from '../shared/fhir.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirCodesystemConceptModalComponent} from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
-import {FileService} from '../shared/file.service';
-import {ConfigService} from '../shared/config.service';
-import {AuthService} from '../shared/auth.service';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {BaseComponent} from '../base.component';
+import { FhirService } from '../shared/fhir.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FhirCodesystemConceptModalComponent } from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
+import { FileService } from '../shared/file.service';
+import { ConfigService } from '../shared/config.service';
+import { AuthService } from '../shared/auth.service';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { BaseComponent } from '../base.component';
 import {ICodeSystem} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {Subject} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
+import { IConformance } from '@trifolia-fhir/models';
 
 @Component({
   templateUrl: './codesystem.component.html',
   styleUrls: ['./codesystem.component.css']
 })
 export class CodesystemComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+  public conformance: IConformance;
   public codeSystem: ICodeSystem;
   public filteredConcepts: ConceptDefinitionComponent[] = [];
   public pagedConcepts: ConceptDefinitionComponent[] = [];
@@ -40,6 +42,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
+  public codeSystemId;
 
   constructor(
     public route: ActivatedRoute,
@@ -60,19 +63,20 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     } else if (this.configService.isFhirSTU3) {
       this.codeSystem = new STU3CodeSystem({ meta: this.authService.getDefaultMeta() });
     } else {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirConformanceVersion}`);
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
+    this.conformance = <IConformance>{ resource: this.codeSystem, fhirVersion: <'stu3'|'r4'|'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         const isIdUnique = await this.fhirService.checkUniqueId(this.codeSystem);
-        if(!isIdUnique){
+        if (!isIdUnique) {
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.codeSystem.id  + " is already used.";
+          this.alreadyInUseIDMessage = "ID " + this.codeSystem.id + " is already used in this IG";
         }
-        else{
+        else {
           this.isIdUnique = true;
-          this.alreadyInUseIDMessage="";
+          this.alreadyInUseIDMessage = "";
         }
       });
   }
@@ -185,30 +189,36 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       this.fileService.saveFile();
       return;
     }
-
-    this.codeSystemService.save(this.codeSystem)
-      .subscribe((codeSystem: ICodeSystem) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${codeSystem.id}`]);
-        } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystem.id, codeSystem.name);
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
+    this.conformance.fhirVersion = <'stu3'|'r4'|'r5'>this.configService.fhirVersion;
+    this.codeSystemService.save(this.codeSystemId, this.conformance)
+      .subscribe({
+        next: (conf: IConformance) => {
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.codeSystemId = conf.id;
+            this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${conf.id}`]);
+          } else {
+            this.conformance = conf;
+            this.codeSystem = conf.resource;
+            this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, conf.id, conf.name);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
+          this.message = 'Your changes have been saved!';
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the code system: ' + getErrorString(err);
         }
-        this.message = 'Your changes have been saved!';
-      }, (err) => {
-        this.message = 'An error occurred while saving the code system: ' + getErrorString(err);
       });
   }
 
-  private getCodeSystemID(){
-    return this.route.snapshot.paramMap.get('id');
+  private getCodeSystemID() {
+    return this.isNew ? null : this.route.snapshot.paramMap.get('id');
   }
 
   private getCodeSystem() {
-    const codeSystemId = this.getCodeSystemID();
+    this.codeSystemId = this.getCodeSystemID();
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -225,24 +235,28 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     if (!this.isNew) {
       this.codeSystem = null;
 
-      this.codeSystemService.get(codeSystemId)
-        .subscribe((cs) => {
-          if (cs.resourceType !== 'CodeSystem') {
-            this.message = 'The specified code system either does not exist or was deleted';
-            return;
-          }
+      this.codeSystemService.getCodeSystem(this.codeSystemId)
+        .subscribe({
+          next: (conf: IConformance) => {
+            if (!conf || !conf.resource || conf.resource.resourceType !== 'CodeSystem') {
+              this.message = 'The specified code system either does not exist or was deleted';
+              return;
+            }
 
-          this.codeSystem = <ICodeSystem>cs;
-          this.nameChanged();
-          this.refreshConcepts();
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentCodeSystems,
-            this.codeSystem.id,
-            this.codeSystem.name || this.codeSystem.title);
-        }, (err) => {
-          this.csNotFound = err.status === 404;
-          this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCodeSystems, codeSystemId);
+            this.conformance = conf;
+            this.codeSystem = <ICodeSystem>conf.resource;
+            this.nameChanged();
+            this.refreshConcepts();
+            this.recentItemService.ensureRecentItem(
+              Globals.cookieKeys.recentCodeSystems,
+              this.codeSystem.id,
+              this.codeSystem.name || this.codeSystem.title);
+          },
+          error: (err) => {
+            this.csNotFound = err.status === 404;
+            this.message = getErrorString(err);
+            this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCodeSystems, this.codeSystemId);
+          }
         });
     }
   }

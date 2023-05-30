@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {ActiveUserModel} from '../../../../../libs/tof-lib/src/lib/active-user-model';
-import {GetUsersModel} from '../../../../../libs/tof-lib/src/lib/get-users-model';
+import {ActiveUserModel, Paginated} from '@trifolia-fhir/tof-lib';
+import { IUser } from '@trifolia-fhir/models';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Injectable()
 export class ManageService {
@@ -17,9 +18,9 @@ export class ManageService {
     return this.http.post(url, null).toPromise();
   }
 
-  async getUsers(searchName: string, count = 10, page = 1) {
+  async getUsers(searchName: string, count = 10, page = 1): Promise<Paginated<IUser>>  {
     const url = `/api/manage/user?count=${encodeURIComponent(count)}&page=${encodeURIComponent(page)}&name=${encodeURIComponent(searchName || '')}`;
-    return await this.http.get<GetUsersModel>(url).toPromise();
+    return firstValueFrom(this.http.get<Paginated<IUser>>(url));
   }
 
   async sendMessageToActiveUsers(message: string) {

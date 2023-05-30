@@ -1,29 +1,23 @@
-import { EventEmitter, Injectable, Injector } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { ConfigModel } from '../../../../../libs/tof-lib/src/lib/config-model';
-import { Title } from '@angular/platform-browser';
-import { CapabilityStatement as STU3CapabilityStatement } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { CapabilityStatement as R4CapabilityStatement, Coding } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { Versions } from 'fhir/fhir';
-import { map } from 'rxjs/operators';
-import { identifyRelease as identifyReleaseFunc } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {Injectable, Injector} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {ConfigModel} from '../../../../../libs/tof-lib/src/lib/config-model';
+import {Title} from '@angular/platform-browser';
+import {Coding} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {Versions} from 'fhir/fhir';
+import {map} from 'rxjs/operators';
+import { ImplementationGuideContext } from '@trifolia-fhir/tof-lib';
 
 @Injectable()
 export class ConfigService {
   public config: ConfigModel;
-  public fhirServer: string;
-  public fhirServerChanged: EventEmitter<string> = new EventEmitter<string>();
-  public project?: {
-    implementationGuideId: string,
-    name?: string,
-    securityTags?: Coding[]
-  };
+  public fhirVersion: 'stu3'|'r4'|'r5' = 'r4';
+  public project?: ImplementationGuideContext;
   public statusMessage: string;
   public showingIntroduction = false;
-  private fhirCapabilityStatements: { [fhirServiceId: string]: STU3CapabilityStatement | R4CapabilityStatement | boolean } = {};
+
 
   constructor(private injector: Injector) {
-    this.fhirServer = localStorage.getItem('fhirServer');
+
   }
 
   /*public async getBinaryResources(igId: string): Promise<Resource[]> {
@@ -63,7 +57,7 @@ export class ConfigService {
           }
         }
       }
-    } catch(ex) {
+    } catch (ex) {
       templateVersions = ['current'];
     }
 
@@ -75,18 +69,13 @@ export class ConfigService {
   }
 
   public get baseSessionUrl(): string {
-    if (this.fhirServer && this.project && this.project.implementationGuideId) {
-      return `/${this.fhirServer}/${this.project.implementationGuideId}`;
-    } else if (this.fhirServer) {
-      return `/${this.fhirServer}`;
+    if (this.project && this.project.implementationGuideId) {
+      return `/projects/${this.project.implementationGuideId}`;
     } else {
-      return '';
+      return `/projects`;
     }
   }
 
-  public get fhirConformance(): STU3CapabilityStatement | R4CapabilityStatement | boolean {
-    return this.fhirCapabilityStatements[this.fhirServer];
-  }
 
   public get titleService(): Title {
     return this.injector.get(Title);
@@ -96,19 +85,35 @@ export class ConfigService {
     return this.injector.get(HttpClient);
   }
 
-  public get isFhirSTU3() {
-    return identifyReleaseFunc(this.fhirConformanceVersion) === Versions.STU3;
+  public setFhirVersion(fhirVersion?: 'stu3'|'r4'|'r5' ) {
+    this.fhirVersion = fhirVersion;
   }
 
-  public get isFhirR4() {
-    return identifyReleaseFunc(this.fhirConformanceVersion) === Versions.R4;
+  public get isCDA(): boolean {
+    if (!this.project || !this.project.dependencies) {
+      return false;
+    }
+
+    return (this.project.dependencies || []).findIndex((d: string) => {
+      return [
+        'hl7.fhir.cda'
+      ].includes((d || '').split('#')[0])
+    }) > -1;
   }
 
-  public get isFhirR5() {
-    return identifyReleaseFunc(this.fhirConformanceVersion) === Versions.R5;
+  public get isFhirSTU3(): boolean {
+    return this.fhirVersion === Versions.STU3.toLowerCase();
+  }
+
+  public get isFhirR4(): boolean {
+    return this.fhirVersion === Versions.R4.toLowerCase();
+  }
+
+  public get isFhirR5(): boolean {
+    return this.fhirVersion === Versions.R5.toLowerCase();
   }
   public setTitle(value: string, isDirty: boolean = false) {
-    const mainTitle = (isDirty ? "*" : "") + 'Trifolia-on-FHIR';
+    const mainTitle = (isDirty ? '*' : '') + 'Trifolia-on-FHIR';
 
     if (value) {
       this.titleService.setTitle(`${mainTitle}: ${value}`);
@@ -124,76 +129,9 @@ export class ConfigService {
       .then((config: ConfigModel) => {
         this.config = config;
 
-        if(localStorage){
-          const currentFhirServer = localStorage.getItem('fhirServer');
-          const found = this.config.fhirServers.find(fhirServer => {
-            return fhirServer.id === currentFhirServer;
-          });
-
-          if(!found){
-            this.fhirServer = null;
-            localStorage.removeItem('fhirServer');
-          }
-        }
-
-        if (!this.fhirServer && this.config.fhirServers.length > 0) {
-          this.fhirServer = this.config.fhirServers[0].id;
-        }
-
-        if (this.fhirServer) {
-          if (!init) {
-            // noinspection JSIgnoredPromiseFromCall
-            this.changeFhirServer(this.fhirServer);
-          }
-        } else {
-          throw new Error('No FHIR servers available for selection.');
-        }
       });
   }
 
-  public changeFhirServer(fhirServer?: string) {
-    // Don't do anything if the fhir server hasn't changed
-    if (this.fhirServer === fhirServer && this.fhirConformance) {
-      return Promise.resolve();
-    }
-
-    if (!fhirServer) {
-      if (!this.fhirServer) {
-        throw new Error('A fhir server must be specified to change the fhir server');
-      } else if (this.fhirConformance) {
-        this.fhirServerChanged.emit(this.fhirServer);
-        return Promise.resolve();
-      }
-    } else {
-      this.fhirServer = fhirServer;
-      localStorage.setItem('fhirServer', this.fhirServer);
-    }
-
-    // Get the conformance statement from the FHIR server and store it
-    return this.http.get('/api/config/fhir').toPromise()
-      .then((res: STU3CapabilityStatement | R4CapabilityStatement) => {
-        this.fhirCapabilityStatements[this.fhirServer] = res;
-        this.fhirServerChanged.emit(this.fhirServer);
-      })
-      .catch((err) => {
-        this.fhirCapabilityStatements[this.fhirServer] = false;
-      });
-  }
-
-  public identifyRelease(): Versions {
-    if (this.fhirConformanceVersion) {
-      return identifyReleaseFunc(this.fhirConformanceVersion);
-    }
-
-    return Versions.STU3;
-  }
-
-  public get fhirConformanceVersion(): string {
-    if (this.fhirConformance && typeof this.fhirConformance === 'object') {
-      const fhirConformance = <STU3CapabilityStatement | R4CapabilityStatement> this.fhirConformance;
-      return fhirConformance.fhirVersion;
-    }
-  }
 
   public setStatusMessage(message: string, timeout?: number) {
     this.statusMessage = message;

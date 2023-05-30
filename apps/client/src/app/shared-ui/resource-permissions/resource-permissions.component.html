@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" *ngIf="resource">
   <div class="col-md-6">
     <table class="table table-striped">
       <thead>
@@ -63,9 +63,9 @@
       <div class="card-body">
         <p>Add permissions from a different resource to this resource. This <em>does not</em> overwrite or remove permissions that already exist on this resource, it <em>adds</em> permissions from the specified resource that don't already exist on this resource.</p>
 
-        <div class="form-group">
+        <div class="mb-3">
           <div class="input-group">
-            <select class="form-control" [(ngModel)]="copyResourceType" [attr.data-intro]="Globals.introText['resource-permissions.copy.resource-type']">
+            <select class="form-select" [(ngModel)]="copyResourceType" [attr.data-intro]="Globals.introText['resource-permissions.copy.resource-type']">
               <option [ngValue]="undefined">SELECT</option>
               <option *ngFor="let rt of resourceTypes" [ngValue]="rt.code">{{rt.code}}</option>
             </select>
@@ -161,8 +161,7 @@
             </button>
           </div>
         </div>
-
-        <table class="table table-striped" *ngIf="foundUsersBundle">
+        <table class="table table-striped" *ngIf="foundUsersArray">
           <thead>
           <tr>
             <th>ID</th>
@@ -174,14 +173,14 @@
           </thead>
           <tbody>
           <tr *ngFor="let u of foundUsers">
-            <td title="{{getIdentifierDisplay(u)}}">
+            <td title="{{getAuthIdIdentifier(u.authId)}}">
               <span>{{u.id}}</span>
-              <span *ngIf="getIdentifierSource(u.identifier)"> - {{getIdentifierSource(u.identifier)}}</span>
+              <span *ngIf="getAuthIdSource(u.authId)"> - {{getAuthIdSource(u.authId)}}</span>
             </td>
             <td>
-              {{getHumanNamesDisplay(u.name)}}
+              {{u.name}}
             </td>
-            <td>{{getPractitionerEmail(u)}}</td>
+            <td>{{getUserEmail(u)}}</td>
             <td class="actions-column-1">
               <button type="button" class="btn btn-primary" title="Add read/view permissions for this user" (click)="addPermission('user', 'read', u.id); change.emit();">
                 <i class="fas fa-plus"></i>

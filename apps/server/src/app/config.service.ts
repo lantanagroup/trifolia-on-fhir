@@ -1,14 +1,16 @@
-import {HttpService, Injectable, Logger} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {Injectable, Logger} from '@nestjs/common';
 import {IServerConfig} from './models/server-config';
 import {IFhirConfig} from './models/fhir-config';
+import {IDatabaseConfig} from './models/database-config';
 import {IAuthConfig} from './models/auth-config';
 import {IGithubConfig} from './models/github-config';
 import {IPublishConfig} from './models/publish-config';
 import {AnnouncementServiceConfig} from './models/announcement-service-config';
 import path from 'path';
-import * as config from 'config';
-import * as fs from 'fs-extra';
-import * as semver from 'semver';
+import config from 'config';
+import {createWriteStream, ensureDirSync, existsSync, readdirSync, statSync, unlinkSync} from 'fs-extra';
+import semver from 'semver';
 
 @Injectable()
 export class ConfigService {
@@ -47,6 +49,9 @@ export class ConfigService {
     queueLimit: 2,
     timeOut: 5000
   };
+  public database: IDatabaseConfig = {
+    uri: 'mongodb://localhost:27017/tofDb'
+  };
   public privacyPolicy: string;
   public termsOfUse: string;
   public announcementService?: AnnouncementServiceConfig;
@@ -67,6 +72,7 @@ export class ConfigService {
       this.announcementService = config.has('announcementService') ? config.get('announcementService') : undefined;
       this.privacyPolicy = config.get('privacyPolicy');
       this.termsOfUse = config.get('termsOfUse');
+      this.database = config.get('database');
     }
   }
 
@@ -81,7 +87,7 @@ export class ConfigService {
    * @param url this is the url that is used to download the jar file
    */
   async downloadJarFile(destPath: string, url: string) {
-    const pathInfo = fs.existsSync(destPath) ? fs.statSync(destPath) : null;
+    const pathInfo = existsSync(destPath) ? statSync(destPath) : null;
     const response = await this.httpService.axiosRef({
       url: url,
       method: 'GET',
@@ -93,7 +99,7 @@ export class ConfigService {
       return Promise.resolve();
     }
 
-    const writer = fs.createWriteStream(destPath);
+    const writer = createWriteStream(destPath);
     response.data.pipe(writer);
 
     return new Promise((resolve, reject) => {
@@ -104,15 +110,18 @@ export class ConfigService {
 
   async getIgPublisherForDependencies() {
     const url = 'https://api.github.com/repos/hl7/fhir-ig-publisher/releases';
+    if(!this.httpService) {
+      this.httpService = new HttpService();
+    }
     const allVersions = await this.httpService.get<{ id: string, name: string }[]>(url).toPromise();
 
     const igPublisherDir = path.resolve(this.server.latestIgPublisherPath || 'assets/ig-publisher');
 
     // Make sure the directory exists before we try to read from it
-    fs.ensureDirSync(igPublisherDir);
+    ensureDirSync(igPublisherDir);
 
     // List any JARs that already exist in the directory
-    const jars = fs.readdirSync(igPublisherDir);
+    const jars = readdirSync(igPublisherDir);
 
     for (const nextJar of jars) {
       if (!nextJar.toLowerCase().endsWith('.jar')) continue;
@@ -155,11 +164,11 @@ export class ConfigService {
 
       this.logger.log(`Downloading dev version of IG Publisher from sonatype: ${downloadUrl}`);
 
-      fs.ensureDirSync(path.dirname(filePath));
+      ensureDirSync(path.dirname(filePath));
       await this.downloadJarFile(filePath, downloadUrl);
 
       return filePath;
-    } else if (fs.existsSync(filePath)) {
+    } else if (existsSync(filePath)) {
       this.logger.log('The jar file ' + versionId + ' for the selected version already exists. Not downloading it again.');
       return filePath;
     } else {
@@ -173,7 +182,7 @@ export class ConfigService {
 
         this.logger.log(`Downloading version ${version} (id: ${versionId}) from GitHub URL ${downloadUrl}`);
 
-        fs.ensureDirSync(path.dirname(filePath));
+        ensureDirSync(path.dirname(filePath));
         await this.downloadJarFile(filePath, downloadUrl);
 
         return filePath;
@@ -181,9 +190,10 @@ export class ConfigService {
         // this check for errors and logs errors. If error is caught it also deletes the empty jar file from the directory. This returns the default file path
         this.logger.error(`Error getting version ${versionId} of FHIR IG publisher: ${ex.message}`);
 
-        fs.unlinkSync(filePath);
+        unlinkSync(filePath);
         return;
       }
     }
   }
 }
+
