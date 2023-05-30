@@ -40,8 +40,8 @@
               <app-fhir-string [parentObject]="structureDefinition" propertyName="version" title="Version" tooltipPath="StructureDefinition.version"
                                (change)="isDirty = true; nameChanged();"></app-fhir-string>
 
-              <app-fhir-string [parentObject]="structureDefinition" propertyName="fhirVersion" title="FHIR Version" tooltipPath="StructureDefinition.fhirVersion"
-                               (change)="isDirty = true; nameChanged();"></app-fhir-string>
+              <app-fhir-string [parentObject]="structureDefinition" propertyName="fhirVersion"  title="FHIR Version" tooltipPath="StructureDefinition.fhirVersion"
+                               (change)="isDirty = true; nameChanged();" [disabled] = true ></app-fhir-string>
 
               <app-fhir-string [parentObject]="structureDefinition" propertyName="publisher" title="Publisher" tooltipPath="StructureDefinition.publisher"
                                (change)="isDirty = true; nameChanged();"></app-fhir-string>
