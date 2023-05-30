@@ -38,6 +38,7 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
   public publishingRequest: PublishingRequestModel;
   public publishingRequestJSON;
   public alreadyInUseIDMessage = '';
+  public implementationGuide;
 
   constructor(
     public route: ActivatedRoute,
@@ -102,6 +103,9 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
   }
 
   public save() {
+    if(this.implementationGuide.fhirVersion.length > 0) {
+      this.conformance.resource.fhirVersion = this.implementationGuide.fhirVersion[0];
+    }
     this.strucDefService.save(this.structureDefinitionId, this.conformance)
       .subscribe((results) => {
 
@@ -134,9 +138,9 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
   async ngOnInit() {
 
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    const implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
-    const url = implementationGuide.url;
+    const url =  this.implementationGuide.url;
     this.structureDefinition.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "StructureDefinition/" : "";
 
   }
