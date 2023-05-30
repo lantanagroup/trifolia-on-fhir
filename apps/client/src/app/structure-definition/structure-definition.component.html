@@ -281,7 +281,7 @@
           </div>
         </div>
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search elements" [ngModel]="elementSearch" (ngModelChange)="elementSearchChanged($event)"/>
+          <input type="text" class="form-control" placeholder="Search elements" [ngModel]="elementSearch" (ngModelChange)="elementSearchChanged($event)" (keyup.enter)="getSearchElement(); isDirty = true; nameChanged();"/>
           <div class="input-group-btn">
             <button type="button" class="btn btn-primary" title="Search" (click)="getSearchElement(); isDirty = true; nameChanged();">
               <i class="fas fa-search"></i>

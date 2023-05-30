@@ -491,7 +491,9 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       found = baseStructDefElements.find((element) => {
         return this.checkForMatchingElement(element);
       });
-    } else {
+    }
+    
+    if (found) {
       const model = this.constraintManager.elements.find((element) => {
         const foundPath = found.path;
         const elementPath = element.path;
