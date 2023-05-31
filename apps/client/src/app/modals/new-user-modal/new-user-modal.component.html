@@ -1,11 +1,11 @@
 <h2>New user profile</h2>
 
-<p>Create a user (<a href="http://hl7.org/fhir/practitioner" target="_new">Practitioner</a> resource) on the selected FHIR server to continue...</p>
+<p>Create a user to continue...</p>
 
 <p><strong>{{message}}</strong></p>
 
-<trifolia-fhir-practitioner [practitioner]="practitioner" #editPractitioner></trifolia-fhir-practitioner>
+<user-edit [user]="user" #editUser></user-edit>
 
 <div class="footer">
-  <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="okDisabled || !editPractitioner.valid">OK</button>
+  <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="!editUser.valid || submitted">OK</button>
 </div>

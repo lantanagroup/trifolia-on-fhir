@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
-import {NgbModal, NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbNav} from '@ng-bootstrap/ng-bootstrap';
 import {STU3TypeModalComponent} from './stu3-type-modal/type-modal.component';
 import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {ElementTreeModel} from '../../../../../../libs/tof-lib/src/lib/element-tree-model';
@@ -33,7 +33,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
   public Globals = Globals;
   public editingConstraint: IElementDefinitionConstraint;
 
-  @ViewChild('edTabSet', { static: true }) edTabSet: NgbTabset;
+  @ViewChild('edTabSet', { static: true }) edTabSet: NgbNav;
   @ViewChild('idTextField', { static: true }) idTextField: ElementRef;
 
   constructor(
@@ -228,6 +228,9 @@ export class ElementDefinitionPanelComponent implements OnInit {
       modalRef = this.modalService.open(STU3TypeModalComponent, { size: 'lg', backdrop: 'static' });
     } else if (this.configService.isFhirR4) {
       modalRef = this.modalService.open(R4TypeModalComponent, { size: 'lg', backdrop: 'static' });
+    } else if (this.configService.isFhirR5) {
+      // TODO: isFhirR5
+      throw new Error('Unexpected FHIR version. Cannot open "type" modal popup.');
     } else {
       throw new Error('Unexpected FHIR version. Cannot open "type" modal popup.');
     }

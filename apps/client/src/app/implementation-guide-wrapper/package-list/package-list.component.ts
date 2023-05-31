@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IImplementationGuide} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {PackageListItemModel, PackageListModel} from '../../../../../../libs/tof-lib/src/lib/package-list-model';
 import {ConfigService} from '../../shared/config.service';
 import {identifyRelease} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
@@ -25,7 +25,7 @@ export class PackageListComponent implements OnInit {
     this.change
       .pipe(debounceTime(1000))
       .subscribe(() => {
-        PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirConformanceVersion))
+        PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirVersion))
         this.packageListJSON = JSON.stringify(this.packageList, null, "\t");
       });
 
@@ -50,7 +50,7 @@ export class PackageListComponent implements OnInit {
       status: 'ci-build',
       current: true
     });
-    PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirConformanceVersion));
+    PackageListModel.setPackageList(this.implementationGuide, this.packageList, identifyRelease(this.configService.fhirVersion));
   }
 
   remove() {

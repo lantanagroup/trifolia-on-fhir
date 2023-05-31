@@ -87,9 +87,12 @@ export class FhirMultiJurisdictionComponent implements OnInit {
 
   checkForCompletedJurisdiction(){
     for(let x = 0; x < this.jurisdictions.length; x++){
+      if (!this.jurisdictions[x].coding) {
+        continue;
+      }
       for(let y = 0; y < this.jurisdictions[x].coding.length; y++){
         if(this.jurisdictions[x].text && this.jurisdictions[x].coding[y].code && this.jurisdictions[x].coding[y].display
-          && this.jurisdictions[x].coding[y].system){
+          && this.jurisdictions[x].coding[y]?.system){
           return false;
         }
       }
@@ -161,7 +164,7 @@ export class FhirMultiJurisdictionComponent implements OnInit {
 
   getJurisdictionCodes(input: string) {
     if (!this.jurisdictionCodes) return null;
-    return this.jurisdictionCodes.find(j => j.code === input).code;
+    return this.jurisdictionCodes.find(j => j && j.code === input).code;
   }
 
   setJurisdictionCode(jurisdiction: ICodeableConcept, index: number, coding: ICoding) {

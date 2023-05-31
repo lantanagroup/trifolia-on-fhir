@@ -1,16 +1,14 @@
 <div class="modal-header">
   <h4 class="modal-title">Edit Page</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body" *ngIf="page">
-  <div class="form-group">
+  <div class="mb-3">
     <label>Title</label>
     <input type="text" class="form-control" [ngModel]="page.title" (ngModelChange)="page.setTitle($event, implementationGuide.definition.page === inputPage)" [class.is-invalid]="!page.title" />
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       File Name
       <app-tooltip-icon tooltipKey="ig.page.fileName"></app-tooltip-icon>
@@ -21,7 +19,7 @@
     <p class="text-muted" *ngIf="isRootPageValid">It is <em>strongly</em> encouraged that the root page of the implementation guide have a file name of "index{{page.getExtension()}}". Otherwise, the published implementation guide may not contain a home page.</p>
   </div>
 
-  <div class="form-group" *ngIf="page.generation !== 'generated'">
+  <div class="mb-3" *ngIf="page.generation !== 'generated'">
     <label>
       Show on top nav menu
       <app-tooltip-icon tooltipKey="ig.page.showTopNavMenu"></app-tooltip-icon>
@@ -29,13 +27,13 @@
     <input type="text" class="form-control" [(ngModel)]="page.navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
   </div>
 
-  <div class="form-group" *ngIf="level === 0">
+  <div class="mb-3" *ngIf="level === 0">
     <label>
       <input type="checkbox" [(ngModel)]="page.reuseDescription" /> The content of this page should be the same as the description and contact(s) of the implementation guide (ImplementationGuide.description and ImplementationGuide.contact).
     </label>
   </div>
 
-  <div class="form-group" *ngIf="!page.reuseDescription">
+  <div class="mb-3" *ngIf="!page.reuseDescription">
     <label>Content</label>
     <trifolia-fhir-markdown [(value)]="page.contentMarkdown" [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
   </div>
@@ -44,9 +42,9 @@
 
   <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation" [required]="true" tooltipKey="ig.page.generation"></app-fhir-select-single-code>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>Name Type</label>
-    <select class="form-control" [(ngModel)]="nameType">
+    <select class="form-select" [(ngModel)]="nameType">
       <option>Url</option>
       <option>Reference</option>
     </select>

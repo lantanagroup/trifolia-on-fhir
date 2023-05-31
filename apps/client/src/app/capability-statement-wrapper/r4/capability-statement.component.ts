@@ -9,10 +9,10 @@ import {
   StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
-import { Observable, Subject } from 'rxjs';
+import {firstValueFrom, Observable, Subject} from 'rxjs';
 import { RecentItemService } from '../../shared/recent-item.service';
 import { FhirService } from '../../shared/fhir.service';
-import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { FhirCapabilityStatementResourceModalComponent } from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
 import { FileService } from '../../shared/file.service';
 import { ConfigService } from '../../shared/config.service';
@@ -22,13 +22,19 @@ import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { FhirReferenceModalComponent, ResourceSelection } from '../../fhir-edit/reference-modal/reference-modal.component';
 import { BaseComponent } from '../../base.component';
 import { debounceTime } from 'rxjs/operators';
+import {IConformance} from '@trifolia-fhir/models';
+import {ImplementationGuide} from '@trifolia-fhir/stu3';
+import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 
 @Component({
   templateUrl: './capability-statement.component.html',
   styleUrls: ['./capability-statement.component.css']
 })
 export class R4CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  @Input() public capabilityStatement: CapabilityStatement;
+  @Input() public capabilityStatement;
+
+  public conformance;
+  public capabilityStatementId: string;
 
   public idChangedEvent = new Subject();
   public isIdUnique = true;
@@ -43,6 +49,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
   public ClientHelper = ClientHelper;
   public codes: Coding[] = [];
   private navSubscription: any;
+  public implementationGuide;
 
   constructor(
     public route: ActivatedRoute,
@@ -53,18 +60,20 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     private router: Router,
     private fileService: FileService,
     private recentItemService: RecentItemService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    private implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
 
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
+    this.conformance =  { resource: this.capabilityStatement, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         const isIdUnique = await this.fhirService.checkUniqueId(this.capabilityStatement);
         if(!isIdUnique){
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.capabilityStatement.id  + " is already used.";
+          this.alreadyInUseIDMessage = "ID " +  this.capabilityStatement.id  + " is already used in this IG.";
         }
         else{
           this.isIdUnique = true;
@@ -142,7 +151,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
 
 
 
-  public moveRestLeft(rest: CapabilityStatementRestComponent, tabSet: NgbTabset) {
+  public moveRestLeft(rest: CapabilityStatementRestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex > 0) {
@@ -152,7 +161,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     }
   }
 
-  public moveRestRight(rest: CapabilityStatementRestComponent, tabSet: NgbTabset) {
+  public moveRestRight(rest: CapabilityStatementRestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex < this.capabilityStatement.rest.length) {
@@ -188,22 +197,32 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
       return;
     }
 
-    this.csService.save(this.capabilityStatement)
-      .subscribe((results: CapabilityStatement) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${results.id}`]);
-        } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
+    this.csService.save(this.capabilityStatementId, this.conformance)
+      .subscribe({
+        next: (conf: IConformance) => {
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.capabilityStatementId = conf.id;
+            this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${conf.id}`]);
+          } else {
+            this.conformance = conf;
+            this.capabilityStatement = conf.resource;
+            this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, conf.id, conf.name);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
           }, 3000);
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the capability statement:' + getErrorString(err);
         }
-      }, (err) => {
-        this.message = `An error occurred while saving the capability statement: ${err.message}`;
       });
   }
+
 
   public editResource(resource: CapabilityStatementResourceComponent) {
     const modalRef = this.modal.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg', backdrop: 'static'});
@@ -253,9 +272,12 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     }, 50);
   }
 
-  private getCapabilityStatement(): Observable<CapabilityStatement> {
-    const capabilityStatementId = this.route.snapshot.paramMap.get('id');
-
+  private  getCapabilityStatement(): Observable<CapabilityStatement> {
+    this.capabilityStatementId = this.route.snapshot.paramMap.get('id');
+    if(this.implementationGuide.fhirVersion.length > 0) {
+      this.conformance.resource.fhirVersion = this.implementationGuide.fhirVersion[0];
+      this.capabilityStatement.fhirVersion = this.implementationGuide.fhirVersion[0];
+    }
     if (this.isFile) {
       if (this.fileService.file) {
         this.capabilityStatement = <CapabilityStatement>this.fileService.file.resource;
@@ -270,14 +292,14 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     if (!this.isNew) {
       this.capabilityStatement = null;
 
-      this.csService.get(capabilityStatementId)
-        .subscribe((cs) => {
-          if (cs.resourceType !== 'CapabilityStatement') {
+      this.csService.get(this.capabilityStatementId)
+        .subscribe((conf) => {
+          if (!conf || !conf.resource || conf.resource.resourceType !== 'CapabilityStatement') {
             this.message = 'The specified capability statement either does not exist or was deleted';
             return;
           }
-
-          this.capabilityStatement = <CapabilityStatement>cs;
+          this.conformance = conf;
+          this.capabilityStatement = <CapabilityStatement>conf.resource;
           this.nameChanged();
           this.recentItemService.ensureRecentItem(
             Globals.cookieKeys.recentCapabilityStatements,
@@ -286,7 +308,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
         }, (err) => {
           this.csNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
+          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, this.capabilityStatementId);
         });
     }
   }
@@ -302,20 +324,28 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     this.configService.setTitle(`CapabilityStatement - ${this.capabilityStatement.title || this.capabilityStatement.name || 'no-name'}`);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.messageTransportCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-transport');
     this.codes =  this.codes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.messageEventCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-events');
+
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/capability-statement/')) {
         this.getCapabilityStatement();
       }
     });
+
     this.getCapabilityStatement();
+
   }
 
   ngOnDestroy() {
-    this.navSubscription.unsubscribe();
+    if (this.navSubscription ) {
+      this.navSubscription.unsubscribe();
+    }
     this.configService.setTitle(null);
   }
 

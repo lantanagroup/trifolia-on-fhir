@@ -2,7 +2,7 @@
 
 <div class="alert alert-info" *ngIf="message">{{message}}</div>
 
-<div class="form-group" [attr.data-intro]="Globals.introText['export.implementationGuide']" *ngIf="!configService.project">
+<div class="mb-3" [attr.data-intro]="Globals.introText['export.implementationGuide']" *ngIf="!configService.project">
   <label>Implementation Guide</label>
   <div class="input-group">
     <input type="text" class="form-control"
@@ -20,144 +20,151 @@
   </div>
 </div>
 
-<ngb-tabset *ngIf="options.implementationGuideId || configService.showingIntroduction" [activeId]="activeTabId" (tabChange)="onTabChange($event)">
-  <ngb-tab title="IG Publisher Package" id="html">
-    <ng-template ngbTabContent>
-      <div class="alert alert-info">The "IG Publisher Package" export format produces a package to be used with the FHIR
-        IG Publisher. You will be prompted to download a ZIP package of all files necessary to execute the FHIR IG
-        Publisher.
-      </div>
-
-      <div class="row" [attr.data-intro]="Globals.introText['export.igPublisher']">
-        <div class="col-md-6">
-          <div class="form-group" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction" [attr.data-intro]="Globals.introText['export.igPublisherOutput']">
-            <label>Output Format</label>
-            <select class="form-control" [(ngModel)]="options.responseFormat">
-              <option value="application/json">JSON</option>
-              <option value="application/xml">XML</option>
-            </select>
-          </div>
+<ng-container *ngIf="options.implementationGuideId || configService.showingIntroduction">
+  <ul ngbNav #nav="ngbNav" class="nav-tabs" [activeId]="activeTabId" (navChange)="onTabChange($event)">
+    <li ngbNavItem="html">
+      <a ngbNavLink>IG Publisher Package</a>
+      <ng-template ngbNavContent>
+        <div class="alert alert-info">The "IG Publisher Package" export format produces a package to be used with the FHIR
+          IG Publisher. You will be prompted to download a ZIP package of all files necessary to execute the FHIR IG
+          Publisher.
         </div>
 
-        <div class="col-md-6">
-          <div class="form-group" [attr.data-intro]="Globals.introText['export.igPublisherJAR']">
-            <label>Include FHIR IG Publisher JAR?</label>
-            <select class="form-control" [(ngModel)]="options.includeIgPublisherJar">
-              <option [ngValue]="true">Yes</option>
-              <option [ngValue]="false">No</option>
-            </select>
+        <div class="row" [attr.data-intro]="Globals.introText['export.igPublisher']">
+          <div class="col-md-6">
+            <div class="mb-3" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction" [attr.data-intro]="Globals.introText['export.igPublisherOutput']">
+              <label>Output Format</label>
+              <select class="form-select" [(ngModel)]="options.responseFormat">
+                <option value="application/json">JSON</option>
+                <option value="application/xml">XML</option>
+              </select>
+            </div>
           </div>
+
+          <div class="col-md-6">
+            <div class="mb-3" [attr.data-intro]="Globals.introText['export.igPublisherJAR']">
+              <label>Include FHIR IG Publisher JAR?</label>
+              <select class="form-select" [(ngModel)]="options.includeIgPublisherJar">
+                <option [ngValue]="true">Yes</option>
+                <option [ngValue]="false">No</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6" *ngIf="options.includeIgPublisherJar">
+            <trifolia-fhir-ig-publisher-selection [options]="options"></trifolia-fhir-ig-publisher-selection>
+          </div>
+
+          <div class="col-md-6" *ngIf="options.includeIgPublisherJar">
+            <app-fhir-boolean
+              [parentObject]="options"
+              [required]="true"
+              propertyName="useTerminologyServer"
+              [cookieKey]="Globals.cookieKeys.exportLastUseTerminologyServer"
+              title="Use terminology server?" trueLabel="Yes" falseLabel="No">
+            </app-fhir-boolean>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label>Template Type</label>
+              <select class="form-select" [(ngModel)]="options.templateType" (change)="templateTypeChanged()">
+                <option value="official">Official</option>
+                <option value="custom-uri">Custom</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4" *ngIf="options.templateType === 'custom-uri'">
+            <div class="mb-3">
+              <label>Template (Archive/ZIP URL)</label>
+              <input type="text" class="form-control" [(ngModel)]="options.template" (change)="templateChanged()" placeholder="{{Globals.tooltips['ig.publishing.template.custom.example']}}" [class.is-invalid]="!options.template" />
+              <div class="help-block">Note: The URI must be a ZIP file.</div>
+            </div>
+          </div>
+          <div class="col-md-4" *ngIf="options.templateType === 'official'">
+            <div class="mb-3">
+              <label>Template</label>
+              <select class="form-select" [(ngModel)]="options.template" (change)="templateChanged()">
+                <option value="hl7.fhir.template">HL7 FHIR Template</option>
+                <option value="hl7.cda.template">HL7 CDA Template</option>
+                <option value="hl7.base.template">HL7 Base Template</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4" *ngIf="options.templateType === 'official'">
+            <div class="mb-3">
+              <label>Version</label>
+              <div>
+                <select class="form-select" [(ngModel)]="options.templateVersion" (click)="templateVersionChanged()">
+                  <option *ngFor="let templateVersion of templateVersions" [ngValue]="templateVersion">{{templateVersion}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </li>
+    <li ngbNavItem="bundle">
+      <a ngbNavLink>Bundle</a>
+      <ng-template ngbNavContent>
+        <div class="alert alert-info">The "Bundle" export format is a Bundle of all resources referenced by the selected
+          implementation guide, including the implementation guide resource.
         </div>
 
-        <div class="col-md-6" *ngIf="options.includeIgPublisherJar">
-          <trifolia-fhir-ig-publisher-selection [options]="options"></trifolia-fhir-ig-publisher-selection>
-        </div>
+        <div class="row" [attr.data-intro]="Globals.introText['export.bundle']">
+          <div class="col-md-4">
+            <div class="mb-3" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction"
+                [attr.data-intro]="Globals.introText['export.bundleOutput']">
+              <label>Output Format</label>
+              <select class="form-select" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
+                <option value="application/json">JSON</option>
+                <option value="application/xml">XML</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label>Remove ToF Extensions?</label>
+              <select class="form-select" [(ngModel)]="options.removeExtensions">
+                <option [ngValue]="false">No</option>
+                <option [ngValue]="true">Yes</option>
+              </select>
+            </div>
+          </div>
 
-        <div class="col-md-6" *ngIf="options.includeIgPublisherJar">
-          <app-fhir-boolean
-            [parentObject]="options"
-            [required]="true"
-            propertyName="useTerminologyServer"
-            [cookieKey]="Globals.cookieKeys.exportLastUseTerminologyServer"
-            title="Use terminology server?" trueLabel="Yes" falseLabel="No">
-          </app-fhir-boolean>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <div class="form-group">
-            <label>Template Type</label>
-            <select class="form-control" [(ngModel)]="options.templateType" (change)="templateTypeChanged()">
-              <option value="official">Official</option>
-              <option value="custom-uri">Custom</option>
-            </select>
-          </div>
-        </div>
-        <div class="col-md-4" *ngIf="options.templateType === 'custom-uri'">
-          <div class="form-group">
-            <label>Template (Archive/ZIP URL)</label>
-            <input type="text" class="form-control" [(ngModel)]="options.template" (change)="templateChanged()" placeholder="{{Globals.tooltips['ig.publishing.template.custom.example']}}" [class.is-invalid]="!options.template" />
-            <div class="help-block">Note: The URI must be a ZIP file.</div>
-          </div>
-        </div>
-        <div class="col-md-4" *ngIf="options.templateType === 'official'">
-          <div class="form-group">
-            <label>Template</label>
-            <select class="form-control" [(ngModel)]="options.template" (change)="templateChanged()">
-              <option value="hl7.fhir.template">HL7 FHIR Template</option>
-              <option value="hl7.cda.template">HL7 CDA Template</option>
-              <option value="hl7.base.template">HL7 Base Template</option>
-            </select>
-          </div>
-        </div>
-        <div class="col-md-4" *ngIf="options.templateType === 'official'">
-          <div class="form-group">
-            <label>Version</label>
-            <div>
-              <select class="form-control" [(ngModel)]="options.templateVersion" (click)="templateVersionChanged()">
-                <option *ngFor="let templateVersion of templateVersions" [ngValue]="templateVersion">{{templateVersion}}</option>
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label>Bundle Type</label>
+              <select class="form-select" [(ngModel)]="options.bundleType">
+                <option value="transaction">Transaction</option>
+                <option value="searchset">Search Set</option>
               </select>
             </div>
           </div>
         </div>
-      </div>
-    </ng-template>
-  </ngb-tab>
-  <ngb-tab title="Bundle" id="bundle">
-    <ng-template ngbTabContent>
-      <div class="alert alert-info">The "Bundle" export format is a Bundle of all resources referenced by the selected
-        implementation guide, including the implementation guide resource.
-      </div>
-
-      <div class="row" [attr.data-intro]="Globals.introText['export.bundle']">
-        <div class="col-md-4">
-          <div class="form-group" *ngIf="(options.implementationGuideId && options.exportFormat !== 3) || configService.showingIntroduction"
-               [attr.data-intro]="Globals.introText['export.bundleOutput']">
-            <label>Output Format</label>
-            <select class="form-control" [(ngModel)]="options.responseFormat" (change)="responseFormatChanged()">
-              <option value="application/json">JSON</option>
-              <option value="application/xml">XML</option>
-            </select>
-          </div>
+      </ng-template>
+    </li>
+    <li ngbNavItem="msword">
+      <a ngbNavLink>MsWord</a>
+      <ng-template ngbNavContent>
+        <div class="alert alert-info">The "MsWord" document export contains all resources referenced by the selected
+          implementation guide, including the implementation guide resource.
         </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <label>Remove ToF Extensions?</label>
-            <select class="form-control" [(ngModel)]="options.removeExtensions">
-              <option [ngValue]="false">No</option>
-              <option [ngValue]="true">Yes</option>
-            </select>
-          </div>
+      </ng-template>
+    </li>
+    <li ngbNavItem="github" class="hide">
+      <a ngbNavLink>GitHub</a>
+      <ng-template ngbNavContent>
+        <div [attr.data-intro]="Globals.introText['export.github']">
+          <trifolia-fhir-export-github-panel #githubPanel [attr.data-intro]="Globals.introText['export.githubLogin']"
+                                            [responseFormat]="options.responseFormat" (change)="responseFormatChanged($event)" ></trifolia-fhir-export-github-panel>
         </div>
-
-        <div class="col-md-4">
-          <div class="form-group">
-            <label>Bundle Type</label>
-            <select class="form-control" [(ngModel)]="options.bundleType">
-              <option value="transaction">Transaction</option>
-              <option value="searchset">Search Set</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-  </ngb-tab>
-  <ngb-tab title="MsWord" id="msword">
-    <ng-template ngbTabContent>
-      <div class="alert alert-info">The "MsWord" document export contains all resources referenced by the selected
-        implementation guide, including the implementation guide resource.
-      </div>
-    </ng-template>
-  </ngb-tab>
-  <ngb-tab title="GitHub" id="github">
-    <ng-template ngbTabContent>
-      <div [attr.data-intro]="Globals.introText['export.github']">
-        <trifolia-fhir-export-github-panel #githubPanel [attr.data-intro]="Globals.introText['export.githubLogin']"
-                                           [responseFormat]="options.responseFormat" (change)="responseFormatChanged($event)" ></trifolia-fhir-export-github-panel>
-      </div>
-    </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+      </ng-template>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+</ng-container>
 
 <!-- DEMO -->
 <footer class="footer" *ngIf="configService.showingIntroduction">

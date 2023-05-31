@@ -5,7 +5,7 @@ import { CapabilityStatement, Coding, EventComponent, ResourceComponent, RestCom
 import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
 import { RecentItemService } from '../../shared/recent-item.service';
 import { FhirService } from '../../shared/fhir.service';
-import { NgbModal, NgbTabChangeEvent, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavChangeEvent, NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { FhirCapabilityStatementResourceModalComponent } from '../../fhir-edit/capability-statement-resource-modal/capability-statement-resource-modal.component';
 import { FhirMessagingEventModalComponent } from '../../fhir-edit/messaging-event-modal/messaging-event-modal.component';
 import { FhirReferenceModalComponent } from '../../fhir-edit/reference-modal/reference-modal.component';
@@ -17,16 +17,20 @@ import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { BaseComponent } from '../../base.component';
 import {debounceTime} from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import {IConformance} from '@trifolia-fhir/models';
 
 @Component({
   templateUrl: './capability-statement.component.html',
   styleUrls: ['./capability-statement.component.css']
 })
 export class STU3CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  @Input() public capabilityStatement: CapabilityStatement;
+  public conformance;
+  @Input() public capabilityStatement;
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
+
+  public capabilityStatementId: string;
 
   public message: string;
   public validation: any;
@@ -53,13 +57,14 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     super(configService, authService);
 
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
+    this.conformance =  { resource: this.capabilityStatement, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         const isIdUnique = await this.fhirService.checkUniqueId(this.capabilityStatement);
         if(!isIdUnique){
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.capabilityStatement.id  + " is already used.";
+          this.alreadyInUseIDMessage = "ID " +  this.capabilityStatement.id  + " is already used in this IG.";
         }
         else{
           this.isIdUnique = true;
@@ -122,7 +127,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     this.getCapabilityStatement();
   }
 
-  public moveRestLeft(rest: RestComponent, tabSet: NgbTabset) {
+  public moveRestLeft(rest: RestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex > 0) {
@@ -132,7 +137,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     }
   }
 
-  public moveRestRight(rest: RestComponent, tabSet: NgbTabset) {
+  public moveRestRight(rest: RestComponent, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex < this.capabilityStatement.rest.length) {
@@ -152,20 +157,29 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
       return;
     }
 
-    this.csService.save(this.capabilityStatement)
-      .subscribe((results: CapabilityStatement) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${results.id}`]);
-        } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCapabilityStatements, results.id, results.name);
+    this.csService.save(this.capabilityStatementId, this.conformance)
+      .subscribe({
+        next: (conf: IConformance) => {
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.capabilityStatement = conf.id;
+            this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${conf.id}`]);
+          } else {
+            this.conformance = conf;
+            this.capabilityStatement = conf.resource;
+            this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, conf.id, conf.name);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
           this.message = 'Your changes have been saved!';
           setTimeout(() => {
             this.message = '';
           }, 3000);
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the capability statement:' + getErrorString(err);
         }
-      }, (err) => {
-        this.message = `An error occurred while saving the capability statement: ${err.message}`;
       });
   }
 
@@ -213,7 +227,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     }, 50);
   }
 
-  public beforeRestTabChange($event: NgbTabChangeEvent) {
+  public beforeRestTabChange($event: NgbNavChangeEvent) {
     if ($event.nextId === 'add') {
       $event.preventDefault();
     }
@@ -245,7 +259,9 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
   }
 
   ngOnDestroy() {
-    this.navSubscription.unsubscribe();
+    if(this.navSubscription) {
+      this.navSubscription.unsubscribe();
+    }
     this.configService.setTitle(null);
   }
 
@@ -256,7 +272,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
   }
 
   private getCapabilityStatement() {
-    const capabilityStatementId = this.route.snapshot.paramMap.get('id');
+    this.capabilityStatementId  = this.route.snapshot.paramMap.get('id');
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -272,14 +288,15 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     if (!this.isNew) {
       this.capabilityStatement = null;
 
-      this.csService.get(capabilityStatementId)
-        .subscribe((cs) => {
-          if (cs.resourceType !== 'CapabilityStatement') {
+      this.csService.get(this.capabilityStatementId)
+        .subscribe((conf) => {
+          if (!conf || !conf.resource || conf.resource.resourceType !== 'CapabilityStatement') {
             this.message = 'The specified capability statement either does not exist or was deleted';
             return;
           }
 
-          this.capabilityStatement = <CapabilityStatement>cs;
+          this.conformance = conf;
+          this.capabilityStatement = <CapabilityStatement>conf.resource;
           this.nameChanged();
           this.recentItemService.ensureRecentItem(
             Globals.cookieKeys.recentCapabilityStatements,
@@ -288,8 +305,9 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
         }, (err) => {
           this.csNotFound = err.status === 404;
           this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, capabilityStatementId);
+          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCapabilityStatements, this.capabilityStatementId);
         });
-    }
+  }
+
   }
 }

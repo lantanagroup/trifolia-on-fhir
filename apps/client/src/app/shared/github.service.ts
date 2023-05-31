@@ -257,7 +257,7 @@ export class GithubService {
       throw new Error('Could not open window to login to GitHub. Please ensure pop-ups are not blocked.');
     }
 
-    return new Promise((resolve, error) => {
+    return new Promise<void>((resolve, error) => {
       const checkWin = () => {
         if (this.loginWin.closed) {
           if (this.token) {

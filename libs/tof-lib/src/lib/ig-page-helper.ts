@@ -1,3 +1,4 @@
+import {ImplementationGuide as R5ImplementationGuide, ImplementationGuideDefinitionPage} from './r5/fhir';
 import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent} from './r4/fhir';
 import {ImplementationGuide as STU3ImplementationGuide, ContactDetail, PageComponent} from './stu3/fhir';
 import {IExtension, IImplementationGuide} from './fhirInterfaces';
@@ -5,7 +6,7 @@ import {createTableFromArray, escapeForXml} from './helper';
 import {Globals} from './globals';
 
 export class PageInfo {
-  page: PageComponent | ImplementationGuidePageComponent;
+  page: PageComponent | ImplementationGuidePageComponent | ImplementationGuideDefinitionPage;
   fileName: string;
   content: string;
 
@@ -91,7 +92,7 @@ export class IgPageHelper {
     return theList;
   }
 
-  public static getR4PagesList(theList: PageInfo[], page: ImplementationGuidePageComponent, implementationGuide: R4ImplementationGuide) {
+  public static getR4andR5PagesList(theList: PageInfo[], page: ImplementationGuidePageComponent | ImplementationGuideDefinitionPage, implementationGuide: R4ImplementationGuide | R5ImplementationGuide) {
     if (!page) {
       return theList;
     }
@@ -108,7 +109,7 @@ export class IgPageHelper {
 
     theList.push(pageInfo);
 
-    (page.page || []).forEach((next) => this.getR4PagesList(theList, next, implementationGuide));
+    (page.page || []).forEach((next) => this.getR4andR5PagesList(theList, next, implementationGuide));
 
     return theList;
   }

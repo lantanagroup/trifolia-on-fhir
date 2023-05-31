@@ -6,3 +6,11 @@ select {
   max-width: 150px;
   margin-left: 7px;
 }
+
+.tab-content {
+  height: 85%;
+}
+
+:host ::ng-deep .tab-pane, .input-group {
+  height: 100%;
+}

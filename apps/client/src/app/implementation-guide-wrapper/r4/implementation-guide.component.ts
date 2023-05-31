@@ -1,4 +1,4 @@
-import {Component, DoCheck, EventEmitter, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, DoCheck, EventEmitter, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../../shared/auth.service';
 import {
   Coding,
@@ -9,7 +9,6 @@ import {
   ImplementationGuideGroupingComponent,
   ImplementationGuidePageComponent,
   ImplementationGuideResourceComponent,
-  OperationOutcome,
   ResourceReference,
   StructureDefinition
 } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
@@ -22,21 +21,19 @@ import {FhirService} from '../../shared/fhir.service';
 import {FileService} from '../../shared/file.service';
 import {ConfigService} from '../../shared/config.service';
 import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
-import {
-  FhirReferenceModalComponent,
-  ResourceSelection
-} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {getErrorString, parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {R4ResourceModalComponent} from './resource-modal.component';
-import {
-  getDefaultImplementationGuideResourcePath,
-  getImplementationGuideMediaReferences,
-  MediaReference
-} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+import {getDefaultImplementationGuideResourcePath, getImplementationGuideMediaReferences, MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
+import {ProjectService} from '../../shared/projects.service';
+import {IConformance, IExample, IProjectResource, IProjectResourceReference} from '@trifolia-fhir/models';
+import {getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
+import {ObjectId} from 'mongodb';
+import {Conformance} from '../../../../../server/src/app/conformance/conformance.schema';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
@@ -49,7 +46,8 @@ class PageDefinition {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class R4ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
-  @Input() public implementationGuide: ImplementationGuide;
+  public conformance: IConformance;
+  public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
   public pages: PageDefinition[];
@@ -67,7 +65,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public selectedPage: PageDefinition;
   public selectedResource: ImplementationGuideResourceComponent;
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
-
+  public implementationGuideId: string;
 
   constructor(
     private modal: NgbModal,
@@ -77,11 +75,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     private fhirService: FhirService,
     protected authService: AuthService,
     public configService: ConfigService,
+    public projectService: ProjectService,
     public route: ActivatedRoute) {
 
     super(configService, authService);
 
-    this.implementationGuide = new ImplementationGuide({meta: this.authService.getDefaultMeta()});
+    this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
 
     this.igChanging.subscribe((value) => {
       this.isDirty = value;
@@ -113,6 +112,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     return (this.implementationGuide.definition.resource || [])
       .filter((resource: ImplementationGuideResourceComponent) => {
+
         if (!resource.reference || !resource.reference.reference) {
           return true;
         }
@@ -272,7 +272,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   public editGroup(group: ImplementationGuideGroupingComponent) {
     const originalId = group.id;
-    const modalRef = this.modal.open(GroupModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modal.open(GroupModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.group = group;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
     modalRef.result.then((result: ImplementationGuideGroupingComponent) => {
@@ -324,12 +324,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public editResource(resource: ImplementationGuideResourceComponent) {
-    const modalRef = this.modal.open(R4ResourceModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
+    modalRef.componentInstance.implementationGuideID = this.implementationGuideId;
     modalRef.result.then(() => {
-      this.igChanging.emit(true)
-    })
+      this.igChanging.emit(true);
+    });
   }
 
   public changeId() {
@@ -337,12 +338,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
-    const modalRef = this.modal.open(ChangeResourceIdModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modal.open(ChangeResourceIdModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
 
     modalRef.result.then(() => {
-      this.igChanging.emit(true)
+      this.igChanging.emit(true);
     });
   }
 
@@ -366,13 +367,17 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public addResources() {
-    if (!this.implementationGuide.definition) this.implementationGuide.definition = {resource: []};
+    if (!this.implementationGuide.definition) this.implementationGuide.definition = { resource: [] };
     if (!this.implementationGuide.definition.resource) this.implementationGuide.definition.resource = [];
 
-    const modalRef = this.modal.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.fhirVersion = 'r4';
     modalRef.componentInstance.selectMultiple = true;
 
     modalRef.result.then((results: ResourceSelection[]) => {
+
+      if (!results) return;
+
       if (!this.implementationGuide.definition) {
         this.implementationGuide.definition = new ImplementationGuideDefinitionComponent();
         this.implementationGuide.definition.resource = [];
@@ -406,6 +411,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             exampleBoolean: allProfilingTypes.indexOf(result.resourceType) < 0
           }
         );
+
+        if (!this.conformance.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
+          const conf = <IConformance>{ id: result.projectResourceId, resource: result.resource };
+          const newProjectResourceReference: IProjectResourceReference = { value: conf, valueType: 'Conformance' };
+          this.conformance.references.push(newProjectResourceReference);
+        }
+
       });
     });
   }
@@ -481,8 +493,34 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     if (this.implementationGuide.definition && this.implementationGuide.definition.resource) {
-      const index = this.implementationGuide.definition.resource.indexOf(resource);
+      let index = this.implementationGuide.definition.resource.indexOf(resource);
       this.implementationGuide.definition.resource.splice(index, 1);
+      let resourceType = resource.reference.reference.split('/')[0];
+      let resourceId = resource.reference.reference.split('/')[1];
+
+      index = (this.conformance.references || []).findIndex((ref: IProjectResourceReference) => {
+        if (ref.valueType === 'Conformance') {
+          const val: IConformance = <IConformance>ref.value;
+          let refResourceId = `${val.resource.id ?? val.id}`;
+          let refResourceType = val.resource.resourceType;
+          return refResourceType == resourceType && refResourceId == resourceId;
+        } else if (ref.valueType === 'Example') {
+          const val: IExample = <IExample>ref.value;
+          if (typeof val.content === typeof {} && 'resourceType' in val.content && 'id' in val.content) {
+            let refResourceId = `${val.content['id]'] ?? val.id}`;
+            let refResourceType = `${val.content['resourceType']}`;
+            return refResourceType == resourceType && refResourceId == resourceId;
+          } else {
+            let refResourceId = `${val.name || val.content['id'] || val.id}`;
+            let refResourceType = `Binary`;
+            return refResourceType == resourceType && refResourceId == resourceId;
+          }
+        }
+      });
+      if (index > -1) {
+        this.conformance.references.splice(index, 1);
+      }
+
     }
   }
 
@@ -494,7 +532,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public selectPublishedIg(dependsOn: ImplementationGuideDependsOnComponent) {
-    const modalRef = this.modal.open(PublishedIgSelectModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modal.open(PublishedIgSelectModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.result.then((guide: PublishedGuideModel) => {
       if (guide) {
         const npmName = guide['npm-name'];
@@ -532,21 +570,26 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     if (!this.isNew) {
-      this.implementationGuide = null;
 
-      this.implementationGuideService.getImplementationGuide(implementationGuideId)
-        .subscribe((results: ImplementationGuide | OperationOutcome) => {
-          if (results.resourceType !== 'ImplementationGuide') {
-            this.message = 'The specified implementation guide either does not exist or was deleted';
-            return;
+      this.implementationGuideService.getImplementationGuideWithReferences(implementationGuideId)
+        .subscribe({
+          next: (conf: IConformance) => {
+
+            if (!conf || !conf.resource || conf.resource.resourceType !== 'ImplementationGuide') {
+              this.message = 'The specified implementation guide either does not exist or was deleted';
+              return;
+            }
+
+            this.implementationGuide = new ImplementationGuide(conf.resource);
+            this.conformance = conf;
+            this.conformance.resource = this.implementationGuide;
+            this.igChanging.emit(false);
+            this.initPagesAndGroups();
+          },
+          error: (err) => {
+            this.igNotFound = err.status === 404;
+            this.message = getErrorString(err);
           }
-
-          this.implementationGuide = new ImplementationGuide(results);
-          this.igChanging.emit(false);
-          this.initPagesAndGroups();
-        }, (err) => {
-          this.igNotFound = err.status === 404;
-          this.message = getErrorString(err);
         });
     }
   }
@@ -570,7 +613,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public editPage(pageDef: PageDefinition) {
-    const modalRef = this.modal.open(PageComponentModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modal.open(PageComponentModalComponent, { size: 'lg', backdrop: 'static' });
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
     componentInstance.implementationGuide = this.implementationGuide;
@@ -762,12 +805,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
 
     this.implementationGuide.definition.parameter = this.implementationGuide.definition.parameter || [];
-    this.implementationGuide.definition.parameter.push({code: '', value: ''});
+    this.implementationGuide.definition.parameter.push({ code: '', value: '' });
   }
 
   public addGlobal() {
     this.implementationGuide.global = this.implementationGuide.global || [];
-    this.implementationGuide.global.push({type: '', profile: ''});
+    this.implementationGuide.global.push({ type: '', profile: '' });
   }
 
   public setDependsOnName(dependsOn: ImplementationGuideDependsOnComponent, name: any) {
@@ -837,28 +880,27 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
-    this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
-      .subscribe((implementationGuide: ImplementationGuide) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
-        } else {
-          // Copy the new permissions to the context so that we other resources create for the ig will adopt the new permissions
-          if (this.configService.project && this.configService.project.implementationGuideId === implementationGuide.id) {
-            // only if the updated implementation guide has security tags
-            if (implementationGuide.meta && implementationGuide.meta.security && implementationGuide.meta.security.length > 0) {
-              this.configService.project.securityTags = implementationGuide.meta.security;
-            }
+    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
+      .subscribe({
+        next: (conf: IConformance) => {
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.implementationGuide = <ImplementationGuide>conf.resource;
+            this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
+          } else {
+            this.conformance = conf;
+            this.implementationGuide = <ImplementationGuide>conf.resource;
+            this.configService.project = getImplementationGuideContext(conf);
+            this.message = 'Your changes have been saved!';
+            this.igChanging.emit(false);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
           }
-
-          this.message = 'Your changes have been saved!';
-          this.igChanging.emit(false);
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
         }
-      }, (err) => {
-        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
       });
   }
 
@@ -903,7 +945,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     // Watch the route parameters to see if the id of the implementation guide changes. Reload if it does.
     this.route.params.subscribe((params) => {
-      if (params.implementationGuideId && this.implementationGuide && params.implementationGuideId !== this.implementationGuide.id) {
+      if (!this.implementationGuideId) {
+        this.implementationGuideId = params.implementationGuideId;
+      }
+      if (params.implementationGuideId && this.implementationGuideId && params.implementationGuideId !== this.implementationGuideId) {
+        this.implementationGuideId = params.implementationGuideId;
         this.getImplementationGuide();
       }
     });
@@ -1046,9 +1092,30 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public removeDependency(index: number) {
-    this.implementationGuide.dependsOn.splice(index, 1)
+    this.implementationGuide.dependsOn.splice(index, 1);
     if (this.implementationGuide.dependsOn.length === 0) {
       delete this.implementationGuide.dependsOn;
     }
+  }
+
+  public async delete(implementationGuideId) {
+    if (!confirm(`Are you sure you want to delete ${this.implementationGuide.name}?`)) {
+      return false;
+    }
+
+    const name = this.implementationGuide.name;
+
+    this.projectService.deleteIg(implementationGuideId)
+      .subscribe(async () => {
+        await this.implementationGuideService.removeImplementationGuide(this.implementationGuideId).toPromise().then((project) => {
+          console.log(project);
+          this.configService.project = null;
+          this.router.navigate([`${this.configService.baseSessionUrl}`]);
+          alert(`IG ${name} with id ${this.implementationGuideId} has been deleted`);
+        }).catch((err) => this.message = getErrorString(err));
+      }, (err) => {
+        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
+      });
+
   }
 }

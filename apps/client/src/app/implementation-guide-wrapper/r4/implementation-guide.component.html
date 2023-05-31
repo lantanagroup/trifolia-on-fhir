@@ -2,16 +2,17 @@
 
 <div class="alert alert-danger" *ngIf="igNotFound">Implementation Guide with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<div class="ig-main" *ngIf="implementationGuide">
+<div class="ig-main" *ngIf="conformance && implementationGuide">
   <h2>
-    {{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span><span class="badge badge-danger" *ngIf="isDirty">Changed!</span>
+    {{implementationGuide.name || 'no-name'}} <span class="badge bg-warning" *ngIf="!canEdit(conformance)">View-only</span><span class="badge bg-danger" *ngIf="isDirty">Changed!</span>
   </h2>
-  <ngb-tabset [destroyOnHide]="false" #igTabs="ngbTabset">
-    <ngb-tab id="general" title="General">
-      <ng-template ngbTabContent>
+  <ul ngbNav #igTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+    <li ngbNavItem="general">
+      <a ngbNavLink>General</a>
+      <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-6">
-            <div class="form-group">
+            <div class="mb-3">
               <label>ID</label>
               <div [class.input-group]="!isNew">
                 <input type="text" class="form-control" [disabled]="!isNew" [(ngModel)]="implementationGuide.id" placeholder="AUTO" />
@@ -52,7 +53,7 @@
           </div>
 
           <div class="col-md-3">
-            <div class="form-group">
+            <div class="mb-3">
               <label>
                 Package ID
                 <app-tooltip-icon tooltipPath="ImplementationGuide.packageId"></app-tooltip-icon>
@@ -68,7 +69,7 @@
           </div>
 
           <div class="col-md-3">
-            <div class="form-group">
+            <div class="mb-3">
               <label>
                 <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('fhirVersion')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'fhirVersion', [])"
                 (change)="igChanging.emit(true)"/>
@@ -84,34 +85,30 @@
               </div>
               <div class="input-group" *ngIf="implementationGuide.hasOwnProperty('fhirVersion')">
                 <input type="text" class="form-control" [(ngModel)]="newFhirVersion" (change)="igChanging.emit(true)"/>
-                <div class="input-group-append">
-                  <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                  <div class="dropdown-menu">
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '4.0.1'">4.0.1</a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '4.0.0'">4.0.0</a>
-                    <div role="separator" class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '3.0.2'">3.0.2</a>
-                    <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '3.0.1'">3.0.1</a>
-                  </div>
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '4.0.1'">4.0.1</a>
+                  <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '4.0.0'">4.0.0</a>
+                  <div role="separator" class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '3.0.2'">3.0.2</a>
+                  <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '3.0.1'">3.0.1</a>
                 </div>
-                <div class="input-group-append">
-                  <div class="input-group-btn">
-                    <button type="button" class="btn btn-primary" [disabled]="!newFhirVersion" (click)="addNewFhirVersion(); igChanging.emit(true)" title="Add this FHIR version">
-                      <i class="fa fa-plus"></i>
-                    </button>
-                  </div>
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-primary" [disabled]="!newFhirVersion" (click)="addNewFhirVersion(); igChanging.emit(true)" title="Add this FHIR version">
+                    <i class="fa fa-plus"></i>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="col-md-3">
-            <div class="form-group">
+            <div class="mb-3">
               <label>
                 <span>Status </span>
                 <app-tooltip-icon tooltipPath="ImplementationGuide.status"></app-tooltip-icon>
               </label>
-              <select class="form-control" [(ngModel)]="implementationGuide.status" (change)="igChanging.emit(true)">
+              <select class="form-select" [(ngModel)]="implementationGuide.status" (change)="igChanging.emit(true)">
                 <option [ngValue]="'draft'">Draft</option>
                 <option [ngValue]="'active'">Active</option>
                 <option [ngValue]="'retired'">Retired</option>
@@ -121,9 +118,9 @@
           </div>
 
           <div class="col-md-3" *ngIf="implementationGuide.packageId && implementationGuide.packageId.startsWith('hl7.')">
-            <div class="form-group">
+            <div class="mb-3">
               <label>HL7 Work Group</label>
-              <select class="form-control" [(ngModel)]="hl7WorkGroup" (change)="igChanging.emit(true)" [class.is-invalid]="!hl7WorkGroup">
+              <select class="form-select" [(ngModel)]="hl7WorkGroup" (change)="igChanging.emit(true)" [class.is-invalid]="!hl7WorkGroup">
                 <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
                 <option [ngValue]="undefined">Unspecified</option>
               </select>
@@ -154,20 +151,20 @@
 
         <div class="row">
           <div class="col-md-12">
-            <div class="form-group">
+            <div class="mb-3">
               <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction" (change)="igChanging.emit(true)" [required]="true">
               </app-fhir-multi-jurisdiction>
             </div>
           </div>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="narrative">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="narrative">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['ig.narrative-tab']">Narrative/Pages</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <ng-template #pageKeyboardShortcuts>
           ALT + UP/DOWN = Select previous/next page<br/>
           CTRL + ALT + &lt;ARROW KEY&gt; = Move page
@@ -205,7 +202,7 @@
                     <i class="fa fa-edit"></i>
                   </button>
                   <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" title="Add a page as a child of this page" id="addPageMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn btn-primary dropdown-toggle" title="Add a page as a child of this page" id="addPageMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="fa fa-plus"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="addPageMenu">
@@ -214,7 +211,7 @@
                     </div>
                   </div>
                   <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" title="Re-arrange the pages" id="rearrangePages" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn btn-primary dropdown-toggle" title="Re-arrange the pages" id="rearrangePages" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="fas fa-arrows-alt"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="rearrangePages">
@@ -256,14 +253,14 @@
 
         <app-fhir-narrative [resource]="implementationGuide" (change)="igChanging.emit(true)"></app-fhir-narrative>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Resources -->
-    <ngb-tab id="resources">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="resources">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['ig.resources-tab']">Resources</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
 
         <!-- Resource Groups -->
         <div class="card">
@@ -342,35 +339,39 @@
               <td colspan="5">
                 <div class="row filter-row">
                   <div class="col-md-6 checkboxes">
-                    <label>
-                      <input type="checkbox" [ngModel]="isFilterResourceTypeAll"
-                             (click)="toggleFilterResourceType('all')"> All
-                    </label>
-                    <label>
-                      <input type="checkbox" [ngModel]="filterResourceType.profile"
-                             (click)="toggleFilterResourceType('profile')"> Profiles
-                    </label>
-                    <label>
-                      <input type="checkbox" [ngModel]="filterResourceType.terminology"
-                             (click)="toggleFilterResourceType('terminology')"> Terminology
-                    </label>
-                    <label>
-                      <input type="checkbox" [ngModel]="filterResourceType.example" (click)="toggleFilterResourceType('example')"> Examples
-                    </label>
+                    <div class="form-check form-check-inline">
+                      <input type="checkbox" [ngModel]="isFilterResourceTypeAll" class="form-check-input" (click)="toggleFilterResourceType('all')">
+                      <label class="form-check-label">All</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input type="checkbox" [ngModel]="filterResourceType.profile" class="form-check-input" (click)="toggleFilterResourceType('profile')">
+                      <label class="form-check-label">Profiles</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input type="checkbox" [ngModel]="filterResourceType.terminology" class="form-check-input" (click)="toggleFilterResourceType('terminology')">
+                      <label class="form-check-label">Terminology</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input type="checkbox" [ngModel]="filterResourceType.example" (click)="toggleFilterResourceType('example')" class="form-check-input">
+                      <label class="form-check-label">Examples</label>
+                    </div>
                   </div>
                   <div class="col-md-6">
                     <input type="text" class="form-control" placeholder="Search resources" [(ngModel)]="filterResourceQuery"/>
                   </div>
                   <div class="col-md-6 checkboxes">
-                    <label>
-                      <input type="checkbox" [(ngModel)]="filterGroupsAll"> All
-                    </label>
-                    <label *ngFor="let group of implementationGuide.definition?.grouping || 0">
-                      <input (click)="toggleFilterGroup(group.id)" [ngModel]="filterGroups.indexOf(group.id) >= 0" type="checkbox"> {{group.name}}
-                    </label>
-                    <label>
-                      <input type="checkbox" [(ngModel)]="filterGroupsUnspecified"> Unspecified
-                    </label>
+                    <div class="form-check form-check-inline">
+                      <input type="checkbox" [(ngModel)]="filterGroupsAll" class="form-check-input">
+                      <label class="form-check-label">All</label>
+                    </div>
+                    <div *ngFor="let group of implementationGuide.definition?.grouping || 0" class="form-check form-check-inline">
+                      <input (click)="toggleFilterGroup(group.id)" [ngModel]="filterGroups.indexOf(group.id) >= 0" type="checkbox" class="form-check-input">
+                      <label class="form-check-label">{{group.name}}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input type="checkbox" [(ngModel)]="filterGroupsUnspecified" class="form-check-input">
+                      <label class="form-check-label">Unspecified</label>
+                    </div>
                   </div>
                 </div>
               </td>
@@ -409,10 +410,10 @@
                 </app-fhir-reference>
               </td>
               <td>
-                <app-fhir-string [parentObject]="resource" propertyName="name" [isFormGroup]="false" (change)="igChanging.emit(true)"></app-fhir-string>
+                <app-fhir-string [parentObject]="resource" propertyName="name" [required]="true" [isFormGroup]="false" (change)="igChanging.emit(true)"></app-fhir-string>
               </td>
               <td>
-                <select class="form-control" [(ngModel)]="resource.groupingId" (change)="igChanging.emit(true)">
+                <select class="form-select" [(ngModel)]="resource.groupingId" (change)="igChanging.emit(true)">
                   <option [ngValue]="undefined">Unspecified</option>
                   <option *ngFor="let g of implementationGuide.definition?.grouping" [ngValue]="g.id">{{g.name || g.id}}</option>
                 </select>
@@ -452,14 +453,14 @@
           </table>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Other -->
-    <ngb-tab id="other">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="other">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['ig.other-tab']">Other</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
 
         <app-fhir-boolean [parentObject]="implementationGuide" propertyName="experimental" title="Experimental" tooltipPath="ImplementationGuide.experimental" (change)="igChanging.emit(true)"></app-fhir-boolean>
 
@@ -493,11 +494,9 @@
               <td>
                 <div class="input-group">
                   <input type="text" class="form-control" [class.is-invalid]="!param.code" [(ngModel)]="param.code" (change)="igChanging.emit(true)"/>
-                  <div class="input-group-append">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                    <div class="dropdown-menu">
-                      <a class="dropdown-item" href="javascript:void(0)" *ngFor="let p of Globals.igParameters" (click)="param.code = p; igChanging.emit(true)">{{p}}</a>
-                    </div>
+                  <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="javascript:void(0)" *ngFor="let p of Globals.igParameters" (click)="param.code = p; igChanging.emit(true)">{{p}}</a>
                   </div>
                 </div>
               </td>
@@ -550,7 +549,7 @@
             <tbody *ngIf="implementationGuide.global">
             <tr *ngFor="let g of implementationGuide.global; let i = index" [attr.data-index]="i">
               <td>
-                <select class="form-control" [(ngModel)]="g.type" (change)="igChanging.emit(true)">
+                <select class="form-select" [(ngModel)]="g.type" (change)="igChanging.emit(true)">
                   <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
                 </select>
               </td>
@@ -576,11 +575,12 @@
           </table>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Publishing -->
-    <ngb-tab id="publishing" title="Publishing">
-      <ng-template ngbTabContent>
+    <li ngbNavItem="publishing">
+      <a ngbNavLink>Publishing</a>
+      <ng-template ngbNavContent>
         <div class='row'>
           <div class='col-md-6'>
             <trifolia-fhir-publishing-template [implementationGuide]='implementationGuide' (change)='igChanging.emit(true)'></trifolia-fhir-publishing-template>
@@ -609,49 +609,50 @@
           </div>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Permissions -->
-    <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions
-          <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(implementationGuide)" title="No write permissions for current user specified!"></i></span>
+          <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i></span>
+      </a>
+      <ng-template ngbNavContent>
+        <trifolia-fhir-resource-permissions [resource]="conformance" (change)="igChanging.emit(true)"></trifolia-fhir-resource-permissions>
       </ng-template>
-      <ng-template ngbTabContent>
-        <trifolia-fhir-resource-permissions [resource]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-resource-permissions>
-      </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Validation -->
-    <ngb-tab id="validation">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="validation">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- RAW JSON/XML -->
-    <ngb-tab id="raw">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="raw">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.raw-tab']">RAW</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-raw-resource [resource]="implementationGuide"></app-raw-resource>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Version History -->
-    <ngb-tab id="history" *ngIf="!isNew">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="history" *ngIf="!isNew">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
+      </a>
+      <ng-template ngbNavContent>
+        <app-resource-history [resource]="conformance" (resourceChange) = "implementationGuide= $event; conformance.resource = $event;"></app-resource-history>
       </ng-template>
-      <ng-template ngbTabContent>
-        <app-resource-history [(resource)]="implementationGuide"></app-resource-history>
-      </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="igTabs" class="mt-2"></div>
 </div>
 
 <ng-template #dependsOn>
@@ -744,12 +745,12 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(implementationGuide)" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance)" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>
   <div class="pull-right">
-    <button type="button" class="btn btn-danger" title="Delete this Implementation Guide" (click)="implementationGuideService.deleteImplementationGuide(implementationGuide)">
+    <button type="button" class="btn btn-danger" title="Delete this Implementation Guide" (click)="delete(implementationGuideId)">
       <i class="fa fa-trash"></i> Delete
     </button>
   </div>

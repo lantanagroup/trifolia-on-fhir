@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -184,7 +185,7 @@
 
             <div class="main-content">
                 
-<h1 class="rvps9"><span class="rvts0"><span class="rvts22">Export</span></span></h1>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts21">Export</span></span></h1>
 <p class="rvps2"><span class="rvts6">Select Export in the tabbed tool bar on the top of the screen.&nbsp;</span></p>
 <p class="rvps2"><span class="rvts6">in order to export artifacts, you must first select the Implementation Guide(IG).</span></p>
 <p class="rvps2"><span class="rvts6">The Export page contains form fields that allow users to specify the details of their exports. Users can export the Implementation Guides (IGs) saved under the Browse/Edit tab at the top right side of the screen. Users can export IGs as bundles or HTML with the IG Publisher. Once the form fields are complete, select the Export button on the left side of the scrolling tab at the bottom of the screen.</span></p>
@@ -193,8 +194,8 @@
 </ol>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
  <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
-  <li style="margin-left: 0px" class="rvps10"><span class="rvts6">Users can select either JSON or XML format for the output</span></li>
-  <li style="margin-left: 0px" class="rvps10"><span class="rvts6">The "FHIR IG Publisher JAR" can be included in the export package</span></li>
+  <li style="margin-left: 0px" class="rvps8"><span class="rvts6">Users can select either JSON or XML format for the output</span></li>
+  <li style="margin-left: 0px" class="rvps8"><span class="rvts6">The "FHIR IG Publisher JAR" can be included in the export package</span></li>
   <li class="rvps2"><span class="rvts6">The Export tool will take a few minutes to process. The length of time is correlated with the size of the export.&nbsp;</span></li>
   <li class="rvps2"><span class="rvts6">After completing the process, the export will automatically download to users' computers in a compressed folder, and tthe user is prompted to download a ZIP package of all files necessary to execute the FHIR IG publisher.</span></li>
   <li class="rvps2"><span class="rvts6">When the IG Publisher is executed, the output from the IG Publisher is copied to a public location in Trifolia-on-FHIR for preview. &nbsp;</span></li>
@@ -224,7 +225,7 @@
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -259,7 +260,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -276,7 +277,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

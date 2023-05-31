@@ -1,4 +1,4 @@
-import {ConstraintManager} from './constraint-manager';
+import { ConstraintManager } from './constraint-manager';
 import * as profileTypes from '../assets/r4/profiles-types.json';
 import * as profileResources from '../assets/r4/profiles-resources.json';
 import * as shareablePlanDefinitionData from '../../../../test/data/shareableplandefinition.profile.json';
@@ -9,12 +9,15 @@ import * as dentalReferralData from '../../../../test/data/dentalReferral.json';
 import * as referralNoteData from '../../../../test/data/referralNote.json';
 import * as dentalCCDData from '../../../../test/data/dental-ccd.json';
 import * as fetalDeathReportdata from '../../../../test/data/composition-jurisdiction-fetal-death-report.json';
+import * as compositionClinicalDocumentDataEnterer from '../../../../test/data/composition-clinicaldocument-dataEnterer.json';
 
-import {Fhir, Versions} from 'fhir/fhir';
-import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
-import {ParseConformance} from 'fhir/parseConformance';
-import {ElementDefinition, StructureDefinition} from './r4/fhir';
-import {ElementTreeModel} from './element-tree-model';
+import * as observationHowDeathInjuryOccured from '../../../../test/data/observationHowDeathInjuryOccured.profile.json';
+
+
+import { Fhir, Versions } from 'fhir/fhir';
+import { IElementDefinition, IStructureDefinition } from './fhirInterfaces';
+import { ParseConformance } from 'fhir/parseConformance';
+import { ElementDefinition, StructureDefinition } from './r4/fhir';
 
 describe('ConstraintManager', () => {
   const parser = new ParseConformance(false, Versions.R4);
@@ -673,6 +676,50 @@ describe('ConstraintManager', () => {
       expect(children[7].path).toBe('PlanDefinition.meta.tag');
     });
 
+    describe('elements should be constrained when Reference is constrained by type', () => {
+      let cm;
+
+      it('should contain constrainedElement', async () => {
+        const testData: IStructureDefinition = <IStructureDefinition>JSON.parse(JSON.stringify(compositionClinicalDocumentDataEnterer));
+        expect(testData.differential.element[2].id).toBe('Extension.value[x]:valueReference');
+
+        const extModel = <IStructureDefinition>fhir.parser.structureDefinitions.find(ext => ext.id === 'Extension');
+        cm = new ConstraintManager(ElementDefinition, extModel, testData, fhir.parser);
+        await cm.initializeRoot();
+
+        expect(cm.elements[4].constrainedElement).toBeTruthy();
+        expect(cm.elements[4].constrainedElement.id).toBe('Extension.value[x]:valueReference');
+        expect(cm.elements[4].constrainedElement.type[0].code).toBe('Reference');
+        expect(cm.elements[4].constrainedElement.type[0].targetProfile[0]).toBe('http://hl7.org/fhir/StructureDefinition/Practitioner');
+        expect(cm.elements[4].constrainedElement.type[0].targetProfile[1]).toBe('http://hl7.org/fhir/StructureDefinition/PractitionerRole');
+        expect(cm.elements[4].constrainedElement.type[0].targetProfile[2]).toBe('http://hl7.org/fhir/StructureDefinition/RelatedPerson');
+
+
+      });
+
+    });
+
+    describe('regex recognition methods should work correctly', () => {
+
+      it('should recognize the correct type', async () => {
+        const regExString1 = 'Extension.value[x]';
+        const regExString2 = 'Extension.valueReference';
+        const regExString3 = 'Extension.valueHumanName';
+        const regExString4 = 'Extension.valueTriggerDefinition';
+
+        const normalizedPath1 = ConstraintManager.normalizePath(regExString1);
+        const normalizedPath2 = ConstraintManager.normalizePath(regExString2);
+        const normalizedPath3 = ConstraintManager.normalizePath(regExString3);
+        const normalizedPath4 = ConstraintManager.normalizePath(regExString4);
+
+        expect(normalizedPath1).toBe('Extension.value[x]');
+        expect(normalizedPath2).toBe('Extension.value[x]');
+        expect(normalizedPath3).toBe('Extension.value[x]');
+        expect(normalizedPath4).toBe('Extension.value[x]');
+      });
+
+    });
+
     /*
     it('should find children for a type that is no loaded', async () => {
       const getStructureDefinitionCalled = false;
@@ -694,5 +741,57 @@ describe('ConstraintManager', () => {
       expect(getStructureDefinitionCalled).toBe(true);
     });
        */
+
+
+  });
+
+  describe('maintain order after constraining', () => {
+    let cm;
+    let testData: IStructureDefinition;
+
+    it('constrain Observation.note', async () => {
+      testData = <IStructureDefinition>JSON.parse(JSON.stringify(observationHowDeathInjuryOccured));
+      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
+      cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+      await cm.initializeRoot();
+
+      expect(cm.elements.length).toBe(36);
+      expect(cm.elements[21].constrainedElement).toBe(testData.differential.element[7]);
+      expect(testData.differential.element[7].id).toBe('Observation.value[x]');
+      expect(testData.differential.element[8].id).toBe('Observation.value[x].text');
+
+      expect(testData.differential.element.length).toBe(23);
+      cm.constrain(cm.elements[24]);
+      expect(cm.elements.length).toBe(36);
+      expect(testData.differential.element.length).toBe(24);
+      expect(testData.differential.element[7].id).toBe('Observation.value[x]');
+      expect(testData.differential.element[8].id).toBe('Observation.value[x].text'); // should fail here
+      expect(testData.differential.element[9].id).toBe('Observation.note'); // also causes fail
+
+    });
+
+    it('constrain Observatione.note with must support', async () => {
+      testData = <IStructureDefinition>JSON.parse(JSON.stringify(observationHowDeathInjuryOccured));
+      const obsModel = fhir.parser.structureDefinitions.find(sd => sd.id === 'Observation');
+      cm = new ConstraintManager(ElementDefinition, obsModel, testData, fhir.parser);
+      await cm.initializeRoot();
+
+      expect(cm.elements.length).toBe(36);
+      expect(cm.elements[21].constrainedElement).toBe(testData.differential.element[7]);
+      expect(testData.differential.element[7].id).toBe('Observation.value[x]');
+      expect(testData.differential.element[8].id).toBe('Observation.value[x].text');
+
+      expect(testData.differential.element.length).toBe(23);
+      cm.constrain(cm.elements[24]);
+      testData.differential.element[8].mustSupport = true;
+      expect(cm.elements.length).toBe(36);
+      expect(testData.differential.element.length).toBe(24);
+      expect(testData.differential.element[7].id).toBe('Observation.value[x]');
+      expect(testData.differential.element[8].id).toBe('Observation.value[x].text'); // should fail here
+      expect(testData.differential.element[9].id).toBe('Observation.note'); // also causes fail
+
+
+    });
+
   });
 });

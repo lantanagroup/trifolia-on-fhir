@@ -7,6 +7,7 @@ import {Media as R4Media} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {FhirService} from '../../shared/fhir.service';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../../shared/config.service';
+import {IConformance} from '@trifolia-fhir/models';
 
 export class ImageItem {
   name: string;
@@ -34,7 +35,7 @@ export class MediaSelectionModalComponent implements OnInit {
   }
 
   async loadImages(page = 1) {
-    let results: IBundle;
+    let metadataResult;
     const query = {};
 
     if (page === 1) {
@@ -51,17 +52,17 @@ export class MediaSelectionModalComponent implements OnInit {
     }
 
     try {
-      results = await this.fhirService.search('Media', null, true, null, null, query, false, null, page, 10).toPromise();
+      metadataResult = await this.fhirService.search('Media', null, true, null, null, this.configService.project.implementationGuideId, null, false, null, page).toPromise();
     } catch (ex) {
       this.message = getErrorString(ex);
       console.error('Error loading images from server: ' + this.message);
       return;
     }
-
+    let results = metadataResult.results;
     if (results) {
-      this.totalImages = results.total;
+      this.totalImages = metadataResult.total;
 
-      const nextImages = (results.entry || []).map((entry) => {
+      const nextImages = (results|| []).map((entry) => {
         const media = <STU3Media | R4Media>entry.resource;
 
         const imageItem = new ImageItem();

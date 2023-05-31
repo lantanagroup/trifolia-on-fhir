@@ -2,17 +2,17 @@
 
 <div class="alert alert-danger" *ngIf="igNotFound">Implementation Guide with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<div class="ig-main" *ngIf="implementationGuide">
+<div class="ig-main" *ngIf="conformance && implementationGuide">
   <h2>
-    {{implementationGuide.name || 'no-name'}} <span class="badge badge-warning" *ngIf="!canEdit(implementationGuide)">View-only</span>
-    <span class="badge badge-danger" *ngIf="isDirty">Changed!</span>
+    {{implementationGuide.name || 'no-name'}} <span class="badge bg-warning" *ngIf="!canEdit(conformance)">View-only</span>
+    <span class="badge bg-danger" *ngIf="isDirty">Changed!</span>
   </h2>
-  <ngb-tabset [destroyOnHide]="false" (tabChange)="tabChange($event)" #igTabs="ngbTabset">
-    <ngb-tab id="general">
-      <ng-template ngbTabTitle>
+  <ul ngbNav #igTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false" (navChange)="tabChange($event)">
+    <li ngbNavItem="general">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['ig.general-tab']">General</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <fieldset>
           <div class="row">
             <div class="col-md-8">
@@ -95,7 +95,7 @@
               </div>
             </div>
             <div class="col-md-4">
-              <div class="form-group">
+              <div class="mb-3">
                 <label>ID
                   <app-tooltip-icon *ngIf="!isNew" tooltipKey="resource.move"></app-tooltip-icon>
                 </label>
@@ -109,7 +109,7 @@
 
               <app-fhir-date [parentObject]="implementationGuide" propertyName="date" title="Date" [allowTime]="true"></app-fhir-date>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label>Package ID</label>
                 <input type="text" class="form-control" [(ngModel)]="packageId" [class.is-invalid]="!packageId || !packageIdFormatValid" (change)="igChanging.emit(true);"/>
                 <span class="help-block" *ngIf="!packageId">You must specify Package ID.</span>
@@ -118,9 +118,9 @@
                 </div>
               </div>
 
-              <div class="form-group" *ngIf="packageId && packageId.startsWith('hl7.')">
+              <div class="mb-3" *ngIf="packageId && packageId.startsWith('hl7.')">
                 <label>HL7 Work Group</label>
-                <select class="form-control" [(ngModel)]="hl7WorkGroup" [class.is-invalid]="!hl7WorkGroup" (change)="igChanging.emit(true);">
+                <select class="form-select" [(ngModel)]="hl7WorkGroup" [class.is-invalid]="!hl7WorkGroup" (change)="igChanging.emit(true);">
                   <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
                   <option [ngValue]="undefined">Unspecified</option>
                 </select>
@@ -135,11 +135,11 @@
                 (change)="igChanging.emit(true);">
               </app-fhir-string>
 
-              <div class="form-group">
+              <div class="mb-3">
                 <label>Status
                   <app-tooltip-icon tooltipPath="ImplementationGuide.status"></app-tooltip-icon>
                 </label>
-                <select class="form-control" [(ngModel)]="implementationGuide.status" (change)="igChanging.emit(true);">
+                <select class="form-select" [(ngModel)]="implementationGuide.status" (change)="igChanging.emit(true);">
                   <option [ngValue]="'draft'">Draft</option>
                   <option [ngValue]="'active'">Active</option>
                   <option [ngValue]="'retired'">Retired</option>
@@ -155,14 +155,14 @@
           </div>
         </fieldset>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Pages -->
-    <ngb-tab id="pages">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="pages">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['ig.narrative-tab']">Narrative/Pages</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <table class="table">
           <thead>
           <tr>
@@ -192,7 +192,7 @@
               <span *ngIf="isFileNameInvalid(p)" style="color:red">The file name must not include special characters such as "&" and "/"</span>
             </td>
             <td>
-              <select class="form-control" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind" (change)="igChanging.emit(true);">
+              <select class="form-select" [(ngModel)]="p.page.kind" [class.is-invalid]="!p.page.kind" (change)="igChanging.emit(true);">
                 <option value="page">Page</option>
                 <option value="example">Example</option>
                 <option value="list">List</option>
@@ -236,14 +236,14 @@
           </tfoot>
         </table>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Other -->
-    <ngb-tab id="other">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="other">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['ig.other-tab']">Other</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-fhir-multi-jurisdiction [parentObject]="implementationGuide" propertyName="jurisdiction" (change)="igChanging.emit(true);"></app-fhir-multi-jurisdiction>
 
         <div class="card">
@@ -273,11 +273,9 @@
               <td>
                 <div class="input-group">
                   <input type="text" class="form-control" [class.is-invalid]="!param.code" [(ngModel)]="param.code" (change)="igChanging.emit(true);"/>
-                  <div class="input-group-append">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                    <div class="dropdown-menu">
-                      <a class="dropdown-item" href="javascript:void(0)" *ngFor="let p of Globals.igParameters" (click)="param.code = p">{{p}}</a>
-                    </div>
+                  <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="javascript:void(0)" *ngFor="let p of Globals.igParameters" (click)="param.code = p">{{p}}</a>
                   </div>
                 </div>
               </td>
@@ -329,7 +327,7 @@
             <tbody *ngIf="implementationGuide.hasOwnProperty('global')">
             <tr *ngFor="let g of implementationGuide.global; let i = index" [attr.data-index]="i">
               <td>
-                <select class="form-control" [(ngModel)]="g.type" (change)="igChanging.emit(true);">
+                <select class="form-select" [(ngModel)]="g.type" (change)="igChanging.emit(true);">
                   <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
                 </select>
               </td>
@@ -356,11 +354,12 @@
           </table>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Publishing -->
-    <ngb-tab id="publishing" title="Publishing">
-      <ng-template ngbTabContent>
+    <li ngbNavItem="publishing">
+      <a ngbNavLink>Publishing</a>
+      <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-12">
             <trifolia-fhir-package-list
@@ -380,13 +379,13 @@
           </div>
         </div>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="resources">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="resources">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['ig.resources-tab']">Resources</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <table class="table table-striped">
           <thead>
           <tr>
@@ -411,7 +410,7 @@
           <tbody>
           <tr *ngFor="let ir of resources">
             <td>
-              <select class="form-control" [ngModel]="ir.igPackage" (ngModelChange)="changeResourcePackage(ir, $event)" (change)="igChanging.emit(true);">
+              <select class="form-select" [ngModel]="ir.igPackage" (ngModelChange)="changeResourcePackage(ir, $event)" (change)="igChanging.emit(true);">
                 <option *ngFor="let p of implementationGuide.package; let pi = index" [ngValue]="p">{{p.name || 'Index ' + pi}}</option>
               </select>
             </td>
@@ -442,119 +441,121 @@
           </tfoot>
         </table>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Packages -->
-    <ngb-tab id="packages">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="packages">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['ig.packages-tab']">Packages</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('package')"
                (ngModelChange)="Globals.toggleProperty(implementationGuide, 'package', [{ name: '', resource: [{ sourceReference: { reference: '', display: '' }, example: false}]}])"
         (change)="igChanging.emit(true);"/> This
         implementation guide has packages
         <app-tooltip-icon tooltipPath="ImplementationGuide.package"></app-tooltip-icon>
-        <ngb-tabset *ngIf="implementationGuide.hasOwnProperty('package')" justify="center" #packagesTabSet [destroyOnHide]="false">
-          <ngb-tab *ngFor="let p of implementationGuide.package; let pi = index" id="package-{{pi}}">
-            <ng-template ngbTabTitle>
-              <span title="{{p.name}}">#{{pi + 1}}</span>
-              <i class="fas fa-trash-alt" title="Remove this package"
-                 (click)="prompt(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
-            </ng-template>
-            <ng-template ngbTabContent>
-              <div class="form-group">
-                <label>Name
-                  <app-tooltip-icon tooltipPath="ImplementationGuide.package.name"></app-tooltip-icon>
-                </label>
-                <input type="text" class="form-control" [(ngModel)]="p.name" (change)="igChanging.emit(true);"/>
-              </div>
-
-              <div class="form-group">
-                <label>
-                  <input type="checkbox" [ngModel]="p.hasOwnProperty('description')"
-                         (ngModelChange)="Globals.toggleProperty(p, 'description', '')" (change)="igChanging.emit(true);"/>
-                  Description
-                  <app-tooltip-icon tooltipPath="ImplementationGuide.package.description"></app-tooltip-icon>
-                </label>
-                <trifolia-fhir-markdown [(value)]="p.description" [disabled]="!p.hasOwnProperty('description')" (valueChange)="igChanging.emit(true);"></trifolia-fhir-markdown>
-              </div>
-
-              <h4>Resources
-                <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource"></app-tooltip-icon>
-              </h4>
-              <table class="table">
-                <thead>
-                <tr>
-                  <th>Name
-                    <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource.name"></app-tooltip-icon>
-                  </th>
-                  <th>Source Type</th>
-                  <th>Source</th>
-                  <th class="actions-column-2">
-                    <div class="pull-right">
-                      <button type="button" class="btn btn-primary" title="Add resource" (click)="addResources(p)">
-                        <i class="fa fa-plus"></i>
-                      </button>
-                    </div>
-                  </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let r of p.resource; let ri = index" [attr.data-index]="ri">
-                  <td>
-                    <div class="input-group">
-                      <div class="input-group-addon">
-                        <input type="checkbox" [ngModel]="r.hasOwnProperty('name')"
-                               (ngModelChange)="Globals.toggleProperty(r, 'name', '')" (change)="igChanging.emit(true);"/>
+        <ng-container *ngIf="implementationGuide.hasOwnProperty('package')">
+          <ul ngbNav #packagesTabSet="ngbNav" justify="center" [destroyOnHide]="false">
+            <li *ngFor="let p of implementationGuide.package; let pi = index" ngbNavItem="package-{{pi}}">
+              <a ngbNavLink>
+                <span title="{{p.name}}">#{{pi + 1}}</span>
+                <i class="fas fa-trash-alt" title="Remove this package"
+                   (click)="prompt(implementationGuide.package, pi, 'Are you sure you want to remove this package?', $event)"></i>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="mb-3">
+                  <label>Name
+                    <app-tooltip-icon tooltipPath="ImplementationGuide.package.name"></app-tooltip-icon>
+                  </label>
+                  <input type="text" class="form-control" [(ngModel)]="p.name" (change)="igChanging.emit(true);"/>
+                </div>
+                <div class="mb-3">
+                  <label>
+                    <input type="checkbox" [ngModel]="p.hasOwnProperty('description')"
+                           (ngModelChange)="Globals.toggleProperty(p, 'description', '')" (change)="igChanging.emit(true);"/>
+                    Description
+                    <app-tooltip-icon tooltipPath="ImplementationGuide.package.description"></app-tooltip-icon>
+                  </label>
+                  <trifolia-fhir-markdown [(value)]="p.description" [disabled]="!p.hasOwnProperty('description')" (valueChange)="igChanging.emit(true);"></trifolia-fhir-markdown>
+                </div>
+                <h4>Resources
+                  <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource"></app-tooltip-icon>
+                </h4>
+                <table class="table">
+                  <thead>
+                  <tr>
+                    <th>Name
+                      <app-tooltip-icon tooltipPath="ImplementationGuide.package.resource.name"></app-tooltip-icon>
+                    </th>
+                    <th>Source Type</th>
+                    <th>Source</th>
+                    <th class="actions-column-2">
+                      <div class="pull-right">
+                        <button type="button" class="btn btn-primary" title="Add resource" (click)="addResources(p)">
+                          <i class="fa fa-plus"></i>
+                        </button>
                       </div>
-                      <input type="text" class="form-control" [(ngModel)]="r.name"
-                             [disabled]="!r.hasOwnProperty('name')" (change)="igChanging.emit(true);"/>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="input-group">
-                      <select class="form-control" [ngModel]="getResourceSourceType(r)"
-                              (ngModelChange)="setResourceSourceType(r, $event)" (change)="igChanging.emit(true);">
-                        <option value="uri">URI</option>
-                        <option value="reference">Reference</option>
-                      </select>
-                    </div>
-                  </td>
-                  <td>
-                    <input type="text" class="form-control" *ngIf="r.hasOwnProperty('sourceUri')" [(ngModel)]="r.sourceUri" placeholder="URI" (change)="igChanging.emit(true);"/>
-                    <app-fhir-reference *ngIf="r.hasOwnProperty('sourceReference')" [parentObject]="r" propertyName="sourceReference" [required]="true" [isFormGroup]="false"
-                                        (change)="igChanging.emit(true);"></app-fhir-reference>
-                  </td>
-                  <td>
-                    <div class="btn-group pull-right">
-                      <button type="button" class="btn btn-default" (click)="editPackageResourceModal(r, packageResourceModal)" title="Edit additional properties for this package resource">
-                        <i class="fa fa-edit"></i>
-                      </button>
-                      <button type="button" class="btn btn-default" [disabled]="p.resource.length === 1"
-                              (click)="prompt(p.resource, ri, 'Are you sure you want to remove this resource?')" title="Remove resource">
-                        <i class="fas fa-trash-alt"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab [disabled]="true">
-            <ng-template ngbTabTitle>
-              <button type="button" class="btn btn-default" title="Add a package entry" (click)="addPackageEntry(packagesTabSet); igChanging.emit(true);">Add</button>
-            </ng-template>
-            <ng-template ngbTabContent></ng-template>
-          </ngb-tab>
-        </ngb-tabset>
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let r of p.resource; let ri = index" [attr.data-index]="ri">
+                    <td>
+                      <div class="input-group">
+                        <div class="input-group-addon">
+                          <input type="checkbox" [ngModel]="r.hasOwnProperty('name')"
+                                 (ngModelChange)="Globals.toggleProperty(r, 'name', '')" (change)="igChanging.emit(true);"/>
+                        </div>
+                        <input type="text" class="form-control" [(ngModel)]="r.name"
+                               [disabled]="!r.hasOwnProperty('name')" (change)="igChanging.emit(true);"/>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="input-group">
+                        <select class="form-select" [ngModel]="getResourceSourceType(r)"
+                                (ngModelChange)="setResourceSourceType(r, $event)" (change)="igChanging.emit(true);">
+                          <option value="uri">URI</option>
+                          <option value="reference">Reference</option>
+                        </select>
+                      </div>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control" *ngIf="r.hasOwnProperty('sourceUri')" [(ngModel)]="r.sourceUri" placeholder="URI" (change)="igChanging.emit(true);"/>
+                      <app-fhir-reference *ngIf="r.hasOwnProperty('sourceReference')" [parentObject]="r" propertyName="sourceReference" [required]="true" [isFormGroup]="false"
+                                          (change)="igChanging.emit(true);"></app-fhir-reference>
+                    </td>
+                    <td>
+                      <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-default" (click)="editPackageResourceModal(r, packageResourceModal)" title="Edit additional properties for this package resource">
+                          <i class="fa fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-default" [disabled]="p.resource.length === 1"
+                                (click)="prompt(p.resource, ri, 'Are you sure you want to remove this resource?')" title="Remove resource">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </ng-template>
+            </li>
+            <li ngbNavItem [disabled]="true">
+              <a ngbNavLink>
+                <button type="button" class="btn btn-default" title="Add a package entry" (click)="addPackageEntry(packagesTabSet); igChanging.emit(true);">Add</button>
+              </a>
+              <ng-template ngbNavContent></ng-template>
+            </li>
+          </ul>
+          <div [ngbNavOutlet]="packagesTabSet" class="mt-2"></div>
+        </ng-container>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Binary -->
-    <ngb-tab id="binary" title="Binary">
-      <ng-template ngbTabContent>
+    <li ngbNavItem="binary">
+      <a ngbNavLink>Binary</a>
+      <ng-template ngbNavContent>
         <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('binary')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'binary', [''])"
                (change)="igChanging.emit(true);"/>
         Implementation guide has binary URIs
@@ -589,64 +590,63 @@
           </tbody>
         </table>
       </ng-template>
-    </ngb-tab>
+    </li>
 
-    <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions
-        <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(implementationGuide)" title="No write permissions for current user specified!"></i></span>
+        <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i></span>
+      </a>
+      <ng-template ngbNavContent>
+        <trifolia-fhir-resource-permissions [resource]="conformance" (change)="igChanging.emit(true);"></trifolia-fhir-resource-permissions>
       </ng-template>
-      <ng-template ngbTabContent>
-        <trifolia-fhir-resource-permissions [resource]="implementationGuide" (change)="igChanging.emit(true);"></trifolia-fhir-resource-permissions>
-      </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Validation -->
-    <ngb-tab id="validation">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="validation">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- RAW JSON/XML -->
-    <ngb-tab id="raw">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="raw">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.raw-tab']">RAW</span>
-      </ng-template>
-      <ng-template ngbTabContent>
+      </a>
+      <ng-template ngbNavContent>
         <app-raw-resource [resource]="implementationGuide" [shown]="igTabs.activeId === 'raw'"></app-raw-resource>
       </ng-template>
-    </ngb-tab>
+    </li>
 
     <!-- Version History -->
-    <ngb-tab id="history" *ngIf="!isNew">
-      <ng-template ngbTabTitle>
+    <li ngbNavItem="history" *ngIf="!isNew">
+      <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
+      </a>
+      <ng-template ngbNavContent>
+        <app-resource-history [resource]="conformance"  (resourceChange) = "implementationGuide= $event" (change)="igChanging.emit(true);"></app-resource-history>
       </ng-template>
-      <ng-template ngbTabContent>
-        <app-resource-history [(resource)]="implementationGuide" (change)="igChanging.emit(true);"></app-resource-history>
-      </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="igTabs" class="mt-2"></div>
 </div>
 
 <ng-template #packageResourceModal let-c="close" let-d="dismiss">
   <div class="modal-header">
     <h4 class="modal-title">Edit package resource</h4>
-    <button type="button" class="close" aria-label="Close" (click)="closePackageResourceModal(d)">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closePackageResourceModal(d)"></button>
   </div>
   <div class="modal-body">
     <app-fhir-string [parentObject]="currentResource" propertyName="name" title="Name" (change)="igChanging.emit(true);"></app-fhir-string>
 
-    <div class="form-group">
+    <div class="mb-3">
       <label>Source type</label>
       <div class="input-group">
-        <select class="form-control" [ngModel]="getResourceSourceType(currentResource)" (ngModelChange)="setResourceSourceType(currentResource, $event)" (change)="igChanging.emit(true);">
+        <select class="form-select" [ngModel]="getResourceSourceType(currentResource)" (ngModelChange)="setResourceSourceType(currentResource, $event)" (change)="igChanging.emit(true);">
           <option value="uri">URI</option>
           <option value="reference">Reference</option>
         </select>
@@ -674,12 +674,12 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(implementationGuide)" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance)" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>
   <div class="pull-right">
-    <button type="button" class="btn btn-danger" title="Delete this Implementation Guide" (click)="implementationGuideService.deleteImplementationGuide(implementationGuide)">
+    <button type="button" class="btn btn-danger" title="Delete this Implementation Guide" (click)="delete(implementationGuide?.id)">
       <i class="fa fa-trash"></i> Delete
     </button>
   </div>

@@ -1,13 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ImportService, VSACImportCriteria } from '../shared/import.service';
 import { Bundle, DomainResource, EntryComponent, IssueComponent, Media as STU3Media, OperationOutcome, RequestComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { NgbModal, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
-import { FileSystemFileEntry, UploadEvent, UploadFile } from 'ngx-file-drop';
+import { NgbModal, NgbNav } from '@ng-bootstrap/ng-bootstrap';
+import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { FhirService } from '../shared/fhir.service';
-import { CookieService } from 'angular2-cookie/core';
+import { CookieService } from 'ngx-cookie-service';
 import { ContentModel, GithubService } from '../shared/github.service';
 import { ImportGithubPanelComponent } from './import-github-panel/import-github-panel.component';
-import { forkJoin } from 'rxjs';
+import { Observable, forkJoin, zip } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
@@ -15,8 +15,12 @@ import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { ConfigService } from '../shared/config.service';
 import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { IDomainResource } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { Media as R5Media } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
+import type { IDomainResource } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
+import { ConformanceService } from '../shared/conformance.service';
+import { IConformance, IExample, IProjectResource } from '@trifolia-fhir/models';
+import { ExamplesService } from '../shared/examples.service';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
@@ -24,20 +28,25 @@ enum ContentTypes {
   Json = 0,
   Xml = 1,
   Xlsx = 2,
-  Image = 3
+  Image = 3,
+  CdaExample = 4
 }
 
 class ImportFileModel {
   public name: string;
   public contentType: ContentTypes = ContentTypes.Json;
+  public isExample: boolean = false;
   public content: string | Uint8Array;
   public resource?: DomainResource;
   public vsBundle?: Bundle;
   public message: string;
   public status: 'add' | 'update' | 'unauthorized' | 'pending' | 'unknown' = 'pending';
+  public existingResource?: IProjectResource;
   public bundleOperation: 'store' | 'execute';
   public singleIg = true;
   public multipleIgMessage: "";
+  public cdaContent?: string;
+  public isCDAExample: boolean = false;
 }
 
 class GitHubImportContent {
@@ -53,6 +62,7 @@ class GitHubImportContent {
 export class ImportComponent implements OnInit {
   public textContentType = ContentTypes.Json;
   public textContent: string;
+  public textContentIsExample: boolean = false;
   public files: ImportFileModel[] = [];
   public outcome: OperationOutcome;
   public importBundle: Bundle;
@@ -68,7 +78,7 @@ export class ImportComponent implements OnInit {
 
   private readonly vsacPasswordCookieKey = 'vsac_password';
 
-  @ViewChild('importGithubPanel', { static: false })
+  @ViewChild('importGithubPanel')
   private importGithubPanel: ImportGithubPanelComponent;
 
   constructor(
@@ -76,6 +86,8 @@ export class ImportComponent implements OnInit {
     public configService: ConfigService,
     private httpClient: HttpClient,
     private importService: ImportService,
+    private conformanceService: ConformanceService,
+    private examplesService: ExamplesService,
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService,
     public githubService: GithubService,
@@ -89,9 +101,16 @@ export class ImportComponent implements OnInit {
     }
   }
 
-  viewUpdateDiff(resource: IDomainResource) {
+  viewUpdateDiff(fileModel: ImportFileModel) {
     const modalRef = this.modalService.open(UpdateDiffComponent, { backdrop: 'static', size: 'lg' });
-    modalRef.componentInstance.importResource = resource;
+    if (fileModel.resource) {
+      modalRef.componentInstance.importResource = fileModel.resource;
+      modalRef.componentInstance.existingResource = (<IConformance>fileModel.existingResource).resource;
+    }
+    else {
+      modalRef.componentInstance.importResource = fileModel.content;
+      modalRef.componentInstance.existingResource = (<IExample>fileModel.existingResource).content;
+    }
   }
 
   private createMedia(name: string, contentType: string, buffer: ArrayBuffer) {
@@ -113,8 +132,8 @@ export class ImportComponent implements OnInit {
         data: b64content
       };
       return media;
-    } else if (this.configService.isFhirR4) {
-      const media = new R4Media();
+    } else if (this.configService.isFhirR4 || this.configService.isFhirR5) {
+      const media = this.configService.isFhirR4 ? new R4Media() : new R5Media();
       media.id = name
         .substring(0, name.lastIndexOf('.'))
         .replace(/[^a-z0-9_]/gi, '')
@@ -129,7 +148,7 @@ export class ImportComponent implements OnInit {
       };
       return media;
     } else {
-      throw new Error('Can\'t create media. Unexpected FHIR server version');
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
   }
 
@@ -183,6 +202,7 @@ export class ImportComponent implements OnInit {
 
   public async filesChanged(event) {
     const files = event.target.files;
+    console.log('files:', files);
     if (files.length === 1) {
       try {
         await this.populateFile(files[0]);
@@ -201,7 +221,7 @@ export class ImportComponent implements OnInit {
     url += `/$validate-single-ig`;
 
     const singleIg = await this.httpClient.get(url).toPromise();
-    if(!singleIg){
+    if (!singleIg) {
       importFileModel.singleIg = false;
       importFileModel.multipleIgMessage = "This resource already belongs to another implementation guide. Continuing to import will add this resource to your current implementation guide, which may cause problems with the Publisher in the future."
     }
@@ -220,11 +240,11 @@ export class ImportComponent implements OnInit {
    * panel, needing to be loaded into the list of files to be imported.
    * @param event
    */
-  public async dropped(event: UploadEvent) {
+  public async dropped(files: NgxFileDropEntry[]) {
     // Create an inline function that returns an awaitable promise
     // when the file has been loaded/populated
-    const populateFile = (droppedFile: UploadFile) => {
-      return new Promise(resolve => {
+    const populateFile = (droppedFile: NgxFileDropEntry) => {
+      return new Promise<void>(resolve => {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file(async (file: File) => {
           await this.populateFile(file);
@@ -233,7 +253,7 @@ export class ImportComponent implements OnInit {
       });
     }
 
-    for (const droppedFile of event.files) {
+    for (const droppedFile of files) {
       if (droppedFile.fileEntry.isFile) {
         await populateFile(droppedFile);
       }
@@ -253,21 +273,56 @@ export class ImportComponent implements OnInit {
    * @private
    */
   private updateFileStatus() {
-    const pendingResources = this.files
-      .filter(f => !!f.resource && f.resource.id && f.status === 'pending');
+    const pendingResources = this.files.filter(f =>
+      (
+        (!f.isExample && !!f.resource && f.resource.id) ||
+        (f.isExample && !!f.content && this.getIdDisplay(f))
+      ) && f.status === 'pending');
 
-    const resourceReferences = pendingResources
-      .map(pr => `${pr.resource.resourceType}/${pr.resource.id}`);
+    const resourceReferences: { resourceType: string, id: string, isExample: boolean }[] = pendingResources
+      .map(pr => {
+        if (pr.isExample && !!pr.content) {
+          let resourceType;
+          let id;
+          if (pr.isCDAExample) {
+            resourceType = 'Binary';
+            id = this.getIdDisplay(pr);
+          } else {
+            if (pr.resource && typeof pr.resource === typeof {}) {
+              resourceType = pr.resource.resourceType;
+              id = pr.resource.id;
+            } else {
+              let resource = JSON.parse(pr.content.toString());
+              resourceType = resource['resourceType'];
+              id = resource['id'];
+            }
+          }
+          return { resourceType: resourceType, id: id, isExample:  pr.isCDAExample };
+        }
+        return { resourceType: pr.resource.resourceType, id: pr.resource.id, isExample: pr.isCDAExample };
+      });
 
     this.files.filter(f => !!f.resource && !f.resource.id)
       .forEach(f => f.status = 'add');
 
+    this.files.filter(f => f.isCDAExample && f.cdaContent).forEach(f => {
+      f.status = 'add'
+    });
+
     // Only ask the server if we have one or more resources with an ID that hasn't already been checked
     if (resourceReferences.length > 0) {
-      this.importService.checkResourcesStatus(resourceReferences)
+      this.importService.checkResourcesStatus(resourceReferences, this.implementationGuideId)
         .then((statuses) => {
           pendingResources.forEach(pr => {
-            pr.status = statuses[`${pr.resource.resourceType}/${pr.resource.id}`] || 'unknown';
+            let path = '';
+
+            if (pr.isExample) {
+              path = this.getExamplePath(pr);
+            } else {
+              path = `${pr.resource.resourceType}/${pr.resource.id}`;
+            }
+            pr.status = statuses[path].action || 'unknown';
+            pr.existingResource = statuses[path].resource;
           });
         })
         .catch((err) => {
@@ -291,7 +346,7 @@ export class ImportComponent implements OnInit {
       return;
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       reader.onload = (e: any) => {
         const result = e.target.result;
         const importFileModel = new ImportFileModel();
@@ -311,9 +366,30 @@ export class ImportComponent implements OnInit {
 
         try {
           if (importFileModel.contentType === ContentTypes.Xml) {
-            importFileModel.resource = this.fhirService.deserialize(result);
+
+            // try to deserialize XML imports into FHIR objects
+            try {
+              importFileModel.resource = this.fhirService.deserialize(result);
+            } catch (error) {
+              // if deserializing failed and this is a CDA IG we can store the XML as example content
+              if (this.configService.isCDA) {
+                importFileModel.cdaContent = result;
+                importFileModel.isExample = true;
+                importFileModel.isCDAExample = true;
+                importFileModel.contentType = ContentTypes.CdaExample;
+              }
+              else {
+                throw error;
+              }
+            }
           } else if (importFileModel.contentType === ContentTypes.Json) {
             importFileModel.resource = JSON.parse(result);
+            try {
+              let ser = this.fhirService.serialize(importFileModel.resource);
+            } catch (error) {
+              importFileModel.resource = null;
+              throw new Error("File does not contain a valid resource.");
+            }
           } else if (importFileModel.contentType === ContentTypes.Xlsx) {
             const convertResults = this.importService.convertExcelToValueSetBundle(result);
             if (!convertResults.success) {
@@ -331,8 +407,16 @@ export class ImportComponent implements OnInit {
           importFileModel.message = ex.message;
         }
 
-        if (importFileModel.resource && importFileModel.resource.resourceType === 'Bundle') {
-          importFileModel.bundleOperation = 'execute';
+        // TODO: add support for splitting bundles into individual resources to import
+        if (importFileModel.resource && importFileModel.resource.resourceType === 'Bundle' ) {
+          //importFileModel.bundleOperation = 'execute';
+          this.errorMessage = 'Bundle import is not supported.';
+        }
+
+        // default to treating this as an example if it is not a profile/terminology resource type
+        if (importFileModel.resource && importFileModel.resource.resourceType
+          && Globals.profileTypes.concat(Globals.terminologyTypes).indexOf(importFileModel.resource.resourceType) < 0) {
+          importFileModel.isExample = true;
         }
 
         // First find a matching file based on the file name. If it has the same file name as one that already exists, replace it
@@ -352,9 +436,9 @@ export class ImportComponent implements OnInit {
         if (this.errorMessage === '') {
           this.files.push(importFileModel);
         }
-        if (this.configService.project && this.configService.project.implementationGuideId) {
-          this.getList(importFileModel);
-        }
+        // if (this.configService.project && this.configService.project.implementationGuideId) {
+        //   this.getList(importFileModel);
+        // }
         this.importBundle = this.getFileBundle();
         this.cdr.detectChanges();
 
@@ -369,18 +453,24 @@ export class ImportComponent implements OnInit {
     });
   }
 
-  public downloadBundle(format: 'json'|'xml') {
+  public toggleExample(file: ImportFileModel) {
+    file.status = 'pending';
+    file.isExample = !file.isExample;
+    this.updateFileStatus();
+  }
+
+  public downloadBundle(format: 'json' | 'xml') {
     let content, contentBlob;
 
     switch (format) {
       case 'json':
         content = JSON.stringify(this.importBundle, null, '\t');
-        contentBlob = new Blob([content], {type: 'application/json'});
+        contentBlob = new Blob([content], { type: 'application/json' });
         saveAs(contentBlob, 'importBundle.json');
         break;
       case 'xml':
         content = this.fhirService.serialize(this.importBundle);
-        contentBlob = new Blob([content], {type: 'application/xml'});
+        contentBlob = new Blob([content], { type: 'application/xml' });
         saveAs(contentBlob, 'importBundle.xml');
     }
   }
@@ -402,107 +492,101 @@ export class ImportComponent implements OnInit {
     return clone;
   }
 
-  private importText(tabSet: NgbTabset) {
+  private importText(tabSet: NgbNav) {
     let resource;
 
     try {
-      resource = this.textContentType === ContentTypes.Xml ?
+        resource = this.textContentType === ContentTypes.Xml ?
         this.fhirService.fhir.xmlToObj(this.textContent) :
         JSON.parse(this.textContent);
     } catch (ex) {
-      this.outcome = {
-        resourceType: 'OperationOutcome',
-        text: {
-          status: 'generated',
-          div: 'An error occurred while parsing the text content: ' + getErrorString(ex)
-        },
-        issue: []
-      };
-      this.message = 'Done. Errors occurred.';
-      setTimeout(() => {
-        tabSet.select('results');
-      });
-      return;
+      if (this.configService.isCDA && this.textContentType === ContentTypes.Xml) {
+        resource = this.textContent;
+        this.textContentIsExample = true;
+      }
+      else {
+        this.message = 'Error: ' + getErrorString(ex);
+        return;
+      }
     }
 
-    let url = `/api/fhir/${resource.resourceType}`;
+    let newResource: IConformance | IExample = <IConformance | IExample>{};
 
-    if (resource.id) {
-      url += `/${resource.id}`;
+    if (this.implementationGuideId) {
+      newResource.igIds = [this.implementationGuideId];
     }
 
-    url += `?applyContextPermissions=${this.applyContextPermissions}`;
+    newResource.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
 
-    (resource.id ? this.httpClient.put(url, resource) : this.httpClient.post(url, resource))
-      .subscribe((results: OperationOutcome) => {
-        if (results.resourceType === 'OperationOutcome') {
-          this.outcome = <OperationOutcome>results;
-        } else {
-          const successOutcome = new OperationOutcome();
-          successOutcome.text = {
-            status: 'generated',
-            div: `<div><p>Successfully imported resource</p></div>`
-          };
-          successOutcome.issue = [{
-            severity: 'information',
-            code: 'success',
-            diagnostics: 'Successfully imported the resource.'
-          }];
-          this.outcome = successOutcome;
-        }
+    let req: Observable<IConformance | IExample>;
 
-        this.message = 'Done.';
-        setTimeout(() => {
-          tabSet.select('results');
-        });
-      }, (err) => {
-        if (err && err.error && err.error.resourceType === 'OperationOutcome') {
-          this.outcome = err.error;
-        } else {
-          this.outcome = {
-            resourceType: 'OperationOutcome',
-            text: {
-              status: 'generated',
-              div: 'An error occurred while importing the resource(s): ' + getErrorString(err)
-            },
-            issue: []
-          };
-        }
+    if (this.textContentIsExample) {
+      (<IExample>newResource).content = resource;
+      req = this.examplesService.save(null, <IExample>newResource, this.implementationGuideId);
+    } else {
+      (<IConformance>newResource).resource = resource;
+      req = this.conformanceService.save(null, <IConformance>newResource, this.implementationGuideId);
+    }
 
-        this.message = 'Done. Errors occurred: ' + getErrorString(err);
-        setTimeout(() => {
-          tabSet.select('results');
-        });
-      });
+    req.subscribe({
+      next: (res) => {
+        this.textContent = '';
+        this.message = 'Resource imported.';
+      },
+      error: (err) => {
+        this.message = 'Error: ' + getErrorString(err);
+      }
+    });
+
   }
 
-  private importFiles(tabSet: NgbTabset) {
+  private importFiles(tabSet: NgbNav) {
     const json = JSON.stringify(this.importBundle, null, '\t');
-    this.fhirService.batch(json, 'application/json', false, this.applyContextPermissions)
-      .subscribe((results: OperationOutcome | Bundle) => {
-        if (results.resourceType === 'OperationOutcome') {
-          this.outcome = <OperationOutcome>results;
-        } else if (results.resourceType === 'Bundle') {
-          this.resultsBundle = <Bundle>results;
-        }
 
+    let requests = [];
+
+    for (const file of this.files) {
+
+      if (!file.existingResource) {
+        file.existingResource = <IConformance | IExample>{};
+      }
+      (<IConformance | IExample>file.existingResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
+
+      // add/update non-fhir example type
+      if (file.isExample && file.isCDAExample) {
+        let example: IExample = <IExample>{ ...file.existingResource };
+        example.content = file.isCDAExample ? file.cdaContent : file.resource;
+        example.name = this.getIdDisplay(file);
+        requests.push(this.examplesService.save(example.id, example, this.implementationGuideId));
+      }
+
+      // add/update fhir type
+      else {
+        let conformance: IConformance = <IConformance>{ ...file.existingResource };
+        conformance.resource = file.resource;
+        requests.push(this.conformanceService.save(conformance.id, conformance, this.implementationGuideId, file.isExample));
+      }
+    }
+
+    zip(requests).subscribe({
+      next: (res: IProjectResource[]) => {
         this.files = [];
         this.message = 'Done importing';
-        setTimeout(() => {
-          tabSet.select('results');
-        });
-      }, (err) => {
+      },
+      error: (err) => {
         if (err && err.message) {
           this.message = 'Error while importing: ' + err.message;
         } else {
           this.message = getErrorString(err);
         }
-      });
+      }
+    });
+
   }
 
-  private importVsac(tabSet: NgbTabset) {
+  private importVsac(tabSet: NgbNav) {
     if (this.rememberVsacCredentials) {
-      this.cookieService.put(this.vsacPasswordCookieKey, btoa(this.vsacCriteria.password));
+      this.cookieService.set(this.vsacPasswordCookieKey, btoa(this.vsacCriteria.password));
     }
 
     this.importService.importVsac(this.vsacCriteria)
@@ -536,7 +620,8 @@ export class ImportComponent implements OnInit {
       });
   }
 
-  public importGithub(tabSet: NgbTabset) {
+  /*
+  public importGithub(tabSet: NgbNav) {
     // Filter the paths so that we don't include duplicate paths, or paths for directories where
     // child files are already selected.
     const filteredPaths = this.importGithubPanel.selectedPaths.filter((selectedPath: string) => {
@@ -674,8 +759,9 @@ export class ImportComponent implements OnInit {
       this.message = getErrorString(err);
     });
   }
+  */
 
-  public import(tabSet: NgbTabset) {
+  public import(tabSet: NgbNav) {
     this.outcome = null;
     this.resultsBundle = null;
     this.message = 'Importing...';
@@ -686,26 +772,32 @@ export class ImportComponent implements OnInit {
       this.importText(tabSet);
     } else if (this.activeTab === 'vsac') {
       this.importVsac(tabSet);
-    } else if (this.activeTab === 'github') {
+    } /*else if (this.activeTab === 'github') {
       this.importGithub(tabSet);
-    }
+    }*/
   }
 
   public importDisabled(): boolean {
     if (this.activeTab) {
       if (this.activeTab === 'file') {
         const unauthorizedResources = this.files.filter(f => f.status === 'unauthorized');
-        return !this.files || this.files.length === 0 || !this.importBundle || !this.importBundle.entry || this.importBundle.entry.length === 0 || unauthorizedResources.length > 0;
+        const invalidFiles = this.files.filter(f => this.fileIsInvalid(f));
+        return !this.files || this.files.length === 0 || unauthorizedResources.length > 0 || invalidFiles.length > 0;
       } else if (this.activeTab === 'text') {
         return !this.textContent;
       } else if (this.activeTab === 'vsac') {
         return !this.vsacCriteria.id || !this.vsacCriteria.password;
-      } else if (this.importGithubPanel && this.activeTab === 'github') {
+      } /*else if (this.importGithubPanel && this.activeTab === 'github') {
         return !this.importGithubPanel || !this.importGithubPanel.selectedPaths || this.importGithubPanel.selectedPaths.length === 0;
-      }
+      }*/
     }
     return true;
   }
+
+  public fileIsInvalid(file: ImportFileModel) {
+    return (file.contentType === 0 || file.contentType === 1) && !file.resource;
+  }
+
 
   public getIdDisplay(file: ImportFileModel) {
     if (file.contentType === ContentTypes.Xlsx) {
@@ -713,6 +805,10 @@ export class ImportComponent implements OnInit {
         const ids = (file.vsBundle.entry || []).map((entry) => entry.resource.id);
         return ids.join(', ');
       }
+    } else if (file.contentType === ContentTypes.CdaExample) {
+      let name = file.name || '';
+      const regex = /[^\w\-\.]/g;
+      return name.substring(0, name.lastIndexOf('.')).toLowerCase().replace(regex, '').replace(/_/gi, '-');;
     } else {
       if (file.resource) {
         return file.resource.id;
@@ -730,11 +826,43 @@ export class ImportComponent implements OnInit {
         return 'Value Set XLSX';
       case ContentTypes.Image:
         return 'Image';
+      case ContentTypes.CdaExample:
+        return 'CDA XML Example';
       default:
         return 'Unknown';
     }
   }
 
+  public getExamplePathParts(file: ImportFileModel): { resourceType: string, id: string } {
+    let resourceType: string;
+    let id: string;
+
+    if (file.isCDAExample) {
+      resourceType = 'Binary';
+    } else {
+      if (file.resource) {
+        resourceType = file.resource.resourceType;
+      } else {
+        resourceType = JSON.parse(file.content.toString())['resourceType'];
+      }
+    }
+
+    id = this.getIdDisplay(file);
+
+    return { resourceType: resourceType, id: id };
+  }
+
+  public getExamplePath(file: ImportFileModel) {
+    const parts = this.getExamplePathParts(file);
+    return `${parts.resourceType}/${parts.id}`;
+  }
+
+
   ngOnInit() {
+
+    if (this.configService.project && this.configService.project.implementationGuideId) {
+      this.implementationGuideId = this.configService.project.implementationGuideId;
+    }
+
   }
 }

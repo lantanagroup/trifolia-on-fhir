@@ -10,8 +10,8 @@ import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
 import {SearchImplementationGuideResponse, SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
-import {CookieService} from 'angular2-cookie';
-import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {CookieService} from 'ngx-cookie-service';
+import type {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 
 @Component({
   selector: 'app-implementation-guides',
@@ -25,7 +25,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
   public nameText: string;
   public titleText: string;
   public idText: string;
-  public criteriaChangedEvent = new Subject();
+  public criteriaChangedEvent = new Subject<void>();
   public Globals = Globals;
   public recentIgs: RecentImplementationGuide[] = [];
 
@@ -92,24 +92,27 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
   }
 
   public get selectCookie() {
-    if (this.configService.fhirServer) {
+    return "igsSelected";
+   /* if (this.configService.fhirServer) {
       if (this.configService.fhirServer === 'lantana_hapi_r4_prod') {
         return 'r4ProdRecentIgs';
       } else if (this.configService.fhirServer === 'lantana_hapi_r4') {
         return 'r4DevRecentIgs';
-      } else if (this.configService.fhirServer === 'lantana_hapi_stu3_prod')
+      } else if (this.configService.fhirServer === 'lantana_hapi_stu3_prod') {
         return 'stu3ProdRecentIgs';
-      else if (this.configService.fhirServer === 'lantana_hapi_stu3') {
+      } else if (this.configService.fhirServer === 'lantana_hapi_stu3') {
         return 'stu3DevRecentIgs';
+      } else {
+        return this.configService.fhirServer;
       }
-    }
+    }*/
   }
 
   public projectReselected(recentIg: RecentImplementationGuide) {
     const currentIndex = this.recentIgs.indexOf(recentIg);
     this.recentIgs.splice(currentIndex, 1);
     this.recentIgs.splice(0, 0, recentIg);
-    this.cookieService.put(this.selectCookie, JSON.stringify(this.recentIgs));
+    this.cookieService.set(this.selectCookie, JSON.stringify(this.recentIgs));
   }
 
   public projectSelected(ig: IImplementationGuide) {
@@ -131,7 +134,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
       this.recentIgs = this.recentIgs.slice(0, 3);
     }
 
-    this.cookieService.put(this.selectCookie, JSON.stringify(this.recentIgs));
+    this.cookieService.set(this.selectCookie, JSON.stringify(this.recentIgs));
   }
 
   public get implementationGuides() {
@@ -162,7 +165,7 @@ export class ImplementationGuidesComponent extends BaseComponent implements OnIn
 
   ngOnInit() {
     this.getImplementationGuides();
-    this.configService.fhirServerChanged.subscribe(() => this.getImplementationGuides());
+ //   this.configService.fhirServerChanged.subscribe(() => this.getImplementationGuides());
 
     if (!!this.cookieService.get(this.selectCookie)) {
       this.recentIgs = JSON.parse(this.cookieService.get(this.selectCookie));

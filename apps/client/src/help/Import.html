@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -184,24 +185,24 @@
 
             <div class="main-content">
                 
-<h1 class="rvps9"><span class="rvts0"><span class="rvts22">Import</span></span></h1>
+<h1 class="rvps7"><span class="rvts0"><span class="rvts21">Import</span></span></h1>
 <p class="rvps2"><span class="rvts6">ToF allows users to import files, text, VSAC and &nbsp;GitHub content.&nbsp;</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
  <li class="rvps2"><span class="rvts70">File</span><span class="rvts6"> imports allow users to drag-and-drop FHIR resources (e.g., StructureDefinitions, ValueSets, CodeSystems) and Excel-based value sets directly from your computer to ToF.&nbsp;</span></li>
  <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
   <li class="rvps2"><span class="rvts6">Users can drag-and-drop files from their computers File Explorer directly into the Import screen, or select the "Click to Select" link to select the files they wish to import.</span></li>
   <li class="rvps2"><span class="rvts6">Once the user has selected the files in Explorer, the list of files to be imported will be displayed in the Import screen. &nbsp;</span></li>
-  <li class="rvps2"><span class="rvts6">Users can click the </span><span class="rvts23">trash</span><span class="rvts6"> icon to remove file(s) from the list of files to be imported.</span></li>
+  <li class="rvps2"><span class="rvts6">Users can click the </span><span class="rvts22">trash</span><span class="rvts6"> icon to remove file(s) from the list of files to be imported.</span></li>
   <li class="rvps2"><span class="rvts6">Imported resources are sent directly to the ToF server as a transaction bundle. &nbsp; ToF displays an excerpt of the JSON or XML bundle of the file prior to uploading.</span></li>
-  <li class="rvps2"><span class="rvts6">The </span><span class="rvts23">Results</span><span class="rvts6"> tab displays the outcome of importing from the </span><span class="rvts23">Files</span><span class="rvts6"> tab</span></li>
+  <li class="rvps2"><span class="rvts6">The </span><span class="rvts22">Results</span><span class="rvts6"> tab displays the outcome of importing from the </span><span class="rvts22">Files</span><span class="rvts6"> tab</span></li>
  </ul>
- <li class="rvps2"><span class="rvts23">Text </span><span class="rvts6">imports</span><span class="rvts23"> </span><span class="rvts6">allows users to copy/paste JSON or XML content directly into Trifolia-on-FHIR to have it imported. &nbsp;&nbsp;</span></li>
- <li class="rvps2"><span class="rvts23">VSAC</span><span class="rvts6"> imports allows users to import value sets and code systems directly from VSAC into ToF. &nbsp;</span></li>
+ <li class="rvps2"><span class="rvts22">Text </span><span class="rvts6">imports</span><span class="rvts22"> </span><span class="rvts6">allows users to copy/paste JSON or XML content directly into Trifolia-on-FHIR to have it imported. &nbsp;&nbsp;</span></li>
+ <li class="rvps2"><span class="rvts22">VSAC</span><span class="rvts6"> imports allows users to import value sets and code systems directly from VSAC into ToF. &nbsp;</span></li>
  <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
   <li class="rvps2"><span class="rvts6">Imported value sets and code systems can be referenced by Structure Definition resources.</span></li>
   <li class="rvps2"><span class="rvts6">The VSAC mports require users' VSAC credentials, which are not persisted on the ToF server. If users select 'Remember VSAC Credentials,' the tool will store this information as cookies in the users' browser.</span></li>
  </ul>
- <li class="rvps2"><span class="rvts6">The </span><span class="rvts23">GitHub</span><span class="rvts6"> tab allows users to import resources directly from GitHub into ToF. &nbsp;&nbsp;</span></li>
+ <li class="rvps2"><span class="rvts6">The </span><span class="rvts22">GitHub</span><span class="rvts6"> tab allows users to import resources directly from GitHub into ToF. &nbsp;&nbsp;</span></li>
  <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
   <li class="rvps2"><span class="rvts6">After selecting the "GitHub" tab, the user will be prompted to login to GitHub using their GitHub credentials.</span></li>
  </ul>
@@ -220,7 +221,7 @@
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -255,7 +256,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -272,7 +273,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

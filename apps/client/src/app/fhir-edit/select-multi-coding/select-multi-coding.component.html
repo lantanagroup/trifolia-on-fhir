@@ -19,7 +19,7 @@
     <tbody>
     <tr *ngFor="let c of parentObject[propertyName]; let ci = index">
       <td *ngIf="codes && codes.length > 0">
-        <select class="form-control" [ngModel]="getCodeType(c)" (ngModelChange)="setCodeType(ci, $event); change.emit()">
+        <select class="form-select" [ngModel]="getCodeType(c)" (ngModelChange)="setCodeType(ci, $event); change.emit()">
           <option value="custom">Custom</option>
           <option value="pre">Pre-defined</option>
         </select>
@@ -33,7 +33,7 @@
           <input type="text" class="form-control" [ngModel]="getSystem(ci)" (ngModelChange)="setSystem(ci, $event); change.emit()"
                  placeholder="System"/>
         </div>
-        <select class="form-control" *ngIf="getCodeType(c) === 'pre'" [ngModel]="getCoding(ci)"
+        <select class="form-select" *ngIf="getCodeType(c) === 'pre'" [ngModel]="getCoding(ci)"
                 (ngModelChange)="setCoding(ci, $event); change.emit()">
           <option *ngFor="let o of codes" [ngValue]="o">{{o.display || o.code}}</option>
         </select>

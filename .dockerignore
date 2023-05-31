@@ -9,3 +9,7 @@ README.md
 LICENSE
 .vscode
 apps/server/src/assets/ig-publisher/
+dist/
+.angular
+.vscode
+tmp/

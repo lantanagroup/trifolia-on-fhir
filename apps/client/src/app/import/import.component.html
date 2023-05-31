@@ -1,24 +1,22 @@
 <h1>Import</h1>
 
-<p *ngIf="configService.project">
-  <input type="checkbox" [(ngModel)]="applyContextPermissions" /> Apply permissions of context implementation guide to imported resources.
-</p>
-
-<ngb-tabset #t="ngbTabset" [activeId]="activeTab" (tabChange)="activeTab = $event.nextId">
-  <ngb-tab id="file">
-    <ng-template ngbTabTitle>
+<ul ngbNav #t="ngbNav" class="nav-tabs" [activeId]="activeTab" (navChange)="activeTab = $event.nextId">
+  <li ngbNavItem="file">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['import.file-tab']">Files</span>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <div class="alert alert-info">You may select (or drag-and-drop) JSON, XML, XLSX (excel) and image (JPG, PNG, GIF, etc.) files in this window. Excel files will be imported as value sets. See the help documentation for more information.
       </div>
 
       <div class="alert alert-danger" *ngIf="errorMessage !== ''">{{errorMessage}}</div>
 
-      <file-drop (onFileDrop)="dropped($event)">
-        <span [attr.data-intro]="Globals.introText['import.file.drag-and-drop']">Drag and drop file or <a href="javascript:void(0)" (click)="selectFile.click()">click to select</a>.</span>
-        <input style="display: none;" type="file" class="form-control" (change)="filesChanged($event)" #selectFile/>
-      </file-drop>
+      <ngx-file-drop (onFileDrop)="dropped($event)">
+        <ng-template ngx-file-drop-content-tmp>
+          <span [attr.data-intro]="Globals.introText['import.file.drag-and-drop']">Drag and drop file or <a href="javascript:void(0)" (click)="selectFile.click()">click to select</a>.</span>
+          <input style="display: none;" type="file" class="form-control" (change)="filesChanged($event)" #selectFile/>
+        </ng-template>
+      </ngx-file-drop>
 
       <table class="table table-striped" *ngIf="!configService.showingIntroduction && files && files.length > 0">
         <thead>
@@ -27,27 +25,31 @@
           <th>ID(s)</th>
           <th>Type</th>
           <th>Action</th>
+          <th>Example?</th>
           <th></th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let f of files; let fi = index" [class.invalid]="(f.contentType === 0 || f.contentType === 1) && !f.resource">
+        <tr *ngFor="let f of files; let fi = index" [class.invalid]="fileIsInvalid(f)">
           <td>
             {{f.name}}
             <i *ngIf="f.message" class="fas fa-exclamation warning"><span class="message">{{f.message}}</span></i>
           </td>
-          <td>{{getIdDisplay(f)}}</td>
+          <td>{{getIdDisplay(f) || f.name}}</td>
           <td>{{getContentTypeDisplay(f)}}</td>
           <td>
             <span *ngIf="f.resource?.resourceType !== 'Bundle'">{{f.status.substring(0, 1).toUpperCase()}}{{f.status.substring(1)}}&nbsp;</span>
-            <select (change)="importBundle = getFileBundle()" *ngIf="f.resource?.resourceType === 'Bundle'" [(ngModel)]="f.bundleOperation" class="form-control">
+            <select (change)="importBundle = getFileBundle()" *ngIf="f.resource?.resourceType === 'Bundle'" [(ngModel)]="f.bundleOperation" class="form-select">
               <option value="store">Store</option>
               <option value="execute">Execute</option>
             </select>
-            <a *ngIf="f.status === 'update' && f.resource" href="javascript:void(0)" (click)="viewUpdateDiff(f.resource)">
+            <a *ngIf="f.status === 'update' && (f.resource || f.content)" href="javascript:void(0)" (click)="viewUpdateDiff(f)">
               <i class="fas fa-eye"></i>
             </a>
             <i *ngIf="!f.singleIg" class="fas fa-exclamation warning" style="padding-left:15px;" [ngbTooltip]="f.multipleIgMessage"></i>
+          </td>
+          <td>
+            <input type="checkbox" (click)="toggleExample(f)" [disabled]="f.isCDAExample || f.status === 'pending'" [checked]="f.isExample" />
           </td>
           <td class="actions-column-1">
             <div class="pull-right">
@@ -61,7 +63,7 @@
       </table>
 
       <div class="dropdown" *ngIf="files && files.length > 0 && importBundle">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Download Transaction Bundle
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -94,37 +96,52 @@
         </tbody>
       </table>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab id="text">
-    <ng-template ngbTabTitle>
+  </li>
+  <li ngbNavItem="text">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['import.text-tab']">Text</span>
-    </ng-template>
-    <ng-template ngbTabContent>
-      <div class="form-group">
-        <label>Content Type</label>
-        <br/>
-        <input type="radio" name="textContentType" [value]="0" [(ngModel)]="textContentType"/> JSON
-        <input type="radio" name="textContentType" [value]="1" [(ngModel)]="textContentType"/> XML
-      </div>
+    </a>
+    <ng-template ngbNavContent>
+      <div class="row">
+        <div class="col-md-2">
+          <label class="form-label">Content Type</label>
+          <div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="textContentType" id="textContentType0" [value]="0" [(ngModel)]="textContentType"/>
+              <label class="form-check-label" for="textContentType0">JSON</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="textContentType" id="textContentType1" [value]="1" [(ngModel)]="textContentType"/>
+              <label class="form-check-label" for="textContentType1">XML</label>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="col-md-2">
+          <label class="form-label" for="textContentIsExampleSwitch">Is Example?</label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="textContentIsExampleSwitch" [(ngModel)]="textContentIsExample">
+          </div>
+        </div> -->
+    </div>
 
-      <div class="form-group" [attr.data-intro]="Globals.introText['import.text.content']">
+      <div class="mb-3" [attr.data-intro]="Globals.introText['import.text.content']">
         <label>Text</label>
         <textarea class="form-control" rows="20" [(ngModel)]="textContent"></textarea>
       </div>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab id="vsac">
-    <ng-template ngbTabTitle>
+  <li ngbNavItem="vsac">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['import.vsac-tab']">VSAC</span>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-6">
           <div class="card">
             <div class="card-header">Search Criteria</div>
             <div class="card-body">
-              <div class="form-group" [attr.data-intro]="Globals.introText['import.vsac.id']">
+              <div class="mb-3" [attr.data-intro]="Globals.introText['import.vsac.id']">
                 <label>ID</label>
                 <input type="text" class="form-control" [(ngModel)]="vsacCriteria.id" placeholder="OID" />
                 <div class="help-block">This is the OID of the value set as specified by the VSAC browser (ex: 2.16.840.1.113762.1.4.1096.153).</div>
@@ -137,7 +154,7 @@
           <div class="card" [attr.data-intro]="Globals.introText['import.vsac.credentials']">
             <div class="card-header">VSAC Credentials</div>
             <div class="card-body">
-              <div class="form-group">
+              <div class="mb-3">
                 <label>
                   API Key <app-tooltip-icon tooltipKey="vsac.apikey"></app-tooltip-icon>
                 </label>
@@ -152,19 +169,19 @@
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab id="github">
-    <ng-template ngbTabTitle>
+  </li>
+  <!-- <li ngbNavItem="github">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['import.github-tab']">GitHub</span>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <app-import-github-panel #importGithubPanel></app-import-github-panel>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li> -->
+</ul>
+<div [ngbNavOutlet]="t" class="mt-2"></div>
 
-<div class="card results" *ngIf="outcome || resultsBundle">
-  <div class="card-header">Results</div>
+<!-- <div class="card results" *ngIf="outcome || resultsBundle">
   <div class="card-body" *ngIf="outcome">
     <p *ngIf="outcome.text && outcome.text.div && (!outcome.issue || outcome.issue.length === 0)" [innerHTML]="outcome.text.div"></p>
     <ul>
@@ -189,7 +206,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <footer class="footer">
   <button type="button" class="btn btn-primary" (click)="import(t)" [disabled]="importDisabled()" [attr.data-intro]="Globals.introText['import.import-btn']">Import</button>

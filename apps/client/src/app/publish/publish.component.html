@@ -5,7 +5,7 @@
     href="https://chat.fhir.org/#narrow/stream/179252-IG-creation" target="_blank">chat.fhir.org</a>.
 </div>
 
-<div class="form-group" [attr.data-intro]="Globals.introText['publish.implementation-guide']" *ngIf="!configService.project">
+<div class="mb-3" [attr.data-intro]="Globals.introText['publish.implementation-guide']" *ngIf="!configService.project">
   <label>Implementation Guide</label>
   <div class="input-group">
     <input type="text" class="form-control"
@@ -23,12 +23,12 @@
   </div>
 </div>
 
-<ngb-tabset #tabs>
-  <ngb-tab id="options">
-    <ng-template ngbTabTitle>
+<ul ngbNav #tabs="ngbNav" class="nav-tabs">
+  <li ngbNavItem="options">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['publish.options']">Options</span>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-6">
           <trifolia-fhir-ig-publisher-selection [options]="options"></trifolia-fhir-ig-publisher-selection>
@@ -54,9 +54,9 @@
         </div>
 
         <div class="col-md-6">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Notify via email after done publishing?</label>
-            <select [(ngModel)]="options.notifyMe" class="form-control">
+            <select [(ngModel)]="options.notifyMe" class="form-select">
               <option [ngValue]="false">No</option>
               <option [ngValue]="true">Yes</option>
             </select>
@@ -74,9 +74,9 @@
         </div>
 
         <div class="col-md-6">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Resource Format</label>
-            <select (change)="responseFormatChanged()" [(ngModel)]="options.responseFormat" class="form-control">
+            <select (change)="responseFormatChanged()" [(ngModel)]="options.responseFormat" class="form-select">
               <option value="application/json">JSON</option>
               <option value="application/xml">XML</option>
             </select>
@@ -86,9 +86,9 @@
       <div class="alert alert-info">If the Edit IG tab specifies any Publishing Template customizations then further changes can only be made on the Edit IG tab</div>
       <div class="row">
         <div class="col-md-4">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Template Type</label>
-            <select class="form-control" [(ngModel)]="options.templateType" [disabled]="igSpecifiesTemplate">
+            <select class="form-select" [(ngModel)]="options.templateType" [disabled]="igSpecifiesTemplate">
               <option value="not-specified">Not Specified</option>
               <option value="official">Official</option>
               <option value="custom-uri">Custom</option>
@@ -96,7 +96,7 @@
           </div>
         </div>
         <div class="col-md-4" *ngIf="options.templateType === 'custom-uri'">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Template (Archive/ZIP URL)</label>
             <input type="text" class="form-control" [(ngModel)]="options.template" [disabled]="igSpecifiesTemplate"
                    placeholder="ex: http://github.com/HL7/ig-template-fhir/archive/master.zip" [class.is-invalid]="!options.template" />
@@ -104,9 +104,9 @@
           </div>
         </div>
         <div class="col-md-4" *ngIf="options.templateType === 'official' || options.templateType === 'not-specified'">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Template</label>
-            <select class="form-control" *ngIf="options.templateType === 'not-specified' || options.templateType === 'official'" [(ngModel)]="options.template"
+            <select class="form-select" *ngIf="options.templateType === 'not-specified' || options.templateType === 'official'" [(ngModel)]="options.template"
                     [disabled]="igSpecifiesTemplate">
               <option value="hl7.fhir.template">HL7 FHIR Template</option>
               <option value="hl7.cda.template">HL7 CDA Template</option>
@@ -115,10 +115,10 @@
           </div>
         </div>
         <div class="col-md-4" *ngIf="options.templateType === 'official'">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Version</label>
             <div>
-              <select class="form-control" [(ngModel)]="options.templateVersion" [disabled]="igSpecifiesTemplate">
+              <select class="form-select" [(ngModel)]="options.templateVersion" [disabled]="igSpecifiesTemplate">
                 <option *ngFor="let templateVersion of templateVersions" [ngValue]="templateVersion">{{templateVersion}}</option>
               </select>
             </div>
@@ -126,17 +126,18 @@
         </div>
       </div>
     </ng-template>
-  </ngb-tab>
-  <ngb-tab id="status">
-    <ng-template ngbTabTitle>
+  </li>
+  <li ngbNavItem="status">
+    <a ngbNavLink>
       <span [attr.data-intro]="Globals.introText['publish.status']">Status</span>
-    </ng-template>
-    <ng-template ngbTabContent>
+    </a>
+    <ng-template ngbNavContent>
       <pre *ngIf="socketOutput" [innerHTML]="socketOutput" routeTransformer #outputEle></pre>
       <input type="checkbox" [(ngModel)]="autoScroll" /> Automatically scroll to bottom when status is updated
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
+<div [ngbNavOutlet]="tabs" class="mt-2"></div>
 
 <footer class="footer">
   <button type="button" class="btn btn-primary" (click)="publish()" [disabled]="publishDisabled" [attr.data-intro]="Globals.introText['publish.publish-btn']">Publish</button>

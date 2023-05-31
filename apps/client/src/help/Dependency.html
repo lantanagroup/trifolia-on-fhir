@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -184,39 +185,39 @@
 
             <div class="main-content">
                 
-<p class="rvps29"><span class="rvts61">Dependency Error</span></p>
-<p class="rvps29"><span class="rvts62">To resolve a Dependency error, follow these steps:</span></p>
+<p class="rvps27"><span class="rvts61">Dependency Error</span></p>
+<p class="rvps27"><span class="rvts62">To resolve a Dependency error, follow these steps:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside;">
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Go to https://fhir.github.io/auto-ig-builder/builds.html.</span></li>
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Search for the HL7 / US-Core-R4 in the list of IGs.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts58">Go to https://fhir.github.io/auto-ig-builder/builds.html.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts58">Search for the HL7 / US-Core-R4 in the list of IGs.</span></li>
 </ol>
-<p class="rvps30"><img width="665" height="44" alt="" style="padding : 1px;" src="lib/dependency.jpg"></p>
-<p class="rvps30"><span class="rvts68">3.</span><span class="rvts68"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts68">Click on the </span><span class="rvts67">gh</span><span class="rvts68"> option.</span></p>
-<p class="rvps30"><img width="659" height="59" alt="" style="padding : 1px;" src="lib/dependency-2.jpg"></p>
-<p class="rvps30"><span class="rvts58">4.</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">Double-click on the US-Core-R4/package-list.json file.&nbsp;</span></p>
-<p class="rvps30"><img width="675" height="376" alt="" style="padding : 1px;" src="lib/HL7-US%20Core.png"></p>
-<p class="rvps28"><span class="rvts58">You will need the information from these fields:</span></p>
+<p class="rvps28"><img width="665" height="44" alt="" style="padding : 1px;" src="lib/dependency.jpg"></p>
+<p class="rvps28"><span class="rvts68">3.</span><span class="rvts68"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts68">Click on the </span><span class="rvts67">gh</span><span class="rvts68"> option.</span></p>
+<p class="rvps28"><img width="659" height="59" alt="" style="padding : 1px;" src="lib/dependency-2.jpg"></p>
+<p class="rvps28"><span class="rvts58">4.</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">Double-click on the US-Core-R4/package-list.json file.&nbsp;</span></p>
+<p class="rvps28"><img width="675" height="376" alt="" style="padding : 1px;" src="lib/HL7-US%20Core.png"></p>
+<p class="rvps26"><span class="rvts58">You will need the information from these fields:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps11"><span class="rvts58">Canonical value</span></li>
- <li class="rvps11"><span class="rvts58">Package-id value</span></li>
- <li class="rvps11"><span class="rvts58">Title value</span></li>
- <li class="rvps11"><span class="rvts58">Version value</span></li>
+ <li class="rvps9"><span class="rvts58">Canonical value</span></li>
+ <li class="rvps9"><span class="rvts58">Package-id value</span></li>
+ <li class="rvps9"><span class="rvts58">Title value</span></li>
+ <li class="rvps9"><span class="rvts58">Version value</span></li>
 </ul>
-<p class="rvps30"><img width="685" height="218" alt="" style="padding : 1px;" src="lib/package-listjson.png"></p>
-<p class="rvps30"><span class="rvts58">5.</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">In the IG Editor, open the IG.&nbsp;</span></p>
-<p class="rvps30"><span class="rvts58">6.&nbsp;</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">In the </span><span class="rvts59">General</span><span class="rvts58"> tab, scroll down to the </span><span class="rvts59">Dependencies</span><span class="rvts58"> section</span></p>
-<p class="rvps30"><span class="rvts58">7.&nbsp;</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">In the </span><span class="rvts59">URI</span><span class="rvts58"> field, enter the canonical value from the package-list.json.</span></p>
-<p class="rvps30"><span class="rvts58">8.&nbsp;</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">In the </span><span class="rvts59">Package ID</span><span class="rvts58"> field, enter the package-id value from the package-list.json file.&nbsp;</span></p>
-<p class="rvps30"><span class="rvts58">9.&nbsp;</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">In the </span><span class="rvts59">Name</span><span class="rvts58"> field, enter the title value from the package-list.json.&nbsp;</span></p>
-<p class="rvps30"><span class="rvts58">10. In the </span><span class="rvts59">Version</span><span class="rvts58"> field, enter the version value from the package-list.json.</span></p>
-<p class="rvps30"><img width="687" height="77" alt="" style="padding : 1px;" src="lib/dependencies.png"></p>
-<p class="rvps30"><span class="rvts67"><br/></span></p>
-<p class="rvps30"><span class="rvts58">11. Click </span><span class="rvts59">Save </span><span class="rvts58">and then publish.</span></p>
-<p class="rvps30"><span class="rvts58"></span><span class="rvts27"></span></p>
+<p class="rvps28"><img width="685" height="218" alt="" style="padding : 1px;" src="lib/package-listjson.png"></p>
+<p class="rvps28"><span class="rvts58">5.</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">In the IG Editor, open the IG.&nbsp;</span></p>
+<p class="rvps28"><span class="rvts58">6.&nbsp;</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">In the </span><span class="rvts59">General</span><span class="rvts58"> tab, scroll down to the </span><span class="rvts59">Dependencies</span><span class="rvts58"> section</span></p>
+<p class="rvps28"><span class="rvts58">7.&nbsp;</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">In the </span><span class="rvts59">URI</span><span class="rvts58"> field, enter the canonical value from the package-list.json.</span></p>
+<p class="rvps28"><span class="rvts58">8.&nbsp;</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">In the </span><span class="rvts59">Package ID</span><span class="rvts58"> field, enter the package-id value from the package-list.json file.&nbsp;</span></p>
+<p class="rvps28"><span class="rvts58">9.&nbsp;</span><span class="rvts58"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts58">In the </span><span class="rvts59">Name</span><span class="rvts58"> field, enter the title value from the package-list.json.&nbsp;</span></p>
+<p class="rvps28"><span class="rvts58">10. In the </span><span class="rvts59">Version</span><span class="rvts58"> field, enter the version value from the package-list.json.</span></p>
+<p class="rvps28"><img width="687" height="77" alt="" style="padding : 1px;" src="lib/dependencies.png"></p>
+<p class="rvps28"><span class="rvts67"><br/></span></p>
+<p class="rvps28"><span class="rvts58">11. Click </span><span class="rvts59">Save </span><span class="rvts58">and then publish.</span></p>
+<p class="rvps28"><span class="rvts58"></span><span class="rvts26"></span></p>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -251,7 +252,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -268,7 +269,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

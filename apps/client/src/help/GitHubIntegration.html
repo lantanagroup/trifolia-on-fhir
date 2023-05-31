@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -188,7 +189,7 @@
 <p class="rvps2"><span class="rvts6">The import and export screens both contain options for GitHub. As soon as the GitHub option is selected in either screen, you are prompted to login with your GitHub credentials. Once logged in, your GitHub authentication token is stored in cookies so that you do not have to login every time you select "GitHub" under the import/export screens.</span></p>
 <p class="rvps2"><span class="rvts6">After you have logged into GitHub, a GitHub icon appears in the top-right corner of the all screens. When clicked, this icon logs you out of GitHub within ToF.</span></p>
 <p class="rvps2"><span class="rvts6">ToF uses a pop-up window to authenticate with GitHub. If your browser blocks the pop-up window, ToF will not be able to authenticate with GitHub and you will receive an error.</span></p>
-<p class="rvps2"><span class="rvts29">NOTE: If you select "Remember Me" when logging into GitHub, and want to change to a different GitHub user, you will need to open github.com in a separate window and logout of your GitHub account, then have ToF forget the GitHub login using the GitHub icon mentioned above. Once this is done, when you attempt to login to GitHub via ToF, it will ask you which account you would like to use with GitHub.</span></p>
+<p class="rvps2"><span class="rvts20">NOTE: If you select "Remember Me" when logging into GitHub, and want to change to a different GitHub user, you will need to open github.com in a separate window and logout of your GitHub account, then have ToF forget the GitHub login using the GitHub icon mentioned above. Once this is done, when you attempt to login to GitHub via ToF, it will ask you which account you would like to use with GitHub.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Work Flow</span></span></h2>
 <p class="rvps2"><span class="rvts6">The work flow within ToF for GitHub is to</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside;">
@@ -198,7 +199,7 @@
 </ol>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Extensions</span></span></h2>
 <p class="rvps2"><span class="rvts6">When importing resources, two extensions are added to each resource representing the location within GitHub for where the resource came from. This enables ToF to know where in GItHub to export the resources back to.</span></p>
-<p class="rvps2"><span class="rvts6">If you are exporting </span><span class="rvts29">new</span><span class="rvts6"> resources to GitHub, these extensions will not yet exist and you will need to specify where the resources should be stored during the export (which will create the two extensions on the resource).</span></p>
+<p class="rvps2"><span class="rvts6">If you are exporting </span><span class="rvts20">new</span><span class="rvts6"> resources to GitHub, these extensions will not yet exist and you will need to specify where the resources should be stored during the export (which will create the two extensions on the resource).</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Limitations</span></span></h2>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
  <li class="rvps2"><span class="rvts6">Trifolia only exports the individual resources associated with the implementation guide, and does not include the entire IG Publication package. For example, the "framework" (html templates) folder is not included in the export.</span></li>
@@ -210,7 +211,7 @@
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -245,7 +246,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -262,7 +263,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

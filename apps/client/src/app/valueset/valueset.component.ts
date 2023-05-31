@@ -1,5 +1,5 @@
 import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
-import {OperationOutcome, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {RecentItemService} from '../shared/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
@@ -16,19 +16,22 @@ import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import {IConformance} from '@trifolia-fhir/models';
+
 
 @Component({
   templateUrl: './valueset.component.html',
   styleUrls: ['./valueset.component.css']
 })
 export class ValuesetComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+  public conformance;
   public valueSet: ValueSet;
   public message: string;
   public validation: any;
   public vsNotFound = false;
   public Globals = Globals;
   public ClientHelper = ClientHelper;
-
+  public valueSetId: string;
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
@@ -50,12 +53,14 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
 
     this.valueSet = new ValueSet({ meta: this.authService.getDefaultMeta() });
 
+    this.conformance = { resource: this.valueSet, fhirVersion: <'stu3'|'r4'|'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         const isIdUnique = await this.fhirService.checkUniqueId(this.valueSet);
         if(!isIdUnique){
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.valueSet.id  + " is already used.";
+          this.alreadyInUseIDMessage = "ID " +  this.valueSet.id  + " is already used in this IG.";
         }
         else{
           this.isIdUnique = true;
@@ -199,13 +204,14 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
       return;
     }
 
-    this.valueSetService.save(this.valueSet)
-      .subscribe((results: ValueSet) => {
+    this.valueSetService.save(this.valueSetId, this.conformance)
+      .subscribe((conf: IConformance) => {
         if (this.isNew) {
           // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/value-set/${results.id}`]);
+          this.valueSetId = conf.id;
+          this.router.navigate([`${this.configService.baseSessionUrl}/value-set/${this.valueSetId}`]);
         } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentValueSets, results.id, results.name);
+          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentValueSets, this.valueSetId, this.valueSet.name);
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -217,7 +223,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
   }
 
   private getValueSet() {
-    const valueSetId = this.route.snapshot.paramMap.get('id');
+    this.valueSetId = this.isNew ? null : this.route.snapshot.paramMap.get('id');
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -233,23 +239,27 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     if (!this.isNew) {
       this.valueSet = null;
 
-      this.valueSetService.get(valueSetId)
-        .subscribe((results: ValueSet | OperationOutcome) => {
-          if (results.resourceType !== 'ValueSet') {
-            this.message = 'The specified value set either does not exist or was deleted';
-            return;
-          }
+      this.valueSetService.getValueSet(this.valueSetId)
+        .subscribe({
+          next: (conf: IConformance) => {
+            if (!conf || !conf.resource || conf.resource.resourceType !== 'ValueSet') {
+              this.message = 'The specified code system either does not exist or was deleted';
+              return;
+            }
 
-          this.valueSet = <ValueSet>results;
-          this.nameChanged();
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentValueSets,
-            this.valueSet.id,
-            this.valueSet.name || this.valueSet.title);
-        }, (err) => {
-          this.vsNotFound = err.status === 404;
-          this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentValueSets, valueSetId);
+            this.conformance = conf;
+            this.valueSet = <ValueSet>conf.resource;
+            this.nameChanged();
+            this.recentItemService.ensureRecentItem(
+              Globals.cookieKeys.recentCodeSystems,
+              this.valueSetId,
+              this.valueSet.name || this.valueSet.title);
+          },
+          error: (err) => {
+            this.vsNotFound = err.status === 404;
+            this.message = getErrorString(err);
+            this.recentItemService.removeRecentItem(Globals.cookieKeys.recentCodeSystems, this.valueSetId);
+          }
         });
     }
   }

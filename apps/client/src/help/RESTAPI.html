@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -193,20 +194,20 @@
 </ul>
 <p class="rvps2"><span class="rvts6">For more information, see </span><span class="rvts11">FHIR Versions</span><span class="rvts6">.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">FHIR Server Proxy</span></span></h2>
-<p class="rvps2"><span class="rvts6">An </span><span class="rvts23">/api/fhir</span><span class="rvts6"> end-point in the API represents a "proxy" to the FHIR server(s) available within the ToF installation. The proxy endpoint supports GET, PUT, POST, DELETE requests for individual resources, as well as </span><a class="rvts11" href="http://www.hl7.org/fhir/http.html#transaction" target="_blank">batches</a><span class="rvts6">. Transactions are </span><span class="rvts29">not </span><span class="rvts6">supported by this proxy.</span></p>
+<p class="rvps2"><span class="rvts6">An </span><span class="rvts22">/api/fhir</span><span class="rvts6"> end-point in the API represents a "proxy" to the FHIR server(s) available within the ToF installation. The proxy endpoint supports GET, PUT, POST, DELETE requests for individual resources, as well as </span><a class="rvts11" href="http://www.hl7.org/fhir/http.html#transaction" target="_blank">batches</a><span class="rvts6">. Transactions are </span><span class="rvts20">not </span><span class="rvts6">supported by this proxy.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Authentication</span></span></h2>
 <p class="rvps2"><span class="rvts6">Authentication is required to access the REST API. To get an authorization code to use the REST API:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside;">
- <li class="rvps11"><span class="rvts27">Log into the ToF web application and open the settings screen where the Authorization Code is displayed.&nbsp;</span></li>
- <li class="rvps11"><span class="rvts27">Attach the authorization code in an Authorization header prefixed with Bearer.</span></li>
+ <li class="rvps9"><span class="rvts26">Log into the ToF web application and open the settings screen where the Authorization Code is displayed.&nbsp;</span></li>
+ <li class="rvps9"><span class="rvts26">Attach the authorization code in an Authorization header prefixed with Bearer.</span></li>
 </ol>
-<p class="rvps2"><span class="rvts23">Example:</span><span class="rvts6"> "Authorization: Bearer XXXX" where XXXX is your authorization code.</span></p>
+<p class="rvps2"><span class="rvts22">Example:</span><span class="rvts6"> "Authorization: Bearer XXXX" where XXXX is your authorization code.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Trifolia-on-FHIR Native API</span></span></h2>
-<p class="rvps2"><span class="rvts6">ToF's REST API is documented using Swagger. The publicly available installation exposes custom API documentation at </span><span class="rvts6"></span><a class="rvts11" href="/api-docs" target="_blank">/api-docs</a><span class="rvts6"></span><span class="rvts6">. The API described by </span><span class="rvts23">/api-docs</span><span class="rvts6"> is the same API the web application (i.e., user interface) uses.</span><span class="rvts6"></span></p>
+<p class="rvps2"><span class="rvts6">ToF's REST API is documented using Swagger. The publicly available installation exposes custom API documentation at </span><span class="rvts6"></span><a class="rvts11" href="/api-docs" target="_blank">/api-docs</a><span class="rvts6"></span><span class="rvts6">. The API described by </span><span class="rvts22">/api-docs</span><span class="rvts6"> is the same API the web application (i.e., user interface) uses.</span><span class="rvts6"></span></p>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -241,7 +242,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -258,7 +259,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

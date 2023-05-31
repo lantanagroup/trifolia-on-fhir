@@ -2,9 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ValueSetService} from '../shared/value-set.service';
 import {OperationOutcome, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {NgbTabset} from '@ng-bootstrap/ng-bootstrap';
+import {NgbNav} from '@ng-bootstrap/ng-bootstrap';
 import {FhirService} from '../shared/fhir.service';
-import {ExpandOptions} from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
+import type {ExpandOptions} from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 
 @Component({
@@ -33,12 +33,12 @@ export class ValuesetExpandComponent implements OnInit {
     return this.results && this.results.resourceType === 'OperationOutcome';
   }
 
-  public expand(tabSet: NgbTabset) {
+  public expand(tabSet: NgbNav) {
     this.expanding = true;
     this.message = 'Expanding... This may take a while.';
 
     const valueSetId = this.route.snapshot.paramMap.get('id');
-    this.valueSetService.expand(valueSetId, this.criteria, this.terminologyServer)
+   /* this.valueSetService.expand(valueSetId, this.criteria, this.terminologyServer)
       .subscribe((results) => {
         this.results = results;
         setTimeout(() => {
@@ -60,18 +60,18 @@ export class ValuesetExpandComponent implements OnInit {
           this.message = 'Expansion completed with errors';
           tabSet.select('results');
         });
-      });
+      });*/
   }
 
   ngOnInit() {
     const valueSetId = this.route.snapshot.paramMap.get('id');
-    this.valueSetService.get(valueSetId)
-      .subscribe((valueSet) => {
-        if (valueSet.resourceType !== 'ValueSet') {
+    this.valueSetService.getValueSet(valueSetId)
+      .subscribe((conf) => {
+        if (conf.resource.resourceType !== 'ValueSet') {
           throw new Error('The specified value set either does not exist or was deleted');
         }
 
-        this.valueSet = <ValueSet>valueSet;
+        this.valueSet = <ValueSet>conf.resource;
       }, (err) => {
         this.message = 'An error occurred while loading the value set: ' + getErrorString(err);
       });

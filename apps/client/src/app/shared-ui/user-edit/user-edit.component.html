@@ -1,0 +1,24 @@
+<div class="row" *ngIf="user">
+    <div class="col-md-6">
+        <div class="mb-3">
+            <label>First Name</label>
+            <input type="text" class="form-control" [(ngModel)]="user.firstName" required [class.is-invalid]="!user.firstName" />
+        </div>
+
+        <div class="mb-3">
+            <label>Last Name</label>
+            <input type="text" class="form-control" [(ngModel)]="user.lastName" required [class.is-invalid]="!user.lastName" />
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="text" class="form-control" [(ngModel)]="email" required email [class.is-invalid]="!email" />
+        </div>
+
+        <div class="mb-3">
+            <label>Phone</label>
+            <input type="text" class="form-control" [(ngModel)]="user.phone" />
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-<div class="form-group" *ngIf="isFormGroup && parentObject">
+<div class="mb-3" *ngIf="isFormGroup && parentObject">
     <label>
         <input type="checkbox" *ngIf="!required" [ngModel]="parentObject.hasOwnProperty(propertyName)"
                (ngModelChange)="Globals.toggleProperty(parentObject, propertyName, defaultValue); change.emit()" />

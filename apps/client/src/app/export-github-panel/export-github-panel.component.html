@@ -4,18 +4,18 @@
 
 <div class="row" *ngIf="githubService.token">
   <div class="col-md-12">
-    <div class="form-group">
+    <div class="mb-3">
       <label>Commit Message</label>
       <textarea class="form-control" [class.is-invalid]="!commitMessage" [(ngModel)]="commitMessage" placeholder="Required" [attr.data-intro]="Globals.introText['export.githubMessage']"></textarea>
     </div>
   </div>
 
   <div class="col-md-4">
-    <div class="form-group">
+    <div class="mb-3">
       <label>
         Repository <app-tooltip-icon tooltipKey="github.repository.onlypush"></app-tooltip-icon>
       </label>
-      <select class="form-control" [(ngModel)]="repository" (change)="repositoryChanged()" *ngIf="!loadingRepositories">
+      <select class="form-select" [(ngModel)]="repository" (change)="repositoryChanged()" *ngIf="!loadingRepositories">
         <option *ngFor="let repo of repositories" [ngValue]="repo">{{repo.owner.login}}/{{repo.name}}</option>
       </select>
       <p class="help-block" *ngIf="loadingRepositories">Loading list of GitHub repositories...</p>
@@ -23,17 +23,17 @@
   </div>
 
   <div class="col-md-4">
-    <div class="form-group" *ngIf="repository">
+    <div class="mb-3" *ngIf="repository">
       <label>Branch</label>
-      <select class="form-control" [(ngModel)]="branch" (change)="branchChanged()">
+      <select class="form-select" [(ngModel)]="branch" (change)="branchChanged()">
         <option *ngFor="let b of branches">{{b.name}}</option>
       </select>
     </div>
   </div>
   <div class="col-md-4">
-    <div class="form-group" *ngIf="repository">
+    <div class="mb-3" *ngIf="repository">
       <label>Output Format</label>
-      <select class="form-control" [(ngModel)]="responseFormat" (change)="responseFormatChanged(); change.emit(responseFormat)">
+      <select class="form-select" [(ngModel)]="responseFormat" (change)="responseFormatChanged(); change.emit(responseFormat)">
         <option value="application/json">JSON</option>
         <option value="application/xml">XML</option>
       </select>
@@ -64,7 +64,7 @@
         <th>Info</th>
         <th>
           <div class="dropdown pull-right">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
             <div class="dropdown-menu" aria-labelledby="actionsMenuButton">
               <a class="dropdown-item" href="javascript:void(0)" (click)="deleteOthers()">Delete everything not in the IG</a>
             </div>
@@ -77,7 +77,7 @@
         <td>{{file.path}}</td>
         <td>{{file.info}}</td>
         <td>
-          <select class="form-control" [(ngModel)]="file.action">
+          <select class="form-select" [(ngModel)]="file.action">
             <option value="nothing">Do Nothing</option>
             <option value="add" *ngIf="file.isNew">Add</option>
             <option value="update" *ngIf="file.content">Update</option>

@@ -28,6 +28,7 @@
   <tr>
     <th>ID</th>
     <th>Name</th>
+    <th>Url</th>
     <th class="actions-column-3">
       <div class="pull-right">
         <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/capability-statement/new" title="Create a new capability statement"
@@ -41,7 +42,8 @@
   <tbody *ngIf="!configService.showingIntroduction">
   <tr *ngFor="let cs of capabilityStatements">
     <td>{{cs.id}}</td>
-    <td>{{cs.name}}</td>
+    <td>{{cs.resource.name}}</td>
+    <td>{{cs.resource.url}}</td>
     <td>
       <div class="btn-group pull-right">
         <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/capability-statement/{{cs.id}}" title="Edit this resource">
@@ -50,7 +52,7 @@
         <button type="button" class="btn btn-secondary" (click)="remove(cs)" [disabled]="!canEdit(cs)" title="Remove this resource">
           <i class="fas fa-trash-alt"></i>
         </button>
-        <button type="button" class="btn btn-secondary" (click)="changeId(cs)" [disabled]="!canEdit(cs)" title="Change this resource's ID">
+        <button type="button" class="btn btn-secondary" (click)="changeId(cs.resource)" [disabled]="!canEdit(cs)" title="Change this resource's ID">
           <i class="fa fa-id-badge"></i>
         </button>
       </div>

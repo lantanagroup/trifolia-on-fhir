@@ -5,7 +5,7 @@ import {ExportService} from '../shared/export.service';
 import JSZip from 'jszip';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {IDomainResource} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IDomainResource} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {FhirService} from '../shared/fhir.service';
 
 @Component({

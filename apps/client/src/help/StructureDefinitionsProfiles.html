@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -185,56 +186,56 @@
             <div class="main-content">
                 
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Structure Definition</span></span></h2>
-<p class="rvps2"><span class="rvts43"><br/></span></p>
-<p class="rvps15"><span class="rvts43">A definition of a FHIR structure. This resource is used to describe the underlying resources, data types defined in FHIR, and also for describing extensions and constraints on resources and data types.</span></p>
-<p class="rvps15"><span class="rvts43">The StructureDefinition resource describes a structure - a set of data element definitions, and their associated rules of usage. These structure definitions are used to describe both the content defined in the FHIR specification itself - Resources, data types, the underlying infrastructural types, and also are used to describe how these structures are used in implementations. This allows the definitions of the structures to be shared and published through repositories of structure definitions, compared with each other, and used as the basis for code, report and UI generation. &nbsp;For more information on Structure Definitions, see </span><a class="rvts45" href="https://www.hl7.org/fhir/structuredefinition.html">https://www.hl7.org/fhir/structuredefinition.html</a><span class="rvts43">.</span></p>
+<p class="rvps2"><span class="rvts41"><br/></span></p>
+<p class="rvps13"><span class="rvts41">A definition of a FHIR structure. This resource is used to describe the underlying resources, data types defined in FHIR, and also for describing extensions and constraints on resources and data types.</span></p>
+<p class="rvps13"><span class="rvts41">The StructureDefinition resource describes a structure - a set of data element definitions, and their associated rules of usage. These structure definitions are used to describe both the content defined in the FHIR specification itself - Resources, data types, the underlying infrastructural types, and also are used to describe how these structures are used in implementations. This allows the definitions of the structures to be shared and published through repositories of structure definitions, compared with each other, and used as the basis for code, report and UI generation. &nbsp;For more information on Structure Definitions, see </span><a class="rvts43" href="https://www.hl7.org/fhir/structuredefinition.html">https://www.hl7.org/fhir/structuredefinition.html</a><span class="rvts41">.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Profiling FHIR</span></span></h2>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
-<p class="rvps15"><span class="rvts43">A profile is defined as a A set of constraints on a resource represented as a structure definition with kind = </span><span class="rvts44">constraint</span></p>
-<p class="rvps15"><span class="rvts43">The base FHIR specification describes a set of base resources, frameworks and APIs that are used in many different contexts in healthcare. However, there is wide variability between jurisdictions and across the healthcare ecosystem around practices, requirements, regulations, education and what actions are feasible and/or beneficial.</span></p>
-<p class="rvps15"><span class="rvts43">For this reason, the FHIR specification is a "platform specification" - it creates a common platform or foundation on which a variety of different solutions are implemented. As a consequence, this specification usually requires further adaptation to particular contexts of use. Typically, these adaptations specify:</span></p>
+<p class="rvps13"><span class="rvts41">A profile is defined as a A set of constraints on a resource represented as a structure definition with kind = </span><span class="rvts42">constraint</span></p>
+<p class="rvps13"><span class="rvts41">The base FHIR specification describes a set of base resources, frameworks and APIs that are used in many different contexts in healthcare. However, there is wide variability between jurisdictions and across the healthcare ecosystem around practices, requirements, regulations, education and what actions are feasible and/or beneficial.</span></p>
+<p class="rvps13"><span class="rvts41">For this reason, the FHIR specification is a "platform specification" - it creates a common platform or foundation on which a variety of different solutions are implemented. As a consequence, this specification usually requires further adaptation to particular contexts of use. Typically, these adaptations specify:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps16"><span class="rvts43">Rules about which resource elements are or are not used, and what additional elements are added that are not part of the base specification</span></li>
- <li class="rvps16"><span class="rvts43">Rules about which API features are used, and how</span></li>
- <li class="rvps16"><span class="rvts43">Rules about which terminologies are used in particular elements</span></li>
- <li class="rvps16"><span class="rvts43">Descriptions of how the Resource elements and API features map to local requirements and/or implementations</span></li>
+ <li class="rvps14"><span class="rvts41">Rules about which resource elements are or are not used, and what additional elements are added that are not part of the base specification</span></li>
+ <li class="rvps14"><span class="rvts41">Rules about which API features are used, and how</span></li>
+ <li class="rvps14"><span class="rvts41">Rules about which terminologies are used in particular elements</span></li>
+ <li class="rvps14"><span class="rvts41">Descriptions of how the Resource elements and API features map to local requirements and/or implementations</span></li>
 </ul>
-<p class="rvps15"><span class="rvts43">Note that because of the nature of the healthcare ecosystem, there may be multiple overlapping sets of adaptations - by healthcare domain, by country, by institution, and/or by vendor/implementation. &nbsp;For more information on FHIR Profiles, please visit </span><a class="rvts45" href="https://www.hl7.org/fhir/profiling.html">https://www.hl7.org/fhir/profiling.html.</a></p>
-<p class="rvps15"><span class="rvts49">Note:&nbsp;</span><span class="rvts43"> </span><span class="rvts32">Trifolia-on-FHIR (ToF) forces users to create </span><span class="rvts48">structurally </span><span class="rvts32">correct FHIR but does not enforce that the content of the resources meet the requirements of all business rules in FHIR. An example of this, is that the structure of an Extension may be correct, but slices within the Extension may not be correct. Over time, as FHIR continues to mature and those business rules are solidified, ToF will be updated to enforce them.&nbsp;</span></p>
+<p class="rvps13"><span class="rvts41">Note that because of the nature of the healthcare ecosystem, there may be multiple overlapping sets of adaptations - by healthcare domain, by country, by institution, and/or by vendor/implementation. &nbsp;For more information on FHIR Profiles, please visit </span><a class="rvts43" href="https://www.hl7.org/fhir/profiling.html">https://www.hl7.org/fhir/profiling.html.</a></p>
+<p class="rvps13"><span class="rvts47">Note:&nbsp;</span><span class="rvts41"> </span><span class="rvts30">Trifolia-on-FHIR (ToF) forces users to create </span><span class="rvts46">structurally </span><span class="rvts30">correct FHIR but does not enforce that the content of the resources meet the requirements of all business rules in FHIR. An example of this, is that the structure of an Extension may be correct, but slices within the Extension may not be correct. Over time, as FHIR continues to mature and those business rules are solidified, ToF will be updated to enforce them.&nbsp;</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Creating/Editing Profiles in Trifolia on FHIR</span></span></h2>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside;">
- <li class="rvps17"><span class="rvts6">Select Browse/Edit &gt; Profiles/Extensions.</span></li>
- <li class="rvps17"><span class="rvts6">Click the blue “+” icon in the top-right of the screen to create a new profile or the edit icon to edit an existing profile.</span></li>
- <li class="rvps17"><span class="rvts6">Indicate the URL for the profile. The beginning of the URL should match the IG’s URL (e.g., http://test.com/fhir/structuredefinition/my-profile if the IG is http://test.com/fhir/implementationguide/test-ig).</span></li>
- <li class="rvps17"><span class="rvts6">Verify the ID matches the end of the URL. This should auto-populate when you enter the URL</span><br/><span class="rvts6">(e.g., “my-profile” for the above URL example)</span></li>
- <li class="rvps17"><span class="rvts6">Specify/update a name and title, which the published IG will display.</span></li>
- <li class="rvps17"><span class="rvts6">Add/update the “type” of resource this profile constrains (e.g., “Patient”).</span></li>
- <li class="rvps17"><span class="rvts6">You may want to build your profile based on another profile. Specify/update a “Base Profile” that exists in the system.</span></li>
- <li class="rvps17"><span class="rvts6">Click “Save.”</span></li>
- <li class="rvps17"><span class="rvts6">Click the “Elements” tab.</span></li>
- <li class="rvps17"><span class="rvts6">Select an element to constrain or update</span></li>
- <li class="rvps17"><span class="rvts6">Click “Constrain Element” in the right panel for new elements, or click on the element to update an existing element.</span></li>
- <li class="rvps17"><span class="rvts6">Re-define the element in the right panel to specify the difference between the element and the base definition.</span></li>
- <li class="rvps17"><span class="rvts6">Repeat for all constraints.</span></li>
- <li class="rvps17"><span class="rvts6">Define a description for the profile, which the published IG will display to the reader.</span></li>
- <li class="rvps17"><span class="rvts6">Save the profile.</span></li>
+ <li class="rvps15"><span class="rvts6">Select Browse/Edit &gt; Profiles/Extensions.</span></li>
+ <li class="rvps15"><span class="rvts6">Click the blue “+” icon in the top-right of the screen to create a new profile or the edit icon to edit an existing profile.</span></li>
+ <li class="rvps15"><span class="rvts6">Indicate the URL for the profile. The beginning of the URL should match the IG’s URL (e.g., http://test.com/fhir/structuredefinition/my-profile if the IG is http://test.com/fhir/implementationguide/test-ig).</span></li>
+ <li class="rvps15"><span class="rvts6">Verify the ID matches the end of the URL. This should auto-populate when you enter the URL</span><br/><span class="rvts6">(e.g., “my-profile” for the above URL example)</span></li>
+ <li class="rvps15"><span class="rvts6">Specify/update a name and title, which the published IG will display.</span></li>
+ <li class="rvps15"><span class="rvts6">Add/update the “type” of resource this profile constrains (e.g., “Patient”).</span></li>
+ <li class="rvps15"><span class="rvts6">You may want to build your profile based on another profile. Specify/update a “Base Profile” that exists in the system.</span></li>
+ <li class="rvps15"><span class="rvts6">Click “Save.”</span></li>
+ <li class="rvps15"><span class="rvts6">Click the “Elements” tab.</span></li>
+ <li class="rvps15"><span class="rvts6">Select an element to constrain or update</span></li>
+ <li class="rvps15"><span class="rvts6">Click “Constrain Element” in the right panel for new elements, or click on the element to update an existing element.</span></li>
+ <li class="rvps15"><span class="rvts6">Re-define the element in the right panel to specify the difference between the element and the base definition.</span></li>
+ <li class="rvps15"><span class="rvts6">Repeat for all constraints.</span></li>
+ <li class="rvps15"><span class="rvts6">Define a description for the profile, which the published IG will display to the reader.</span></li>
+ <li class="rvps15"><span class="rvts6">Save the profile.</span></li>
 </ol>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Extensions</span></span></h2>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
 <p class="rvps2"><span class="rvts6">All extensions used in resources require a formal published definition that can be used by application developers or the applications themselves, to help integrate extensions into the healthcare process they support. &nbsp;</span></p>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
-<p class="rvps2"><span class="rvts6">Every extension in a resource refers directly to its definition, which is made available as a </span><a class="rvts42" href="https://www.hl7.org/fhir/structuredefinition.html">StructureDefinition</a><span class="rvts6">. A resource can be </span><a class="rvts42" href="https://www.hl7.org/fhir/profiling.html">profiled</a><span class="rvts6"> to specify where particular extensions are required or expected.&nbsp;</span></p>
+<p class="rvps2"><span class="rvts6">Every extension in a resource refers directly to its definition, which is made available as a </span><a class="rvts40" href="https://www.hl7.org/fhir/structuredefinition.html">StructureDefinition</a><span class="rvts6">. A resource can be </span><a class="rvts40" href="https://www.hl7.org/fhir/profiling.html">profiled</a><span class="rvts6"> to specify where particular extensions are required or expected.&nbsp;</span></p>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
-<p class="rvps2"><span class="rvts6">For more information on creating/incorporating extensions into existing resources, please visit the “Defining Extensions” page at </span><a class="rvts42" href="https://www.hl7.org/fhir/defining-extensions.html">https://www.hl7.org/fhir/defining-extensions.html</a><span class="rvts6"> &nbsp;</span></p>
+<p class="rvps2"><span class="rvts6">For more information on creating/incorporating extensions into existing resources, please visit the “Defining Extensions” page at </span><a class="rvts40" href="https://www.hl7.org/fhir/defining-extensions.html">https://www.hl7.org/fhir/defining-extensions.html</a><span class="rvts6"> &nbsp;</span></p>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12"><br/></span></span></h2>
-<h2 class="rvps4"><span class="rvts0"><a class="rvts47" href="https://www.hl7.org/fhir/backboneelement.html"><br/></a></span></h2>
-<p class="rvps15"><span class="rvts32"><br/></span></p>
-<p class="rvps2"><span class="rvts46"></span><span class="rvts6"></span></p>
+<h2 class="rvps4"><span class="rvts0"><a class="rvts45" href="https://www.hl7.org/fhir/backboneelement.html"><br/></a></span></h2>
+<p class="rvps13"><span class="rvts30"><br/></span></p>
+<p class="rvps2"><span class="rvts44"></span><span class="rvts6"></span></p>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -269,7 +270,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -286,7 +287,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

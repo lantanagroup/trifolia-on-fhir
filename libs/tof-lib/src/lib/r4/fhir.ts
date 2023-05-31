@@ -21,6 +21,7 @@ import {
   setChoice
 } from '../fhirInterfaces';
 import {Globals} from '../globals';
+import {Reference} from '../r5/fhir';
 
 export class Base {
   public fhir_comments?: string[];
@@ -220,8 +221,8 @@ export class CodeableConcept extends Element implements ICodeableConcept {
 }
 
 export class Period extends Element {
-  public start?: Date;
-  public end?: Date;
+  public start?: string;
+  public end?: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -432,7 +433,10 @@ export class ContactDetail extends Element implements IContactDetail {
 
 export class UsageContext extends Element {
   public code: Coding;
-  public value: Element;
+  valueCodeableConcept?: CodeableConcept;
+  valueQuantity?: Quantity;
+  valueRange?: Range;
+  valueReference?: Reference;
 
   constructor(obj?: any) {
     super(obj);
@@ -440,8 +444,21 @@ export class UsageContext extends Element {
       if (obj.hasOwnProperty('code')) {
         this.code = new Coding(obj.code);
       }
-      if (obj.hasOwnProperty('value')) {
-        this.value = new Element(obj.value);
+
+      if (obj.hasOwnProperty('valueCodeableConcept')) {
+        this.valueCodeableConcept = obj.valueCodeableConcept;
+      }
+
+      if (obj.hasOwnProperty('valueQuantity')) {
+        this.valueQuantity = obj.valueQuantity;
+      }
+
+      if (obj.hasOwnProperty('valueRange')) {
+        this.valueRange = obj.valueRange;
+      }
+
+      if (obj.hasOwnProperty('valueReference')) {
+        this.valueReference = obj.valueReference;
       }
     }
   }
@@ -1143,7 +1160,7 @@ export class StructureDefinition extends DomainResource implements IStructureDef
   public title?: string;
   public status: 'draft' | 'active' | 'retired' | 'unknown' = 'active';
   public experimental?: boolean;
-  public date?: Date;
+  public date?: string;
   public publisher?: string;
   public contact?: ContactDetail[];
   public description?: string;
@@ -1788,7 +1805,7 @@ export class BundleResponseComponent extends BackboneElement {
   public status: string;
   public location?: string;
   public etag?: string;
-  public lastModified?: Date;
+  public lastModified?: string;
   public outcome?: Resource;
 
   constructor(obj?: any) {
@@ -1853,7 +1870,7 @@ export class BundleEntryComponent extends BackboneElement {
 
 export class Signature extends Element {
   public type: Coding[];
-  public when: Date;
+  public when: string;
   public who: ResourceReference;
   public onBehalfOf?: ResourceReference;
   public targetFormat?: string;
@@ -2700,7 +2717,7 @@ export class TimingRepeatComponent extends Element {
   public periodMax?: number;
   public periodUnit?: string;
   public dayOfWeek?: string[];
-  public timeOfDay?: Date[];
+  public timeOfDay?: string[];
   public when?: string[];
   public offset?: number;
 
@@ -2758,7 +2775,7 @@ export class TimingRepeatComponent extends Element {
 }
 
 export class Timing extends BackboneElement {
-  public event?: Date[];
+  public event?: string[];
   public repeat?: TimingRepeatComponent;
   public code?: CodeableConcept;
 
@@ -3402,7 +3419,7 @@ export class Age extends Quantity {
 
 export class Annotation extends Element {
   public author?: Element;
-  public time?: Date;
+  public time?: string;
   public text: string;
 
   constructor(obj?: any) {

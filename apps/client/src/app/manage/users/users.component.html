@@ -1,8 +1,9 @@
 <h2>Users</h2>
 
-<ngb-tabset>
-  <ngb-tab title="Users">
-    <ng-template ngbTabContent>
+<ul ngbNav #nav="ngbNav" class="nav-tabs">
+  <li ngbNavItem>
+    <a ngbNavLink>Users</a>
+    <ng-template ngbNavContent>
       <table class="table table-striped">
         <thead>
         <tr>
@@ -10,7 +11,6 @@
           <th>Identifier</th>
           <th>Source</th>
           <th>Name</th>
-          <th>Alias</th>
           <th class="actions-column-1">
             <div class="pull-right">
               <button type="button" class="btn btn-primary" (click)="refreshUsers()">Refresh</button>
@@ -30,10 +30,11 @@
         <tbody>
         <tr *ngFor="let u of users">
           <td>{{u.id}}</td>
-          <td>{{getDisplayIdentifier(u.identifier)}}</td>
-          <td>{{getIdentifierSource(u.identifier)}}</td>
-          <td>{{getDisplayName(u.name)}}</td>
-          <td>{{getAliasName(u.name)}}</td>
+          <td>{{getAuthIdIdentifier(u.authId)}}</td>
+          <td>{{getAuthIdSource(u.authId)}}</td>
+          <!-- <td>{{u.authId[0]}}</td>
+          <td>{{u.authId[0]}}</td> -->
+          <td>{{u.name}}</td>
           <td>
             <div class="pull-right">
               <button type="button" class="btn btn-primary" (click)="mergeUser(u)">Merge</button>
@@ -57,10 +58,11 @@
         (pageChange)="usersPageChanged.next()">
       </ngb-pagination>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab title="Active Users">
-    <ng-template ngbTabContent>
+  <li ngbNavItem>
+    <a ngbNavLink>Active Users</a>
+    <ng-template ngbNavContent>
       <table class="table table-striped">
         <thead>
         <tr>
@@ -84,12 +86,14 @@
         </tbody>
       </table>
     </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab title="Broadcast Message">
-    <ng-template ngbTabContent>
+  <li ngbNavItem>
+    <a ngbNavLink>Broadcast Message</a>
+    <ng-template ngbNavContent>
       <textarea class="form-control" #messageToBroadcast></textarea>
       <button type="button" class="btn btn-primary" (click)="broadcastMessage(messageToBroadcast.value)">Broadcast!</button>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav" class="mt-2"></div>

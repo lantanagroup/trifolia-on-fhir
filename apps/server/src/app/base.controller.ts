@@ -1,7 +1,7 @@
 import {Response} from 'express';
 import {addPermission, findPermission, getErrorString} from '../../../../libs/tof-lib/src/lib/helper';
-import {BadRequestException, HttpService, InternalServerErrorException, UnauthorizedException} from '@nestjs/common';
-import {ITofRequest} from './models/tof-request';
+import {HttpService} from '@nestjs/axios';
+import {BadRequestException, InternalServerErrorException, UnauthorizedException} from '@nestjs/common';
 import {TofLogger} from './tof-logger';
 import {ConfigService} from './config.service';
 import {Bundle, DomainResource, Group, Practitioner, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -9,8 +9,9 @@ import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof
 import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AxiosRequestConfig} from 'axios';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 import {IPractitioner} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { IProject, IProjectResource } from '@trifolia-fhir/models';
 
 export interface GenericResponse {
   status?: number;
@@ -105,7 +106,11 @@ export class BaseController {
       throw ex;
     }
 
-    if (bundle.total === 0) {
+    if (!bundle.entry) {
+      throw new InternalServerErrorException('Expected to receive entries when searching for currently logged-in user within FHIR server');
+    }
+
+    if (bundle.entry.length === 0) {
       if (!resolveIfNotFound) {
         throw new BadRequestException('No practitioner was found associated with the authenticated user');
       } else {
@@ -113,11 +118,7 @@ export class BaseController {
       }
     }
 
-    if (!bundle.entry) {
-      throw new InternalServerErrorException('Expected to receive entries when searching for currently logged-in user within FHIR server');
-    }
-
-    if (bundle.total > 1) {
+    if (bundle.entry.length > 1) {
       new TofLogger('security.helper').error(`Expected a single Practitioner resource to be found with identifier ${system}|${identifier}`);
       throw new InternalServerErrorException();
     }
@@ -191,16 +192,16 @@ export class BaseController {
     throw new UnauthorizedException();
   }
 
-  protected userHasPermission(userSecurityInfo: IUserSecurityInfo, permission: 'read'|'write', resource: DomainResource) {
+  protected userHasPermission(userSecurityInfo: IUserSecurityInfo, permission: 'read'|'write', resource: IProject|IProjectResource) {
     if (userSecurityInfo.user && userSecurityInfo.user.isAdmin) {
       return true;
     }
 
-    const foundEveryone = findPermission(resource.meta, 'everyone', permission);
+    const foundEveryone = findPermission(resource.permissions, 'everyone', permission);
     const foundGroup = userSecurityInfo.groups.find((group) => {
-      return findPermission(resource.meta, 'group', permission, group.id);
+      return findPermission(resource.permissions, 'group', permission, group.id);
     });
-    const foundUser = findPermission(resource.meta, 'user', permission, userSecurityInfo.practitioner.id);
+    const foundUser = findPermission(resource.permissions, 'user', permission, userSecurityInfo.practitioner.id);
 
     return foundEveryone || foundGroup || foundUser;
   }
@@ -211,7 +212,7 @@ export class BaseController {
    * @param userSecurityInfo
    * @param resource
    */
-  protected ensureUserCanEdit(userSecurityInfo: IUserSecurityInfo, resource: DomainResource) {
+  protected ensureUserCanEdit(userSecurityInfo: IUserSecurityInfo, resource: IProject|IProjectResource) {
     if (!this.configService.server.enableSecurity || !userSecurityInfo) {
       return;
     }
@@ -221,17 +222,16 @@ export class BaseController {
       return;
     }
 
-    resource.meta = resource.meta || {};
-    resource.meta.security = resource.meta.security || [];
+    resource.permissions = resource.permissions || [];
 
     // Make sure user can read
     if (!this.userHasPermission(userSecurityInfo, 'read', resource)) {
-      addPermission(resource.meta, 'user', 'read', userSecurityInfo.practitioner.id);
+      addPermission(resource, 'user', 'read', userSecurityInfo.practitioner.id);
     }
 
     // Make sure user can write
     if (!this.userHasPermission(userSecurityInfo, 'write', resource)) {
-      addPermission(resource.meta, 'user', 'write', userSecurityInfo.practitioner.id);
+      addPermission(resource, 'user', 'write', userSecurityInfo.practitioner.id);
     }
   }
 
@@ -281,7 +281,7 @@ export class BaseController {
    * @param resourceType The resource type of the resource that we want to find references to
    * @param id The id of the resource that we want to find references to
    */
-  protected async removeReferencesToResource(baseUrl: string, fhirServerVersion: 'stu3'|'r4', resourceType: string, id: string) {
+  protected async removeReferencesToResource(baseUrl: string, fhirServerVersion: 'stu3'|'r4'|'r5', resourceType: string, id: string) {
     // Searches all properties of the object to find a property that has "reference" set to <resourceType>/<id>
     // The object/property that contains that "reference" property/value is returned.
     const findReference = (obj: any) => {

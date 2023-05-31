@@ -1,3 +1,4 @@
+<!--
 <div class="alert alert-warning" *ngIf="message">{{message}}</div>
 
 <button type="button" class="btn btn-primary" *ngIf="!githubService.token" (click)="githubLogin()">Login to GitHub</button>
@@ -8,18 +9,18 @@
         <div class="alert alert-warning">If the resource already exists in Trifolia-on-FHIR with the specified ID, it will overwrite the resource in Trifolia-on-FHIR with the resource from GitHub.<br/>You should only select files that represent FHIR resources; the import will fail if you select an XML/JSON file that is not a FHIR resource.</div>
     </div>
     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-        <div class="form-group" *ngIf="!loadingRepositories">
+        <div class="mb-3" *ngIf="!loadingRepositories">
             <label>Select a repository</label>
-            <select class="form-control" [(ngModel)]="repositoryId" (change)="repositoryChanged()">
+            <select class="form-select" [(ngModel)]="repositoryId" (change)="repositoryChanged()">
                 <option *ngFor="let repo of repositories" [ngValue]="repo.id">{{repo.owner.login}}: {{repo.name}}</option>
             </select>
         </div>
         <span *ngIf="loadingRepositories">Loading...</span>
     </div>
     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6" *ngIf="repositoryId">
-        <div class="form-group">
+        <div class="mb-3">
             <label>Select a branch</label>
-            <select class="form-control" [(ngModel)]="branchName" (change)="branchChanged()">
+            <select class="form-select" [(ngModel)]="branchName" (change)="branchChanged()">
                 <option *ngFor="let b of branches">{{b.name}}</option>
             </select>
         </div>
@@ -28,22 +29,22 @@
         <label>Select files</label>
         <tree [tree]="tree" [settings]="{ rootIsVisible: false, showCheckboxes: true }" (nodeChecked)="handleSelected($event)" (nodeUnchecked)="handleUnselected($event)" #treeComponent></tree>
     </div>
-</div>
+</div> -->
 
 <!-- INTRO -->
-<div class="row" *ngIf="configService.showingIntroduction">
+<!-- <div class="row" *ngIf="configService.showingIntroduction">
   <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-    <div class="form-group" [attr.data-intro]="Globals.introText['import.github.repository']">
+    <div class="mb-3" [attr.data-intro]="Globals.introText['import.github.repository']">
       <label>Select a repository</label>
-      <select class="form-control">
+      <select class="form-select">
         <option>HL7/my-repository</option>
       </select>
     </div>
   </div>
   <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-    <div class="form-group">
+    <div class="mb-3">
       <label>Select a branch</label>
-      <select class="form-control">
+      <select class="form-select">
         <option>master</option>
       </select>
     </div>
@@ -52,4 +53,4 @@
     <label>Select files</label>
     <tree [tree]="introTree" [settings]="{ rootIsVisible: false, showCheckboxes: true }"></tree>
   </div>
-</div>
+</div> -->

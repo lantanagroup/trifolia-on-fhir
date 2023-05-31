@@ -32,7 +32,7 @@ export interface IResourceReference {
 
 export interface INetworkComponent {
   address?: string;
-  type?: ICoding;
+  type?: ICoding|string;
 }
 
 export interface IAgentComponent{
@@ -123,6 +123,14 @@ export interface IDomainResource extends IResource {
   modifierExtension?: IExtension[];
 }
 
+export interface IBundleEntryResponse {
+  status: string;
+  location?: string;
+  etag?: string;
+  lastModified?: string;
+  outcome?: IDomainResource | IResource;
+}
+
 export interface IBundleEntry {
   search?: {
     mode?: string;
@@ -133,13 +141,7 @@ export interface IBundleEntry {
     method: string;
     url: string;
   };
-  response?: {
-    status: string;
-    location?: string;
-    etag?: string;
-    lastModified?: Date;
-    outcome?: IDomainResource | IResource;
-  };
+  response?: IBundleEntryResponse;
 }
 
 export interface IBundle extends IDomainResource {
@@ -267,6 +269,8 @@ export interface IStructureDefinition extends IDomainResource {
   description?: string;
   title?: string;
   status: string;
+
+  baseDefinition?: string;
   snapshot?: {
     element: IElementDefinition[]
   };
@@ -277,12 +281,12 @@ export interface IStructureDefinition extends IDomainResource {
   notes: string;
 }
 
-export interface IAuditEvent {
+export interface IAuditEvent extends IDomainResource {
   type: ICoding;
   subtype?: ICoding[];
   action?: string;
   recorded: string;
-  outcome?: ICoding;
+  outcome?: ICoding|string;
   outcomeDesc?: string;
   purposeOfEvent?: ICodeableConcept[];
   agent: IAgentComponent[];
@@ -339,8 +343,8 @@ export interface IAttachment {
 }
 
 export interface IDocumentReference extends IDomainResource {
-  masterIdentifier?: IResourceReference;
-  identifier?: IResourceReference[];
+  masterIdentifier?: IIdentifier;
+  identifier?: IIdentifier[];
   type?: ICodeableConcept;
   subject?: IResourceReference;
   status?: string;

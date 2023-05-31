@@ -14,7 +14,7 @@
 
 <br />
 
-<div *ngIf="questionnairesBundle && questionnairesBundle.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+<div *ngIf="questionnairesBundle && total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
     <ngb-pagination class="d-flex justify-content-center"
                     [maxSize]="5"
                     [collectionSize]="questionnairesBundle.total"
@@ -28,6 +28,7 @@
     <tr>
         <th>ID</th>
         <th>Name</th>
+        <th>Url</th>
         <th class="actions-column-3">
             <div class="pull-right">
                 <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/questionnaire/new" title="Create a new questionnaire" [attr.data-intro]="Globals.introText['browse.add']">
@@ -40,7 +41,8 @@
     <tbody *ngIf="!configService.showingIntroduction">
     <tr *ngFor="let questionnaire of questionnaires">
         <td>{{questionnaire.id}}</td>
-        <td>{{questionnaire.name}}</td>
+        <td>{{questionnaire.resource.name}}</td>
+        <td>{{questionnaire.resource.url}}</td>
         <td>
             <div class="btn-group pull-right">
                 <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/questionnaire/{{questionnaire.id}}" title="Edit this questionnaire">
@@ -49,7 +51,7 @@
                 <button type="button" class="btn btn-secondary" (click)="remove(questionnaire)" [disabled]="!canEdit(questionnaire)" title="Remove this questionnaire">
                     <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-secondary" (click)="changeId(questionnaire)" [disabled]="!canEdit(questionnaire)" title="Change this questionnaire's ID">
+                <button type="button" class="btn btn-secondary" (click)="changeId(questionnaire.resource)" [disabled]="!canEdit(questionnaire)" title="Change this questionnaire's ID">
                     <i class="fa fa-id-badge"></i>
                 </button>
             </div>
@@ -76,10 +78,10 @@
     </tr>
     </tbody>
     <tfoot>
-    <tr *ngIf="questionnairesBundle && questionnairesBundle.total === 0">
+    <tr *ngIf="questionnairesBundle && total === 0">
         <td colspan="3">No questionnaires! Create one by clicking <a routerLink="/{{configService.baseSessionUrl}}/questionnaire/new">here</a>...</td>
     </tr>
-    <tr *ngIf="questionnairesBundle && questionnairesBundle.total > 0">
+    <tr *ngIf="questionnairesBundle && total > 0">
         <td colspan="3">
             <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="questionnairesBundle.total" [(page)]="page" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
         </td>

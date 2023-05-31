@@ -1,25 +1,9 @@
-<div class="form-group" *ngIf="isFormGroup && parentObject">
+<div class="mb-3" *ngIf="isFormGroup && parentObject">
   <label *ngIf="label">
     {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
   </label>
   <div class="input-group">
     <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="value" (change)="valueChanged()" [class.is-invalid]="!isValid()">
-    <div class="input-group-append">
-      <button class="btn btn-primary" type="button" [ngbPopover]="dateSelector" autoClose="outside">
-        <i class="fa fa-calendar"></i>
-      </button>
-      <button class="btn btn-primary" type="button" [ngbPopover]="timeSelector" autoClose="outside" *ngIf="allowTime">
-        <i class="fas fa-clock"></i>
-      </button>
-    </div>
-  </div>
-</div>
-<div class="input-group" *ngIf="!isFormGroup && parentObject">
-  <div class="input-group-addon" *ngIf="label && (!required || title)">
-    {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
-  </div>
-  <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="value" (change)="valueChanged()" [class.is-invalid]="!isValid()">
-  <div class="input-group-append">
     <button class="btn btn-primary" type="button" [ngbPopover]="dateSelector" autoClose="outside">
       <i class="fa fa-calendar"></i>
     </button>
@@ -28,6 +12,18 @@
     </button>
   </div>
 </div>
+<div class="input-group" *ngIf="!isFormGroup && parentObject">
+  <div class="input-group-addon" *ngIf="label && (!required || title)">
+    {{title}} <app-tooltip-icon [tooltipPath]="tooltipPath" [tooltipKey]="tooltipKey"></app-tooltip-icon>
+  </div>
+  <input class="form-control" placeholder="yyyy-mm-dd" [(ngModel)]="value" (change)="valueChanged()" [class.is-invalid]="!isValid()">
+  <button class="btn btn-primary" type="button" [ngbPopover]="dateSelector" autoClose="outside">
+    <i class="fa fa-calendar"></i>
+  </button>
+  <button class="btn btn-primary" type="button" [ngbPopover]="timeSelector" autoClose="outside" *ngIf="allowTime">
+    <i class="fas fa-clock"></i>
+  </button>
+</div>
 
 <ng-template #dateSelector>
   <ngb-datepicker [(ngModel)]="dateModel" (change)="change.emit()"></ngb-datepicker>
@@ -35,7 +31,7 @@
 
 <ng-template #timeSelector>
   <ngb-timepicker [(ngModel)]="timeModel"></ngb-timepicker>
-  <select class="form-control" [(ngModel)]="tz" (change)="setTimeFromModel(); change.emit()">
+  <select class="form-select" [(ngModel)]="tz" (change)="setTimeFromModel(); change.emit()">
     <option>-23:00</option>
     <option>-22:00</option>
     <option>-21:00</option>

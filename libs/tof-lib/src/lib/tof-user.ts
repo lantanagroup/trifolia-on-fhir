@@ -1,3 +1,4 @@
+import {IUser} from '@trifolia-fhir/models';
 
 export interface ITofUser {
   sub: string;
@@ -5,6 +6,7 @@ export interface ITofUser {
   name?: string;
   isAdmin: boolean;   // set by ToF
   roles?: string[];
+  user?: IUser
 }
 
 /*

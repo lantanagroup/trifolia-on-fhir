@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ValueSetService} from '../shared/value-set.service';
-import {Bundle, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Bundle, CodeSystem, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Subject} from 'rxjs';
@@ -18,14 +18,16 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./valuesets.component.css']
 })
 export class ValuesetsComponent extends BaseComponent implements OnInit {
-  public results: Bundle;
+  public valueSet;
+  public total: string;
   public nameText: string;
   public idText: string;
   public page = 1;
   public urlText: string;
-  public criteriaChangedEvent = new Subject();
+  public criteriaChangedEvent = new Subject<void>();
   public message: string;
   public Globals = Globals;
+  public valueSetId;
 
   constructor(
     public configService: ConfigService,
@@ -44,11 +46,11 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
   }
 
   public get valueSets() {
-    if (!this.results || !this.results.entry) {
+    if (!this.valueSet) {
       return [];
     }
 
-    return this.results.entry.map((entry) => <ValueSet>entry.resource);
+    return this.valueSet.results.map((entry) => <ValueSet>entry);
   }
 
   public clearFilters() {
@@ -67,9 +69,9 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
     this.valueSetService.delete(valueSet.id)
       .subscribe(() => {
         this.message = `Successfully deleted value set ${valueSet.title || valueSet.name || 'no-name'} (${valueSet.id})`;
-        const entry = this.results.entry.find((e) => e.resource.id === valueSet.id);
-        const index = this.results.entry.indexOf(entry);
-        this.results.entry.splice(index, index >= 0 ? 1 : 0);
+        const entry = (this.valueSet.results || []).find((e) => e.id === valueSet.id);
+        const index = this.valueSet.results.indexOf(entry);
+        this.valueSet.results.splice(index, index >= 0 ? 1 : 0);
         setTimeout(() => this.message = '', 3000);
       }, (err) => {
         this.message = getErrorString(err);
@@ -112,12 +114,13 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
   }
 
   public getValueSets() {
-    this.results = null;
+    this.valueSet = null;
     this.message = 'Searching value sets...';
 
-    this.valueSetService.search(this.page, this.nameText, this.urlText, this.idText, this.getImplementationGuideId())
+    this.valueSetService.searchValueSet(this.page, this.nameText, this.urlText, this.idText, this.getImplementationGuideId())
       .subscribe((results: Bundle) => {
-        this.results = results;
+        this.valueSet = results;
+        this.total = this.valueSet.total;
         this.message = '';
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while searching for value sets');
@@ -126,6 +129,5 @@ export class ValuesetsComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getValueSets();
-    this.configService.fhirServerChanged.subscribe(() => this.getValueSets());
   }
 }

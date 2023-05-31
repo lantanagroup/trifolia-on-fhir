@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -184,36 +185,36 @@
 
             <div class="main-content">
                 
-<p class="rvps2"><span class="rvts18">Release 1.11.2</span></p>
+<p class="rvps2"><span class="rvts19">Release 1.11.2</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">New Prompt to Avoid Losing Unsaved Changes&nbsp;</span></span></h2>
-<p class="rvps7"><span class="rvts54">We've heard from IG designers that they’ve lost unsaved work when accidentally leaving the screen. A prompt will now notify users on the R4 implementation guide (IG) editing screen that they will lose their changes if they leave the screen.&nbsp;</span></p>
-<p class="rvps2"><span class="rvts19">We will add this pop-up to additional edit screens in future releases.</span></p>
+<p class="rvps30"><span class="rvts54">We've heard from IG designers that they’ve lost unsaved work when accidentally leaving the screen. A prompt will now notify users on the R4 implementation guide (IG) editing screen that they will lose their changes if they leave the screen.&nbsp;</span></p>
+<p class="rvps2"><span class="rvts48">We will add this pop-up to additional edit screens in future releases.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Improvements to Page Editing</span></span></h2>
-<p class="rvps7"><span class="rvts54">The </span><span class="rvts55">Edit Page</span><span class="rvts54"> popup window has been simplified, and we’ve added extra validation messages to make the page requirements clearer. We’ve added:</span></p>
+<p class="rvps30"><span class="rvts54">The </span><span class="rvts55">Edit Page</span><span class="rvts54"> popup window has been simplified, and we’ve added extra validation messages to make the page requirements clearer. We’ve added:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;">
  <li class="rvps34"><span class="rvts58">A </span><span class="rvts59">File Name </span><span class="rvts58">field&nbsp;</span></li>
  <li class="rvps34"><span class="rvts58">A checkbox to specify that the content of the page should be automatically generated based on the IG description and contacts&nbsp;</span></li>
 </ul>
-<p class="rvps7"><span class="rvts54">Behind the scenes, the way the data is stored in the ImplementationGuide resource has changed. Instead of using a contained Binary resource to represent page content, we're using an extension on the page to hold the page content (which is markdown). For self-installs of Trifolia-on-FHIR, the </span><span class="rvts55">tools</span><span class="rvts54"> command-line interface contains a migration script to migrate the data from a FHIR server to this new way of persisting the IG page information.</span></p>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts90">Disabled GitHub Exports</span></span></h2>
-<p class="rvps7"><span class="rvts54">We have identified a problem with GitHub exports. We have disabled GitHub exports for this release and will be working on a solution to the GitHub exports problem, targeting to have the problem resolved in the subsequent release.</span></p>
+<p class="rvps30"><span class="rvts54">Behind the scenes, the way the data is stored in the ImplementationGuide resource has changed. Instead of using a contained Binary resource to represent page content, we're using an extension on the page to hold the page content (which is markdown). For self-installs of Trifolia-on-FHIR, the </span><span class="rvts55">tools</span><span class="rvts54"> command-line interface contains a migration script to migrate the data from a FHIR server to this new way of persisting the IG page information.</span></p>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts92">Disabled GitHub Exports</span></span></h2>
+<p class="rvps30"><span class="rvts54">We have identified a problem with GitHub exports. We have disabled GitHub exports for this release and will be working on a solution to the GitHub exports problem, targeting to have the problem resolved in the subsequent release.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log (5)</span></span></h3>
-<h4 class="rvps32"><span class="rvts0"><span class="rvts79">New Features</span></span></h4>
+<h4 class="rvps32"><span class="rvts0"><span class="rvts81">New Features</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps2"><span class="rvts19">[</span><a class="rvts57" href="https://trifolia.atlassian.net/browse/TRIFFHIR-390">TRIFFHIR-390</a><span class="rvts19">] - Add "Base" for OperationDefinition editing</span></li>
- <li class="rvps2"><span class="rvts19">[</span><a class="rvts57" href="https://trifolia.atlassian.net/browse/TRIFFHIR-391">TRIFFHIR-391</a><span class="rvts19">] - Allow configuration of types listed for selection on new profile creation</span></li>
- <li class="rvps2"><span class="rvts19">[</span><a class="rvts57" href="https://trifolia.atlassian.net/browse/TRIFFHIR-4264">TRIFFHIR-264</a><span class="rvts19">] - Prompt user when leaving Edit IG (R4) screen without saving changes</span></li>
- <li class="rvps2"><span class="rvts19">[</span><a class="rvts57" href="https://trifolia.atlassian.net/browse/TRIFFHIR-404">TRIFFHIR-404</a><span class="rvts19">] - Allow user to edit "use" on value set concept designations</span></li>
+ <li class="rvps2"><span class="rvts48">[</span><a class="rvts57" href="https://trifolia.atlassian.net/browse/TRIFFHIR-390">TRIFFHIR-390</a><span class="rvts48">] - Add "Base" for OperationDefinition editing</span></li>
+ <li class="rvps2"><span class="rvts48">[</span><a class="rvts57" href="https://trifolia.atlassian.net/browse/TRIFFHIR-391">TRIFFHIR-391</a><span class="rvts48">] - Allow configuration of types listed for selection on new profile creation</span></li>
+ <li class="rvps2"><span class="rvts48">[</span><a class="rvts57" href="https://trifolia.atlassian.net/browse/TRIFFHIR-4264">TRIFFHIR-264</a><span class="rvts48">] - Prompt user when leaving Edit IG (R4) screen without saving changes</span></li>
+ <li class="rvps2"><span class="rvts48">[</span><a class="rvts57" href="https://trifolia.atlassian.net/browse/TRIFFHIR-404">TRIFFHIR-404</a><span class="rvts48">] - Allow user to edit "use" on value set concept designations</span></li>
 </ul>
-<h4 class="rvps32"><span class="rvts0"><span class="rvts78">Improvements</span></span></h4>
+<h4 class="rvps32"><span class="rvts0"><span class="rvts80">Improvements</span></span></h4>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps2"><span class="rvts19">[</span><a class="rvts57" href="https://trifolia.atlassian.net/browse/TRIFFHIR-395">TRIFFHIR-395</a><span class="rvts19">] - </span><span class="rvts54">Improve page editing functionality</span></li>
+ <li class="rvps2"><span class="rvts48">[</span><a class="rvts57" href="https://trifolia.atlassian.net/browse/TRIFFHIR-395">TRIFFHIR-395</a><span class="rvts48">] - </span><span class="rvts54">Improve page editing functionality</span></li>
 </ul>
-<h4 class="rvps32"><span class="rvts0"><span class="rvts78"></span></span><span class="rvts0"><span class="rvts98"></span></span></h4>
+<h4 class="rvps32"><span class="rvts0"><span class="rvts80"></span></span><span class="rvts0"><span class="rvts100"></span></span></h4>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -248,7 +249,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -265,7 +266,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

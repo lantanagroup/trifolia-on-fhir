@@ -1,336 +1,345 @@
 <h1>Code System</h1>
 
 <div class="alert alert-danger" *ngIf="csNotFound">Code System with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
+<ng-container *ngIf="conformance && codeSystem">
+  <ul ngbNav #csTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+    <li ngbNavItem>
+      <a ngbNavLink>General</a>
+      <ng-template ngbNavContent>
+        <div class="row">
+          <div class="col-md-8">
+            <app-fhir-string [parentObject]="codeSystem" propertyName="url" title="URL" tooltipPath="CodeSystem.url" (change)="urlChanged()"></app-fhir-string>
 
-<ngb-tabset *ngIf="codeSystem" [destroyOnHide]="false" #csTabs="ngbTabset">
-  <ngb-tab title="General">
-    <ng-template ngbTabContent>
-      <div class="row">
-        <div class="col-md-8">
-          <app-fhir-string [parentObject]="codeSystem" propertyName="url" title="URL" tooltipPath="CodeSystem.url" (change)="urlChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="codeSystem" propertyName="name" title="Name" (change)="nameChanged()" tooltipPath="CodeSystem.name"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="codeSystem" propertyName="name" title="Name" (change)="nameChanged()" tooltipPath="CodeSystem.name"></app-fhir-string>
+            <app-fhir-string [parentObject]="codeSystem" propertyName="title" title="Title" (change)="nameChanged()" tooltipPath="CodeSystem.title"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="codeSystem" propertyName="title" title="Title" (change)="nameChanged()" tooltipPath="CodeSystem.title"></app-fhir-string>
+            <app-fhir-string [parentObject]="codeSystem" propertyName="publisher" title="Publisher" tooltipPath="CodeSystem.publisher"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="codeSystem" propertyName="publisher" title="Publisher" tooltipPath="CodeSystem.publisher"></app-fhir-string>
+            <app-fhir-string [parentObject]="codeSystem" propertyName="valueSet" title="Value Set" placeholder="URI" tooltipPath="CodeSystem.valueSet"></app-fhir-string>
+          </div>
+          <div class="col-md-4">
+            <app-fhir-string [parentObject]="codeSystem" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+            <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
-          <app-fhir-string [parentObject]="codeSystem" propertyName="valueSet" title="Value Set" placeholder="URI" tooltipPath="CodeSystem.valueSet"></app-fhir-string>
-        </div>
-        <div class="col-md-4">
-          <app-fhir-string [parentObject]="codeSystem" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
-          <div class="help-block">{{alreadyInUseIDMessage}}</div>
+            <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"
+                                        tooltipPath="CodeSystem.status"></app-fhir-select-single-code>
 
-          <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"
-                                       tooltipPath="CodeSystem.status"></app-fhir-select-single-code>
+            <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="content" title="Content" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/codesystem-content-mode"
+                                        tooltipPath="CodeSystem.content"></app-fhir-select-single-code>
 
-          <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="content" title="Content" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/codesystem-content-mode"
-                                       tooltipPath="CodeSystem.content"></app-fhir-select-single-code>
+            <app-fhir-string [parentObject]="codeSystem" propertyName="version" title="Version" tooltipPath="CodeSystem.version"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="codeSystem" propertyName="version" title="Version" tooltipPath="CodeSystem.version"></app-fhir-string>
+            <app-fhir-boolean [parentObject]="codeSystem" propertyName="experimental" title="Experimental" tooltipPath="CodeSystem.experimental"></app-fhir-boolean>
 
-          <app-fhir-boolean [parentObject]="codeSystem" propertyName="experimental" title="Experimental" tooltipPath="CodeSystem.experimental"></app-fhir-boolean>
+            <app-fhir-boolean [parentObject]="codeSystem" propertyName="compositional" title="Compositional" tooltipPath="CodeSystem.compositional"></app-fhir-boolean>
+          </div>
+          <div class="col-md-5">
+            <trifolia-fhir-identifier-card [parentObject]="codeSystem" propertyName="identifier"></trifolia-fhir-identifier-card>
+          </div>
+          <div class="col-md-3">
+            <app-fhir-boolean [parentObject]="codeSystem" propertyName="caseSensitive" title="Case Sensitive" tooltipPath="CodeSystem.caseSensitive"></app-fhir-boolean>
 
-          <app-fhir-boolean [parentObject]="codeSystem" propertyName="compositional" title="Compositional" tooltipPath="CodeSystem.compositional"></app-fhir-boolean>
-        </div>
-        <div class="col-md-5">
-          <trifolia-fhir-identifier-card [parentObject]="codeSystem" propertyName="identifier"></trifolia-fhir-identifier-card>
-        </div>
-        <div class="col-md-3">
-          <app-fhir-boolean [parentObject]="codeSystem" propertyName="caseSensitive" title="Case Sensitive" tooltipPath="CodeSystem.caseSensitive"></app-fhir-boolean>
+            <app-fhir-date [parentObject]="codeSystem" propertyName="date" title="Date" tooltipPath="CodeSystem.date"></app-fhir-date>
 
-          <app-fhir-date [parentObject]="codeSystem" propertyName="date" title="Date" tooltipPath="CodeSystem.date"></app-fhir-date>
+            <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="hierarchyMeaning" title="Hierarchy Meaning" [codes]="Globals.codeSystemHierarchyMeaningCodes"
+                                        tooltipPath="CodeSystem.hierarchyMeaning"></app-fhir-select-single-code>
+          </div>
+          <div class="col-md-4">
+            <app-fhir-boolean [parentObject]="codeSystem" propertyName="versionNeeded" title="Version Needed" tooltipPath="CodeSystem.versionNeeded"></app-fhir-boolean>
 
-          <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="hierarchyMeaning" title="Hierarchy Meaning" [codes]="Globals.codeSystemHierarchyMeaningCodes"
-                                       tooltipPath="CodeSystem.hierarchyMeaning"></app-fhir-select-single-code>
-        </div>
-        <div class="col-md-4">
-          <app-fhir-boolean [parentObject]="codeSystem" propertyName="versionNeeded" title="Version Needed" tooltipPath="CodeSystem.versionNeeded"></app-fhir-boolean>
-
-          <div class="form-group">
-            <label>
-              <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('count')" (ngModelChange)="Globals.toggleProperty(codeSystem, 'count', 1)"/>
-              Count
-              <app-tooltip-icon tooltipPath="CodeSystem.count"></app-tooltip-icon>
-            </label>
-            <input type="number" class="form-control" [disabled]="!codeSystem.hasOwnProperty('count')" [(ngModel)]="codeSystem.count"/>
+            <div class="mb-3">
+              <label>
+                <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('count')" (ngModelChange)="Globals.toggleProperty(codeSystem, 'count', 1)"/>
+                Count
+                <app-tooltip-icon tooltipPath="CodeSystem.count"></app-tooltip-icon>
+              </label>
+              <input type="number" class="form-control" [disabled]="!codeSystem.hasOwnProperty('count')" [(ngModel)]="codeSystem.count"/>
+            </div>
           </div>
         </div>
-      </div>
-    </ng-template>
-  </ngb-tab>
+      </ng-template>
+    </li>
 
-  <ngb-tab title="Narrative">
-    <ng-template ngbTabContent>
-      <app-fhir-markdown [parentObject]="codeSystem" propertyName="description" title="Description" tooltipPath="CodeSystem.description"></app-fhir-markdown>
+    <li ngbNavItem>
+      <a ngbNavLink>Narrative</a>
+      <ng-template ngbNavContent>
+        <app-fhir-markdown [parentObject]="codeSystem" propertyName="description" title="Description" tooltipPath="CodeSystem.description"></app-fhir-markdown>
 
-      <app-fhir-markdown [parentObject]="codeSystem" propertyName="purpose" title="Purpose" tooltipPath="CodeSystem.purpose"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="codeSystem" propertyName="purpose" title="Purpose" tooltipPath="CodeSystem.purpose"></app-fhir-markdown>
 
-      <app-fhir-markdown [parentObject]="codeSystem" propertyName="copyright" title="Copyright" tooltipPath="CodeSystem.copyright"></app-fhir-markdown>
-    </ng-template>
-  </ngb-tab>
+        <app-fhir-markdown [parentObject]="codeSystem" propertyName="copyright" title="Copyright" tooltipPath="CodeSystem.copyright"></app-fhir-markdown>
+      </ng-template>
+    </li>
 
-  <ngb-tab title="Additional">
-    <ng-template ngbTabContent>
-      <div class="card filter-property">
-        <div class="card-header">
-          <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('filter')" (ngModelChange)="Globals.toggleProperty(codeSystem, 'filter', [{ code: '', operator: ['='], value: '' }])"/>
-          Filter
-          <app-tooltip-icon tooltipPath="CodeSystem.filter"></app-tooltip-icon>
-        </div>
-        <table class="table table-striped" *ngIf="codeSystem.hasOwnProperty('filter')">
-          <thead>
-          <tr>
-            <th>Code
-              <app-tooltip-icon tooltipPath="CodeSystem.filter.code"></app-tooltip-icon>
-            </th>
-            <th>Description
-              <app-tooltip-icon tooltipPath="CodeSystem.filter.description"></app-tooltip-icon>
-            </th>
-            <th>Operator
-              <app-tooltip-icon tooltipPath="CodeSystem.filter.operator"></app-tooltip-icon>
-            </th>
-            <th>Value
-              <app-tooltip-icon tooltipPath="CodeSystem.filter.value"></app-tooltip-icon>
-            </th>
-            <th>
-              <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Add a filter" (click)="codeSystem.filter.push({ code: '', operator: ['='], value: '' })">
-                  <i class="fa fa-plus"></i>
-                </button>
-              </div>
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let uc of codeSystem.filter; let uci = index">
-            <td>
-              <app-fhir-string [parentObject]="uc" propertyName="code" [required]="true" [isFormGroup]="false"></app-fhir-string>
-            </td>
-            <td>
-              <app-fhir-string [parentObject]="uc" propertyName="description" [isFormGroup]="false"></app-fhir-string>
-            </td>
-            <td>
-              <div class="input-group" *ngFor="let o of uc.operator; let oi = index">
-                <select class="form-control">
-                  <option value="=">=</option>
-                  <option value="is-a">Is A (by subsumption)</option>
-                  <option value="descendent-of">Descendent Of (by subsumption)</option>
-                  <option value="is-not-a">Not (Is A) (by subsumption)</option>
-                  <option value="regex">Regular Expression</option>
-                  <option value="in">In Set</option>
-                  <option value="not-in">Not in Set</option>
-                  <option value="generalizes">Generalizes (by subsumption)</option>
-                  <option value="exists">Exists</option>
-                </select>
-                <div class="input-group-btn">
-                  <button type="button" class="btn btn-default" title="Remove this operator" (click)="uc.operator.splice(oi, 1)">
+    <li ngbNavItem>
+      <a ngbNavLink>Additional</a>
+      <ng-template ngbNavContent>
+        <div class="card filter-property">
+          <div class="card-header">
+            <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('filter')" (ngModelChange)="Globals.toggleProperty(codeSystem, 'filter', [{ code: '', operator: ['='], value: '' }])"/>
+            Filter
+            <app-tooltip-icon tooltipPath="CodeSystem.filter"></app-tooltip-icon>
+          </div>
+          <table class="table table-striped" *ngIf="codeSystem.hasOwnProperty('filter')">
+            <thead>
+            <tr>
+              <th>Code
+                <app-tooltip-icon tooltipPath="CodeSystem.filter.code"></app-tooltip-icon>
+              </th>
+              <th>Description
+                <app-tooltip-icon tooltipPath="CodeSystem.filter.description"></app-tooltip-icon>
+              </th>
+              <th>Operator
+                <app-tooltip-icon tooltipPath="CodeSystem.filter.operator"></app-tooltip-icon>
+              </th>
+              <th>Value
+                <app-tooltip-icon tooltipPath="CodeSystem.filter.value"></app-tooltip-icon>
+              </th>
+              <th>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-default btn-sm" title="Add a filter" (click)="codeSystem.filter.push({ code: '', operator: ['='], value: '' })">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let uc of codeSystem.filter; let uci = index">
+              <td>
+                <app-fhir-string [parentObject]="uc" propertyName="code" [required]="true" [isFormGroup]="false"></app-fhir-string>
+              </td>
+              <td>
+                <app-fhir-string [parentObject]="uc" propertyName="description" [isFormGroup]="false"></app-fhir-string>
+              </td>
+              <td>
+                <div class="input-group" *ngFor="let o of uc.operator; let oi = index">
+                  <select class="form-select">
+                    <option value="=">=</option>
+                    <option value="is-a">Is A (by subsumption)</option>
+                    <option value="descendent-of">Descendent Of (by subsumption)</option>
+                    <option value="is-not-a">Not (Is A) (by subsumption)</option>
+                    <option value="regex">Regular Expression</option>
+                    <option value="in">In Set</option>
+                    <option value="not-in">Not in Set</option>
+                    <option value="generalizes">Generalizes (by subsumption)</option>
+                    <option value="exists">Exists</option>
+                  </select>
+                  <div class="input-group-btn">
+                    <button type="button" class="btn btn-default" title="Remove this operator" (click)="uc.operator.splice(oi, 1)">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </div>
+                <p><a href="javascript:void(0)" (click)="uc.operator.push('=')">Add an operator</a></p>
+              </td>
+              <td>
+                <app-fhir-string [parentObject]="uc" propertyName="value" [required]="true" [isFormGroup]="false"></app-fhir-string>
+              </td>
+              <td>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-default btn-sm" title="Remove this filter" (click)="codeSystem.filter.splice(uci, 1)">
                     <i class="fas fa-trash-alt"></i>
                   </button>
                 </div>
-              </div>
-              <p><a href="javascript:void(0)" (click)="uc.operator.push('=')">Add an operator</a></p>
-            </td>
-            <td>
-              <app-fhir-string [parentObject]="uc" propertyName="value" [required]="true" [isFormGroup]="false"></app-fhir-string>
-            </td>
-            <td>
-              <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Remove this filter" (click)="codeSystem.filter.splice(uci, 1)">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card property-property">
-        <div class="card-header">
-          <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('property')" (ngModelChange)="Globals.toggleProperty(codeSystem, 'property', [{ code: '', type: 'code' }])"/>
-          Property
-          <app-tooltip-icon tooltipPath="CodeSystem.property"></app-tooltip-icon>
+              </td>
+            </tr>
+            </tbody>
+          </table>
         </div>
-        <table class="table table-striped" *ngIf="codeSystem.hasOwnProperty('property')">
+
+        <div class="card property-property">
+          <div class="card-header">
+            <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('property')" (ngModelChange)="Globals.toggleProperty(codeSystem, 'property', [{ code: '', type: 'code' }])"/>
+            Property
+            <app-tooltip-icon tooltipPath="CodeSystem.property"></app-tooltip-icon>
+          </div>
+          <table class="table table-striped" *ngIf="codeSystem.hasOwnProperty('property')">
+            <thead>
+            <tr>
+              <th>Code
+                <app-tooltip-icon tooltipPath="CodeSystem.property.code"></app-tooltip-icon>
+              </th>
+              <th>URI
+                <app-tooltip-icon tooltipPath="CodeSystem.property.uri"></app-tooltip-icon>
+              </th>
+              <th>Description
+                <app-tooltip-icon tooltipPath="CodeSystem.property.description"></app-tooltip-icon>
+              </th>
+              <th>Type
+                <app-tooltip-icon tooltipPath="CodeSystem.property.type"></app-tooltip-icon>
+              </th>
+              <th>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-default btn-sm" title="Add a property" (click)="codeSystem.property.push({ code: '', type: 'code' })">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let uc of codeSystem.property; let uci = index">
+              <td>
+                <app-fhir-string [parentObject]="uc" propertyName="code" [required]="true" [isFormGroup]="false"></app-fhir-string>
+              </td>
+              <td>
+                <app-fhir-string [parentObject]="uc" propertyName="uri" [isFormGroup]="false"></app-fhir-string>
+              </td>
+              <td>
+                <app-fhir-string [parentObject]="uc" propertyName="description" [isFormGroup]="false"></app-fhir-string>
+              </td>
+              <td>
+                <app-fhir-select-single-code [parentObject]="uc" propertyName="type" [isFormGroup]="false" [required]="true"
+                                            valueSetUrl="http://hl7.org/fhir/ValueSet/concept-property-type"></app-fhir-select-single-code>
+              </td>
+              <td>
+                <div class="pull-right">
+                  <button type="button" class="btn btn-default btn-sm" title="Remove this property" (click)="codeSystem.property.splice(uci, 1)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <app-fhir-multi-contact [parentObject]="codeSystem" propertyName="contact" title="Contact" tooltipPath="CodeSystem.contact"></app-fhir-multi-contact>
+
+        <app-fhir-multi-use-context [parentObject]="codeSystem" propertyName="useContext" title="Use Context" tooltipPath="CodeSystem.useContext"></app-fhir-multi-use-context>
+
+        <app-fhir-multi-jurisdiction [parentObject]="codeSystem" propertyName="jurisdiction" title="Jurisdiction" tooltipPath="CodeSystem.jurisdiction"></app-fhir-multi-jurisdiction>
+      </ng-template>
+    </li>
+
+    <li ngbNavItem>
+      <a ngbNavLink>Concept(s)</a>
+      <ng-template ngbNavContent>
+        <p>
+          <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('concept')" (ngModelChange)="initConcepts()"/> Code system has concepts
+          <app-tooltip-icon tooltipPath="CodeSystem.concept"></app-tooltip-icon>
+        </p>
+
+        <table class="table table-striped" *ngIf="codeSystem.concept">
           <thead>
           <tr>
             <th>Code
-              <app-tooltip-icon tooltipPath="CodeSystem.property.code"></app-tooltip-icon>
+              <app-tooltip-icon tooltipPath="CodeSystem.concept.code"></app-tooltip-icon>
             </th>
-            <th>URI
-              <app-tooltip-icon tooltipPath="CodeSystem.property.uri"></app-tooltip-icon>
+            <th>Display
+              <app-tooltip-icon tooltipPath="CodeSystem.concept.display"></app-tooltip-icon>
             </th>
-            <th>Description
-              <app-tooltip-icon tooltipPath="CodeSystem.property.description"></app-tooltip-icon>
+            <th>Definition
+              <app-tooltip-icon tooltipPath="CodeSystem.concept.definition"></app-tooltip-icon>
             </th>
-            <th>Type
-              <app-tooltip-icon tooltipPath="CodeSystem.property.type"></app-tooltip-icon>
-            </th>
-            <th>
+            <th class="actions-column-2">
               <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Add a property" (click)="codeSystem.property.push({ code: '', type: 'code' })">
+                <button type="button" class="btn btn-default btn-sm" title="Add a concept" (click)="addConcept()">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
             </th>
           </tr>
+          <tr>
+            <th><input type="text" class="form-control" placeholder="Search code" [ngModel]="searchCode" (input)="searchCodeChanged($event.target.value)"/></th>
+            <th><input type="text" class="form-control" placeholder="Search display" [ngModel]="searchDisplay" (input)="searchDisplayChanged($event.target.value)"/></th>
+            <th><input type="text" class="form-control" placeholder="Search definition" [ngModel]="searchDefinition" (input)="searchDefinitionChanged($event.target.value)"/></th>
+            <th>&nbsp;</th>
+          </tr>
+          <tr *ngIf="filteredConcepts.length > perPage">
+            <td colspan="4">
+              <ngb-pagination class="d-flex justify-content-center" *ngIf="filteredConcepts && filteredConcepts.length > 0"
+                              [maxSize]="5"
+                              [collectionSize]="filteredConcepts.length"
+                              [(page)]="page"
+                              [pageSize]="perPage"
+                              [boundaryLinks]="true"
+                              (pageChange)="refreshConcepts()"></ngb-pagination>
+            </td>
+          </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let uc of codeSystem.property; let uci = index">
+          <tr *ngFor="let c of pagedConcepts">
             <td>
-              <app-fhir-string [parentObject]="uc" propertyName="code" [required]="true" [isFormGroup]="false"></app-fhir-string>
+              <app-fhir-string [parentObject]="c" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
             </td>
             <td>
-              <app-fhir-string [parentObject]="uc" propertyName="uri" [isFormGroup]="false"></app-fhir-string>
+              <app-fhir-string [parentObject]="c" propertyName="display" [isFormGroup]="false"></app-fhir-string>
             </td>
             <td>
-              <app-fhir-string [parentObject]="uc" propertyName="description" [isFormGroup]="false"></app-fhir-string>
+              <app-fhir-string [parentObject]="c" propertyName="definition" [isFormGroup]="false"></app-fhir-string>
             </td>
             <td>
-              <app-fhir-select-single-code [parentObject]="uc" propertyName="type" [isFormGroup]="false" [required]="true"
-                                           valueSetUrl="http://hl7.org/fhir/ValueSet/concept-property-type"></app-fhir-select-single-code>
-            </td>
-            <td>
-              <div class="pull-right">
-                <button type="button" class="btn btn-default btn-sm" title="Remove this property" (click)="codeSystem.property.splice(uci, 1)">
+              <div class="ntb-group pull-right">
+                <button type="button" class="btn btn-default btn-sm" title="Edit this concept" (click)="editConcept(c)">
+                  <i class="fa fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-default btn-sm" title="Remove this concept" (click)="removeConcept(c)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
             </td>
           </tr>
           </tbody>
+          <tfoot>
+          <tr *ngIf="filteredConcepts.length > perPage">
+            <td colspan="4">
+              <ngb-pagination class="d-flex justify-content-center" *ngIf="filteredConcepts && filteredConcepts.length > 0"
+                              [maxSize]="5"
+                              [collectionSize]="filteredConcepts.length"
+                              [(page)]="page"
+                              [pageSize]="perPage"
+                              [boundaryLinks]="true"
+                              (pageChange)="refreshConcepts()"></ngb-pagination>
+            </td>
+          </tr>
+          </tfoot>
         </table>
-      </div>
+      </ng-template>
+    </li>
 
-      <app-fhir-multi-contact [parentObject]="codeSystem" propertyName="contact" title="Contact" tooltipPath="CodeSystem.contact"></app-fhir-multi-contact>
+    <!-- Permissions -->
+    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+      <a ngbNavLink>
+        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i>
+      </a>
+      <ng-template ngbNavContent>
+        <trifolia-fhir-resource-permissions [resource]="conformance"></trifolia-fhir-resource-permissions>
+      </ng-template>
+    </li>
 
-      <app-fhir-multi-use-context [parentObject]="codeSystem" propertyName="useContext" title="Use Context" tooltipPath="CodeSystem.useContext"></app-fhir-multi-use-context>
+    <!-- Validation -->
+    <li ngbNavItem="validation">
+      <a ngbNavLink>Validation</a>
+      <ng-template ngbNavContent>
+        <app-validation-results [results]="validation"></app-validation-results>
+      </ng-template>
+    </li>
 
-      <app-fhir-multi-jurisdiction [parentObject]="codeSystem" propertyName="jurisdiction" title="Jurisdiction" tooltipPath="CodeSystem.jurisdiction"></app-fhir-multi-jurisdiction>
-    </ng-template>
-  </ngb-tab>
+    <!-- JSON -->
+    <li ngbNavItem="raw">
+      <a ngbNavLink>RAW</a>
+      <ng-template ngbNavContent>
+        <app-raw-resource [resource]="codeSystem" [shown]="csTabs.activeId === 'raw'"></app-raw-resource>
+      </ng-template>
+    </li>
 
-  <ngb-tab title="Concept(s)">
-    <ng-template ngbTabContent>
-      <p>
-        <input type="checkbox" [ngModel]="codeSystem.hasOwnProperty('concept')" (ngModelChange)="initConcepts()"/> Code system has concepts
-        <app-tooltip-icon tooltipPath="CodeSystem.concept"></app-tooltip-icon>
-      </p>
-
-      <table class="table table-striped" *ngIf="codeSystem.concept">
-        <thead>
-        <tr>
-          <th>Code
-            <app-tooltip-icon tooltipPath="CodeSystem.concept.code"></app-tooltip-icon>
-          </th>
-          <th>Display
-            <app-tooltip-icon tooltipPath="CodeSystem.concept.display"></app-tooltip-icon>
-          </th>
-          <th>Definition
-            <app-tooltip-icon tooltipPath="CodeSystem.concept.definition"></app-tooltip-icon>
-          </th>
-          <th class="actions-column-2">
-            <div class="pull-right">
-              <button type="button" class="btn btn-default btn-sm" title="Add a concept" (click)="addConcept()">
-                <i class="fa fa-plus"></i>
-              </button>
-            </div>
-          </th>
-        </tr>
-        <tr>
-          <th><input type="text" class="form-control" placeholder="Search code" [ngModel]="searchCode" (input)="searchCodeChanged($event.target.value)"/></th>
-          <th><input type="text" class="form-control" placeholder="Search display" [ngModel]="searchDisplay" (input)="searchDisplayChanged($event.target.value)"/></th>
-          <th><input type="text" class="form-control" placeholder="Search definition" [ngModel]="searchDefinition" (input)="searchDefinitionChanged($event.target.value)"/></th>
-          <th>&nbsp;</th>
-        </tr>
-        <tr *ngIf="filteredConcepts.length > perPage">
-          <td colspan="4">
-            <ngb-pagination class="d-flex justify-content-center" *ngIf="filteredConcepts && filteredConcepts.length > 0"
-                            [maxSize]="5"
-                            [collectionSize]="filteredConcepts.length"
-                            [(page)]="page"
-                            [pageSize]="perPage"
-                            [boundaryLinks]="true"
-                            (pageChange)="refreshConcepts()"></ngb-pagination>
-          </td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let c of pagedConcepts">
-          <td>
-            <app-fhir-string [parentObject]="c" propertyName="code" [isFormGroup]="false" [required]="true"></app-fhir-string>
-          </td>
-          <td>
-            <app-fhir-string [parentObject]="c" propertyName="display" [isFormGroup]="false"></app-fhir-string>
-          </td>
-          <td>
-            <app-fhir-string [parentObject]="c" propertyName="definition" [isFormGroup]="false"></app-fhir-string>
-          </td>
-          <td>
-            <div class="ntb-group pull-right">
-              <button type="button" class="btn btn-default btn-sm" title="Edit this concept" (click)="editConcept(c)">
-                <i class="fa fa-edit"></i>
-              </button>
-              <button type="button" class="btn btn-default btn-sm" title="Remove this concept" (click)="removeConcept(c)">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-        </tbody>
-        <tfoot>
-        <tr *ngIf="filteredConcepts.length > perPage">
-          <td colspan="4">
-            <ngb-pagination class="d-flex justify-content-center" *ngIf="filteredConcepts && filteredConcepts.length > 0"
-                            [maxSize]="5"
-                            [collectionSize]="filteredConcepts.length"
-                            [(page)]="page"
-                            [pageSize]="perPage"
-                            [boundaryLinks]="true"
-                            (pageChange)="refreshConcepts()"></ngb-pagination>
-          </td>
-        </tr>
-        </tfoot>
-      </table>
-    </ng-template>
-  </ngb-tab>
-
-  <!-- Permissions -->
-  <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
-    <ng-template ngbTabTitle>
-      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(codeSystem)" title="No write permissions for current user specified!"></i>
-    </ng-template>
-    <ng-template ngbTabContent>
-      <trifolia-fhir-resource-permissions [resource]="codeSystem"></trifolia-fhir-resource-permissions>
-    </ng-template>
-  </ngb-tab>
-
-  <!-- Validation -->
-  <ngb-tab id="validation" title="Validation">
-    <ng-template ngbTabContent>
-      <app-validation-results [results]="validation"></app-validation-results>
-    </ng-template>
-  </ngb-tab>
-
-  <!-- JSON -->
-  <ngb-tab id="raw" title="RAW">
-    <ng-template ngbTabContent>
-      <app-raw-resource [resource]="codeSystem" [shown]="csTabs.activeId === 'raw'"></app-raw-resource>
-    </ng-template>
-  </ngb-tab>
-
-  <!-- Version History -->
-  <ngb-tab id="history" title="History" *ngIf="!isNew">
-    <ng-template ngbTabContent>
-      <app-resource-history [(resource)]="codeSystem"></app-resource-history>
-    </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+    <!-- Version History -->
+    <li ngbNavItem="history" *ngIf="!isNew">
+      <a ngbNavLink>History</a>
+      <ng-template ngbNavContent>
+        <app-resource-history [resource]="conformance" (resourceChange) = "codeSystem = $event; conformance.resource = $event;"></app-resource-history>
+      </ng-template>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="csTabs" class="mt-2"></div>
+</ng-container>
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(codeSystem) || (isNew && !isIdUnique)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance) || (isNew && !isIdUnique)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

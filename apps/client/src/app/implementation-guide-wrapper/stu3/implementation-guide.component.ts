@@ -1,32 +1,35 @@
-import {Component, DoCheck, EventEmitter, OnDestroy, OnInit} from '@angular/core';
-import {AuthService} from '../../shared/auth.service';
+import { Component, DoCheck, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { AuthService } from '../../shared/auth.service';
 import {
-  Binary,
   Coding,
   Extension,
   ImplementationGuide,
-  OperationOutcome,
   PackageComponent,
   PackageResourceComponent,
   PageComponent
 } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import {ImplementationGuideService, PublishedGuideModel} from '../../shared/implementation-guide.service';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {PageComponentModalComponent} from './page-component-modal.component';
-import {FhirService} from '../../shared/fhir.service';
-import {FileService} from '../../shared/file.service';
-import {ConfigService} from '../../shared/config.service';
-import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
-import {ValidatorResponse} from 'fhir/validator';
-import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
-import {ClientHelper} from '../../clientHelper';
-import {getErrorString, parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {STU3ResourceModalComponent} from './resource-modal.component';
-import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
-import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
+import { ImplementationGuideService, PublishedGuideModel } from '../../shared/implementation-guide.service';
+import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PageComponentModalComponent } from './page-component-modal.component';
+import { FhirService } from '../../shared/fhir.service';
+import { FileService } from '../../shared/file.service';
+import { ConfigService } from '../../shared/config.service';
+import { PublishedIgSelectModalComponent } from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
+import { ValidatorResponse } from 'fhir/validator';
+import { FhirReferenceModalComponent, ResourceSelection } from '../../fhir-edit/reference-modal/reference-modal.component';
+import { ClientHelper } from '../../clientHelper';
+import { getErrorString, parseReference } from '../../../../../../libs/tof-lib/src/lib/helper';
+import { STU3ResourceModalComponent } from './resource-modal.component';
+import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
+import { BaseImplementationGuideComponent } from '../base-implementation-guide-component';
 import { CanComponentDeactivate } from '../../guards/resource.guard';
+import { ProjectService } from '../../shared/projects.service';
+import {IConformance, IExample, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
+import { forkJoin } from 'rxjs';
+import { getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
+
 
 class Parameter {
   public extension: Extension;
@@ -97,7 +100,8 @@ class ImplementationGuideResource {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class STU3ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
-  public implementationGuide: ImplementationGuide;
+  public conformance;
+  public implementationGuide;
   public message: string;
   public currentResource: any;
   public validation: ValidatorResponse;
@@ -107,8 +111,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   public ClientHelper = ClientHelper;
   public parameters: Parameter[] = [];
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
-  public isDirty = false;
-
+  public implementationGuideId: string;
   private navSubscription: any;
   // noinspection JSMismatchedCollectionQueryUpdate
   private resources: ImplementationGuideResource[] = [];
@@ -121,13 +124,14 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     private fileService: FileService,
     private fhirService: FhirService,
     protected authService: AuthService,
-    public configService: ConfigService) {
+    public configService: ConfigService,
+    public projectService: ProjectService) {
 
     super(configService, authService);
 
     this.implementationGuide = new ImplementationGuide({ meta: this.authService.getDefaultMeta() });
 
-    this.igChanging.subscribe((value) =>{
+    this.igChanging.subscribe((value) => {
       this.isDirty = value;
       this.configService.setTitle(`ImplementationGuide - ${this.implementationGuide.name || 'no-name'}`, this.isDirty);
     });
@@ -194,7 +198,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
   public addGlobal() {
     this.implementationGuide.global = this.implementationGuide.global || [];
-    this.implementationGuide.global.push({type: '', profile: { reference: '' }});
+    this.implementationGuide.global.push({ type: '', profile: { reference: '' } });
   }
 
   public changeId() {
@@ -206,11 +210,11 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     modalRef.componentInstance.resourceType = 'ImplementationGuide';
     modalRef.componentInstance.originalId = this.implementationGuide.id;
 
-    modalRef.result.then(() => {this.igChanging.emit(true);});
+    modalRef.result.then(() => { this.igChanging.emit(true); });
   }
 
   public selectPublishedIg(dependency: Extension) {
-    const modalRef = this.modalService.open(PublishedIgSelectModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(PublishedIgSelectModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.result.then((guide: PublishedGuideModel) => {
       this.setDependencyLocation(dependency, guide.url);
       this.setDependencyID(dependency, guide['npm-name'])
@@ -226,10 +230,14 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   public addResources(destPackage?: PackageComponent) {
-    const modalRef = this.modalService.open(FhirReferenceModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.fhirVersion = 'stu3';
     modalRef.componentInstance.selectMultiple = true;
 
     modalRef.result.then((results: ResourceSelection[]) => {
+
+      if (!results) return;
+
       if (!this.implementationGuide.package) {
         this.implementationGuide.package = [];
       }
@@ -277,6 +285,13 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
             example: allProfilingTypes.indexOf(result.resourceType) < 0
           });
         }
+
+        if (!this.conformance.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
+          const conf = <IConformance>{ id: result.projectResourceId, resource: result.resource };
+          const newProjectResourceReference: IProjectResourceReference = { value: conf, valueType: 'Conformance' };
+          this.conformance.references.push(newProjectResourceReference);
+        }
+
       });
 
       this.initResources();
@@ -402,7 +417,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   public addPackageEntry(packagesTabSet) {
-    this.implementationGuide.package.push({name: '', resource: [{name: '', sourceUri: '', example: false}]});
+    this.implementationGuide.package.push({ name: '', resource: [{ name: '', sourceUri: '', example: false }] });
 
     setTimeout(() => {
       const lastIndex = this.implementationGuide.package.length - 1;
@@ -428,6 +443,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   private getImplementationGuide() {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
+    this.conformance = <IConformance>{};
+
     if (this.isFile) {
       if (this.fileService.file) {
         this.implementationGuide = new ImplementationGuide(this.fileService.file.resource);
@@ -444,20 +461,26 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     if (!this.isNew) {
       this.implementationGuide = null;
 
-      this.implementationGuideService.getImplementationGuide(implementationGuideId)
-        .subscribe((results: ImplementationGuide | OperationOutcome) => {
-          if (results.resourceType !== 'ImplementationGuide') {
-            this.message = 'The specified implementation guide either does not exist or was deleted';
-            return;
-          }
+      this.implementationGuideService.getImplementationGuideWithReferences(implementationGuideId)
+        .subscribe({
+          next: (conf: IConformance) => {
 
-          this.implementationGuide = new ImplementationGuide(results);
-          this.igChanging.emit(false);
-          this.initPages();
-          this.initParameters();
-        }, (err) => {
-          this.igNotFound = err.status === 404;
-          this.message = getErrorString(err);
+            if (!conf || !conf.resource || conf.resource.resourceType !== 'ImplementationGuide') {
+              this.message = 'The specified implementation guide either does not exist or was deleted';
+              return;
+            }
+
+            this.implementationGuide = new ImplementationGuide(conf.resource);
+            this.conformance = conf;
+            this.conformance.resource = this.implementationGuide;
+            this.igChanging.emit(false);
+            this.initPages();
+            this.initParameters();
+          },
+          error: (err) => {
+            this.igNotFound = err.status === 404;
+            this.message = getErrorString(err);
+          }
         });
     }
   }
@@ -470,18 +493,18 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     }
   }
 
-  public prompt(array, index, text, event=null){
+  public prompt(array, index, text, event = null) {
     const result = ClientHelper.promptForRemove(array, index, text, event);
-    if(result){
+    if (result) {
       this.igChanging.emit(true);
     }
   }
 
   public editPackageResourceModal(resource, content) {
     this.currentResource = resource;
-    const modalRef = this.modalService.open(content, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(content, { size: 'lg', backdrop: 'static' });
 
-    modalRef.result.then(() => {this.igChanging.emit(true);})
+    modalRef.result.then(() => { this.igChanging.emit(true); })
   }
 
   public tabChange(event) {
@@ -524,7 +547,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   }
 
   public editPage(pageDef: PageDefinition) {
-    const modalRef = this.modalService.open(PageComponentModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(PageComponentModalComponent, { size: 'lg', backdrop: 'static' });
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
     componentInstance.implementationGuide = this.implementationGuide;
@@ -658,29 +681,61 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       return;
     }
 
-    this.implementationGuideService.saveImplementationGuide(this.implementationGuide)
-      .subscribe((implementationGuide: ImplementationGuide) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.fhirServer}/${implementationGuide.id}/implementation-guide`]);
-        } else {
-          this.message = 'Your changes have been saved!';
-          this.igChanging.emit(false);
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
+    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
+      .subscribe({
+        next: (conf: IConformance) => {
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.implementationGuide = conf.resource;
+            this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
+          } else {
+            this.conformance = conf;
+            this.implementationGuide = conf.resource;
+            this.configService.project = getImplementationGuideContext(conf);
+            this.message = 'Your changes have been saved!';
+            this.igChanging.emit(false);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
+        },
+        error: (err) => {
+          this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
         }
-      }, (err) => {
-        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
       });
   }
 
+  public async delete(implementationGuideId) {
+    if (!confirm(`Are you sure you want to delete ${this.implementationGuide.name}?`)) {
+      return false;
+    }
+
+    const name = this.implementationGuide.name;
+    const id = this.implementationGuide.id;
+    if (!confirm(`Are you sure you want to delete`)) {
+      return false;
+    }
+
+    this.projectService.deleteIg(implementationGuideId)
+      .subscribe(async () => {
+        await this.implementationGuideService.removeImplementationGuide(this.implementationGuide.id).toPromise().then((project) => {
+          console.log(project);
+          this.configService.project = null;
+          this.router.navigate([`${this.configService.baseSessionUrl}`]);
+          alert(`IG ${name} with id ${this.implementationGuide.id} has been deleted`);
+        }).catch((err) => this.message = getErrorString(err));
+      }, (err) => {
+        this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
+      });
+
+  }
+
   public editImplementationGuideResource(igResource: ImplementationGuideResource) {
-    const modalRef = this.modalService.open(STU3ResourceModalComponent, { size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(STU3ResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
     modalRef.componentInstance.resource = igResource.resource;
 
-    modalRef.result.then(() => {this.igChanging.emit(true);});
+    modalRef.result.then(() => { this.igChanging.emit(true); });
   }
 
   public initResources() {
@@ -709,6 +764,33 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     if (igResource.igPackage.resource.length === 0) {
       const packageIndex = this.implementationGuide.package.indexOf(igResource.igPackage);
       this.implementationGuide.package.splice(packageIndex, 1);
+    }
+
+    let resourceType = igResource.resource.sourceReference.reference.split('/')[0];
+    let resourceId = igResource.resource.sourceReference.reference.split('/')[1];
+
+    let index = (this.conformance.references || []).findIndex((ref: IProjectResourceReference) => {
+      if (ref.valueType === 'Conformance') {
+        const val: IConformance = <IConformance>ref.value;
+        let refResourceId = `${val.resource.id ?? val.id}`;
+        let refResourceType = val.resource.resourceType;
+        return refResourceType == resourceType && refResourceId == resourceId;
+      } else if (ref.valueType === 'Example') {
+        const val: IExample = <IExample>ref.value;
+        if (typeof val.content === typeof {} && 'resourceType' in val.content && 'id' in val.content) {
+          let refResourceId = `${val.content['id]'] ?? val.id}`;
+          let refResourceType = `${val.content['resourceType']}`;
+          return refResourceType == resourceType && refResourceId == resourceId;
+        } else {
+          let refResourceId = `${val.name || val.content['id'] || val.id}`;
+          let refResourceType = `Binary`;
+          return refResourceType == resourceType && refResourceId == resourceId;
+        }
+      }
+    });
+
+    if (index > -1) {
+      this.conformance.references.splice(index, 1);
     }
 
     this.initResources();
@@ -757,13 +839,17 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
     // Watch the route parameters to see if the id of the implementation guide changes. Reload if it does.
     this.route.params.subscribe((params) => {
-      if (params.implementationGuideId && this.implementationGuide && params.implementationGuideId !== this.implementationGuide.id) {
+      if (!this.implementationGuideId) {
+        this.implementationGuideId = params.implementationGuideId;
+      }
+
+      if (params.implementationGuideId && this.implementationGuide && params.implementationGuideId !== this.implementationGuideId) {
         this.getImplementationGuide();
       }
     });
   }
 
-  public canDeactivate(): boolean{
+  public canDeactivate(): boolean {
     return !this.isDirty;
   }
 

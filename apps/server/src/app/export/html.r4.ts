@@ -3,7 +3,7 @@ import {ImplementationGuidePageComponent, ImplementationGuideResourceComponent} 
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import {parseReference} from '../../../../../libs/tof-lib/src/lib/helper';
-import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {IgPageHelper} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
 
 export class R4HtmlExporter extends HtmlExporter {
@@ -78,7 +78,7 @@ export class R4HtmlExporter extends HtmlExporter {
       this.r4ImplementationGuide.definition.page.generation = 'markdown';
     }
 
-    this.pageInfos = IgPageHelper.getR4PagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
+    this.pageInfos = IgPageHelper.getR4andR5PagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
   }
 
   protected prepareImplementationGuide(): IImplementationGuide {

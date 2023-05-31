@@ -1,22 +1,22 @@
 import {Document, HeadingLevel, IParagraphOptions, Packer, Paragraph, Table, TableCell, TableOfContents, TableRow, TextRun, VerticalAlign} from 'docx';
 import {
-  Bundle,
   Extension as R4Extension,
   ImplementationGuide as R4ImplementationGuide,
   StructureDefinition as R4StructureDefinition,
   ValueSet as R4ValueSet
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+} from '@trifolia-fhir/r4';
+import {ImplementationGuide as R5ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {TofLogger} from '../tof-logger';
 import {
   Extension as STU3Extension,
   ImplementationGuide as STU3ImplementationGuide,
   StructureDefinition as STU3StructureDefinition,
   ValueSet as STU3ValueSet
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import * as fs from 'fs';
-import {IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IgPageHelper, PageInfo} from '../../../../../libs/tof-lib/src/lib/ig-page-helper';
+} from '@trifolia-fhir/stu3';
+import {Globals, IgPageHelper, PageInfo} from '@trifolia-fhir/tof-lib';
+import type {IBundle, IImplementationGuide} from '@trifolia-fhir/tof-lib';
+import {readFileSync} from 'fs';
+
 
 /**
  * This class is responsible for creating an MSWord DOCX document from a bundle of
@@ -88,9 +88,9 @@ export class MSWordExporter {
     ];
   }
 
-  async export(bundle: Bundle, version: 'stu3'|'r4') {
+  async export(bundle: IBundle, version: 'stu3'|'r4'|'r5') {
     this.doc = new Document({
-      externalStyles: fs.readFileSync('./assets/msword-styles.xml').toString()
+      externalStyles: readFileSync('./assets/msword-styles.xml').toString()
     });
     this.body = [];
 
@@ -110,6 +110,8 @@ export class MSWordExporter {
       implementationGuide = new STU3ImplementationGuide(implementationGuideEntry.resource);
     } else if (version === 'r4') {
       implementationGuide = new R4ImplementationGuide(implementationGuideEntry.resource);
+    } else if (version === 'r5') {
+      implementationGuide = new R5ImplementationGuide(implementationGuideEntry.resource);
     }
 
     if (implementationGuide) {
@@ -123,10 +125,10 @@ export class MSWordExporter {
       if (version === 'stu3') {
         const stu3ImplementationGuide = <STU3ImplementationGuide> implementationGuide;
         pageInfos = IgPageHelper.getSTU3PagesList([], stu3ImplementationGuide.page, stu3ImplementationGuide);
-      } else if (version === 'r4') {
-        const r4ImplementationGuide = <R4ImplementationGuide> implementationGuide;
-        if (r4ImplementationGuide.definition) {
-          pageInfos = IgPageHelper.getR4PagesList([], r4ImplementationGuide.definition.page, r4ImplementationGuide);
+      } else if (version === 'r4' || version === 'r5') {
+        const ig = <R4ImplementationGuide | R5ImplementationGuide> implementationGuide;
+        if (ig.definition) {
+          pageInfos = IgPageHelper.getR4andR5PagesList([], ig.definition.page, ig);
         }
       }
 

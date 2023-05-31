@@ -1,8 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">Edit concept</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body" *ngIf="concept">
   <app-fhir-string [parentObject]="concept" propertyName="code" title="Code" [required]="true"></app-fhir-string>
@@ -32,7 +30,7 @@
           <app-fhir-string [parentObject]="designation" propertyName="language" [isFormGroup]="false"></app-fhir-string>
         </td>
         <td>
-          <select class="form-control" [(ngModel)]="designation.use">
+          <select class="form-select" [(ngModel)]="designation.use">
             <option *ngFor="let u of uses" [ngValue]="u">{{u.display}}</option>
           </select>
         </td>

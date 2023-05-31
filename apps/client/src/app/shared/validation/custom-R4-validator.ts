@@ -41,7 +41,7 @@ export class CustomR4Validator extends CustomValidator {
       });
     }
 
-    if(!implementationGuide.jurisdiction || (implementationGuide.jurisdiction && implementationGuide.jurisdiction[0] === {})){
+    if(!implementationGuide.jurisdiction || (implementationGuide.jurisdiction && JSON.stringify(implementationGuide.jurisdiction[0]) === '{}')){
       messages.push({
         location: "ImplementationGuide.jurisdiction",
         resourceId: implementationGuide.id,

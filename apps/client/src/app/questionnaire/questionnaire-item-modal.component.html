@@ -1,8 +1,6 @@
 <div class="modal-header">
     <h4 class="modal-title">Edit Questionnaire Item</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body">
     <div class="row">
@@ -26,7 +24,7 @@
 
             <app-fhir-boolean [parentObject]="item" propertyName="readOnly" title="Read only"></app-fhir-boolean>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label>
                     <input type="checkbox" [ngModel]="item.hasOwnProperty('maxLength')" (ngModelChange)="Globals.toggleProperty(item, 'maxLength', 1)" />
                     Max length
@@ -65,7 +63,7 @@
             <tbody>
             <tr *ngFor="let ew of item.enableWhen; let ewi = index">
                 <td>
-                    <select class="form-control" [(ngModel)]="ew.question">
+                    <select class="form-select" [(ngModel)]="ew.question">
                         <option *ngFor="let aqi of allQuestions" [ngValue]="aqi.linkId">{{aqi.linkId}} ({{aqi.text}})</option>
                     </select>
                 </td>

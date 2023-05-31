@@ -1,501 +1,500 @@
 <fieldset [disabled]="disabled">
-  <ngb-tabset justify="fill" *ngIf="element" #edTabSet>
-    <ngb-tab id="general">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="Globals.introText['sd.element-panel.general-tab']">General</span>
-      </ng-template>
-      <ng-template ngbTabContent>
-        <div class="form-group">
-          <label>ID/Path</label>
-          <div class="input-group">
-            <input type="text" class="form-control" readonly="readonly" [(ngModel)]="element.id" #idTextField/>
-            <input type="text" class="form-control" readonly="readonly" [(ngModel)]="element.path"/>
-          </div>
-        </div>
-
-        <div class="form-group" *ngIf="elementTreeModel.isSliceRoot">
-          <label>
-            Slice Name
-            <app-tooltip-icon tooltipPath="ElementDefinition.sliceName"></app-tooltip-icon>
-          </label>
-          <div class="input-group" *ngIf="!editingSliceName">
-            <input type="text" class="form-control" [ngModel]="element.sliceName" readonly="readonly"
-                   *ngIf="!editingSliceName"/>
-            <div class="input-grp-btn">
-              <button type="button" class="btn btn-primary" (click)="toggleEditSliceName()" title="Edit the slice name">
-                <i class="fa fa-edit"></i>
-              </button>
+  <ng-container *ngIf="element">
+    <ul ngbNav #edTabSet="ngbNav" class="nav-tabs nav-fill">
+      <li ngbNavItem id="general">
+        <ng-template ngbTabTitle>
+          <span [attr.data-intro]="Globals.introText['sd.element-panel.general-tab']">General</span>
+        </ng-template>
+        <ng-template ngbNavContent>
+          <div class="mb-3">
+            <label>ID/Path</label>
+            <div class="input-group">
+              <input type="text" class="form-control" readonly="readonly" [(ngModel)]="element.id" #idTextField/>
+              <input type="text" class="form-control" readonly="readonly" [(ngModel)]="element.path"/>
             </div>
           </div>
-          <div class="input-group" *ngIf="editingSliceName">
-            <input type="text" class="form-control" [(ngModel)]="editedSliceName"/>
-            <div class="input-group-append btn-group">
-              <button type="button" class="btn btn-primary" (click)="toggleEditSliceName(true); change.emit()" title="Finish editing the slice name" [disabled]="disableEditSliceName()">
-                <i class="fa fa-check"></i>
-              </button>
-              <button type="button" class="btn btn-outline-primary" (click)="toggleEditSliceName(false)" title="Cancel editing the slice name">
-                <i class="fa fa-ban"></i>
-              </button>
-            </div>
-            <span class="alert alert-warning status-message" *ngIf="editedSliceName.indexOf(' ') > 0 || editedSliceName.indexOf('.') > 0">Slice names can't contain spaces or dots within their name.</span>
-          </div>
-          <p *ngIf="!editedResliceNameValid()">This is a re-slice. The slice name of the re-slice must start with "{{elementTreeModel.baseElement.sliceName}}/".</p>
-        </div>
 
-        <div class="row">
-          <div class="col-md-5">
-            <!-- Min -->
-            <div class="form-group">
-              <label>
-                Min <app-tooltip-icon tooltipPath="ElementDefinition.min"></app-tooltip-icon>
-              </label>
-              <div class="input-group">
-                <input type="number" class="form-control" [(ngModel)]="min" [class.is-invalid]="!isMinValid" (change)="change.emit()"/>
-                <div class="input-group-append">
+          <div class="mb-3" *ngIf="elementTreeModel.isSliceRoot">
+            <label>
+              Slice Name
+              <app-tooltip-icon tooltipPath="ElementDefinition.sliceName"></app-tooltip-icon>
+            </label>
+            <div class="input-group" *ngIf="!editingSliceName">
+              <input type="text" class="form-control" [ngModel]="element.sliceName" readonly="readonly"
+                    *ngIf="!editingSliceName"/>
+              <div class="input-grp-btn">
+                <button type="button" class="btn btn-primary" (click)="toggleEditSliceName()" title="Edit the slice name">
+                  <i class="fa fa-edit"></i>
+                </button>
+              </div>
+            </div>
+            <div class="input-group" *ngIf="editingSliceName">
+              <input type="text" class="form-control" [(ngModel)]="editedSliceName"/>
+              <div class="input-group-append btn-group">
+                <button type="button" class="btn btn-primary" (click)="toggleEditSliceName(true); change.emit()" title="Finish editing the slice name" [disabled]="disableEditSliceName()">
+                  <i class="fa fa-check"></i>
+                </button>
+                <button type="button" class="btn btn-outline-primary" (click)="toggleEditSliceName(false)" title="Cancel editing the slice name">
+                  <i class="fa fa-ban"></i>
+                </button>
+              </div>
+              <span class="alert alert-warning status-message" *ngIf="editedSliceName.indexOf(' ') > 0 || editedSliceName.indexOf('.') > 0">Slice names can't contain spaces or dots within their name.</span>
+            </div>
+            <p *ngIf="!editedResliceNameValid()">This is a re-slice. The slice name of the re-slice must start with "{{elementTreeModel.baseElement.sliceName}}/".</p>
+          </div>
+
+          <div class="row">
+            <div class="col-md-5">
+              <!-- Min -->
+              <div class="mb-3">
+                <label>
+                  Min <app-tooltip-icon tooltipPath="ElementDefinition.min"></app-tooltip-icon>
+                </label>
+                <div class="input-group">
+                  <input type="number" class="form-control" [(ngModel)]="min" [class.is-invalid]="!isMinValid" (change)="change.emit()"/>
                   <button type="button" class="btn btn-secondary" (click)="min = undefined; change.emit()">
                     <i class="fas fa-times"></i>
                   </button>
                 </div>
+                <div class="help-block" *ngIf="!isMinValid">The minimum cardinality cannot be less than the base profile's minimum cardinality or greater than the base profile's maximum cardinality.</div>
               </div>
-              <div class="help-block" *ngIf="!isMinValid">The minimum cardinality cannot be less than the base profile's minimum cardinality or greater than the base profile's maximum cardinality.</div>
             </div>
-          </div>
-          <div class="col-md-7">
-            <!-- Max -->
-            <div class="form-group">
-              <label>
-                Max <app-tooltip-icon tooltipPath="ElementDefinition.max"></app-tooltip-icon>
-              </label>
-              <div class="input-group">
-                <input type="number" class="form-control" [disabled]="element.max === '*'" [(ngModel)]="max" [class.is-invalid]="!isMaxValid" (change)="change.emit()"/>
-                <div class="input-group-append">
+            <div class="col-md-7">
+              <!-- Max -->
+              <div class="mb-3">
+                <label>
+                  Max <app-tooltip-icon tooltipPath="ElementDefinition.max"></app-tooltip-icon>
+                </label>
+                <div class="input-group">
+                  <input type="number" class="form-control" [disabled]="element.max === '*'" [(ngModel)]="max" [class.is-invalid]="!isMaxValid" (change)="change.emit()"/>
                   <button type="button" class="btn btn-secondary" (click)="max = undefined; change.emit()">
                     <i class="fas fa-times"></i>
                   </button>
                   <div class="input-group-text">
                     <input type="checkbox" [ngModel]="element.max === '*'" (ngModelChange)="toggleMaxUnlimited(); change.emit()"
-                           [disabled]="elementTreeModel.baseElement.max === '0' || elementTreeModel.baseElement.max === '1'"/>
+                            [disabled]="elementTreeModel.baseElement.max === '0' || elementTreeModel.baseElement.max === '1'"/>
                     Unlimited
                   </div>
+                  <div class="help-block" *ngIf="!isMaxValid">The maximum cardinality cannot be more than the base profile's maximum cardinality or less than the
+                    base profile's minimum cardinality.</div>
                 </div>
-                <div class="help-block" *ngIf="!isMaxValid">The maximum cardinality cannot be more than the base profile's maximum cardinality or less than the
-                  base profile's minimum cardinality.</div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label>
-                <input type="checkbox" [(ngModel)]="element.isSummary"/>
-                Is Summary
-                <app-tooltip-icon tooltipPath="ElementDefinition.isSummary"></app-tooltip-icon>
-              </label>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label>
+                  <input type="checkbox" [(ngModel)]="element.isSummary"/>
+                  Is Summary
+                  <app-tooltip-icon tooltipPath="ElementDefinition.isSummary"></app-tooltip-icon>
+                </label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label>
+                  <input type="checkbox" [(ngModel)]="element.isModifier" (change)="change.emit()"/>
+                  Is Modifier
+                  <app-tooltip-icon tooltipPath="ElementDefinition.isModifier"></app-tooltip-icon>
+                </label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label>
+                  <input type="checkbox" [(ngModel)]="element.mustSupport" (change)="change.emit()"/>
+                  Must Support
+                  <app-tooltip-icon tooltipPath="ElementDefinition.mustSupport"></app-tooltip-icon>
+                </label>
+              </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label>
-                <input type="checkbox" [(ngModel)]="element.isModifier" (change)="change.emit()"/>
-                Is Modifier
-                <app-tooltip-icon tooltipPath="ElementDefinition.isModifier"></app-tooltip-icon>
-              </label>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label>
-                <input type="checkbox" [(ngModel)]="element.mustSupport" (change)="change.emit()"/>
-                Must Support
-                <app-tooltip-icon tooltipPath="ElementDefinition.mustSupport"></app-tooltip-icon>
-              </label>
-            </div>
-          </div>
-        </div>
 
-        <!-- Type -->
-        <div class="form-group">
-          <label>
-            <input type="checkbox"
-                   [ngModel]="element.hasOwnProperty('type')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'type', [{ code: getDefaultType() }]);
-                   typeChanged(true)"/>
-            Type
-            <app-tooltip-icon tooltipPath="ElementDefinition.type"></app-tooltip-icon>
-          </label>
-          <div class="pull-right" *ngIf="element.hasOwnProperty('type')">
-            <i class="fa fa-plus clickable" title="Add a type" (click)="addType()"></i>
-          </div>
-          <div class="input-group" *ngFor="let t of element.type; let i = index" [attr.data-index]="i">
-            <select class="form-control" [(ngModel)]="t.code" (change)="typeChanged()">
-              <option [ngValue]="t.code">{{getTypeDisplay(t)}}</option>
-              <option *ngFor="let o of getTypes()" [ngValue]="o.code">{{getTypeDisplay(o)}}</option>
-            </select>
-            <input type="text" class="form-control" readonly
-                   value="{{Globals.getShortString(t.profile, false, 30) || Globals.getShortString(t.targetProfile, false, 30)}}"
-                   title="{{t.profile || t.targetProfile}}" placeholder="No profile or targetProfile"/>
-            <div class="input-group-btn">
-              <button type="button" class="btn btn-primary clickable" (click)="openTypeModal(element, t)" title="Edit this type">
-                <i class="fa fa-edit"></i>
-              </button>
-              <button type="button" class="btn btn-primary clickable" (click)="removeType(i)" title="Remove this type">
-                <i class="fas fa-trash-alt"></i>
-              </button>
+          <!-- Type -->
+          <div class="mb-3">
+            <label>
+              <input type="checkbox"
+                    [ngModel]="element.hasOwnProperty('type')"
+                    (ngModelChange)="Globals.toggleProperty(element, 'type', [{ code: getDefaultType() }]);
+                    typeChanged(true)"/>
+              Type
+              <app-tooltip-icon tooltipPath="ElementDefinition.type"></app-tooltip-icon>
+            </label>
+            <div class="pull-right" *ngIf="element.hasOwnProperty('type')">
+              <i class="fa fa-plus clickable" title="Add a type" (click)="addType()"></i>
             </div>
-          </div>
-          <div *ngIf="element.type && element.type.length == 0">No constrained types</div>
-        </div>
-
-        <!-- Representation -->
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('representation')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'representation', ['xmlAttr']); change.emit()"/>
-            Representation
-            <app-tooltip-icon tooltipKey="ElementDefinition.representation"></app-tooltip-icon>
-          </label>
-          <div class="pull-right" *ngIf="element.hasOwnProperty('representation')">
-            <i class="fa fa-plus clickable" title="Add a type" (click)="element.representation.push('xmlAttr'); change.emit()"></i>
-          </div>
-          <div class="input-group" *ngFor="let t of element.representation; let i = index" [attr.data-index]="i">
-            <select class="form-control" [(ngModel)]="element.representation[i]"
-                    [disabled]="!element.hasOwnProperty('representation')" (change)="change.emit()">
-              <option>xmlAttr</option>
-              <option>xmlText</option>
-              <option>typeAttr</option>
-              <option>cdaText</option>
-              <option>xhtml</option>
-            </select>
-            <div class="input-group-btn">
-              <button type="button" class="btn btn-primary clickable" (click)="element.representation.splice(i, 1); change.emit()"
-                      title="Remove this representation">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>
-            Max Length <app-tooltip-icon tooltipKey="ElementDefinition.maxLength"></app-tooltip-icon>
-          </label>
-          <input type="number" class="form-control" [disabled]="!element.maxLength && !isPrimitiveExceptBoolean()" [(ngModel)]="element.maxLength" (change)="change.emit()"/>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            Condition
-            <app-tooltip-icon tooltipPath="ElementDefinition.condition"></app-tooltip-icon>
-          </div>
-          <table class="table table-striped">
-            <thead>
-            <tr>
-              <th>ID</th>
-              <th class="actions-column-1">
-                <button type="button" class="btn btn-primary btn-sm" title="Add a condition" (click)="addCondition(); change.emit()">
-                  <i class="fa fa-plus"></i>
+            <div class="input-group" *ngFor="let t of element.type; let i = index" [attr.data-index]="i">
+              <select class="form-select" [(ngModel)]="t.code" (change)="typeChanged()">
+                <option [ngValue]="t.code">{{getTypeDisplay(t)}}</option>
+                <option *ngFor="let o of getTypes()" [ngValue]="o.code">{{getTypeDisplay(o)}}</option>
+              </select>
+              <input type="text" class="form-control" readonly
+                    value="{{Globals.getShortString(t.profile, false, 30) || Globals.getShortString(t.targetProfile, false, 30)}}"
+                    title="{{t.profile || t.targetProfile}}" placeholder="No profile or targetProfile"/>
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-primary clickable" (click)="openTypeModal(element, t)" title="Edit this type">
+                  <i class="fa fa-edit"></i>
                 </button>
-              </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let c of element.condition || []; let ci = index; trackBy: Globals.trackByFn">
-              <td>
-                <input type="text" class="form-control" [(ngModel)]="element.condition[ci]" (change)="change.emit()"/>
-              </td>
-              <td>
-                <button type="button" class="btn btn-primary btn-sm" title="Remove this condition" (click)="element.condition.splice(ci, 1); change.emit()">
+                <button type="button" class="btn btn-primary clickable" (click)="removeType(i)" title="Remove this type">
                   <i class="fas fa-trash-alt"></i>
                 </button>
-              </td>
-            </tr>
-            </tbody>
-            <tfoot *ngIf="!element.condition?.length">
-            <tr>
-              <td colspan="2">No conditions. Click <a href="javascript:void(0)" (click)="addCondition(); change.emit()">here</a> to add one.</td>
-            </tr>
-            </tfoot>
-          </table>
-        </div>
-
-        <div class="card">
-          <div class="card-header">Constraint(s)</div>
-          <table class="table table-striped">
-            <thead>
-            <tr>
-              <th>Key</th>
-              <th>Human</th>
-              <th class="actions-column-1">
-                <div class="float-right">
-                  <button type="button" class="btn btn-primary btn-sm" title="Add a constraint." (click)="addConstraint(); change.emit()">
-                    <i class="fas fa-plus"></i>
-                  </button>
-                </div>
-              </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let c of element.constraint || []; let i = index">
-              <td>
-                <app-fhir-string [parentObject]="c" propertyName="key" [isFormGroup]="false" [required]="true" (change)="change.emit()"></app-fhir-string>
-              </td>
-              <td>
-                <app-fhir-string [parentObject]="c" propertyName="human" [isFormGroup]="false" [required]="true" (change)="change.emit()"></app-fhir-string>
-              </td>
-              <td>
-                <div class="btn-group">
-                  <button type="button" class="btn btn-primary btn-sm" title="Edit additional details for this constraint." (click)="editConstraint(c)">
-                    <i class="fa fa-edit"></i>
-                  </button>
-                  <button type="button" class="btn btn-primary btn-sm" title="Remove this constraint." (click)="element.constraint.splice(i, 1); change.emit()">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            </tbody>
-            <tfoot *ngIf="!element.constraint?.length">
-            <tr>
-              <td colspan="4">No constraints defined. Click <a href="javascript:void(0)" (click)="addConstraint(); change.emit()">here</a> to add one.</td>
-            </tr>
-            </tfoot>
-          </table>
-        </div>
-
-        <!-- Mapping -->
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('mapping')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'mapping', [{ identity: 'identity', map: 'map'}]); change.emit()"/>
-            Mapping
-            <app-tooltip-icon tooltipPath="ElementDefinition.mapping"></app-tooltip-icon>
-          </label>
-          <p *ngFor="let m of element.mapping">{{m.identity}} | {{m.map}}</p>
-          <button type="button" class="btn btn-primary btn-sm" *ngIf="element.hasOwnProperty('mapping')" (click)="editMappings()" [disabled]="!structureDefinition.mapping || structureDefinition.mapping.length === 0">Edit</button>
-          <app-tooltip-icon *ngIf="element.hasOwnProperty('mapping') && (!structureDefinition.mapping || structureDefinition.mapping.length === 0)" [showAsExclamation]="true" tooltipKey="sd.no-mappings"></app-tooltip-icon>
-        </div>
-
-        <!-- Code -->
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('code')"
-                   (ngModelChange)="Globals.toggleProperty(element, 'code', []); change.emit()"/>
-            Code
-            <app-tooltip-icon tooltipPath="ElementDefinition.code"></app-tooltip-icon>
-          </label>
-          <div class="pull-right" *ngIf="element.hasOwnProperty('code')">
-            <i class="fa fa-plus" title="Add a code" (click)="element.code.push({}); change.emit()"></i>
+              </div>
+            </div>
+            <div *ngIf="element.type && element.type.length == 0">No constrained types</div>
           </div>
-          <div class="input-group" *ngFor="let c of element.code; let i = index" [attr.data-index]="i">
-            <div class="input-group-addon">
-              <input type="checkbox" [ngModel]="c.hasOwnProperty('system')"
-                     (ngModelChange)="Globals.toggleProperty(c, 'system', ''); change.emit()"/>
+
+          <!-- Representation -->
+          <div class="mb-3">
+            <label>
+              <input type="checkbox" [ngModel]="element.hasOwnProperty('representation')"
+                    (ngModelChange)="Globals.toggleProperty(element, 'representation', ['xmlAttr']); change.emit()"/>
+              Representation
+              <app-tooltip-icon tooltipKey="ElementDefinition.representation"></app-tooltip-icon>
+            </label>
+            <div class="pull-right" *ngIf="element.hasOwnProperty('representation')">
+              <i class="fa fa-plus clickable" title="Add a type" (click)="element.representation.push('xmlAttr'); change.emit()"></i>
             </div>
-            <input type="text" class="form-control" placeholder="system"
-                   [disabled]="!c.hasOwnProperty('system')" [(ngModel)]="c.system" (change)="change.emit()"/>
-            <div class="input-group-addon">
-              <input type="checkbox" [ngModel]="c.hasOwnProperty('code')"
-                     (ngModelChange)="Globals.toggleProperty(c, 'code', '')" (change)="change.emit()"/>
-            </div>
-            <input type="text" class="form-control" placeholder="code"
-                   [disabled]="!c.hasOwnProperty('code')" [(ngModel)]="c.code" (change)="change.emit()"/>
-            <div class="input-group-addon">
-              <input type="checkbox" [ngModel]="c.hasOwnProperty('display')"
-                     (ngModelChange)="Globals.toggleProperty(c, 'display', ''); change.emit()"/>
-            </div>
-            <input type="text" class="form-control" placeholder="display"
-                   [disabled]="!c.hasOwnProperty('display')" [(ngModel)]="c.display" (change)="change.emit()"/>
-            <div class="input-group-btn">
-              <button type="button" class="btn btn-primary clickable" (click)="element.code.splice(i, 1); change.emit()"
-                      title="Remove this code"><i class="fas fa-trash-alt"></i></button>
+            <div class="input-group" *ngFor="let t of element.representation; let i = index" [attr.data-index]="i">
+              <select class="form-select" [(ngModel)]="element.representation[i]"
+                      [disabled]="!element.hasOwnProperty('representation')" (change)="change.emit()">
+                <option>xmlAttr</option>
+                <option>xmlText</option>
+                <option>typeAttr</option>
+                <option>cdaText</option>
+                <option>xhtml</option>
+              </select>
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-primary clickable" (click)="element.representation.splice(i, 1); change.emit()"
+                        title="Remove this representation">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
             </div>
           </div>
-          <div *ngIf="element.code && element.code.length == 0">No codes</div>
-        </div>
-      </ng-template>
-    </ngb-tab>
-    <ngb-tab *ngIf="element.slicing" id="slicing">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="Globals.introText['sd.element-panel.slicing-tab']">Slicing</span>
-      </ng-template>
-      <ng-template ngbTabContent>
-        <app-fhir-select-single-code [parentObject]="element.slicing"
-                                     propertyName="rules"
-                                     title="Rules"
-                                     valueSetUrl="http://hl7.org/fhir/ValueSet/resource-slicing-rules"
-                                     [required]="true"
-                                     tooltipPath="ElementDefinition.slicing.rules"
-                                     (change)="change.emit()"></app-fhir-select-single-code>
 
-        <div class="card">
-          <div class="card-header">
-            <input type="checkbox" [ngModel]="element.slicing.hasOwnProperty('discriminator')"
-                   (ngModelChange)="Globals.toggleProperty(element.slicing, 'discriminator', [{ type: 'value', path: '' }]); change.emit()"/>
-            Discriminator
-            <app-tooltip-icon tooltipPath="ElementDefinition.slicing.discriminator"></app-tooltip-icon>
+          <div class="mb-3">
+            <label>
+              Max Length <app-tooltip-icon tooltipKey="ElementDefinition.maxLength"></app-tooltip-icon>
+            </label>
+            <input type="number" class="form-control" [disabled]="!element.maxLength && !isPrimitiveExceptBoolean()" [(ngModel)]="element.maxLength" (change)="change.emit()"/>
           </div>
-          <table class="table table-striped" *ngIf="element.slicing.hasOwnProperty('discriminator')">
-            <thead>
-            <tr>
-              <th>
-                Type
-                <app-tooltip-icon tooltipPath="ElementDefinition.slicing.discriminator.type"></app-tooltip-icon>
-              </th>
-              <th>
-                Path
-                <app-tooltip-icon tooltipPath="ElementDefinition.slicing.discriminator.path"></app-tooltip-icon>
-              </th>
-              <th>
-                <div class="pull-right">
-                  <button type="button" class="btn btn-primary btn-sm" title="Add a discriminator"
-                          (click)="element.slicing.discriminator.push({ type: 'value', path: '' }); change.emit()">
+
+          <div class="card">
+            <div class="card-header">
+              Condition
+              <app-tooltip-icon tooltipPath="ElementDefinition.condition"></app-tooltip-icon>
+            </div>
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th class="actions-column-1">
+                  <button type="button" class="btn btn-primary btn-sm" title="Add a condition" (click)="addCondition(); change.emit()">
                     <i class="fa fa-plus"></i>
                   </button>
-                </div>
-              </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let d of element.slicing.discriminator; let di = index">
-              <td>
-                <app-fhir-select-single-code [parentObject]="d" propertyName="type"
-                                             [isFormGroup]="false"
-                                             valueSetUrl="http://hl7.org/fhir/ValueSet/discriminator-type"
-                                             [required]="true"
-                                             (change)="change.emit()"></app-fhir-select-single-code>
-              </td>
-              <td>
-                <input type="text" class="form-control" [(ngModel)]="d.path" (change)="change.emit()"/>
-              </td>
-              <td>
-                <div class="pull-right">
-                  <button (click)="element.slicing.discriminator.splice(di, 1); change.emit()" class="btn btn-primary btn-sm" title="Remove this discriminator"
-                          type="button">
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let c of element.condition || []; let ci = index; trackBy: Globals.trackByFn">
+                <td>
+                  <input type="text" class="form-control" [(ngModel)]="element.condition[ci]" (change)="change.emit()"/>
+                </td>
+                <td>
+                  <button type="button" class="btn btn-primary btn-sm" title="Remove this condition" (click)="element.condition.splice(ci, 1); change.emit()">
                     <i class="fas fa-trash-alt"></i>
                   </button>
-                </div>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <app-fhir-string [parentObject]="element.slicing" propertyName="description" title="Description"
-                         tooltipPath="ElementDefinition.slicing.description" (change)="change.emit()"></app-fhir-string>
-
-        <app-fhir-boolean [parentObject]="element.slicing" propertyName="ordered" title="Ordered"
-                          tooltipPath="ElementDefinition.slicing.ordered" (change)="change.emit()"></app-fhir-boolean>
-      </ng-template>
-    </ngb-tab>
-    <ngb-tab id="narrative">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="Globals.introText['sd.element-panel.narrative-tab']">Narrative</span>
-      </ng-template>
-      <ng-template ngbTabContent>
-        <app-fhir-string [parentObject]="element" propertyName="short" title="Short"
-                         tooltipPath="ElementDefinition.short" (change)="change.emit()"></app-fhir-string>
-
-        <app-fhir-string [parentObject]="element" propertyName="label" title="Label"
-                         tooltipPath="ElementDefinition.label" (change)="change.emit()"></app-fhir-string>
-
-        <div class="form-group">
-          <label>
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('alias')"
-                   (ngModelChange)="toggleAlias()" (change)="change.emit()"/>
-            Alias
-            <app-tooltip-icon tooltipPath="ElementDefinition.alias"></app-tooltip-icon>
-          </label>
-          <div class="pull-right" *ngIf="element.alias">
-            <i class="fa fa-plus clickable" title="Add an alias" (click)="element.alias.push(''); change.emit()"></i>
+                </td>
+              </tr>
+              </tbody>
+              <tfoot *ngIf="!element.condition?.length">
+              <tr>
+                <td colspan="2">No conditions. Click <a href="javascript:void(0)" (click)="addCondition(); change.emit()">here</a> to add one.</td>
+              </tr>
+              </tfoot>
+            </table>
           </div>
-          <div class="input-group" *ngFor="let a of element.alias; let ai = index; trackBy: Globals.trackByFn" [attr.data-index]="ai">
-            <input type="text" class="form-control" [(ngModel)]="element.alias[ai]"
-                    [disabled]="!element.hasOwnProperty('alias')" (change)="change.emit()"/>
-            <div class="input-group-btn">
-              <button type="button" class="btn btn-primary clickable" (click)="element.alias.splice(ai, 1); change.emit()"
-                      title="Remove this alias">
-                <i class="fas fa-trash-alt"></i>
-              </button>
+
+          <div class="card">
+            <div class="card-header">Constraint(s)</div>
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th>Key</th>
+                <th>Human</th>
+                <th class="actions-column-1">
+                  <div class="float-right">
+                    <button type="button" class="btn btn-primary btn-sm" title="Add a constraint." (click)="addConstraint(); change.emit()">
+                      <i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let c of element.constraint || []; let i = index">
+                <td>
+                  <app-fhir-string [parentObject]="c" propertyName="key" [isFormGroup]="false" [required]="true" (change)="change.emit()"></app-fhir-string>
+                </td>
+                <td>
+                  <app-fhir-string [parentObject]="c" propertyName="human" [isFormGroup]="false" [required]="true" (change)="change.emit()"></app-fhir-string>
+                </td>
+                <td>
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm" title="Edit additional details for this constraint." (click)="editConstraint(c)">
+                      <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" title="Remove this constraint." (click)="element.constraint.splice(i, 1); change.emit()">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+              <tfoot *ngIf="!element.constraint?.length">
+              <tr>
+                <td colspan="4">No constraints defined. Click <a href="javascript:void(0)" (click)="addConstraint(); change.emit()">here</a> to add one.</td>
+              </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Mapping -->
+          <div class="mb-3">
+            <label>
+              <input type="checkbox" [ngModel]="element.hasOwnProperty('mapping')"
+                    (ngModelChange)="Globals.toggleProperty(element, 'mapping', [{ identity: 'identity', map: 'map'}]); change.emit()"/>
+              Mapping
+              <app-tooltip-icon tooltipPath="ElementDefinition.mapping"></app-tooltip-icon>
+            </label>
+            <p *ngFor="let m of element.mapping">{{m.identity}} | {{m.map}}</p>
+            <button type="button" class="btn btn-primary btn-sm" *ngIf="element.hasOwnProperty('mapping')" (click)="editMappings()" [disabled]="!structureDefinition.mapping || structureDefinition.mapping.length === 0">Edit</button>
+            <app-tooltip-icon *ngIf="element.hasOwnProperty('mapping') && (!structureDefinition.mapping || structureDefinition.mapping.length === 0)" [showAsExclamation]="true" tooltipKey="sd.no-mappings"></app-tooltip-icon>
+          </div>
+
+          <!-- Code -->
+          <div class="mb-3">
+            <label>
+              <input type="checkbox" [ngModel]="element.hasOwnProperty('code')"
+                    (ngModelChange)="Globals.toggleProperty(element, 'code', []); change.emit()"/>
+              Code
+              <app-tooltip-icon tooltipPath="ElementDefinition.code"></app-tooltip-icon>
+            </label>
+            <div class="pull-right" *ngIf="element.hasOwnProperty('code')">
+              <i class="fa fa-plus" title="Add a code" (click)="element.code.push({}); change.emit()"></i>
+            </div>
+            <div class="input-group" *ngFor="let c of element.code; let i = index" [attr.data-index]="i">
+              <div class="input-group-addon">
+                <input type="checkbox" [ngModel]="c.hasOwnProperty('system')"
+                      (ngModelChange)="Globals.toggleProperty(c, 'system', ''); change.emit()"/>
+              </div>
+              <input type="text" class="form-control" placeholder="system"
+                    [disabled]="!c.hasOwnProperty('system')" [(ngModel)]="c.system" (change)="change.emit()"/>
+              <div class="input-group-addon">
+                <input type="checkbox" [ngModel]="c.hasOwnProperty('code')"
+                      (ngModelChange)="Globals.toggleProperty(c, 'code', '')" (change)="change.emit()"/>
+              </div>
+              <input type="text" class="form-control" placeholder="code"
+                    [disabled]="!c.hasOwnProperty('code')" [(ngModel)]="c.code" (change)="change.emit()"/>
+              <div class="input-group-addon">
+                <input type="checkbox" [ngModel]="c.hasOwnProperty('display')"
+                      (ngModelChange)="Globals.toggleProperty(c, 'display', ''); change.emit()"/>
+              </div>
+              <input type="text" class="form-control" placeholder="display"
+                    [disabled]="!c.hasOwnProperty('display')" [(ngModel)]="c.display" (change)="change.emit()"/>
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-primary clickable" (click)="element.code.splice(i, 1); change.emit()"
+                        title="Remove this code"><i class="fas fa-trash-alt"></i></button>
+              </div>
+            </div>
+            <div *ngIf="element.code && element.code.length == 0">No codes</div>
+          </div>
+        </ng-template>
+      </li>
+      <li ngbNavItem *ngIf="element.slicing" id="slicing">
+        <ng-template ngbTabTitle>
+          <span [attr.data-intro]="Globals.introText['sd.element-panel.slicing-tab']">Slicing</span>
+        </ng-template>
+        <ng-template ngbNavContent>
+          <app-fhir-select-single-code [parentObject]="element.slicing"
+                                      propertyName="rules"
+                                      title="Rules"
+                                      valueSetUrl="http://hl7.org/fhir/ValueSet/resource-slicing-rules"
+                                      [required]="true"
+                                      tooltipPath="ElementDefinition.slicing.rules"
+                                      (change)="change.emit()"></app-fhir-select-single-code>
+
+          <div class="card">
+            <div class="card-header">
+              <input type="checkbox" [ngModel]="element.slicing.hasOwnProperty('discriminator')"
+                    (ngModelChange)="Globals.toggleProperty(element.slicing, 'discriminator', [{ type: 'value', path: '' }]); change.emit()"/>
+              Discriminator
+              <app-tooltip-icon tooltipPath="ElementDefinition.slicing.discriminator"></app-tooltip-icon>
+            </div>
+            <table class="table table-striped" *ngIf="element.slicing.hasOwnProperty('discriminator')">
+              <thead>
+              <tr>
+                <th>
+                  Type
+                  <app-tooltip-icon tooltipPath="ElementDefinition.slicing.discriminator.type"></app-tooltip-icon>
+                </th>
+                <th>
+                  Path
+                  <app-tooltip-icon tooltipPath="ElementDefinition.slicing.discriminator.path"></app-tooltip-icon>
+                </th>
+                <th>
+                  <div class="pull-right">
+                    <button type="button" class="btn btn-primary btn-sm" title="Add a discriminator"
+                            (click)="element.slicing.discriminator.push({ type: 'value', path: '' }); change.emit()">
+                      <i class="fa fa-plus"></i>
+                    </button>
+                  </div>
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let d of element.slicing.discriminator; let di = index">
+                <td>
+                  <app-fhir-select-single-code [parentObject]="d" propertyName="type"
+                                              [isFormGroup]="false"
+                                              valueSetUrl="http://hl7.org/fhir/ValueSet/discriminator-type"
+                                              [required]="true"
+                                              (change)="change.emit()"></app-fhir-select-single-code>
+                </td>
+                <td>
+                  <input type="text" class="form-control" [(ngModel)]="d.path" (change)="change.emit()"/>
+                </td>
+                <td>
+                  <div class="pull-right">
+                    <button (click)="element.slicing.discriminator.splice(di, 1); change.emit()" class="btn btn-primary btn-sm" title="Remove this discriminator"
+                            type="button">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <app-fhir-string [parentObject]="element.slicing" propertyName="description" title="Description"
+                          tooltipPath="ElementDefinition.slicing.description" (change)="change.emit()"></app-fhir-string>
+
+          <app-fhir-boolean [parentObject]="element.slicing" propertyName="ordered" title="Ordered"
+                            tooltipPath="ElementDefinition.slicing.ordered" (change)="change.emit()"></app-fhir-boolean>
+        </ng-template>
+      </li>
+      <li ngbNavItem id="narrative">
+        <ng-template ngbTabTitle>
+          <span [attr.data-intro]="Globals.introText['sd.element-panel.narrative-tab']">Narrative</span>
+        </ng-template>
+        <ng-template ngbNavContent>
+          <app-fhir-string [parentObject]="element" propertyName="short" title="Short"
+                          tooltipPath="ElementDefinition.short" (change)="change.emit()"></app-fhir-string>
+
+          <app-fhir-string [parentObject]="element" propertyName="label" title="Label"
+                          tooltipPath="ElementDefinition.label" (change)="change.emit()"></app-fhir-string>
+
+          <div class="mb-3">
+            <label>
+              <input type="checkbox" [ngModel]="element.hasOwnProperty('alias')"
+                    (ngModelChange)="toggleAlias()" (change)="change.emit()"/>
+              Alias
+              <app-tooltip-icon tooltipPath="ElementDefinition.alias"></app-tooltip-icon>
+            </label>
+            <div class="pull-right" *ngIf="element.alias">
+              <i class="fa fa-plus clickable" title="Add an alias" (click)="element.alias.push(''); change.emit()"></i>
+            </div>
+            <div class="input-group" *ngFor="let a of element.alias; let ai = index; trackBy: Globals.trackByFn" [attr.data-index]="ai">
+              <input type="text" class="form-control" [(ngModel)]="element.alias[ai]"
+                      [disabled]="!element.hasOwnProperty('alias')" (change)="change.emit()"/>
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-primary clickable" (click)="element.alias.splice(ai, 1); change.emit()"
+                        title="Remove this alias">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <app-fhir-markdown [parentObject]="element" propertyName="definition" title="Definition" [displayOnly]="true"
-                           tooltipPath="ElementDefinition.definition" (valueChangeEmitter)="change.emit()"></app-fhir-markdown>
+          <app-fhir-markdown [parentObject]="element" propertyName="definition" title="Definition" [displayOnly]="true"
+                            tooltipPath="ElementDefinition.definition" (valueChangeEmitter)="change.emit()"></app-fhir-markdown>
 
-        <app-fhir-markdown [parentObject]="element" propertyName="comment" title="Comment" [displayOnly]="true"
-                           tooltipPath="ElementDefinition.comment" (valueChangeEmitter)="change.emit()"></app-fhir-markdown>
+          <app-fhir-markdown [parentObject]="element" propertyName="comment" title="Comment" [displayOnly]="true"
+                            tooltipPath="ElementDefinition.comment" (valueChangeEmitter)="change.emit()"></app-fhir-markdown>
 
-        <app-fhir-markdown [parentObject]="element" propertyName="requirements" title="Requirements"
-                           [displayOnly]="true" tooltipPath="ElementDefinition.requirements" (valueChangeEmitter)="change.emit()"></app-fhir-markdown>
+          <app-fhir-markdown [parentObject]="element" propertyName="requirements" title="Requirements"
+                            [displayOnly]="true" tooltipPath="ElementDefinition.requirements" (valueChangeEmitter)="change.emit()"></app-fhir-markdown>
 
-        <app-fhir-markdown *ngIf="structureDefinition.type == 'Extension'" [parentObject]="element" propertyName="meaningWhenMissing" title="Meaning when missing"
-                           [displayOnly]="true" tooltipPath="ElementDefinition.meaningWhenMissing" (valueChangeEmitter)="change.emit()"></app-fhir-markdown>
-      </ng-template>
-    </ngb-tab>
-    <ngb-tab id="binding">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="Globals.introText['sd.element-panel.binding-tab']">Binding</span>
-      </ng-template>
-      <ng-template ngbTabContent>
-        <app-element-definition-binding [element]="element" (change)="change.emit()"></app-element-definition-binding>
+          <app-fhir-markdown *ngIf="structureDefinition.type == 'Extension'" [parentObject]="element" propertyName="meaningWhenMissing" title="Meaning when missing"
+                            [displayOnly]="true" tooltipPath="ElementDefinition.meaningWhenMissing" (valueChangeEmitter)="change.emit()"></app-fhir-markdown>
+        </ng-template>
+      </li>
+      <li ngbNavItem id="binding">
+        <ng-template ngbTabTitle>
+          <span [attr.data-intro]="Globals.introText['sd.element-panel.binding-tab']">Binding</span>
+        </ng-template>
+        <ng-template ngbNavContent>
+          <app-element-definition-binding [element]="element" (change)="change.emit()"></app-element-definition-binding>
 
-        <app-fhir-choice [disabled]="isFixedDisabled" [parentObject]="element" propertyName="fixed" title="Fixed"
-                         tooltipPath="ElementDefinition.fixed[x]" [allowedType]="getAllowedType('fixed')" (change)="change.emit()"></app-fhir-choice>
+          <app-fhir-choice [disabled]="isFixedDisabled" [parentObject]="element" propertyName="fixed" title="Fixed"
+                          tooltipPath="ElementDefinition.fixed[x]" [allowedType]="getAllowedType('fixed')" (change)="change.emit()"></app-fhir-choice>
 
-        <app-fhir-choice [disabled]="isPatternDisabled" [parentObject]="element" propertyName="pattern" title="Pattern"
-                         tooltipPath="ElementDefinition.pattern[x]" [allowedType]="getAllowedType('pattern')" (change)="change.emit()"></app-fhir-choice>
+          <app-fhir-choice [disabled]="isPatternDisabled" [parentObject]="element" propertyName="pattern" title="Pattern"
+                          tooltipPath="ElementDefinition.pattern[x]" [allowedType]="getAllowedType('pattern')" (change)="change.emit()"></app-fhir-choice>
 
-        <app-fhir-choice (change)="change.emit()" [disabled]="isDefaultDisabled" [parentObject]="element" propertyName="defaultValue" title="Default Value"
-                         tooltipPath="ElementDefinition.defaultValue[x]"></app-fhir-choice>
+          <app-fhir-choice (change)="change.emit()" [disabled]="isDefaultDisabled" [parentObject]="element" propertyName="defaultValue" title="Default Value"
+                          tooltipPath="ElementDefinition.defaultValue[x]"></app-fhir-choice>
 
-        <app-fhir-choice [disabled]="isMinDisabled" [parentObject]="element" propertyName="minValue" title="Min Value"
-                         [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
-                         tooltipPath="ElementDefinition.minValue[x]" [allowedType]="getAllowedType('minValue')" (change)="change.emit()"></app-fhir-choice>
+          <app-fhir-choice [disabled]="isMinDisabled" [parentObject]="element" propertyName="minValue" title="Min Value"
+                          [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
+                          tooltipPath="ElementDefinition.minValue[x]" [allowedType]="getAllowedType('minValue')" (change)="change.emit()"></app-fhir-choice>
 
-        <app-fhir-choice [disabled]="isMaxDisabled" [parentObject]="element" propertyName="maxValue" title="Max Value"
-                         [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
-                         tooltipPath="ElementDefinition.maxValue[x]" [allowedType]="getAllowedType('maxValue')" (change)="change.emit()"></app-fhir-choice>
+          <app-fhir-choice [disabled]="isMaxDisabled" [parentObject]="element" propertyName="maxValue" title="Max Value"
+                          [choices]="['date', 'dateTime', 'instant', 'time', 'decimal', 'integer', 'positiveInt', 'unsignedInt', 'Quantity']"
+                          tooltipPath="ElementDefinition.maxValue[x]" [allowedType]="getAllowedType('maxValue')" (change)="change.emit()"></app-fhir-choice>
 
-        <div class="card">
-          <div class="card-header">
-            <input type="checkbox" [ngModel]="element.hasOwnProperty('example')" (ngModelChange)="toggleExample(); change.emit()" /> Example
-            <div class="pull-right" *ngIf="element.hasOwnProperty('example')">
-              <button type="button" class="btn btn-primary btn-sm" (click)="refreshExamples()" title="Refresh the examples listed here based on the types allowed by the element.">
-                <i class="fas fa-refresh"></i>
-              </button>
+          <div class="card">
+            <div class="card-header">
+              <input type="checkbox" [ngModel]="element.hasOwnProperty('example')" (ngModelChange)="toggleExample(); change.emit()" /> Example
+              <div class="pull-right" *ngIf="element.hasOwnProperty('example')">
+                <button type="button" class="btn btn-primary btn-sm" (click)="refreshExamples()" title="Refresh the examples listed here based on the types allowed by the element.">
+                  <i class="fas fa-refresh"></i>
+                </button>
+              </div>
             </div>
+            <table class="table table-striped" *ngIf="element.hasOwnProperty('example')">
+              <thead>
+              <tr>
+                <th>Label</th>
+                <th>Value</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let example of element.example; let ei = index">
+                <td>
+                  <app-fhir-string [parentObject]="example" propertyName="label" [required]="true" [isFormGroup]="false" (change)="change.emit()"></app-fhir-string>
+                </td>
+                <td>
+                  <app-fhir-choice [parentObject]="example" propertyName="value" [allowedType]="getExampleValueType(example)" [required]="true" (change)="change.emit()"></app-fhir-choice>
+                </td>
+              </tr>
+              </tbody>
+            </table>
           </div>
-          <table class="table table-striped" *ngIf="element.hasOwnProperty('example')">
-            <thead>
-            <tr>
-              <th>Label</th>
-              <th>Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let example of element.example; let ei = index">
-              <td>
-                <app-fhir-string [parentObject]="example" propertyName="label" [required]="true" [isFormGroup]="false" (change)="change.emit()"></app-fhir-string>
-              </td>
-              <td>
-                <app-fhir-choice [parentObject]="example" propertyName="value" [allowedType]="getExampleValueType(example)" [required]="true" (change)="change.emit()"></app-fhir-choice>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </ng-template>
-    </ngb-tab>
-    <ngb-tab id="json">
-      <ng-template ngbTabTitle>
-        <span [attr.data-intro]="Globals.introText['sd.element-panel.json-tab']">JSON</span>
-      </ng-template>
-      <ng-template ngbTabContent>
-        <pre>{{element | json}}</pre>
-      </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+        </ng-template>
+      </li>
+      <li ngbNavItem id="json">
+        <ng-template ngbTabTitle>
+          <span [attr.data-intro]="Globals.introText['sd.element-panel.json-tab']">JSON</span>
+        </ng-template>
+        <ng-template ngbNavContent>
+          <pre>{{element | json}}</pre>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="edTabSet" class="mt-2"></div>
+  </ng-container>
 </fieldset>

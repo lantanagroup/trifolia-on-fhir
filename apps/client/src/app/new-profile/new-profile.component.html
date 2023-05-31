@@ -1,19 +1,20 @@
 <h3>New Structure Definition</h3>
 
-<ngb-tabset>
-  <ngb-tab title="General">
-    <ng-template ngbTabContent>
+<ul ngbNav #nav="ngbNav" class="nav-tabs">
+  <li ngbNavItem>
+    <a ngbNavLink>General</a>
+    <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-8">
           <app-fhir-string [parentObject]="structureDefinition" propertyName="url" title="URL" [required]="true" tooltipPath="StructureDefinition.url" (change)="urlChanged()"></app-fhir-string>
         </div>
         <div class="col-md-4">
-          <div class="form-group">
+          <div class="mb-3">
             <label>
               ID <app-tooltip-icon tooltipPath="StructureDefinition.id"></app-tooltip-icon>
             </label>
             <input type="text" class="form-control" [(ngModel)]="structureDefinition.id" placeholder="Auto generate" (change)="idChangedEvent.next()" [class.is-invalid]="!isIdUnique" />
-            <div class="help-block" *ngIf="!isIdUnique">The specified ID already exists.</div>
+            <div class="help-block">{{alreadyInUseIDMessage}}</div>
           </div>
         </div>
         <div class="col-md-8">
@@ -40,7 +41,7 @@
                             tooltipPath="StructureDefinition.abstract"></app-fhir-boolean>
         </div>
         <div class="col-md-4">
-          <div class="form-group">
+          <div class="mb-3">
             <label>Type</label>
             <input type="text" class="form-control"
                    [(ngModel)]="selectedType"
@@ -53,7 +54,7 @@
 
             <ng-template #typeTemplate let-r="result" let-t="term">
               <ngb-highlight [result]="r.display || r.code" [term]="t"></ngb-highlight>
-              &nbsp;<i class="badge badge-info">{{r.spec}}</i>
+              &nbsp;<i class="badge bg-info">{{r.spec}}</i>
             </ng-template>
           </div>
         </div>
@@ -62,36 +63,39 @@
                                        valueSetUrl="http://hl7.org/fhir/ValueSet/type-derivation-rule"
                                        tooltipPath="StructureDefinition.derivation"></app-fhir-select-single-code>
         </div>
-        <div class="col-md-4" *ngIf="structureDefinition.type">\
+        <div class="col-md-4" *ngIf="structureDefinition.type">
           <app-fhir-reference [parentObject]="structureDefinition" propertyName="baseDefinition" title="Base Definition" [isCanonical]="true" resourceType="StructureDefinition"
                               [structureDefinitionType]="structureDefinition.type" [hideResourceType]="true"></app-fhir-reference>
         </div>
       </div>
-      <div class="row" *ngIf="configService.isFhirR4 && structureDefinition.type === 'Extension'">
+      <div class="row" *ngIf="configService.isFhirR4 || configService.isFhirR5 && structureDefinition.type === 'Extension'">
         <div class="col-md-6">
           <app-structure-definition-context-panel-wrapper [structureDefinition]="structureDefinition"></app-structure-definition-context-panel-wrapper>
         </div>
       </div>
 
     </ng-template>
-  </ngb-tab>
+  </li>
 
   <!-- Permissions -->
-  <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
-    <ng-template ngbTabTitle>
-      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(structureDefinition)" title="No write permissions for current user specified!"></i>
+  <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+    <a ngbNavLink>
+      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i>
+    </a>
+    <ng-template ngbNavContent>
+      <trifolia-fhir-resource-permissions [resource]="conformance"></trifolia-fhir-resource-permissions>
     </ng-template>
-    <ng-template ngbTabContent>
-      <trifolia-fhir-resource-permissions [resource]="structureDefinition"></trifolia-fhir-resource-permissions>
-    </ng-template>
-  </ngb-tab>
+  </li>
 
-  <ngb-tab title="RAW">
-    <ng-template ngbTabContent>
+  <li ngbNavItem>
+    <a ngbNavLink>RAW</a>
+    <ng-template ngbNavContent>
       <app-raw-resource [resource]="structureDefinition"></app-raw-resource>
     </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
+
 
 <footer class="footer">
   <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saveDisabled()">Save</button>

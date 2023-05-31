@@ -2,160 +2,169 @@
 
 <div class="alert alert-danger" *ngIf="qNotFound">Questionnaire with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<ngb-tabset *ngIf="questionnaire" [destroyOnHide]="false" #qTabs="ngbTabset">
-  <ngb-tab title="General">
-    <ng-template ngbTabContent>
-      <div class="row">
-        <div class="col-md-8">
-          <app-fhir-string [parentObject]="questionnaire" propertyName="url" title="URL" (change)="urlChanged()"></app-fhir-string>
+<ng-container *ngIf="questionnaire">
+  <ul ngbNav #qTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+    <li ngbNavItem>
+      <a ngbNavLink>General</a>
+      <ng-template ngbNavContent>
+        <div class="row">
+          <div class="col-md-8">
+            <app-fhir-string [parentObject]="questionnaire" propertyName="url" title="URL" (change)="urlChanged()"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="questionnaire" propertyName="name" title="Name" (change)="nameChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="name" title="Name" (change)="nameChanged()"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="questionnaire" propertyName="title" title="Title" (change)="nameChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="title" title="Title" (change)="nameChanged()"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="questionnaire" propertyName="publisher" title="Publisher"></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="publisher" title="Publisher"></app-fhir-string>
 
-          <app-fhir-markdown [parentObject]="questionnaire" propertyName="description" title="Description"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="questionnaire" propertyName="description" title="Description"></app-fhir-markdown>
+          </div>
+
+          <div class="col-md-4">
+            <app-fhir-string [parentObject]="questionnaire" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+            <div class="help-block">{{alreadyInUseIDMessage}}</div>
+
+            <app-fhir-string [parentObject]="questionnaire" propertyName="version" title="Version"></app-fhir-string>
+
+            <app-fhir-select-single-code [parentObject]="questionnaire" propertyName="status" title="Status" [required]="true"
+                                        valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"></app-fhir-select-single-code>
+
+            <app-fhir-boolean [parentObject]="questionnaire" propertyName="experimental" title="Experimental"></app-fhir-boolean>
+
+            <app-fhir-date [parentObject]="questionnaire" propertyName="date" title="Date"></app-fhir-date>
+
+            <app-fhir-date [parentObject]="questionnaire" propertyName="approvalDate" title="Approval Date"></app-fhir-date>
+
+            <app-fhir-date [parentObject]="questionnaire" propertyName="lastReviewDate" title="Last Review Date"></app-fhir-date>
+
+            <!-- effectivePeriod -->
+
+            <!-- code -->
+
+            <!-- subject type -->
+          </div>
         </div>
+      </ng-template>
+    </li>
 
-        <div class="col-md-4">
-          <app-fhir-string [parentObject]="questionnaire" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
-          <div class="help-block">{{alreadyInUseIDMessage}}</div>
+    <li ngbNavItem>
+      <a ngbNavLink>Additional</a>
+      <ng-template ngbNavContent>
+        <app-fhir-markdown [parentObject]="questionnaire" propertyName="purpose" title="Purpose"></app-fhir-markdown>
 
-          <app-fhir-string [parentObject]="questionnaire" propertyName="version" title="Version"></app-fhir-string>
+        <app-fhir-markdown [parentObject]="questionnaire" propertyName="copyright" title="Copyright"></app-fhir-markdown>
 
-          <app-fhir-select-single-code [parentObject]="questionnaire" propertyName="status" title="Status" [required]="true"
-                                       valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"></app-fhir-select-single-code>
+        <app-fhir-multi-use-context [parentObject]="questionnaire" propertyName="useContext" title="Use Context"></app-fhir-multi-use-context>
 
-          <app-fhir-boolean [parentObject]="questionnaire" propertyName="experimental" title="Experimental"></app-fhir-boolean>
+        <app-fhir-multi-jurisdiction [parentObject]="questionnaire" propertyName="jurisdiction" title="Jurisdiction"></app-fhir-multi-jurisdiction>
 
-          <app-fhir-date [parentObject]="questionnaire" propertyName="date" title="Date"></app-fhir-date>
+        <app-fhir-multi-contact [parentObject]="questionnaire" propertyName="contact" title="Contact"></app-fhir-multi-contact>
+      </ng-template>
+    </li>
 
-          <app-fhir-date [parentObject]="questionnaire" propertyName="approvalDate" title="Approval Date"></app-fhir-date>
+    <li ngbNavItem>
+      <a ngbNavLink>Items</a>
+      <ng-template ngbNavContent>
+        <p>
+          <input type="checkbox" [ngModel]="questionnaire.hasOwnProperty('item')" (ngModelChange)="toggleItems()"/> This questionnaire includes items
+        </p>
 
-          <app-fhir-date [parentObject]="questionnaire" propertyName="lastReviewDate" title="Last Review Date"></app-fhir-date>
+        <table class="table table-striped" *ngIf="questionnaire.hasOwnProperty('item')">
+          <thead>
+          <tr>
+            <th>Link ID</th>
+            <th>Text</th>
+            <th>Type</th>
+            <th class="actions-column-1">
+              <div class="pull-right">
+                <button type="button" class="btn btn-default" title="Add an item to the top level" (click)="addItem()">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let fi of flattenedItems; let fii = index">
+            <td style="display: flex;">
+                          <span style="float: left; line-height: 37px;">
+                              <i class="fa" [class.fa-plus]="fi.hasChildren() && !fi.expanded" [class.fa-minus]="fi.hasChildren() && fi.expanded" (click)="toggleExpandItem(fi)"></i>
+                              <span *ngIf="!fi.hasChildren()">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                          </span>
+              <span style="white-space: pre; float: left;">{{fi.getSpaces()}}</span>
+              <input type="text" style="float: left;" class="form-control" [(ngModel)]="fi.item.linkId"/>
+            </td>
+            <td>
+              <app-fhir-string [parentObject]="fi.item" propertyName="text" [isFormGroup]="false"></app-fhir-string>
+            </td>
+            <td>
+              <app-fhir-select-single-code [parentObject]="fi.item" propertyName="type" valueSetUrl="http://hl7.org/fhir/ValueSet/item-type" [isFormGroup]="false"></app-fhir-select-single-code>
+            </td>
+            <td class="actions-column-2">
+              <div class="btn-group pull-right">
+                <button type="button" class="btn btn-default" tile="Add a child item" (click)="addItem(fi)">
+                  <i class="fa fa-plus"></i>
+                </button>
+                <button type="button" class="btn btn-default" tile="Edit this item" (click)="editItem(fi)">
+                  <i class="fa fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-default" tile="Move this item up" [disabled]="!canMoveItemUp(fi)" (click)="moveItem(true, fi)">
+                  <i class="fa fa-chevron-up"></i>
+                </button>
+                <button type="button" class="btn btn-default" tile="Move this item down" [disabled]="!canMoveItemDown(fi)" (click)="moveItem(false, fi)">
+                  <i class="fa fa-chevron-down"></i>
+                </button>
+                <button type="button" class="btn btn-default" title="Remove this item" (click)="removeItem(fi)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-template>
+    </li>
 
-          <!-- effectivePeriod -->
+    <!-- Permissions -->
+    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
+      <a ngbNavLink>
+        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i>
+      </a>
+      <ng-template ngbNavContent>
+        <trifolia-fhir-resource-permissions [resource]="conformance"></trifolia-fhir-resource-permissions>
+      </ng-template>
+    </li>
 
-          <!-- code -->
+    <!-- Validation -->
+    <li ngbNavItem="validation">
+      <a ngbNavLink>Validation</a>
+      <ng-template ngbNavContent>
+        <app-validation-results [results]="validation"></app-validation-results>
+      </ng-template>
+    </li>
 
-          <!-- subject type -->
-        </div>
-      </div>
-    </ng-template>
-  </ngb-tab>
+    <!-- JSON -->
+    <li ngbNavItem="raw">
+      <a ngbNavLink>RAW</a>
+      <ng-template ngbNavContent>
+        <app-raw-resource [resource]="questionnaire" [shown]="qTabs.activeId === 'raw'"></app-raw-resource>
+      </ng-template>
+    </li>
 
-  <ngb-tab title="Additional">
-    <ng-template ngbTabContent>
-      <app-fhir-markdown [parentObject]="questionnaire" propertyName="purpose" title="Purpose"></app-fhir-markdown>
-
-      <app-fhir-markdown [parentObject]="questionnaire" propertyName="copyright" title="Copyright"></app-fhir-markdown>
-
-      <app-fhir-multi-use-context [parentObject]="questionnaire" propertyName="useContext" title="Use Context"></app-fhir-multi-use-context>
-
-      <app-fhir-multi-jurisdiction [parentObject]="questionnaire" propertyName="jurisdiction" title="Jurisdiction"></app-fhir-multi-jurisdiction>
-
-      <app-fhir-multi-contact [parentObject]="questionnaire" propertyName="contact" title="Contact"></app-fhir-multi-contact>
-    </ng-template>
-  </ngb-tab>
-
-  <ngb-tab title="Items">
-    <ng-template ngbTabContent>
-      <p>
-        <input type="checkbox" [ngModel]="questionnaire.hasOwnProperty('item')" (ngModelChange)="toggleItems()"/> This questionnaire includes items
-      </p>
-
-      <table class="table table-striped" *ngIf="questionnaire.hasOwnProperty('item')">
-        <thead>
-        <tr>
-          <th>Link ID</th>
-          <th>Text</th>
-          <th>Type</th>
-          <th class="actions-column-1">
-            <div class="pull-right">
-              <button type="button" class="btn btn-default" title="Add an item to the top level" (click)="addItem()">
-                <i class="fa fa-plus"></i>
-              </button>
-            </div>
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let fi of flattenedItems; let fii = index">
-          <td style="display: flex;">
-                        <span style="float: left; line-height: 37px;">
-                            <i class="fa" [class.fa-plus]="fi.hasChildren() && !fi.expanded" [class.fa-minus]="fi.hasChildren() && fi.expanded" (click)="toggleExpandItem(fi)"></i>
-                            <span *ngIf="!fi.hasChildren()">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                        </span>
-            <span style="white-space: pre; float: left;">{{fi.getSpaces()}}</span>
-            <input type="text" style="float: left;" class="form-control" [(ngModel)]="fi.item.linkId"/>
-          </td>
-          <td>
-            <app-fhir-string [parentObject]="fi.item" propertyName="text" [isFormGroup]="false"></app-fhir-string>
-          </td>
-          <td>
-            <app-fhir-select-single-code [parentObject]="fi.item" propertyName="type" valueSetUrl="http://hl7.org/fhir/ValueSet/item-type" [isFormGroup]="false"></app-fhir-select-single-code>
-          </td>
-          <td class="actions-column-2">
-            <div class="btn-group pull-right">
-              <button type="button" class="btn btn-default" tile="Add a child item" (click)="addItem(fi)">
-                <i class="fa fa-plus"></i>
-              </button>
-              <button type="button" class="btn btn-default" tile="Edit this item" (click)="editItem(fi)">
-                <i class="fa fa-edit"></i>
-              </button>
-              <button type="button" class="btn btn-default" tile="Move this item up" [disabled]="!canMoveItemUp(fi)" (click)="moveItem(true, fi)">
-                <i class="fa fa-chevron-up"></i>
-              </button>
-              <button type="button" class="btn btn-default" tile="Move this item down" [disabled]="!canMoveItemDown(fi)" (click)="moveItem(false, fi)">
-                <i class="fa fa-chevron-down"></i>
-              </button>
-              <button type="button" class="btn btn-default" title="Remove this item" (click)="removeItem(fi)">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </ng-template>
-  </ngb-tab>
-
-  <!-- Permissions -->
-  <ngb-tab id="permissions" *ngIf="configService.config.enableSecurity">
-    <ng-template ngbTabTitle>
-      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(questionnaire)" title="No write permissions for current user specified!"></i>
-    </ng-template>
-    <ng-template ngbTabContent>
-      <trifolia-fhir-resource-permissions [resource]="questionnaire"></trifolia-fhir-resource-permissions>
-    </ng-template>
-  </ngb-tab>
-
-  <!-- Validation -->
-  <ngb-tab id="validation" title="Validation">
-    <ng-template ngbTabContent>
-      <app-validation-results [results]="validation"></app-validation-results>
-    </ng-template>
-  </ngb-tab>
-
-  <!-- JSON -->
-  <ngb-tab id="raw" title="RAW">
-    <ng-template ngbTabContent>
-      <app-raw-resource [resource]="questionnaire" [shown]="qTabs.activeId === 'raw'"></app-raw-resource>
-    </ng-template>
-  </ngb-tab>
-
-  <!-- Version History -->
-  <ngb-tab id="history" title="History" *ngIf="!isNew">
-    <ng-template ngbTabContent>
-      <app-resource-history [(resource)]="questionnaire"></app-resource-history>
-    </ng-template>
-  </ngb-tab>
-</ngb-tabset>
+    <!-- Version History -->
+    <li ngbNavItem="history" *ngIf="!isNew">
+      <a ngbNavLink>History</a>
+      <ng-template ngbNavContent>
+        <app-resource-history   [resource]="conformance" (resourceChange) = "questionnaire = $event; conformance.resource = $event;"></app-resource-history>
+      </ng-template>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="qTabs" class="mt-2"></div>
+</ng-container>
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(questionnaire) || (isNew && !isIdUnique)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance) || (isNew && !isIdUnique)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

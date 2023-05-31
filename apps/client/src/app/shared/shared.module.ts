@@ -23,6 +23,11 @@ import {GroupService} from './group.service';
 import {ManageService} from './manage.service';
 import {ModalService} from './modal.service';
 import { FshService } from './fsh.service';
+import {ProjectService} from './projects.service';
+import { ConformanceService } from './conformance.service';
+import {HistoryService} from './history.service';
+import {SearchParameterService} from './search-parameter.service';
+import { ExamplesService } from './examples.service';
 
 @NgModule({
   declarations: [],
@@ -52,7 +57,12 @@ import { FshService } from './fsh.service';
     GroupService,
     ManageService,
     ModalService,
-    FshService
+    FshService,
+    ProjectService,
+    ConformanceService,
+    ExamplesService,
+    SearchParameterService,
+    HistoryService
   ],
   exports: []
 })

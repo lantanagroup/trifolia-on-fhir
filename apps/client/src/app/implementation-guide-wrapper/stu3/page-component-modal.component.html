@@ -1,16 +1,14 @@
 <div class="modal-header">
   <h4 class="modal-title">Edit page</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body" *ngIf="page">
-  <div class="form-group">
+  <div class="mb-3">
     <label>Title</label>
     <input type="text" class="form-control" [ngModel]="page.title" (ngModelChange)="page.setTitle($event, implementationGuide.page === inputPage)" [class.is-invalid]="!page.hasOwnProperty('title')"/>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       File Name (Source)
       <app-tooltip-icon tooltipKey="ig.page.fileName"></app-tooltip-icon>
@@ -20,7 +18,7 @@
     <p class="text-muted" *ngIf="page.source && !page.source.endsWith('.html')">This page's file names must end with the ".html" extension, or the page will not export/publish correctly.</p>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       Format
       <app-tooltip-icon tooltipKey="ig.page.format"></app-tooltip-icon>
@@ -28,7 +26,7 @@
     <input type="text" class="form-control" [(ngModel)]="page.format"/>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       Show on top nav menu
       <app-tooltip-icon tooltipKey="ig.page.showTopNavMenu"></app-tooltip-icon>
@@ -36,13 +34,13 @@
     <input type="text" class="form-control" [(ngModel)]="page.navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label>
       <input type="checkbox" [(ngModel)]="page.reuseDescription" /> The content of this page should be the same as the description and contact(s) of the implementation guide (ImplementationGuide.description and ImplementationGuide.contact).
     </label>
   </div>
 
-  <div class="form-group" *ngIf="!page.reuseDescription">
+  <div class="mb-3" *ngIf="!page.reuseDescription">
     <label>Content</label>
     <trifolia-fhir-markdown [(value)]="page.contentMarkdown" [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
   </div>

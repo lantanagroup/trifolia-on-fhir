@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, firstValueFrom} from 'rxjs';
 import * as XLSX from 'xlsx';
 import {Bundle, EntryComponent, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { IProjectResource } from '@trifolia-fhir/models';
 
 export class VSACImportCriteria {
   id: string;
@@ -22,8 +23,12 @@ export class ImportService {
   constructor(private http: HttpClient) {
   }
 
-  public async checkResourcesStatus(resourceReferences: string[]) {
-    return this.http.post<{ [resourceReference: string]: 'add'|'update'|'unauthorized'|'unknown'}>('/api/import/resourcesStatus', resourceReferences).toPromise();
+  public async checkResourcesStatus(resourceReferences: {resourceType: string, id: string, isExample: boolean}[], implementationGuideId?: string) {
+    let url = '/api/import/resourcesStatus';
+    if (implementationGuideId) {
+      url += `?implementationguideid=${implementationGuideId}`;
+    }
+    return firstValueFrom(this.http.post<{ [resourceReference: string]: {resource?: IProjectResource, action: 'update'|'add'|'unknown'} }>(url, resourceReferences));
   }
 
   public importVsac(criteria: VSACImportCriteria): Observable<any> {

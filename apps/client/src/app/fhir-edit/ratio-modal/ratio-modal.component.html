@@ -1,8 +1,6 @@
 <div class="modal-header">
     <h4 class="modal-title">Edit Range</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-        <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body" *ngIf="ratio">
     <div class="row">
@@ -16,7 +14,7 @@
                 <div class="card-body" *ngIf="ratio.hasOwnProperty('numerator')">
                     <app-fhir-string [parentObject]="ratio.numerator" propertyName="unit" title="Unit"></app-fhir-string>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>
                             <input type="checkbox" [ngModel]="ratio.numerator.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(ratio.numerator, 'value', 0)"/>
                             Value
@@ -24,12 +22,12 @@
                         <input type="number" class="form-control" [disabled]="!ratio.numerator.hasOwnProperty('value')" [(ngModel)]="ratio.numerator.value"/>
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>
                             <input type="checkbox" [ngModel]="ratio.numerator.hasOwnProperty('comparator')" (ngModelChange)="Globals.toggleProperty(ratio.numerator, 'comparator', '<')"/>
                             Comparator
                         </label>
-                        <select class="form-control" [disabled]="!ratio.numerator.hasOwnProperty('comparator')" [(ngModel)]="ratio.numerator.comparator">
+                        <select class="form-select" [disabled]="!ratio.numerator.hasOwnProperty('comparator')" [(ngModel)]="ratio.numerator.comparator">
                             <option value="<">&lt;</option>
                             <option value="<=">&lt;=</option>
                             <option value=">=">&gt;=</option>
@@ -55,7 +53,7 @@
                 <div class="card-body" *ngIf="ratio.hasOwnProperty('denominator')">
                     <app-fhir-string [parentObject]="ratio.denominator" propertyName="unit" title="Unit"></app-fhir-string>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>
                             <input type="checkbox" [ngModel]="ratio.denominator.hasOwnProperty('value')" (ngModelChange)="Globals.toggleProperty(ratio.denominator, 'value', 0)"/>
                             Value
@@ -63,12 +61,12 @@
                         <input type="number" class="form-control" [disabled]="!ratio.denominator.hasOwnProperty('value')" [(ngModel)]="ratio.denominator.value"/>
                     </div>
 
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>
                             <input type="checkbox" [ngModel]="ratio.denominator.hasOwnProperty('comparator')" (ngModelChange)="Globals.toggleProperty(ratio.denominator, 'comparator', '<')"/>
                             Comparator
                         </label>
-                        <select class="form-control" [disabled]="!ratio.denominator.hasOwnProperty('comparator')" [(ngModel)]="ratio.denominator.comparator">
+                        <select class="form-select" [disabled]="!ratio.denominator.hasOwnProperty('comparator')" [(ngModel)]="ratio.denominator.comparator">
                             <option value="<">&lt;</option>
                             <option value="<=">&lt;=</option>
                             <option value=">=">&gt;=</option>

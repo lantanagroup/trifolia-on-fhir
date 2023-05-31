@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent, ValueSet } from '../../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { ElementDefinition as R4ElementDefinition, ElementDefinitionElementDefinitionBindingComponent } from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { ElementDefinition as R4ElementDefinition, ElementDefinitionElementDefinitionBindingComponent as R4ElementDefinitionElementDefinitionBindingComponent } from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { ElementDefinition as R5ElementDefinition, ElementDefinitionElementDefinitionBindingComponent as R5ElementDefinitionElementDefinitionBindingComponent } from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { Globals } from '../../../../../../../libs/tof-lib/src/lib/globals';
 import { ConfigService } from '../../../shared/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -34,8 +35,18 @@ export class BindingPanelComponent implements OnInit {
     }
   }
 
+  public get R5Element() {
+    if (this.configService.isFhirR5) {
+      return <R5ElementDefinition>this.element;
+    }
+  }
+
   public get R4ValueSet(): string {
     return this.R4Element.binding.valueSet;
+  }
+
+  public get R5ValueSet(): string {
+    return this.R5Element.binding.valueSet;
   }
 
   public set R4ValueSet(value: string) {
@@ -51,11 +62,13 @@ export class BindingPanelComponent implements OnInit {
               private valueSetService: ValueSetService) {
   }
 
-  public getDefaultBinding(): ElementDefinitionBindingComponent | ElementDefinitionElementDefinitionBindingComponent {
+  public getDefaultBinding(): ElementDefinitionBindingComponent | R4ElementDefinitionElementDefinitionBindingComponent | R5ElementDefinitionElementDefinitionBindingComponent {
     if (this.configService.isFhirSTU3) {
       return new ElementDefinitionBindingComponent({ strength: 'required' });
     } else if (this.configService.isFhirR4) {
-      return new ElementDefinitionElementDefinitionBindingComponent({ strength: 'required' });
+      return new R4ElementDefinitionElementDefinitionBindingComponent({ strength: 'required' });
+    } else if (this.configService.isFhirR5) {
+      return new R5ElementDefinitionElementDefinitionBindingComponent({ strength: 'required' });
     }
   }
 
@@ -92,7 +105,9 @@ export class BindingPanelComponent implements OnInit {
   public selectValueSet(valueSet: IValueSet) {
     this.selectedValueSet = valueSet;
 
-    if (this.configService.isFhirR4) {
+    if (this.configService.isFhirR5) {
+      this.R5Element.binding.valueSet = valueSet.url;
+    } else if (this.configService.isFhirR4) {
       this.R4Element.binding.valueSet = valueSet.url;
     } else if (this.configService.isFhirSTU3) {
       if (this.STU3Element.binding.hasOwnProperty('valueSetUri')) {
@@ -117,7 +132,7 @@ export class BindingPanelComponent implements OnInit {
       distinctUntilChanged(),
       switchMap((term: string) => {
         if (term.length <= 2) return [];
-        return this.valueSetService.search(1, term).pipe(
+        return this.valueSetService.searchValueSet(1, term).pipe(
           map((bundle: IBundle) => (bundle.entry || []).map(entry => <IValueSet>entry.resource))
         );
       })
@@ -130,6 +145,13 @@ export class BindingPanelComponent implements OnInit {
         this.selectedValueSet = {
           resourceType: 'ValueSet',
           url: this.R4Element.binding.valueSet
+        };
+      }
+    } else if (this.configService.isFhirR5) {
+      if (this.R5Element && this.R5Element.binding && this.R5Element.binding.valueSet) {
+        this.selectedValueSet = {
+          resourceType: 'ValueSet',
+          url: this.R5Element.binding.valueSet
         };
       }
     }

@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -187,17 +188,17 @@
 <p class="rvps2"><span class="rvts72">Validation</span></p>
 <p class="rvps2"><span class="rvts6">Trifolia-on-FHIR uses three validation methods to provide as much feedback to IG authors as possible:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside;">
- <li class="rvps11"><span class="rvts26">Real-time UI Validation</span><br/><span class="rvts27">This validation checks the base FHIR specification requirements (i.e., cardinality, terminology bindings, value set requirements). This validation occurs as each field in ToF is changed to update and render to the user in real-time.&nbsp;</span></li>
- <li class="rvps11"><span class="rvts26">Pre-publish Validation</span><br/><span class="rvts27">When publishing an implementation guide from the "Publish" screen, the FHIR server's </span><a class="rvts73" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a><a class="rvts75" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank"> </a><span class="rvts27">is executed for each resource in the implementation guide. This is specific to the FHIR server in Trifolia-on-FHIR for this IG (e.g., HAPI, the FHIR server instance default).</span></li>
+ <li class="rvps9"><span class="rvts25">Real-time UI Validation</span><br/><span class="rvts26">This validation checks the base FHIR specification requirements (i.e., cardinality, terminology bindings, value set requirements). This validation occurs as each field in ToF is changed to update and render to the user in real-time.&nbsp;</span></li>
+ <li class="rvps9"><span class="rvts25">Pre-publish Validation</span><br/><span class="rvts26">When publishing an implementation guide from the "Publish" screen, the FHIR server's </span><a class="rvts73" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank">$validate operation</a><a class="rvts75" href="https://www.hl7.org/fhir/operation-resource-validate.html" target="_blank"> </a><span class="rvts26">is executed for each resource in the implementation guide. This is specific to the FHIR server in Trifolia-on-FHIR for this IG (e.g., HAPI, the FHIR server instance default).</span></li>
 </ol>
-<p class="rvps11"><span class="rvts27"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts27"> &nbsp; &nbsp; &nbsp;Please see the </span><a class="rvts73" href="FAQ.html">FAQ</a><span class="rvts27"> page, </span><span class="rvts74">Publishing with the FHIR IG Publisher</span><span class="rvts27"> section for examples of errors and steps to resolve.</span></p>
+<p class="rvps9"><span class="rvts26"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts26"> &nbsp; &nbsp; &nbsp;Please see the </span><a class="rvts73" href="FAQ.html">FAQ</a><span class="rvts26"> page, </span><span class="rvts74">Publishing with the FHIR IG Publisher</span><span class="rvts26"> section for examples of errors and steps to resolve.</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 72px; list-style-position: outside;">
- <li value="3" class="rvps11"><span class="rvts26">HL7 IG Publisher Validation</span><br/><span class="rvts27">The FHIR IG Publisher executes this validation step automatically </span><span class="rvts74">during </span><span class="rvts27">the publishing process. Validation checks for relationships between all resources and pages within this IG package. This includes all applicable IG resources, profiles, extensions, value sets, etc. FHIR IG Publisher validation also validates HTML links within the package. You cannot execute this validation step &nbsp;externally/independently of the publish process for an entire IG.</span><span class="rvts27"></span></li>
+ <li value="3" class="rvps9"><span class="rvts25">HL7 IG Publisher Validation</span><br/><span class="rvts26">The FHIR IG Publisher executes this validation step automatically </span><span class="rvts74">during </span><span class="rvts26">the publishing process. Validation checks for relationships between all resources and pages within this IG package. This includes all applicable IG resources, profiles, extensions, value sets, etc. FHIR IG Publisher validation also validates HTML links within the package. You cannot execute this validation step &nbsp;externally/independently of the publish process for an entire IG.</span><span class="rvts26"></span></li>
 </ol>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -232,7 +233,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -249,7 +250,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

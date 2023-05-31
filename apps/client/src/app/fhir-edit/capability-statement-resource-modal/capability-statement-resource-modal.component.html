@@ -1,8 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">Edit Resource</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body" *ngIf="resource">
   <app-fhir-select-single-code
@@ -25,6 +23,7 @@
     resourceType="StructureDefinition"
     [hideResourceType]="true"></app-fhir-reference>
 
+  <!-- TODO: isFhirR5 -->
   <div class="card" *ngIf="configService.isFhirR4">
     <div class="card-header">
       <input type="checkbox" [ngModel]="r4Resource.hasOwnProperty('supportedProfile')" (ngModelChange)="Globals.toggleProperty(r4Resource, 'supportedProfile', [''])"/>
@@ -48,12 +47,10 @@
         <td>
           <div class="input-group">
             <input type="text" class="form-control" [(ngModel)]="r4Resource.supportedProfile[spi]" />
-            <div class="input-group-append">
-              <div class="input-group-btn">
-                <button type="button" class="btn btn-primary" title="Select a profile" (click)="selectSupportedProfile(spi)">
-                  <i class="fas fa-hand-pointer"></i>
-                </button>
-              </div>
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-primary" title="Select a profile" (click)="selectSupportedProfile(spi)">
+                <i class="fas fa-hand-pointer"></i>
+              </button>
             </div>
           </div>
         </td>
@@ -103,7 +100,7 @@
               <input type="checkbox" [ngModel]="interactionHasExpectation(i)"
                      (ngModelChange)="toggleInteractionExpectation(i)"/>
             </div>
-            <select class="form-control" [ngModel]="getInteractionExpectation(i)"
+            <select class="form-select" [ngModel]="getInteractionExpectation(i)"
                     (ngModelChange)="setInteractionExpectation(i, $event)">
               <option>SHALL</option>
               <option>SHOULD</option>
@@ -317,6 +314,57 @@
     </table>
   </div>
 </div>
+
+<!-- Operations -->
+<div class="card">
+  <div class="card-header">
+    <input type="checkbox" [ngModel]="resource.hasOwnProperty('operation')"
+           (ngModelChange)="Globals.toggleProperty(resource, 'operation', [{ name: '', definition: { reference: '', display: '' }}])"/>
+    Operations
+    <app-tooltip-icon tooltipPath="CapabilityStatement.rest.operation"></app-tooltip-icon>
+  </div>
+  <table class="table table-striped" *ngIf="resource.hasOwnProperty('operation')">
+    <thead>
+    <tr>
+      <th>Name
+        <app-tooltip-icon tooltipPath="CapabilityStatement.rest.operation.name"></app-tooltip-icon>
+      </th>
+      <th>Definition
+        <app-tooltip-icon tooltipPath="CapabilityStatement.rest.operation.definition"></app-tooltip-icon>
+      </th>
+      <th class="actions-column-1">
+        <div class="pull-right">
+          <button type="button" class="btn btn-primary btn-sm" title="Add an operation"
+                  (click)="resource.operation.push({ name: '', definition: { reference: '', display: '' }})">
+            <i class="fa fa-plus"></i>
+          </button>
+        </div>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let si of resource.operation; let sii = index">
+      <td>
+        <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false"
+                         [required]="true"></app-fhir-string>
+      </td>
+      <td>
+        <app-fhir-reference [parentObject]="si" propertyName="definition" [isFormGroup]="false"
+                            [required]="true" resourceType="OperationDefinition"></app-fhir-reference>
+      </td>
+      <td>
+        <div class="pull-right">
+          <button type="button" class="btn btn-primary btn-sm" title="Remove this operation"
+                  (click)="resource.operation.splice(sii, 1)">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
 <div class="modal-footer">
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>

@@ -1,41 +1,47 @@
 <div class="modal-header">
   <h4 class="modal-title">{{modalTitle}}</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-    <span aria-hidden="true">&times;</span>
-  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
-  <ngb-tabset orientation="vertical" (tabChange)="tabChanged($event)">
-    <ngb-tab id="server" title="Server">
-      <ng-template ngbTabContent>
-        <ng-container *ngTemplateOutlet="tabContent"></ng-container>
-      </ng-template>
-    </ngb-tab>
-    <ngb-tab id="dependency" title="Dependency" *ngIf="resourceType === 'StructureDefinition'">
-      <ng-template ngbTabContent>
-        <ng-container *ngTemplateOutlet="tabContent"></ng-container>
-      </ng-template>
-    </ngb-tab>
-    <ngb-tab id="base" title="Base">
-      <ng-template ngbTabContent>
-        <ng-container *ngTemplateOutlet="tabContent"></ng-container>
-      </ng-template>
-    </ngb-tab>
-  </ngb-tabset>
+  <div class="d-flex">
+    <ul ngbNav #nav="ngbNav" class="nav-pills" orientation="vertical" (navChange)="tabChanged($event)">
+      <li ngbNavItem="server">
+        <a ngbNavLink>Server</a>
+        <ng-template ngbNavContent>
+          <ng-container *ngTemplateOutlet="tabContent"></ng-container>
+        </ng-template>
+      </li>
+      <li ngbNavItem="dependency" *ngIf="resourceType === 'StructureDefinition'">
+        <a ngbNavLink>Dependency</a>
+        <ng-template ngbNavContent>
+          <ng-container *ngTemplateOutlet="tabContent"></ng-container>
+        </ng-template>
+      </li>
+      <li ngbNavItem="base">
+        <a ngbNavLink>Base</a>
+        <ng-template ngbNavContent>
+          <ng-container *ngTemplateOutlet="tabContent"></ng-container>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="ms-4"></div>
+  </div>
 </div>
 <div class="modal-footer">
   <div class="pull-left footer-criteria">
     <p *ngIf="configService.project && searchLocation === 'server'">
-      <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from the <span class="badge badge-info">{{configService.project.name}}</span> implementation guide.
+      <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from
+      the <span class="badge bg-info">{{configService.project.name}}</span> implementation guide.
     </p>
-    <p *ngIf="resourceType === 'StructureDefinition' && structureDefinitionType">Showing profiles of type <span class="badge badge-info">{{structureDefinitionType}}</span>.</p>
+    <p *ngIf="resourceType === 'StructureDefinition' && structureDefinitionType">Showing profiles of type <span
+        class="badge bg-info">{{structureDefinitionType}}</span>.</p>
   </div>
   <div class="pull-left" *ngIf="selected.length > 0">
     Selected {{selected.length}}: <span *ngFor="let s of selected">{{s.resourceType}}/{{s.id}} </span>
     [ <a href="javascript:void(0)" (click)="selected.splice(0, selected.length)">clear</a> ]
   </div>
   <button type="button" class="btn btn-primary" (click)="select()" *ngIf="selectMultiple"
-          [disabled]="selected.length === 0">OK
+    [disabled]="selected.length === 0">OK
   </button>
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.close()">Close</button>
 </div>
@@ -45,43 +51,39 @@
     <!-- Type -->
     <div class="col-md-6" *ngIf="!resourceType || !hideResourceType">
       <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">Type</div>
-        </div>
-        <select class="form-control" [(ngModel)]="resourceType" (change)="criteriaChanged()">
+        <div class="input-group-text">Type</div>
+        <select class="form-select" [(ngModel)]="resourceType" (change)="criteriaChanged()">
           <option *ngFor="let o of resourceTypeCodes" [ngValue]="o.code">{{o.display}}</option>
         </select>
       </div>
     </div>
 
     <div class="col-md-6" *ngIf="showContentSearch">
-      <input class="form-control" [(ngModel)]="contentSearch" (ngModelChange)="criteriaChangedEvent.next($event)" placeholder="Search"/>
+      <input class="form-control" [(ngModel)]="contentSearch" (ngModelChange)="criteriaChangedEvent.next($event)"
+        placeholder="Search" />
     </div>
 
     <div class="col-md-6" *ngIf="showNameSearch">
       <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">Name</div>
-        </div>
-        <input type="text" class="form-control" [(ngModel)]="nameSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
+        <div class="input-group-text">Name</div>
+        <input type="text" class="form-control" [(ngModel)]="nameSearch"
+          (ngModelChange)="criteriaChangedEvent.next($event)" />
       </div>
     </div>
 
     <div class="col-md-6" *ngIf="showTitleSearch">
       <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">Title</div>
-        </div>
-        <input type="text" class="form-control" [(ngModel)]="titleSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
+        <div class="input-group-text">Title</div>
+        <input type="text" class="form-control" [(ngModel)]="titleSearch"
+          (ngModelChange)="criteriaChangedEvent.next($event)" />
       </div>
     </div>
 
     <div class="col-md-6" *ngIf="!!resourceType">
       <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">ID</div>
-        </div>
-        <input type="text" class="form-control" [(ngModel)]="idSearch" (ngModelChange)="criteriaChangedEvent.next($event)" />
+        <div class="input-group-text">ID</div>
+        <input type="text" class="form-control" [(ngModel)]="idSearch"
+          (ngModelChange)="criteriaChangedEvent.next($event)" />
       </div>
     </div>
   </div>
@@ -90,41 +92,44 @@
   <p *ngIf="searching"><em>Searching...</em></p>
   <table class="table" *ngIf="results">
     <thead>
-    <tr>
-      <th *ngIf="selectMultiple" class="actions-column-1"></th>
-      <th>Id</th>
-      <th>Title/Name</th>
-      <th *ngIf="!selectMultiple" class="actions-column-1">&nbsp;</th>
-    </tr>
+      <tr>
+        <th *ngIf="selectMultiple" class="actions-column-1"></th>
+        <th>Id</th>
+        <th>Title/Name</th>
+        <th *ngIf="!selectMultiple" class="actions-column-1">&nbsp;</th>
+      </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let e of results.entry">
-      <td *ngIf="selectMultiple">
-        <input type="checkbox" [ngModel]="isSelected(e)" (ngModelChange)="setSelected(e, $event)"/>
-      </td>
-      <td>{{e.resource.id}}</td>
-      <td>{{e.resource | fhirDisplay}}</td>
-      <td *ngIf="!selectMultiple">
-        <div class="pull-right">
-          <button type="button" class="btn btn-primary" (click)="select(e)">Select</button>
-        </div>
-      </td>
-    </tr>
-    <tr *ngIf="results.entry && results.entry.length < results.total">
-      <td colspan="3">
-        <a href="javascript:void(0)" (click)="criteriaChanged(true)">Load More</a>
-      </td>
-    </tr>
+      <tr *ngFor="let c of results">
+        <td *ngIf="selectMultiple">
+          <input type="checkbox" [ngModel]="isSelected(c)" (ngModelChange)="setSelected(c, $event)" />
+        </td>
+        <td>{{c.resource.id}}</td>
+        <td>{{c.resource | fhirDisplay}}</td>
+        <td *ngIf="!selectMultiple">
+          <div class="pull-right">
+            <button type="button" class="btn btn-primary" (click)="select(c)">Select</button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="results && results.length < total">
+        <td colspan="3">
+          <!-- <a href="javascript:void(0)" (click)="criteriaChanged(true)">Load More</a> -->
+          <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="total"
+            [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="pageChanged.next()">
+          </ngb-pagination>
+        </td>
+      </tr>
     </tbody>
-    <tfoot *ngIf="results.entry.length > 0">
-    <tr>
-      <th colspan="3">Showing {{results.entry.length}} of {{results.total}} results</th>
-    </tr>
+    <tfoot *ngIf="total > 0">
+      <tr>
+        <th colspan="3">Showing {{results.length}} of {{total}} results</th>
+      </tr>
     </tfoot>
-    <tfoot *ngIf="results.entry.length === 0">
-    <tr>
-      <th colspan="3"><em>No resources were found with the specified criteria.</em></th>
-    </tr>
+    <tfoot *ngIf="results.length === 0">
+      <tr>
+        <th colspan="3"><em>No resources were found with the specified criteria.</em></th>
+      </tr>
     </tfoot>
   </table>
 </ng-template>

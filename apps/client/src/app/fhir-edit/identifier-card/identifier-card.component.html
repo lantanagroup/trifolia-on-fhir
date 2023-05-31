@@ -47,9 +47,7 @@
 <ng-template #modalContent let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Edit Identifier</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
   </div>
   <div class="modal-body">
     <app-fhir-select-single-code [parentObject]="modalIdentifier" propertyName="use" valueSetUrl="http://hl7.org/fhir/ValueSet/identifier-use" [required]="false" title="Use"></app-fhir-select-single-code>

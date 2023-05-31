@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -173,7 +174,7 @@
                         <li>Version History</li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group" role="group"><a class="btn btn-default" href="v110.html" title="v1.1.0" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="v231.html" title="v2.3.1" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group" role="group"><a class="btn btn-default" href="v110.html" title="v1.1.0" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -184,7 +185,7 @@
 
             <div class="main-content">
                 
-<p class="rvps2"><span class="rvts23">Release 1.0.0 on January 15, 2019</span></p>
+<p class="rvps2"><span class="rvts22">Release 1.0.0 on January 15, 2019</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Open-source</span></span></h2>
 <p class="rvps2"><span class="rvts6">Trifolia-on-FHIR is an open-source product. The source code can be found here: </span><a class="rvts11" href="https://github.com/lantanagroup/trifolia-on-fhir" target="_blank">https://github.com/lantanagroup/trifolia-on-fhir</a></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">FHIR IG Publisher</span></span></h2>
@@ -193,14 +194,14 @@
 <p class="rvps2"><span class="rvts6">ToF has the official R4 FHIR models loaded for use within the user interface’s validation. ToF is dependent on other tools, such as the HAPI FHIR server, and the FHIR IG publisher to provide end-to-end implementation guide design and publication. If the underlying FHIR Server (ex: HAPI) or the FHIR IG publisher does not support the published FHIR R4 models, you may encounter various issues in the application.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Development Log</span></span></h2>
 <p class="rvps2"><span class="rvts6">This table only lists issues addressed after release 0.4. Changes were not tracked prior to version 0.4.</span></p>
-<div class="rvps31">
+<div class="rvps29">
 <table width="100%" border="2" cellpadding="6" cellspacing="4" style="border-color: #000000; border-style: solid; border-spacing: 4px;">
  <tr valign="top">
   <td width="121" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
-   <p class="rvps2"><span class="rvts23">Type</span></p>
+   <p class="rvps2"><span class="rvts22">Type</span></p>
   </td>
   <td width="898" valign="top" style="border-width : 2px; border-color: #000000; border-style: solid; padding: 0px 13px;">
-   <p class="rvps2"><span class="rvts23">Summary</span></p>
+   <p class="rvps2"><span class="rvts22">Summary</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -293,11 +294,11 @@
  </tr>
 </table>
 </div>
-<p class="rvps40"><span class="rvts39"></span><span class="rvts6"></span></p>
+<p class="rvps40"><span class="rvts37"></span><span class="rvts6"></span></p>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -332,7 +333,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -349,7 +350,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

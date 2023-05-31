@@ -2,19 +2,19 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {
-  ImplementationGuide as STU3ImplementationGuide,
-  OperationOutcome as STU3OperationOutcome
+  ImplementationGuide as STU3ImplementationGuide
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
-  ImplementationGuide as R4ImplementationGuide,
-  OperationOutcome as R4OperationOutcome
+  ImplementationGuide as R4ImplementationGuide
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {ConfigService} from './config.service';
 import {Router} from '@angular/router';
 import {SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {IBundle, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
+import {ConfigService} from './config.service';
+import { IConformance, IExample } from '@trifolia-fhir/models';
+import { ConformanceService } from './conformance.service';
 
 export class PublishedGuideModel {
   public name: string;
@@ -38,11 +38,12 @@ export class PublishedGuideEditionsModel {
 }
 
 @Injectable()
-export class ImplementationGuideService {
+export class ImplementationGuideService extends ConformanceService {
 
-  constructor(private http: HttpClient,
+  constructor(protected http: HttpClient,
               public configService: ConfigService,
               public router: Router) {
+    super(http);
   }
 
   /*
@@ -64,10 +65,10 @@ export class ImplementationGuideService {
   }
 
   public getProfiles(implementationGuideId: string) {
-    return this.http.get<IBundle>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/profile`);
+    return this.http.get<any[]>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/profile`);
   }
 
-  public getExamples(implementationGuideId: string) {
+  public getExamples(implementationGuideId: string): Observable<IConformance[]|IExample[]> {
     return this.http.get<any>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/example`);
   }
 
@@ -98,36 +99,29 @@ export class ImplementationGuideService {
     return this.http.get<SearchImplementationGuideResponseContainer>(url);
   }
 
-  public getImplementationGuide(id: string) {
-    return this.http.get<STU3ImplementationGuide | STU3OperationOutcome | R4ImplementationGuide | R4OperationOutcome>(`/api/implementationGuide/${id}`);
+  public getImplementationGuide(id: string): Observable<IConformance> {
+    const url = '/api/implementationGuide/' + encodeURIComponent(id);
+    return this.http.get<IConformance>(url);
   }
 
-  public saveImplementationGuide(implementationGuide: IImplementationGuide) {
-    if (implementationGuide.id) {
-      return this.http.put(`/api/implementationGuide/${implementationGuide.id}`, implementationGuide);
+  public getImplementationGuideWithReferences(id: string): Observable<IConformance> {
+    const url = '/api/implementationGuide/' + encodeURIComponent(id) + "/references";
+    return this.http.get<IConformance>(url);
+  }
+
+
+  public saveImplementationGuide(implementationGuide: IConformance): Observable<IConformance> {
+    return this.http.post<IConformance>('/api/implementationGuide', implementationGuide);
+  }
+
+  public updateImplementationGuide(id: string, implementationGuide: IConformance): Observable<IConformance> {
+    if (id) {
+      return this.http.put<IConformance>(`/api/implementationGuide/${id}`, implementationGuide);
     } else {
-      return this.http.post('/api/implementationGuide', implementationGuide);
+     return null;
     }
   }
 
-  public deleteImplementationGuide(ig: STU3ImplementationGuide | R4ImplementationGuide) {
-    if (!confirm(`Are you sure you want to delete ${ig.name}?`)) {
-      return false;
-    }
-
-    const name = ig.name;
-    const id = ig.id;
-
-    this.removeImplementationGuide(ig.id)
-      .subscribe(() => {
-        this.configService.project = null;
-        // noinspection JSIgnoredPromiseFromCall
-        this.router.navigate([`${this.configService.fhirServer}/home`]);
-        alert(`IG ${name} with id ${id} has been deleted`);
-      }, (err) => {
-        console.log('Error while deleting the IG: ' + getErrorString(err));
-      });
-  }
 
   public removeImplementationGuide(id: string) {
     return this.http.delete(`/api/implementationGuide/${id}`);
@@ -136,4 +130,5 @@ export class ImplementationGuideService {
   public copyPermissions(id: string) {
     return this.http.post<number>(`/api/implementationGuide/${id}/copy-permissions`, null);
   }
+
 }

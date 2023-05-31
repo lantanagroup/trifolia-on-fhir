@@ -4,40 +4,40 @@
     <img src="assets/trifoliaonfhir_64.png" alt="Trifolia-on-FHIR" title="Trifolia-on-FHIR"/>
     <span>Trifolia-on-FHIR</span>
   </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
           aria-label="Toggle navigation" #navbarToggler>
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="navbar-collapse collapse" id="navbarSupportedContent" #navbarCollapse>
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav me-auto">
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="homeMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          File <span class="sr-only">(current)</span>
+        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="homeMenu" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          File <span class="visually-hidden">(current)</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="homeMenu">
           <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/home">
             <i class="fa fa-home"></i> Home
           </a>
-          <a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/implementation-guide/new" *ngIf="authService.isAuthenticated() && !configService.project" title="Create a new project (implementation guide)">
-            <i class="fa fa-plus"></i> New Project
+          <a class="dropdown-item" routerLink="/projects/new" *ngIf="authService.isAuthenticated() && !configService.project" title="Create a new project">
+          <i class="fa fa-plus"></i> New Project
           </a>
-          <a class="dropdown-item" href="javascript:void(0)" routerLink="/{{configService.baseSessionUrl}}/implementation-guide/open" *ngIf="authService.isAuthenticated() && !configService.project" title="Open/select an implementation guide project to work on">
-            <i class="far fa-folder"></i> Open project
+           <a class="dropdown-item" href="javascript:void(0)" routerLink="/projects" *ngIf="authService.isAuthenticated() && !configService.project" title="Open/select an project to work on">
+             <i class="far fa-folder"></i> Open project
           </a>
           <a class="dropdown-item" href="javascript:void(0)" (click)="closeProject()" *ngIf="authService.isAuthenticated() && configService.project" title="Close the currently opened project implementation guide">
             <i class="fa fa-window-close"></i> Close project
           </a>
-          <a class="dropdown-item" href="javascript:void(0)" (click)="openFile()" title="Open a resource file from your computer">
+          <!--a class="dropdown-item" href="javascript:void(0)" (click)="openFile()" title="Open a resource file from your computer">
             <i class="fa fa-upload"></i> Open from computer
-          </a>
+          </a-->
           <a class="dropdown-item" href="javascript:void(0)" (click)="editSettings()" title="Change application settings">
             <i class="fa fa-cog"></i> Settings
           </a>
         </div>
       </li>
       <li class="nav-item dropdown" *ngIf="authService.isAuthenticated() && configService.project">
-        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="browseMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="browseMenu" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Browse/Edit
         </a>
         <div class="dropdown-menu" aria-labelledby="browseMenu">
@@ -57,7 +57,7 @@
           <a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/other-resources">Other Resources</a>
         </div>
       </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated()">
+      <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.project">
         <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/import">Import</a>
       </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.project">
@@ -67,21 +67,21 @@
         <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/publish">Publish</a>
       </li>
       <li class="nav-item dropdown" *ngIf="authService.userProfile && authService.userProfile.isAdmin">
-        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="manageMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Manage <span class="sr-only">(current)</span>
+        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="manageMenu" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Manage <span class="visually-hidden">(current)</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="manageMenu">
-          <a class="dropdown-item" routerLink="{{configService.fhirServer}}/manage/user">
+          <a class="dropdown-item" routerLink="/manage/user">
             Users
           </a>
-          <a class="dropdown-item" routerLink="{{configService.fhirServer}}/manage/queue">
+          <a class="dropdown-item" routerLink="/manage/queue">
             Publishing Queue
           </a>
         </div>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="helpMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Help <span class="sr-only">(current)</span>
+        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="helpMenu" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Help <span class="visually-hidden">(current)</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="helpMenu">
           <!--suppress HtmlUnknownTarget -->
@@ -101,22 +101,22 @@
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
-      <ul class="navbar-nav mr-auto">
+      <ul class="navbar-nav me-auto">
         <li class="nav-item" *ngIf="configService.project">
           <a class="nav-link" href="javascript:void(0)" title="The currently selected project">
-            <div class="badge badge-info">{{configService.project.name || configService.project.implementationGuideId}}</div>
+            <div class="badge bg-info">{{configService.project.name || configService.project.implementationGuideId}}</div>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0)" (click)="editSettings()" title="The currently selected FHIR server">
-            <div class="badge badge-info">{{fhirServerDisplay}}</div>
+          <a class="nav-link" href="javascript:void(0)" (click)="editSettings()" title="Settings">
+            <div class="badge bg-info"><i class="fa fa-info"></i></div>
           </a>
         </li>
         <li class="nav-item" *ngIf="!authService.isAuthenticated()">
           <a class="nav-link" href="javascript:void(0)" (click)="authService.login()">Login</a>
         </li>
         <li class="nav-item" *ngIf="authService.isAuthenticated()">
-          <a class="nav-link" routerLink="/{{configService.fhirServer}}/users/me">
+          <a class="nav-link" routerLink="/users/me">
             <img class="profile-picture" *ngIf="authService.userProfile && authService.userProfile.picture" src="{{authService.userProfile.picture}}" alt="Your profile picture"/>
             {{displayName}}
           </a>
@@ -140,9 +140,7 @@
 <ng-template #bannerTemplate>
   <div class="alert alert-primary" *ngIf="configService.config.bannerMessage">
     <span [innerHTML]="configService.config.bannerMessage"></span>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
   </div>
 </ng-template>
 
@@ -153,20 +151,16 @@
   </div>
   <div class="jumbotron" *ngIf="showNewUser">
     <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
-    <trifolia-fhir-new-user-modal *ngIf="configService.fhirConformance"></trifolia-fhir-new-user-modal>
-  </div>
-  <div class="jumbotron" *ngIf="configService.fhirConformance === false">
-    <h3>Error!</h3>
-    <p>Trifolia-on-FHIR cannot communicate with the selected FHIR server!</p>
+    <trifolia-fhir-new-user-modal></trifolia-fhir-new-user-modal>
   </div>
   <div class="jumbotron" *ngIf="showRouterOutlet">
     <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
     <div class="alert alert-warning status-message" *ngIf="configService.statusMessage">
       {{configService.statusMessage}}
     </div>
-    <router-outlet *ngIf="fhirService.loaded"></router-outlet>
-    <div *ngIf="!fhirService.loaded">
+    <router-outlet></router-outlet>
+  <!--  <div *ngIf="!fhirService.loaded">
       Loading information from selected FHIR server...
-    </div>
+    </div>-->
   </div>
 </div>

@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Globals } from 'libs/tof-lib/src/lib/globals';
-import { Bundle, SearchParameter } from 'libs/tof-lib/src/lib/stu3/fhir';
-import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
-import { AuthService } from '../shared/auth.service';
-import { ConfigService } from '../shared/config.service';
-import { SearchParameterService } from '../shared/search-parameter.service';
-import { ChangeResourceIdModalComponent } from '../modals/change-resource-id-modal/change-resource-id-modal.component';
-import { BaseComponent } from '../base.component';
+import {Component, OnInit} from '@angular/core';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {Globals} from 'libs/tof-lib/src/lib/globals';
+import {SearchParameter} from 'libs/tof-lib/src/lib/stu3/fhir';
+import {Subject} from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
+import {AuthService} from '../shared/auth.service';
+import {ConfigService} from '../shared/config.service';
+import {SearchParameterService} from '../shared/search-parameter.service';
+import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
+import {BaseComponent} from '../base.component';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   templateUrl: './search-parameters.component.html',
@@ -16,9 +17,10 @@ import { BaseComponent } from '../base.component';
 })
 export class SearchParametersComponent extends BaseComponent implements OnInit {
 
-  public searchParameterBundle: Bundle;
+  public searchParameterBundle;
+  public total: string;
   public nameText: string;
-  public criteriaChangedEvent = new Subject();
+  public criteriaChangedEvent = new Subject<void>();
   public page = 1;
   public Globals = Globals;
 
@@ -26,7 +28,8 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
     public configService: ConfigService,
     protected authService: AuthService,
     private spService: SearchParameterService,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public route: ActivatedRoute) {
 
     super(configService, authService);
 
@@ -36,12 +39,14 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
       });
   }
 
+
+
   public get searchParameter(): SearchParameter[] {
-    if (!this.searchParameterBundle || !this.searchParameterBundle.entry) {
+    if (!this.searchParameterBundle) {
       return [];
     }
 
-    return this.searchParameterBundle.entry.map((entry) => <SearchParameter>entry.resource);
+    return (this.searchParameterBundle.results || []).map((entry) => <SearchParameter>entry);
   }
 
   public remove(searchParameter: SearchParameter) {
@@ -51,9 +56,9 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
 
     this.spService.delete(searchParameter.id)
       .subscribe(() => {
-        const entry = (this.searchParameterBundle.entry || []).find((e) => e.resource.id === searchParameter.id);
-        const index = this.searchParameterBundle.entry.indexOf(entry);
-        this.searchParameterBundle.entry.splice(index, 1);
+        const entry = (this.searchParameterBundle.results || []).find((e) => e.id === searchParameter.id);
+        const index = this.searchParameterBundle.results.indexOf(entry);
+        this.searchParameterBundle.results.splice(index, 1);
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while deleting the capability statement');
       });
@@ -74,12 +79,16 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
     });
   }
 
+
   public getSearchParameters() {
     this.searchParameterBundle = null;
 
-    this.spService.search(this.page, this.nameText)
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+
+    this.spService.search(this.page, this.nameText, implementationGuideId)
       .subscribe((results) => {
         this.searchParameterBundle = results;
+        this.total = this.searchParameterBundle.total;
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while searching for capability statements');
       });

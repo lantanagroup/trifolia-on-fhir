@@ -1,11 +1,9 @@
 <div class="modal-header">
     <h4 class="modal-title">Edit Parameter</h4>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()">
-        <span aria-hidden="true">&times;</span>
-    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
-    <div class="form-group">
+    <div class="mb-3">
         <label>
             Documentation
             <input type="checkbox" [ngModel]="parameter.hasOwnProperty('documentation')" (ngModelChange)="Globals.toggleProperty(parameter, 'type', 'documentation')" />
@@ -13,22 +11,22 @@
         <input type="text" class="form-control" [disabled]="!parameter.hasOwnProperty('documentation')" [(ngModel)]="parameter.documentation"/>
     </div>
 
-    <div class="form-group">
+    <div class="mb-3">
         <label>
             Type
             <input type="checkbox" [ngModel]="parameter.hasOwnProperty('type')" (ngModelChange)="Globals.toggleProperty(parameter, 'type', '')" />
         </label>
-        <select class="form-control" [disabled]="!parameter.hasOwnProperty('type')" [(ngModel)]="parameter.type">
+        <select class="form-select" [disabled]="!parameter.hasOwnProperty('type')" [(ngModel)]="parameter.type">
             <option *ngFor="let o of allTypeCodes" [ngValue]="o.code">{{o.display}}</option>
         </select>
     </div>
 
-    <div class="form-group">
+    <div class="mb-3">
         <label>
             Search Type
             <input type="checkbox" [ngModel]="parameter.hasOwnProperty('searchType')" (ngModelChange)="Globals.toggleProperty(parameter, 'searchType', 'number')" />
         </label>
-        <select class="form-control" [disabled]="!parameter.hasOwnProperty('searchType')" [(ngModel)]="parameter.searchType">
+        <select class="form-select" [disabled]="!parameter.hasOwnProperty('searchType')" [(ngModel)]="parameter.searchType">
             <option value="number">Number</option>
             <option value="date">Date</option>
             <option value="string">String</option>
@@ -40,7 +38,7 @@
         </select>
     </div>
 
-    <div class="form-group">
+    <div class="mb-3">
         <label>
             Profile
             <input type="checkbox" [ngModel]="parameter.hasOwnProperty('profile')" (ngModelChange)="Globals.toggleProperty(parameter, 'profile', { reference: '', display: '' })" />
@@ -58,9 +56,9 @@
             <input type="checkbox" [ngModel]="parameter.hasOwnProperty('binding')" (ngModelChange)="Globals.toggleProperty(parameter, 'binding', { strength: 'required', valueSetUri: '' })" />
         </div>
         <div class="card-body" *ngIf="parameter.hasOwnProperty('binding')">
-            <div class="form-group">
+            <div class="mb-3">
                 <label>Strength</label>
-                <select class="form-control" [(ngModel)]="parameter.binding.strength" [class.is-invalid]="!parameter.binding.strength">
+                <select class="form-select" [(ngModel)]="parameter.binding.strength" [class.is-invalid]="!parameter.binding.strength">
                     <option value="required">Required</option>
                     <option value="extensible">Extensible</option>
                     <option value="preferred">Preferred</option>
@@ -68,20 +66,20 @@
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label>Value Set Choice</label>
-                <select class="form-control" [(ngModel)]="valueSetChoice">
+                <select class="form-select" [(ngModel)]="valueSetChoice">
                     <option value="Uri">URI</option>
                     <option value="Reference">Reference</option>
                 </select>
             </div>
 
-            <div class="form-group" *ngIf="parameter.binding.hasOwnProperty('valueSetUri')">
+            <div class="mb-3" *ngIf="parameter.binding.hasOwnProperty('valueSetUri')">
                 <label>Value Set URI</label>
                 <input type="text" class="form-control" [(ngModel)]="parameter.binding.valueSetUri" />
             </div>
 
-            <div class="form-group" *ngIf="parameter.binding.hasOwnProperty('valueSetReference')">
+            <div class="mb-3" *ngIf="parameter.binding.hasOwnProperty('valueSetReference')">
                 <label>Value Set Reference</label>
                 <app-fhir-reference
                         [parentObject]="parameter.binding"

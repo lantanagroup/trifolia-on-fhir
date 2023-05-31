@@ -25,7 +25,7 @@ export class PublishingRequestComponent implements OnInit {
     this.change
       .pipe(debounceTime(1000))
       .subscribe(() => {
-        PublishingRequestModel.setPublishingRequest(this.implementationGuide, this.publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));
+        PublishingRequestModel.setPublishingRequest(this.implementationGuide, this.publishingRequest, identifyRelease(this.configService.fhirVersion));
         this.publishingRequestJSON = JSON.stringify(this.publishingRequest, null, '\t');
       });
 
@@ -40,7 +40,7 @@ export class PublishingRequestComponent implements OnInit {
     this.publishingRequest = new PublishingRequestModel();
     this.publishingRequest['package-id'] = this.defaultPackageId;
     this.publishingRequest.title = this.defaultTitle || this.defaultName;
-    PublishingRequestModel.setPublishingRequest(this.implementationGuide, this.publishingRequest, identifyRelease(this.configService.fhirConformanceVersion));
+    PublishingRequestModel.setPublishingRequest(this.implementationGuide, this.publishingRequest, identifyRelease(this.configService.fhirVersion));
   }
 
   remove() {

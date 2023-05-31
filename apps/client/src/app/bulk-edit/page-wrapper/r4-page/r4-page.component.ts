@@ -12,14 +12,16 @@ export class R4PageComponent implements OnInit {
   public pages: ImplementationGuidePageComponent[];
   public expanded: { [fileName: string]: boolean } = {};
 
-  constructor() { }
+  constructor() { 
+    console.log('R4PageComponent::ctor');
+  }
 
   public toggleExpandPage(page: ImplementationGuidePageComponent) {
     this.expanded[page.fileName] = !this.expanded[page.fileName];
   }
 
   private populatePages(parent?: ImplementationGuidePageComponent) {
-    if (!parent) {
+    if (!parent && this.implementationGuide.definition.page) {
       this.pages = [this.implementationGuide.definition.page];
       this.populatePages(this.implementationGuide.definition.page);
 
@@ -28,7 +30,7 @@ export class R4PageComponent implements OnInit {
         this.implementationGuide.definition.page.setTitle(this.implementationGuide.definition.page.title, true);
         this.changedPages[this.implementationGuide.definition.page.fileName] = true;
       }
-    } else if (parent.page) {
+    } else if (parent && parent.page) {
       parent.page.forEach(p => {
         this.pages.push(p);
         this.populatePages(p);

@@ -1,12 +1,13 @@
 import {BaseFhirController} from './base-fhir.controller';
 import {Test, TestingModule} from '@nestjs/testing';
-import {Controller, HttpModule, HttpService} from '@nestjs/common';
+import {HttpModule, HttpService} from '@nestjs/axios';
+import {Controller} from '@nestjs/common';
 import {Bundle, DomainResource, ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {ConfigService} from './config.service';
 import {createBundle, createTestUser, nockDelete, nockPermissions} from './test.helper';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {RequestHeaders} from './server.decorators';
-import {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
+import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
 // @ts-ignore
 import nock = require('nock');
 // @ts-ignore

@@ -1,97 +1,7 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
-  "newProjectRoot": "",
   "projects": {
-    "server": {
-      "root": "apps/server",
-      "sourceRoot": "apps/server/src",
-      "projectType": "application",
-      "prefix": "server",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/server",
-            "main": "apps/server/src/main.ts",
-            "tsConfig": "apps/server/tsconfig.app.json",
-            "assets": [
-              "apps/server/src/assets",
-              "apps/server/src/config",
-              "apps/server/src/igs",
-              {
-                "glob": "**/*",
-                "input": "libs/tof-lib/src/assets",
-                "output": "./assets"
-              }
-            ]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/server/src/environments/environment.ts",
-                  "with": "apps/server/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "server:build"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/server/tsconfig.app.json",
-              "apps/server/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/server/jest.config.js",
-            "tsConfig": "apps/server/tsconfig.spec.json"
-          }
-        }
-      }
-    },
-    "tof-lib": {
-      "root": "libs/tof-lib",
-      "sourceRoot": "libs/tof-lib/src",
-      "projectType": "library",
-      "prefix": "trifolia-fhir",
-      "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/tof-lib/tsconfig.lib.json",
-              "libs/tof-lib/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/tof-lib/jest.config.js",
-            "tsConfig": "libs/tof-lib/tsconfig.spec.json"
-          }
-        }
-      },
-      "schematics": {}
-    },
     "client": {
       "root": "apps/client/",
       "sourceRoot": "apps/client/src",
@@ -105,7 +15,7 @@
             "outputPath": "dist/apps/client",
             "index": "apps/client/src/index.html",
             "main": "apps/client/src/main.ts",
-            "polyfills": "apps/client/src/polyfills.ts",
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "apps/client/tsconfig.app.json",
             "assets": [
               "apps/client/src/favicon.ico",
@@ -119,19 +29,23 @@
               }
             ],
             "styles": [
-              "node_modules/ng2-tree/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-              "node_modules/ngx-simplemde/src/index.less",
+              "node_modules/ngx-simplemde/index.less",
               "apps/client/src/styles.css"
             ],
             "scripts": [
-              "node_modules/popper.js/dist/umd/popper.min.js",
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "node_modules/@popperjs/core/dist/umd/popper.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.js",
               "node_modules/simplemde-antd/dist/simplemde.min.js"
             ],
-            "es5BrowserSupport": true
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -144,12 +58,10 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -158,7 +70,9 @@
                 }
               ]
             }
-          }
+          },
+          "outputs": ["{options.outputPath}"],
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -178,25 +92,16 @@
             "browserTarget": "client:build"
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/client/tsconfig.app.json",
-              "apps/client/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/client/jest.config.js",
-            "tsConfig": "apps/client/tsconfig.spec.json",
-            "setupFile": "apps/client/src/test-setup.ts"
-          }
+            "jestConfig": "apps/client/jest.config.ts",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/client/"]
         }
-      }
+      },
+      "tags": []
     },
     "client-e2e": {
       "root": "apps/client-e2e",
@@ -214,15 +119,86 @@
               "devServerTarget": "client:serve:production"
             }
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "apps/client-e2e/tsconfig.e2e.json",
-            "exclude": ["**/node_modules/**"]
-          }
         }
-      }
+      },
+      "tags": []
+    },
+    "server": {
+      "root": "apps/server",
+      "sourceRoot": "apps/server/src",
+      "projectType": "application",
+      "prefix": "server",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/webpack:webpack",
+          "options": {
+            "outputPath": "dist/apps/server",
+            "main": "apps/server/src/main.ts",
+            "tsConfig": "apps/server/tsconfig.app.json",
+            "assets": [
+              "apps/server/src/assets",
+              "apps/server/src/config",
+              "apps/server/src/igs",
+              {
+                "glob": "**/*",
+                "input": "libs/tof-lib/src/assets",
+                "output": "./assets"
+              }
+            ],
+            "buildLibsFromSource": true,
+            "target": "node",
+            "compiler": "tsc"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/server/src/environments/environment.ts",
+                  "with": "apps/server/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:node",
+          "options": {
+            "buildTarget": "server:build"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/server/jest.config.ts",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/server"]
+        }
+      },
+      "tags": []
+    },
+    "tof-lib": {
+      "root": "libs/tof-lib",
+      "sourceRoot": "libs/tof-lib/src",
+      "projectType": "library",
+      "prefix": "trifolia-fhir",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/tof-lib/jest.config.ts",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/tof-lib"]
+        }
+      },
+      "schematics": {},
+      "tags": []
     },
     "tools": {
       "root": "apps/tools",
@@ -232,12 +208,15 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@nrwl/webpack:webpack",
           "options": {
             "outputPath": "dist/apps/tools",
             "main": "apps/tools/src/app/main.ts",
             "tsConfig": "apps/tools/tsconfig.app.json",
-            "assets": ["apps/tools/src/assets"]
+            "assets": ["apps/tools/src/assets"],
+            "buildLibsFromSource": true,
+            "target": "node",
+            "compiler": "tsc"
           },
           "configurations": {
             "production": {
@@ -245,40 +224,25 @@
               "extractLicenses": true,
               "inspect": false
             }
-          }
+          },
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
-          "builder": "@nrwl/node:execute",
+          "builder": "@nrwl/node:node",
           "options": {
             "buildTarget": "tools:build"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/tools/tsconfig.app.json",
-              "apps/tools/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/tools/jest.config.js",
-            "tsConfig": "apps/tools/tsconfig.spec.json"
-          }
+            "jestConfig": "apps/tools/jest.config.ts",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/tools"]
         }
-      }
+      },
+      "tags": []
     }
-  },
-  "cli": {
-    "warnings": {
-      "typescriptMismatch": false,
-      "versionMismatch": false
-    },
-    "defaultCollection": "@nrwl/angular"
-  },
-  "schematics": {}
+  }
 }

@@ -1,6 +1,6 @@
 import {Bundle, CapabilityStatement, DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import * as rp from 'request-promise';
-import {HttpService} from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
 import {Versions} from 'fhir/fhir';
 import {getFhirR4Instance, getFhirStu3Instance} from '../../../server/src/app/helper';
 
@@ -81,7 +81,8 @@ export class BaseTools {
     });
   }
 
-  protected getAllResources(server: string, resourceType?: string): Promise<DomainResource[]> {
+
+  protected async getAllResources(server: string, resourceType?: string): Promise<DomainResource[]> {
     if (resourceType) {
       return this.getAllResourcesByType(server, [resourceType]);
     }

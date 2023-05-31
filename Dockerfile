@@ -1,9 +1,9 @@
-FROM node:10-alpine AS build-ToF
+FROM node:14-alpine AS build-ToF
 
 # Python and G++ are required for some of the node devDependencies
 # Java is required for Trifolia-on-FHIR to "Publish" implementation guides
 # (Java is used to executed the FHIR IG Publisher)
-RUN apk add --no-cache --virtual .gyp make python gcc g++ openjdk8-jre build-base fontconfig
+RUN apk add --no-cache --virtual .gyp make python3 gcc g++ openjdk8-jre build-base fontconfig
 
 RUN mkdir /build
 
@@ -23,22 +23,13 @@ COPY . .
 
 # Need --max_old_space_size to allocate more ram to node when building. Without it,
 # you get an error "Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory"
-RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build client --prod
-RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build server --prod
-RUN node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build tools --prod
+RUN node --max_old_space_size=4096 node_modules/@nrwl/cli/bin/nx build client --configuration production
+RUN node --max_old_space_size=4096 node_modules/@nrwl/cli/bin/nx build server --configuration production
+RUN node --max_old_space_size=4096 node_modules/@nrwl/cli/bin/nx build tools --configuration production
 
 RUN npm prune --production
 
-FROM node:10-alpine
-
-# Install ruby, open-jdk
-RUN apk update && apk --update --no-cache add ruby-full ruby-dev build-base openjdk11-jre
-# Install fonts that are used by ig publisher. Without these, ig publisher throws a bunch of exceptions
-RUN apk add --no-cache fontconfig ttf-dejavu
-RUN gem install sassc -- --disable-march-tune-native
-RUN gem install rouge -v 3.30.0
-RUN gem install jekyll bundler --no-document
-RUN jekyll -v
+FROM lantanagroup/tof-base:latest
 
 COPY --from=build-ToF /build/dist/. /ToF/
 COPY --from=build-ToF /build/node_modules/. /ToF/node_modules/

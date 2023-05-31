@@ -3,7 +3,6 @@ import { APP_INITIALIZER, Injectable, NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 // noinspection JSDeprecatedSymbols
-import { HttpModule } from '@angular/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ImplementationGuidesComponent } from './implementation-guides/implementation-guides.component';
 import { HomeComponent } from './home/home.component';
@@ -21,7 +20,7 @@ import { LoginComponent } from './login/login.component';
 import { StructureDefinitionsComponent } from './structure-definitions/structure-definitions.component';
 import { UserComponent } from './user/user.component';
 import { NewProfileComponent } from './new-profile/new-profile.component';
-import { CookieService } from 'angular2-cookie/core';
+import { CookieService } from 'ngx-cookie-service';
 import { HTTP_INTERCEPTORS, HttpClientModule, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ElementDefinitionPanelComponent } from './structure-definition/element-definition-panel/element-definition-panel.component';
@@ -37,7 +36,7 @@ import { ValuesetExpandComponent } from './valueset-expand/valueset-expand.compo
 import { CapabilityStatementWrapperComponent } from './capability-statement-wrapper/capability-statement-wrapper.component';
 import { STU3CapabilityStatementComponent } from './capability-statement-wrapper/stu3/capability-statement.component';
 import { R4CapabilityStatementComponent } from './capability-statement-wrapper/r4/capability-statement.component';
-import { FileDropModule } from 'ngx-file-drop';
+import { NgxFileDropModule } from 'ngx-file-drop';
 import { ConfigService } from './shared/config.service';
 import { ConceptCardComponent } from './valueset/concept-card/concept-card.component';
 import { ImplementationGuideViewComponent } from './implementation-guide-view/implementation-guide-view.component';
@@ -49,7 +48,7 @@ import { ImplementationGuideWrapperComponent } from './implementation-guide-wrap
 import { RouteTransformerDirective } from './route-transformer.directive';
 import { MappingModalComponent } from './structure-definition/element-definition-panel/mapping-modal/mapping-modal.component';
 import { ImportGithubPanelComponent } from './import/import-github-panel/import-github-panel.component';
-import { TreeModule } from 'ng2-tree';
+// import { TreeModule } from 'ng2-tree';
 import { ExportGithubPanelComponent } from './export-github-panel/export-github-panel.component';
 import { ContextPanelWrapperComponent } from './structure-definition/context-panel-wrapper/context-panel-wrapper.component';
 import { ContextPanelR4Component } from './structure-definition/context-panel-wrapper/r4/context-panel-r4.component';
@@ -65,7 +64,8 @@ import { AuthService } from './shared/auth.service';
 import { FhirService } from './shared/fhir.service';
 import { R4ResourceModalComponent } from './implementation-guide-wrapper/r4/resource-modal.component';
 import { STU3ResourceModalComponent } from './implementation-guide-wrapper/stu3/resource-modal.component';
-import { JwksValidationHandler, OAuthModule, OAuthModuleConfig, OAuthService, OAuthStorage, ValidationHandler } from 'angular-oauth2-oidc';
+import { OAuthModule, OAuthModuleConfig, OAuthService, OAuthStorage, ValidationHandler } from 'angular-oauth2-oidc';
+import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
 import { UsersComponent } from './manage/users/users.component';
 import { GroupModalComponent } from './implementation-guide-wrapper/r4/group-modal.component';
 import { OtherResourcesResultComponent } from './other-resources/other-resources-result/other-resources-result.component';
@@ -73,7 +73,7 @@ import { PackageListComponent } from './implementation-guide-wrapper/package-lis
 import { ResourceGuard } from './guards/resource.guard';
 import { ElementDefinitionConstraintComponent } from './modals/element-definition-constraint/element-definition-constraint.component';
 import { UpdateDiffComponent } from './import/update-diff/update-diff.component';
-import { DiffMatchPatchModule } from 'ng-diff-match-patch';
+import { NgxDiffModule } from 'ngx-diff';
 import { QueueComponent } from './manage/queue/queue.component';
 import { ExamplesComponent } from './examples/examples.component';
 import { BulkEditComponent } from './bulk-edit/bulk-edit.component';
@@ -90,6 +90,8 @@ import { NewProjectComponent } from './new-project/new-project.component';
 import { SearchParameterComponent } from './search-parameter/search-parameter.component';
 import { SearchParametersComponent } from './search-parameters/search-parameters.component';
 import { PublishingRequestComponent } from './implementation-guide-wrapper/publishing-request/publishing-request.component';
+import { ProjectsComponent } from './projects/projects.component';
+import { ProjectComponent } from './project/project.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -97,34 +99,50 @@ import { PublishingRequestComponent } from './implementation-guide-wrapper/publi
  */
 @Injectable()
 export class AddHeaderInterceptor implements HttpInterceptor {
-  constructor(private configService: ConfigService, private oauthService: OAuthService) {
-  }
+  constructor(
+    private configService: ConfigService,
+    private oauthService: OAuthService
+  ) { }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const fhirServer = localStorage.getItem('fhirServer');
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
     let headers = req.headers;
 
     if (req.url.startsWith('/')) {
       if (this.oauthService.getIdToken()) {
-        headers = headers.set('Authorization', 'Bearer ' + this.oauthService.getIdToken());
+        headers = headers.set(
+          'Authorization',
+          'Bearer ' + this.oauthService.getIdToken()
+        );
       }
     }
 
     if (req.url.startsWith('/api/')) {
       headers = headers.set('Cache-Control', 'no-cache');
 
-      if (fhirServer) {
-        headers = headers.set('fhirServer', fhirServer);
-      }
-
       // Pass the implementation guide (project) to the request so that it knows this request
       // is within the context of the project
-      if (this.configService.project && this.configService.project.implementationGuideId) {
-        headers = headers.set('implementationGuideId', this.configService.project.implementationGuideId);
+      if (
+        this.configService.project &&
+        this.configService.project.implementationGuideId
+      ) {
+        headers = headers.set(
+          'implementationGuideId',
+          this.configService.project.implementationGuideId
+        );
+        headers = headers.set(
+          'fhirversion',
+          this.configService.fhirVersion
+        );
       }
 
       // Remove the context if the request indicates the context should be ignored
-      if (headers.get('ignoreContext') && headers.get('implementationGuideId')) {
+      if (
+        headers.get('ignoreContext') &&
+        headers.get('implementationGuideId')
+      ) {
         headers = headers.delete('implementationGuideId');
         headers = headers.delete('ignoreContext');
       }
@@ -134,53 +152,53 @@ export class AddHeaderInterceptor implements HttpInterceptor {
   }
 }
 
-export function cookieServiceFactory() {
-  return new CookieService();
-}
-
 /**
  * The routes in the client application.
  */
 const appRoutes: Routes = [
-  {path: 'login', component: LoginComponent},
-  {path: ':fhirServer/home', component: HomeComponent},
-  {path: ':fhirServer/:implementationGuideId/home', component: HomeComponent},
-  {path: ':fhirServer/implementation-guide/new', component: NewProjectComponent},
-  {path: ':fhirServer/implementation-guide/open', component: ImplementationGuidesComponent},
-  {path: ':fhirServer/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always'},
-  {path: ':fhirServer/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
-  {path: ':fhirServer/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent},
-  {path: ':fhirServer/:implementationGuideId/structure-definition/new', component: NewProfileComponent},
-  {path: ':fhirServer/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]},
-  {path: ':fhirServer/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent},
-  { path: ':fhirServer/:implementationGuideId/capability-statement/new', component: CapabilityStatementWrapperComponent },
-  { path: ':fhirServer/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/:implementationGuideId/operation-definition', component: OperationDefinitionsComponent },
-  { path: ':fhirServer/:implementationGuideId/operation-definition/new', component: OperationDefinitionComponent },
-  { path: ':fhirServer/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/:implementationGuideId/value-set', component: ValuesetsComponent },
-  { path: ':fhirServer/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/:implementationGuideId/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/:implementationGuideId/code-system', component: CodesystemsComponent },
-  { path: ':fhirServer/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/:implementationGuideId/questionnaire', component: QuestionnairesComponent },
-  { path: ':fhirServer/:implementationGuideId/questionnaire/new', component: QuestionnaireComponent },
-  { path: ':fhirServer/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/:implementationGuideId/publish', component: PublishComponent },
-  { path: ':fhirServer/:implementationGuideId/export', component: ExportComponent },
-  { path: ':fhirServer/:implementationGuideId/import', component: ImportComponent },
-  { path: ':fhirServer/:implementationGuideId/other-resources', component: OtherResourcesComponent },
-  { path: ':fhirServer/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent },
-  { path: ':fhirServer/:implementationGuideId/examples', component: ExamplesComponent },
-  { path: ':fhirServer/:implementationGuideId/bulk-edit', component: BulkEditComponent },
-  { path: ':fhirServer/:implementationGuideId/search-parameter', component: SearchParametersComponent },
-  { path: ':fhirServer/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
-  { path: ':fhirServer/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },
-  { path: ':fhirServer/import', component: ImportComponent },
-  { path: ':fhirServer/users/me', component: UserComponent },
-  { path: ':fhirServer/users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
-  { path: ':fhirServer/manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
+  { path: 'login', component: LoginComponent },
+  { path: 'projects', component: ProjectsComponent },
+  { path: 'projects/new', component: NewProjectComponent },
+  { path: 'projects/home', component: HomeComponent },
+  { path: 'projects/:id', component: ProjectComponent },
+  { path: 'projects/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard] },
+  { path: 'projects/:implementationGuideId/home', component: HomeComponent },
+  { path: 'projects/implementation-guide/open', component: ImplementationGuidesComponent },
+  { path: 'projects/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/code-system', component: CodesystemsComponent },
+  { path: 'projects/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/search-parameter', component: SearchParametersComponent },
+  { path: 'projects/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
+  { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },
+
+  { path: 'projects/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent },
+  { path: 'projects/:implementationGuideId/structure-definition/new', component: NewProfileComponent },
+  { path: 'projects/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard] },
+  { path: 'projects/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent },
+  { path: 'projects/:implementationGuideId/capability-statement/new', component: CapabilityStatementWrapperComponent },
+  { path: 'projects/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/operation-definition', component: OperationDefinitionsComponent },
+  { path: 'projects/:implementationGuideId/operation-definition/new', component: OperationDefinitionComponent },
+  { path: 'projects/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/value-set', component: ValuesetsComponent },
+  { path: 'projects/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always' },
+
+  { path: 'projects/:implementationGuideId/questionnaire', component: QuestionnairesComponent },
+  { path: 'projects/:implementationGuideId/questionnaire/new', component: QuestionnaireComponent },
+  { path: 'projects/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/publish', component: PublishComponent },
+  { path: 'projects/:implementationGuideId/export', component: ExportComponent },
+  { path: 'projects/:implementationGuideId/import', component: ImportComponent },
+  { path: 'projects/:implementationGuideId/other-resources', component: OtherResourcesComponent },
+  { path: 'projects/:implementationGuideId/other-resources/:type/:id', component: OtherResourcesResultComponent },
+  { path: 'projects/:implementationGuideId/examples', component: ExamplesComponent },
+  { path: 'projects/:implementationGuideId/bulk-edit', component: BulkEditComponent },
+
+  { path: 'users/me', component: UserComponent },
+  { path: 'users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
+  { path: 'manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
+  { path: 'manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
 ];
 
 /**
@@ -190,15 +208,16 @@ const appRoutes: Routes = [
  * 3. Loads assets for the remembered version of the FHIR server
  * 4. Gets the profile o f the currently logged-in user, if there is one
  */
-export function init(configService: ConfigService, authService: AuthService, fhirService: FhirService) {
+export function init(
+  configService: ConfigService,
+  authService: AuthService,
+  fhirService: FhirService
+) {
   const getConfig = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       // Get the initial config for the server and get the FHIR server config
-      configService.getConfig(true)
-        .then(() => {
-          // Notify components and the FHIR server has changed (or in this case, has been loaded)
-          return configService.changeFhirServer();
-        })
+      configService
+        .getConfig(true)
         .then(() => {
           // Now that the config has been loaded, init the auth module
           authService.init();
@@ -211,8 +230,8 @@ export function init(configService: ConfigService, authService: AuthService, fhi
           // The FHIR server should now be loaded, get the profile for the authenticated user (if any)
           return authService.getProfile();
         })
-        .then(() => resolve())              // Done
-        .catch((err) => reject(err));       // Error
+        .then(() => resolve()) // Done
+        .catch((err) => reject(err)); // Error
     });
   };
 
@@ -230,81 +249,124 @@ const authModuleConfig: OAuthModuleConfig = {
 
 // noinspection JSDeprecatedSymbols
 @NgModule({
-  entryComponents: [
-    STU3TypeModalComponent, R4TypeModalComponent, STU3PageComponentModalComponent, R4PageComponentModalComponent,
-    ParameterModalComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
-    QuestionnaireItemModalComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent,
-    MappingModalComponent, ContextPanelStu3Component, ContextPanelR4Component, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, STU3PageComponent, R4PageComponent,
-    MergeUserModalComponent
-  ],
   declarations: [
-    AppComponent, ImplementationGuidesComponent,
-    HomeComponent, STU3ImplementationGuideComponent, R4ImplementationGuideComponent, ExportComponent,
-    ImportComponent, StructureDefinitionComponent, ValuesetsComponent, ValuesetComponent, CodesystemsComponent,
-    CodesystemComponent, LoginComponent, StructureDefinitionsComponent, UsersComponent, UserComponent,
-    NewProfileComponent, ElementDefinitionPanelComponent, STU3TypeModalComponent, R4TypeModalComponent,
-    STU3PageComponentModalComponent, R4PageComponentModalComponent, CapabilityStatementsComponent,
-    CapabilityStatementWrapperComponent, STU3CapabilityStatementComponent, R4CapabilityStatementComponent,
-    OperationDefinitionsComponent, OperationDefinitionComponent, ParameterModalComponent, ValuesetExpandComponent,
-    ConceptCardComponent, ImplementationGuideViewComponent,
-    OtherResourcesComponent, QuestionnairesComponent, QuestionnaireComponent, QuestionnaireItemModalComponent,
-    ImplementationGuideWrapperComponent, RouteTransformerDirective,
-    MappingModalComponent, ImportGithubPanelComponent, ExportGithubPanelComponent, ContextPanelWrapperComponent, ContextPanelR4Component,
-    ContextPanelStu3Component, PublishComponent, IncludePanelComponent, BindingPanelComponent, R4ResourceModalComponent, STU3ResourceModalComponent,
-    GroupModalComponent, OtherResourcesResultComponent, PackageListComponent, ElementDefinitionConstraintComponent, UpdateDiffComponent, QueueComponent,
-    ExamplesComponent, BulkEditComponent, PageWrapperComponent, R4PageComponent, STU3PageComponent, IgnoreWarningsComponent, JiraSpecComponent, CustomMenuComponent, SecurityServicesComponent, PublishingTemplateComponent, MergeUserModalComponent, NewProjectComponent, SearchParametersComponent, SearchParameterComponent, PublishingRequestComponent
+    AppComponent,
+    ImplementationGuidesComponent,
+    HomeComponent,
+    STU3ImplementationGuideComponent,
+    R4ImplementationGuideComponent,
+    ExportComponent,
+    ImportComponent,
+    StructureDefinitionComponent,
+    ValuesetsComponent,
+    ValuesetComponent,
+    CodesystemsComponent,
+    CodesystemComponent,
+    LoginComponent,
+    StructureDefinitionsComponent,
+    UsersComponent,
+    UserComponent,
+    NewProfileComponent,
+    ElementDefinitionPanelComponent,
+    STU3TypeModalComponent,
+    R4TypeModalComponent,
+    STU3PageComponentModalComponent,
+    R4PageComponentModalComponent,
+    CapabilityStatementsComponent,
+    CapabilityStatementWrapperComponent,
+    STU3CapabilityStatementComponent,
+    R4CapabilityStatementComponent,
+    OperationDefinitionsComponent,
+    OperationDefinitionComponent,
+    ParameterModalComponent,
+    ValuesetExpandComponent,
+    ConceptCardComponent,
+    ImplementationGuideViewComponent,
+    OtherResourcesComponent,
+    QuestionnairesComponent,
+    QuestionnaireComponent,
+    QuestionnaireItemModalComponent,
+    ImplementationGuideWrapperComponent,
+    RouteTransformerDirective,
+    MappingModalComponent,
+    ImportGithubPanelComponent,
+    ExportGithubPanelComponent,
+    ContextPanelWrapperComponent,
+    ContextPanelR4Component,
+    ContextPanelStu3Component,
+    PublishComponent,
+    IncludePanelComponent,
+    BindingPanelComponent,
+    R4ResourceModalComponent,
+    STU3ResourceModalComponent,
+    GroupModalComponent,
+    OtherResourcesResultComponent,
+    PackageListComponent,
+    ElementDefinitionConstraintComponent,
+    UpdateDiffComponent,
+    QueueComponent,
+    ExamplesComponent,
+    BulkEditComponent,
+    PageWrapperComponent,
+    R4PageComponent,
+    STU3PageComponent,
+    IgnoreWarningsComponent,
+    JiraSpecComponent,
+    CustomMenuComponent,
+    SecurityServicesComponent,
+    PublishingTemplateComponent,
+    MergeUserModalComponent,
+    NewProjectComponent,
+    SearchParametersComponent,
+    SearchParameterComponent,
+    PublishingRequestComponent,
+    ProjectsComponent,
+    ProjectComponent,
   ],
   imports: [
-    RouterModule.forRoot(
-      appRoutes, {
-        enableTracing: false,           // <-- debugging purposes only
-        onSameUrlNavigation: 'reload'
-      }
-    ),
+    RouterModule.forRoot(appRoutes, {
+      enableTracing: false,
+      onSameUrlNavigation: 'reload',
+    }),
     BrowserModule,
     FormsModule,
     HttpClientModule,
     OAuthModule.forRoot(authModuleConfig),
-    HttpModule,
     NgbModule,
-    FileDropModule,
-    TreeModule,
+    NgxFileDropModule,
+    // TreeModule,
     SharedModule,
     SharedUiModule,
     FhirEditModule,
     ModalsModule,
-    DiffMatchPatchModule
+    NgxDiffModule,
   ],
   providers: [
+    CookieService,
     {
       provide: APP_INITIALIZER,
       useFactory: init,
       deps: [ConfigService, AuthService, FhirService],
-      multi: true
+      multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AddHeaderInterceptor,
-      multi: true
-    }, {
-      provide: CookieService,
-      useFactory: cookieServiceFactory
+      multi: true,
     },
     {
       provide: OAuthModuleConfig,
-      useValue: authModuleConfig
+      useValue: authModuleConfig,
     },
     {
       provide: ValidationHandler,
-      useClass: JwksValidationHandler
+      useClass: JwksValidationHandler,
     },
     {
       provide: OAuthStorage,
-      useValue: localStorage
-    }
+      useValue: localStorage,
+    },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule {
-}
+export class AppModule { }

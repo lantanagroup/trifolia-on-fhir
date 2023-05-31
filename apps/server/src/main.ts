@@ -1,9 +1,8 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app/app.module';
 import {Response} from 'express';
-import {ITofRequest} from './app/models/tof-request';
+import type {ITofRequest} from './app/models/tof-request';
 import socketIo from 'socket.io';
-import {BadRequestException} from '@nestjs/common';
 import {ISocketConnection} from './app/models/socket-connection';
 import {NotFoundExceptionFilter} from './not-found-exception-filter';
 import {TofLogger} from './app/tof-logger';
@@ -12,7 +11,7 @@ import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as fs from 'fs-extra';
-import * as modulePackage from '../../../package.json';
+import modulePackage from '../../../package.json';
 import {ConfigService} from './app/config.service';
 import {NestExpressApplication} from '@nestjs/platform-express';
 import hpropagate from 'hpropagate';
@@ -25,30 +24,10 @@ const connections: ISocketConnection[] = [];
 let io;
 
 const loadTofRequest = (req: ITofRequest, res: Response, next) => {
-  if (!config.fhir.servers || !config.fhir.servers.length) {
-    throw new Error('This server is not configured with any FHIR servers');
-  }
-
-  req.fhirServerId = req.headers['fhirserver'] || config.fhir.servers[0].id;
-  req.fhirServerBase = config.fhir.servers[0].uri;
-  req.fhirServerVersion = config.fhir.servers[0].version;
+  req.fhirServerVersion = req.headers['fhirversion'] || 'r4';
   req.io = io;
   req.ioConnections = connections;
 
-  if (!config.fhir.servers) {
-    throw new Error('FHIR servers have not been configured on the server');
-  }
-
-  if (req.fhirServerId && req.originalUrl !== '/api/config') {
-    const foundFhirServer = config.fhir.servers.find((server) => server.id === req.fhirServerId);
-
-    if (!foundFhirServer) {
-      throw new BadRequestException('The ID of the fhir server specified by the "fhirserver" header is not valid.');
-    }
-
-    req.fhirServerBase = foundFhirServer.uri;
-    req.fhirServerVersion = foundFhirServer.version;
-  }
 
   switch (req.fhirServerVersion) {
     case 'stu3':
@@ -57,15 +36,15 @@ const loadTofRequest = (req: ITofRequest, res: Response, next) => {
     case 'r4':
       req.fhir = FhirInstances.fhirR4;
       break;
+    case 'r5':
+      req.fhir = FhirInstances.fhirR5;
+      break;
     default:
       throw new Error(`Unsupported FHIR version ${req.fhirServerVersion}`);
   }
 
-  if (req.fhirServerBase && !req.fhirServerBase.endsWith('/')) {
-    req.fhirServerBase += '/';
-  }
-
   next();
+
 };
 
 const parseFhirBody = (req: ITofRequest, res: Response, next) => {
@@ -187,11 +166,13 @@ async function bootstrap() {
   let app: NestExpressApplication;
 
   try {
+    console.log('creating application');
     app = await NestFactory.create<NestExpressApplication>(AppModule, {
       httpsOptions,
-      logger: false
+      //logger: false
     });
   } catch (ex) {
+    console.log(ex);
     logger.error(ex);
   }
 

@@ -28,6 +28,7 @@
   <tr>
     <th>ID</th>
     <th>Name</th>
+    <th>Url</th>
     <th>Base</th>
     <th>Type</th>
     <th class="actions-column-3">
@@ -43,9 +44,10 @@
   <tbody *ngIf="!configService.showingIntroduction">
   <tr *ngFor="let sp of searchParameter">
     <td>{{sp.id}}</td>
-    <td>{{sp.name}}</td>
-    <td>{{sp.base}}</td>
-    <td>{{sp.type}}</td>
+    <td>{{sp.resource.name}}</td>
+    <td>{{sp.resource.url}}</td>
+    <td>{{sp.resource.base}}</td>
+    <td>{{sp.resource.type}}</td>
     <td>
       <div class="btn-group pull-right">
         <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/search-parameter/{{sp.id}}" title="Edit this resource">
@@ -54,7 +56,7 @@
         <button type="button" class="btn btn-secondary" (click)="remove(sp)" [disabled]="!canEdit(sp)" title="Remove this resource">
           <i class="fas fa-trash-alt"></i>
         </button>
-        <button type="button" class="btn btn-secondary" (click)="changeId(sp)" [disabled]="!canEdit(sp)" title="Change this resource's ID">
+        <button type="button" class="btn btn-secondary" (click)="changeId(sp.resource)" [disabled]="!canEdit(sp)" title="Change this resource's ID">
           <i class="fa fa-id-badge"></i>
         </button>
       </div>

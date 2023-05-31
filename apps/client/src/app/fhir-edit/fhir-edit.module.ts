@@ -93,35 +93,17 @@ const components = [
 ];
 
 @NgModule({
-  entryComponents: [
-    FhirAddressModalComponent,
-    FhirAttachmentModalComponent,
-    FhirCapabilityStatementResourceModalComponent,
-    FhirCodeableConceptModalComponent,
-    FhirCodesystemConceptModalComponent,
-    FhirCodingModalComponent,
-    FhirContactModalComponent,
-    FhirContactPointModalComponent,
-    FhirHumanNameModalComponent,
-    FhirIdentifierModalComponent,
-    FhirMarkdownComponent,
-    FhirMessagingEventModalComponent,
-    FhirRangeModalComponent,
-    FhirRatioModalComponent,
-    FhirReferenceModalComponent,
-    FhirValueSetIncludeConceptModalComponent
-  ],
-  declarations: components,
-  exports: components,
-  imports: [
-    FormsModule,
-    CommonModule,
-    NgbModule,
-    SharedModule,
-    SharedUiModule,
-    AngularEditorModule,
-    SimplemdeModule.forRoot({ })
-  ]
+    declarations: components,
+    exports: components,
+    imports: [
+        FormsModule,
+        CommonModule,
+        NgbModule,
+        SharedModule,
+        SharedUiModule,
+        AngularEditorModule,
+        SimplemdeModule.forRoot({})
+    ]
 })
 export class FhirEditModule {
 }

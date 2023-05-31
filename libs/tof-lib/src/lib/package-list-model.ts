@@ -1,6 +1,6 @@
 import {DocumentReference as R4DocumentReference} from './r4/fhir';
 import {DocumentReference as STU3DocumentReference} from './stu3/fhir';
-import {IImplementationGuide} from './fhirInterfaces';
+import type {IImplementationGuide} from './fhirInterfaces';
 import {Globals} from './globals';
 import {Versions} from 'fhir/fhir';
 
