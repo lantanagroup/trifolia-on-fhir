@@ -185,7 +185,7 @@
 
             <div class="main-content">
                 
-<p class="rvps2"><span class="rvts18">Release 3.0</span></p>
+<p class="rvps2"><span class="rvts19">Release 3.0</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Proprietary persistence layer</span></span></h3>
 <p class="rvps2"><span class="rvts6">We have transitioned away from using one or more FHIR servers to support the persistence of data, and are now using a Mongo (document-based) database. The Mongo database consists of multiple collections (similar to tables) that represent the data persisted in ToF. A migration tool has been created to assist existing installations in migrating from FHIR servers to the Mongo database.</span></p>
 <p class="rvps2"><span class="rvts6">Making this change will allow ToF to:</span></p>
@@ -196,9 +196,9 @@
 </ul>
 <p class="rvps2"><span class="rvts6">This transition minimally impacts the user interface. In some cases, the user interface is simplified because there is no need to distinguish between versions of FHIR and the FHIR server that supports thee version of the IG.</span></p>
 <p class="rvps2"><span class="rvts6">One notable difference is that there is now an official concept of a "Project" that is tightly coupled with an ImplementationGuide. Now, when you open a project, it will show you metadata about the project that is not contained within the ImplementationGuide resource, and allows you to edit the ImplementationGuide resource separately.</span></p>
-<p class="rvps2"><span class="rvts6">We are </span><span class="rvts19">considering </span><span class="rvts6">allowing a single "project" to have multiple ImplementationGuide resources, share permissions, and other common functionality.</span></p>
+<p class="rvps2"><span class="rvts6">We are </span><span class="rvts20">considering </span><span class="rvts6">allowing a single "project" to have multiple ImplementationGuide resources, share permissions, and other common functionality.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">CDA Example Import Support</span></span></h3>
-<p class="rvps2"><span class="rvts6">ToF's functionality for importing has been enhanced to support the import of CDA examples. When an XML file is being imported into a project that has a dependency on the CDA implementation guide, it automatically detects if the XML file is </span><span class="rvts19">not</span><span class="rvts6"> a valid FHIR resource, and treats it as an arbitrary example. This supports CDA implementation guides having examples such as "Component" or "ClinicalDocument" that are not valid FHIR resources.</span></p>
+<p class="rvps2"><span class="rvts6">ToF's functionality for importing has been enhanced to support the import of CDA examples. When an XML file is being imported into a project that has a dependency on the CDA implementation guide, it automatically detects if the XML file is </span><span class="rvts20">not</span><span class="rvts6"> a valid FHIR resource, and treats it as an arbitrary example. This supports CDA implementation guides having examples such as "Component" or "ClinicalDocument" that are not valid FHIR resources.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Profile editing improvements</span></span></h3>
 <p class="rvps2"><span class="rvts6">In parallel to the very significant foundational changes for persistence, we are focusing on improving profile editing, specifically around the "Elements" tab. A critical bug has been fixed related to the sorting of elements within the profile's differential list. We will continue to prioritize profile editing enhancements and bug fixes in future sprints, as we see this as crucial functionality for the product as a whole.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">GitHub functionality removed (for now)</span></span></h3>
