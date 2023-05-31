@@ -130,6 +130,8 @@ export class MigrateDb extends BaseTools {
   private async getAndGroup(): Promise<any> {
     this.log('Parsing input data');
 
+    const testColl = await this.db.collection('test');
+    this.log(`Mongo collection: ${testColl.collectionName}`);
     await this.connectMysql();
 
     this.log(`Retrieving resources from the database`);
@@ -742,7 +744,7 @@ export class MigrateDb extends BaseTools {
       let newIg = this.implementationGuides[i];
       let newProject = this.projects[i];
 
-      // Add/update IG conformance      
+      // Add/update IG conformance
       let igResult = await this.db.collection('conformance').findOneAndUpdate(
         { migratedFrom: newIg.migratedFrom, 'resource.resourceType': 'ImplementationGuide', 'resource.id': newIg.resource.id },
         { $set: newIg }, { upsert: true, returnDocument: ReturnDocument.AFTER }
