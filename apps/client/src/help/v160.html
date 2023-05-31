@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -200,7 +201,7 @@
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Publication Queue</span></span></h3>
 <p class="rvps2"><span class="rvts6">As ToF gets more popular, more users publish more implementation guides simultaneously. These resource-intensive "Publish" requests can tax servers. We implemented a queue, which allows administrators to configure the maximum number of publication requests that can run in parallel. For example, if an installation is configured to run two publication requests in parallel, then each additional request will enter the queue.&nbsp;</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Development Log</span></span></h3>
-<h4 class="rvps32"><span class="rvts0"><span class="rvts98">New Feature</span></span></h4>
+<h4 class="rvps32"><span class="rvts0"><span class="rvts99">New Feature</span></span></h4>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-225" target="_blank">TRIFFHIR-225</a><span class="rvts6">] - Search elements for content when editing a structure definition</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-228" target="_blank">TRIFFHIR-228</a><span class="rvts6">] - Search by "ID" on the Browse Profiles screen.</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-257" target="_blank">TRIFFHIR-257</a><span class="rvts6">] - Queue for implementation guide publishing</span></p>
@@ -209,14 +210,14 @@
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-294" target="_blank">TRIFFHIR-294</a><span class="rvts6">] - Add page title to previous/next links in the generated markdown pages</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-295" target="_blank">TRIFFHIR-295</a><span class="rvts6">] - Copy permissions from IG to child resources</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-296" target="_blank">TRIFFHIR-296</a><span class="rvts6">] - Support group resources in implementation guide</span></p>
-<h4 class="rvps32"><span class="rvts0"><span class="rvts98">Defect</span></span></h4>
+<h4 class="rvps32"><span class="rvts0"><span class="rvts99">Defect</span></span></h4>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-220" target="_blank">TRIFFHIR-220</a><span class="rvts6">] - Wrong default FHIR version</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-246" target="_blank">TRIFFHIR-246</a><span class="rvts6">] - ServiceRequest vs. ServiceDefinition for CapabilityStatement &gt; REST &gt; Resource &gt; Type</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-256" target="_blank">TRIFFHIR-256</a><span class="rvts6">] - Media images should not be included in ImplementationGuide resource when exported</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-258" target="_blank">TRIFFHIR-258</a><span class="rvts6">] - Adding a new slice to an already sliced element removes slice's discriminator</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-291" target="_blank">TRIFFHIR-291</a><span class="rvts6">] - ToF not preserving XHTML lang tag</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-305" target="_blank">TRIFFHIR-305</a><span class="rvts6">] - Fix slow responding text fields</span></p>
-<h4 class="rvps32"><span class="rvts0"><span class="rvts98">Improvement</span></span></h4>
+<h4 class="rvps32"><span class="rvts0"><span class="rvts99">Improvement</span></span></h4>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-195" target="_blank">TRIFFHIR-195</a><span class="rvts6">] - Align profile editing grid with FHIR specification's layout</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-227" target="_blank">TRIFFHIR-227</a><span class="rvts6">] - Change how user adds resources to an IG from the "Edit IG" screen</span></p>
 <p class="rvps2"><span class="rvts6">[</span><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-248" target="_blank">TRIFFHIR-248</a><span class="rvts6">] - Update references when changing the ID of a resource</span></p>
@@ -224,7 +225,7 @@
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -259,7 +260,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -276,7 +277,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -184,17 +185,17 @@
 
             <div class="main-content">
                 
-<h2 class="rvps4"><span class="rvts0"><span class="rvts33">Users</span></span></h2>
+<h2 class="rvps4"><span class="rvts0"><span class="rvts30">Users</span></span></h2>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside;">
- <li class="rvps13"><span class="rvts32">On the top right side of the screen, click the Login button. &nbsp;If you do not have an account, you may register via this screen. &nbsp;Trifolia-on-FHIR (ToF) re-directs users to the identity provider to either register or login.&nbsp;</span></li>
+ <li class="rvps11"><span class="rvts29">On the top right side of the screen, click the Login button. &nbsp;If you do not have an account, you may register via this screen. &nbsp;Trifolia-on-FHIR (ToF) re-directs users to the identity provider to either register or login.&nbsp;</span></li>
 </ol>
-<p class="rvps14"><span class="rvts34">Note:</span><span class="rvts32"> After you have registered and logged-in with the identity provider, your browser will redirect to the ToF homepage.</span></p>
+<p class="rvps12"><span class="rvts31">Note:</span><span class="rvts29"> After you have registered and logged-in with the identity provider, your browser will redirect to the ToF homepage.</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside;">
- <li value="2" class="rvps13"><span class="rvts32">If this is your first time logging-in to Trifolia-on-FHIR (ToF), you must create a profile (represented by a FHIR </span><a class="rvts11" href="http://www.hl7.org/fhir/practitioner.html" target="_blank">Practitioner</a><span class="rvts32"> resource in ToF's FHIR server). If you configure ToF with multiple FHIR servers, you may need to create a new profile for each FHIR server.</span></li>
+ <li value="2" class="rvps11"><span class="rvts29">If this is your first time logging-in to Trifolia-on-FHIR (ToF), you must create a profile (represented by a FHIR </span><a class="rvts11" href="http://www.hl7.org/fhir/practitioner.html" target="_blank">Practitioner</a><span class="rvts29"> resource in ToF's FHIR server). If you configure ToF with multiple FHIR servers, you may need to create a new profile for each FHIR server.</span></li>
 </ol>
-<p class="rvps14"><span class="rvts34">Note:</span><span class="rvts32"> ToF identifies you as the author of resources and associates your profile with audit records when changing resources.&nbsp;</span></p>
+<p class="rvps12"><span class="rvts31">Note:</span><span class="rvts29"> ToF identifies you as the author of resources and associates your profile with audit records when changing resources.&nbsp;</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside;">
- <li value="3" class="rvps13"><span class="rvts6">Click your name at the top right side of the screen to edit your profile for the selected FHIR server.</span></li>
+ <li value="3" class="rvps11"><span class="rvts6">Click your name at the top right side of the screen to edit your profile for the selected FHIR server.</span></li>
 </ol>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Groups</span></span></h2>
 <p class="rvps2"><span class="rvts6">Create a group to share resources and grant permissions to members. All users can create/manage their groups. A group may only have one manager. When you create a group, you are automatically added as a member to the group. You cannot remove yourself as a member from the group.</span></p>
@@ -205,13 +206,13 @@
  <li class="rvps2"><span class="rvts6">Under the Managing Groups section, click the plus icon to create a group.&nbsp;</span></li>
  <li class="rvps2"><span class="rvts6">Enter a name for the group.</span></li>
  <li class="rvps2"><span class="rvts6">Search for group members by name or email. Click the plus to add them to the group.</span></li>
- <li class="rvps2"><span class="rvts6">Click </span><span class="rvts23">Save</span><span class="rvts6">.</span></li>
+ <li class="rvps2"><span class="rvts6">Click </span><span class="rvts21">Save</span><span class="rvts6">.</span></li>
 </ol>
-<p class="rvps2"><span class="rvts23">Note: </span><span class="rvts6">Changes to the "Groups" tab are persisted immediately. The "Save" button only applies to editing information for your profile.</span><span class="rvts6"></span></p>
+<p class="rvps2"><span class="rvts21">Note: </span><span class="rvts6">Changes to the "Groups" tab are persisted immediately. The "Save" button only applies to editing information for your profile.</span><span class="rvts6"></span></p>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -246,7 +247,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -263,7 +264,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

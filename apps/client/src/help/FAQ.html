@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -173,7 +174,7 @@
                         
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group" role="group"><a class="btn btn-default" href="Glossary.html" title="Glossary" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="v221.html" title="v2.2.1" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group" role="group"><a class="btn btn-default" href="Glossary.html" title="Glossary" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="v240.html" title="v2.4.0" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
@@ -184,43 +185,43 @@
 
             <div class="main-content">
                 
-<p class="rvps2"><span class="rvts76">The published implementation guide shows a lot of messages about link's not having a href value</span></p>
-<p class="rvps2"><span class="rvts77">The official HL7 templates use the first contact in the implementation guide as the contact for the Copyright information in the footer. Ensure you have at least one contact in your implementation guide to stop seeing these errors.</span></p>
-<p class="rvps2"><span class="rvts76">My implementation guide has pages, but the table of contents is empty?</span></p>
-<p class="rvps25"><span class="rvts54">On the </span><span class="rvts55">Table of Contents</span><span class="rvts54"> page, in the </span><span class="rvts55">Auto Generate Table of Contents?</span><span class="rvts54"> field, select </span><span class="rvts55">Yes</span><span class="rvts54">.</span></p>
-<p class="rvps25"><span class="rvts76">Why is the Home Screen stuck on Loading?</span></p>
-<p class="rvps25"><span class="rvts62">Based on your web browser storage settings, Trifolia-on-FHIR (ToF) may “hang" or "stall" at the Loading page with the orange circle. Clearing browser history typically resolves this issue.&nbsp;</span></p>
-<p class="rvps25"><span class="rvts62">Follow these steps based on the web browser you use to access ToF; if clearing your browser history does not resolve the issue, submit a ticket and specify the browser you use.&nbsp;</span></p>
-<p class="rvps25"><span class="rvts61">Chrome:</span></p>
+<p class="rvps2"><span class="rvts75">The published implementation guide shows a lot of messages about link's not having a href value</span></p>
+<p class="rvps2"><span class="rvts76">The official HL7 templates use the first contact in the implementation guide as the contact for the Copyright information in the footer. Ensure you have at least one contact in your implementation guide to stop seeing these errors.</span></p>
+<p class="rvps2"><span class="rvts75">My implementation guide has pages, but the table of contents is empty?</span></p>
+<p class="rvps23"><span class="rvts53">On the </span><span class="rvts54">Table of Contents</span><span class="rvts53"> page, in the </span><span class="rvts54">Auto Generate Table of Contents?</span><span class="rvts53"> field, select </span><span class="rvts54">Yes</span><span class="rvts53">.</span></p>
+<p class="rvps23"><span class="rvts75">Why is the Home Screen stuck on Loading?</span></p>
+<p class="rvps23"><span class="rvts61">Based on your web browser storage settings, Trifolia-on-FHIR (ToF) may “hang" or "stall" at the Loading page with the orange circle. Clearing browser history typically resolves this issue.&nbsp;</span></p>
+<p class="rvps23"><span class="rvts61">Follow these steps based on the web browser you use to access ToF; if clearing your browser history does not resolve the issue, submit a ticket and specify the browser you use.&nbsp;</span></p>
+<p class="rvps23"><span class="rvts60">Chrome:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside;">
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Select </span><span class="rvts59">Options</span><span class="rvts58">, the three vertical dots to right of the URL address bar within Chrome, and select </span><span class="rvts59">History</span><span class="rvts58">.</span></li>
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">From the menu, select </span><span class="rvts59">History</span><span class="rvts58">.</span></li>
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">On the </span><span class="rvts59">History</span><span class="rvts58"> page, from the left pane, select </span><span class="rvts59">Clear browsing data</span><span class="rvts58">.</span></li>
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Refresh the page.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">Select </span><span class="rvts58">Options</span><span class="rvts57">, the three vertical dots to right of the URL address bar within Chrome, and select </span><span class="rvts58">History</span><span class="rvts57">.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">From the menu, select </span><span class="rvts58">History</span><span class="rvts57">.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">On the </span><span class="rvts58">History</span><span class="rvts57"> page, from the left pane, select </span><span class="rvts58">Clear browsing data</span><span class="rvts57">.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">Refresh the page.</span></li>
 </ol>
-<p class="rvps25"><span class="rvts61">Internet Explorer:</span></p>
+<p class="rvps23"><span class="rvts60">Internet Explorer:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside;">
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Select the gear icon (to the right of the URL address bar within IE) and select</span><span class="rvts59"> Internet Options</span><span class="rvts58">.</span></li>
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">On the </span><span class="rvts59">General</span><span class="rvts58"> tab, under </span><span class="rvts59">Browsing History</span><span class="rvts58">, click </span><span class="rvts59">Delete</span><span class="rvts58">.</span></li>
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Click </span><span class="rvts59">Apply</span><span class="rvts58">.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">Select the gear icon (to the right of the URL address bar within IE) and select</span><span class="rvts58"> Internet Options</span><span class="rvts57">.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">On the </span><span class="rvts58">General</span><span class="rvts57"> tab, under </span><span class="rvts58">Browsing History</span><span class="rvts57">, click </span><span class="rvts58">Delete</span><span class="rvts57">.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">Click </span><span class="rvts58">Apply</span><span class="rvts57">.</span></li>
 </ol>
-<p class="rvps25"><span class="rvts61">Safari:</span></p>
+<p class="rvps23"><span class="rvts60">Safari:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside;">
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Select </span><span class="rvts59">Develop</span><span class="rvts58"> and then select </span><span class="rvts59">Show JavaScript Console</span><span class="rvts58"> (or Option-Command-C).</span></li>
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Select the </span><span class="rvts59">Storage</span><span class="rvts58"> tab.</span></li>
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Highlight Local Storage - trifolia-fhir.lantanagroup.com and Application Cache.</span></li>
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Select each of the key values, and click </span><span class="rvts59">Delete</span><span class="rvts58"> to remove each of them.</span></li>
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">After deleting each key/value pair, refresh the page.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">Select </span><span class="rvts58">Develop</span><span class="rvts57"> and then select </span><span class="rvts58">Show JavaScript Console</span><span class="rvts57"> (or Option-Command-C).</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">Select the </span><span class="rvts58">Storage</span><span class="rvts57"> tab.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">Highlight Local Storage - trifolia-fhir.lantanagroup.com and Application Cache.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">Select each of the key values, and click </span><span class="rvts58">Delete</span><span class="rvts57"> to remove each of them.</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">After deleting each key/value pair, refresh the page.</span></li>
 </ol>
-<p class="rvps25"><span class="rvts61">Microsoft Edge:</span></p>
+<p class="rvps23"><span class="rvts60">Microsoft Edge:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside;">
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Select the three horizontal dots (to the right of the URL address bar within Edge).</span></li>
- <li style="margin-left: 0px" class="rvps28"><span class="rvts58">Select </span><span class="rvts59">History</span><span class="rvts58"> and select </span><span class="rvts59">Clear Browsing Data</span><span class="rvts58"> (Ctrl + Shift + Delete).</span><span class="rvts27"></span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">Select the three horizontal dots (to the right of the URL address bar within Edge).</span></li>
+ <li style="margin-left: 0px" class="rvps26"><span class="rvts57">Select </span><span class="rvts58">History</span><span class="rvts57"> and select </span><span class="rvts58">Clear Browsing Data</span><span class="rvts57"> (Ctrl + Shift + Delete).</span><span class="rvts25"></span></li>
 </ol>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -255,7 +256,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -272,7 +273,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

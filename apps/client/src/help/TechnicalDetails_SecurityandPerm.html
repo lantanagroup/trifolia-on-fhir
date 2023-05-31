@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -190,21 +191,21 @@
  <li class="rvps2"><span class="rvts6">Group - One or more users (Practitioners) represented as a single group. Use a group to represent a team of users. To create a group, see </span><span class="rvts11">Accounts and Login</span><span class="rvts6">.</span></li>
  <li class="rvps2"><span class="rvts6">User (Practitioner) - A single person with access to the installation. Trifolia-on-FHIR (ToF) requires every user to create a Practitioner that represents their user login to open ToF to a specific FHIR server for the first time.</span></li>
 </ul>
-<p class="rvps2"><span class="rvts25">Two Levels of Permissions</span><span class="rvts6">:</span></p>
+<p class="rvps2"><span class="rvts23">Two Levels of Permissions</span><span class="rvts6">:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
  <li class="rvps2"><span class="rvts6">Read - Allows the user to search/view the resource</span></li>
  <li class="rvps2"><span class="rvts6">Write - Allows the user to update/delete the resource</span></li>
 </ul>
 <p class="rvps2"><span class="rvts6">WIth these concepts combined, the resource may have several security codes. For example:</span></p>
-<p class="rvps12"><span class="rvts30">{</span><br/><span class="rvts30">&nbsp; resourceType: "ImplementationGuide",</span><br/><span class="rvts30">&nbsp; meta: {</span><br/><span class="rvts30">&nbsp; &nbsp; security: [</span><br/><span class="rvts30">&nbsp; &nbsp; &nbsp; // Everyone has access to read/wite</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "everyone^read" },</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "everyone^write" },</span><br/><span class="rvts30">&nbsp; &nbsp; &nbsp; // Members of group test-group-id have access to read/write</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "group^test-group-id^read" },</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "group^test-group-id^write" },</span><br/><span class="rvts30">&nbsp; &nbsp; &nbsp; // A specific user (Practitioner) with id test-practitioner-id has access to read/write</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "user^test-practitioner-id^read" },</span><br/><span class="rvts31">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "user^test-practitioner-id^write" }</span><br/><span class="rvts30">&nbsp; &nbsp; ]</span><br/><span class="rvts30">&nbsp; }</span><br/><span class="rvts30">}</span></p>
+<p class="rvps10"><span class="rvts27">{</span><br/><span class="rvts27">&nbsp; resourceType: "ImplementationGuide",</span><br/><span class="rvts27">&nbsp; meta: {</span><br/><span class="rvts27">&nbsp; &nbsp; security: [</span><br/><span class="rvts27">&nbsp; &nbsp; &nbsp; // Everyone has access to read/wite</span><br/><span class="rvts28">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "everyone^read" },</span><br/><span class="rvts28">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "everyone^write" },</span><br/><span class="rvts27">&nbsp; &nbsp; &nbsp; // Members of group test-group-id have access to read/write</span><br/><span class="rvts28">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "group^test-group-id^read" },</span><br/><span class="rvts28">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "group^test-group-id^write" },</span><br/><span class="rvts27">&nbsp; &nbsp; &nbsp; // A specific user (Practitioner) with id test-practitioner-id has access to read/write</span><br/><span class="rvts28">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "user^test-practitioner-id^read" },</span><br/><span class="rvts28">&nbsp; &nbsp; &nbsp; { system: "https://trifolia-fhir.../security", code: "user^test-practitioner-id^write" }</span><br/><span class="rvts27">&nbsp; &nbsp; ]</span><br/><span class="rvts27">&nbsp; }</span><br/><span class="rvts27">}</span></p>
 <p class="rvps2"><span class="rvts6">When a user searches for ImplementationGuide resources, ToF sends a search request to the FHIR server that includes a _security parameter with all possible variations applicable to the active user. For example:</span></p>
-<p class="rvps12"><span class="rvts30">// un-encoded for readability</span><br/><span class="rvts30">https://some-fhir-server.com/fhir/ImplementationGuide?_security=&lt;system&gt;|everyone^read,&lt;system&gt;|group^test-group-id^read,&lt;system&gt;|user^test-practitioner-rid^read</span><br/><span class="rvts30">// encoded</span><br/><span class="rvts30">https://some-fhir-server.com/fhir/ImplementationGuide?_security=https%3A%2F%2Ftrifolia-fhir...%2Fsecurity%7Ceveryone%5Eread%2Chttps%3A%2F%2Ftrifolia-fhir...%2Fsecurity%7Cgroup%5Etest-group-id%5Eread%2Chttps%3A%2F%2Ftrifolia-fhir...%2Fsecurity%7Cuser%5Etest-practitioner-rid%5Eread</span></p>
-<p class="rvps2"><span class="rvts6">When a user clicks the </span><span class="rvts23">Edit</span><span class="rvts6"> button on a resource, ToF retrieves a single/specific resource. The ToF server verifies whether the persisted resource grants the active user permissions to view the resource before sending the resource to the user's browser for viewing.</span></p>
-<p class="rvps2"><span class="rvts6">Similarly, when a user clicks </span><span class="rvts23">Save</span><span class="rvts6"> or </span><span class="rvts23">Delete</span><span class="rvts6">, the ToF server retrieves the instance of the resource persisted on the FHIR server, verifies whether the user has permissions to modify the resource, and rejects the request with a 401 Unauthorized response if the user does not have permissions. Otherwise, the resource is updated on the FHIR server according to the request.</span><span class="rvts6"></span></p>
+<p class="rvps10"><span class="rvts27">// un-encoded for readability</span><br/><span class="rvts27">https://some-fhir-server.com/fhir/ImplementationGuide?_security=&lt;system&gt;|everyone^read,&lt;system&gt;|group^test-group-id^read,&lt;system&gt;|user^test-practitioner-rid^read</span><br/><span class="rvts27">// encoded</span><br/><span class="rvts27">https://some-fhir-server.com/fhir/ImplementationGuide?_security=https%3A%2F%2Ftrifolia-fhir...%2Fsecurity%7Ceveryone%5Eread%2Chttps%3A%2F%2Ftrifolia-fhir...%2Fsecurity%7Cgroup%5Etest-group-id%5Eread%2Chttps%3A%2F%2Ftrifolia-fhir...%2Fsecurity%7Cuser%5Etest-practitioner-rid%5Eread</span></p>
+<p class="rvps2"><span class="rvts6">When a user clicks the </span><span class="rvts21">Edit</span><span class="rvts6"> button on a resource, ToF retrieves a single/specific resource. The ToF server verifies whether the persisted resource grants the active user permissions to view the resource before sending the resource to the user's browser for viewing.</span></p>
+<p class="rvps2"><span class="rvts6">Similarly, when a user clicks </span><span class="rvts21">Save</span><span class="rvts6"> or </span><span class="rvts21">Delete</span><span class="rvts6">, the ToF server retrieves the instance of the resource persisted on the FHIR server, verifies whether the user has permissions to modify the resource, and rejects the request with a 401 Unauthorized response if the user does not have permissions. Otherwise, the resource is updated on the FHIR server according to the request.</span><span class="rvts6"></span></p>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -239,7 +240,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -256,7 +257,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -195,14 +196,14 @@
  <li class="rvps2"><span class="rvts6">Select a resource type and type search criteria in the text field. Suggestions will present below the text field. Select one of the suggestions and press the "Copy" button.</span></li>
  <li class="rvps2"><span class="rvts6">Click the "Search" button next to the text field to select a resource using the advanced search pop-up window. Click the "Copy" button after you identify and select a resource.</span></li>
 </ol>
-<p class="rvps2"><span class="rvts6">If you have permissions to a resource via a group and that resource has other associated groups and you </span><span class="rvts29">aren't </span><span class="rvts6">a member, the name of the group will not appear and the "Permissions" tab will only display the ID of those other groups.</span></p>
+<p class="rvps2"><span class="rvts6">If you have permissions to a resource via a group and that resource has other associated groups and you </span><span class="rvts19">aren't </span><span class="rvts6">a member, the name of the group will not appear and the "Permissions" tab will only display the ID of those other groups.</span></p>
 <p class="rvps2"><span class="rvts6">If you do not have permissions to edit a resource, you cannot click the "Edit" button on the resource from the browse screen. Future enhancements may allow the user to access the "Edit" screen in a disabled state when the user doesn't have edit permissions to the resource.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Managing Groups</span></span></h2>
 <p class="rvps2"><span class="rvts6">All users can create/manage their groups. A group may only have one manager.</span></p>
 <p class="rvps2"><span class="rvts6">To create/edit/delete groups, click your name in the top-right of ToF, and select the "Groups" tab. Changes to the "Groups" tab are persisted immediately. The "Save" button only applies to editing information for your profile.</span></p>
 <p class="rvps2"><span class="rvts6">When you create a group, you are automatically added as a member to the group. You cannot remove yourself as a member from the group.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Importing Resources</span></span></h2>
-<p class="rvps2"><span class="rvts6">When importing </span><span class="rvts29">new </span><span class="rvts6">resources, the permissions for those new resources default to allow the user performing the import view/edit access. To allow additional permissions, edit each resource and grant additional permissions.</span></p>
+<p class="rvps2"><span class="rvts6">When importing </span><span class="rvts19">new </span><span class="rvts6">resources, the permissions for those new resources default to allow the user performing the import view/edit access. To allow additional permissions, edit each resource and grant additional permissions.</span></p>
 <h2 class="rvps4"><a name="IGPermissions"></a><span class="rvts0"><span class="rvts12">Implementation Guide Permissions</span></span></h2>
 <p class="rvps2"><span class="rvts6">You may copy permissions for an implementation guide to resources within the implementation guide. This functionality is primarily for scenarios where the permissions to the implementation guide have changed, and those changes need to be propagated down to the resources within the implementation guide.</span></p>
 <p class="rvps2"><span class="rvts6">Note: You cannot change permissions for a resource you don't have access. If you don't have access to one or more of the resources within the IG, you cannot copy permissions from the IG to that/those resources.</span></p>
@@ -217,7 +218,7 @@
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -252,7 +253,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -269,7 +270,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer

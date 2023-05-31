@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 7.6.0.479">
+  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -51,6 +51,7 @@
   <link href="css/theme-light-blue.min.css" rel="stylesheet" />
   <link href="css/print.min.css" rel="stylesheet" media="print" />
   <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
+  <style type="text/css">.navigation #inline-toc { width: auto !important}</style>
 
   <!-- Content style -->
   <link href="css/hnd.content.css" rel="stylesheet" />
@@ -81,8 +82,8 @@
   <nav id="panel-left" class="md-nav-expanded">
     <!-- Nav tabs -->
     <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
+      <li id="nav-close" role="presentation"> 
+        <button class="hnd-toggle btn btn-default" aria-label="close">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         </button>
       </li>
@@ -138,9 +139,9 @@
             <form id="search-form">
               <div class="form-group">
                 <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
+                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." aria-label="Search..." />
                   <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
+                    <button class="btn btn-default" type="submit" aria-label="Search...">
                       <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     </button>
                   </span>
@@ -189,7 +190,7 @@
 <p class="rvps2"><span class="rvts6">After logging in, users must now select a project (an ImplementationGuide) to work with prior to seeing any Browse screens. All screens (except Browse &gt; Other Resources) have been modified to respect the context of the project the user has selected, and will only show resources that are related to that project. When creating new resources or importing resources from an external source (such as a file on your computer), they are automatically associated with the project that you are working on.</span></p>
 <p class="rvps2"><span class="rvts6">Note that permissions still apply; if you don't have permission to access a resource, you won't see it in the browse screens.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Authentication</span></span></h3>
-<p class="rvps2"><span class="rvts6">Behind-the-scenes, how ToF handles authentication has changed quite a bit. ToF used to be bound specifically to auth0.com so that only auth0.com can be used as an authentication provider. Now, however, we have replaced that functionality with more generic functionality to allow </span><span class="rvts29">any </span><span class="rvts6">OAuth2-compatible authentication provider to be used with Trifolia-on-FHIR. We have specifically tested authentication with </span><a class="rvts11" href="http://auth0.com" target="_blank">auth0.com</a><span class="rvts6">, </span><a class="rvts11" href="https://www.keycloak.org/" target="_blank">KeyCloak</a><span class="rvts6">, and </span><a class="rvts11" href="https://www.okta.com/">Okta</a><span class="rvts6">.</span></p>
+<p class="rvps2"><span class="rvts6">Behind-the-scenes, how ToF handles authentication has changed quite a bit. ToF used to be bound specifically to auth0.com so that only auth0.com can be used as an authentication provider. Now, however, we have replaced that functionality with more generic functionality to allow </span><span class="rvts19">any </span><span class="rvts6">OAuth2-compatible authentication provider to be used with Trifolia-on-FHIR. We have specifically tested authentication with </span><a class="rvts11" href="http://auth0.com" target="_blank">auth0.com</a><span class="rvts6">, </span><a class="rvts11" href="https://www.keycloak.org/" target="_blank">KeyCloak</a><span class="rvts6">, and </span><a class="rvts11" href="https://www.okta.com/">Okta</a><span class="rvts6">.</span></p>
 <p class="rvps2"><span class="rvts6">Additionally, we have added support for an "administrator" role that allows you to configure specific users to be an administrator of ToF. These administrators have complete access over the installation of ToF. More information on configuring various authentication providers and how to setup administrator users can be found on the ToF GitHub repository's WIKI: </span><a class="rvts11" href="https://github.com/lantanagroup/trifolia-on-fhir/wiki/Authentication" target="_blank">https://github.com/lantanagroup/trifolia-on-fhir/wiki/Authentication</a><span class="rvts6">.</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Paging "Other Resources"</span></span></h3>
 <p class="rvps2"><span class="rvts6">Prior to this release, the screen would only show the first 10 resources stored on the server. Now, users are given paging options when there are multiple pages of resources.</span></p>
@@ -201,13 +202,13 @@
 <table border="0" cellpadding="0" cellspacing="0" style="border-width: 0px; border-spacing: 0px;">
  <tr valign="top">
   <td width="118" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts34">Key</span></p>
+   <p class="rvps2"><span class="rvts31">Key</span></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts34">Type</span></p>
+   <p class="rvps2"><span class="rvts31">Type</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts34">Summary</span></p>
+   <p class="rvps2"><span class="rvts31">Summary</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -215,10 +216,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-231" target="_blank">TRIFFHIR-231</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">New Feature</span></p>
+   <p class="rvps2"><span class="rvts29">New Feature</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Select Project/ImplementationGuide Context</span></p>
+   <p class="rvps2"><span class="rvts29">Select Project/ImplementationGuide Context</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -226,10 +227,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-199" target="_blank">TRIFFHIR-199</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">New Feature</span></p>
+   <p class="rvps2"><span class="rvts29">New Feature</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Add an administrative role that overrides all permissions</span></p>
+   <p class="rvps2"><span class="rvts29">Add an administrative role that overrides all permissions</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -237,10 +238,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-244" target="_blank">TRIFFHIR-244</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">New Feature</span></p>
+   <p class="rvps2"><span class="rvts29">New Feature</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Make authentication generic to OAuth 2.0, not bound specifically to auth0.com</span></p>
+   <p class="rvps2"><span class="rvts29">Make authentication generic to OAuth 2.0, not bound specifically to auth0.com</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -248,10 +249,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-236" target="_blank">TRIFFHIR-236</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Defect</span></p>
+   <p class="rvps2"><span class="rvts29">Defect</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Profile editor doesn't allow expanding PlanDefinition.action.action</span></p>
+   <p class="rvps2"><span class="rvts29">Profile editor doesn't allow expanding PlanDefinition.action.action</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -259,10 +260,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-214" target="_blank">TRIFFHIR-214</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Defect</span></p>
+   <p class="rvps2"><span class="rvts29">Defect</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Change the element definition panel's alias property to repeat (allow multiple)</span></p>
+   <p class="rvps2"><span class="rvts29">Change the element definition panel's alias property to repeat (allow multiple)</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -270,10 +271,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-232" target="_blank">TRIFFHIR-232</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Defect</span></p>
+   <p class="rvps2"><span class="rvts29">Defect</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Cannot set value set binding on R4 profile's element</span></p>
+   <p class="rvps2"><span class="rvts29">Cannot set value set binding on R4 profile's element</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -281,10 +282,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-243" target="_blank">TRIFFHIR-243</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Defect</span></p>
+   <p class="rvps2"><span class="rvts29">Defect</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">"Add" button for R4 capability statement REST tabs doesn't work</span></p>
+   <p class="rvps2"><span class="rvts29">"Add" button for R4 capability statement REST tabs doesn't work</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -292,10 +293,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-249" target="_blank">TRIFFHIR-249</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Defect</span></p>
+   <p class="rvps2"><span class="rvts29">Defect</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Can't expand a brand new slice</span></p>
+   <p class="rvps2"><span class="rvts29">Can't expand a brand new slice</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -303,10 +304,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-246" target="_blank">TRIFFHIR-246</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Defect</span></p>
+   <p class="rvps2"><span class="rvts29">Defect</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">ServiceRequest vs. ServiceDefinition for CapabilityStatement &gt; REST &gt; Resource &gt; Type</span></p>
+   <p class="rvps2"><span class="rvts29">ServiceRequest vs. ServiceDefinition for CapabilityStatement &gt; REST &gt; Resource &gt; Type</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -314,10 +315,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-251" target="_blank">TRIFFHIR-251</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Defect</span></p>
+   <p class="rvps2"><span class="rvts29">Defect</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Multiple publish boxes on published implementation guide's main page</span></p>
+   <p class="rvps2"><span class="rvts29">Multiple publish boxes on published implementation guide's main page</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -325,10 +326,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-254" target="_blank">TRIFFHIR-254</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Defect</span></p>
+   <p class="rvps2"><span class="rvts29">Defect</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Change editor to only display constraints in the current profile's differential, regardless of base profile</span></p>
+   <p class="rvps2"><span class="rvts29">Change editor to only display constraints in the current profile's differential, regardless of base profile</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -336,10 +337,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-190" target="_blank">TRIFFHIR-190</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Improvement</span></p>
+   <p class="rvps2"><span class="rvts29">Improvement</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">User interface allows profiling fields that shouldn't be profiled</span></p>
+   <p class="rvps2"><span class="rvts29">User interface allows profiling fields that shouldn't be profiled</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -347,10 +348,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-188" target="_blank">TRIFFHIR-188</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Improvement</span></p>
+   <p class="rvps2"><span class="rvts29">Improvement</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Add support for paging in the "Other Resources" screen</span></p>
+   <p class="rvps2"><span class="rvts29">Add support for paging in the "Other Resources" screen</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -358,10 +359,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-233" target="_blank">TRIFFHIR-233</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Improvement</span></p>
+   <p class="rvps2"><span class="rvts29">Improvement</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Element mappings reference profile mappings</span></p>
+   <p class="rvps2"><span class="rvts29">Element mappings reference profile mappings</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -369,10 +370,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-240" target="_blank">TRIFFHIR-240</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Improvement</span></p>
+   <p class="rvps2"><span class="rvts29">Improvement</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Automatically delete IG references when deleting resources</span></p>
+   <p class="rvps2"><span class="rvts29">Automatically delete IG references when deleting resources</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -380,10 +381,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-239" target="_blank">TRIFFHIR-239</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Improvement</span></p>
+   <p class="rvps2"><span class="rvts29">Improvement</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Automatically set ID of new resources to the leaf/end of the URL</span></p>
+   <p class="rvps2"><span class="rvts29">Automatically set ID of new resources to the leaf/end of the URL</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -391,10 +392,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-242" target="_blank">TRIFFHIR-242</a></p>
   </td>
   <td width="117" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Improvement</span></p>
+   <p class="rvps2"><span class="rvts29">Improvement</span></p>
   </td>
   <td width="545" height="19" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Add "supported profiles" to R4 capability statement editing screen</span></p>
+   <p class="rvps2"><span class="rvts29">Add "supported profiles" to R4 capability statement editing screen</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -402,10 +403,10 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-253" target="_blank">TRIFFHIR-253</a></p>
   </td>
   <td width="117" height="17" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Improvement</span></p>
+   <p class="rvps2"><span class="rvts29">Improvement</span></p>
   </td>
   <td width="545" height="17" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Getting latest ig publisher doesn't work due to HL7/FHIR process changes</span></p>
+   <p class="rvps2"><span class="rvts29">Getting latest ig publisher doesn't work due to HL7/FHIR process changes</span></p>
   </td>
  </tr>
  <tr valign="top">
@@ -413,20 +414,20 @@
    <p class="rvps2"><a class="rvts11" href="https://trifolia.atlassian.net/browse/TRIFFHIR-200" target="_blank">TRIFFHIR-200</a></p>
   </td>
   <td width="117" height="17" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Improvement</span></p>
+   <p class="rvps2"><span class="rvts29">Improvement</span></p>
   </td>
   <td width="545" height="17" valign="top" style="padding: 0px;">
-   <p class="rvps2"><span class="rvts32">Automatically associate new resources to IG in context</span></p>
+   <p class="rvps2"><span class="rvts29">Automatically associate new resources to IG in context</span></p>
   </td>
  </tr>
 </table>
 </div>
 <p class="rvps39"><span class="rvts6"> &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
-<p class="rvps2"><span class="rvts102"></span><span class="rvts6"></span></p>
+<p class="rvps2"><span class="rvts103"></span><span class="rvts6"></span></p>
 
             </div>
             
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2022 by Lantana Consulting Group. All Rights Reserved.</div></div>
+            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; 2023 by Lantana Consulting Group. All Rights Reserved.</div></div>
         </div>  <!-- /#topic-content -->
     </article>
 
@@ -461,7 +462,7 @@
   <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
   <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
   <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
+  <script src="vendors/uri-1.19.11/uri.min.js"></script>
   <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
   <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
   <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
@@ -478,7 +479,9 @@
   <script>
     $(function() {
       // Create the app
-      var app = new Hnd.App();
+      var app = new Hnd.App({
+        searchEngineMinChars: 3
+      });
       // Update translations
       hnd_ut(app);
 	  // Instanciate imageMapResizer
