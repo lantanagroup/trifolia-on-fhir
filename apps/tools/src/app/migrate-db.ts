@@ -591,6 +591,7 @@ export class MigrateDb extends BaseTools {
                 return foundUser
               })
               .filter(m => !!m)
+              .map(m => m['_id'])
           };
         });
     } else if (this.options.fhirVersion === 'stu3') {
@@ -619,6 +620,7 @@ export class MigrateDb extends BaseTools {
                 return user;
               })
               .filter(m => !!m)
+              .map(m => m['_id'])
           };
         });
     }
