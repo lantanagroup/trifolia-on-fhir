@@ -186,22 +186,22 @@
             <div class="main-content">
                 
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Structure Definition</span></span></h2>
-<p class="rvps2"><span class="rvts40"><br/></span></p>
-<p class="rvps13"><span class="rvts40">A definition of a FHIR structure. This resource is used to describe the underlying resources, data types defined in FHIR, and also for describing extensions and constraints on resources and data types.</span></p>
-<p class="rvps13"><span class="rvts40">The StructureDefinition resource describes a structure - a set of data element definitions, and their associated rules of usage. These structure definitions are used to describe both the content defined in the FHIR specification itself - Resources, data types, the underlying infrastructural types, and also are used to describe how these structures are used in implementations. This allows the definitions of the structures to be shared and published through repositories of structure definitions, compared with each other, and used as the basis for code, report and UI generation. &nbsp;For more information on Structure Definitions, see </span><a class="rvts42" href="https://www.hl7.org/fhir/structuredefinition.html">https://www.hl7.org/fhir/structuredefinition.html</a><span class="rvts40">.</span></p>
+<p class="rvps2"><span class="rvts41"><br/></span></p>
+<p class="rvps13"><span class="rvts41">A definition of a FHIR structure. This resource is used to describe the underlying resources, data types defined in FHIR, and also for describing extensions and constraints on resources and data types.</span></p>
+<p class="rvps13"><span class="rvts41">The StructureDefinition resource describes a structure - a set of data element definitions, and their associated rules of usage. These structure definitions are used to describe both the content defined in the FHIR specification itself - Resources, data types, the underlying infrastructural types, and also are used to describe how these structures are used in implementations. This allows the definitions of the structures to be shared and published through repositories of structure definitions, compared with each other, and used as the basis for code, report and UI generation. &nbsp;For more information on Structure Definitions, see </span><a class="rvts43" href="https://www.hl7.org/fhir/structuredefinition.html">https://www.hl7.org/fhir/structuredefinition.html</a><span class="rvts41">.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Profiling FHIR</span></span></h2>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
-<p class="rvps13"><span class="rvts40">A profile is defined as a A set of constraints on a resource represented as a structure definition with kind = </span><span class="rvts41">constraint</span></p>
-<p class="rvps13"><span class="rvts40">The base FHIR specification describes a set of base resources, frameworks and APIs that are used in many different contexts in healthcare. However, there is wide variability between jurisdictions and across the healthcare ecosystem around practices, requirements, regulations, education and what actions are feasible and/or beneficial.</span></p>
-<p class="rvps13"><span class="rvts40">For this reason, the FHIR specification is a "platform specification" - it creates a common platform or foundation on which a variety of different solutions are implemented. As a consequence, this specification usually requires further adaptation to particular contexts of use. Typically, these adaptations specify:</span></p>
+<p class="rvps13"><span class="rvts41">A profile is defined as a A set of constraints on a resource represented as a structure definition with kind = </span><span class="rvts42">constraint</span></p>
+<p class="rvps13"><span class="rvts41">The base FHIR specification describes a set of base resources, frameworks and APIs that are used in many different contexts in healthcare. However, there is wide variability between jurisdictions and across the healthcare ecosystem around practices, requirements, regulations, education and what actions are feasible and/or beneficial.</span></p>
+<p class="rvps13"><span class="rvts41">For this reason, the FHIR specification is a "platform specification" - it creates a common platform or foundation on which a variety of different solutions are implemented. As a consequence, this specification usually requires further adaptation to particular contexts of use. Typically, these adaptations specify:</span></p>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 20px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps14"><span class="rvts40">Rules about which resource elements are or are not used, and what additional elements are added that are not part of the base specification</span></li>
- <li class="rvps14"><span class="rvts40">Rules about which API features are used, and how</span></li>
- <li class="rvps14"><span class="rvts40">Rules about which terminologies are used in particular elements</span></li>
- <li class="rvps14"><span class="rvts40">Descriptions of how the Resource elements and API features map to local requirements and/or implementations</span></li>
+ <li class="rvps14"><span class="rvts41">Rules about which resource elements are or are not used, and what additional elements are added that are not part of the base specification</span></li>
+ <li class="rvps14"><span class="rvts41">Rules about which API features are used, and how</span></li>
+ <li class="rvps14"><span class="rvts41">Rules about which terminologies are used in particular elements</span></li>
+ <li class="rvps14"><span class="rvts41">Descriptions of how the Resource elements and API features map to local requirements and/or implementations</span></li>
 </ul>
-<p class="rvps13"><span class="rvts40">Note that because of the nature of the healthcare ecosystem, there may be multiple overlapping sets of adaptations - by healthcare domain, by country, by institution, and/or by vendor/implementation. &nbsp;For more information on FHIR Profiles, please visit </span><a class="rvts42" href="https://www.hl7.org/fhir/profiling.html">https://www.hl7.org/fhir/profiling.html.</a></p>
-<p class="rvps13"><span class="rvts46">Note:&nbsp;</span><span class="rvts40"> </span><span class="rvts29">Trifolia-on-FHIR (ToF) forces users to create </span><span class="rvts45">structurally </span><span class="rvts29">correct FHIR but does not enforce that the content of the resources meet the requirements of all business rules in FHIR. An example of this, is that the structure of an Extension may be correct, but slices within the Extension may not be correct. Over time, as FHIR continues to mature and those business rules are solidified, ToF will be updated to enforce them.&nbsp;</span></p>
+<p class="rvps13"><span class="rvts41">Note that because of the nature of the healthcare ecosystem, there may be multiple overlapping sets of adaptations - by healthcare domain, by country, by institution, and/or by vendor/implementation. &nbsp;For more information on FHIR Profiles, please visit </span><a class="rvts43" href="https://www.hl7.org/fhir/profiling.html">https://www.hl7.org/fhir/profiling.html.</a></p>
+<p class="rvps13"><span class="rvts47">Note:&nbsp;</span><span class="rvts41"> </span><span class="rvts30">Trifolia-on-FHIR (ToF) forces users to create </span><span class="rvts46">structurally </span><span class="rvts30">correct FHIR but does not enforce that the content of the resources meet the requirements of all business rules in FHIR. An example of this, is that the structure of an Extension may be correct, but slices within the Extension may not be correct. Over time, as FHIR continues to mature and those business rules are solidified, ToF will be updated to enforce them.&nbsp;</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Creating/Editing Profiles in Trifolia on FHIR</span></span></h2>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside;">
  <li class="rvps15"><span class="rvts6">Select Browse/Edit &gt; Profiles/Extensions.</span></li>
@@ -224,14 +224,14 @@
 <p class="rvps2"><span class="rvts6"><br/></span></p>
 <p class="rvps2"><span class="rvts6">All extensions used in resources require a formal published definition that can be used by application developers or the applications themselves, to help integrate extensions into the healthcare process they support. &nbsp;</span></p>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
-<p class="rvps2"><span class="rvts6">Every extension in a resource refers directly to its definition, which is made available as a </span><a class="rvts39" href="https://www.hl7.org/fhir/structuredefinition.html">StructureDefinition</a><span class="rvts6">. A resource can be </span><a class="rvts39" href="https://www.hl7.org/fhir/profiling.html">profiled</a><span class="rvts6"> to specify where particular extensions are required or expected.&nbsp;</span></p>
+<p class="rvps2"><span class="rvts6">Every extension in a resource refers directly to its definition, which is made available as a </span><a class="rvts40" href="https://www.hl7.org/fhir/structuredefinition.html">StructureDefinition</a><span class="rvts6">. A resource can be </span><a class="rvts40" href="https://www.hl7.org/fhir/profiling.html">profiled</a><span class="rvts6"> to specify where particular extensions are required or expected.&nbsp;</span></p>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
-<p class="rvps2"><span class="rvts6">For more information on creating/incorporating extensions into existing resources, please visit the “Defining Extensions” page at </span><a class="rvts39" href="https://www.hl7.org/fhir/defining-extensions.html">https://www.hl7.org/fhir/defining-extensions.html</a><span class="rvts6"> &nbsp;</span></p>
+<p class="rvps2"><span class="rvts6">For more information on creating/incorporating extensions into existing resources, please visit the “Defining Extensions” page at </span><a class="rvts40" href="https://www.hl7.org/fhir/defining-extensions.html">https://www.hl7.org/fhir/defining-extensions.html</a><span class="rvts6"> &nbsp;</span></p>
 <p class="rvps2"><span class="rvts6"><br/></span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12"><br/></span></span></h2>
-<h2 class="rvps4"><span class="rvts0"><a class="rvts44" href="https://www.hl7.org/fhir/backboneelement.html"><br/></a></span></h2>
-<p class="rvps13"><span class="rvts29"><br/></span></p>
-<p class="rvps2"><span class="rvts43"></span><span class="rvts6"></span></p>
+<h2 class="rvps4"><span class="rvts0"><a class="rvts45" href="https://www.hl7.org/fhir/backboneelement.html"><br/></a></span></h2>
+<p class="rvps13"><span class="rvts30"><br/></span></p>
+<p class="rvps2"><span class="rvts44"></span><span class="rvts6"></span></p>
 
             </div>
             
