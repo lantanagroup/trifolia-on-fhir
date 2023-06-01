@@ -216,6 +216,7 @@ export class MigrateDb extends BaseTools {
     await this.migrateGroups();
     await this.migrateProjects();
     await this.migrateResources();
+    await this.migratePractitioners();
     await this.migrateAuditEvents();
 
     this.log(`Done`);
@@ -236,6 +237,28 @@ export class MigrateDb extends BaseTools {
       await this.migrateConformance(groupedResource);
 
     }
+  }
+
+
+  private async migratePractitioners() {
+    // Practitioner resources (likely examples in existing IGs) that were skipped over during the system user migration step
+
+    const resources = this.getGroupedResources('Practitioner');
+    this.log(`Retrieved ${resources.length} Practitioner records`);
+
+    for (const gr of resources) {
+
+      const r = gr.head as IPractitioner;
+      const identifier = (r.identifier || []).find(i => i.system !== 'https://trifolia-fhir.lantanagroup.com' && i.system !== 'https://auth0.com');
+
+      if (!identifier || !identifier.value) {
+        continue;
+      }
+
+      await this.migrateConformance(gr);
+
+    }
+
   }
 
 
