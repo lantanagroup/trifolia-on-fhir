@@ -142,8 +142,8 @@ export class MigrateDb extends BaseTools {
     const allHistory = await this.queryMysql(`select res_id, res_ver, res_text, res_updated from hfj_res_ver order by res_id, res_ver`);
     this.log(`Retrieved ${allHistory.length} history items`);
 
-    const allSecurityTags = await this.queryMysql(`select res_id, tag_code from hfj_res_tag rt join hfj_tag_def td on rt.tag_id=td.tag_id`);
-    this.log(`Retrieved ${allSecurityTags.length} security tags`);
+    const allTags = await this.queryMysql(`select res_id, tag_code, tag_system, tag_type from hfj_res_tag rt join hfj_tag_def td on rt.tag_id=td.tag_id`);
+    this.log(`Retrieved ${allTags.length} tags`);
 
     this.mysqlCon.destroy();
 
@@ -161,7 +161,11 @@ export class MigrateDb extends BaseTools {
       try {
         const headResult = allHistory.find(al => al.res_id === resId && al.res_ver === resVer);
         const history = allHistory.filter(al => al.res_id === resId && al.res_ver !== resVer);
-        const security = allSecurityTags.filter(s => s.res_id === resId).map(s => { return { 'system': Globals.securitySystem, 'code': s.tag_code }; });
+
+        // tag type enum: https://github.com/hapifhir/hapi-fhir/blob/master/hapi-fhir-jpaserver-model/src/main/java/ca/uhn/fhir/jpa/model/entity/TagTypeEnum.java
+        const security = allTags.filter(t => t.res_id === resId && t.tag_type === 2 && t.tag_system === Globals.securitySystem).map(s => { return { 'system': Globals.securitySystem, 'code': s.tag_code }; });
+        const profile = allTags.filter(t => t.res_id === resId && t.tag_type === 1).map(s => { return s.tag_code });
+
         const head = await this.getJSON(headResult.res_text);
 
         head.id = actualId;
@@ -170,6 +174,9 @@ export class MigrateDb extends BaseTools {
           versionId: headResult['res_ver'],
           security: security
         };
+        if (profile && profile.length > 0) {
+          head.meta['profile'] = profile;
+        }
 
         this.groupedResources[resType + '/' + actualId] = {
           head: head,
@@ -211,6 +218,9 @@ export class MigrateDb extends BaseTools {
     if (this.options.out && fs.existsSync(this.options.out)) {
       fs.unlinkSync(this.options.out);
     }
+
+    // await this.initResourceMapWithIGs();
+    // console.log('resourceMap key count:', Object.keys(this.resourceMap).length);
 
     await this.migrateUsers();
     await this.migrateGroups();
@@ -319,9 +329,9 @@ export class MigrateDb extends BaseTools {
    * @param resourceReference
    * @private
    */
-  private findImplementationGuides(resourceReference: string): IConformance[] {
+  private async findImplementationGuides(resourceReference: string): Promise<IConformance[]> {
 
-    let igs: IConformance[] = []
+    let igs: IConformance[] = [];
 
     let igKeys = Object.keys(this.resourceMap).filter(k => this.resourceMap[k].resource.resourceType === 'ImplementationGuide');
 
@@ -491,7 +501,7 @@ export class MigrateDb extends BaseTools {
   private async migrateConformance(groupedResource: GroupedResource) {
     const resource = groupedResource.head;
     const resourceReference = `${resource.resourceType}/${resource.id}`;
-    const igs = this.findImplementationGuides(resourceReference);
+    const igs = await this.findImplementationGuides(resourceReference);
 
 
     let versionId = 1;
@@ -820,5 +830,22 @@ export class MigrateDb extends BaseTools {
     }
 
   }
+
+
+  private async initResourceMapWithIGs() {
+
+    if (!this.resourceMap) {
+      this.resourceMap = {};
+    }
+
+    //const igConfs = this.db.collection('conformance').find<IConformance>({'migratedFrom': this.options.migratedFromLabel});
+    const igConfs = this.db.collection('conformance').find<IConformance>({$and: [{migratedFrom: this.options.migratedFromLabel}, {'resource.resourceType':'ImplementationGuide'}]});
+    for await (const ig of igConfs) {
+      const key = ig.resource.resourceType + '/' + ig.resource.id;
+      this.resourceMap[key] = ig;
+    }
+
+  }
+
 }
 
