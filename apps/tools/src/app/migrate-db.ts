@@ -538,7 +538,7 @@ export class MigrateDb extends BaseTools {
 
     this.log(`Inserting/updating resource ${resource.resourceType}/${resource.id}`);
     const results = await this.db.collection('conformance').findOneAndUpdate(
-      { migratedFrom: conformance.migratedFrom, 'resource.id': conformance.resource.id },
+      { migratedFrom: conformance.migratedFrom, 'resource.resourceType': conformance.resource.resourceType, 'resource.id': conformance.resource.id },
       { $set: conformance }, { upsert: true, returnDocument: ReturnDocument.AFTER }
     );
     groupedResource.projectResource = <IConformance><unknown>{ ...results.value };
@@ -570,7 +570,12 @@ export class MigrateDb extends BaseTools {
       };
 
       this.log(`Inserting/updating history version ${meta.versionId} for ${resourceHistory.resourceType}/${resourceHistory.id}`);
-      const results = await this.db.collection('history').updateOne({ migratedFrom: this.options.migratedFromLabel, 'content.id': resourceHistory.id, versionId: history.versionId }, { $set: history }, { upsert: true });
+      const results = await this.db.collection('history').updateOne({
+        migratedFrom: this.options.migratedFromLabel,
+        'content.resourceType': resourceHistory.resourceType,
+        'content.id': resourceHistory.id,
+        versionId: history.versionId
+      }, { $set: history }, { upsert: true });
       this.reportResults(results);
 
     }
@@ -663,7 +668,10 @@ export class MigrateDb extends BaseTools {
     this.log(`Storing ${this.groups.length} groups in the database`);
 
     for (const group of this.groups) {
-      const results = await this.db.collection('group').findOneAndUpdate({ migratedFrom: group.migratedFrom, name: group.name }, { $set: group }, { upsert: true, returnDocument: ReturnDocument.AFTER });
+      const results = await this.db.collection('group').findOneAndUpdate(
+        { migratedFrom: group.migratedFrom, name: group.name },
+        { $set: group },
+        { upsert: true, returnDocument: ReturnDocument.AFTER });
       this.reportResults(results);
       this.groupMap[group['originalGroupId']] = <IGroup>results.value;
     }
