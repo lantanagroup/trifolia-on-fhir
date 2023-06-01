@@ -1,10 +1,10 @@
 <fieldset [disabled]="disabled">
   <ng-container *ngIf="element">
     <ul ngbNav #edTabSet="ngbNav" class="nav-tabs nav-fill">
-      <li ngbNavItem id="general">
-        <ng-template ngbTabTitle>
+      <li ngbNavItem = "general">
+        <a ngbNavLink>
           <span [attr.data-intro]="Globals.introText['sd.element-panel.general-tab']">General</span>
-        </ng-template>
+        </a>
         <ng-template ngbNavContent>
           <div class="mb-3">
             <label>ID/Path</label>
@@ -314,9 +314,9 @@
         </ng-template>
       </li>
       <li ngbNavItem *ngIf="element.slicing" id="slicing">
-        <ng-template ngbTabTitle>
+        <a ngbNavLink>
           <span [attr.data-intro]="Globals.introText['sd.element-panel.slicing-tab']">Slicing</span>
-        </ng-template>
+        </a>
         <ng-template ngbNavContent>
           <app-fhir-select-single-code [parentObject]="element.slicing"
                                       propertyName="rules"
@@ -387,9 +387,9 @@
         </ng-template>
       </li>
       <li ngbNavItem id="narrative">
-        <ng-template ngbTabTitle>
+         <a ngbNavLink>
           <span [attr.data-intro]="Globals.introText['sd.element-panel.narrative-tab']">Narrative</span>
-        </ng-template>
+         </a>
         <ng-template ngbNavContent>
           <app-fhir-string [parentObject]="element" propertyName="short" title="Short"
                           tooltipPath="ElementDefinition.short" (change)="change.emit()"></app-fhir-string>
@@ -433,9 +433,9 @@
         </ng-template>
       </li>
       <li ngbNavItem id="binding">
-        <ng-template ngbTabTitle>
+        <a ngbNavLink>
           <span [attr.data-intro]="Globals.introText['sd.element-panel.binding-tab']">Binding</span>
-        </ng-template>
+        </a>
         <ng-template ngbNavContent>
           <app-element-definition-binding [element]="element" (change)="change.emit()"></app-element-definition-binding>
 
@@ -487,9 +487,9 @@
         </ng-template>
       </li>
       <li ngbNavItem id="json">
-        <ng-template ngbTabTitle>
+        <a ngbNavLink>
           <span [attr.data-intro]="Globals.introText['sd.element-panel.json-tab']">JSON</span>
-        </ng-template>
+        </a>
         <ng-template ngbNavContent>
           <pre>{{element | json}}</pre>
         </ng-template>
