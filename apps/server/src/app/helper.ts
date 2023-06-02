@@ -648,7 +648,6 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   let exampleFor: string;
   if (resourceToAdd['resource']) {
     let profile = (<IConformance>resourceToAdd).resource?.meta?.profile;
-    console.log('profile:', profile);
     if (profile) {
       exampleFor = profile[0];
     }
@@ -804,11 +803,9 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
     // add to references if not already in the reference list
     if (!implGuideResource.references.find((r: IProjectResourceReference) => {
       if (r.valueType !== (isNotFhir ? 'Example' : 'Conformance')) return false;
-    //  console.log('Id ' + r.value.toString());
       if (r.value && r.value.toString() === resourceToAdd.id) return true;
     })) {
       implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'Example' : 'Conformance' });
-
     }
     let conf = await service.updateOne(implGuideResource.id, implGuideResource);
     //console.log('Conformance ' + conf);

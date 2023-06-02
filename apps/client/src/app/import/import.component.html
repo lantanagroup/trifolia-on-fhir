@@ -39,9 +39,9 @@
           <td>{{getContentTypeDisplay(f)}}</td>
           <td>
             <span *ngIf="f.resource?.resourceType !== 'Bundle'">{{f.status.substring(0, 1).toUpperCase()}}{{f.status.substring(1)}}&nbsp;</span>
-            <select (change)="importBundle = getFileBundle()" *ngIf="f.resource?.resourceType === 'Bundle'" [(ngModel)]="f.bundleOperation" class="form-select">
+            <select (change)="bundleOperationChanged(f)" *ngIf="f.resource?.resourceType === 'Bundle'" [(ngModel)]="f.bundleOperation" class="form-select">
+              <option value="split">Split</option>
               <option value="store">Store</option>
-              <option value="execute">Execute</option>
             </select>
             <a *ngIf="f.status === 'update' && (f.resource || f.content)" href="javascript:void(0)" (click)="viewUpdateDiff(f)">
               <i class="fas fa-eye"></i>
