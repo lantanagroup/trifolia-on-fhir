@@ -1,7 +1,7 @@
 import { Component, DoCheck, Input, OnDestroy, OnInit } from '@angular/core';
 import { CapabilityStatementService } from '../../shared/capability-statement.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { CapabilityStatement, Coding, EventComponent, ResourceComponent, RestComponent } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {CapabilityStatement, Coding, EventComponent, ImplementationGuide, ResourceComponent, RestComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
 import { RecentItemService } from '../../shared/recent-item.service';
 import { FhirService } from '../../shared/fhir.service';
@@ -16,8 +16,9 @@ import { AuthService } from '../../shared/auth.service';
 import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { BaseComponent } from '../../base.component';
 import {debounceTime} from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import {firstValueFrom, Subject} from 'rxjs';
 import {IConformance} from '@trifolia-fhir/models';
+import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 
 @Component({
   templateUrl: './capability-statement.component.html',
@@ -40,6 +41,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
   public Globals = Globals;
   public ClientHelper = ClientHelper;
   public codes: Coding[] = [];
+  public implementationGuide;
 
   private navSubscription: any;
 
@@ -52,7 +54,8 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     private csService: CapabilityStatementService,
     public configService: ConfigService,
     private router: Router,
-    private recentItemService: RecentItemService) {
+    private recentItemService: RecentItemService,
+    private implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
 
@@ -246,10 +249,17 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     this.configService.setTitle(`CapabilityStatement - ${this.capabilityStatement.title || this.capabilityStatement.name || 'no-name'}`);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.messageTransportCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-transport');
     this.messageEventCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-events');
     this.codes =  this.codes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
+
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+
+    const url =  this.implementationGuide.url;
+    this.capabilityStatement.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "CapabilityStatement/" : "";
+
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/capability-statement/')) {
         this.getCapabilityStatement();

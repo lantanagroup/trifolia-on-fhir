@@ -10,9 +10,9 @@
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-8">
-            <app-fhir-string [parentObject]="operationDefinition" propertyName="url" title="URL" tooltipPath="OperationDefinition.url" (change)="urlChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="url"  [required]="true" title="URL" tooltipPath="OperationDefinition.url" (change)="urlChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="operationDefinition" propertyName="name" title="Name" [required]="true" (change)="nameChanged()" tooltipPath="OperationDefinition.name"></app-fhir-string>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="name" [required]="true" title="Name" [required]="true" (change)="nameChanged()" tooltipPath="OperationDefinition.name"></app-fhir-string>
 
             <app-fhir-string [parentObject]="operationDefinition" propertyName="publisher" title="Publisher" tooltipPath="OperationDefinition.publisher"></app-fhir-string>
 
@@ -25,7 +25,7 @@
             <app-fhir-multi-contact [parentObject]="operationDefinition" property="contact" tooltipPath="OperationDefinition.contact"></app-fhir-multi-contact>
           </div>
           <div class="col-md-4">
-            <app-fhir-string [parentObject]="operationDefinition" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
             <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
             <app-fhir-string [parentObject]="operationDefinition" propertyName="code" title="Code" [required]="true" tooltipPath="OperationDefinition.code"></app-fhir-string>

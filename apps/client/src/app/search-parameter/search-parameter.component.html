@@ -11,7 +11,7 @@
           <div class="col-md-6">
             <app-fhir-string [parentObject]="searchParameter" propertyName="url" title="URL" [required]="true" (change)="urlChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="searchParameter" propertyName="name" title="Name" [required]="true" (change)="nameChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="searchParameter" propertyName="name"  [required]="true" title="Name" [required]="true" (change)="nameChanged()"></app-fhir-string>
 
             <app-fhir-string [parentObject]="searchParameter" propertyName="expression" title="Expression" [required]="searchParameter.status === 'active'" requiredMessage="Expression is required to save an Active search parameter"></app-fhir-string>
 
@@ -36,7 +36,7 @@
           <div class="col-md-6">
             <div class="mb-3">
               <div [class.input-group]="!isNew">
-                <app-fhir-string [parentObject]="searchParameter" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)="idChangedEvent.next()"></app-fhir-string>
+                <app-fhir-string [parentObject]="searchParameter" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)="idChangedEvent.next()"></app-fhir-string>
                 <div class="help-block">{{alreadyInUseIDMessage}}</div>
                 <div class="input-group-btn" *ngIf="!isNew">
                   <button type="button" class="btn btn-primary" (click)="changeId()">Change</button>

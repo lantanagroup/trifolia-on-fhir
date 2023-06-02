@@ -101,5 +101,7 @@ export class CapabilityStatementsComponent extends BaseComponent implements OnIn
 
   ngOnInit() {
     this.getCapabilityStatements();
+
+
   }
 }

@@ -1,5 +1,5 @@
 import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {OperationOutcome, Questionnaire, QuestionnaireItemComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide, OperationOutcome, Questionnaire, QuestionnaireItemComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -12,10 +12,11 @@ import {QuestionnaireItemModalComponent} from './questionnaire-item-modal.compon
 import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
-import { config, Subject } from 'rxjs';
+import {config, firstValueFrom, Subject} from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import {IConformance} from '@trifolia-fhir/models';
 import {SearchParameter} from '@trifolia-fhir/r4';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
 
 export class ItemModel {
   public item: QuestionnaireItemComponent;
@@ -60,6 +61,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
   public questionnaireId;
+  public implementationGuide;
 
   private navSubscription: any;
 
@@ -72,7 +74,8 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     private modalService: NgbModal,
     private recentItemService: RecentItemService,
     private fileService: FileService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    private implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
 
@@ -362,13 +365,19 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/questionnaire/')) {
         this.getQuestionnaire();
       }
     });
     this.getQuestionnaire();
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+
+    const url =  this.implementationGuide.url;
+    this.questionnaire.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "Questionnaire/" : "";
+
   }
 
   ngOnDestroy() {

@@ -3,7 +3,7 @@ import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { RecentItemService } from '../shared/recent-item.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { CodeSystemService } from '../shared/code-system.service';
-import { CodeSystem as STU3CodeSystem, ConceptDefinitionComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {CodeSystem as STU3CodeSystem, ConceptDefinitionComponent, ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { CodeSystem as R4CodeSystem } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {CodeSystem as R5CodeSystem } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { FhirService } from '../shared/fhir.service';
@@ -15,9 +15,10 @@ import { AuthService } from '../shared/auth.service';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { BaseComponent } from '../base.component';
 import {ICodeSystem} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {Subject} from 'rxjs';
+import {firstValueFrom, Subject} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
 import { IConformance } from '@trifolia-fhir/models';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
 
 @Component({
   templateUrl: './codesystem.component.html',
@@ -43,6 +44,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
   public codeSystemId;
+  public implementationGuide;
 
   constructor(
     public route: ActivatedRoute,
@@ -53,7 +55,9 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     private router: Router,
     private recentItemService: RecentItemService,
     private fileService: FileService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    private implementationGuideService: ImplementationGuideService
+    ) {
 
     super(configService, authService);
     if (this.configService.isFhirR5) {
@@ -265,13 +269,18 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     this.configService.setTitle(`CodeSystem - ${this.codeSystem.title || this.codeSystem.name || 'no-name'}`);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/code-system/')) {
         this.getCodeSystem();
       }
     });
     this.getCodeSystem();
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+
+    const url =  this.implementationGuide.url;
+    this.codeSystem.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "CodeSystem/" : "";
   }
 
   ngOnDestroy() {

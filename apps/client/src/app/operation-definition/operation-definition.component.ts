@@ -1,5 +1,5 @@
 import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
-import {OperationDefinition, OperationOutcome, ParameterComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide, OperationDefinition, OperationOutcome, ParameterComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {OperationDefinitionService} from '../shared/operation-definition.service';
 import {RecentItemService} from '../shared/recent-item.service';
@@ -13,8 +13,9 @@ import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
 import { debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import {firstValueFrom, Subject} from 'rxjs';
 import {IConformance} from '@trifolia-fhir/models';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
 
 
 @Component({
@@ -35,6 +36,8 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
   public alreadyInUseIDMessage = '';
 
   private navSubscription: any;
+  public implementationGuide;
+
 
   constructor(
     public route: ActivatedRoute,
@@ -45,7 +48,8 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
     private opDefService: OperationDefinitionService,
     private recentItemService: RecentItemService,
     private fileService: FileService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    private implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
 
@@ -173,13 +177,19 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
     this.configService.setTitle(`OperationDefinition - ${this.operationDefinition.name || 'no-name'}`);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/operation-definition/')) {
         this.getOperationDefinition();
       }
     });
     this.getOperationDefinition();
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+
+    const url =  this.implementationGuide.url;
+    this.operationDefinition.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "OperationDefinition/" : "";
   }
 
   ngOnDestroy() {
