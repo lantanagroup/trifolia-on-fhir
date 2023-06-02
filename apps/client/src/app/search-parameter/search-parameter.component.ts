@@ -10,11 +10,12 @@ import { FileService } from '../shared/file.service';
 import { SearchParameterService } from '../shared/search-parameter.service';
 import { RecentItemService } from '../shared/recent-item.service';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { Subject } from 'rxjs';
+import {firstValueFrom, Subject} from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChangeResourceIdModalComponent } from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import { IConformance } from '@trifolia-fhir/models';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
 
 @Component({
   selector: 'trifolia-fhir-search-parameter',
@@ -53,7 +54,8 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     private router: Router,
     private fileService: FileService,
     private recentItemService: RecentItemService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    private implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
 
@@ -241,7 +243,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     /*this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.getSearchParameters();
 
@@ -255,6 +257,13 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     this.messageTransportCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-transport');
     this.codes = this.codes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.messageEventCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-events');
+
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+
+    const url =  this.implementationGuide.url;
+    this.searchParameter.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "SearchParameter/" : "";
+
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/search-parameter/')) {
         this.getSearchParameter();

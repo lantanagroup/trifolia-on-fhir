@@ -9,9 +9,9 @@
     <ng-template ngbNavContent>
       <div class="row">
         <div class="col-md-8">
-          <app-fhir-string [parentObject]="valueSet" propertyName="url" title="URL" tooltipPath="ValueSet.url" (change)="urlChanged()"></app-fhir-string>
+          <app-fhir-string [parentObject]="valueSet" propertyName="url" [required]="true" title="URL" tooltipPath="ValueSet.url" (change)="urlChanged()"></app-fhir-string>
 
-          <app-fhir-string [parentObject]="valueSet" propertyName="name" title="Name" (change)="nameChanged()" tooltipPath="ValueSet.name"></app-fhir-string>
+          <app-fhir-string [parentObject]="valueSet" propertyName="name" [required]="true" title="Name" (change)="nameChanged()" tooltipPath="ValueSet.name"></app-fhir-string>
 
           <app-fhir-string [parentObject]="valueSet" propertyName="title" title="Title" (change)="nameChanged()" tooltipPath="ValueSet.title"></app-fhir-string>
 
@@ -20,7 +20,7 @@
           <app-fhir-multi-use-context [parentObject]="valueSet" propertyName="useContext" tooltipPath="ValueSet.useContext"></app-fhir-multi-use-context>
         </div>
         <div class="col-md-4">
-          <app-fhir-string [parentObject]="valueSet" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)="idChangedEvent.next()"></app-fhir-string>
+          <app-fhir-string [parentObject]="valueSet" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)="idChangedEvent.next()"></app-fhir-string>
           <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
           <app-fhir-string [parentObject]="valueSet" propertyName="version" title="Version" tooltipPath="ValueSet.version"></app-fhir-string>

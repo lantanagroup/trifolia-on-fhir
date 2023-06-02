@@ -332,6 +332,9 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
     this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
+    const url =  this.implementationGuide.url;
+    this.capabilityStatement.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "CapabilityStatement/" : "";
+
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/capability-statement/')) {
         this.getCapabilityStatement();

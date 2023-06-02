@@ -447,7 +447,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
     if (checkBinding) return true;
 
-    if (element.type) {
+    /*if (element.type) {
       const types = this.configService.isFhirSTU3 ? <TypeRefComponent[]> element.type : <ElementDefinitionTypeRefComponent[]> element.type;
 
       for (let i = 0; i < types.length; i++) {
@@ -469,7 +469,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
           }
         }
       }
-    }
+    }*/
 
     if(element.sliceName && element.sliceName.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
       return true;
@@ -492,7 +492,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
         return this.checkForMatchingElement(element);
       });
     }
-    
+
     if (found) {
       const model = this.constraintManager.elements.find((element) => {
         const foundPath = found.path;

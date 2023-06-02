@@ -8,9 +8,9 @@
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-8">
-            <app-fhir-string [parentObject]="codeSystem" propertyName="url" title="URL" tooltipPath="CodeSystem.url" (change)="urlChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="codeSystem" propertyName="url"  [required]="true" title="URL" tooltipPath="CodeSystem.url" (change)="urlChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="codeSystem" propertyName="name" title="Name" (change)="nameChanged()" tooltipPath="CodeSystem.name"></app-fhir-string>
+            <app-fhir-string [parentObject]="codeSystem" propertyName="name" [required]="true" title="Name" (change)="nameChanged()" tooltipPath="CodeSystem.name"></app-fhir-string>
 
             <app-fhir-string [parentObject]="codeSystem" propertyName="title" title="Title" (change)="nameChanged()" tooltipPath="CodeSystem.title"></app-fhir-string>
 
@@ -19,7 +19,7 @@
             <app-fhir-string [parentObject]="codeSystem" propertyName="valueSet" title="Value Set" placeholder="URI" tooltipPath="CodeSystem.valueSet"></app-fhir-string>
           </div>
           <div class="col-md-4">
-            <app-fhir-string [parentObject]="codeSystem" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+            <app-fhir-string [parentObject]="codeSystem" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
             <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
             <app-fhir-select-single-code [parentObject]="codeSystem" propertyName="status" title="Status" [required]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"

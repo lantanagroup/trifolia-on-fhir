@@ -12,9 +12,9 @@
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-8">
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="url" title="URL" tooltipPath="CapabilityStatement.url" (change)="urlChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="url"  [required]="true" title="URL" tooltipPath="CapabilityStatement.url" (change)="urlChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="name" title="Name" (change)="nameChanged()" tooltipPath="CapabilityStatement.name"></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="name" [required]="true" title="Name" (change)="nameChanged()" tooltipPath="CapabilityStatement.name"></app-fhir-string>
 
             <app-fhir-string [parentObject]="capabilityStatement" propertyName="title" title="Title" (change)="nameChanged()" tooltipPath="CapabilityStatement.title"></app-fhir-string>
 
@@ -96,7 +96,7 @@
           </div>
 
           <div class="col-md-4">
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
             <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
             <app-fhir-date [parentObject]="capabilityStatement" propertyName="date" title="Date" [required]="false"

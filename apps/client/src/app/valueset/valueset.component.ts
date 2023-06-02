@@ -1,5 +1,5 @@
 import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
-import {ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {RecentItemService} from '../shared/recent-item.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
@@ -15,8 +15,9 @@ import {AuthService} from '../shared/auth.service';
 import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {BaseComponent} from '../base.component';
 import { debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import {firstValueFrom, Subject} from 'rxjs';
 import {IConformance} from '@trifolia-fhir/models';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
 
 
 @Component({
@@ -35,6 +36,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
+  public implementationGuide;
 
   private navSubscription: any;
 
@@ -47,7 +49,8 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     private modalService: NgbModal,
     private recentItemService: RecentItemService,
     private fileService: FileService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    private implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
 
@@ -264,13 +267,18 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/value-set/')) {
         this.getValueSet();
       }
     });
     this.getValueSet();
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+
+    const url =  this.implementationGuide.url;
+    this.valueSet.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "ValueSet/" : "";
   }
 
   ngOnDestroy() {
