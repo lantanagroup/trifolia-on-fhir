@@ -98,7 +98,7 @@
             <app-fhir-date [parentObject]="capabilityStatement" propertyName="date" title="Date"
                           [required]="false"></app-fhir-date>
             <div class="alert alert-warning status-message" *ngIf="capabilityStatement.date && wrongDateFormat">
-              <span>Date must be written as yyyy-MM-dd</span>
+              <span>Date must be written as YYYY-MM-DD</span>
             </div>
 
             <div class="mb-3">

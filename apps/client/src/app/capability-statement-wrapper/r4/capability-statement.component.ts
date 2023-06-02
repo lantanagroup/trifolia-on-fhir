@@ -66,6 +66,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     super(configService, authService);
 
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
+    this.capabilityStatement.date = this.capabilityStatement.date?this.capabilityStatement.date.substring(0, this.capabilityStatement.date.indexOf("T") ) : "";
     this.conformance =  { resource: this.capabilityStatement, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))

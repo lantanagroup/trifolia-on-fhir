@@ -60,6 +60,8 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     super(configService, authService);
 
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
+    this.capabilityStatement.date = this.capabilityStatement.date?this.capabilityStatement.date.substring(0, this.capabilityStatement.date.indexOf("T") ) : "";
+
     this.conformance =  { resource: this.capabilityStatement, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
@@ -243,6 +245,13 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
       const newMessagingTabId = 'messaging-' + lastIndex.toString();
       messagingTabSet.select(newMessagingTabId);
     }, 50);
+  }
+
+  public get wrongDateFormat(){
+    if(!this.capabilityStatement || !this.capabilityStatement.date) return false;
+    const dateParts = this.capabilityStatement.date.toString().split('-');
+
+    return dateParts.length > 1 && (dateParts.length !== 3 || dateParts[0].length < 4 || dateParts[1].length !== 2 || dateParts[2].length !== 2);
   }
 
   nameChanged() {
