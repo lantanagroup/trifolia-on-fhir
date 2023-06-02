@@ -232,9 +232,11 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         }
 
         // set version and timestamp
-        delete existing.resource.meta['security'];
-        existing.resource.meta.versionId = versionId.toString();
-        existing.resource.meta.lastUpdated = lastUpdated;
+        if (existing.resource.meta) {
+          delete existing.resource.meta['security'];
+          existing.resource.meta.versionId = versionId.toString();
+          existing.resource.meta.lastUpdated = lastUpdated;
+        }
         existing.versionId = versionId;
         existing.lastUpdated = lastUpdated;
 
