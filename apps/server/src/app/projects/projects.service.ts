@@ -17,7 +17,7 @@ export class ProjectsService extends BaseDataService<ProjectDocument> {
     }
 
     public async getProject(projectId: string) : Promise<IProject> {
-      return this.projectModel.findById(projectId).populate(["igs"]).exec();
+      return this.projectModel.findById(projectId).populate(["references.value"]).exec();
     }
 
 }

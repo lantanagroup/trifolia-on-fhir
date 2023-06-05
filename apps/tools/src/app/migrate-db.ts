@@ -242,7 +242,7 @@ export class MigrateDb extends BaseTools {
 
       if (groupedResource.projectResource) continue;
       if (['Practitioner', 'Group', 'AuditEvent'].find(r => r === resource.resourceType)) continue;
-      if (resource.resourceType === 'ImplementationGuide' && this.projects.find(p => p.igs[0]?.id === resource.id)) continue;
+      if (resource.resourceType === 'ImplementationGuide' && this.projects.find(p => p.references[0]?.value === resource.id)) continue;
 
       await this.migrateConformance(groupedResource);
 
@@ -431,12 +431,12 @@ export class MigrateDb extends BaseTools {
     return permissions;
   }
 
-  private getExamples(projects: IProject[], resourceReference: string) {
+  /*private getExamples(projects: IProject[], resourceReference: string) {
     const examples = [];
 
     projects.forEach(p => {
       if (this.options.fhirVersion === 'r4') {
-        const r4ImplementationGuide = p.igs[0].resource as R4ImplementationGuide;
+        const r4ImplementationGuide = p.references[0].value as R4ImplementationGuide;
 
         if (r4ImplementationGuide.definition && r4ImplementationGuide.definition.resource) {
           const foundRes = r4ImplementationGuide.definition.resource
@@ -471,7 +471,7 @@ export class MigrateDb extends BaseTools {
     });
 
     return examples;
-  }
+  }*/
 
   private convertAuditAction(action: string) {
     switch (action) {
@@ -799,9 +799,9 @@ export class MigrateDb extends BaseTools {
 
 
       // Add/update project
-      newProject.igs = [newIgId];
+      newProject.references = [newIgId];
       let projResult = await this.db.collection('project').findOneAndUpdate(
-        { migratedFrom: newIg.migratedFrom, 'igs': newIgId },
+        { migratedFrom: newIg.migratedFrom, 'references': newIgId },
         { $set: newProject }, { upsert: true, returnDocument: ReturnDocument.AFTER }
       );
 

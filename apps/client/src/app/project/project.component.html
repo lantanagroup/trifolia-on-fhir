@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="mb-3">
-       <table class="table table-striped" *ngIf="project.igs">
+       <table class="table table-striped" *ngIf="project.references">
           <thead>
             <tr>
               <th>
@@ -45,14 +45,14 @@
    <!--           <th>Published</th>-->
             </tr>
           </thead>
-          <tr *ngFor="let ig of project.igs">
-            <td><a   role="button" routerLink="/projects/{{ig.id}}/implementation-guide"
+          <tr *ngFor="let ref of project.references">
+            <td><a   role="button" routerLink="/projects/{{ref.value.id}}/implementation-guide"
                      title="Edit Project Implementation Guides ">
-                     <i> {{ig.resource.id || ig.id}}</i>
+                     <i> {{ref.value.resource.id || ref.id}}</i>
                 </a>
             </td>
-            <td>{{ig.resource.name}}</td>
-            <td>{{ig.fhirVersion}}</td>
+            <td>{{ref.value.resource.name}}</td>
+            <td>{{ref.value.fhirVersion}}</td>
            <!-- <td>
                 <i *ngIf="ig.resource.published === true" class="fas fa-check" style="color:green" title="Success"></i>
                 <i *ngIf="ig.resource.published === false" class="fas fa-times" style="color:red" title="Failed"></i>

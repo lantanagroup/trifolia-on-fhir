@@ -3,6 +3,7 @@ import type {IProject, IProjectContributor, IPermission} from '@trifolia-fhir/mo
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 import { Conformance } from '../conformance/conformance.schema';
+import {IProjectResourceReference} from '@trifolia-fhir/models';
 
 export type ProjectDocument = HydratedDocument<Project>;
 
@@ -24,8 +25,14 @@ export class Project extends BaseEntity implements IProject {
     @Prop()
     permissions?: IPermission[];
 
-    @Prop ([{type: mongoose.Schema.Types.ObjectId, ref: 'Conformance' }])
-    igs;
+    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['Project']}}])
+    referencedBy: IProjectResourceReference[];
+
+    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['Conformance', 'Example']}}])
+    references: IProjectResourceReference[];
+
+    @Prop()
+    isDeleted: boolean = false;
 }
 
 
