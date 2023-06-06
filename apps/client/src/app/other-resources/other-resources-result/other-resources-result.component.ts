@@ -34,6 +34,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   selected = 'JSON';
   options: string[] = ['JSON', 'XML'];
   isExample = false;
+  isConformanceExample = false;
 
   constructor(private fhirService: FhirService,
     private route: ActivatedRoute,
@@ -101,6 +102,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     this.message = 'Opening resource';
 
     this.isExample = this.route.snapshot.params.type === 'example';
+    this.isConformanceExample = this.route.snapshot.params.type === 'conformance-example';
 
     if (this.isExample) {
       this.examplesService.get(this.route.snapshot.params.id).subscribe({
@@ -224,7 +226,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     if (this.isExample) {
       request = this.examplesService.save(this.resource.id, <IExample>this.resource, this.configService.project?.implementationGuideId);
     } else {
-      request = this.conformanceService.save(this.resource.id, <IConformance>this.resource, this.configService.project?.implementationGuideId);
+      request = this.conformanceService.save(this.resource.id, <IConformance>this.resource, this.configService.project?.implementationGuideId, this.isConformanceExample);
     }
 
     request.subscribe({
