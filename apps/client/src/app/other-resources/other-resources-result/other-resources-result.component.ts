@@ -14,7 +14,8 @@ import { debounceTime } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import { ConformanceService } from '../../shared/conformance.service';
 import { ExamplesService } from '../../shared/examples.service';
-import { IConformance, IExample } from '@trifolia-fhir/models';
+import { IConformance, IExample, IProjectResource } from '@trifolia-fhir/models';
+import { ImplementationGuideService } from '../../shared/implementation-guide.service';
 
 @Component({
   templateUrl: './other-resources-result.component.html',
@@ -34,7 +35,6 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   selected = 'JSON';
   options: string[] = ['JSON', 'XML'];
   isExample = false;
-  isConformanceExample = false;
 
   constructor(private fhirService: FhirService,
     private route: ActivatedRoute,
@@ -43,7 +43,8 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     public configService: ConfigService,
     protected authService: AuthService,
     protected conformanceService: ConformanceService,
-    protected examplesService: ExamplesService) {
+    protected examplesService: ExamplesService,
+    protected implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
 
@@ -98,7 +99,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     this.message = 'Opening resource';
 
     this.isFhir = this.route.snapshot.params.type === 'fhir';
-    this.isConformanceExample = this.route.snapshot.params.type === 'fhir-example';
+    //this.isExample = this.route.snapshot.params.type === 'fhir-example' || this.route.snapshot.params.type === 'nonfhir-example';
 
     if (!this.isFhir) {
       this.examplesService.get(this.route.snapshot.params.id).subscribe({
@@ -141,6 +142,22 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
         },
         error: (err) => {
           this.message = 'Error opening resource: ' + getErrorString(err);
+        }
+      });
+    }
+
+
+    // determine if this resource is referenced as an example in the current IG
+    this.isExample = false;
+    if (this.configService.project?.implementationGuideId) {
+      this.implementationGuideService.getExamples(this.configService.project.implementationGuideId).subscribe({
+        next: (res: IProjectResource[]) => {
+          if ((res || <IProjectResource[]>[]).findIndex(r => r.id === this.route.snapshot.params.id) > -1) {
+            this.isExample = true;
+          }
+        },
+        error: (err) => {
+          this.message = 'Error retrieving IG context: ' + getErrorString(err);
         }
       });
     }
@@ -221,7 +238,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     let request: Observable<IConformance | IExample>;
 
     if (this.isFhir) {
-      request = this.conformanceService.save(this.resource.id, <IConformance>this.resource, this.configService.project?.implementationGuideId);
+      request = this.conformanceService.save(this.resource.id, <IConformance>this.resource, this.configService.project?.implementationGuideId, this.isExample);
     } else {
       request = this.examplesService.save(this.resource.id, <IExample>this.resource, this.configService.project?.implementationGuideId);
     }

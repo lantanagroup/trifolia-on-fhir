@@ -34,6 +34,45 @@ export class ExamplesComponent implements OnInit {
         return JSON.stringify(e).toLowerCase().indexOf(this.searchText.toLowerCase()) >= 0;
       });
   }
+
+  public getEntryName(entry) {
+    if (entry && entry.resource) {
+      const resource = entry.resource;
+
+      if (resource.title) {
+        return resource.title;
+      }
+
+      if (resource.name) {
+        if (typeof resource.name === 'string') {
+          return resource.name;
+        } else if (resource.name instanceof Array && resource.name.length > 0) {
+          if (resource.name[0].text) {
+            return resource.name[0].text;
+          }
+
+          let retName = '';
+
+          if (resource.name[0].given) {
+            retName = resource.name[0].given.join(' ');
+          }
+
+          if (resource.name[0].family) {
+            retName += ' ' + resource.name[0].family;
+          }
+
+          return retName;
+        }
+      }
+    }
+
+    if (entry && entry.name) {
+      return entry.name;
+    }
+
+    return '';
+    
+  }
   
 
   async ngOnInit() {
