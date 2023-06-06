@@ -69,11 +69,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
               this.data = this.fhirService.deserialize(this.content);
               this.message = 'The content has been updated';
             }
-            if (this.isExample) {
-              (<IExample>this.resource).content = this.data;
-            } else {
-              (<IConformance>this.resource).resource = this.data;
-            }
+            (<IConformance>this.resource).resource = this.data;            
             this.validation = this.fhirService.validate(this.data);
 
             if (!this.validation.valid) {
@@ -100,9 +96,9 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   ngOnInit() {
     this.message = 'Opening resource';
 
-    this.isExample = this.route.snapshot.params.type === 'example';
+    this.isFhir = this.route.snapshot.params.type === 'fhir';
 
-    if (this.isExample) {
+    if (!this.isFhir) {
       this.examplesService.get(this.route.snapshot.params.id).subscribe({
         next: (res: IExample) => {
           this.resource = res;
@@ -151,7 +147,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
   changeType() {
     setTimeout(() => {
-      this.data = this.isExample ? (<IExample>this.resource).content : (<IConformance>this.resource).resource;
+      this.data = this.isFhir ? (<IConformance>this.resource).resource : (<IExample>this.resource).content;
       switch (this.selected) {
         case 'JSON':
           this.content = JSON.stringify(this.data, null, '\t');
@@ -170,7 +166,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   public downloadFile() {
 
     const type: string = this.selected;
-    
+
     if (this.data) {
       switch (type) {
         case 'XML':
@@ -222,10 +218,14 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
     let request: Observable<IConformance | IExample>;
 
-    if (this.isExample) {
-      request = this.examplesService.save(this.resource.id, <IExample>this.resource, this.configService.project?.implementationGuideId);
-    } else {
+    console.log('this.isExample:', this.isExample);
+    console.log('this.isFhir:', this.isFhir);
+    return;
+
+    if (this.isFhir) {
       request = this.conformanceService.save(this.resource.id, <IConformance>this.resource, this.configService.project?.implementationGuideId);
+    } else {
+      request = this.examplesService.save(this.resource.id, <IExample>this.resource, this.configService.project?.implementationGuideId);
     }
 
     request.subscribe({
@@ -241,16 +241,16 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   }
 
   public remove() {
-    if (!confirm(`Are you sure you want to delete the ${this.isExample ? 'example' : 'resource'}?`)) {
+    if (!confirm(`Are you sure you want to delete this resource?`)) {
       return;
     }
 
     let request: Observable<IConformance | IExample>;
 
-    if (this.isExample) {
-      request = this.examplesService.delete(this.resource.id);
-    } else {
+    if (this.isFhir) {
       request = this.conformanceService.delete(this.resource.id);
+    } else {
+      request = this.examplesService.delete(this.resource.id);
     }
 
     request.subscribe({
