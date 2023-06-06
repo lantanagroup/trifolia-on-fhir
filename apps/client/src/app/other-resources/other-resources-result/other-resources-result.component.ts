@@ -135,6 +135,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
       this.conformanceService.get(this.route.snapshot.params.id).subscribe({
         next: (res: IConformance) => {
           this.resource = res;
+          this.data = res.resource;
           this.content = JSON.stringify(res.resource, null, '\t');
           this.validation = this.fhirService.validate((<IConformance>this.resource).resource);
           this.isFhir = true;
@@ -171,7 +172,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   public downloadFile() {
 
     const type: string = this.selected;
-
+    
     if (this.data) {
       switch (type) {
         case 'XML':
