@@ -376,8 +376,10 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
     const url =  this.implementationGuide.url;
-    this.questionnaire.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "Questionnaire/" : "";
 
+    if(!this.questionnaire.url) {
+      this.questionnaire.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "Questionnaire/" : "";
+    }
   }
 
   ngOnDestroy() {

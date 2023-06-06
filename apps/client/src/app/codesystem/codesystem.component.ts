@@ -280,7 +280,9 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
     const url =  this.implementationGuide.url;
-    this.codeSystem.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "CodeSystem/" : "";
+    if(!this.codeSystem.url) {
+      this.codeSystem.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "CodeSystem/" : "";
+    }
   }
 
   ngOnDestroy() {

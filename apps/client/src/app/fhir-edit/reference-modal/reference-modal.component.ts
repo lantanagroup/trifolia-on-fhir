@@ -76,15 +76,15 @@ export class FhirReferenceModalComponent implements OnInit {
   }
 
   public get showContentSearch() {
-    return this.resourceType && this.nameSearchTypes.concat(this.titleSearchTypes).indexOf(this.resourceType) < 0;
+    return false;
   }
 
   public get showNameSearch() {
-    return this.nameSearchTypes.indexOf(this.resourceType) >= 0;
+    return true;
   }
 
   public get showTitleSearch() {
-    return this.titleSearchTypes.indexOf(this.resourceType) >= 0;
+    return true;
   }
 
   public isSelected(con: IConformance) {
@@ -138,11 +138,10 @@ export class FhirReferenceModalComponent implements OnInit {
       igId = this.configService.project.implementationGuideId;
     }
 
-    this.conformanceService
 
-    this.conformanceService.search(this.currentPage, 'name', 'r4', igId, this.resourceType,
-      (this.nameSearch && this.nameSearchTypes.indexOf(this.resourceType) >= 0) ? this.nameSearch : null,
-      (this.titleSearch && this.titleSearchTypes.indexOf(this.resourceType) >= 0) ? this.titleSearch : null,
+    this.conformanceService.search(this.currentPage, 'name', this.configService.fhirVersion, igId, this.resourceType,
+      this.nameSearch ? this.nameSearch : null,
+       this.titleSearch ? this.titleSearch : null,
       this.idSearch
     ).subscribe({
       next: (res: Paginated<IConformance>) => {
@@ -277,6 +276,6 @@ export class FhirReferenceModalComponent implements OnInit {
     this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.criteriaChanged();
     //this.nameSearchTypes = this.fhirService.findResourceTypesWithSearchParam('name');
-   // this.titleSearchTypes = this.fhirService.findResourceTypesWithSearchParam('title');
+    //this.titleSearchTypes = this.fhirService.findResourceTypesWithSearchParam('title');
   }
 }

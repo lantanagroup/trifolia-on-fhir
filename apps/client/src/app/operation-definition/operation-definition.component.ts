@@ -189,7 +189,11 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
     this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
     const url =  this.implementationGuide.url;
-    this.operationDefinition.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "OperationDefinition/" : "";
+
+    if(!this.operationDefinition.url) {
+      this.operationDefinition.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "OperationDefinition/" : "";
+    }
+
   }
 
   ngOnDestroy() {

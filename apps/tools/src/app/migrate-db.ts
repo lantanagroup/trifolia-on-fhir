@@ -219,8 +219,8 @@ export class MigrateDb extends BaseTools {
       fs.unlinkSync(this.options.out);
     }
 
-    // await this.initResourceMapWithIGs();
-    // console.log('resourceMap key count:', Object.keys(this.resourceMap).length);
+    //await this.initResourceMap();
+    //console.log('resourceMap key count:', Object.keys(this.resourceMap).length);
 
     await this.migrateUsers();
     await this.migrateGroups();
@@ -302,6 +302,7 @@ export class MigrateDb extends BaseTools {
         };
       }
 
+      audit['migratedFrom'] = this.options.migratedFromLabel;
       this.log(`Inserting/updating audit ${auditEvent.id}`);
       const results = await this.db.collection('audit').updateOne(
         { timestamp: audit.timestamp, who: audit.who, action: audit.action, what: audit.what },
@@ -840,14 +841,20 @@ export class MigrateDb extends BaseTools {
   }
 
 
-  private async initResourceMapWithIGs() {
+  private async initResourceMap(resourceType?: string) {
 
     if (!this.resourceMap) {
       this.resourceMap = {};
     }
 
-    //const igConfs = this.db.collection('conformance').find<IConformance>({'migratedFrom': this.options.migratedFromLabel});
-    const igConfs = this.db.collection('conformance').find<IConformance>({$and: [{migratedFrom: this.options.migratedFromLabel}, {'resource.resourceType':'ImplementationGuide'}]});
+    let filter = {};
+    if (resourceType) {
+      filter = {$and: [{migratedFrom: this.options.migratedFromLabel}, {'resource.resourceType':resourceType}]};
+    } else {
+      filter = {'migratedFrom': this.options.migratedFromLabel};
+    }
+    
+    const igConfs = this.db.collection('conformance').find<IConformance>(filter);
     for await (const ig of igConfs) {
       const key = ig.resource.resourceType + '/' + ig.resource.id;
       this.resourceMap[key] = ig;
