@@ -262,8 +262,9 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
     const url =  this.implementationGuide.url;
-    this.searchParameter.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "SearchParameter/" : "";
-
+    if(!this.searchParameter.url) {
+      this.searchParameter.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "SearchParameter/" : "";
+    }
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/search-parameter/')) {
         this.getSearchParameter();

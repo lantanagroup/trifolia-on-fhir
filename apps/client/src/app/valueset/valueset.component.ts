@@ -278,7 +278,9 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
     const url =  this.implementationGuide.url;
-    this.valueSet.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "ValueSet/" : "";
+    if(!this.valueSet.url) {
+      this.valueSet.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "ValueSet/" : ""
+    }
   }
 
   ngOnDestroy() {
