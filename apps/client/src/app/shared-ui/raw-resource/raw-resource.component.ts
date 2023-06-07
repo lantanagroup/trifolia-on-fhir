@@ -1,8 +1,8 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {Resource} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirService} from '../../shared/fhir.service';
 import {saveAs} from 'file-saver';
 import * as vkbeautify from 'vkbeautify';
+import {IDomainResource} from '@trifolia-fhir/tof-lib';
 
 @Component({
   selector: 'app-raw-resource',
@@ -11,7 +11,7 @@ import * as vkbeautify from 'vkbeautify';
 })
 export class RawResourceComponent {
   @Input() shown?: boolean;
-  @Input() resource: Resource;
+  @Input() resource: IDomainResource;
 
   constructor(private fhirService: FhirService) {
   }
@@ -53,5 +53,67 @@ export class RawResourceComponent {
     const xml = this.fhirService.serialize(this.resource);
 
     return xml ? vkbeautify.xml(xml) : '';
+  }
+
+  uploadJson(file: File) {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const result = e.target.result;
+
+      try {
+        const obj = JSON.parse(result);
+
+        if (!obj || !obj.resourceType) {
+          alert('JSON is not a FHIR resource');
+          return;
+        }
+
+        if (this.resource.resourceType !== obj.resourceType) {
+          alert(`Uploaded resource's type does not match`);
+        }
+
+        if (this.resource.id && this.resource.id !== obj.id) {
+          alert(`Uploaded resource's ID does not match`);
+          return;
+        }
+
+        Object.assign(this.resource, obj);
+      } catch (ex) {
+        alert('Error parsing JSON as FHIR');
+        console.error(ex);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  uploadXml(file: File) {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const result = e.target.result;
+
+      try {
+        const obj: any = this.fhirService.deserialize(result);
+
+        if (!obj || !obj.resourceType) {
+          alert('XML is not a FHIR resource');
+          return;
+        }
+
+        if (this.resource.resourceType !== obj.resourceType) {
+          alert(`Uploaded resource's type does not match`);
+        }
+
+        if (this.resource.id && this.resource.id !== obj.id) {
+          alert(`Uploaded resource's ID does not match`);
+          return;
+        }
+
+        Object.assign(this.resource, obj);
+      } catch (ex) {
+        alert('Error parsing XML as FHIR');
+        console.error(ex);
+      }
+    };
+    reader.readAsText(file);
   }
 }

@@ -1,19 +1,28 @@
 <ul ngbNav #nav="ngbNav" class="nav-tabs nav-fill">
     <li ngbNavItem>
+        <input type="file" id="jsonUploadFile" #jsonUploadFile style="display: none" (change)="uploadJson(jsonUploadFile.files[0])" accept="application/json" />
         <a ngbNavLink>
             Plain JSON
             <button type="button" class="btn btn-default btn-sm" (click)="downloadJson($event)" title="Download JSON">
                 <i class="fas fa-download"></i>
-            </button></a>
+            </button>
+            <button type="button" class="btn btn-default btn-sm" (click)="jsonUploadFile.click()" title="Upload JSON">
+              <i class="fas fa-upload"></i>
+            </button>
+        </a>
         <ng-template ngbNavContent>
             <pre>{{resource | json}}</pre>
         </ng-template>
     </li>
     <li ngbNavItem>
+        <input type="file" id="xmlUploadFile" #xmlUploadFile style="display: none" (change)="uploadXml(xmlUploadFile.files[0])" accept="application/xml" />
         <a ngbNavLink>
             XML
             <button type="button" class="btn btn-default btn-sm" (click)="downloadXml($event)" title="Download XML">
                 <i class="fas fa-download"></i>
+            </button>
+            <button type="button" class="btn btn-default btn-sm" (click)="xmlUploadFile.click()" title="Upload XML">
+              <i class="fas fa-upload"></i>
             </button>
         </a>
         <ng-template ngbNavContent>

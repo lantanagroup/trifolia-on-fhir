@@ -629,7 +629,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       Object.assign(pageDef.page, page);
       this.initPagesAndGroups();
       this.igChanging.emit(true);
-    });
+    }).catch((err) => {});
 
   }
 
