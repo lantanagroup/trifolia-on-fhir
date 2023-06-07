@@ -185,8 +185,8 @@
 
             <div class="main-content">
                 
-<p class="rvps2"><span class="rvts19">Release 3.0.2</span></p>
-<p class="rvps2"><span class="rvts20">Initial release on 5/31/2023, patched on 6/2/2023, 6/6/2023</span></p>
+<p class="rvps2"><span class="rvts19">Release 3.0.3</span></p>
+<p class="rvps2"><span class="rvts20">Initial release on 5/31/2023, patched on 6/2/2023, 6/6/2023, 6/7/2023</span></p>
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">Proprietary persistence layer</span></span></h3>
 <p class="rvps2"><span class="rvts6">We have transitioned away from using one or more FHIR servers to support the persistence of data, and are now using a Mongo (document-based) database. The Mongo database consists of multiple collections (similar to tables) that represent the data persisted in ToF. A migration tool has been created to assist existing installations in migrating from FHIR servers to the Mongo database.</span></p>
 <p class="rvps2"><span class="rvts6">Making this change will allow ToF to:</span></p>
@@ -205,7 +205,7 @@
 <h3 class="rvps6"><span class="rvts0"><span class="rvts15">GitHub functionality removed (for now)</span></span></h3>
 <p class="rvps2"><span class="rvts6">Functionality for importing/exporting to/from GitHub has been temporarily removed. We are in the process of re-imagining how the GitHub functionality should be implemented given our significant changes to persistence.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Development Log</span></span></h2>
-<p class="rvps2"><span class="rvts19">3.0.0</span></p>
+<h3 class="rvps6"><span class="rvts0"><span class="rvts15">3.0.0</span></span></h3>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
  <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-644" target="_blank">TOFDEV-644</a><span class="rvts6"> - Story - Replace FHIR server(s) persistence with MongoDB</span></li>
  <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;">
@@ -218,7 +218,7 @@
  <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-634" target="_blank">TOFDEV-634</a><span class="rvts6"> - Defect - Adding a Must Support to a previously unconstrained element causes it to be added out of order in the XML/JSON/Raw</span></li>
  <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-714" target="_blank">TOFDEV-714</a><span class="rvts6"> - Defect - Package ID field allows spaces during initial auto-generation and errors out on Edit IG page</span></li>
 </ul>
-<p class="rvps2"><span class="rvts19">3.0.1</span></p>
+<h3 class="rvps6"><span class="rvts0"><span class="rvts15">3.0.1</span></span></h3>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
  <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-734" target="_blank">TOFDEV-734</a><span class="rvts6"> - Improvement - Consistently per-populate base URL, FHIR version and validating required fields across several resource pages (StructureDefinition, CodeSystem, ValueSet, etc.)</span></li>
  <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-731" target="_blank">TOFDEV-731</a><span class="rvts6"> - Improvement - FHIR version of every new StructureDefinition should be pre-populated with FHIR version # of IG</span></li>
@@ -226,12 +226,17 @@
  <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-750" target="_blank">TOFDEV-750</a><span class="rvts6"> - Defect - Re-add support for importing Bundle resources</span></li>
  <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-724" target="_blank">TOFDEV-724</a><span class="rvts6"> - Defect - Capability Statement auto-populated date needs to be in correct format</span></li>
 </ul>
-<p class="rvps2"><span class="rvts19">3.0.2</span></p>
+<h3 class="rvps6"><span class="rvts0"><span class="rvts15">3.0.2</span></span></h3>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
  <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-768" target="_blank">TOFDEV-768</a><span class="rvts6"> - Defect - Searching for a Value Set doesn't do anything</span></li>
  <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-769" target="_blank">TOFDEV-769</a><span class="rvts6"> - Defect - Getting error Error parsing JSON when publishing</span></li>
  <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-773" target="_blank">TOFDEV-773</a><span class="rvts6"> - Defect - Missing part of URL for some resources</span></li>
- <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-774" target="_blank">TOFDEV-774</a><span class="rvts6"> - Defect - Getting wrong file extension downloading Examples</span><span class="rvts6"></span></li>
+ <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-774" target="_blank">TOFDEV-774</a><span class="rvts6"> - Defect - Getting wrong file extension downloading Examples</span></li>
+</ul>
+<h3 class="rvps6"><span class="rvts0"><span class="rvts15">3.0.3</span></span></h3>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-779" target="_blank">TOFDEV-779</a><span class="rvts6"> - Defect - Changes to a page's content are lost under certain circumstances</span></li>
+ <li class="rvps2"><a class="rvts11" href="https://lantana.atlassian.net/browse/TOFDEV-780" target="_blank">TOFDEV-780</a><span class="rvts6"> - Defect - Importing ImplementationGuide for the opened project does not persist changes</span><span class="rvts6"></span></li>
 </ul>
 
             </div>
