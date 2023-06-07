@@ -885,14 +885,15 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         next: (conf: IConformance) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
-            this.implementationGuide = <ImplementationGuide>conf.resource;
             this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
           } else {
             this.conformance = conf;
-            this.implementationGuide = <ImplementationGuide>conf.resource;
+            this.implementationGuide = new ImplementationGuide(conf.resource);
+            this.conformance.resource = this.implementationGuide;
             this.configService.project = getImplementationGuideContext(conf);
             this.message = 'Your changes have been saved!';
             this.igChanging.emit(false);
+            this.initPagesAndGroups();
             setTimeout(() => {
               this.message = '';
             }, 3000);

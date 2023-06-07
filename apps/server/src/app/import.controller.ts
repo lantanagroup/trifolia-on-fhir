@@ -72,12 +72,12 @@ export class ImportController extends BaseController {
       let path = `${e.resourceType}/${e.id}`;
 
       let filter = {};
-      if (implementationGuideId) {
+      if (implementationGuideId && "ImplementationGuide" !== e.resourceType) {
         filter['igIds'] = new ObjectId(implementationGuideId);
       }
 
       if (e.isExample) {
-        filter['$or'] = [ 
+        filter['$or'] = [
           {'content.resourceType': e.resourceType, 'content.id': e.id},
           {'name': e.id, 'content': {$type: 'string'}}
         ];
@@ -111,38 +111,38 @@ export class ImportController extends BaseController {
      const conceptLines = allLines.slice(4);
      const contextImplementationGuide = await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId);
      const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
- 
+
      const valueSet = new ValueSet();
      valueSet.id = oid;
      valueSet.url = `urn:oid:${oid}`;
      valueSet.name = name;
      valueSet.compose = new ValueSetComposeComponent();
      valueSet.compose.include = [];
- 
+
      if (contextImplementationGuide) {
        // TODO: Determine a better URL
      }
- 
+
      // Find distinct/unique code systems
      const codeSystems = [];
- 
+
      conceptLines.forEach((line) => {
        const lineData = line.split('\t');
        const codeSystemOid = lineData[4];
- 
+
        if (!codeSystemOid) {
          return;
        }
- 
+
        const foundInclude = valueSet.compose.include.find((include) => include.system === `urn:oid:${codeSystemOid}`);
- 
+
        if (!foundInclude) {
          const newInclude = new ValueSetConceptSetComponent();
          newInclude.system = `urn:oid:${codeSystemOid}`;
          valueSet.compose.include.push(newInclude);
        }
      });
- 
+
      valueSet.compose.include.forEach((include) => {
        include.concept = conceptLines
          .filter(line => {
@@ -158,14 +158,14 @@ export class ImportController extends BaseController {
            return concept;
          });
      });
- 
+
      const url = buildUrl(fhirServerBase, 'ValueSet', valueSet.id);
      const results = await this.httpService.put(url, valueSet).toPromise();
- 
+
      if (contextImplementationGuide) {
        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, valueSet, userSecurityInfo, contextImplementationGuide, true);
      }
- 
+
      return results.data;
    }*/
 
