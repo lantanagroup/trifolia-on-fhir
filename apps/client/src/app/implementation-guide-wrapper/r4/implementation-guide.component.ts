@@ -31,7 +31,7 @@ import {BaseImplementationGuideComponent} from '../base-implementation-guide-com
 import {CanComponentDeactivate} from '../../guards/resource.guard';
 import {ProjectService} from '../../shared/projects.service';
 import {IConformance, IExample, IProjectResource, IProjectResourceReference} from '@trifolia-fhir/models';
-import {getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
+import {IDomainResource, getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 import {ObjectId} from 'mongodb';
 import {Conformance} from '../../../../../server/src/app/conformance/conformance.schema';
 
@@ -559,9 +559,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.implementationGuide = new ImplementationGuide(this.fileService.file.resource);
-        this.igChanging.emit(false);
-        this.initPagesAndGroups();
+        this.loadIG(this.fileService.file.resource);
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -579,12 +577,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
               this.message = 'The specified implementation guide either does not exist or was deleted';
               return;
             }
-
-            this.implementationGuide = new ImplementationGuide(conf.resource);
+            
             this.conformance = conf;
-            this.conformance.resource = this.implementationGuide;
-            this.igChanging.emit(false);
-            this.initPagesAndGroups();
+            this.loadIG(conf.resource);
           },
           error: (err) => {
             this.igNotFound = err.status === 404;
@@ -888,12 +883,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
           } else {
             this.conformance = conf;
-            this.implementationGuide = new ImplementationGuide(conf.resource);
-            this.conformance.resource = this.implementationGuide;
+            this.loadIG(conf.resource);
             this.configService.project = getImplementationGuideContext(conf);
             this.message = 'Your changes have been saved!';
-            this.igChanging.emit(false);
-            this.initPagesAndGroups();
             setTimeout(() => {
               this.message = '';
             }, 3000);
@@ -1119,4 +1111,16 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       });
 
   }
+  
+  public loadIG(newVal: IDomainResource, isDirty?: boolean) {
+    console.log('this.implementationGuide', this.implementationGuide.constructor, this.implementationGuide);
+    this.implementationGuide = new ImplementationGuide(newVal);
+
+    if (this.conformance) {
+      this.conformance.resource = this.implementationGuide;
+    }
+    this.igChanging.emit(isDirty);
+    this.initPagesAndGroups();
+  }
+
 }

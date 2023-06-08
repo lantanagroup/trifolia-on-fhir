@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FhirService} from '../../shared/fhir.service';
 import {saveAs} from 'file-saver';
 import * as vkbeautify from 'vkbeautify';
@@ -12,6 +12,7 @@ import {IDomainResource} from '@trifolia-fhir/tof-lib';
 export class RawResourceComponent {
   @Input() shown?: boolean;
   @Input() resource: IDomainResource;
+  @Output() changed = new EventEmitter<IDomainResource>();
 
   constructor(private fhirService: FhirService) {
   }
@@ -78,6 +79,7 @@ export class RawResourceComponent {
         }
 
         Object.assign(this.resource, obj);
+        this.changed.emit(this.resource);
       } catch (ex) {
         alert('Error parsing JSON as FHIR');
         console.error(ex);
@@ -109,6 +111,7 @@ export class RawResourceComponent {
         }
 
         Object.assign(this.resource, obj);
+        this.changed.emit(this.resource);
       } catch (ex) {
         alert('Error parsing XML as FHIR');
         console.error(ex);
