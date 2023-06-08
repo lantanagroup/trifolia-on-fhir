@@ -12,7 +12,7 @@ import {IDomainResource} from '@trifolia-fhir/tof-lib';
 export class RawResourceComponent {
   @Input() shown?: boolean;
   @Input() resource: IDomainResource;
-  @Output() changed = new EventEmitter<IDomainResource>();
+  @Output() resourceChange = new EventEmitter<IDomainResource>();
 
   constructor(private fhirService: FhirService) {
   }
@@ -79,7 +79,7 @@ export class RawResourceComponent {
         }
 
         Object.assign(this.resource, obj);
-        this.changed.emit(this.resource);
+        this.resourceChange.emit(this.resource);
       } catch (ex) {
         alert('Error parsing JSON as FHIR');
         console.error(ex);
@@ -111,7 +111,7 @@ export class RawResourceComponent {
         }
 
         Object.assign(this.resource, obj);
-        this.changed.emit(this.resource);
+        this.resourceChange.emit(this.resource);
       } catch (ex) {
         alert('Error parsing XML as FHIR');
         console.error(ex);

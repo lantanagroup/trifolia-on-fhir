@@ -1113,7 +1113,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
   
   public loadIG(newVal: IDomainResource, isDirty?: boolean) {
-    console.log('this.implementationGuide', this.implementationGuide.constructor, this.implementationGuide);
     this.implementationGuide = new ImplementationGuide(newVal);
 
     if (this.conformance) {

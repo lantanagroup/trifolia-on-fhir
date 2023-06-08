@@ -322,7 +322,7 @@
     <li ngbNavItem="raw">
       <a ngbNavLink>RAW</a>
       <ng-template ngbNavContent>
-        <app-raw-resource [resource]="codeSystem" [shown]="csTabs.activeId === 'raw'"></app-raw-resource>
+        <app-raw-resource [resource]="codeSystem" [shown]="csTabs.activeId === 'raw'" (resourceChange)="loadCS($event)"></app-raw-resource>
       </ng-template>
     </li>
 
