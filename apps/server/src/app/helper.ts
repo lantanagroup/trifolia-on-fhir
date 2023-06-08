@@ -716,7 +716,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
               reference: resourceReferenceString,
               display: display
             },
-            exampleBoolean: isExample,
+            exampleBoolean: isExample? true : false,
             name: display,
             description: description
           });
@@ -773,7 +773,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
           reference: resourceReferenceString,
           display: display
         },
-        example: isExample
+        example: isExample? true : false
       }
 
       if (stu3.package.length === 0) {
