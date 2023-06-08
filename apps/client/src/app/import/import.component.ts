@@ -744,6 +744,7 @@ export class ImportComponent implements OnInit {
   public processFile(result: any, fileName: string, fileType: string, extension: string): { errorMessage: string, importFileModel: ImportFileModel } {
     const importFileModel = new ImportFileModel();
     this.errorMessage = '';
+    // let result;
     importFileModel.name = fileName;
     importFileModel.content = result;
 
@@ -753,7 +754,7 @@ export class ImportComponent implements OnInit {
       importFileModel.contentType = ContentTypes.Xml;
     } else if (extension === '.xlsx') {
       importFileModel.contentType = ContentTypes.Xlsx;
-    } else if (extension === '.jpg' || extension === '.gif' || extension === '.png' || extension === '.bmp' || extension === '.svg') {
+    } else if (extension === '.image' || extension === '.jpg' || extension === '.gif' || extension === '.png' || extension === '.bmp' || extension === '.svg') {
       importFileModel.contentType = ContentTypes.Image;
     }
 
@@ -762,7 +763,23 @@ export class ImportComponent implements OnInit {
 
         // try to deserialize XML imports into FHIR objects
         try {
-          importFileModel.resource = this.fhirService.deserialize(result);
+          if(typeof result == typeof '')
+          {
+             importFileModel.resource = this.fhirService.deserialize( result);
+             importFileModel.name = fileName;
+          }
+          else if(typeof result == typeof {}){
+            importFileModel.resource = this.fhirService.deserialize(this.fhirService.serialize(result));
+            importFileModel.name = fileName;
+            if(importFileModel.resource.resourceType === 'Binary' ){
+              result = importFileModel.resource["data"];
+              importFileModel.name = fileName.substring(fileName.indexOf("/")+1);
+              if(importFileModel.name.indexOf(".xml") == -1)  {
+                importFileModel.name = importFileModel.name + ".xml";
+              }
+              importFileModel.resource = this.fhirService.deserialize(result);
+            }
+          }
         } catch (error) {
           // if deserializing failed and this is a CDA IG we can store the XML as example content
           if (this.configService.isCDA) {
@@ -828,6 +845,19 @@ export class ImportComponent implements OnInit {
 
   }
 
+  private get(contentType: ContentTypes) {
+    if (contentType === 0) {
+      return '.json';
+    } else if (contentType === 1) {
+      return '.xml';
+    } else if (contentType === 2) {
+      return '.xlsx';
+    } else if (contentType === 3) {
+      return '.image';
+    } else if (contentType === 4) {
+      return 'CdaExample';
+    }
+  }
 
   public bundleOperationChanged(file: ImportFileModel) {
 
@@ -839,7 +869,7 @@ export class ImportComponent implements OnInit {
       if (!resource) return;
 
       const newFileName = `${file.name} - ${resource.resourceType}/${resource.id}`;
-      const res = this.processFile(JSON.stringify(bundleEntry.resource), newFileName, undefined, '.json');
+      const res = this.processFile(bundleEntry.resource, newFileName, undefined, this.get(file.contentType));
       const errorMessage = res.errorMessage;
       const importFileModel = res.importFileModel;
 
