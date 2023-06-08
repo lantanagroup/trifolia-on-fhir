@@ -328,13 +328,28 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
     await this.strucDefService.save(this.sdId, this.conformance)
       .subscribe((conf) => {
+        let updatedStructureDefinition = null;
         if (!this.sdId) {
           // noinspection JSIgnoredPromiseFromCall
           this.sdId = conf.id;
           this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${this.sdId}`]);
         } else {
-          let updatedStructureDefinition = <STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>conf.resource;
+
+          this.conformance = conf;
+
+          if (this.configService.isFhirR5) {
+            updatedStructureDefinition = new R5StructureDefinition(conf.resource);
+          } else if (this.configService.isFhirR4) {
+            updatedStructureDefinition = new R4StructureDefinition(conf.resource);
+          } else if (this.configService.isFhirSTU3) {
+            updatedStructureDefinition = new STU3StructureDefinition(conf.resource);
+          } else {
+            throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
+          }
+
+        //  let updatedStructureDefinition = <STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>conf.resource;
           this.structureDefinition.snapshot = updatedStructureDefinition.snapshot;
+          this.conformance.resource =  updatedStructureDefinition;
           this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, updatedStructureDefinition.id, updatedStructureDefinition.name);
           this.message = 'Your changes have been saved!';
           this.isDirty = false;
