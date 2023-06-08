@@ -3,9 +3,14 @@ import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { RecentItemService } from '../shared/recent-item.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { CodeSystemService } from '../shared/code-system.service';
-import {CodeSystem as STU3CodeSystem, ConceptDefinitionComponent, ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { CodeSystem as R4CodeSystem } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {CodeSystem as R5CodeSystem } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
+import {
+  CodeSystem as STU3CodeSystem,
+  ConceptDefinitionComponent,
+  ImplementationGuide,
+  StructureDefinition as STU3StructureDefinition
+} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {CodeSystem as R4CodeSystem, StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {CodeSystem as R5CodeSystem, StructureDefinition as R5StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { FhirService } from '../shared/fhir.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FhirCodesystemConceptModalComponent } from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
@@ -203,7 +208,16 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
             this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${conf.id}`]);
           } else {
             this.conformance = conf;
-            this.codeSystem = conf.resource;
+            if (this.configService.isFhirR5) {
+              this.codeSystem  = new R5CodeSystem(conf.resource);
+            } else if (this.configService.isFhirR4) {
+              this.codeSystem  = new R4CodeSystem(conf.resource);
+            } else if (this.configService.isFhirSTU3) {
+              this.codeSystem  = new STU3CodeSystem(conf.resource);
+            } else {
+              throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
+            }
+            this.conformance.resource =  this.codeSystem;
             this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, conf.id, conf.name);
             setTimeout(() => {
               this.message = '';
@@ -248,7 +262,19 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
             }
 
             this.conformance = conf;
-            this.codeSystem = <ICodeSystem>conf.resource;
+
+            if (this.configService.isFhirR5) {
+              this.codeSystem  = new R5CodeSystem(conf.resource);
+            } else if (this.configService.isFhirR4) {
+              this.codeSystem  = new R4CodeSystem(conf.resource);
+            } else if (this.configService.isFhirSTU3) {
+              this.codeSystem  = new STU3CodeSystem(conf.resource);
+            } else {
+              throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
+            }
+
+            this.conformance.resource =  this.codeSystem;
+
             this.nameChanged();
             this.refreshConcepts();
             this.recentItemService.ensureRecentItem(
