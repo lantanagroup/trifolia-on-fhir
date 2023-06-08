@@ -1,32 +1,32 @@
-import { ParseConformance } from 'fhir/parseConformance';
-import { Fhir, Versions as FhirVersions } from 'fhir/fhir';
+import {ParseConformance} from 'fhir/parseConformance';
+import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import JSZip from 'jszip';
-import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Logger, UnauthorizedException } from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {BadRequestException, Logger, UnauthorizedException} from '@nestjs/common';
 import {
   AuditEvent as STU3AuditEvent,
   DomainResource as STU3DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
   PackageResourceComponent
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { buildUrl, getR4Dependencies, getSTU3Dependencies } from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {
   AuditEvent as R4AuditEvent,
   DomainResource as R4DomainResource, ImplementationGuide,
   ImplementationGuide as R4ImplementationGuide
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import { AxiosRequestConfig } from 'axios';
-import { IUserSecurityInfo } from './base.controller';
-import { addPermission, findPermission, getErrorString, parsePermissions } from '../../../../libs/tof-lib/src/lib/helper';
-import { ConfigService } from './config.service';
-import { Globals } from '../../../../libs/tof-lib/src/lib/globals';
-import { IAuditEvent, IDomainResource, IImplementationGuide } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { TofLogger } from './tof-logger';
-import { IConformance, IExample, IProjectResourceReference } from '@trifolia-fhir/models';
-import { ConformanceService } from './conformance/conformance.service';
-import { ObjectId } from 'mongodb';
+import {AxiosRequestConfig} from 'axios';
+import {IUserSecurityInfo} from './base.controller';
+import {addPermission, findPermission, getErrorString, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
+import {ConfigService} from './config.service';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {TofLogger} from './tof-logger';
+import {IConformance, IExample, IProjectResourceReference} from '@trifolia-fhir/models';
+import {ConformanceService} from './conformance/conformance.service';
+import {ObjectId} from 'mongodb';
 
 declare var jasmine;
 
@@ -144,7 +144,7 @@ export const rmdir = (p): Promise<void> => {
 };
 
 export async function createAuditEvent(logger: TofLogger, httpService: HttpService, fhirServerVersion: string,
-  fhirServerBase: string, action: string, usi: IUserSecurityInfo, resource: IDomainResource) {
+                                       fhirServerBase: string, action: string, usi: IUserSecurityInfo, resource: IDomainResource) {
   try {
     let auditEvent: IAuditEvent;
 
@@ -581,9 +581,9 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   // if new resource is not an example it can only be treated as a valid fhir resource
   if (!isExample) {
     if ('resource' in resourceToAdd && resourceToAdd.resource) {
-      resourceReferenceString = `${(<IConformance>resourceToAdd).resource.resourceType}/${(<IConformance>resourceToAdd).resource.id || resourceToAdd.id}`
+      resourceReferenceString = `${(<IConformance>resourceToAdd).resource.resourceType}/${(<IConformance>resourceToAdd).resource.id || resourceToAdd.id}`;
     } else {
-      throw new BadRequestException("Supplied conformance object does not have a valid resource property.");
+      throw new BadRequestException('Supplied conformance object does not have a valid resource property.');
     }
   } else {
 
@@ -696,10 +696,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
       } else {
         // otherwise do the usual...
-        let name;
-        if(typeof (<any>resourceToAdd).resource.name == typeof ''){
-          name = (<any>resourceToAdd).resource.name;
-        }
+        let name = getName((<any>resourceToAdd).resource.name);
         const display = name || (<any>resourceToAdd).resource.title;
         const description = (<any>resourceToAdd).resource.description;
         r4.definition.resource.push(isExample && exampleFor ?
@@ -716,7 +713,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
               reference: resourceReferenceString,
               display: display
             },
-            exampleBoolean: isExample,
+            exampleBoolean: isExample ? true : false,
             name: display,
             description: description
           });
@@ -758,23 +755,19 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
          display = (<any>resourceToAdd).name || (<any>resourceToAdd).id;
       }
       else {
-        let name;
-        if(typeof (<any>resourceToAdd).resource.name == typeof ''){
-          name = (<any>resourceToAdd).resource.name;
-        }
+        let name = getName((<any>resourceToAdd).resource.name);
         display =  name || (<any>resourceToAdd).resource.title ;
         description = (<any>resourceToAdd).resource.description;
       }
-
-      const newResource : PackageResourceComponent = {
+      const newResource: PackageResourceComponent = {
         name: display,
         description: description,
         sourceReference: {
           reference: resourceReferenceString,
           display: display
         },
-        example: isExample
-      }
+        example: isExample ? true : false
+      };
 
       if (stu3.package.length === 0) {
         logger.verbose('STU3 IG does not contain a package, adding a default package with the resource added to it.');
@@ -812,6 +805,31 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   }
   return Promise.resolve();
 }
+
+function getName(name: any) {
+  if (name) {
+    if (typeof name === 'string') {
+      return name;
+    } else if (name instanceof Array && name.length > 0) {
+      if (name[0].text) {
+        return name[0].text;
+      }
+
+      let retName = '';
+
+      if (name[0].given) {
+        retName = name[0].given.join(' ');
+      }
+
+      if (name[0].family) {
+        retName += ' ' + name[0].family;
+      }
+
+      return retName;
+    }
+  }
+}
+
 
 export async function removeFromImplementationGuideNew(service: ConformanceService, resourceToRemove: IConformance): Promise<void> {
 
@@ -866,7 +884,7 @@ export function implementationGuideIsCDA(implementationGuide: IConformance): boo
   return (deps || []).findIndex((d: string) => {
     return [
       'hl7.fhir.cda'
-    ].includes((d || '').split('#')[0])
+    ].includes((d || '').split('#')[0]);
   }) > -1;
 }
 
