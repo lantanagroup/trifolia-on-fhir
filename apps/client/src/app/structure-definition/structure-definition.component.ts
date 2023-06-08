@@ -39,17 +39,17 @@ import { ElementDefinitionPanelComponent } from './element-definition-panel/elem
 import { AuthService } from '../shared/auth.service';
 import { BaseComponent } from '../base.component';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { IElementDefinition } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { IDomainResource, IElementDefinition } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { ConstraintManager } from '../../../../../libs/tof-lib/src/lib/constraint-manager';
 import { BaseDefinitionResponseModel } from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
 import { Severities, ValidatorResponse } from 'fhir/validator';
-import {CanComponentDeactivate} from '../guards/resource.guard';
-import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Versions} from 'fhir/fhir';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import { CanComponentDeactivate } from '../guards/resource.guard';
+import { identifyRelease } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
+import { Versions } from 'fhir/fhir';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { FshResourceComponent } from '../shared-ui/fsh-resource/fsh-resource.component';
 import { firstValueFrom } from 'rxjs';
-import {StructureDefinition} from '@trifolia-fhir/r5';
+import { StructureDefinition } from '@trifolia-fhir/r5';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -133,7 +133,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public toggleMappings() {
     if (this.structureDefinition.mapping) {
       if (this.structureDefinition.mapping.length > 0) {
-        const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.structureDefinition.differential.element;
+        const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]>this.structureDefinition.differential.element;
         const foundElementsWithMappings = elements.filter(e => e.mapping && e.mapping.length > 0);
 
         if (foundElementsWithMappings.length > 0) {
@@ -221,7 +221,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   }
 
   private async getStructureDefinition() {
-     this.sdId = this.route.snapshot.paramMap.get('id');
+    this.sdId = this.route.snapshot.paramMap.get('id');
 
     this.message = 'Loading structure definition...';
     this.structureDefinition = null;
@@ -230,48 +230,16 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     try {
       this.conformance = await this.strucDefService.getStructureDefinition(this.sdId).toPromise();
       const sdr = <StructureDefinition>this.conformance.resource;
+
+      this.loadSD(this.conformance.resource, true, false);
       delete sdr.snapshot;
 
-      if (this.configService.isFhirR5) {
-        this.structureDefinition = new R5StructureDefinition(sdr);
-      } else if (this.configService.isFhirR4) {
-        this.structureDefinition = new R4StructureDefinition(sdr);
-      } else if (this.configService.isFhirSTU3) {
-        this.structureDefinition = new STU3StructureDefinition(sdr);
-      } else {
-        throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
-      }
-
-      this.conformance.resource = this.structureDefinition;
-
-      if (!this.structureDefinition.differential) {
-        this.structureDefinition.differential = {
-          element: []
-        };
-      }
     } catch (err) {
       this.sdNotFound = err.status === 404;
       this.message = getErrorString(err);
       this.recentItemService.removeRecentItem(Globals.cookieKeys.recentStructureDefinitions, this.sdId);
       return;
     }
-
-    this.nameChanged();
-
-    if (this.structureDefinition.differential.element.length === 0) {
-      const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.structureDefinition.differential.element;
-      elements.push({
-        id: this.structureDefinition.type,
-        path: this.structureDefinition.type
-      });
-    }
-
-    await this.loadBaseDefinition();
-
-    this.recentItemService.ensureRecentItem(
-      Globals.cookieKeys.recentStructureDefinitions,
-      this.structureDefinition.id,
-      this.structureDefinition.name);
 
     if (this.route.snapshot.queryParams.copy === 'true') {
       this.message = 'Done copying structure definition';
@@ -285,7 +253,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.structureDefinition.differential.element;
+    const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]>this.structureDefinition.differential.element;
     const found = (elements || []).filter((element) => {
       return element.id.indexOf(elementTreeModel.id + ':') === 0;
     });
@@ -336,24 +304,9 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
         } else {
 
           this.conformance = conf;
+          this.loadSD(conf.resource, false, false);
 
-          if (this.configService.isFhirR5) {
-            updatedStructureDefinition = new R5StructureDefinition(conf.resource);
-          } else if (this.configService.isFhirR4) {
-            updatedStructureDefinition = new R4StructureDefinition(conf.resource);
-          } else if (this.configService.isFhirSTU3) {
-            updatedStructureDefinition = new STU3StructureDefinition(conf.resource);
-          } else {
-            throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
-          }
-
-        //  let updatedStructureDefinition = <STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>conf.resource;
-          this.structureDefinition.snapshot = updatedStructureDefinition.snapshot;
-          this.conformance.resource =  updatedStructureDefinition;
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, updatedStructureDefinition.id, updatedStructureDefinition.name);
           this.message = 'Your changes have been saved!';
-          this.isDirty = false;
-          this.nameChanged();
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -373,7 +326,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     });
 
 
-    if(index >= 0){
+    if (index >= 0) {
       implementationGuide.definition.resource[index].name =
         this.structureDefinition.title ? this.structureDefinition.title : this.structureDefinition.name;
 
@@ -383,6 +336,46 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
   }
+
+  public async loadSD(newVal: IDomainResource, reloadBase: boolean, isDirty: boolean) {
+    if (this.configService.isFhirR5) {
+      this.structureDefinition = new R5StructureDefinition(newVal);
+    } else if (this.configService.isFhirR4) {
+      this.structureDefinition = new R4StructureDefinition(newVal);
+    } else if (this.configService.isFhirSTU3) {
+      this.structureDefinition = new STU3StructureDefinition(newVal);
+    }
+
+    if (!this.structureDefinition.differential) {
+      this.structureDefinition.differential = {
+        element: []
+      };
+    }
+
+    if (this.conformance) {
+      this.conformance.resource = this.structureDefinition;
+    }
+
+    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, this.structureDefinition.id, this.structureDefinition.name);
+    this.isDirty = isDirty;
+    this.nameChanged();
+
+    if (this.structureDefinition.differential.element.length === 0) {
+      const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]>this.structureDefinition.differential.element;
+      elements.push({
+        id: this.structureDefinition.type,
+        path: this.structureDefinition.type
+      });
+    }
+
+    // initial page load and raw resource upload requires reloading base def and re-initializing the constraint manager
+    // saving does not require this
+    if (reloadBase) {
+      await this.loadBaseDefinition();
+    }
+
+  }
+
 
   ngOnInit() {
     this.navSubscription = this.router.events.subscribe((e: any) => {
@@ -426,39 +419,39 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.elementSearch = value;
   }
 
-  public checkForMatchingElement(element: IElementDefinition){
+  public checkForMatchingElement(element: IElementDefinition) {
     // Check the following places for a matching string: path, id,
     // constraint.requirements, binding.valueSetUri (or binding.valueset),
     // type.code, type.profile, type.targetProfile, and sliceName
-    if(element.id.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0
+    if (element.id.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0
       || element.path.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0) return true;
 
     let checkConstraint = false;
-    if(<ConstraintComponent[]> element.constraint){
-      for(let i = 0; i < element.constraint.length; i++){
-        if((<ConstraintComponent> element.constraint[i]).requirements && (<ConstraintComponent> element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >=0 ){
+    if (<ConstraintComponent[]>element.constraint) {
+      for (let i = 0; i < element.constraint.length; i++) {
+        if ((<ConstraintComponent>element.constraint[i]).requirements && (<ConstraintComponent>element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0) {
           checkConstraint = true;
           break;
         }
       }
     }
-    else if(<ElementDefinitionConstraintComponent[]> element.constraint){
-      for(let i = 0; i < element.constraint.length; i++){
-        if((<ElementDefinitionConstraintComponent> element.constraint[i]).requirements
-          && (<ElementDefinitionConstraintComponent> element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >=0 ){
+    else if (<ElementDefinitionConstraintComponent[]>element.constraint) {
+      for (let i = 0; i < element.constraint.length; i++) {
+        if ((<ElementDefinitionConstraintComponent>element.constraint[i]).requirements
+          && (<ElementDefinitionConstraintComponent>element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0) {
           checkConstraint = true;
           break;
         }
       }
     }
-    if(checkConstraint) return true;
+    if (checkConstraint) return true;
 
     let checkBinding = false;
-    if((<STU3ElementDefinition> element).binding && (<STU3ElementDefinition> element).binding.valueSetUri){
-      checkBinding = (<STU3ElementDefinition> element).binding.valueSetUri.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
+    if ((<STU3ElementDefinition>element).binding && (<STU3ElementDefinition>element).binding.valueSetUri) {
+      checkBinding = (<STU3ElementDefinition>element).binding.valueSetUri.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
     }
-    else if((<R4ElementDefinition | R5ElementDefinition> element).binding && (<R4ElementDefinition | R5ElementDefinition> element).binding.valueSet){
-      checkBinding = (<R4ElementDefinition | R5ElementDefinition> element).binding.valueSet.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
+    else if ((<R4ElementDefinition | R5ElementDefinition>element).binding && (<R4ElementDefinition | R5ElementDefinition>element).binding.valueSet) {
+      checkBinding = (<R4ElementDefinition | R5ElementDefinition>element).binding.valueSet.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
     }
     if (checkBinding) return true;
 
@@ -486,23 +479,23 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       }
     }*/
 
-    if(element.sliceName && element.sliceName.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
+    if (element.sliceName && element.sliceName.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0) {
       return true;
     }
   }
 
-  public canDeactivate(): boolean{
+  public canDeactivate(): boolean {
     return !this.isDirty;
   }
 
-  async getSearchElement(){
-    const structureDefElements = <IElementDefinition[]> this.structureDefinition.differential.element;
+  async getSearchElement() {
+    const structureDefElements = <IElementDefinition[]>this.structureDefinition.differential.element;
     let found = structureDefElements.find((element) => {
       return this.checkForMatchingElement(element);
     });
 
     if (!found) {
-      const baseStructDefElements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.baseStructureDefinition.snapshot.element;
+      const baseStructDefElements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]>this.baseStructureDefinition.snapshot.element;
       found = baseStructDefElements.find((element) => {
         return this.checkForMatchingElement(element);
       });

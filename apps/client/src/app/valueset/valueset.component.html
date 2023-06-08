@@ -153,7 +153,7 @@
   <li ngbNavItem="raw">
     <a ngbNavLink>RAW</a>
     <ng-template ngbNavContent>
-      <app-raw-resource [resource]="valueSet" [shown]="vsTabs.activeId === 'raw'"></app-raw-resource>
+      <app-raw-resource [resource]="valueSet" [shown]="vsTabs.activeId === 'raw'" (resourceChange)="loadVS($event)"></app-raw-resource>
     </ng-template>
   </li>
 

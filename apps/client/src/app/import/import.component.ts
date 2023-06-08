@@ -211,21 +211,6 @@ export class ImportComponent implements OnInit {
     }
   }
 
-  public async getList(importFileModel) {
-    if (!importFileModel.resource || !importFileModel.resource.resourceType || !importFileModel.resource.id) return;
-
-    let url = `/api/fhir/${importFileModel.resource.resourceType}`;
-    url += `/${importFileModel.resource.id}`;
-    url += `/$validate-single-ig`;
-
-    const singleIg = await this.httpClient.get(url).toPromise();
-    if (!singleIg) {
-      importFileModel.singleIg = false;
-      importFileModel.multipleIgMessage = "This resource already belongs to another implementation guide. Continuing to import will add this resource to your current implementation guide, which may cause problems with the Publisher in the future."
-    }
-  }
-
-
   public removeImportFile(index: number) {
     //reset the error message
     this.errorMessage = '';
@@ -329,12 +314,6 @@ export class ImportComponent implements OnInit {
     }
   }
 
-  public getBundleEntryOutcome(entry: EntryComponent): OperationOutcome {
-    if (entry && entry.response && entry.response.outcome && entry.response.outcome.resourceType === 'OperationOutcome') {
-      return <OperationOutcome>entry.response.outcome;
-    }
-  }
-
   private populateFile(file: File) {
     const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
     const reader = new FileReader();
@@ -395,23 +374,6 @@ export class ImportComponent implements OnInit {
         contentBlob = new Blob([content], { type: 'application/xml' });
         saveAs(contentBlob, 'importBundle.xml');
     }
-  }
-
-  public getDisplayImportBundle(): Bundle {
-    if (!this.importBundle) {
-      return;
-    }
-
-    const clone = JSON.parse(JSON.stringify(this.importBundle));
-
-    (clone.entry || []).forEach((entry: EntryComponent) => {
-      entry.resource = {
-        resourceType: entry.resource.resourceType,
-        id: entry.resource.id
-      };
-    });
-
-    return clone;
   }
 
   private importText(tabSet: NgbNav) {

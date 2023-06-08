@@ -1,22 +1,23 @@
-import {Component, DoCheck, Input, OnDestroy, OnInit} from '@angular/core';
-import {ImplementationGuide, OperationOutcome, Questionnaire, QuestionnaireItemComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {RecentItemService} from '../shared/recent-item.service';
-import {FileService} from '../shared/file.service';
-import {FhirService} from '../shared/fhir.service';
-import {QuestionnaireService} from '../shared/questionnaire.service';
-import {ConfigService} from '../shared/config.service';
-import {QuestionnaireItemModalComponent} from './questionnaire-item-modal.component';
-import {AuthService} from '../shared/auth.service';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {BaseComponent} from '../base.component';
-import {config, firstValueFrom, Subject} from 'rxjs';
+import { Component, DoCheck, Input, OnDestroy, OnInit } from '@angular/core';
+import { ImplementationGuide, OperationOutcome, Questionnaire, QuestionnaireItemComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { RecentItemService } from '../shared/recent-item.service';
+import { FileService } from '../shared/file.service';
+import { FhirService } from '../shared/fhir.service';
+import { QuestionnaireService } from '../shared/questionnaire.service';
+import { ConfigService } from '../shared/config.service';
+import { QuestionnaireItemModalComponent } from './questionnaire-item-modal.component';
+import { AuthService } from '../shared/auth.service';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { BaseComponent } from '../base.component';
+import { config, firstValueFrom, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import {IConformance} from '@trifolia-fhir/models';
-import {SearchParameter} from '@trifolia-fhir/r4';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import { IConformance } from '@trifolia-fhir/models';
+import { SearchParameter } from '@trifolia-fhir/r4';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import { IDomainResource } from '@trifolia-fhir/tof-lib';
 
 export class ItemModel {
   public item: QuestionnaireItemComponent;
@@ -80,18 +81,18 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     super(configService, authService);
 
     this.questionnaire = new Questionnaire({ meta: this.authService.getDefaultMeta() });
-    this.conformance = { resource: this.questionnaire, fhirVersion: <'stu3'|'r4'|'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.conformance = { resource: this.questionnaire, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         const isIdUnique = await this.fhirService.checkUniqueId(this.questionnaire);
-        if(!isIdUnique){
+        if (!isIdUnique) {
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.questionnaire.id  + " is already used.";
+          this.alreadyInUseIDMessage = "ID " + this.questionnaire.id + " is already used.";
         }
-        else{
+        else {
           this.isIdUnique = true;
-          this.alreadyInUseIDMessage="";
+          this.alreadyInUseIDMessage = "";
         }
       });
   }
@@ -132,22 +133,23 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     }
 
     this.questionnaireService.save(this.questionnaireId, this.conformance)
-      .subscribe((conf: IConformance) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate([`${this.configService.baseSessionUrl}/questionnaire/${conf.id}`]);
-        } else {
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentQuestionnaires,
-            conf.id,
-            conf.name );
-          this.message = 'Your changes have been saved!';
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
+      .subscribe({
+        next: (conf: IConformance) => {
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.router.navigate([`${this.configService.baseSessionUrl}/questionnaire/${conf.id}`]);
+          } else {
+            this.conformance = conf;
+            this.loadQuestionnaire(conf.resource);
+            this.message = 'Your changes have been saved!';
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
+        },
+        error: (err) => {
+          this.message = `An error occurred while saving the questionnaire: ${err.message}`;
         }
-      }, (err) => {
-        this.message = `An error occurred while saving the questionnaire: ${err.message}`;
       });
   }
 
@@ -156,8 +158,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.questionnaire = <Questionnaire>this.fileService.file.resource;
-        this.nameChanged();
+        this.loadQuestionnaire(this.fileService.file.resource);
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -167,25 +168,20 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
 
     if (!this.isNew) {
       this.questionnaireService.get(this.questionnaireId)
-        .subscribe( (conf: IConformance) => {
+        .subscribe({
+          next: (conf: IConformance) => {
             if (!conf || !conf.resource || conf.resource.resourceType !== 'Questionnaire') {
               this.message = 'The specified questionnaire either does not exist or was deleted';
               return;
             }
             this.conformance = conf;
-            this.questionnaire = <Questionnaire>conf.resource;
-            this.nameChanged();
-            this.initFlattenedItems();
-
-          /*  this.recentItemService.ensureRecentItem(
-              Globals.cookieKeys.recentQuestionnaires,
-              this.questionnaire,
-              this.questionnaire.name || this.questionnaire.title);*/
-       //   }
-        }, (err) => {
-          this.qNotFound = err.status === 404;
-          this.message = getErrorString(err);
-          this.recentItemService.removeRecentItem(Globals.cookieKeys.recentQuestionnaires, this.questionnaireId);
+            this.loadQuestionnaire(conf.resource);
+          },
+          error: (err) => {
+            this.qNotFound = err.status === 404;
+            this.message = getErrorString(err);
+            this.recentItemService.removeRecentItem(Globals.cookieKeys.recentQuestionnaires, this.questionnaireId);
+          }
         });
     }
   }
@@ -227,7 +223,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
   }
 
   public editItem(itemModel: ItemModel) {
-    const modalRef = this.modalService.open(QuestionnaireItemModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(QuestionnaireItemModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.item = itemModel.item;
     modalRef.componentInstance.questionnaire = this.questionnaire;
   }
@@ -365,6 +361,23 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     }
   }
 
+  public loadQuestionnaire(newVal: IDomainResource) {
+
+    this.questionnaire = new Questionnaire(newVal);
+
+    if (this.configService) {
+      this.conformance.resource = this.questionnaire;
+    }
+
+    this.initFlattenedItems();
+    this.nameChanged();
+
+    this.recentItemService.ensureRecentItem(
+      Globals.cookieKeys.recentQuestionnaires,
+      this.questionnaire.id,
+      this.questionnaire.name);
+  }
+
   async ngOnInit() {
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/questionnaire/')) {
@@ -373,11 +386,11 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     });
     this.getQuestionnaire();
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+    this.implementationGuide = <ImplementationGuide>(await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
-    const url =  this.implementationGuide.url;
+    const url = this.implementationGuide.url;
 
-    if(!this.questionnaire.url) {
+    if (!this.questionnaire.url) {
       this.questionnaire.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "Questionnaire/" : "";
     }
   }
