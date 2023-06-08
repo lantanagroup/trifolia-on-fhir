@@ -366,7 +366,7 @@
     <li ngbNavItem="raw">
       <a ngbNavLink>RAW</a>
       <ng-template ngbNavContent>
-        <app-raw-resource [resource]="structureDefinition" [shown]="sdTabs.activeId === 'raw'"></app-raw-resource>
+        <app-raw-resource [resource]="structureDefinition" [shown]="sdTabs.activeId === 'raw'" (resourceChange)="loadSD($event, true, true)"></app-raw-resource>
       </ng-template>
     </li>
 
