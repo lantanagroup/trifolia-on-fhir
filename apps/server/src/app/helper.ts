@@ -575,6 +575,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   let implementationGuide = <IImplementationGuide>implGuideResource.resource;
 
   let changed = false;
+  let resourceAdded = false;
   let resourceReferenceString;
   let isNotFhir: boolean = false;
 
@@ -668,14 +669,8 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
         return r.reference.reference === resourceReferenceString;
       }
     });
-    if (foundResource) {
-      // remove existing
-      const removeIndex = r4.definition.resource.findIndex(r => r.reference.reference === resourceReferenceString);
-      r4.definition.resource.splice(removeIndex, 1);
-      foundResource = undefined;
-    }
     if (!foundResource) {
-
+      resourceAdded = true;
       logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');
 
       // special case for adding non-fhir examples
@@ -719,6 +714,17 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
           });
       }
       changed = true;
+
+    }
+    else {
+
+      if (!isNotFhir)//update resource
+      {
+        foundResource.name = (<any>resourceToAdd).resource.name;
+        foundResource.reference.display = (<any>resourceToAdd).resource.title;
+        foundResource.description = (<any>resourceToAdd).resource.description;
+        changed= true;
+      }
     }
   } else {                                        // stu3
     const stu3 = <STU3ImplementationGuide>implementationGuide;
@@ -735,19 +741,21 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
       return foundResources.length > 0;
     });
 
+    let foundResource = null
     if (foundInPackages.length > 0) {
       // remove existing
       (stu3.package || []).filter((igPackage) => {
-        const removeIndex = (igPackage.resource || []).findIndex((r) => {
+        foundResource = (igPackage.resource || []).find((r) => {
           if (r.sourceReference && r.sourceReference.reference) {
             return r.sourceReference.reference === resourceReferenceString;
           }
         });
-        igPackage.resource.splice(removeIndex, 1);
+
       });
     }
 
-    if (foundInPackages.length === 0) {
+    if (!foundResource) {
+      resourceAdded = true;
       let display;
       let description;
 
@@ -788,20 +796,43 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
         changed = true;
       }
     }
+    else{  //update resource
+      if (!isNotFhir)//update resource
+      {
+        foundResource.name = (<any>resourceToAdd).resource.name;
+        foundResource.reference.display = (<any>resourceToAdd).resource.title;
+        foundResource.description = (<any>resourceToAdd).resource.description;
+        changed = true;
+      }
+
+    }
   }
 
   // update the Ig
   if (changed) {
-    implGuideResource.references = implGuideResource.references || [];
-    // add to references if not already in the reference list
-    if (!implGuideResource.references.find((r: IProjectResourceReference) => {
-      if (r.valueType !== (isNotFhir ? 'Example' : 'Conformance')) return false;
-      if (r.value && r.value.toString() === resourceToAdd.id) return true;
-    })) {
-      implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'Example' : 'Conformance' });
+    if(resourceAdded) {
+      implGuideResource.references = implGuideResource.references || [];
+      // add to references if not already in the reference list
+      if (!implGuideResource.references.find((r: IProjectResourceReference) => {
+        if (r.valueType !== (isNotFhir ? 'Example' : 'Conformance')) return false;
+        if (r.value && r.value.toString() === resourceToAdd.id) return true;
+      })) {
+        implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'Example' : 'Conformance' });
+      }
     }
-    let conf = await service.updateOne(implGuideResource.id, implGuideResource);
-    //console.log('Conformance ' + conf);
+    if(implGuideResource.id) {
+      let conf = await service.findById(implGuideResource.id);
+      if(conf) {
+        let conf1 = await service.updateOne(implGuideResource.id, implGuideResource);
+      }
+      else{
+        console.log("Ig " + implGuideResource.id + " does not exist" );
+      }
+    }
+    else {
+      console.log("Ig " + implGuideResource.id + " does not exist" );
+    }
+
   }
   return Promise.resolve();
 }
