@@ -793,17 +793,33 @@ export class ImportComponent implements OnInit {
           }
         }
       } else if (importFileModel.contentType === ContentTypes.Json) {
-        if(typeof result == typeof '') {
-          importFileModel.resource = JSON.parse(result);
-        }
-        else{
-          importFileModel.resource = result;
-        }
         try {
-          let ser = this.fhirService.serialize(importFileModel.resource);
-        } catch (error) {
-          importFileModel.resource = null;
-          throw new Error("File does not contain a valid resource.");
+          if (typeof result == typeof '') {
+            importFileModel.resource = JSON.parse(result);
+            importFileModel.name = fileName;
+          } else if (typeof result == typeof {}) {
+            importFileModel.resource = JSON.parse(JSON.stringify(result));
+            importFileModel.name = fileName;
+            if (importFileModel.resource.resourceType === 'Binary') {
+              result = importFileModel.resource["data"];
+              importFileModel.name = fileName.substring(fileName.indexOf("/") + 1);
+              if (importFileModel.name.indexOf(".json") == -1) {
+                importFileModel.name = importFileModel.name + ".json";
+              }
+             // importFileModel.resource = JSON.parse(result);
+              importFileModel.resource = this.fhirService.deserialize(result);
+            }
+          }
+       } catch (error) {
+          // if deserializing failed and this is a CDA IG we can store the XML as example content
+          if (this.configService.isCDA) {
+            importFileModel.cdaContent = result;
+            importFileModel.isExample = true;
+            importFileModel.isCDAExample = true;
+            importFileModel.contentType = ContentTypes.CdaExample;
+          } else {
+            throw error;
+          }
         }
       } else if (importFileModel.contentType === ContentTypes.Xlsx) {
         const convertResults = this.importService.convertExcelToValueSetBundle(result);
