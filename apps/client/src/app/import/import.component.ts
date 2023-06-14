@@ -62,6 +62,7 @@ export class ImportComponent implements OnInit {
   public textContent: string;
   public textContentIsExample: boolean = false;
   public files: ImportFileModel[] = [];
+  public isUploading: boolean = false;
   public outcome: OperationOutcome;
   public importBundle: Bundle;
   public resultsBundle: Bundle;
@@ -451,10 +452,11 @@ export class ImportComponent implements OnInit {
       }
     }
 
+    this.isUploading = true;
+
     concat(... requests).subscribe({
-      next: (res: IProjectResource[]) => {
-        this.files = [];
-        this.message = 'Done importing';
+      next: (_res: IProjectResource) => {
+        this.files.splice(0, 1);
       },
       error: (err) => {
         if (err && err.message) {
@@ -462,6 +464,12 @@ export class ImportComponent implements OnInit {
         } else {
           this.message = getErrorString(err);
         }
+        this.isUploading = false;
+      },
+      complete: () => {
+        this.files = [];
+        this.message = 'Done importing';
+        this.isUploading = false;
       }
     });
 
@@ -665,7 +673,7 @@ export class ImportComponent implements OnInit {
       if (this.activeTab === 'file') {
         const unauthorizedResources = this.files.filter(f => f.status === 'unauthorized');
         const invalidFiles = this.files.filter(f => this.fileIsInvalid(f));
-        return !this.files || this.files.length === 0 || unauthorizedResources.length > 0 || invalidFiles.length > 0;
+        return !this.files || this.files.length === 0 || unauthorizedResources.length > 0 || invalidFiles.length > 0 || this.isUploading;
       } else if (this.activeTab === 'text') {
         return !this.textContent;
       } else if (this.activeTab === 'vsac') {
@@ -793,17 +801,33 @@ export class ImportComponent implements OnInit {
           }
         }
       } else if (importFileModel.contentType === ContentTypes.Json) {
-        if(typeof result == typeof '') {
-          importFileModel.resource = JSON.parse(result);
-        }
-        else{
-          importFileModel.resource = result;
-        }
         try {
-          let ser = this.fhirService.serialize(importFileModel.resource);
-        } catch (error) {
-          importFileModel.resource = null;
-          throw new Error("File does not contain a valid resource.");
+          if (typeof result == typeof '') {
+            importFileModel.resource = JSON.parse(result);
+            importFileModel.name = fileName;
+          } else if (typeof result == typeof {}) {
+            importFileModel.resource = JSON.parse(JSON.stringify(result));
+            importFileModel.name = fileName;
+            if (importFileModel.resource.resourceType === 'Binary') {
+              result = importFileModel.resource["data"];
+              importFileModel.name = fileName.substring(fileName.indexOf("/") + 1);
+              if (importFileModel.name.indexOf(".json") == -1) {
+                importFileModel.name = importFileModel.name + ".json";
+              }
+             // importFileModel.resource = JSON.parse(result);
+              importFileModel.resource = this.fhirService.deserialize(result);
+            }
+          }
+       } catch (error) {
+          // if deserializing failed and this is a CDA IG we can store the XML as example content
+          if (this.configService.isCDA) {
+            importFileModel.cdaContent = result;
+            importFileModel.isExample = true;
+            importFileModel.isCDAExample = true;
+            importFileModel.contentType = ContentTypes.CdaExample;
+          } else {
+            throw error;
+          }
         }
       } else if (importFileModel.contentType === ContentTypes.Xlsx) {
         const convertResults = this.importService.convertExcelToValueSetBundle(result);

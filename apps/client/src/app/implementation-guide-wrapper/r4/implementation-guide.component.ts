@@ -66,6 +66,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public selectedResource: ImplementationGuideResourceComponent;
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
   public implementationGuideId: string;
+  public saving = false;
+  public duplicate = false;
 
   constructor(
     private modal: NgbModal,
@@ -472,6 +474,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
   }
 
+
   public isDuplicateResource(resource: ImplementationGuideResourceComponent) {
     const thisReference = resource && resource.reference && resource.reference.reference ?
       resource.reference.reference.trim().toLowerCase() : null;
@@ -479,7 +482,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const found = (this.implementationGuide.definition.resource || []).filter((next: ImplementationGuideResourceComponent) =>
       next.reference && next.reference.reference && next.reference.reference.trim().toLowerCase() === thisReference);
 
-    return found.length !== 1;
+    this.duplicate = found.length !== 1;
+    return this.duplicate;
   }
 
   public addNewFhirVersion() {
@@ -577,7 +581,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
               this.message = 'The specified implementation guide either does not exist or was deleted';
               return;
             }
-            
+
             this.conformance = conf;
             this.loadIG(conf.resource);
           },
@@ -869,9 +873,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
+    this.saving = true;
+
     if (this.isFile) {
       this.fileService.saveFile();
       this.igChanging.emit(false);
+      this.saving = false;
       return;
     }
 
@@ -880,19 +887,23 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         next: (conf: IConformance) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
+            this.saving = false;
             this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
           } else {
             this.conformance = conf;
             this.loadIG(conf.resource);
             this.configService.project = getImplementationGuideContext(conf);
             this.message = 'Your changes have been saved!';
+
             setTimeout(() => {
               this.message = '';
+              this.saving = false;
             }, 3000);
           }
         },
         error: (err) => {
           this.message = 'An error occurred while saving the implementation guide: ' + getErrorString(err);
+          this.saving = false;
         }
       });
   }
@@ -1111,7 +1122,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       });
 
   }
-  
+
   public loadIG(newVal: IDomainResource, isDirty?: boolean) {
     this.implementationGuide = new ImplementationGuide(newVal);
 
