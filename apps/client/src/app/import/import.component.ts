@@ -868,7 +868,7 @@ export class ImportComponent implements OnInit {
 
     const transactionBundle =  <Bundle>file.resource;
     this.errorMessage = '';
-    let ig;
+    let ig: any;
     (transactionBundle.entry || []).forEach(bundleEntry => {
       let resource = bundleEntry.resource;
 
@@ -881,7 +881,9 @@ export class ImportComponent implements OnInit {
         this.addResource(file, resource);
       }
     });
-    this.addResource(file, ig);
+    if(ig) {
+      this.addResource(file, ig);
+    }
 
     const foundIndex = this.files.findIndex((importFile: ImportFileModel) => importFile.name === file.name);
     this.files.splice(foundIndex, 1);
