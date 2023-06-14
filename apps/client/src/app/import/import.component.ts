@@ -62,6 +62,7 @@ export class ImportComponent implements OnInit {
   public textContent: string;
   public textContentIsExample: boolean = false;
   public files: ImportFileModel[] = [];
+  public isUploading: boolean = false;
   public outcome: OperationOutcome;
   public importBundle: Bundle;
   public resultsBundle: Bundle;
@@ -451,10 +452,11 @@ export class ImportComponent implements OnInit {
       }
     }
 
+    this.isUploading = true;
+
     concat(... requests).subscribe({
-      next: (res: IProjectResource[]) => {
-        this.files = [];
-        this.message = 'Done importing';
+      next: (_res: IProjectResource) => {
+        this.files.splice(0, 1);
       },
       error: (err) => {
         if (err && err.message) {
@@ -462,6 +464,12 @@ export class ImportComponent implements OnInit {
         } else {
           this.message = getErrorString(err);
         }
+        this.isUploading = false;
+      },
+      complete: () => {
+        this.files = [];
+        this.message = 'Done importing';
+        this.isUploading = false;
       }
     });
 
@@ -665,7 +673,7 @@ export class ImportComponent implements OnInit {
       if (this.activeTab === 'file') {
         const unauthorizedResources = this.files.filter(f => f.status === 'unauthorized');
         const invalidFiles = this.files.filter(f => this.fileIsInvalid(f));
-        return !this.files || this.files.length === 0 || unauthorizedResources.length > 0 || invalidFiles.length > 0;
+        return !this.files || this.files.length === 0 || unauthorizedResources.length > 0 || invalidFiles.length > 0 || this.isUploading;
       } else if (this.activeTab === 'text') {
         return !this.textContent;
       } else if (this.activeTab === 'vsac') {
