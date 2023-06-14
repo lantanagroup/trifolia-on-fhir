@@ -322,7 +322,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
         let igEntry: STU3BundleEntryComponent | R4BundleEntryComponent | R5BundleEntryComponent = new entryType();
         igEntry.resource = implementationGuide.resource;
-
+        bundle.entry.push(igEntry);
         (implementationGuide.references || []).forEach((r: IProjectResourceReference) => {
             let entry: STU3BundleEntryComponent | R4BundleEntryComponent | R5BundleEntryComponent = new entryType();
 
@@ -368,7 +368,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             }
         });
 
-        bundle.entry.push(igEntry);
+
 
         return bundle;
 
