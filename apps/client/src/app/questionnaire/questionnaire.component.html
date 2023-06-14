@@ -147,7 +147,7 @@
     <li ngbNavItem="raw">
       <a ngbNavLink>RAW</a>
       <ng-template ngbNavContent>
-        <app-raw-resource [resource]="questionnaire" [shown]="qTabs.activeId === 'raw'"></app-raw-resource>
+        <app-raw-resource [resource]="questionnaire" [shown]="qTabs.activeId === 'raw'" (resourceChange)="loadQuestionnaire($event)"></app-raw-resource>
       </ng-template>
     </li>
 

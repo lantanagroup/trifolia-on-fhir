@@ -15245,6 +15245,12 @@ export class QuestionnaireItemComponent extends BackboneElement {
           this.option.push(new QuestionnaireItemOptionComponent(o));
         }
       }
+      if (obj.hasOwnProperty('item')) {
+        this.item = [];
+        for (const o of obj.item || []) {
+          this.item.push(new QuestionnaireItemComponent(o));
+        }
+      }
     }
   }
 }

@@ -1,32 +1,32 @@
-import { ParseConformance } from 'fhir/parseConformance';
-import { Fhir, Versions as FhirVersions } from 'fhir/fhir';
+import {ParseConformance} from 'fhir/parseConformance';
+import {Fhir, Versions as FhirVersions} from 'fhir/fhir';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import JSZip from 'jszip';
-import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Logger, UnauthorizedException } from '@nestjs/common';
+import {HttpService} from '@nestjs/axios';
+import {BadRequestException, Logger, UnauthorizedException} from '@nestjs/common';
 import {
   AuditEvent as STU3AuditEvent,
   DomainResource as STU3DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
   PackageResourceComponent
 } from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { buildUrl, getR4Dependencies, getSTU3Dependencies } from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {
   AuditEvent as R4AuditEvent,
   DomainResource as R4DomainResource, ImplementationGuide,
   ImplementationGuide as R4ImplementationGuide
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import { AxiosRequestConfig } from 'axios';
-import { IUserSecurityInfo } from './base.controller';
-import { addPermission, findPermission, getErrorString, parsePermissions } from '../../../../libs/tof-lib/src/lib/helper';
-import { ConfigService } from './config.service';
-import { Globals } from '../../../../libs/tof-lib/src/lib/globals';
-import { IAuditEvent, IDomainResource, IImplementationGuide } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { TofLogger } from './tof-logger';
-import { IConformance, IExample, IProjectResourceReference } from '@trifolia-fhir/models';
-import { ConformanceService } from './conformance/conformance.service';
-import { ObjectId } from 'mongodb';
+import {AxiosRequestConfig} from 'axios';
+import {IUserSecurityInfo} from './base.controller';
+import {addPermission, findPermission, getErrorString, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
+import {ConfigService} from './config.service';
+import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
+import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {TofLogger} from './tof-logger';
+import {IConformance, IExample, IProjectResourceReference} from '@trifolia-fhir/models';
+import {ConformanceService} from './conformance/conformance.service';
+import {ObjectId} from 'mongodb';
 
 declare var jasmine;
 
@@ -144,7 +144,7 @@ export const rmdir = (p): Promise<void> => {
 };
 
 export async function createAuditEvent(logger: TofLogger, httpService: HttpService, fhirServerVersion: string,
-  fhirServerBase: string, action: string, usi: IUserSecurityInfo, resource: IDomainResource) {
+                                       fhirServerBase: string, action: string, usi: IUserSecurityInfo, resource: IDomainResource) {
   try {
     let auditEvent: IAuditEvent;
 
@@ -575,15 +575,16 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   let implementationGuide = <IImplementationGuide>implGuideResource.resource;
 
   let changed = false;
+  let resourceAdded = false;
   let resourceReferenceString;
   let isNotFhir: boolean = false;
 
   // if new resource is not an example it can only be treated as a valid fhir resource
   if (!isExample) {
     if ('resource' in resourceToAdd && resourceToAdd.resource) {
-      resourceReferenceString = `${(<IConformance>resourceToAdd).resource.resourceType}/${(<IConformance>resourceToAdd).resource.id || resourceToAdd.id}`
+      resourceReferenceString = `${(<IConformance>resourceToAdd).resource.resourceType}/${(<IConformance>resourceToAdd).resource.id || resourceToAdd.id}`;
     } else {
-      throw new BadRequestException("Supplied conformance object does not have a valid resource property.");
+      throw new BadRequestException('Supplied conformance object does not have a valid resource property.');
     }
   } else {
 
@@ -668,14 +669,8 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
         return r.reference.reference === resourceReferenceString;
       }
     });
-    if (foundResource) {
-      // remove existing
-      const removeIndex = r4.definition.resource.findIndex(r => r.reference.reference === resourceReferenceString);
-      r4.definition.resource.splice(removeIndex, 1);
-      foundResource = undefined;
-    }
     if (!foundResource) {
-
+      resourceAdded = true;
       logger.verbose('Resource not already part of implementation guide, adding to IG\'s list of resources.');
 
       // special case for adding non-fhir examples
@@ -696,10 +691,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
       } else {
         // otherwise do the usual...
-        let name;
-        if(typeof (<any>resourceToAdd).resource.name == typeof ''){
-          name = (<any>resourceToAdd).resource.name;
-        }
+        let name = getName((<any>resourceToAdd).resource.name);
         const display = name || (<any>resourceToAdd).resource.title;
         const description = (<any>resourceToAdd).resource.description;
         r4.definition.resource.push(isExample && exampleFor ?
@@ -716,12 +708,23 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
               reference: resourceReferenceString,
               display: display
             },
-            exampleBoolean: isExample,
+            exampleBoolean: isExample ? true : false,
             name: display,
             description: description
           });
       }
       changed = true;
+
+    }
+    else {
+
+      if (!isNotFhir)//update resource
+      {
+        foundResource.name = getName((<any>resourceToAdd).resource.name);
+        foundResource.reference.display = foundResource.name || (<any>resourceToAdd).resource.title;
+        foundResource.description = (<any>resourceToAdd).resource.description;
+        changed= true;
+      }
     }
   } else {                                        // stu3
     const stu3 = <STU3ImplementationGuide>implementationGuide;
@@ -738,19 +741,21 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
       return foundResources.length > 0;
     });
 
+    let foundResource = null
     if (foundInPackages.length > 0) {
       // remove existing
       (stu3.package || []).filter((igPackage) => {
-        const removeIndex = (igPackage.resource || []).findIndex((r) => {
+        foundResource = (igPackage.resource || []).find((r) => {
           if (r.sourceReference && r.sourceReference.reference) {
             return r.sourceReference.reference === resourceReferenceString;
           }
         });
-        igPackage.resource.splice(removeIndex, 1);
+
       });
     }
 
-    if (foundInPackages.length === 0) {
+    if (!foundResource) {
+      resourceAdded = true;
       let display;
       let description;
 
@@ -758,23 +763,19 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
          display = (<any>resourceToAdd).name || (<any>resourceToAdd).id;
       }
       else {
-        let name;
-        if(typeof (<any>resourceToAdd).resource.name == typeof ''){
-          name = (<any>resourceToAdd).resource.name;
-        }
+        let name = getName((<any>resourceToAdd).resource.name);
         display =  name || (<any>resourceToAdd).resource.title ;
         description = (<any>resourceToAdd).resource.description;
       }
-
-      const newResource : PackageResourceComponent = {
+      const newResource: PackageResourceComponent = {
         name: display,
         description: description,
         sourceReference: {
           reference: resourceReferenceString,
           display: display
         },
-        example: isExample
-      }
+        example: isExample ? true : false
+      };
 
       if (stu3.package.length === 0) {
         logger.verbose('STU3 IG does not contain a package, adding a default package with the resource added to it.');
@@ -795,23 +796,71 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
         changed = true;
       }
     }
+    else{  //update resource
+      if (!isNotFhir)//update resource
+      {
+        foundResource.name = getName((<any>resourceToAdd).resource.name);
+        foundResource.reference.display = foundResource.name || (<any>resourceToAdd).resource.title;
+        foundResource.description = (<any>resourceToAdd).resource.description;
+        changed = true;
+      }
+
+    }
   }
 
   // update the Ig
   if (changed) {
-    implGuideResource.references = implGuideResource.references || [];
-    // add to references if not already in the reference list
-    if (!implGuideResource.references.find((r: IProjectResourceReference) => {
-      if (r.valueType !== (isNotFhir ? 'Example' : 'Conformance')) return false;
-      if (r.value && r.value.toString() === resourceToAdd.id) return true;
-    })) {
-      implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'Example' : 'Conformance' });
+    if(resourceAdded) {
+      implGuideResource.references = implGuideResource.references || [];
+      // add to references if not already in the reference list
+      if (!implGuideResource.references.find((r: IProjectResourceReference) => {
+        if (r.valueType !== (isNotFhir ? 'Example' : 'Conformance')) return false;
+        if (r.value && r.value.toString() === resourceToAdd.id) return true;
+      })) {
+        implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'Example' : 'Conformance' });
+      }
     }
-    let conf = await service.updateOne(implGuideResource.id, implGuideResource);
-    //console.log('Conformance ' + conf);
+    if(implGuideResource.id) {
+      let conf = await service.findById(implGuideResource.id);
+      if(conf) {
+        let conf1 = await service.updateOne(implGuideResource.id, implGuideResource);
+      }
+      else{
+        console.log("Ig " + implGuideResource.id + " does not exist" );
+      }
+    }
+    else {
+      console.log("Ig " + implGuideResource.id + " does not exist" );
+    }
+
   }
   return Promise.resolve();
 }
+
+function getName(name: any) {
+  if (name) {
+    if (typeof name === 'string') {
+      return name;
+    } else if (name instanceof Array && name.length > 0) {
+      if (name[0].text) {
+        return name[0].text;
+      }
+
+      let retName = '';
+
+      if (name[0].given) {
+        retName = name[0].given.join(' ');
+      }
+
+      if (name[0].family) {
+        retName += ' ' + name[0].family;
+      }
+
+      return retName;
+    }
+  }
+}
+
 
 export async function removeFromImplementationGuideNew(service: ConformanceService, resourceToRemove: IConformance): Promise<void> {
 
@@ -866,7 +915,7 @@ export function implementationGuideIsCDA(implementationGuide: IConformance): boo
   return (deps || []).findIndex((d: string) => {
     return [
       'hl7.fhir.cda'
-    ].includes((d || '').split('#')[0])
+    ].includes((d || '').split('#')[0]);
   }) > -1;
 }
 

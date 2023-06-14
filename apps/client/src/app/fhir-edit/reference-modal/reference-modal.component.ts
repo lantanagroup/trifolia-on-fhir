@@ -88,11 +88,11 @@ export class FhirReferenceModalComponent implements OnInit {
   }
 
   public isSelected(con: IConformance) {
-    return !!this.selected.find((selected) => selected.resourceType === con.resource.resourceType && selected.id === con.resource.id);
+    return !!this.selected.find((selected) => selected.projectResourceId === con.resource.id);
   }
 
   public setSelected(conf: IConformance, isSelected) {
-    const found = this.selected.find((selected) => selected.resourceType === conf.resource.resourceType && selected.id === conf.resource.id);
+    const found = this.selected.find((selected) => selected.projectResourceId === conf.id);
 
     if (found && !isSelected) {
       const index = this.selected.indexOf(found);

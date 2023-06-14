@@ -10,12 +10,13 @@ import { FileService } from '../shared/file.service';
 import { SearchParameterService } from '../shared/search-parameter.service';
 import { RecentItemService } from '../shared/recent-item.service';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import {firstValueFrom, Subject} from 'rxjs';
+import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChangeResourceIdModalComponent } from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import { IConformance } from '@trifolia-fhir/models';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import { IDomainResource } from '@trifolia-fhir/tof-lib';
 
 @Component({
   selector: 'trifolia-fhir-search-parameter',
@@ -60,7 +61,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     super(configService, authService);
 
     this.searchParameter = new SearchParameter({ meta: this.authService.getDefaultMeta() });
-    this.conformance = { resource: this.searchParameter, fhirVersion: <'stu3'|'r4'|'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.conformance = { resource: this.searchParameter, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -117,9 +118,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.searchParameter = <SearchParameter>this.fileService.file.resource;
-        this.nameChanged();
-        this.afterSearchParameterInit();
+        this.loadSP(this.fileService.file.resource);
       } else {
         this.router.navigate([this.configService.baseSessionUrl]);
         return;
@@ -137,13 +136,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
             }
 
             this.conformance = conf;
-            this.searchParameter = <SearchParameter>conf.resource;
-            this.nameChanged();
-            this.afterSearchParameterInit();
-            this.recentItemService.ensureRecentItem(
-              Globals.cookieKeys.recentCodeSystems,
-              this.searchParameter.id,
-              this.searchParameter.name);
+            this.loadSP(conf.resource);
           },
           error: (err) => {
             this.spNotFound = err.status === 404;
@@ -206,8 +199,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
             this.router.navigate([`${this.configService.baseSessionUrl}/search-parameter/${conf.id}`]);
           } else {
             this.conformance = conf;
-            this.searchParameter = conf.resource;
-            this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, conf.id, conf.name);
+            this.loadSP(conf.resource);
             setTimeout(() => {
               this.message = '';
             }, 3000);
@@ -243,6 +235,24 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     });
   }
 
+
+  public loadSP(newVal: IDomainResource) {
+
+    this.searchParameter = new SearchParameter(newVal);
+
+    if (this.conformance) {
+      this.conformance.resource = newVal;
+    }
+    
+    this.nameChanged();
+    this.afterSearchParameterInit();
+    this.recentItemService.ensureRecentItem(
+      Globals.cookieKeys.recentCodeSystems,
+      this.searchParameter.id,
+      this.searchParameter.name);
+
+  }
+
   async ngOnInit() {
     /*this.resourceTypeCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/resource-types');
     this.getSearchParameters();
@@ -259,10 +269,10 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     this.messageEventCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/message-events');
 
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+    this.implementationGuide = <ImplementationGuide>(await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
-    const url =  this.implementationGuide.url;
-    if(!this.searchParameter.url) {
+    const url = this.implementationGuide.url;
+    if (!this.searchParameter.url) {
       this.searchParameter.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "SearchParameter/" : "";
     }
     this.navSubscription = this.router.events.subscribe((e: any) => {

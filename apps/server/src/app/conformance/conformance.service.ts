@@ -46,6 +46,12 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             throw new BadRequestException(`Invalid conformance resource provided.`);
         }
 
+       // verify that the resource does not already exist
+        let existing = await  this.findOne({'resource.resourceType': newConf.resource.resourceType, 'resource.id' : newConf.resource.id, 'igIds': new ObjectId(implementationGuideId)});
+        if(existing)
+        {
+          throw new BadRequestException(`Conformance resource already exists for this IG`);
+        }
         // ensure meta version ID and lastUpdated are set
         if (!newConf.resource.meta) {
             newConf.resource.meta = {};
@@ -317,7 +323,6 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         let igEntry: STU3BundleEntryComponent | R4BundleEntryComponent | R5BundleEntryComponent = new entryType();
         igEntry.resource = implementationGuide.resource;
         bundle.entry.push(igEntry);
-
         (implementationGuide.references || []).forEach((r: IProjectResourceReference) => {
             let entry: STU3BundleEntryComponent | R4BundleEntryComponent | R5BundleEntryComponent = new entryType();
 
@@ -362,6 +367,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
                 bundle.entry.push(entry);
             }
         });
+
 
 
         return bundle;

@@ -3,9 +3,14 @@ import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { RecentItemService } from '../shared/recent-item.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { CodeSystemService } from '../shared/code-system.service';
-import {CodeSystem as STU3CodeSystem, ConceptDefinitionComponent, ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { CodeSystem as R4CodeSystem } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {CodeSystem as R5CodeSystem } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
+import {
+  CodeSystem as STU3CodeSystem,
+  ConceptDefinitionComponent,
+  ImplementationGuide,
+  StructureDefinition as STU3StructureDefinition
+} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { CodeSystem as R4CodeSystem, StructureDefinition as R4StructureDefinition } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { CodeSystem as R5CodeSystem, StructureDefinition as R5StructureDefinition } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { FhirService } from '../shared/fhir.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FhirCodesystemConceptModalComponent } from '../fhir-edit/codesystem-concept-modal/codesystem-concept-modal.component';
@@ -14,11 +19,11 @@ import { ConfigService } from '../shared/config.service';
 import { AuthService } from '../shared/auth.service';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { BaseComponent } from '../base.component';
-import {ICodeSystem} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {firstValueFrom, Subject} from 'rxjs';
-import {debounceTime} from 'rxjs/operators';
+import { ICodeSystem, IDomainResource } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { firstValueFrom, Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { IConformance } from '@trifolia-fhir/models';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
 
 @Component({
   templateUrl: './codesystem.component.html',
@@ -57,7 +62,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     private fileService: FileService,
     private fhirService: FhirService,
     private implementationGuideService: ImplementationGuideService
-    ) {
+  ) {
 
     super(configService, authService);
     if (this.configService.isFhirR5) {
@@ -69,7 +74,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     } else {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
-    this.conformance = <IConformance>{ resource: this.codeSystem, fhirVersion: <'stu3'|'r4'|'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.conformance = <IConformance>{ resource: this.codeSystem, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -193,7 +198,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       this.fileService.saveFile();
       return;
     }
-    this.conformance.fhirVersion = <'stu3'|'r4'|'r5'>this.configService.fhirVersion;
+    this.conformance.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion;
     this.codeSystemService.save(this.codeSystemId, this.conformance)
       .subscribe({
         next: (conf: IConformance) => {
@@ -203,8 +208,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
             this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${conf.id}`]);
           } else {
             this.conformance = conf;
-            this.codeSystem = conf.resource;
-            this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, conf.id, conf.name);
+            this.loadCS(conf.resource);
             setTimeout(() => {
               this.message = '';
             }, 3000);
@@ -226,9 +230,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.codeSystem = <ICodeSystem>this.fileService.file.resource;
-        this.nameChanged();
-        this.refreshConcepts();
+        this.loadCS(this.fileService.file.resource);
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -237,7 +239,6 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     }
 
     if (!this.isNew) {
-      this.codeSystem = null;
 
       this.codeSystemService.getCodeSystem(this.codeSystemId)
         .subscribe({
@@ -248,13 +249,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
             }
 
             this.conformance = conf;
-            this.codeSystem = <ICodeSystem>conf.resource;
-            this.nameChanged();
-            this.refreshConcepts();
-            this.recentItemService.ensureRecentItem(
-              Globals.cookieKeys.recentCodeSystems,
-              this.codeSystem.id,
-              this.codeSystem.name || this.codeSystem.title);
+            this.loadCS(conf.resource);
           },
           error: (err) => {
             this.csNotFound = err.status === 404;
@@ -269,6 +264,30 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     this.configService.setTitle(`CodeSystem - ${this.codeSystem.title || this.codeSystem.name || 'no-name'}`);
   }
 
+  loadCS(newVal: IDomainResource) {
+
+    if (this.configService.isFhirR5) {
+      this.codeSystem = new R5CodeSystem(newVal);
+    } else if (this.configService.isFhirR4) {
+      this.codeSystem = new R4CodeSystem(newVal);
+    } else if (this.configService.isFhirSTU3) {
+      this.codeSystem = new STU3CodeSystem(newVal);
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
+    }
+
+    if (this.conformance) {
+      this.conformance.resource = this.codeSystem;
+    }
+
+    this.nameChanged();
+    this.refreshConcepts();
+    this.recentItemService.ensureRecentItem(
+      Globals.cookieKeys.recentCodeSystems,
+      this.codeSystem.id,
+      this.codeSystem.name || this.codeSystem.title);
+  }
+
   async ngOnInit() {
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/code-system/')) {
@@ -277,10 +296,10 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     });
     this.getCodeSystem();
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    this.implementationGuide = <ImplementationGuide> (await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+    this.implementationGuide = <ImplementationGuide>(await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
 
-    const url =  this.implementationGuide.url;
-    if(!this.codeSystem.url) {
+    const url = this.implementationGuide.url;
+    if (!this.codeSystem.url) {
       this.codeSystem.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "CodeSystem/" : "";
     }
   }

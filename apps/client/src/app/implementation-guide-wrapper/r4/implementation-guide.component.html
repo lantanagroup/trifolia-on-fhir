@@ -638,7 +638,7 @@
         <span [attr.data-intro]="Globals.introText['resource.raw-tab']">RAW</span>
       </a>
       <ng-template ngbNavContent>
-        <app-raw-resource [resource]="implementationGuide"></app-raw-resource>
+        <app-raw-resource [resource]="implementationGuide" (resourceChange)="loadIG($event, true)"></app-raw-resource>
       </ng-template>
     </li>
 

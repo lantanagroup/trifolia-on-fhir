@@ -192,7 +192,7 @@ export class StructureDefinitionController extends ConformanceController  {
       await this.assertCanWriteById(user, implementationGuideId);
     }
     let conformance: IConformance = body;
-    return this.conformanceService.updateConformance(id, conformance);
+    return this.conformanceService.updateConformance(id, conformance, implementationGuideId);
   }
 
   @Delete(':id')

@@ -90,7 +90,7 @@
   <li ngbNavItem>
     <a ngbNavLink>RAW</a>
     <ng-template ngbNavContent>
-      <app-raw-resource [resource]="structureDefinition"></app-raw-resource>
+      <app-raw-resource [resource]="structureDefinition" (resourceChange)="loadSD($event)"></app-raw-resource>
     </ng-template>
   </li>
 </ul>

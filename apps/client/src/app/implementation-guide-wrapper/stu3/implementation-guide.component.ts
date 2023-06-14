@@ -28,7 +28,7 @@ import { CanComponentDeactivate } from '../../guards/resource.guard';
 import { ProjectService } from '../../shared/projects.service';
 import {IConformance, IExample, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
 import { forkJoin } from 'rxjs';
-import { getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
+import { IDomainResource, getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
 
 
 class Parameter {
@@ -447,10 +447,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.implementationGuide = new ImplementationGuide(this.fileService.file.resource);
-        this.igChanging.emit(false);
-        this.initPages();
-        this.initParameters();
+        this.loadIG(this.fileService.file.resource);
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -459,8 +456,6 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     }
 
     if (!this.isNew) {
-      this.implementationGuide = null;
-
       this.implementationGuideService.getImplementationGuideWithReferences(implementationGuideId)
         .subscribe({
           next: (conf: IConformance) => {
@@ -470,12 +465,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
               return;
             }
 
-            this.implementationGuide = new ImplementationGuide(conf.resource);
             this.conformance = conf;
-            this.conformance.resource = this.implementationGuide;
-            this.igChanging.emit(false);
-            this.initPages();
-            this.initParameters();
+            this.loadIG(conf.resource);
           },
           error: (err) => {
             this.igNotFound = err.status === 404;
@@ -689,13 +680,9 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
             this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
           } else {
             this.conformance = conf;
-            this.implementationGuide = new ImplementationGuide(conf.resource);
-            this.conformance.resource = this.implementationGuide;
+            this.loadIG(conf.resource);
             this.configService.project = getImplementationGuideContext(conf);
             this.message = 'Your changes have been saved!';
-            this.igChanging.emit(false);
-            this.initPages();
-            this.initParameters();
             setTimeout(() => {
               this.message = '';
             }, 3000);
@@ -827,6 +814,17 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   private initPages() {
     this.pages = [];
     this.initPage(this.implementationGuide.page);
+  }
+  
+  public loadIG(newVal: IDomainResource, isDirty?: boolean) {
+    this.implementationGuide = new ImplementationGuide(newVal);
+
+    if (this.conformance) {
+      this.conformance.resource = this.implementationGuide;
+    }
+    this.igChanging.emit(isDirty);
+    this.initPages();
+    this.initParameters();
   }
 
   ngOnInit() {
