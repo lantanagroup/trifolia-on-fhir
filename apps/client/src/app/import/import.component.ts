@@ -863,24 +863,20 @@ export class ImportComponent implements OnInit {
 
     const transactionBundle =  <Bundle>file.resource;
     this.errorMessage = '';
-
+    let ig;
     (transactionBundle.entry || []).forEach(bundleEntry => {
       let resource = bundleEntry.resource;
+
       if (!resource) return;
 
-      const newFileName = `${file.name} - ${resource.resourceType}/${resource.id}`;
-      const res = this.processFile(bundleEntry.resource, newFileName, undefined, this.get(file.contentType));
-      const errorMessage = res.errorMessage;
-      const importFileModel = res.importFileModel;
-
-      if (errorMessage === '') {
-        this.files.push(importFileModel);
-      } else {
-        this.errorMessage += `${errorMessage}<br/>`;
+      if(resource.resourceType === 'ImplementationGuide'){
+        ig = resource;
       }
-
+      else {
+        this.addResource(file, resource);
+      }
     });
-
+    this.addResource(file, ig);
 
     const foundIndex = this.files.findIndex((importFile: ImportFileModel) => importFile.name === file.name);
     this.files.splice(foundIndex, 1);
@@ -889,6 +885,19 @@ export class ImportComponent implements OnInit {
 
   }
 
+
+  private addResource(file: ImportFileModel, resource: DomainResource) {
+    const newFileName = `${file.name} - ${resource.resourceType}/${resource.id}`;
+    const res = this.processFile(resource, newFileName, undefined, this.get(file.contentType));
+    const errorMessage = res.errorMessage;
+    const importFileModel = res.importFileModel;
+
+    if (errorMessage === '') {
+      this.files.push(importFileModel);
+    } else {
+      this.errorMessage += `${errorMessage}<br/>`;
+    }
+  }
 
   ngOnInit() {
 
