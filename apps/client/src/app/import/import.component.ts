@@ -793,7 +793,12 @@ export class ImportComponent implements OnInit {
           }
         }
       } else if (importFileModel.contentType === ContentTypes.Json) {
-        importFileModel.resource = JSON.parse(result);
+        if(typeof result == typeof '') {
+          importFileModel.resource = JSON.parse(result);
+        }
+        else{
+          importFileModel.resource = result;
+        }
         try {
           let ser = this.fhirService.serialize(importFileModel.resource);
         } catch (error) {
