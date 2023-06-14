@@ -562,7 +562,6 @@ export async function addToImplementationGuide(httpService: HttpService, configS
 }
 
 export async function addToImplementationGuideNew(service: ConformanceService, resourceToAdd: IConformance | IExample, implementationGuideId: string, isExample: boolean = false): Promise<void> {
-
   // Don't add implementation guides to other implementation guides (or itself).
   if (!isExample && (<IConformance>resourceToAdd).resource.resourceType == 'ImplementationGuide') {
     return Promise.resolve();
@@ -688,42 +687,36 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
           exampleCanonical: exampleFor,
           name: display
         });
-
       } else {
         // otherwise do the usual...
-        let name = getName((<any>resourceToAdd).resource.name);
-        const display = name || (<any>resourceToAdd).resource.title;
-        const description = (<any>resourceToAdd).resource.description;
+        const name = (<any>resourceToAdd).resource.title || getName((<any>resourceToAdd).resource.name);
         r4.definition.resource.push(isExample && exampleFor ?
           {
             reference: {
               reference: resourceReferenceString,
-              display: display
+              display: name
             },
-            exampleCanonical: exampleFor,
-            name: display
+            exampleCanonical: exampleFor
           } :
           {
             reference: {
               reference: resourceReferenceString,
-              display: display
+              display: name
             },
             exampleBoolean: isExample ? true : false,
-            name: display,
-            description: description
+            name: name
           });
       }
       changed = true;
 
-    }
-    else {
-
-      if (!isNotFhir)//update resource
-      {
-        foundResource.name = getName((<any>resourceToAdd).resource.name);
-        foundResource.reference.display = foundResource.name || (<any>resourceToAdd).resource.title;
-        foundResource.description = (<any>resourceToAdd).resource.description;
-        changed= true;
+    } else {
+      if (!isNotFhir) { //update resource
+        let nameToSet = (<any>resourceToAdd).resource.title || getName((<any>resourceToAdd).resource.name);
+        if (nameToSet) {
+          foundResource.name =
+            foundResource.reference.display = nameToSet;
+        }
+        changed = true;
       }
     }
   } else {                                        // stu3
@@ -756,25 +749,21 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
     if (!foundResource) {
       resourceAdded = true;
-      let display;
-      let description;
+      let name;
 
       if (isNotFhir) {
-         display = (<any>resourceToAdd).name || (<any>resourceToAdd).id;
+        name = (<any>resourceToAdd).name || (<any>resourceToAdd).id;
+      } else {
+        name = (<any>resourceToAdd).resource.title || getName((<any>resourceToAdd).resource.name);
       }
-      else {
-        let name = getName((<any>resourceToAdd).resource.name);
-        display =  name || (<any>resourceToAdd).resource.title ;
-        description = (<any>resourceToAdd).resource.description;
-      }
+
       const newResource: PackageResourceComponent = {
-        name: display,
-        description: description,
+        name: name,
         sourceReference: {
           reference: resourceReferenceString,
-          display: display
+          display: name
         },
-        example: isExample ? true : false
+        example: isExample
       };
 
       if (stu3.package.length === 0) {
@@ -795,16 +784,13 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
         stu3.package[0].resource.push(newResource);
         changed = true;
       }
-    }
-    else{  //update resource
-      if (!isNotFhir)//update resource
-      {
-        foundResource.name = getName((<any>resourceToAdd).resource.name);
-        foundResource.reference.display = foundResource.name || (<any>resourceToAdd).resource.title;
-        foundResource.description = (<any>resourceToAdd).resource.description;
+    } else {  //update resource
+      if (!isNotFhir) { //update resource
+        foundResource.name =
+          foundResource.reference.display =
+            (<any>resourceToAdd).resource.title || getName((<any>resourceToAdd).resource.name);
         changed = true;
       }
-
     }
   }
 
