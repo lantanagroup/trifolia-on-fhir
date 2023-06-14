@@ -67,6 +67,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
   public implementationGuideId: string;
   public saving = false;
+  public duplicate = false;
 
   constructor(
     private modal: NgbModal,
@@ -481,7 +482,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const found = (this.implementationGuide.definition.resource || []).filter((next: ImplementationGuideResourceComponent) =>
       next.reference && next.reference.reference && next.reference.reference.trim().toLowerCase() === thisReference);
 
-    return found.length !== 1;
+    this.duplicate = found.length !== 1;
+    return this.duplicate;
   }
 
   public addNewFhirVersion() {

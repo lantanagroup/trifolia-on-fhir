@@ -405,7 +405,7 @@
                   [isFormGroup]="false"
                   [required]="true"
                   (change)="igChanging.emit(true)"
-                  [prependIconClass]="isDuplicateResource(resource) ? 'fa fa-copy text-error' : ''"
+                  [prependIconClass]="isDuplicateResource(resource) ? 'fa fa-copy text-danger' : ''"
                   prependIconTooltip="This is a duplicate">
                 </app-fhir-reference>
               </td>
@@ -745,7 +745,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance) || saving" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance) || saving || duplicate" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" [disabled]="saving"  *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>
