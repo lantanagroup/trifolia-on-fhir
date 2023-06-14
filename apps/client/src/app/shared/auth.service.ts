@@ -123,12 +123,20 @@ export class AuthService {
     this.oauthService.initImplicitFlow();
   }
 
-  public handleAuthentication(): Promise<void> {
+  public async handleAuthentication(): Promise<void> {
     if (!this.oauthService) {
       return;
     }
 
     if (this.oauthService.hasValidAccessToken() && this.oauthService.hasValidIdToken()) {
+
+      this.authChanged.emit();
+      await this.getProfile();
+      this.socketService.notifyAuthenticated({
+        userProfile: this.userProfile,
+        user: this.user
+      });
+
 
       window.location.hash = '';
       let path;
@@ -143,20 +151,20 @@ export class AuthService {
         //path = '/';
         path = this.activatedRoute.snapshot.queryParams.pathname || `/projects`;
       }
+      
+      let navigateTo: string;
 
       if (path && path !== '/' && path !== '/logout' && path !== '/login' && !path.endsWith('/home')) {
-        this.router.navigate([path]);
-      } else if (window.location.pathname === '/' || path.endsWith('/home')) {
-        //this.router.navigate([this.configService.fhirServer, 'implementation-guide', 'open']);
-        this.router.navigate(['/projects'])
+        navigateTo = path;
+      } else if (window.location.pathname === '/' || window.location.pathname === '/login' || path.endsWith('/home')) {
+        navigateTo = '/projects';
       }
 
-      this.authChanged.emit();
-      this.getProfile();
-      this.socketService.notifyAuthenticated({
-        userProfile: this.userProfile,
-        user: this.user
-      });
+      if (navigateTo) {
+        await new Promise(f => setTimeout(f, 500));
+        this.router.navigate([navigateTo]);
+      }
+
     }
   }
 
