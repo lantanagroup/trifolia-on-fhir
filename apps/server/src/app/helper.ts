@@ -720,8 +720,8 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
       if (!isNotFhir)//update resource
       {
-        foundResource.name = (<any>resourceToAdd).resource.name;
-        foundResource.reference.display = (<any>resourceToAdd).resource.title;
+        foundResource.name = getName((<any>resourceToAdd).resource.name);
+        foundResource.reference.display = foundResource.name || (<any>resourceToAdd).resource.title;
         foundResource.description = (<any>resourceToAdd).resource.description;
         changed= true;
       }
@@ -799,8 +799,8 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
     else{  //update resource
       if (!isNotFhir)//update resource
       {
-        foundResource.name = (<any>resourceToAdd).resource.name;
-        foundResource.reference.display = (<any>resourceToAdd).resource.title;
+        foundResource.name = getName((<any>resourceToAdd).resource.name);
+        foundResource.reference.display = foundResource.name || (<any>resourceToAdd).resource.title;
         foundResource.description = (<any>resourceToAdd).resource.description;
         changed = true;
       }
