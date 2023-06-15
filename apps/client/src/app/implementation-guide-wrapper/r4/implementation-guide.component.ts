@@ -889,10 +889,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
             this.loadIG(conf.resource);
             this.configService.project = getImplementationGuideContext(conf);
             this.message = 'Your changes have been saved!';
+            this.saving = false;
 
             setTimeout(() => {
               this.message = '';
-              this.saving = false;
+
             }, 3000);
           }
         },
