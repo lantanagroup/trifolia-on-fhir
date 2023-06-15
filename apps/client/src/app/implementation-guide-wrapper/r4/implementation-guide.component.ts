@@ -505,7 +505,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       let map = this.resourceMap[resource.reference.reference];
 
       index = (this.conformance.references || []).findIndex((ref: IProjectResourceReference) => {
-        return ref.value === map.value || ref.value === map.value['id']
+        return ref.value === map.value
       });
 
       if (index > -1) {
