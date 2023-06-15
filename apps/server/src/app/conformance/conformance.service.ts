@@ -104,8 +104,6 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             throw new BadRequestException();
         }
 
-        const updatedObject = JSON.parse(JSON.stringify(upConf));
-
         let existing = await this.conformanceModel.findById(id);
 
         if (!existing) {
@@ -266,12 +264,8 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             await addToImplementationGuideNew(this, existing, implementationGuideId, isExample);
         }
 
-        updatedObject.resource.meta.versionId =  existing.resource.meta.versionId;
-        updatedObject.resource.meta.lastUpdated = lastUpdated;
-        updatedObject.versionId = versionId;
-        updatedObject.lastUpdated = lastUpdated;
 
-        return updatedObject;
+        return existing;
 
     }
 
