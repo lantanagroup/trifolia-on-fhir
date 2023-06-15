@@ -389,8 +389,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
     }
     let conformance: IConformance = body;
     ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
-    let conf = await this.conformanceService.createConformance(conformance);
-    return await this.conformanceService.getWithReferences(conf.id);
+    return await this.conformanceService.createConformance(conformance);
   }
 
   @Put(':id')
@@ -401,8 +400,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
     await this.assertCanWriteById(user, id);
     let conformance: IConformance = body;
     ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
-    await this.conformanceService.updateConformance(id, conformance);
-    return await this.conformanceService.getWithReferences(id);
+    return await this.conformanceService.updateConformance(id, conformance);
   }
 
   @Delete(':id')
