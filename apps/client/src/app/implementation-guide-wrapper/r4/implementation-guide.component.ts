@@ -70,6 +70,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public saving = false;
   public duplicate = false;
   public resourceMap: IProjectResourceReferenceMap = {};
+  public historyLoaded = false;
 
   constructor(
     private modal: NgbModal,

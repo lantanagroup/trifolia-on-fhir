@@ -117,6 +117,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   private resources: ImplementationGuideResource[] = [];
   public resourceMap: IProjectResourceReferenceMap = {};
   public saving = false;
+  public historyLoaded = false;
 
 
   constructor(
