@@ -63,7 +63,7 @@ export class UsersController extends BaseDataController<UserDocument> {
             return null;
         }
 
-        this.logger.debug(`Getting user with identifier ${authId}`);
+        //this.logger.debug(`Getting user with identifier ${authId}`);
 
         let res = await this.usersService.findOne({authId: authId});
 
