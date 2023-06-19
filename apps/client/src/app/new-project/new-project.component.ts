@@ -130,7 +130,7 @@ export class NewProjectComponent implements OnInit {
           project.igs = project.igs || [];
           project.igs.push(ig);
           await this.projectService.save(project).toPromise().then((project) => {
-            this.router.navigate([`/projects/${project.id}`]);
+            this.router.navigate([`/projects/${ig.id}/implementation-guide`]);
           }).catch((err) => this.message = getErrorString(err));
         },
         error: (err) => {

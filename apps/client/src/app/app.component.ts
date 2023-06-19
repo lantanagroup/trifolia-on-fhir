@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RoutesRecognized } from '@angular/router';
 import { AuthService } from './shared/auth.service';
 import { ConfigService } from './shared/config.service';
-import { Globals, IImplementationGuide, ImplementationGuideContext, getImplementationGuideContext, getR4Dependencies, getSTU3Dependencies } from '@trifolia-fhir/tof-lib';
+import { Globals, ImplementationGuideContext, getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
 import { FileService } from './shared/file.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FileOpenModalComponent } from './modals/file-open-modal/file-open-modal.component';
@@ -14,10 +14,10 @@ import { GithubService } from './shared/github.service';
 import { CookieService } from 'ngx-cookie-service';
 import { AdminMessageModalComponent } from './modals/admin-message-modal/admin-message-modal.component';
 import introJs from 'intro.js/intro.js';
-import { Practitioner, ImplementationGuide as STU3ImplementationGuide } from '@trifolia-fhir/stu3';
-import { Coding, ImplementationGuide as R4ImplementationGuide } from '@trifolia-fhir/r4';
+import { Practitioner } from '@trifolia-fhir/stu3';
 import { ImplementationGuideService } from './shared/implementation-guide.service';
 import { IConformance } from '@trifolia-fhir/models';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'trifolia-fhir-root',
@@ -156,8 +156,8 @@ export class AppComponent implements OnInit {
       return Promise.resolve(this.configService.project);
     }
 
-    return await new Promise((resolve, reject) => {
-      this.implGuideService.getImplementationGuide(implementationGuideId).toPromise()
+    return new Promise((resolve, reject) => {
+      firstValueFrom(this.implGuideService.getImplementationGuide(implementationGuideId))
         .then((conf: IConformance) => {
           resolve(getImplementationGuideContext(conf));
         })

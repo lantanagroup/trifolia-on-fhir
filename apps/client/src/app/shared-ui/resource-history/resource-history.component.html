@@ -27,6 +27,7 @@
     [(page)]="page"
     [pageSize]="20"
     [collectionSize]="historyBundle.total"
+    [maxSize]="5"
     (pageChange)="getHistory()"></ngb-pagination>
   </div>
   <div *ngIf="rightResource && leftResource" class="col-md-8">

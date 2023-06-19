@@ -264,6 +264,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             await addToImplementationGuideNew(this, existing, implementationGuideId, isExample);
         }
 
+
         return existing;
 
     }
@@ -397,7 +398,8 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             }
 
             if (key) {
-                map[key] = r;
+                const newProjectResourceReference: IProjectResourceReference = { value: r.value['id'], valueType: r.valueType };
+                map[key] = newProjectResourceReference;
             }
         });
 

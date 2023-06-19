@@ -5,11 +5,9 @@ import {ConfigService} from '../shared/config.service';
 import {STU3ImplementationGuideComponent} from './stu3/implementation-guide.component';
 import {R4ImplementationGuideComponent} from './r4/implementation-guide.component';
 import {Versions} from 'fhir/fhir';
-import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { CanComponentDeactivate } from '../guards/resource.guard';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {IConformance, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
-import {ImplementationGuide} from '@trifolia-fhir/r4';
+import {IConformance} from '@trifolia-fhir/models';
 import {getErrorString} from '@trifolia-fhir/tof-lib';
 import {FhirService} from '../shared/fhir.service';
 
@@ -34,7 +32,6 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
     private configService: ConfigService,
     private fhirService: FhirService,
     private implementationGuideService: ImplementationGuideService) {
-    this.versionChanged();
   }
 
   canDeactivate(){
@@ -73,6 +70,6 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
   }
 
   ngOnInit() {
-      this.versionChanged();
+    this.versionChanged();
   }
 }
