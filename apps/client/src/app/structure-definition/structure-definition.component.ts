@@ -191,18 +191,9 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     this.baseStructureDefinition = this.baseDefResponse.base;
-
-    if (this.configService.isFhirSTU3) {
-      this.constraintManager = new ConstraintManager(STU3ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
-    } else if (this.configService.isFhirR4) {
-      this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
-    } else if (this.configService.isFhirR5) {
-      this.constraintManager = new ConstraintManager(R5ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
-    } else {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
-    }
-
-
+    
+    await this.initializeConstraintManager();
+    
     this.constraintManager.getStructureDefinition = (url: string) => {
       return new Promise((resolve, reject) => {
         this.strucDefService.getBaseStructureDefinition(url).toPromise()
@@ -215,9 +206,23 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       });
     };
 
+    this.message = 'Done loading base structure definition.';
+  }
+
+  private async initializeConstraintManager() {
+
+    if (this.configService.isFhirSTU3) {
+      this.constraintManager = new ConstraintManager(STU3ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else if (this.configService.isFhirR4) {
+      this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else if (this.configService.isFhirR5) {
+      this.constraintManager = new ConstraintManager(R5ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
+    }
+
     await this.constraintManager.initializeRoot();
 
-    this.message = 'Done loading base structure definition.';
   }
 
   private async getStructureDefinition() {
@@ -372,6 +377,10 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     // saving does not require this
     if (reloadBase) {
       await this.loadBaseDefinition();
+    }
+    // only re-init the constraint manager if base unchanged
+    else {
+      await this.initializeConstraintManager();
     }
 
   }
