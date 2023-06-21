@@ -1,6 +1,6 @@
 import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
-import { ImplementationGuide, ValueSet } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { ImplementationGuide, ValueSet } from '@trifolia-fhir/r4';
+import { getErrorString, Globals } from '@trifolia-fhir/tof-lib';
 import { RecentItemService } from '../shared/recent-item.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ValueSetService } from '../shared/value-set.service';
@@ -12,13 +12,12 @@ import { FileOpenModalComponent } from '../modals/file-open-modal/file-open-moda
 import { FileModel } from '../models/file-model';
 import { ClientHelper } from '../clientHelper';
 import { AuthService } from '../shared/auth.service';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { BaseComponent } from '../base.component';
 import { debounceTime } from 'rxjs/operators';
 import { firstValueFrom, Subject } from 'rxjs';
-import { IConformance } from '@trifolia-fhir/models';
+import type { IConformance } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import { IDomainResource } from '@trifolia-fhir/tof-lib';
+import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 
 
 @Component({
