@@ -143,9 +143,11 @@ export class ExportController extends ConformanceController {//BaseController {
       const refSplit = ref.split('/');
       const foundEntry = bundle.entry.find(entry => entry.resource.resourceType === refSplit[0] && entry.resource.id === refSplit[1]);
 
-      docBundle.entry.push({
-        resource: foundEntry.resource
-      });
+      if (foundEntry) {
+        docBundle.entry.push({
+          resource: foundEntry.resource
+        });
+      }
     });
 
     return res.send(docBundle);

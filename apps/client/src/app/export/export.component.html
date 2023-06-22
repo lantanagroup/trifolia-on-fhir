@@ -170,7 +170,8 @@
           <div class="col-md-6">
             <div class="form-group">
               <label>Composition</label>
-              <select class="form-control" name="composition" [class.is-invalid]="!documentOptions.compositionId" [(ngModel)]="documentOptions.compositionId">
+              <select class="form-control" name="composition" [class.is-invalid]="!documentOptions.compositionId" 
+                      [ngModel]="documentOptions.compositionId" (ngModelChange)="documentOptions.compositionId = $event === 'null' ? null : $event">
                 <option *ngFor="let c of compositions" [value]="c.id">{{c.name || 'ID: ' + c.id}}</option>
                 <option [value]="null">None</option>
               </select>

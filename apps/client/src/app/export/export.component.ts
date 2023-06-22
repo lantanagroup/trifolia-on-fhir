@@ -217,6 +217,10 @@ export class ExportComponent implements OnInit {
       }
     }
 
+    if (this.options.exportFormat === ExportFormats.Document) {
+      return !this.documentOptions.compositionId || this.documentOptions.compositionId === 'null';
+    }
+
     /* TODO: Uncomment after Export GitHub issue is fixed
     if (this.options.exportFormat === ExportFormats.GitHub && this.githubPanel) {
       return !this.githubPanel.canExport;
@@ -243,6 +247,7 @@ export class ExportComponent implements OnInit {
   }
 
   private async exportDocument() {
+    console.log("exportDocument:", !this.documentOptions.compositionId, this.documentOptions.compositionId);
     if (!this.documentOptions.compositionId) {
       this.message = 'You must specify a composition to export as a document';
       return;
