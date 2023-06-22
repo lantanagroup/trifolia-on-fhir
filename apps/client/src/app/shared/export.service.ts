@@ -128,4 +128,13 @@ export class ExportService {
     const url = '/api/export/' + packageId;
     return this.http.get(url, {observe: 'response', responseType: 'blob'});
   }
+
+  public exportDocument(implementationGuideId: string, compositionId: string, format: string) {
+    const url = `/api/export/${encodeURIComponent(implementationGuideId)}/${encodeURIComponent(compositionId)}/document`;
+    const headers = {
+      accept: format || 'application/json'
+    };
+
+    return this.http.get(url, {observe: 'response', responseType: 'blob', headers});
+  }
 }

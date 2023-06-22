@@ -73,7 +73,7 @@ export class ExportController extends ConformanceController {//BaseController {
     }
   }
 
-  @Post(':implementationGuideId/:compositionId/document')
+  @Get(':implementationGuideId/:compositionId/document')
   public async exportCompositionDocument(@User() user: ITofUser, @Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string, @Param('compositionId') compositionId: string) {
     await this.assertCanReadById(user, implementationGuideId);
 
@@ -85,7 +85,9 @@ export class ExportController extends ConformanceController {//BaseController {
       return;
     }
 
-    const compositionEntry = bundle.entry.find(e => e.resource.resourceType === 'Composition' && e.resource.id === compositionId);
+    const compositionEntry = bundle.entry
+      .filter(e => e.resource.resourceType === 'Composition')
+      .find(e => e.resource.id === compositionId);
     const composition = compositionEntry ? compositionEntry.resource : null;
 
     if (!composition) {

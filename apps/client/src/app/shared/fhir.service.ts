@@ -2,7 +2,6 @@ import {Injectable, Injector} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {
   Bundle,
-  CapabilityStatement,
   CodeSystem,
   Coding,
   ConceptDefinitionComponent,
@@ -11,13 +10,10 @@ import {
   IssueComponent,
   OperationOutcome,
   Resource,
-  ResourceComponent,
-  RestComponent,
-  SearchParamComponent,
   StructureDefinition,
   ValueSet
 } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Observable} from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 import {Fhir, Versions} from 'fhir/fhir';
 import {ParseConformance} from 'fhir/parseConformance';
 import {ConfigService} from './config.service';
@@ -25,13 +21,11 @@ import {Severities, ValidatorMessage, ValidatorResponse} from 'fhir/validator';
 import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
 import {CustomValidator} from './validation/custom-validator';
 import {CustomSTU3Validator} from './validation/custom-STU3-validator';
-import {CustomR4Validator} from './validation/custom-R4-validator';
 import * as vkbeautify from 'vkbeautify';
 import {publishReplay, refCount} from 'rxjs/operators';
-import {IBundle, ICoding} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {forkJoin} from 'rxjs';
-import {IConformance, IHistory} from '@trifolia-fhir/models';
+import {IBundle} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IConformance} from '@trifolia-fhir/models';
+import {Paginated} from '@trifolia-fhir/tof-lib';
 
 export interface IResourceGithubDetails {
   owner: string;
@@ -344,7 +338,7 @@ export class FhirService {
 
     if (sortID) url += '_sort=resourceid&';
 
-    return this.http.get<IConformance[]>(url);
+    return this.http.get<Paginated<IConformance>>(url);
   }
 
 

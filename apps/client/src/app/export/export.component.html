@@ -162,6 +162,32 @@
         </div>
       </ng-template>
     </li>
+    <li ngbNavItem="document">
+      <a ngbNavLink>Document</a>
+      <ng-template ngbNavContent>
+        <div class="alert alert-info">This export is the equivalent of the $document operation in a FHIR server. Select a Composition to create a document from.</div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Composition</label>
+              <select class="form-control" name="composition" [class.is-invalid]="!documentOptions.compositionId" [(ngModel)]="documentOptions.compositionId">
+                <option *ngFor="let c of compositions" [value]="c.id">{{c.name || 'ID: ' + c.id}}</option>
+                <option [value]="null">None</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Format</label>
+              <select class="form-control" name="format" [(ngModel)]="documentOptions.format">
+                <option value="application/json">JSON</option>
+                <option value="application/xml">XML</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </li>
   </ul>
   <div [ngbNavOutlet]="nav" class="mt-2"></div>
 </ng-container>
