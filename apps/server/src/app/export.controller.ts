@@ -1,28 +1,28 @@
-import { HttpService } from '@nestjs/axios';
-import { Controller, Get, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
-import { BundleExporter } from './export/bundle';
-import type { ITofRequest } from './models/tof-request';
-import type { IBundle, IDomainResource, IOperationOutcome, IStructureDefinition } from '@trifolia-fhir/tof-lib';
-import { buildUrl, joinUrl, ServerValidationResult } from '@trifolia-fhir/tof-lib';
-import { emptydir, rmdir, zip } from './helper';
-import { ExportOptions } from './models/export-options';
-import { AuthGuard } from '@nestjs/passport';
-import { Response } from 'express';
-import { TofLogger } from './tof-logger';
-import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
-import { ConfigService } from './config.service';
-import { createHtmlExporter } from './export/html.factory';
+import {HttpService} from '@nestjs/axios';
+import {Controller, Get, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/common';
+import {BundleExporter} from './export/bundle';
+import type {ITofRequest} from './models/tof-request';
+import type {IBundle, IStructureDefinition, ITofUser} from '@trifolia-fhir/tof-lib';
+import {findReferences, joinUrl} from '@trifolia-fhir/tof-lib';
+import {emptydir, rmdir, zip} from './helper';
+import {ExportOptions} from './models/export-options';
+import {AuthGuard} from '@nestjs/passport';
+import {Response} from 'express';
+import {TofLogger} from './tof-logger';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
+import {ConfigService} from './config.service';
+import {createHtmlExporter} from './export/html.factory';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import { MSWordExporter } from './export/msword';
-import { ExportService } from './export.service';
-import {  User } from './server.decorators';
-import { HtmlExporter } from './export/html';
-import type { ITofUser } from '@trifolia-fhir/tof-lib';
+import {MSWordExporter} from './export/msword';
+import {ExportService} from './export.service';
+import {User} from './server.decorators';
+import {HtmlExporter} from './export/html';
 import nodemailer from 'nodemailer';
-import JSZip from "jszip";
-import { ConformanceController } from './conformance/conformance.controller';
-import { ConformanceService } from './conformance/conformance.service';
+import JSZip from 'jszip';
+import {ConformanceController} from './conformance/conformance.controller';
+import {ConformanceService} from './conformance/conformance.service';
+import {doc} from 'prettier';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
@@ -71,6 +71,82 @@ export class ExportController extends ConformanceController {//BaseController {
       this.logger.error(`Error during bundle export: ${ex.message}`, ex.stack);
       throw ex;
     }
+  }
+
+  @Post(':implementationGuideId/:compositionId/document')
+  public async exportCompositionDocument(@User() user: ITofUser, @Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string, @Param('compositionId') compositionId: string) {
+    await this.assertCanReadById(user, implementationGuideId);
+
+    const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, req.fhir, implementationGuideId);
+    const bundle = await bundleExporter.getBundle(false);
+
+    if (!bundle || !bundle.entry) {
+      res.status(404).send();
+      return;
+    }
+
+    const compositionEntry = bundle.entry.find(e => e.resource.resourceType === 'Composition' && e.resource.id === compositionId);
+    const composition = compositionEntry ? compositionEntry.resource : null;
+
+    if (!composition) {
+      res.status(404).send(`Composition id ${compositionId} not found`);
+      return;
+    }
+
+    const references = findReferences(composition).map(r => r.reference);
+    const checked = [];     // Keep a list of resources we've already looked at so-as not to get in an endless loop of circular references
+
+    const next = (reference: string) => {
+      if (checked.indexOf(reference) >= 0) {
+        return;
+      }
+
+      const referenceSplit = reference.split('/');
+      const found = bundle.entry.find(e => e.resource.resourceType === referenceSplit[0] && e.resource.id === referenceSplit[1]);
+
+      checked.push(reference);
+
+      if (!found) {
+        this.logger.warn(`Did not find resource for reference ${reference} in implementation guide ${implementationGuideId} bundle`);
+        return;
+      }
+
+      const nextReferences = findReferences(found).map(r => r.reference);
+      references.push(...nextReferences);
+      nextReferences.forEach(next);
+    };
+
+    references.map(r => r).forEach(next);
+
+    const uniqueReferences = references.reduce((list: string[], nextRef: string) => {
+      if (list.indexOf(nextRef) < 0) {
+        list.push(nextRef);
+      }
+      return list;
+    }, []);
+
+    const docBundle: IBundle = {
+      resourceType: 'Bundle',
+      type: 'document',
+      entry: [{
+        resource: composition
+      }]
+    };
+
+    uniqueReferences.forEach(ref => {
+      if (ref === 'Composition/' + compositionId) {
+        return;
+      }
+
+      const refSplit = ref.split('/');
+      const foundEntry = bundle.entry.find(entry => entry.resource.resourceType === refSplit[0] && entry.resource.id === refSplit[1]);
+
+      docBundle.entry.push({
+        resource: foundEntry.resource
+      });
+    });
+
+    return res.send(docBundle);
   }
 
   @Post(':implementationGuideId/msword')

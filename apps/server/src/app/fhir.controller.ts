@@ -17,7 +17,7 @@ import {
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import {buildUrl, createOperationOutcome, generateId, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, createOperationOutcome, findReferences, generateId, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
@@ -128,33 +128,14 @@ export class FhirController extends ConformanceController {
     });
 
 
-    let references: any[] = [];
-    const findReferences = (obj: any) => {
-      if (!obj) return;
-
-      if (obj.hasOwnProperty('reference') && obj.reference === `${resourceType}/${currentId}`) {
-        references.push(obj);
-      }
-
-      const propertyNames = Object.keys(obj);
-
-      for (let i = 0; i < propertyNames.length; i++) {
-        const propertyName = propertyNames[i];
-
-        if (typeof obj[propertyName] === 'object') {
-          findReferences(obj[propertyName]);
-        }
-      }
-      return;
-    };
+    let references: any[];
 
     const allResources = allResults.reduce((prev, curr) => {
       return prev.concat(curr);
     }, []);
 
     allResults.forEach(result => {
-      references = [];
-      findReferences(result.resource);
+      references = findReferences(result.resource, resourceType, currentId);
       if (references.length > 0) {
         const anyResource = <any>conf.resource;
         references.forEach(foundReference => {

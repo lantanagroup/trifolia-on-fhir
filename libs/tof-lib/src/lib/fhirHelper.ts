@@ -5,6 +5,39 @@ import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
 import {Globals} from './globals';
 
+export function findReferences(obj: any, resourceType?: string, id?: string) {
+  const references = [];
+
+  const next = (obj: any) => {
+    if (!obj) return;
+
+    if (obj.hasOwnProperty('reference') && typeof obj['reference'] === 'string' && obj['reference'].split('/').length === 2) {
+      if (resourceType && id && obj.reference === `${resourceType}/${id}`) {
+        references.push(obj);
+      } else if (resourceType && !id && obj.reference.startsWit(resourceType + '/')) {
+        references.push(obj);
+      } else if (!resourceType && !id) {
+        references.push(obj);
+      }
+    }
+
+    const propertyNames = Object.keys(obj);
+
+    for (let i = 0; i < propertyNames.length; i++) {
+      const propertyName = propertyNames[i];
+
+      if (typeof obj[propertyName] === 'object') {
+        next(obj[propertyName]);
+      }
+    }
+    return;
+  };
+
+  next(obj);
+
+  return references;
+}
+
 export function identifyRelease(fhirVersion: string): Versions {
   const modFhirVersion = fhirVersion ? fhirVersion.replace('-ballot', '') : fhirVersion;
   if (!fhirVersion) {
