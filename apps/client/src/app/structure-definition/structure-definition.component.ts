@@ -373,14 +373,37 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       });
     }
 
-    // initial page load and raw resource upload requires reloading base def and re-initializing the constraint manager
+    // initial page load and raw resource upload requires reloading base def and resetting the constraint manager
     // saving does not require this
     if (reloadBase) {
       await this.loadBaseDefinition();
     }
-    // only re-init the constraint manager if base unchanged
     else {
+
+      // without reloading everything... need to initialize the constraint manager to handle new element collection returned from the server
+      // and match the constraint manager tree to its previous state
+      const prevElements =  [... this.constraintManager.elements];
       await this.initializeConstraintManager();
+
+      // expand whatever was expanded before...
+      for (const el of prevElements) {
+        if (el.expanded) {
+          const found = (this.constraintManager.elements || []).find(e => e.baseElement.id === el.baseElement.id);
+          if (found && !found.expanded) {
+            await this.constraintManager.toggleExpand(found);
+          }
+        }
+      }
+
+      // element already previously selected... attempt to match it by path to get new reference and expand the tree
+      if (this.selectedElement) {
+        const found = (this.constraintManager.elements || []).find(e => e.id === this.selectedElement.id);
+        if (found) {
+          this.selectedElement = found;
+        } else {
+          this.selectedElement = null;
+        }
+      }
     }
 
   }
