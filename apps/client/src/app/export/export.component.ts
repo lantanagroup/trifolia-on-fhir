@@ -15,6 +15,11 @@ import {HttpClient} from '@angular/common/http';
 import {IConformance} from '@trifolia-fhir/models';
 import {FhirService} from '../shared/fhir.service';
 
+interface DocumentOptions {
+  compositionId?: string;
+  format: string;
+}
+
 @Component({
   templateUrl: './export.component.html',
   styleUrls: ['./export.component.css']
@@ -31,8 +36,7 @@ export class ExportComponent implements OnInit {
 
   public options = new ExportOptions();
   public selectedImplementationGuide: ImplementationGuide;
-  public documentOptions = {
-    compositionId: null,
+  public documentOptions: DocumentOptions = {
     format: 'application/json'
   };
   public compositions: {
@@ -54,6 +58,15 @@ export class ExportComponent implements OnInit {
     this.options.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
     this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
     this.options.templateVersion = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion) || this.options.templateVersion;
+  }
+
+  public getSelectedComposition() {
+    const found = this.compositions.find(c => c.id === this.documentOptions.compositionId);
+    if (!found) {
+      return 'Select';
+    } else if (found.name) {
+      return found.name;
+    }
   }
 
   public async templateTypeChanged() {
@@ -257,7 +270,7 @@ export class ExportComponent implements OnInit {
 
     try {
       const response = await this.exportService.exportDocument(this.configService.project.implementationGuideId, this.documentOptions.compositionId, this.documentOptions.format).toPromise();
-      saveAs(response.body, this.configService.project.name + (this.documentOptions.format === 'application/xml' ? '.xml' : '.json'));
+      saveAs(response.body, 'bundle-' + this.documentOptions.compositionId + (this.documentOptions.format === 'application/xml' ? '.xml' : '.json'));
     } catch (ex) {
       this.message = getErrorString(ex);
     }

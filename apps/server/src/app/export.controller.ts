@@ -129,7 +129,9 @@ export class ExportController extends ConformanceController {//BaseController {
 
     const docBundle: IBundle = {
       resourceType: 'Bundle',
+      id: 'bundle-' + compositionId,
       type: 'document',
+      timestamp: new Date().toISOString(),
       entry: [{
         resource: composition
       }]
