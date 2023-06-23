@@ -170,11 +170,24 @@
           <div class="col-md-6">
             <div class="form-group">
               <label>Composition</label>
-              <select class="form-control" name="composition" [class.is-invalid]="!documentOptions.compositionId" 
-                      [ngModel]="documentOptions.compositionId" (ngModelChange)="documentOptions.compositionId = $event === 'null' ? null : $event">
-                <option *ngFor="let c of compositions" [value]="c.id">{{c.name || 'ID: ' + c.id}}</option>
-                <option [value]="null">None</option>
-              </select>
+              <div class="input-group">
+                <input type="text" class="form-control" disabled placeholder="Ttile" [ngModel]="getSelectedComposition()" [class.is-invalid]="!documentOptions.compositionId" />
+                <input type="text" class="form-control" disabled placeholder="ID" [ngModel]="documentOptions.compositionId" [class.is-invalid]="!documentOptions.compositionId" />
+                <div ngbDropdown #myDrop="ngbDropdown">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary me-2"
+                    ngbDropdownAnchor
+                    style="width: 100%"
+                    (focus)="myDrop.open()">Select</button>
+                  <div ngbDropdownMenu aria-labelledby="dropdownManual">
+                    <button ngbDropdownItem *ngFor="let c of compositions" (click)="documentOptions.compositionId = c.id">
+                      <span *ngIf="c.name">{{c.name}}<br/></span>
+                      <span>ID: {{c.id}}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="col-md-6">

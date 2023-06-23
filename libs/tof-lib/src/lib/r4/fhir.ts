@@ -1915,7 +1915,7 @@ export class Bundle extends Resource implements IBundle {
   public resourceType = 'Bundle';
   public identifier?: Identifier;
   public type: BundleTypes;
-  public timestamp?: Date;
+  public timestamp?: string;
   public total?: number;
   public link?: BundleLinkComponent[];
   public entry?: BundleEntryComponent[];
