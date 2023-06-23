@@ -8,12 +8,12 @@ import {
   addPermission,
   getErrorString,
   getHumanNameDisplay,
-  getHumanNamesDisplay, 
+  getHumanNamesDisplay,
   getUserEmail,
   groupBy,
   removePermission
 } from '@trifolia-fhir/tof-lib';
-import {firstValueFrom, Observable} from 'rxjs';
+import {firstValueFrom, mergeMap, Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators';
 import {GroupService} from '../../shared/group.service';
 import {ConfigService} from '../../shared/config.service';
@@ -101,7 +101,7 @@ export class ResourcePermissionsComponent implements OnInit {
         this.fhirService
           .search(this.copyResourceType, term, true)
           .pipe(
-            map((res: IConformance[]) => (res || []).map((conf) => conf.resource))
+            mergeMap((conf) => conf.results)
           )
       )
     );
@@ -141,7 +141,7 @@ export class ResourcePermissionsComponent implements OnInit {
     if (!this.resource) {
       return [];
     }
-    
+
     const perms = this.resource.permissions || [];
     const grouped = groupBy(perms, (next) => next.type + next.targetId);
     const groupedKeys = Object.keys(grouped);
@@ -249,7 +249,7 @@ export class ResourcePermissionsComponent implements OnInit {
   }
 
   private findCurrentUserPermission(permission: 'read'|'write') {
-    
+
     if (!this.resource.permissions) {
       return false;
     }
@@ -263,7 +263,7 @@ export class ResourcePermissionsComponent implements OnInit {
         return true;
       } else if (perm.type === 'group' && this.groupsArray) {
         return !!(this.groupsArray || []).find((group: IGroup) => {
-          
+
           return !!(group.members || []).find((member: IUser|string) => {
             if (member['id']) {
               return member['id'] === this.currentUser.id;
