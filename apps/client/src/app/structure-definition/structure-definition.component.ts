@@ -191,18 +191,9 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
     this.baseStructureDefinition = this.baseDefResponse.base;
-
-    if (this.configService.isFhirSTU3) {
-      this.constraintManager = new ConstraintManager(STU3ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
-    } else if (this.configService.isFhirR4) {
-      this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
-    } else if (this.configService.isFhirR5) {
-      this.constraintManager = new ConstraintManager(R5ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
-    } else {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
-    }
-
-
+    
+    await this.initializeConstraintManager();
+    
     this.constraintManager.getStructureDefinition = (url: string) => {
       return new Promise((resolve, reject) => {
         this.strucDefService.getBaseStructureDefinition(url).toPromise()
@@ -215,9 +206,23 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       });
     };
 
+    this.message = 'Done loading base structure definition.';
+  }
+
+  private async initializeConstraintManager() {
+
+    if (this.configService.isFhirSTU3) {
+      this.constraintManager = new ConstraintManager(STU3ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else if (this.configService.isFhirR4) {
+      this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else if (this.configService.isFhirR5) {
+      this.constraintManager = new ConstraintManager(R5ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
+    }
+
     await this.constraintManager.initializeRoot();
 
-    this.message = 'Done loading base structure definition.';
   }
 
   private async getStructureDefinition() {
@@ -368,10 +373,37 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       });
     }
 
-    // initial page load and raw resource upload requires reloading base def and re-initializing the constraint manager
+    // initial page load and raw resource upload requires reloading base def and resetting the constraint manager
     // saving does not require this
     if (reloadBase) {
       await this.loadBaseDefinition();
+    }
+    else {
+
+      // without reloading everything... need to initialize the constraint manager to handle new element collection returned from the server
+      // and match the constraint manager tree to its previous state
+      const prevElements =  [... this.constraintManager.elements];
+      await this.initializeConstraintManager();
+
+      // expand whatever was expanded before...
+      for (const el of prevElements) {
+        if (el.expanded) {
+          const found = (this.constraintManager.elements || []).find(e => e.baseElement.id === el.baseElement.id);
+          if (found && !found.expanded) {
+            await this.constraintManager.toggleExpand(found);
+          }
+        }
+      }
+
+      // element already previously selected... attempt to match it by path to get new reference and expand the tree
+      if (this.selectedElement) {
+        const found = (this.constraintManager.elements || []).find(e => e.id === this.selectedElement.id);
+        if (found) {
+          this.selectedElement = found;
+        } else {
+          this.selectedElement = null;
+        }
+      }
     }
 
   }

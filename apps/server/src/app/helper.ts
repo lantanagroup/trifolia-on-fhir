@@ -690,12 +690,14 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
       } else {
         // otherwise do the usual...
         const name = (<any>resourceToAdd).resource.title || getName((<any>resourceToAdd).resource.name);
+        logger.verbose(`Adding resource with name ${name}`);
         r4.definition.resource.push(isExample && exampleFor ?
           {
             reference: {
               reference: resourceReferenceString,
               display: name
             },
+            name: name,
             exampleCanonical: exampleFor
           } :
           {
@@ -710,7 +712,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
       changed = true;
 
     } else {
-      if (!isNotFhir) { //update resource
+      if (!isNotFhir && !foundResource.name) { //update resource
         let nameToSet = (<any>resourceToAdd).resource.title || getName((<any>resourceToAdd).resource.name);
         if (nameToSet) {
           foundResource.name =
@@ -785,7 +787,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
         changed = true;
       }
     } else {  //update resource
-      if (!isNotFhir) { //update resource
+      if (!isNotFhir && !foundResource.name) { //update resource
         foundResource.name =
           foundResource.reference.display =
             (<any>resourceToAdd).resource.title || getName((<any>resourceToAdd).resource.name);
