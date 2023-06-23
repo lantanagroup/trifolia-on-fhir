@@ -22,7 +22,7 @@ import nodemailer from 'nodemailer';
 import JSZip from 'jszip';
 import {ConformanceController} from './conformance/conformance.controller';
 import {ConformanceService} from './conformance/conformance.service';
-import {doc} from 'prettier';
+import {v4 as uuidv4} from 'uuid';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
@@ -130,6 +130,10 @@ export class ExportController extends ConformanceController {//BaseController {
     const docBundle: IBundle = {
       resourceType: 'Bundle',
       id: 'bundle-' + compositionId,
+      identifier: {
+        system: 'urn:ietf:rfc:3986',
+        value: 'urn:uuid:' + uuidv4()
+      },
       type: 'document',
       timestamp: new Date().toISOString(),
       entry: [{
