@@ -688,7 +688,14 @@ export class FhirController extends ConformanceController {
         if (!packageFile.toLowerCase().endsWith('.json')) continue;
 
         const fileContent = fs.readFileSync(path.join(dependencyDir, packageFile)).toString();
-        const resource = JSON.parse(fileContent);
+        let resource;
+
+        try {
+          resource = JSON.parse(fileContent);
+        } catch (ex) {
+          this.logger.warn(`Could not parse JSON file ${packageFile} from dependency ${dependency}`);
+          continue;
+        }
 
         if (!resource.resourceType) continue;
 
