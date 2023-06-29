@@ -240,6 +240,8 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
 
     if (!this.isNew) {
 
+      this.codeSystem = null;
+
       this.codeSystemService.getCodeSystem(this.codeSystemId)
         .subscribe({
           next: (conf: IConformance) => {
