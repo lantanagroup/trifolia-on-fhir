@@ -37,7 +37,8 @@ export class ConfigController extends BaseController {
       nonEditableResources: this.configService.fhir.nonEditableResources,
       announcementService: !!this.configService.announcementService && !!this.configService.announcementService.type,
       termsOfUse: this.configService.termsOfUse,
-      privacyPolicy: this.configService.privacyPolicy
+      privacyPolicy: this.configService.privacyPolicy,
+      googleAnalyticsCode: this.configService.server.googleAnalyticsCode
     };
 
     return retConfig;
