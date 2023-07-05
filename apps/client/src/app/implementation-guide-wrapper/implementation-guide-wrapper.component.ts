@@ -53,9 +53,13 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
         this.fhirService.setFhirVersion(conf.fhirVersion).then( () => {
             if (conf.fhirVersion === Versions.R4.toLowerCase()) {
               componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4ImplementationGuideComponent);
-            } else {
+            } else  if (conf.fhirVersion === Versions.STU3.toLowerCase())  {
               componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3ImplementationGuideComponent);
             }
+            else {
+              throw new Error(`Unexpected FHIR version: ${conf.fhirVersion}`);
+            }
+
             this.viewContainerRef.clear();
             this.igComponent = this.viewContainerRef.createComponent(componentFactory);
           }
