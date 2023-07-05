@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router, RoutesRecognized } from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router, RoutesRecognized} from '@angular/router';
 import { AuthService } from './shared/auth.service';
 import { ConfigService } from './shared/config.service';
 import { Globals, ImplementationGuideContext, getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
@@ -18,6 +18,8 @@ import { Practitioner } from '@trifolia-fhir/stu3';
 import { ImplementationGuideService } from './shared/implementation-guide.service';
 import { IConformance } from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
+
+declare let gtag: Function;
 
 @Component({
   selector: 'trifolia-fhir-root',
@@ -43,7 +45,6 @@ export class AppComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private cookieService: CookieService,
     private socketService: SocketService) {
-
     this.router.events.subscribe(async (event) => {
       this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
       if (event instanceof RoutesRecognized && event.state.root.firstChild) {
@@ -60,6 +61,14 @@ export class AppComponent implements OnInit {
           this.configService.project = null;
         }
         this.configService.project = await this.getContext(implementationGuideId);
+      } else if (event instanceof NavigationEnd) {
+        if (this.configService.config.googleAnalyticsCode && event.urlAfterRedirects.indexOf('access_token=') < 0) {
+          gtag('event', 'page_view', {
+            'page_location': document.location.origin + event.urlAfterRedirects,
+            'page_title': document.title,
+            'user': this.authService.user ? `${this.authService.user.firstName} ${this.authService.user.lastName} (${this.authService.user.id})` : null
+          });
+        }
       }
     });
 

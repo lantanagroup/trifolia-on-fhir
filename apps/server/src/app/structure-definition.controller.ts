@@ -83,11 +83,14 @@ export class StructureDefinitionController extends ConformanceController  {
 
     let supportedLogicalTypes = [];
 
-   if(fhirServerVersion === 'r4') {
-     supportedLogicalTypes = ["FHIR-R4", "CDA-R2.1"];
-   }else if(fhirServerVersion === 'stu3') {
-     supportedLogicalTypes = ["FHIR-STU3"];
-   }
+    if (fhirServerVersion === 'r5') {
+      supportedLogicalTypes = ["FHIR-R5", "CDA-R2.1"];
+    } else if (fhirServerVersion === 'r4') {
+      supportedLogicalTypes = ["FHIR-R4", "CDA-R2.1"];
+    } else if (fhirServerVersion === 'stu3') {
+      supportedLogicalTypes = ["FHIR-STU3"];
+    }
+
     const allTypes = supportedLogicalTypes
       .map(slt => typesConfig.find(tc => tc.id.toLowerCase() === slt.toLowerCase()))
       .reduce<ILogicalTypeDefinition[]>((previous, current) => {
@@ -125,12 +128,18 @@ export class StructureDefinitionController extends ConformanceController  {
           ret.base = dependencies.entry[0].resource['resource'];
           return ret;
         }
+
         let profileWithSnapshot: IStructureDefinition = await this.getBaseStructureDefinitionResource(user, request, url);
+
+        if (!profileWithSnapshot) {
+          ret.message = `Could not find a profile defined for base definition ${url}`;
+          ret.success = false;
+          return ret;
+        }
 
         // The snapshot is not already generated for the profile, so we need to generate it now.
         if (!profileWithSnapshot.snapshot) {
             profileWithSnapshot = await this.generateInternalSnapshot( user, request, request.fhir, url);
-
         }
 
         if (profileWithSnapshot && profileWithSnapshot.resourceType === 'StructureDefinition' && profileWithSnapshot.snapshot) {

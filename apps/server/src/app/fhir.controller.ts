@@ -643,7 +643,7 @@ export class FhirController extends ConformanceController {
   @Get('dependency')
   public async searchDependency(
     @Headers('implementationguideid') implementationGuideId: string,
-    @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4',
+    @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4' | 'r5',
     @Query('resourceType') resourceType?: string,
     @Query('_id') resourceId?: string,
     @Query('name') name?: string,
@@ -664,6 +664,7 @@ export class FhirController extends ConformanceController {
         dependencies = getSTU3Dependencies(<STU3ImplementationGuide>ig.resource);
         break;
       case 'r4':
+      case 'r5':
         dependencies = getR4Dependencies(<R4ImplementationGuide>ig.resource);
         break;
       default:

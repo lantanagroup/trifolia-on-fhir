@@ -201,6 +201,24 @@ const appRoutes: Routes = [
   { path: 'manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
 ];
 
+export function createGtag(googleAnalyticsCode: string) {
+  if (!googleAnalyticsCode) {
+    return;
+  }
+
+  const lElement = document.createElement(`script`);
+  lElement.async = true
+  lElement.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsCode}`;
+
+  const gaElementContent= `window.dataLayer = window.dataLayer || [];\n` + `function gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', '${googleAnalyticsCode}');\n`;
+  const gaElement = document.createElement('script');
+  gaElement.setAttribute('type', 'text/javascript');
+  gaElement.innerHTML = gaElementContent;
+
+  document.getElementsByTagName('head')[0].appendChild(lElement);
+  document.getElementsByTagName('head')[0].appendChild(gaElement);
+}
+
 /**
  * Initialization logic.
  * 1. Gets the client application's config from the server
@@ -219,6 +237,8 @@ export function init(
       configService
         .getConfig(true)
         .then(() => {
+          createGtag(configService.config.googleAnalyticsCode);
+
           // Now that the config has been loaded, init the auth module
           authService.init();
           authService.handleAuthentication();

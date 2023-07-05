@@ -25,4 +25,5 @@ export interface ConfigModel {
   announcementService: boolean;
   termsOfUse: string;
   privacyPolicy: string;
+  googleAnalyticsCode?: string;
 }

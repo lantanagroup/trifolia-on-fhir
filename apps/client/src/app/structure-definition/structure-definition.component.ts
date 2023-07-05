@@ -1,55 +1,35 @@
-import {
-  Component,
-  DoCheck,
-  HostListener,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Renderer2,
-  ViewChild
-} from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { StructureDefinitionService } from '../shared/structure-definition.service';
-import { NgbModal, NgbNav } from '@ng-bootstrap/ng-bootstrap';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
-import { ElementTreeModel } from '../../../../../libs/tof-lib/src/lib/element-tree-model';
-import {
-  ConstraintComponent,
-  ElementDefinition as STU3ElementDefinition,
-  StructureDefinition as STU3StructureDefinition,
-  TypeRefComponent
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Component, DoCheck, HostListener, Inject, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {StructureDefinitionService} from '../shared/structure-definition.service';
+import {NgbModal, NgbNav} from '@ng-bootstrap/ng-bootstrap';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {ElementTreeModel} from '../../../../../libs/tof-lib/src/lib/element-tree-model';
+import {ConstraintComponent, ElementDefinition as STU3ElementDefinition, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
   ElementDefinition as R4ElementDefinition,
   ElementDefinitionConstraintComponent,
-  ElementDefinitionTypeRefComponent, ImplementationGuide,
+  ImplementationGuide,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {
-  ElementDefinition as R5ElementDefinition,
-  StructureDefinition as R5StructureDefinition
-} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
-import { RecentItemService } from '../shared/recent-item.service';
-import { FhirService } from '../shared/fhir.service';
-import { FileService } from '../shared/file.service';
-import { DOCUMENT } from '@angular/common';
-import { ConfigService } from '../shared/config.service';
-import { ElementDefinitionPanelComponent } from './element-definition-panel/element-definition-panel.component';
-import { AuthService } from '../shared/auth.service';
-import { BaseComponent } from '../base.component';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { IDomainResource, IElementDefinition } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { ConstraintManager } from '../../../../../libs/tof-lib/src/lib/constraint-manager';
-import { BaseDefinitionResponseModel } from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
-import { Severities, ValidatorResponse } from 'fhir/validator';
-import { CanComponentDeactivate } from '../guards/resource.guard';
-import { identifyRelease } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import { Versions } from 'fhir/fhir';
-import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import { FshResourceComponent } from '../shared-ui/fsh-resource/fsh-resource.component';
-import { firstValueFrom } from 'rxjs';
-import { StructureDefinition } from '@trifolia-fhir/r5';
+import {ElementDefinition as R5ElementDefinition, StructureDefinition as R5StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
+import {RecentItemService} from '../shared/recent-item.service';
+import {FhirService} from '../shared/fhir.service';
+import {FileService} from '../shared/file.service';
+import {DOCUMENT} from '@angular/common';
+import {ConfigService} from '../shared/config.service';
+import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
+import {AuthService} from '../shared/auth.service';
+import {BaseComponent} from '../base.component';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {IDomainResource, IElementDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {ConstraintManager} from '../../../../../libs/tof-lib/src/lib/constraint-manager';
+import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
+import {Severities, ValidatorResponse} from 'fhir/validator';
+import {CanComponentDeactivate} from '../guards/resource.guard';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import {FshResourceComponent} from '../shared-ui/fsh-resource/fsh-resource.component';
+import {firstValueFrom} from 'rxjs';
+import {StructureDefinition} from '@trifolia-fhir/r5';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -190,10 +170,14 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
+    if (!this.baseDefResponse.success) {
+      this.message = this.baseDefResponse.message;
+    }
+
     this.baseStructureDefinition = this.baseDefResponse.base;
-    
+
     await this.initializeConstraintManager();
-    
+
     this.constraintManager.getStructureDefinition = (url: string) => {
       return new Promise((resolve, reject) => {
         this.strucDefService.getBaseStructureDefinition(url).toPromise()
