@@ -88,7 +88,7 @@ export class NewProjectComponent implements OnInit {
       }],
     }];
 
-    const jusrisdiction = this.selectedJurisdiction ? [{ coding: [this.selectedJurisdiction] }] : this.selectedJurisdiction;
+    const jurisdiction = this.selectedJurisdiction ? [{ coding: [this.selectedJurisdiction] }] : this.selectedJurisdiction;
     // Create the implementation guide based on the FHIR server we're connected to
     if (this.fhirVersion === 'r5') {
       if (this.isHL7) {
@@ -102,7 +102,7 @@ export class NewProjectComponent implements OnInit {
       if (this.isHL7) {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
-        (<R4ImplementationGuide>ig).jurisdiction = jusrisdiction;
+        (<R4ImplementationGuide>ig).jurisdiction = jurisdiction;
         (<R4ImplementationGuide>ig).packageId = this.packageId;
         (<R4ImplementationGuide>ig).title = this.igTitle;
       }

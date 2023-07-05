@@ -1,6 +1,7 @@
 import { DocumentReference as R4DocumentReference } from './r4/fhir';
 import { DocumentReference as STU3DocumentReference } from './stu3/fhir';
-import { IImplementationGuide } from './fhirInterfaces';
+import { DocumentReference as R5DocumentReference } from '@trifolia-fhir/r5';
+import {IDocumentReference, IImplementationGuide} from './fhirInterfaces';
 import { Globals } from './globals';
 import { Versions } from 'fhir/fhir';
 
@@ -81,13 +82,15 @@ export class PublishingRequestModel {
     if (!implementationGuide) return;
 
     implementationGuide.contained = implementationGuide.contained || [];
-    let found: STU3DocumentReference | R4DocumentReference = this.findContainedDocumentReference(implementationGuide);
+    let found: IDocumentReference = this.findContainedDocumentReference(implementationGuide);
 
     if (!found) {
       if (fhirVersion === Versions.STU3) {
         found = new STU3DocumentReference();
       } else if (fhirVersion === Versions.R4) {
         found = new R4DocumentReference();
+      } else if (fhirVersion === Versions.R5) {
+        found = new R5DocumentReference();
       }
 
       found.type = {

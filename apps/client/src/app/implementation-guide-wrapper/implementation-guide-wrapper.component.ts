@@ -10,6 +10,7 @@ import {ImplementationGuideService} from '../shared/implementation-guide.service
 import {IConformance} from '@trifolia-fhir/models';
 import {getErrorString} from '@trifolia-fhir/tof-lib';
 import {FhirService} from '../shared/fhir.service';
+import {R5ImplementationGuideComponent} from './r5/implementation-guide.component';
 
 /**
  * This class is responsible for determining which implementation-guide component to render
@@ -51,7 +52,9 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
       next: (conf: IConformance) => {
         this.configService.fhirVersion = conf.fhirVersion;
         this.fhirService.setFhirVersion(conf.fhirVersion).then( () => {
-            if (conf.fhirVersion === Versions.R4.toLowerCase()) {
+            if (conf.fhirVersion === Versions.R5.toLowerCase()) {
+              componentFactory = this.componentFactoryResolver.resolveComponentFactory(R5ImplementationGuideComponent);
+            } else if (conf.fhirVersion === Versions.R4.toLowerCase()) {
               componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4ImplementationGuideComponent);
             } else {
               componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3ImplementationGuideComponent);

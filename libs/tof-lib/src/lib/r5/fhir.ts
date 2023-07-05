@@ -381,14 +381,14 @@ export class Element extends Base {
 
     if (obj.hasOwnProperty('extension')) {
       this.extension = [];
-      for (const o of obj.extension || []) {
+      for (const o of (obj.extension instanceof Array ? obj.extension : [])) {
         this.extension.push(new Extension(o));
       }
     }
   }
 
   public id?: string;
-  public extension: Extension[];
+  public extension?: Extension[];
 }
 
 export class Address extends Element {
@@ -409,7 +409,7 @@ export class Address extends Element {
 
 		if (obj.hasOwnProperty('line')) {
 			this.line = [];
-			for (const o of obj.line || []) {
+			for (const o of (obj.line instanceof Array ? obj.line : [])) {
 				this.line.push(o);
 			}
 		}
@@ -603,7 +603,7 @@ export class CodeableConcept implements IFhir.ICodeableConcept {
 	constructor(obj?: any) {
 		if (obj.hasOwnProperty('coding')) {
 			this.coding = [];
-			for (const o of obj.coding || []) {
+			for (const o of (obj.coding instanceof Array ? obj.coding : [])) {
 				this.coding.push(new Coding(o));
 			}
 		}
@@ -721,7 +721,7 @@ export class ContactDetail implements IFhir.IContactDetail {
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
@@ -777,7 +777,7 @@ export class Contributor extends Element {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -865,7 +865,7 @@ export class DataRequirementCodeFilter extends Element {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new Coding(o));
 			}
 		}
@@ -888,7 +888,7 @@ export class DataRequirement extends Element {
 
 		if (obj.hasOwnProperty('profile')) {
 			this.profile = [];
-			for (const o of obj.profile || []) {
+			for (const o of (obj.profile instanceof Array ? obj.profile : [])) {
 				this.profile.push(o);
 			}
 		}
@@ -903,21 +903,21 @@ export class DataRequirement extends Element {
 
 		if (obj.hasOwnProperty('mustSupport')) {
 			this.mustSupport = [];
-			for (const o of obj.mustSupport || []) {
+			for (const o of (obj.mustSupport instanceof Array ? obj.mustSupport : [])) {
 				this.mustSupport.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('codeFilter')) {
 			this.codeFilter = [];
-			for (const o of obj.codeFilter || []) {
+			for (const o of (obj.codeFilter instanceof Array ? obj.codeFilter : [])) {
 				this.codeFilter.push(new DataRequirementCodeFilter(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('dateFilter')) {
 			this.dateFilter = [];
-			for (const o of obj.dateFilter || []) {
+			for (const o of (obj.dateFilter instanceof Array ? obj.dateFilter : [])) {
 				this.dateFilter.push(new DataRequirementDateFilter(o));
 			}
 		}
@@ -928,7 +928,7 @@ export class DataRequirement extends Element {
 
 		if (obj.hasOwnProperty('sort')) {
 			this.sort = [];
-			for (const o of obj.sort || []) {
+			for (const o of (obj.sort instanceof Array ? obj.sort : [])) {
 				this.sort.push(new DataRequirementSort(o));
 			}
 		}
@@ -1012,7 +1012,7 @@ export class Dosage extends Element {
 
 		if (obj.hasOwnProperty('additionalInstruction')) {
 			this.additionalInstruction = [];
-			for (const o of obj.additionalInstruction || []) {
+			for (const o of (obj.additionalInstruction instanceof Array ? obj.additionalInstruction : [])) {
 				this.additionalInstruction.push(new CodeableConcept(o));
 			}
 		}
@@ -1047,7 +1047,7 @@ export class Dosage extends Element {
 
 		if (obj.hasOwnProperty('doseAndRate')) {
 			this.doseAndRate = [];
-			for (const o of obj.doseAndRate || []) {
+			for (const o of (obj.doseAndRate instanceof Array ? obj.doseAndRate : [])) {
 				this.doseAndRate.push(new DosageDoseAndRate(o));
 			}
 		}
@@ -1140,21 +1140,21 @@ export class TimingRepeat extends Element {
 
 		if (obj.hasOwnProperty('dayOfWeek')) {
 			this.dayOfWeek = [];
-			for (const o of obj.dayOfWeek || []) {
+			for (const o of (obj.dayOfWeek instanceof Array ? obj.dayOfWeek : [])) {
 				this.dayOfWeek.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('timeOfDay')) {
 			this.timeOfDay = [];
-			for (const o of obj.timeOfDay || []) {
+			for (const o of (obj.timeOfDay instanceof Array ? obj.timeOfDay : [])) {
 				this.timeOfDay.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('when')) {
 			this.when = [];
-			for (const o of obj.when || []) {
+			for (const o of (obj.when instanceof Array ? obj.when : [])) {
 				this.when.push(o);
 			}
 		}
@@ -1190,7 +1190,7 @@ export class Timing extends Element {
 
 		if (obj.hasOwnProperty('event')) {
 			this.event = [];
-			for (const o of obj.event || []) {
+			for (const o of (obj.event instanceof Array ? obj.event : [])) {
 				this.event.push(o);
 			}
 		}
@@ -1612,21 +1612,21 @@ export class ElementDefinitionType implements IFhir.IElementDefinitionType {
 
 		if (obj.hasOwnProperty('profile')) {
 			this.profile = [];
-			for (const o of obj.profile || []) {
+			for (const o of (obj.profile instanceof Array ? obj.profile : [])) {
 				this.profile.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('targetProfile')) {
 			this.targetProfile = [];
-			for (const o of obj.targetProfile || []) {
+			for (const o of (obj.targetProfile instanceof Array ? obj.targetProfile : [])) {
 				this.targetProfile.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('aggregation')) {
 			this.aggregation = [];
-			for (const o of obj.aggregation || []) {
+			for (const o of (obj.aggregation instanceof Array ? obj.aggregation : [])) {
 				this.aggregation.push(o);
 			}
 		}
@@ -1689,7 +1689,7 @@ export class ElementDefinitionSlicing implements IFhir.IElementDefinitionSlicing
 	constructor(obj?: any) {
 		if (obj.hasOwnProperty('discriminator')) {
 			this.discriminator = [];
-			for (const o of obj.discriminator || []) {
+			for (const o of (obj.discriminator instanceof Array ? obj.discriminator : [])) {
 				this.discriminator.push(new ElementDefinitionSlicingDiscriminator(o));
 			}
 		}
@@ -1724,7 +1724,7 @@ export class ElementDefinition extends Element implements IFhir.IElementDefiniti
 
 		if (obj.hasOwnProperty('representation')) {
 			this.representation = [];
-			for (const o of obj.representation || []) {
+			for (const o of (obj.representation instanceof Array ? obj.representation : [])) {
 				this.representation.push(o);
 			}
 		}
@@ -1743,7 +1743,7 @@ export class ElementDefinition extends Element implements IFhir.IElementDefiniti
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new Coding(o));
 			}
 		}
@@ -1770,7 +1770,7 @@ export class ElementDefinition extends Element implements IFhir.IElementDefiniti
 
 		if (obj.hasOwnProperty('alias')) {
 			this.alias = [];
-			for (const o of obj.alias || []) {
+			for (const o of (obj.alias instanceof Array ? obj.alias : [])) {
 				this.alias.push(o);
 			}
 		}
@@ -1793,7 +1793,7 @@ export class ElementDefinition extends Element implements IFhir.IElementDefiniti
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new ElementDefinitionType(o));
 			}
 		}
@@ -2420,7 +2420,7 @@ export class ElementDefinition extends Element implements IFhir.IElementDefiniti
 
 		if (obj.hasOwnProperty('example')) {
 			this.example = [];
-			for (const o of obj.example || []) {
+			for (const o of (obj.example instanceof Array ? obj.example : [])) {
 				this.example.push(new ElementDefinitionExample(o));
 			}
 		}
@@ -2503,14 +2503,14 @@ export class ElementDefinition extends Element implements IFhir.IElementDefiniti
 
 		if (obj.hasOwnProperty('condition')) {
 			this.condition = [];
-			for (const o of obj.condition || []) {
+			for (const o of (obj.condition instanceof Array ? obj.condition : [])) {
 				this.condition.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('constraint')) {
 			this.constraint = [];
-			for (const o of obj.constraint || []) {
+			for (const o of (obj.constraint instanceof Array ? obj.constraint : [])) {
 				this.constraint.push(new ElementDefinitionConstraint(o));
 			}
 		}
@@ -2537,7 +2537,7 @@ export class ElementDefinition extends Element implements IFhir.IElementDefiniti
 
 		if (obj.hasOwnProperty('mapping')) {
 			this.mapping = [];
-			for (const o of obj.mapping || []) {
+			for (const o of (obj.mapping instanceof Array ? obj.mapping : [])) {
 				this.mapping.push(new ElementDefinitionMapping(o));
 			}
 		}
@@ -2762,21 +2762,21 @@ export class HumanName implements IFhir.IHumanName {
 
 		if (obj.hasOwnProperty('given')) {
 			this.given = [];
-			for (const o of obj.given || []) {
+			for (const o of (obj.given instanceof Array ? obj.given : [])) {
 				this.given.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('prefix')) {
 			this.prefix = [];
-			for (const o of obj.prefix || []) {
+			for (const o of (obj.prefix instanceof Array ? obj.prefix : [])) {
 				this.prefix.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('suffix')) {
 			this.suffix = [];
-			for (const o of obj.suffix || []) {
+			for (const o of (obj.suffix instanceof Array ? obj.suffix : [])) {
 				this.suffix.push(o);
 			}
 		}
@@ -2886,7 +2886,7 @@ export class Signature extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new Coding(o));
 			}
 		}
@@ -3075,7 +3075,7 @@ export class TriggerDefinition extends Element {
 
 		if (obj.hasOwnProperty('data')) {
 			this.data = [];
-			for (const o of obj.data || []) {
+			for (const o of (obj.data instanceof Array ? obj.data : [])) {
 				this.data.push(new DataRequirement(o));
 			}
 		}
@@ -3444,21 +3444,21 @@ export class Meta implements IFhir.IMeta {
 
 		if (obj.hasOwnProperty('profile')) {
 			this.profile = [];
-			for (const o of obj.profile || []) {
+			for (const o of (obj.profile instanceof Array ? obj.profile : [])) {
 				this.profile.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('security')) {
 			this.security = [];
-			for (const o of obj.security || []) {
+			for (const o of (obj.security instanceof Array ? obj.security : [])) {
 				this.security.push(new Coding(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('tag')) {
 			this.tag = [];
-			for (const o of obj.tag || []) {
+			for (const o of (obj.tag instanceof Array ? obj.tag : [])) {
 				this.tag.push(new Coding(o));
 			}
 		}
@@ -3558,21 +3558,21 @@ export class ProdCharacteristic extends Element {
 
 		if (obj.hasOwnProperty('color')) {
 			this.color = [];
-			for (const o of obj.color || []) {
+			for (const o of (obj.color instanceof Array ? obj.color : [])) {
 				this.color.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('imprint')) {
 			this.imprint = [];
-			for (const o of obj.imprint || []) {
+			for (const o of (obj.imprint instanceof Array ? obj.imprint : [])) {
 				this.imprint.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('image')) {
 			this.image = [];
-			for (const o of obj.image || []) {
+			for (const o of (obj.image instanceof Array ? obj.image : [])) {
 				this.image.push(new Attachment(o));
 			}
 		}
@@ -3614,7 +3614,7 @@ export class ProductShelfLife extends Element {
 
 		if (obj.hasOwnProperty('specialPrecautionsForStorage')) {
 			this.specialPrecautionsForStorage = [];
-			for (const o of obj.specialPrecautionsForStorage || []) {
+			for (const o of (obj.specialPrecautionsForStorage instanceof Array ? obj.specialPrecautionsForStorage : [])) {
 				this.specialPrecautionsForStorage.push(new CodeableConcept(o));
 			}
 		}
@@ -3725,21 +3725,21 @@ export class DomainResource extends Resource implements IFhir.IDomainResource {
 
     if (obj.hasOwnProperty('contained')) {
       this.contained = [];
-      for (const o of obj.contained || []) {
+      for (const o of (obj.contained instanceof Array ? obj.contained : [])) {
         this.contained.push(new DomainResource(o));
       }
     }
 
     if (obj.hasOwnProperty('extension')) {
       this.extension = [];
-      for (const o of obj.extension || []) {
+      for (const o of (obj.extension instanceof Array ? obj.extension : [])) {
         this.extension.push(new Extension(o));
       }
     }
 
     if (obj.hasOwnProperty('modifierExtension')) {
       this.modifierExtension = [];
-      for (const o of obj.modifierExtension || []) {
+      for (const o of (obj.modifierExtension instanceof Array ? obj.modifierExtension : [])) {
         this.modifierExtension.push(new Extension(o));
       }
     }
@@ -3762,7 +3762,7 @@ export class Account extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -3781,7 +3781,7 @@ export class Account extends DomainResource {
 
 		if (obj.hasOwnProperty('subject')) {
 			this.subject = [];
-			for (const o of obj.subject || []) {
+			for (const o of (obj.subject instanceof Array ? obj.subject : [])) {
 				this.subject.push(new Reference(o));
 			}
 		}
@@ -3792,7 +3792,7 @@ export class Account extends DomainResource {
 
 		if (obj.hasOwnProperty('coverage')) {
 			this.coverage = [];
-			for (const o of obj.coverage || []) {
+			for (const o of (obj.coverage instanceof Array ? obj.coverage : [])) {
 				this.coverage.push(new AccountCoverage(o));
 			}
 		}
@@ -3807,7 +3807,7 @@ export class Account extends DomainResource {
 
 		if (obj.hasOwnProperty('guarantor')) {
 			this.guarantor = [];
-			for (const o of obj.guarantor || []) {
+			for (const o of (obj.guarantor instanceof Array ? obj.guarantor : [])) {
 				this.guarantor.push(new AccountGuarantor(o));
 			}
 		}
@@ -3881,7 +3881,7 @@ export class ActivityDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -3932,7 +3932,7 @@ export class ActivityDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -3943,14 +3943,14 @@ export class ActivityDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -3981,49 +3981,49 @@ export class ActivityDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('topic')) {
 			this.topic = [];
-			for (const o of obj.topic || []) {
+			for (const o of (obj.topic instanceof Array ? obj.topic : [])) {
 				this.topic.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('editor')) {
 			this.editor = [];
-			for (const o of obj.editor || []) {
+			for (const o of (obj.editor instanceof Array ? obj.editor : [])) {
 				this.editor.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reviewer')) {
 			this.reviewer = [];
-			for (const o of obj.reviewer || []) {
+			for (const o of (obj.reviewer instanceof Array ? obj.reviewer : [])) {
 				this.reviewer.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endorser')) {
 			this.endorser = [];
-			for (const o of obj.endorser || []) {
+			for (const o of (obj.endorser instanceof Array ? obj.endorser : [])) {
 				this.endorser.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedArtifact')) {
 			this.relatedArtifact = [];
-			for (const o of obj.relatedArtifact || []) {
+			for (const o of (obj.relatedArtifact instanceof Array ? obj.relatedArtifact : [])) {
 				this.relatedArtifact.push(new RelatedArtifact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('library')) {
 			this.library = [];
-			for (const o of obj.library || []) {
+			for (const o of (obj.library instanceof Array ? obj.library : [])) {
 				this.library.push(o);
 			}
 		}
@@ -4082,7 +4082,7 @@ export class ActivityDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('participant')) {
 			this.participant = [];
-			for (const o of obj.participant || []) {
+			for (const o of (obj.participant instanceof Array ? obj.participant : [])) {
 				this.participant.push(new ActivityDefinitionParticipant(o));
 			}
 		}
@@ -4101,35 +4101,35 @@ export class ActivityDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('dosage')) {
 			this.dosage = [];
-			for (const o of obj.dosage || []) {
+			for (const o of (obj.dosage instanceof Array ? obj.dosage : [])) {
 				this.dosage.push(new Dosage(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('bodySite')) {
 			this.bodySite = [];
-			for (const o of obj.bodySite || []) {
+			for (const o of (obj.bodySite instanceof Array ? obj.bodySite : [])) {
 				this.bodySite.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specimenRequirement')) {
 			this.specimenRequirement = [];
-			for (const o of obj.specimenRequirement || []) {
+			for (const o of (obj.specimenRequirement instanceof Array ? obj.specimenRequirement : [])) {
 				this.specimenRequirement.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('observationRequirement')) {
 			this.observationRequirement = [];
-			for (const o of obj.observationRequirement || []) {
+			for (const o of (obj.observationRequirement instanceof Array ? obj.observationRequirement : [])) {
 				this.observationRequirement.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('observationResultRequirement')) {
 			this.observationResultRequirement = [];
-			for (const o of obj.observationResultRequirement || []) {
+			for (const o of (obj.observationResultRequirement instanceof Array ? obj.observationResultRequirement : [])) {
 				this.observationResultRequirement.push(new Reference(o));
 			}
 		}
@@ -4140,7 +4140,7 @@ export class ActivityDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('dynamicValue')) {
 			this.dynamicValue = [];
-			for (const o of obj.dynamicValue || []) {
+			for (const o of (obj.dynamicValue instanceof Array ? obj.dynamicValue : [])) {
 				this.dynamicValue.push(new ActivityDefinitionDynamicValue(o));
 			}
 		}
@@ -4237,7 +4237,7 @@ export class AdministrableProductDefinitionRouteOfAdministrationTargetSpecies ex
 
 		if (obj.hasOwnProperty('withdrawalPeriod')) {
 			this.withdrawalPeriod = [];
-			for (const o of obj.withdrawalPeriod || []) {
+			for (const o of (obj.withdrawalPeriod instanceof Array ? obj.withdrawalPeriod : [])) {
 				this.withdrawalPeriod.push(new AdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod(o));
 			}
 		}
@@ -4278,7 +4278,7 @@ export class AdministrableProductDefinitionRouteOfAdministration extends Element
 
 		if (obj.hasOwnProperty('targetSpecies')) {
 			this.targetSpecies = [];
-			for (const o of obj.targetSpecies || []) {
+			for (const o of (obj.targetSpecies instanceof Array ? obj.targetSpecies : [])) {
 				this.targetSpecies.push(new AdministrableProductDefinitionRouteOfAdministrationTargetSpecies(o));
 			}
 		}
@@ -4346,7 +4346,7 @@ export class AdministrableProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -4357,7 +4357,7 @@ export class AdministrableProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('formOf')) {
 			this.formOf = [];
-			for (const o of obj.formOf || []) {
+			for (const o of (obj.formOf instanceof Array ? obj.formOf : [])) {
 				this.formOf.push(new Reference(o));
 			}
 		}
@@ -4372,14 +4372,14 @@ export class AdministrableProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('producedFrom')) {
 			this.producedFrom = [];
-			for (const o of obj.producedFrom || []) {
+			for (const o of (obj.producedFrom instanceof Array ? obj.producedFrom : [])) {
 				this.producedFrom.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('ingredient')) {
 			this.ingredient = [];
-			for (const o of obj.ingredient || []) {
+			for (const o of (obj.ingredient instanceof Array ? obj.ingredient : [])) {
 				this.ingredient.push(new CodeableConcept(o));
 			}
 		}
@@ -4390,14 +4390,14 @@ export class AdministrableProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('property')) {
 			this.property = [];
-			for (const o of obj.property || []) {
+			for (const o of (obj.property instanceof Array ? obj.property : [])) {
 				this.property.push(new AdministrableProductDefinitionProperty(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('routeOfAdministration')) {
 			this.routeOfAdministration = [];
-			for (const o of obj.routeOfAdministration || []) {
+			for (const o of (obj.routeOfAdministration instanceof Array ? obj.routeOfAdministration : [])) {
 				this.routeOfAdministration.push(new AdministrableProductDefinitionRouteOfAdministration(o));
 			}
 		}
@@ -4455,7 +4455,7 @@ export class AdverseEventSuspectEntity extends Element {
 
 		if (obj.hasOwnProperty('causality')) {
 			this.causality = [];
-			for (const o of obj.causality || []) {
+			for (const o of (obj.causality instanceof Array ? obj.causality : [])) {
 				this.causality.push(new AdverseEventSuspectEntityCausality(o));
 			}
 		}
@@ -4483,7 +4483,7 @@ export class AdverseEvent extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -4514,7 +4514,7 @@ export class AdverseEvent extends DomainResource {
 
 		if (obj.hasOwnProperty('resultingCondition')) {
 			this.resultingCondition = [];
-			for (const o of obj.resultingCondition || []) {
+			for (const o of (obj.resultingCondition instanceof Array ? obj.resultingCondition : [])) {
 				this.resultingCondition.push(new Reference(o));
 			}
 		}
@@ -4541,35 +4541,35 @@ export class AdverseEvent extends DomainResource {
 
 		if (obj.hasOwnProperty('contributor')) {
 			this.contributor = [];
-			for (const o of obj.contributor || []) {
+			for (const o of (obj.contributor instanceof Array ? obj.contributor : [])) {
 				this.contributor.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('suspectEntity')) {
 			this.suspectEntity = [];
-			for (const o of obj.suspectEntity || []) {
+			for (const o of (obj.suspectEntity instanceof Array ? obj.suspectEntity : [])) {
 				this.suspectEntity.push(new AdverseEventSuspectEntity(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('subjectMedicalHistory')) {
 			this.subjectMedicalHistory = [];
-			for (const o of obj.subjectMedicalHistory || []) {
+			for (const o of (obj.subjectMedicalHistory instanceof Array ? obj.subjectMedicalHistory : [])) {
 				this.subjectMedicalHistory.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('referenceDocument')) {
 			this.referenceDocument = [];
-			for (const o of obj.referenceDocument || []) {
+			for (const o of (obj.referenceDocument instanceof Array ? obj.referenceDocument : [])) {
 				this.referenceDocument.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('study')) {
 			this.study = [];
-			for (const o of obj.study || []) {
+			for (const o of (obj.study instanceof Array ? obj.study : [])) {
 				this.study.push(new Reference(o));
 			}
 		}
@@ -4609,7 +4609,7 @@ export class AllergyIntoleranceReaction extends Element {
 
 		if (obj.hasOwnProperty('manifestation')) {
 			this.manifestation = [];
-			for (const o of obj.manifestation || []) {
+			for (const o of (obj.manifestation instanceof Array ? obj.manifestation : [])) {
 				this.manifestation.push(new CodeableConcept(o));
 			}
 		}
@@ -4632,7 +4632,7 @@ export class AllergyIntoleranceReaction extends Element {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -4657,7 +4657,7 @@ export class AllergyIntolerance extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -4676,7 +4676,7 @@ export class AllergyIntolerance extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(o);
 			}
 		}
@@ -4735,14 +4735,14 @@ export class AllergyIntolerance extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reaction')) {
 			this.reaction = [];
-			for (const o of obj.reaction || []) {
+			for (const o of (obj.reaction instanceof Array ? obj.reaction : [])) {
 				this.reaction.push(new AllergyIntoleranceReaction(o));
 			}
 		}
@@ -4778,7 +4778,7 @@ export class AppointmentParticipant extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
@@ -4817,7 +4817,7 @@ export class Appointment extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -4832,21 +4832,21 @@ export class Appointment extends DomainResource {
 
 		if (obj.hasOwnProperty('serviceCategory')) {
 			this.serviceCategory = [];
-			for (const o of obj.serviceCategory || []) {
+			for (const o of (obj.serviceCategory instanceof Array ? obj.serviceCategory : [])) {
 				this.serviceCategory.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('serviceType')) {
 			this.serviceType = [];
-			for (const o of obj.serviceType || []) {
+			for (const o of (obj.serviceType instanceof Array ? obj.serviceType : [])) {
 				this.serviceType.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specialty')) {
 			this.specialty = [];
-			for (const o of obj.specialty || []) {
+			for (const o of (obj.specialty instanceof Array ? obj.specialty : [])) {
 				this.specialty.push(new CodeableConcept(o));
 			}
 		}
@@ -4857,14 +4857,14 @@ export class Appointment extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
@@ -4879,7 +4879,7 @@ export class Appointment extends DomainResource {
 
 		if (obj.hasOwnProperty('supportingInformation')) {
 			this.supportingInformation = [];
-			for (const o of obj.supportingInformation || []) {
+			for (const o of (obj.supportingInformation instanceof Array ? obj.supportingInformation : [])) {
 				this.supportingInformation.push(new Reference(o));
 			}
 		}
@@ -4898,7 +4898,7 @@ export class Appointment extends DomainResource {
 
 		if (obj.hasOwnProperty('slot')) {
 			this.slot = [];
-			for (const o of obj.slot || []) {
+			for (const o of (obj.slot instanceof Array ? obj.slot : [])) {
 				this.slot.push(new Reference(o));
 			}
 		}
@@ -4917,21 +4917,21 @@ export class Appointment extends DomainResource {
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('participant')) {
 			this.participant = [];
-			for (const o of obj.participant || []) {
+			for (const o of (obj.participant instanceof Array ? obj.participant : [])) {
 				this.participant.push(new AppointmentParticipant(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('requestedPeriod')) {
 			this.requestedPeriod = [];
-			for (const o of obj.requestedPeriod || []) {
+			for (const o of (obj.requestedPeriod instanceof Array ? obj.requestedPeriod : [])) {
 				this.requestedPeriod.push(new Period(o));
 			}
 		}
@@ -4972,7 +4972,7 @@ export class AppointmentResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -4991,7 +4991,7 @@ export class AppointmentResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('participantType')) {
 			this.participantType = [];
-			for (const o of obj.participantType || []) {
+			for (const o of (obj.participantType instanceof Array ? obj.participantType : [])) {
 				this.participantType.push(new CodeableConcept(o));
 			}
 		}
@@ -5066,7 +5066,7 @@ export class AuditEventEntity extends Element {
 
 		if (obj.hasOwnProperty('securityLabel')) {
 			this.securityLabel = [];
-			for (const o of obj.securityLabel || []) {
+			for (const o of (obj.securityLabel instanceof Array ? obj.securityLabel : [])) {
 				this.securityLabel.push(new Coding(o));
 			}
 		}
@@ -5085,7 +5085,7 @@ export class AuditEventEntity extends Element {
 
 		if (obj.hasOwnProperty('detail')) {
 			this.detail = [];
-			for (const o of obj.detail || []) {
+			for (const o of (obj.detail instanceof Array ? obj.detail : [])) {
 				this.detail.push(new AuditEventEntityDetail(o));
 			}
 		}
@@ -5117,7 +5117,7 @@ export class AuditEventSource extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new Coding(o));
 			}
 		}
@@ -5153,7 +5153,7 @@ export class AuditEventAgent implements IFhir.IAgentComponent {
 
 		if (obj.hasOwnProperty('role')) {
 			this.role = [];
-			for (const o of obj.role || []) {
+			for (const o of (obj.role instanceof Array ? obj.role : [])) {
 				this.role.push(new CodeableConcept(o));
 			}
 		}
@@ -5180,7 +5180,7 @@ export class AuditEventAgent implements IFhir.IAgentComponent {
 
 		if (obj.hasOwnProperty('policy')) {
 			this.policy = [];
-			for (const o of obj.policy || []) {
+			for (const o of (obj.policy instanceof Array ? obj.policy : [])) {
 				this.policy.push(o);
 			}
 		}
@@ -5195,7 +5195,7 @@ export class AuditEventAgent implements IFhir.IAgentComponent {
 
 		if (obj.hasOwnProperty('purposeOfUse')) {
 			this.purposeOfUse = [];
-			for (const o of obj.purposeOfUse || []) {
+			for (const o of (obj.purposeOfUse instanceof Array ? obj.purposeOfUse : [])) {
 				this.purposeOfUse.push(new CodeableConcept(o));
 			}
 		}
@@ -5228,7 +5228,7 @@ export class AuditEvent extends DomainResource implements IFhir.IAuditEvent {
 
 		if (obj.hasOwnProperty('subtype')) {
 			this.subtype = [];
-			for (const o of obj.subtype || []) {
+			for (const o of (obj.subtype instanceof Array ? obj.subtype : [])) {
 				this.subtype.push(new Coding(o));
 			}
 		}
@@ -5255,14 +5255,14 @@ export class AuditEvent extends DomainResource implements IFhir.IAuditEvent {
 
 		if (obj.hasOwnProperty('purposeOfEvent')) {
 			this.purposeOfEvent = [];
-			for (const o of obj.purposeOfEvent || []) {
+			for (const o of (obj.purposeOfEvent instanceof Array ? obj.purposeOfEvent : [])) {
 				this.purposeOfEvent.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('agent')) {
 			this.agent = [];
-			for (const o of obj.agent || []) {
+			for (const o of (obj.agent instanceof Array ? obj.agent : [])) {
 				this.agent.push(new AuditEventAgent(o));
 			}
 		}
@@ -5273,7 +5273,7 @@ export class AuditEvent extends DomainResource implements IFhir.IAuditEvent {
 
 		if (obj.hasOwnProperty('entity')) {
 			this.entity = [];
-			for (const o of obj.entity || []) {
+			for (const o of (obj.entity instanceof Array ? obj.entity : [])) {
 				this.entity.push(new AuditEventEntity(o));
 			}
 		}
@@ -5303,7 +5303,7 @@ export class Basic extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -5482,7 +5482,7 @@ export class BiologicallyDerivedProduct extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -5501,7 +5501,7 @@ export class BiologicallyDerivedProduct extends DomainResource {
 
 		if (obj.hasOwnProperty('request')) {
 			this.request = [];
-			for (const o of obj.request || []) {
+			for (const o of (obj.request instanceof Array ? obj.request : [])) {
 				this.request.push(new Reference(o));
 			}
 		}
@@ -5512,7 +5512,7 @@ export class BiologicallyDerivedProduct extends DomainResource {
 
 		if (obj.hasOwnProperty('parent')) {
 			this.parent = [];
-			for (const o of obj.parent || []) {
+			for (const o of (obj.parent instanceof Array ? obj.parent : [])) {
 				this.parent.push(new Reference(o));
 			}
 		}
@@ -5523,7 +5523,7 @@ export class BiologicallyDerivedProduct extends DomainResource {
 
 		if (obj.hasOwnProperty('processing')) {
 			this.processing = [];
-			for (const o of obj.processing || []) {
+			for (const o of (obj.processing instanceof Array ? obj.processing : [])) {
 				this.processing.push(new BiologicallyDerivedProductProcessing(o));
 			}
 		}
@@ -5534,7 +5534,7 @@ export class BiologicallyDerivedProduct extends DomainResource {
 
 		if (obj.hasOwnProperty('storage')) {
 			this.storage = [];
-			for (const o of obj.storage || []) {
+			for (const o of (obj.storage instanceof Array ? obj.storage : [])) {
 				this.storage.push(new BiologicallyDerivedProductStorage(o));
 			}
 		}
@@ -5564,7 +5564,7 @@ export class BodyStructure extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -5583,7 +5583,7 @@ export class BodyStructure extends DomainResource {
 
 		if (obj.hasOwnProperty('locationQualifier')) {
 			this.locationQualifier = [];
-			for (const o of obj.locationQualifier || []) {
+			for (const o of (obj.locationQualifier instanceof Array ? obj.locationQualifier : [])) {
 				this.locationQualifier.push(new CodeableConcept(o));
 			}
 		}
@@ -5594,7 +5594,7 @@ export class BodyStructure extends DomainResource {
 
 		if (obj.hasOwnProperty('image')) {
 			this.image = [];
-			for (const o of obj.image || []) {
+			for (const o of (obj.image instanceof Array ? obj.image : [])) {
 				this.image.push(new Attachment(o));
 			}
 		}
@@ -5709,7 +5709,7 @@ export class BundleEntry implements IFhir.IBundleEntry {
 	constructor(obj?: any) {
 		if (obj.hasOwnProperty('link')) {
 			this.link = [];
-			for (const o of obj.link || []) {
+			for (const o of (obj.link instanceof Array ? obj.link : [])) {
 				this.link.push(new BundleLink(o));
 			}
 		}
@@ -5787,14 +5787,14 @@ export class Bundle extends Resource implements IFhir.IBundle {
 
 		if (obj.hasOwnProperty('link')) {
 			this.link = [];
-			for (const o of obj.link || []) {
+			for (const o of (obj.link instanceof Array ? obj.link : [])) {
 				this.link.push(new BundleLink(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('entry')) {
 			this.entry = [];
-			for (const o of obj.entry || []) {
+			for (const o of (obj.entry instanceof Array ? obj.entry : [])) {
 				this.entry.push(new BundleEntry(o));
 			}
 		}
@@ -5880,7 +5880,7 @@ export class CapabilityStatementMessaging extends Element {
 
 		if (obj.hasOwnProperty('endpoint')) {
 			this.endpoint = [];
-			for (const o of obj.endpoint || []) {
+			for (const o of (obj.endpoint instanceof Array ? obj.endpoint : [])) {
 				this.endpoint.push(new CapabilityStatementMessagingEndpoint(o));
 			}
 		}
@@ -5895,7 +5895,7 @@ export class CapabilityStatementMessaging extends Element {
 
 		if (obj.hasOwnProperty('supportedMessage')) {
 			this.supportedMessage = [];
-			for (const o of obj.supportedMessage || []) {
+			for (const o of (obj.supportedMessage instanceof Array ? obj.supportedMessage : [])) {
 				this.supportedMessage.push(new CapabilityStatementMessagingSupportedMessage(o));
 			}
 		}
@@ -6009,7 +6009,7 @@ export class CapabilityStatementRestResource extends Element {
 
 		if (obj.hasOwnProperty('supportedProfile')) {
 			this.supportedProfile = [];
-			for (const o of obj.supportedProfile || []) {
+			for (const o of (obj.supportedProfile instanceof Array ? obj.supportedProfile : [])) {
 				this.supportedProfile.push(o);
 			}
 		}
@@ -6020,7 +6020,7 @@ export class CapabilityStatementRestResource extends Element {
 
 		if (obj.hasOwnProperty('interaction')) {
 			this.interaction = [];
-			for (const o of obj.interaction || []) {
+			for (const o of (obj.interaction instanceof Array ? obj.interaction : [])) {
 				this.interaction.push(new CapabilityStatementRestResourceInteraction(o));
 			}
 		}
@@ -6055,35 +6055,35 @@ export class CapabilityStatementRestResource extends Element {
 
 		if (obj.hasOwnProperty('referencePolicy')) {
 			this.referencePolicy = [];
-			for (const o of obj.referencePolicy || []) {
+			for (const o of (obj.referencePolicy instanceof Array ? obj.referencePolicy : [])) {
 				this.referencePolicy.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('searchInclude')) {
 			this.searchInclude = [];
-			for (const o of obj.searchInclude || []) {
+			for (const o of (obj.searchInclude instanceof Array ? obj.searchInclude : [])) {
 				this.searchInclude.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('searchRevInclude')) {
 			this.searchRevInclude = [];
-			for (const o of obj.searchRevInclude || []) {
+			for (const o of (obj.searchRevInclude instanceof Array ? obj.searchRevInclude : [])) {
 				this.searchRevInclude.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('searchParam')) {
 			this.searchParam = [];
-			for (const o of obj.searchParam || []) {
+			for (const o of (obj.searchParam instanceof Array ? obj.searchParam : [])) {
 				this.searchParam.push(new CapabilityStatementRestResourceSearchParam(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('operation')) {
 			this.operation = [];
-			for (const o of obj.operation || []) {
+			for (const o of (obj.operation instanceof Array ? obj.operation : [])) {
 				this.operation.push(new CapabilityStatementRestResourceOperation(o));
 			}
 		}
@@ -6119,7 +6119,7 @@ export class CapabilityStatementRestSecurity extends Element {
 
 		if (obj.hasOwnProperty('service')) {
 			this.service = [];
-			for (const o of obj.service || []) {
+			for (const o of (obj.service instanceof Array ? obj.service : [])) {
 				this.service.push(new CodeableConcept(o));
 			}
 		}
@@ -6153,35 +6153,35 @@ export class CapabilityStatementRest extends Element {
 
 		if (obj.hasOwnProperty('resource')) {
 			this.resource = [];
-			for (const o of obj.resource || []) {
+			for (const o of (obj.resource instanceof Array ? obj.resource : [])) {
 				this.resource.push(new CapabilityStatementRestResource(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('interaction')) {
 			this.interaction = [];
-			for (const o of obj.interaction || []) {
+			for (const o of (obj.interaction instanceof Array ? obj.interaction : [])) {
 				this.interaction.push(new CapabilityStatementRestInteraction(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('searchParam')) {
 			this.searchParam = [];
-			for (const o of obj.searchParam || []) {
+			for (const o of (obj.searchParam instanceof Array ? obj.searchParam : [])) {
 				this.searchParam.push(new CapabilityStatementRestResourceSearchParam(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('operation')) {
 			this.operation = [];
-			for (const o of obj.operation || []) {
+			for (const o of (obj.operation instanceof Array ? obj.operation : [])) {
 				this.operation.push(new CapabilityStatementRestResourceOperation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('compartment')) {
 			this.compartment = [];
-			for (const o of obj.compartment || []) {
+			for (const o of (obj.compartment instanceof Array ? obj.compartment : [])) {
 				this.compartment.push(o);
 			}
 		}
@@ -6285,7 +6285,7 @@ export class CapabilityStatement extends DomainResource implements IFhir.ICapabi
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -6296,14 +6296,14 @@ export class CapabilityStatement extends DomainResource implements IFhir.ICapabi
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -6322,14 +6322,14 @@ export class CapabilityStatement extends DomainResource implements IFhir.ICapabi
 
 		if (obj.hasOwnProperty('instantiates')) {
 			this.instantiates = [];
-			for (const o of obj.instantiates || []) {
+			for (const o of (obj.instantiates instanceof Array ? obj.instantiates : [])) {
 				this.instantiates.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('imports')) {
 			this.imports = [];
-			for (const o of obj.imports || []) {
+			for (const o of (obj.imports instanceof Array ? obj.imports : [])) {
 				this.imports.push(o);
 			}
 		}
@@ -6348,42 +6348,42 @@ export class CapabilityStatement extends DomainResource implements IFhir.ICapabi
 
 		if (obj.hasOwnProperty('format')) {
 			this.format = [];
-			for (const o of obj.format || []) {
+			for (const o of (obj.format instanceof Array ? obj.format : [])) {
 				this.format.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('patchFormat')) {
 			this.patchFormat = [];
-			for (const o of obj.patchFormat || []) {
+			for (const o of (obj.patchFormat instanceof Array ? obj.patchFormat : [])) {
 				this.patchFormat.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('implementationGuide')) {
 			this.implementationGuide = [];
-			for (const o of obj.implementationGuide || []) {
+			for (const o of (obj.implementationGuide instanceof Array ? obj.implementationGuide : [])) {
 				this.implementationGuide.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('rest')) {
 			this.rest = [];
-			for (const o of obj.rest || []) {
+			for (const o of (obj.rest instanceof Array ? obj.rest : [])) {
 				this.rest.push(new CapabilityStatementRest(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('messaging')) {
 			this.messaging = [];
-			for (const o of obj.messaging || []) {
+			for (const o of (obj.messaging instanceof Array ? obj.messaging : [])) {
 				this.messaging.push(new CapabilityStatementMessaging(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('document')) {
 			this.document = [];
-			for (const o of obj.document || []) {
+			for (const o of (obj.document instanceof Array ? obj.document : [])) {
 				this.document.push(new CapabilityStatementDocument(o));
 			}
 		}
@@ -6429,14 +6429,14 @@ export class CarePlanActivityDetail extends Element {
 
 		if (obj.hasOwnProperty('instantiatesCanonical')) {
 			this.instantiatesCanonical = [];
-			for (const o of obj.instantiatesCanonical || []) {
+			for (const o of (obj.instantiatesCanonical instanceof Array ? obj.instantiatesCanonical : [])) {
 				this.instantiatesCanonical.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesUri')) {
 			this.instantiatesUri = [];
-			for (const o of obj.instantiatesUri || []) {
+			for (const o of (obj.instantiatesUri instanceof Array ? obj.instantiatesUri : [])) {
 				this.instantiatesUri.push(o);
 			}
 		}
@@ -6447,21 +6447,21 @@ export class CarePlanActivityDetail extends Element {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('goal')) {
 			this.goal = [];
-			for (const o of obj.goal || []) {
+			for (const o of (obj.goal instanceof Array ? obj.goal : [])) {
 				this.goal.push(new Reference(o));
 			}
 		}
@@ -6496,7 +6496,7 @@ export class CarePlanActivityDetail extends Element {
 
 		if (obj.hasOwnProperty('performer')) {
 			this.performer = [];
-			for (const o of obj.performer || []) {
+			for (const o of (obj.performer instanceof Array ? obj.performer : [])) {
 				this.performer.push(new Reference(o));
 			}
 		}
@@ -6551,21 +6551,21 @@ export class CarePlanActivity extends Element {
 
 		if (obj.hasOwnProperty('outcomeCodeableConcept')) {
 			this.outcomeCodeableConcept = [];
-			for (const o of obj.outcomeCodeableConcept || []) {
+			for (const o of (obj.outcomeCodeableConcept instanceof Array ? obj.outcomeCodeableConcept : [])) {
 				this.outcomeCodeableConcept.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('outcomeReference')) {
 			this.outcomeReference = [];
-			for (const o of obj.outcomeReference || []) {
+			for (const o of (obj.outcomeReference instanceof Array ? obj.outcomeReference : [])) {
 				this.outcomeReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('progress')) {
 			this.progress = [];
-			for (const o of obj.progress || []) {
+			for (const o of (obj.progress instanceof Array ? obj.progress : [])) {
 				this.progress.push(new Annotation(o));
 			}
 		}
@@ -6596,42 +6596,42 @@ export class CarePlan extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesCanonical')) {
 			this.instantiatesCanonical = [];
-			for (const o of obj.instantiatesCanonical || []) {
+			for (const o of (obj.instantiatesCanonical instanceof Array ? obj.instantiatesCanonical : [])) {
 				this.instantiatesCanonical.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesUri')) {
 			this.instantiatesUri = [];
-			for (const o of obj.instantiatesUri || []) {
+			for (const o of (obj.instantiatesUri instanceof Array ? obj.instantiatesUri : [])) {
 				this.instantiatesUri.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('replaces')) {
 			this.replaces = [];
-			for (const o of obj.replaces || []) {
+			for (const o of (obj.replaces instanceof Array ? obj.replaces : [])) {
 				this.replaces.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -6646,7 +6646,7 @@ export class CarePlan extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -6681,49 +6681,49 @@ export class CarePlan extends DomainResource {
 
 		if (obj.hasOwnProperty('contributor')) {
 			this.contributor = [];
-			for (const o of obj.contributor || []) {
+			for (const o of (obj.contributor instanceof Array ? obj.contributor : [])) {
 				this.contributor.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('careTeam')) {
 			this.careTeam = [];
-			for (const o of obj.careTeam || []) {
+			for (const o of (obj.careTeam instanceof Array ? obj.careTeam : [])) {
 				this.careTeam.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('addresses')) {
 			this.addresses = [];
-			for (const o of obj.addresses || []) {
+			for (const o of (obj.addresses instanceof Array ? obj.addresses : [])) {
 				this.addresses.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('supportingInfo')) {
 			this.supportingInfo = [];
-			for (const o of obj.supportingInfo || []) {
+			for (const o of (obj.supportingInfo instanceof Array ? obj.supportingInfo : [])) {
 				this.supportingInfo.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('goal')) {
 			this.goal = [];
-			for (const o of obj.goal || []) {
+			for (const o of (obj.goal instanceof Array ? obj.goal : [])) {
 				this.goal.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('activity')) {
 			this.activity = [];
-			for (const o of obj.activity || []) {
+			for (const o of (obj.activity instanceof Array ? obj.activity : [])) {
 				this.activity.push(new CarePlanActivity(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -6762,7 +6762,7 @@ export class CareTeamParticipant extends Element {
 
 		if (obj.hasOwnProperty('role')) {
 			this.role = [];
-			for (const o of obj.role || []) {
+			for (const o of (obj.role instanceof Array ? obj.role : [])) {
 				this.role.push(new CodeableConcept(o));
 			}
 		}
@@ -6796,7 +6796,7 @@ export class CareTeam extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -6807,7 +6807,7 @@ export class CareTeam extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -6830,42 +6830,42 @@ export class CareTeam extends DomainResource {
 
 		if (obj.hasOwnProperty('participant')) {
 			this.participant = [];
-			for (const o of obj.participant || []) {
+			for (const o of (obj.participant instanceof Array ? obj.participant : [])) {
 				this.participant.push(new CareTeamParticipant(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('managingOrganization')) {
 			this.managingOrganization = [];
-			for (const o of obj.managingOrganization || []) {
+			for (const o of (obj.managingOrganization instanceof Array ? obj.managingOrganization : [])) {
 				this.managingOrganization.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -6915,7 +6915,7 @@ export class CatalogEntry extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -6934,14 +6934,14 @@ export class CatalogEntry extends DomainResource {
 
 		if (obj.hasOwnProperty('additionalIdentifier')) {
 			this.additionalIdentifier = [];
-			for (const o of obj.additionalIdentifier || []) {
+			for (const o of (obj.additionalIdentifier instanceof Array ? obj.additionalIdentifier : [])) {
 				this.additionalIdentifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('classification')) {
 			this.classification = [];
-			for (const o of obj.classification || []) {
+			for (const o of (obj.classification instanceof Array ? obj.classification : [])) {
 				this.classification.push(new CodeableConcept(o));
 			}
 		}
@@ -6964,21 +6964,21 @@ export class CatalogEntry extends DomainResource {
 
 		if (obj.hasOwnProperty('additionalCharacteristic')) {
 			this.additionalCharacteristic = [];
-			for (const o of obj.additionalCharacteristic || []) {
+			for (const o of (obj.additionalCharacteristic instanceof Array ? obj.additionalCharacteristic : [])) {
 				this.additionalCharacteristic.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('additionalClassification')) {
 			this.additionalClassification = [];
-			for (const o of obj.additionalClassification || []) {
+			for (const o of (obj.additionalClassification instanceof Array ? obj.additionalClassification : [])) {
 				this.additionalClassification.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedEntry')) {
 			this.relatedEntry = [];
-			for (const o of obj.relatedEntry || []) {
+			for (const o of (obj.relatedEntry instanceof Array ? obj.relatedEntry : [])) {
 				this.relatedEntry.push(new CatalogEntryRelatedEntry(o));
 			}
 		}
@@ -7028,21 +7028,21 @@ export class ChargeItem extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('definitionUri')) {
 			this.definitionUri = [];
-			for (const o of obj.definitionUri || []) {
+			for (const o of (obj.definitionUri instanceof Array ? obj.definitionUri : [])) {
 				this.definitionUri.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('definitionCanonical')) {
 			this.definitionCanonical = [];
-			for (const o of obj.definitionCanonical || []) {
+			for (const o of (obj.definitionCanonical instanceof Array ? obj.definitionCanonical : [])) {
 				this.definitionCanonical.push(o);
 			}
 		}
@@ -7053,7 +7053,7 @@ export class ChargeItem extends DomainResource {
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -7084,7 +7084,7 @@ export class ChargeItem extends DomainResource {
 
 		if (obj.hasOwnProperty('performer')) {
 			this.performer = [];
-			for (const o of obj.performer || []) {
+			for (const o of (obj.performer instanceof Array ? obj.performer : [])) {
 				this.performer.push(new ChargeItemPerformer(o));
 			}
 		}
@@ -7107,7 +7107,7 @@ export class ChargeItem extends DomainResource {
 
 		if (obj.hasOwnProperty('bodysite')) {
 			this.bodysite = [];
-			for (const o of obj.bodysite || []) {
+			for (const o of (obj.bodysite instanceof Array ? obj.bodysite : [])) {
 				this.bodysite.push(new CodeableConcept(o));
 			}
 		}
@@ -7134,14 +7134,14 @@ export class ChargeItem extends DomainResource {
 
 		if (obj.hasOwnProperty('reason')) {
 			this.reason = [];
-			for (const o of obj.reason || []) {
+			for (const o of (obj.reason instanceof Array ? obj.reason : [])) {
 				this.reason.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('service')) {
 			this.service = [];
-			for (const o of obj.service || []) {
+			for (const o of (obj.service instanceof Array ? obj.service : [])) {
 				this.service.push(new Reference(o));
 			}
 		}
@@ -7156,21 +7156,21 @@ export class ChargeItem extends DomainResource {
 
 		if (obj.hasOwnProperty('account')) {
 			this.account = [];
-			for (const o of obj.account || []) {
+			for (const o of (obj.account instanceof Array ? obj.account : [])) {
 				this.account.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('supportingInformation')) {
 			this.supportingInformation = [];
-			for (const o of obj.supportingInformation || []) {
+			for (const o of (obj.supportingInformation instanceof Array ? obj.supportingInformation : [])) {
 				this.supportingInformation.push(new Reference(o));
 			}
 		}
@@ -7243,14 +7243,14 @@ export class ChargeItemDefinitionPropertyGroup extends Element {
 
 		if (obj.hasOwnProperty('applicability')) {
 			this.applicability = [];
-			for (const o of obj.applicability || []) {
+			for (const o of (obj.applicability instanceof Array ? obj.applicability : [])) {
 				this.applicability.push(new ChargeItemDefinitionApplicability(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('priceComponent')) {
 			this.priceComponent = [];
-			for (const o of obj.priceComponent || []) {
+			for (const o of (obj.priceComponent instanceof Array ? obj.priceComponent : [])) {
 				this.priceComponent.push(new ChargeItemDefinitionPropertyGroupPriceComponent(o));
 			}
 		}
@@ -7297,7 +7297,7 @@ export class ChargeItemDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -7312,21 +7312,21 @@ export class ChargeItemDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('derivedFromUri')) {
 			this.derivedFromUri = [];
-			for (const o of obj.derivedFromUri || []) {
+			for (const o of (obj.derivedFromUri instanceof Array ? obj.derivedFromUri : [])) {
 				this.derivedFromUri.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('replaces')) {
 			this.replaces = [];
-			for (const o of obj.replaces || []) {
+			for (const o of (obj.replaces instanceof Array ? obj.replaces : [])) {
 				this.replaces.push(o);
 			}
 		}
@@ -7349,7 +7349,7 @@ export class ChargeItemDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -7360,14 +7360,14 @@ export class ChargeItemDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -7394,21 +7394,21 @@ export class ChargeItemDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('instance')) {
 			this.instance = [];
-			for (const o of obj.instance || []) {
+			for (const o of (obj.instance instanceof Array ? obj.instance : [])) {
 				this.instance.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('applicability')) {
 			this.applicability = [];
-			for (const o of obj.applicability || []) {
+			for (const o of (obj.applicability instanceof Array ? obj.applicability : [])) {
 				this.applicability.push(new ChargeItemDefinitionApplicability(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('propertyGroup')) {
 			this.propertyGroup = [];
-			for (const o of obj.propertyGroup || []) {
+			for (const o of (obj.propertyGroup instanceof Array ? obj.propertyGroup : [])) {
 				this.propertyGroup.push(new ChargeItemDefinitionPropertyGroup(o));
 			}
 		}
@@ -7501,7 +7501,7 @@ export class CitationCitedArtifactContributorshipEntryAffiliationInfo extends El
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -7531,35 +7531,35 @@ export class CitationCitedArtifactContributorshipEntry extends Element {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('affiliationInfo')) {
 			this.affiliationInfo = [];
-			for (const o of obj.affiliationInfo || []) {
+			for (const o of (obj.affiliationInfo instanceof Array ? obj.affiliationInfo : [])) {
 				this.affiliationInfo.push(new CitationCitedArtifactContributorshipEntryAffiliationInfo(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('address')) {
 			this.address = [];
-			for (const o of obj.address || []) {
+			for (const o of (obj.address instanceof Array ? obj.address : [])) {
 				this.address.push(new Address(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('contributionType')) {
 			this.contributionType = [];
-			for (const o of obj.contributionType || []) {
+			for (const o of (obj.contributionType instanceof Array ? obj.contributionType : [])) {
 				this.contributionType.push(new CodeableConcept(o));
 			}
 		}
@@ -7570,7 +7570,7 @@ export class CitationCitedArtifactContributorshipEntry extends Element {
 
 		if (obj.hasOwnProperty('contributionInstance')) {
 			this.contributionInstance = [];
-			for (const o of obj.contributionInstance || []) {
+			for (const o of (obj.contributionInstance instanceof Array ? obj.contributionInstance : [])) {
 				this.contributionInstance.push(new CitationCitedArtifactContributorshipEntryContributionInstance(o));
 			}
 		}
@@ -7609,14 +7609,14 @@ export class CitationCitedArtifactContributorship extends Element {
 
 		if (obj.hasOwnProperty('entry')) {
 			this.entry = [];
-			for (const o of obj.entry || []) {
+			for (const o of (obj.entry instanceof Array ? obj.entry : [])) {
 				this.entry.push(new CitationCitedArtifactContributorshipEntry(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('summary')) {
 			this.summary = [];
-			for (const o of obj.summary || []) {
+			for (const o of (obj.summary instanceof Array ? obj.summary : [])) {
 				this.summary.push(new CitationCitedArtifactContributorshipSummary(o));
 			}
 		}
@@ -7671,7 +7671,7 @@ export class CitationCitedArtifactClassification extends Element {
 
 		if (obj.hasOwnProperty('classifier')) {
 			this.classifier = [];
-			for (const o of obj.classifier || []) {
+			for (const o of (obj.classifier instanceof Array ? obj.classifier : [])) {
 				this.classifier.push(new CodeableConcept(o));
 			}
 		}
@@ -7781,7 +7781,7 @@ export class CitationCitedArtifactPublicationFormPublishedIn extends Element {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -7829,7 +7829,7 @@ export class CitationCitedArtifactPublicationForm extends Element {
 
 		if (obj.hasOwnProperty('language')) {
 			this.language = [];
-			for (const o of obj.language || []) {
+			for (const o of (obj.language instanceof Array ? obj.language : [])) {
 				this.language.push(new CodeableConcept(o));
 			}
 		}
@@ -7883,7 +7883,7 @@ export class CitationCitedArtifactRelatesTo extends Element {
 
 		if (obj.hasOwnProperty('targetClassifier')) {
 			this.targetClassifier = [];
-			for (const o of obj.targetClassifier || []) {
+			for (const o of (obj.targetClassifier instanceof Array ? obj.targetClassifier : [])) {
 				this.targetClassifier.push(new CodeableConcept(o));
 			}
 		}
@@ -7971,7 +7971,7 @@ export class CitationCitedArtifactTitle extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
@@ -8038,14 +8038,14 @@ export class CitationCitedArtifact extends Element {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedIdentifier')) {
 			this.relatedIdentifier = [];
-			for (const o of obj.relatedIdentifier || []) {
+			for (const o of (obj.relatedIdentifier instanceof Array ? obj.relatedIdentifier : [])) {
 				this.relatedIdentifier.push(new Identifier(o));
 			}
 		}
@@ -8060,28 +8060,28 @@ export class CitationCitedArtifact extends Element {
 
 		if (obj.hasOwnProperty('currentState')) {
 			this.currentState = [];
-			for (const o of obj.currentState || []) {
+			for (const o of (obj.currentState instanceof Array ? obj.currentState : [])) {
 				this.currentState.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('statusDate')) {
 			this.statusDate = [];
-			for (const o of obj.statusDate || []) {
+			for (const o of (obj.statusDate instanceof Array ? obj.statusDate : [])) {
 				this.statusDate.push(new CitationCitedArtifactStatusDate(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('title')) {
 			this.title = [];
-			for (const o of obj.title || []) {
+			for (const o of (obj.title instanceof Array ? obj.title : [])) {
 				this.title.push(new CitationCitedArtifactTitle(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('abstract')) {
 			this.abstract = [];
-			for (const o of obj.abstract || []) {
+			for (const o of (obj.abstract instanceof Array ? obj.abstract : [])) {
 				this.abstract.push(new CitationCitedArtifactAbstract(o));
 			}
 		}
@@ -8092,28 +8092,28 @@ export class CitationCitedArtifact extends Element {
 
 		if (obj.hasOwnProperty('relatesTo')) {
 			this.relatesTo = [];
-			for (const o of obj.relatesTo || []) {
+			for (const o of (obj.relatesTo instanceof Array ? obj.relatesTo : [])) {
 				this.relatesTo.push(new CitationCitedArtifactRelatesTo(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('publicationForm')) {
 			this.publicationForm = [];
-			for (const o of obj.publicationForm || []) {
+			for (const o of (obj.publicationForm instanceof Array ? obj.publicationForm : [])) {
 				this.publicationForm.push(new CitationCitedArtifactPublicationForm(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('webLocation')) {
 			this.webLocation = [];
-			for (const o of obj.webLocation || []) {
+			for (const o of (obj.webLocation instanceof Array ? obj.webLocation : [])) {
 				this.webLocation.push(new CitationCitedArtifactWebLocation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('classification')) {
 			this.classification = [];
-			for (const o of obj.classification || []) {
+			for (const o of (obj.classification instanceof Array ? obj.classification : [])) {
 				this.classification.push(new CitationCitedArtifactClassification(o));
 			}
 		}
@@ -8124,7 +8124,7 @@ export class CitationCitedArtifact extends Element {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -8158,7 +8158,7 @@ export class CitationRelatesTo extends Element {
 
 		if (obj.hasOwnProperty('targetClassifier')) {
 			this.targetClassifier = [];
-			for (const o of obj.targetClassifier || []) {
+			for (const o of (obj.targetClassifier instanceof Array ? obj.targetClassifier : [])) {
 				this.targetClassifier.push(new CodeableConcept(o));
 			}
 		}
@@ -8222,7 +8222,7 @@ export class CitationClassification extends Element {
 
 		if (obj.hasOwnProperty('classifier')) {
 			this.classifier = [];
-			for (const o of obj.classifier || []) {
+			for (const o of (obj.classifier instanceof Array ? obj.classifier : [])) {
 				this.classifier.push(new CodeableConcept(o));
 			}
 		}
@@ -8264,7 +8264,7 @@ export class Citation extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -8299,7 +8299,7 @@ export class Citation extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -8310,14 +8310,14 @@ export class Citation extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -8344,70 +8344,70 @@ export class Citation extends DomainResource {
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('editor')) {
 			this.editor = [];
-			for (const o of obj.editor || []) {
+			for (const o of (obj.editor instanceof Array ? obj.editor : [])) {
 				this.editor.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reviewer')) {
 			this.reviewer = [];
-			for (const o of obj.reviewer || []) {
+			for (const o of (obj.reviewer instanceof Array ? obj.reviewer : [])) {
 				this.reviewer.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endorser')) {
 			this.endorser = [];
-			for (const o of obj.endorser || []) {
+			for (const o of (obj.endorser instanceof Array ? obj.endorser : [])) {
 				this.endorser.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('summary')) {
 			this.summary = [];
-			for (const o of obj.summary || []) {
+			for (const o of (obj.summary instanceof Array ? obj.summary : [])) {
 				this.summary.push(new CitationSummary(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('classification')) {
 			this.classification = [];
-			for (const o of obj.classification || []) {
+			for (const o of (obj.classification instanceof Array ? obj.classification : [])) {
 				this.classification.push(new CitationClassification(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('currentState')) {
 			this.currentState = [];
-			for (const o of obj.currentState || []) {
+			for (const o of (obj.currentState instanceof Array ? obj.currentState : [])) {
 				this.currentState.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('statusDate')) {
 			this.statusDate = [];
-			for (const o of obj.statusDate || []) {
+			for (const o of (obj.statusDate instanceof Array ? obj.statusDate : [])) {
 				this.statusDate.push(new CitationStatusDate(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatesTo')) {
 			this.relatesTo = [];
-			for (const o of obj.relatesTo || []) {
+			for (const o of (obj.relatesTo instanceof Array ? obj.relatesTo : [])) {
 				this.relatesTo.push(new CitationRelatesTo(o));
 			}
 		}
@@ -8472,14 +8472,14 @@ export class ClaimItemDetailSubDetail extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('programCode')) {
 			this.programCode = [];
-			for (const o of obj.programCode || []) {
+			for (const o of (obj.programCode instanceof Array ? obj.programCode : [])) {
 				this.programCode.push(new CodeableConcept(o));
 			}
 		}
@@ -8502,7 +8502,7 @@ export class ClaimItemDetailSubDetail extends Element {
 
 		if (obj.hasOwnProperty('udi')) {
 			this.udi = [];
-			for (const o of obj.udi || []) {
+			for (const o of (obj.udi instanceof Array ? obj.udi : [])) {
 				this.udi.push(new Reference(o));
 			}
 		}
@@ -8544,14 +8544,14 @@ export class ClaimItemDetail extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('programCode')) {
 			this.programCode = [];
-			for (const o of obj.programCode || []) {
+			for (const o of (obj.programCode instanceof Array ? obj.programCode : [])) {
 				this.programCode.push(new CodeableConcept(o));
 			}
 		}
@@ -8574,14 +8574,14 @@ export class ClaimItemDetail extends Element {
 
 		if (obj.hasOwnProperty('udi')) {
 			this.udi = [];
-			for (const o of obj.udi || []) {
+			for (const o of (obj.udi instanceof Array ? obj.udi : [])) {
 				this.udi.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('subDetail')) {
 			this.subDetail = [];
-			for (const o of obj.subDetail || []) {
+			for (const o of (obj.subDetail instanceof Array ? obj.subDetail : [])) {
 				this.subDetail.push(new ClaimItemDetailSubDetail(o));
 			}
 		}
@@ -8612,28 +8612,28 @@ export class ClaimItem extends Element {
 
 		if (obj.hasOwnProperty('careTeamSequence')) {
 			this.careTeamSequence = [];
-			for (const o of obj.careTeamSequence || []) {
+			for (const o of (obj.careTeamSequence instanceof Array ? obj.careTeamSequence : [])) {
 				this.careTeamSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('diagnosisSequence')) {
 			this.diagnosisSequence = [];
-			for (const o of obj.diagnosisSequence || []) {
+			for (const o of (obj.diagnosisSequence instanceof Array ? obj.diagnosisSequence : [])) {
 				this.diagnosisSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('procedureSequence')) {
 			this.procedureSequence = [];
-			for (const o of obj.procedureSequence || []) {
+			for (const o of (obj.procedureSequence instanceof Array ? obj.procedureSequence : [])) {
 				this.procedureSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('informationSequence')) {
 			this.informationSequence = [];
-			for (const o of obj.informationSequence || []) {
+			for (const o of (obj.informationSequence instanceof Array ? obj.informationSequence : [])) {
 				this.informationSequence.push(o);
 			}
 		}
@@ -8652,14 +8652,14 @@ export class ClaimItem extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('programCode')) {
 			this.programCode = [];
-			for (const o of obj.programCode || []) {
+			for (const o of (obj.programCode instanceof Array ? obj.programCode : [])) {
 				this.programCode.push(new CodeableConcept(o));
 			}
 		}
@@ -8702,7 +8702,7 @@ export class ClaimItem extends Element {
 
 		if (obj.hasOwnProperty('udi')) {
 			this.udi = [];
-			for (const o of obj.udi || []) {
+			for (const o of (obj.udi instanceof Array ? obj.udi : [])) {
 				this.udi.push(new Reference(o));
 			}
 		}
@@ -8713,21 +8713,21 @@ export class ClaimItem extends Element {
 
 		if (obj.hasOwnProperty('subSite')) {
 			this.subSite = [];
-			for (const o of obj.subSite || []) {
+			for (const o of (obj.subSite instanceof Array ? obj.subSite : [])) {
 				this.subSite.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('encounter')) {
 			this.encounter = [];
-			for (const o of obj.encounter || []) {
+			for (const o of (obj.encounter instanceof Array ? obj.encounter : [])) {
 				this.encounter.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('detail')) {
 			this.detail = [];
-			for (const o of obj.detail || []) {
+			for (const o of (obj.detail instanceof Array ? obj.detail : [])) {
 				this.detail.push(new ClaimItemDetail(o));
 			}
 		}
@@ -8814,7 +8814,7 @@ export class ClaimInsurance extends Element {
 
 		if (obj.hasOwnProperty('preAuthRef')) {
 			this.preAuthRef = [];
-			for (const o of obj.preAuthRef || []) {
+			for (const o of (obj.preAuthRef instanceof Array ? obj.preAuthRef : [])) {
 				this.preAuthRef.push(o);
 			}
 		}
@@ -8844,7 +8844,7 @@ export class ClaimProcedure extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
@@ -8863,7 +8863,7 @@ export class ClaimProcedure extends Element {
 
 		if (obj.hasOwnProperty('udi')) {
 			this.udi = [];
-			for (const o of obj.udi || []) {
+			for (const o of (obj.udi instanceof Array ? obj.udi : [])) {
 				this.udi.push(new Reference(o));
 			}
 		}
@@ -8896,7 +8896,7 @@ export class ClaimDiagnosis extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
@@ -9065,7 +9065,7 @@ export class Claim extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -9120,7 +9120,7 @@ export class Claim extends DomainResource {
 
 		if (obj.hasOwnProperty('related')) {
 			this.related = [];
-			for (const o of obj.related || []) {
+			for (const o of (obj.related instanceof Array ? obj.related : [])) {
 				this.related.push(new ClaimRelated(o));
 			}
 		}
@@ -9147,35 +9147,35 @@ export class Claim extends DomainResource {
 
 		if (obj.hasOwnProperty('careTeam')) {
 			this.careTeam = [];
-			for (const o of obj.careTeam || []) {
+			for (const o of (obj.careTeam instanceof Array ? obj.careTeam : [])) {
 				this.careTeam.push(new ClaimCareTeam(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('supportingInfo')) {
 			this.supportingInfo = [];
-			for (const o of obj.supportingInfo || []) {
+			for (const o of (obj.supportingInfo instanceof Array ? obj.supportingInfo : [])) {
 				this.supportingInfo.push(new ClaimSupportingInfo(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('diagnosis')) {
 			this.diagnosis = [];
-			for (const o of obj.diagnosis || []) {
+			for (const o of (obj.diagnosis instanceof Array ? obj.diagnosis : [])) {
 				this.diagnosis.push(new ClaimDiagnosis(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('procedure')) {
 			this.procedure = [];
-			for (const o of obj.procedure || []) {
+			for (const o of (obj.procedure instanceof Array ? obj.procedure : [])) {
 				this.procedure.push(new ClaimProcedure(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('insurance')) {
 			this.insurance = [];
-			for (const o of obj.insurance || []) {
+			for (const o of (obj.insurance instanceof Array ? obj.insurance : [])) {
 				this.insurance.push(new ClaimInsurance(o));
 			}
 		}
@@ -9186,7 +9186,7 @@ export class Claim extends DomainResource {
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new ClaimItem(o));
 			}
 		}
@@ -9382,7 +9382,7 @@ export class ClaimResponseAddItemDetailSubDetail extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
@@ -9405,14 +9405,14 @@ export class ClaimResponseAddItemDetailSubDetail extends Element {
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ClaimResponseItemAdjudication(o));
 			}
 		}
@@ -9439,7 +9439,7 @@ export class ClaimResponseAddItemDetail extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
@@ -9462,21 +9462,21 @@ export class ClaimResponseAddItemDetail extends Element {
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ClaimResponseItemAdjudication(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('subDetail')) {
 			this.subDetail = [];
-			for (const o of obj.subDetail || []) {
+			for (const o of (obj.subDetail instanceof Array ? obj.subDetail : [])) {
 				this.subDetail.push(new ClaimResponseAddItemDetailSubDetail(o));
 			}
 		}
@@ -9500,28 +9500,28 @@ export class ClaimResponseAddItem extends Element {
 
 		if (obj.hasOwnProperty('itemSequence')) {
 			this.itemSequence = [];
-			for (const o of obj.itemSequence || []) {
+			for (const o of (obj.itemSequence instanceof Array ? obj.itemSequence : [])) {
 				this.itemSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('detailSequence')) {
 			this.detailSequence = [];
-			for (const o of obj.detailSequence || []) {
+			for (const o of (obj.detailSequence instanceof Array ? obj.detailSequence : [])) {
 				this.detailSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('subdetailSequence')) {
 			this.subdetailSequence = [];
-			for (const o of obj.subdetailSequence || []) {
+			for (const o of (obj.subdetailSequence instanceof Array ? obj.subdetailSequence : [])) {
 				this.subdetailSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('provider')) {
 			this.provider = [];
-			for (const o of obj.provider || []) {
+			for (const o of (obj.provider instanceof Array ? obj.provider : [])) {
 				this.provider.push(new Reference(o));
 			}
 		}
@@ -9532,14 +9532,14 @@ export class ClaimResponseAddItem extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('programCode')) {
 			this.programCode = [];
-			for (const o of obj.programCode || []) {
+			for (const o of (obj.programCode instanceof Array ? obj.programCode : [])) {
 				this.programCode.push(new CodeableConcept(o));
 			}
 		}
@@ -9586,28 +9586,28 @@ export class ClaimResponseAddItem extends Element {
 
 		if (obj.hasOwnProperty('subSite')) {
 			this.subSite = [];
-			for (const o of obj.subSite || []) {
+			for (const o of (obj.programCode instanceof Array ? obj.subSite : [])) {
 				this.subSite.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ClaimResponseItemAdjudication(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('detail')) {
 			this.detail = [];
-			for (const o of obj.detail || []) {
+			for (const o of (obj.detail instanceof Array ? obj.detail : [])) {
 				this.detail.push(new ClaimResponseAddItemDetail(o));
 			}
 		}
@@ -9647,14 +9647,14 @@ export class ClaimResponseItemDetailSubDetail extends Element {
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ClaimResponseItemAdjudication(o));
 			}
 		}
@@ -9676,21 +9676,21 @@ export class ClaimResponseItemDetail extends Element {
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ClaimResponseItemAdjudication(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('subDetail')) {
 			this.subDetail = [];
-			for (const o of obj.subDetail || []) {
+			for (const o of (obj.subDetail instanceof Array ? obj.subDetail : [])) {
 				this.subDetail.push(new ClaimResponseItemDetailSubDetail(o));
 			}
 		}
@@ -9741,21 +9741,21 @@ export class ClaimResponseItem extends Element {
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ClaimResponseItemAdjudication(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('detail')) {
 			this.detail = [];
-			for (const o of obj.detail || []) {
+			for (const o of (obj.detail instanceof Array ? obj.detail : [])) {
 				this.detail.push(new ClaimResponseItemDetail(o));
 			}
 		}
@@ -9777,7 +9777,7 @@ export class ClaimResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -9840,28 +9840,28 @@ export class ClaimResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new ClaimResponseItem(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('addItem')) {
 			this.addItem = [];
-			for (const o of obj.addItem || []) {
+			for (const o of (obj.addItem instanceof Array ? obj.addItem : [])) {
 				this.addItem.push(new ClaimResponseAddItem(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ClaimResponseItemAdjudication(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('total')) {
 			this.total = [];
-			for (const o of obj.total || []) {
+			for (const o of (obj.total instanceof Array ? obj.total : [])) {
 				this.total.push(new ClaimResponseTotal(o));
 			}
 		}
@@ -9884,28 +9884,28 @@ export class ClaimResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('processNote')) {
 			this.processNote = [];
-			for (const o of obj.processNote || []) {
+			for (const o of (obj.processNote instanceof Array ? obj.processNote : [])) {
 				this.processNote.push(new ClaimResponseProcessNote(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('communicationRequest')) {
 			this.communicationRequest = [];
-			for (const o of obj.communicationRequest || []) {
+			for (const o of (obj.communicationRequest instanceof Array ? obj.communicationRequest : [])) {
 				this.communicationRequest.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('insurance')) {
 			this.insurance = [];
-			for (const o of obj.insurance || []) {
+			for (const o of (obj.insurance instanceof Array ? obj.insurance : [])) {
 				this.insurance.push(new ClaimResponseInsurance(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('error')) {
 			this.error = [];
-			for (const o of obj.error || []) {
+			for (const o of (obj.error instanceof Array ? obj.error : [])) {
 				this.error.push(new ClaimResponseError(o));
 			}
 		}
@@ -9975,7 +9975,7 @@ export class ClinicalImpressionInvestigation extends Element {
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new Reference(o));
 			}
 		}
@@ -9995,7 +9995,7 @@ export class ClinicalImpression extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -10046,21 +10046,21 @@ export class ClinicalImpression extends DomainResource {
 
 		if (obj.hasOwnProperty('problem')) {
 			this.problem = [];
-			for (const o of obj.problem || []) {
+			for (const o of (obj.problem instanceof Array ? obj.problem : [])) {
 				this.problem.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('investigation')) {
 			this.investigation = [];
-			for (const o of obj.investigation || []) {
+			for (const o of (obj.investigation instanceof Array ? obj.investigation : [])) {
 				this.investigation.push(new ClinicalImpressionInvestigation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('protocol')) {
 			this.protocol = [];
-			for (const o of obj.protocol || []) {
+			for (const o of (obj.protocol instanceof Array ? obj.protocol : [])) {
 				this.protocol.push(o);
 			}
 		}
@@ -10071,35 +10071,35 @@ export class ClinicalImpression extends DomainResource {
 
 		if (obj.hasOwnProperty('finding')) {
 			this.finding = [];
-			for (const o of obj.finding || []) {
+			for (const o of (obj.finding instanceof Array ? obj.finding : [])) {
 				this.finding.push(new ClinicalImpressionFinding(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('prognosisCodeableConcept')) {
 			this.prognosisCodeableConcept = [];
-			for (const o of obj.prognosisCodeableConcept || []) {
+			for (const o of (obj.prognosisCodeableConcept instanceof Array ? obj.prognosisCodeableConcept : [])) {
 				this.prognosisCodeableConcept.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('prognosisReference')) {
 			this.prognosisReference = [];
-			for (const o of obj.prognosisReference || []) {
+			for (const o of (obj.prognosisReference instanceof Array ? obj.prognosisReference : [])) {
 				this.prognosisReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('supportingInfo')) {
 			this.supportingInfo = [];
-			for (const o of obj.supportingInfo || []) {
+			for (const o of (obj.supportingInfo instanceof Array ? obj.supportingInfo : [])) {
 				this.supportingInfo.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -10195,7 +10195,7 @@ export class ClinicalUseDefinitionInteraction extends Element {
 
 		if (obj.hasOwnProperty('interactant')) {
 			this.interactant = [];
-			for (const o of obj.interactant || []) {
+			for (const o of (obj.interactant instanceof Array ? obj.interactant : [])) {
 				this.interactant.push(new ClinicalUseDefinitionInteractionInteractant(o));
 			}
 		}
@@ -10214,7 +10214,7 @@ export class ClinicalUseDefinitionInteraction extends Element {
 
 		if (obj.hasOwnProperty('management')) {
 			this.management = [];
-			for (const o of obj.management || []) {
+			for (const o of (obj.management instanceof Array ? obj.management : [])) {
 				this.management.push(new CodeableConcept(o));
 			}
 		}
@@ -10242,7 +10242,7 @@ export class ClinicalUseDefinitionIndication extends Element {
 
 		if (obj.hasOwnProperty('comorbidity')) {
 			this.comorbidity = [];
-			for (const o of obj.comorbidity || []) {
+			for (const o of (obj.comorbidity instanceof Array ? obj.comorbidity : [])) {
 				this.comorbidity.push(new CodeableReference(o));
 			}
 		}
@@ -10261,14 +10261,14 @@ export class ClinicalUseDefinitionIndication extends Element {
 
 		if (obj.hasOwnProperty('undesirableEffect')) {
 			this.undesirableEffect = [];
-			for (const o of obj.undesirableEffect || []) {
+			for (const o of (obj.undesirableEffect instanceof Array ? obj.undesirableEffect : [])) {
 				this.undesirableEffect.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('otherTherapy')) {
 			this.otherTherapy = [];
-			for (const o of obj.otherTherapy || []) {
+			for (const o of (obj.otherTherapy instanceof Array ? obj.otherTherapy : [])) {
 				this.otherTherapy.push(new ClinicalUseDefinitionContraindicationOtherTherapy(o));
 			}
 		}
@@ -10317,21 +10317,21 @@ export class ClinicalUseDefinitionContraindication extends Element {
 
 		if (obj.hasOwnProperty('comorbidity')) {
 			this.comorbidity = [];
-			for (const o of obj.comorbidity || []) {
+			for (const o of (obj.comorbidity instanceof Array ? obj.comorbidity : [])) {
 				this.comorbidity.push(new CodeableReference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('indication')) {
 			this.indication = [];
-			for (const o of obj.indication || []) {
+			for (const o of (obj.indication instanceof Array ? obj.indication : [])) {
 				this.indication.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('otherTherapy')) {
 			this.otherTherapy = [];
-			for (const o of obj.otherTherapy || []) {
+			for (const o of (obj.otherTherapy instanceof Array ? obj.otherTherapy : [])) {
 				this.otherTherapy.push(new ClinicalUseDefinitionContraindicationOtherTherapy(o));
 			}
 		}
@@ -10354,7 +10354,7 @@ export class ClinicalUseDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -10365,14 +10365,14 @@ export class ClinicalUseDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('subject')) {
 			this.subject = [];
-			for (const o of obj.subject || []) {
+			for (const o of (obj.subject instanceof Array ? obj.subject : [])) {
 				this.subject.push(new Reference(o));
 			}
 		}
@@ -10395,7 +10395,7 @@ export class ClinicalUseDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('population')) {
 			this.population = [];
-			for (const o of obj.population || []) {
+			for (const o of (obj.population instanceof Array ? obj.population : [])) {
 				this.population.push(new Reference(o));
 			}
 		}
@@ -10509,21 +10509,21 @@ export class CodeSystemConcept implements IFhir.ICodeSystemConcept {
 
 		if (obj.hasOwnProperty('designation')) {
 			this.designation = [];
-			for (const o of obj.designation || []) {
+			for (const o of (obj.designation instanceof Array ? obj.designation : [])) {
 				this.designation.push(new CodeSystemConceptDesignation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('property')) {
 			this.property = [];
-			for (const o of obj.property || []) {
+			for (const o of (obj.property instanceof Array ? obj.property : [])) {
 				this.property.push(new CodeSystemConceptProperty(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('concept')) {
 			this.concept = [];
-			for (const o of obj.concept || []) {
+			for (const o of (obj.concept instanceof Array ? obj.concept : [])) {
 				this.concept.push(new CodeSystemConcept(o));
 			}
 		}
@@ -10580,7 +10580,7 @@ export class CodeSystemFilter extends Element {
 
 		if (obj.hasOwnProperty('operator')) {
 			this.operator = [];
-			for (const o of obj.operator || []) {
+			for (const o of (obj.operator instanceof Array ? obj.operator : [])) {
 				this.operator.push(o);
 			}
 		}
@@ -10610,7 +10610,7 @@ export class CodeSystem extends DomainResource implements IFhir.ICodeSystem {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -10645,7 +10645,7 @@ export class CodeSystem extends DomainResource implements IFhir.ICodeSystem {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -10656,14 +10656,14 @@ export class CodeSystem extends DomainResource implements IFhir.ICodeSystem {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -10710,21 +10710,21 @@ export class CodeSystem extends DomainResource implements IFhir.ICodeSystem {
 
 		if (obj.hasOwnProperty('filter')) {
 			this.filter = [];
-			for (const o of obj.filter || []) {
+			for (const o of (obj.filter instanceof Array ? obj.filter : [])) {
 				this.filter.push(new CodeSystemFilter(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('property')) {
 			this.property = [];
-			for (const o of obj.property || []) {
+			for (const o of (obj.property instanceof Array ? obj.property : [])) {
 				this.property.push(new CodeSystemProperty(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('concept')) {
 			this.concept = [];
-			for (const o of obj.concept || []) {
+			for (const o of (obj.concept instanceof Array ? obj.concept : [])) {
 				this.concept.push(new CodeSystemConcept(o));
 			}
 		}
@@ -10792,42 +10792,42 @@ export class Communication extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesCanonical')) {
 			this.instantiatesCanonical = [];
-			for (const o of obj.instantiatesCanonical || []) {
+			for (const o of (obj.instantiatesCanonical instanceof Array ? obj.instantiatesCanonical : [])) {
 				this.instantiatesCanonical.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesUri')) {
 			this.instantiatesUri = [];
-			for (const o of obj.instantiatesUri || []) {
+			for (const o of (obj.instantiatesUri instanceof Array ? obj.instantiatesUri : [])) {
 				this.instantiatesUri.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('inResponseTo')) {
 			this.inResponseTo = [];
-			for (const o of obj.inResponseTo || []) {
+			for (const o of (obj.inResponseTo instanceof Array ? obj.inResponseTo : [])) {
 				this.inResponseTo.push(new Reference(o));
 			}
 		}
@@ -10842,7 +10842,7 @@ export class Communication extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -10853,7 +10853,7 @@ export class Communication extends DomainResource {
 
 		if (obj.hasOwnProperty('medium')) {
 			this.medium = [];
-			for (const o of obj.medium || []) {
+			for (const o of (obj.medium instanceof Array ? obj.medium : [])) {
 				this.medium.push(new CodeableConcept(o));
 			}
 		}
@@ -10868,7 +10868,7 @@ export class Communication extends DomainResource {
 
 		if (obj.hasOwnProperty('about')) {
 			this.about = [];
-			for (const o of obj.about || []) {
+			for (const o of (obj.about instanceof Array ? obj.about : [])) {
 				this.about.push(new Reference(o));
 			}
 		}
@@ -10887,7 +10887,7 @@ export class Communication extends DomainResource {
 
 		if (obj.hasOwnProperty('recipient')) {
 			this.recipient = [];
-			for (const o of obj.recipient || []) {
+			for (const o of (obj.recipient instanceof Array ? obj.recipient : [])) {
 				this.recipient.push(new Reference(o));
 			}
 		}
@@ -10898,28 +10898,28 @@ export class Communication extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('payload')) {
 			this.payload = [];
-			for (const o of obj.payload || []) {
+			for (const o of (obj.payload instanceof Array ? obj.payload : [])) {
 				this.payload.push(new CommunicationPayload(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -10984,21 +10984,21 @@ export class CommunicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('replaces')) {
 			this.replaces = [];
-			for (const o of obj.replaces || []) {
+			for (const o of (obj.replaces instanceof Array ? obj.replaces : [])) {
 				this.replaces.push(new Reference(o));
 			}
 		}
@@ -11017,7 +11017,7 @@ export class CommunicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -11032,7 +11032,7 @@ export class CommunicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('medium')) {
 			this.medium = [];
-			for (const o of obj.medium || []) {
+			for (const o of (obj.medium instanceof Array ? obj.medium : [])) {
 				this.medium.push(new CodeableConcept(o));
 			}
 		}
@@ -11043,7 +11043,7 @@ export class CommunicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('about')) {
 			this.about = [];
-			for (const o of obj.about || []) {
+			for (const o of (obj.about instanceof Array ? obj.about : [])) {
 				this.about.push(new Reference(o));
 			}
 		}
@@ -11054,7 +11054,7 @@ export class CommunicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('payload')) {
 			this.payload = [];
-			for (const o of obj.payload || []) {
+			for (const o of (obj.payload instanceof Array ? obj.payload : [])) {
 				this.payload.push(new CommunicationRequestPayload(o));
 			}
 		}
@@ -11077,7 +11077,7 @@ export class CommunicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('recipient')) {
 			this.recipient = [];
-			for (const o of obj.recipient || []) {
+			for (const o of (obj.recipient instanceof Array ? obj.recipient : [])) {
 				this.recipient.push(new Reference(o));
 			}
 		}
@@ -11088,21 +11088,21 @@ export class CommunicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -11145,7 +11145,7 @@ export class CompartmentDefinitionResource extends Element {
 
 		if (obj.hasOwnProperty('param')) {
 			this.param = [];
-			for (const o of obj.param || []) {
+			for (const o of (obj.param instanceof Array ? obj.param : [])) {
 				this.param.push(o);
 			}
 		}
@@ -11198,7 +11198,7 @@ export class CompartmentDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -11209,7 +11209,7 @@ export class CompartmentDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
@@ -11228,7 +11228,7 @@ export class CompartmentDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('resource')) {
 			this.resource = [];
-			for (const o of obj.resource || []) {
+			for (const o of (obj.resource instanceof Array ? obj.resource : [])) {
 				this.resource.push(new CompartmentDefinitionResource(o));
 			}
 		}
@@ -11266,7 +11266,7 @@ export class CompositionSection extends Element {
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new Reference(o));
 			}
 		}
@@ -11289,7 +11289,7 @@ export class CompositionSection extends Element {
 
 		if (obj.hasOwnProperty('entry')) {
 			this.entry = [];
-			for (const o of obj.entry || []) {
+			for (const o of (obj.entry instanceof Array ? obj.entry : [])) {
 				this.entry.push(new Reference(o));
 			}
 		}
@@ -11300,7 +11300,7 @@ export class CompositionSection extends Element {
 
 		if (obj.hasOwnProperty('section')) {
 			this.section = [];
-			for (const o of obj.section || []) {
+			for (const o of (obj.section instanceof Array ? obj.section : [])) {
 				this.section.push(new CompositionSection(o));
 			}
 		}
@@ -11325,7 +11325,7 @@ export class CompositionEvent extends Element {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new CodeableConcept(o));
 			}
 		}
@@ -11336,7 +11336,7 @@ export class CompositionEvent extends Element {
 
 		if (obj.hasOwnProperty('detail')) {
 			this.detail = [];
-			for (const o of obj.detail || []) {
+			for (const o of (obj.detail instanceof Array ? obj.detail : [])) {
 				this.detail.push(new Reference(o));
 			}
 		}
@@ -11415,7 +11415,7 @@ export class Composition extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -11434,7 +11434,7 @@ export class Composition extends DomainResource {
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new Reference(o));
 			}
 		}
@@ -11449,7 +11449,7 @@ export class Composition extends DomainResource {
 
 		if (obj.hasOwnProperty('attester')) {
 			this.attester = [];
-			for (const o of obj.attester || []) {
+			for (const o of (obj.attester instanceof Array ? obj.attester : [])) {
 				this.attester.push(new CompositionAttester(o));
 			}
 		}
@@ -11460,21 +11460,21 @@ export class Composition extends DomainResource {
 
 		if (obj.hasOwnProperty('relatesTo')) {
 			this.relatesTo = [];
-			for (const o of obj.relatesTo || []) {
+			for (const o of (obj.relatesTo instanceof Array ? obj.relatesTo : [])) {
 				this.relatesTo.push(new CompositionRelatesTo(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('event')) {
 			this.event = [];
-			for (const o of obj.event || []) {
+			for (const o of (obj.event instanceof Array ? obj.event : [])) {
 				this.event.push(new CompositionEvent(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('section')) {
 			this.section = [];
-			for (const o of obj.section || []) {
+			for (const o of (obj.section instanceof Array ? obj.section : [])) {
 				this.section.push(new CompositionSection(o));
 			}
 		}
@@ -11577,14 +11577,14 @@ export class ConceptMapGroupElementTarget extends Element {
 
 		if (obj.hasOwnProperty('dependsOn')) {
 			this.dependsOn = [];
-			for (const o of obj.dependsOn || []) {
+			for (const o of (obj.dependsOn instanceof Array ? obj.dependsOn : [])) {
 				this.dependsOn.push(new ConceptMapGroupElementTargetDependsOn(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('product')) {
 			this.product = [];
-			for (const o of obj.product || []) {
+			for (const o of (obj.product instanceof Array ? obj.product : [])) {
 				this.product.push(new ConceptMapGroupElementTargetDependsOn(o));
 			}
 		}
@@ -11613,7 +11613,7 @@ export class ConceptMapGroupElement extends Element {
 
 		if (obj.hasOwnProperty('target')) {
 			this.target = [];
-			for (const o of obj.target || []) {
+			for (const o of (obj.target instanceof Array ? obj.target : [])) {
 				this.target.push(new ConceptMapGroupElementTarget(o));
 			}
 		}
@@ -11647,7 +11647,7 @@ export class ConceptMapGroup extends Element {
 
 		if (obj.hasOwnProperty('element')) {
 			this.element = [];
-			for (const o of obj.element || []) {
+			for (const o of (obj.element instanceof Array ? obj.element : [])) {
 				this.element.push(new ConceptMapGroupElement(o));
 			}
 		}
@@ -11711,7 +11711,7 @@ export class ConceptMap extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -11722,14 +11722,14 @@ export class ConceptMap extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -11760,7 +11760,7 @@ export class ConceptMap extends DomainResource {
 
 		if (obj.hasOwnProperty('group')) {
 			this.group = [];
-			for (const o of obj.group || []) {
+			for (const o of (obj.group instanceof Array ? obj.group : [])) {
 				this.group.push(new ConceptMapGroup(o));
 			}
 		}
@@ -11796,14 +11796,14 @@ export class ConditionEvidence extends Element {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('detail')) {
 			this.detail = [];
-			for (const o of obj.detail || []) {
+			for (const o of (obj.detail instanceof Array ? obj.detail : [])) {
 				this.detail.push(new Reference(o));
 			}
 		}
@@ -11824,7 +11824,7 @@ export class ConditionStage extends Element {
 
 		if (obj.hasOwnProperty('assessment')) {
 			this.assessment = [];
-			for (const o of obj.assessment || []) {
+			for (const o of (obj.assessment instanceof Array ? obj.assessment : [])) {
 				this.assessment.push(new Reference(o));
 			}
 		}
@@ -11849,7 +11849,7 @@ export class Condition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -11864,7 +11864,7 @@ export class Condition extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -11879,7 +11879,7 @@ export class Condition extends DomainResource {
 
 		if (obj.hasOwnProperty('bodySite')) {
 			this.bodySite = [];
-			for (const o of obj.bodySite || []) {
+			for (const o of (obj.bodySite instanceof Array ? obj.bodySite : [])) {
 				this.bodySite.push(new CodeableConcept(o));
 			}
 		}
@@ -11946,21 +11946,21 @@ export class Condition extends DomainResource {
 
 		if (obj.hasOwnProperty('stage')) {
 			this.stage = [];
-			for (const o of obj.stage || []) {
+			for (const o of (obj.stage instanceof Array ? obj.stage : [])) {
 				this.stage.push(new ConditionStage(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('evidence')) {
 			this.evidence = [];
-			for (const o of obj.evidence || []) {
+			for (const o of (obj.evidence instanceof Array ? obj.evidence : [])) {
 				this.evidence.push(new ConditionEvidence(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -12045,42 +12045,42 @@ export class ConsentProvision extends Element {
 
 		if (obj.hasOwnProperty('actor')) {
 			this.actor = [];
-			for (const o of obj.actor || []) {
+			for (const o of (obj.actor instanceof Array ? obj.actor : [])) {
 				this.actor.push(new ConsentProvisionActor(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('securityLabel')) {
 			this.securityLabel = [];
-			for (const o of obj.securityLabel || []) {
+			for (const o of (obj.securityLabel instanceof Array ? obj.securityLabel : [])) {
 				this.securityLabel.push(new Coding(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('purpose')) {
 			this.purpose = [];
-			for (const o of obj.purpose || []) {
+			for (const o of (obj.purpose instanceof Array ? obj.purpose : [])) {
 				this.purpose.push(new Coding(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('class')) {
 			this.class = [];
-			for (const o of obj.class || []) {
+			for (const o of (obj.class instanceof Array ? obj.class : [])) {
 				this.class.push(new Coding(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new CodeableConcept(o));
 			}
 		}
@@ -12091,14 +12091,14 @@ export class ConsentProvision extends Element {
 
 		if (obj.hasOwnProperty('data')) {
 			this.data = [];
-			for (const o of obj.data || []) {
+			for (const o of (obj.data instanceof Array ? obj.data : [])) {
 				this.data.push(new ConsentProvisionData(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('provision')) {
 			this.provision = [];
-			for (const o of obj.provision || []) {
+			for (const o of (obj.provision instanceof Array ? obj.provision : [])) {
 				this.provision.push(new ConsentProvision(o));
 			}
 		}
@@ -12168,7 +12168,7 @@ export class Consent extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -12183,7 +12183,7 @@ export class Consent extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -12198,14 +12198,14 @@ export class Consent extends DomainResource {
 
 		if (obj.hasOwnProperty('performer')) {
 			this.performer = [];
-			for (const o of obj.performer || []) {
+			for (const o of (obj.performer instanceof Array ? obj.performer : [])) {
 				this.performer.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('organization')) {
 			this.organization = [];
-			for (const o of obj.organization || []) {
+			for (const o of (obj.organization instanceof Array ? obj.organization : [])) {
 				this.organization.push(new Reference(o));
 			}
 		}
@@ -12220,7 +12220,7 @@ export class Consent extends DomainResource {
 
 		if (obj.hasOwnProperty('policy')) {
 			this.policy = [];
-			for (const o of obj.policy || []) {
+			for (const o of (obj.policy instanceof Array ? obj.policy : [])) {
 				this.policy.push(new ConsentPolicy(o));
 			}
 		}
@@ -12231,7 +12231,7 @@ export class Consent extends DomainResource {
 
 		if (obj.hasOwnProperty('verification')) {
 			this.verification = [];
-			for (const o of obj.verification || []) {
+			for (const o of (obj.verification instanceof Array ? obj.verification : [])) {
 				this.verification.push(new ConsentVerification(o));
 			}
 		}
@@ -12327,7 +12327,7 @@ export class ContractSigner extends Element {
 
 		if (obj.hasOwnProperty('signature')) {
 			this.signature = [];
-			for (const o of obj.signature || []) {
+			for (const o of (obj.signature instanceof Array ? obj.signature : [])) {
 				this.signature.push(new Signature(o));
 			}
 		}
@@ -12345,7 +12345,7 @@ export class ContractTermActionSubject extends Element {
 
 		if (obj.hasOwnProperty('reference')) {
 			this.reference = [];
-			for (const o of obj.reference || []) {
+			for (const o of (obj.reference instanceof Array ? obj.reference : [])) {
 				this.reference.push(new Reference(o));
 			}
 		}
@@ -12374,7 +12374,7 @@ export class ContractTermAction extends Element {
 
 		if (obj.hasOwnProperty('subject')) {
 			this.subject = [];
-			for (const o of obj.subject || []) {
+			for (const o of (obj.subject instanceof Array ? obj.subject : [])) {
 				this.subject.push(new ContractTermActionSubject(o));
 			}
 		}
@@ -12385,7 +12385,7 @@ export class ContractTermAction extends Element {
 
 		if (obj.hasOwnProperty('linkId')) {
 			this.linkId = [];
-			for (const o of obj.linkId || []) {
+			for (const o of (obj.linkId instanceof Array ? obj.linkId : [])) {
 				this.linkId.push(o);
 			}
 		}
@@ -12400,7 +12400,7 @@ export class ContractTermAction extends Element {
 
 		if (obj.hasOwnProperty('contextLinkId')) {
 			this.contextLinkId = [];
-			for (const o of obj.contextLinkId || []) {
+			for (const o of (obj.contextLinkId instanceof Array ? obj.contextLinkId : [])) {
 				this.contextLinkId.push(o);
 			}
 		}
@@ -12419,21 +12419,21 @@ export class ContractTermAction extends Element {
 
 		if (obj.hasOwnProperty('requester')) {
 			this.requester = [];
-			for (const o of obj.requester || []) {
+			for (const o of (obj.requester instanceof Array ? obj.requester : [])) {
 				this.requester.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('requesterLinkId')) {
 			this.requesterLinkId = [];
-			for (const o of obj.requesterLinkId || []) {
+			for (const o of (obj.requesterLinkId instanceof Array ? obj.requesterLinkId : [])) {
 				this.requesterLinkId.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('performerType')) {
 			this.performerType = [];
-			for (const o of obj.performerType || []) {
+			for (const o of (obj.performerType instanceof Array ? obj.performerType : [])) {
 				this.performerType.push(new CodeableConcept(o));
 			}
 		}
@@ -12448,49 +12448,49 @@ export class ContractTermAction extends Element {
 
 		if (obj.hasOwnProperty('performerLinkId')) {
 			this.performerLinkId = [];
-			for (const o of obj.performerLinkId || []) {
+			for (const o of (obj.performerLinkId instanceof Array ? obj.performerLinkId : [])) {
 				this.performerLinkId.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reason')) {
 			this.reason = [];
-			for (const o of obj.reason || []) {
+			for (const o of (obj.reason instanceof Array ? obj.reason : [])) {
 				this.reason.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonLinkId')) {
 			this.reasonLinkId = [];
-			for (const o of obj.reasonLinkId || []) {
+			for (const o of (obj.reasonLinkId instanceof Array ? obj.reasonLinkId : [])) {
 				this.reasonLinkId.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('securityLabelNumber')) {
 			this.securityLabelNumber = [];
-			for (const o of obj.securityLabelNumber || []) {
+			for (const o of (obj.securityLabelNumber instanceof Array ? obj.securityLabelNumber : [])) {
 				this.securityLabelNumber.push(o);
 			}
 		}
@@ -12580,14 +12580,14 @@ export class ContractTermAssetValuedItem extends Element {
 
 		if (obj.hasOwnProperty('linkId')) {
 			this.linkId = [];
-			for (const o of obj.linkId || []) {
+			for (const o of (obj.linkId instanceof Array ? obj.linkId : [])) {
 				this.linkId.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('securityLabelNumber')) {
 			this.securityLabelNumber = [];
-			for (const o of obj.securityLabelNumber || []) {
+			for (const o of (obj.securityLabelNumber instanceof Array ? obj.securityLabelNumber : [])) {
 				this.securityLabelNumber.push(o);
 			}
 		}
@@ -12621,7 +12621,7 @@ export class ContractTermAssetContext extends Element {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new CodeableConcept(o));
 			}
 		}
@@ -12647,21 +12647,21 @@ export class ContractTermAsset extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('typeReference')) {
 			this.typeReference = [];
-			for (const o of obj.typeReference || []) {
+			for (const o of (obj.typeReference instanceof Array ? obj.typeReference : [])) {
 				this.typeReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('subtype')) {
 			this.subtype = [];
-			for (const o of obj.subtype || []) {
+			for (const o of (obj.subtype instanceof Array ? obj.subtype : [])) {
 				this.subtype.push(new CodeableConcept(o));
 			}
 		}
@@ -12672,7 +12672,7 @@ export class ContractTermAsset extends Element {
 
 		if (obj.hasOwnProperty('context')) {
 			this.context = [];
-			for (const o of obj.context || []) {
+			for (const o of (obj.context instanceof Array ? obj.context : [])) {
 				this.context.push(new ContractTermAssetContext(o));
 			}
 		}
@@ -12683,21 +12683,21 @@ export class ContractTermAsset extends Element {
 
 		if (obj.hasOwnProperty('periodType')) {
 			this.periodType = [];
-			for (const o of obj.periodType || []) {
+			for (const o of (obj.periodType instanceof Array ? obj.periodType : [])) {
 				this.periodType.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('period')) {
 			this.period = [];
-			for (const o of obj.period || []) {
+			for (const o of (obj.period instanceof Array ? obj.period : [])) {
 				this.period.push(new Period(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('usePeriod')) {
 			this.usePeriod = [];
-			for (const o of obj.usePeriod || []) {
+			for (const o of (obj.usePeriod instanceof Array ? obj.usePeriod : [])) {
 				this.usePeriod.push(new Period(o));
 			}
 		}
@@ -12708,28 +12708,28 @@ export class ContractTermAsset extends Element {
 
 		if (obj.hasOwnProperty('linkId')) {
 			this.linkId = [];
-			for (const o of obj.linkId || []) {
+			for (const o of (obj.linkId instanceof Array ? obj.linkId : [])) {
 				this.linkId.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('answer')) {
 			this.answer = [];
-			for (const o of obj.answer || []) {
+			for (const o of (obj.answer instanceof Array ? obj.answer : [])) {
 				this.answer.push(new ContractTermOfferAnswer(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('securityLabelNumber')) {
 			this.securityLabelNumber = [];
-			for (const o of obj.securityLabelNumber || []) {
+			for (const o of (obj.securityLabelNumber instanceof Array ? obj.securityLabelNumber : [])) {
 				this.securityLabelNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('valuedItem')) {
 			this.valuedItem = [];
-			for (const o of obj.valuedItem || []) {
+			for (const o of (obj.valuedItem instanceof Array ? obj.valuedItem : [])) {
 				this.valuedItem.push(new ContractTermAssetValuedItem(o));
 			}
 		}
@@ -12827,7 +12827,7 @@ export class ContractTermOfferParty extends Element {
 
 		if (obj.hasOwnProperty('reference')) {
 			this.reference = [];
-			for (const o of obj.reference || []) {
+			for (const o of (obj.reference instanceof Array ? obj.reference : [])) {
 				this.reference.push(new Reference(o));
 			}
 		}
@@ -12848,14 +12848,14 @@ export class ContractTermOffer extends Element {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('party')) {
 			this.party = [];
-			for (const o of obj.party || []) {
+			for (const o of (obj.party instanceof Array ? obj.party : [])) {
 				this.party.push(new ContractTermOfferParty(o));
 			}
 		}
@@ -12874,14 +12874,14 @@ export class ContractTermOffer extends Element {
 
 		if (obj.hasOwnProperty('decisionMode')) {
 			this.decisionMode = [];
-			for (const o of obj.decisionMode || []) {
+			for (const o of (obj.decisionMode instanceof Array ? obj.decisionMode : [])) {
 				this.decisionMode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('answer')) {
 			this.answer = [];
-			for (const o of obj.answer || []) {
+			for (const o of (obj.answer instanceof Array ? obj.answer : [])) {
 				this.answer.push(new ContractTermOfferAnswer(o));
 			}
 		}
@@ -12892,14 +12892,14 @@ export class ContractTermOffer extends Element {
 
 		if (obj.hasOwnProperty('linkId')) {
 			this.linkId = [];
-			for (const o of obj.linkId || []) {
+			for (const o of (obj.linkId instanceof Array ? obj.linkId : [])) {
 				this.linkId.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('securityLabelNumber')) {
 			this.securityLabelNumber = [];
-			for (const o of obj.securityLabelNumber || []) {
+			for (const o of (obj.securityLabelNumber instanceof Array ? obj.securityLabelNumber : [])) {
 				this.securityLabelNumber.push(o);
 			}
 		}
@@ -12924,7 +12924,7 @@ export class ContractTermSecurityLabel extends Element {
 
 		if (obj.hasOwnProperty('number')) {
 			this.number = [];
-			for (const o of obj.number || []) {
+			for (const o of (obj.number instanceof Array ? obj.number : [])) {
 				this.number.push(o);
 			}
 		}
@@ -12935,14 +12935,14 @@ export class ContractTermSecurityLabel extends Element {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new Coding(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('control')) {
 			this.control = [];
-			for (const o of obj.control || []) {
+			for (const o of (obj.control instanceof Array ? obj.control : [])) {
 				this.control.push(new Coding(o));
 			}
 		}
@@ -12993,7 +12993,7 @@ export class ContractTerm extends Element {
 
 		if (obj.hasOwnProperty('securityLabel')) {
 			this.securityLabel = [];
-			for (const o of obj.securityLabel || []) {
+			for (const o of (obj.securityLabel instanceof Array ? obj.securityLabel : [])) {
 				this.securityLabel.push(new ContractTermSecurityLabel(o));
 			}
 		}
@@ -13004,21 +13004,21 @@ export class ContractTerm extends Element {
 
 		if (obj.hasOwnProperty('asset')) {
 			this.asset = [];
-			for (const o of obj.asset || []) {
+			for (const o of (obj.asset instanceof Array ? obj.asset : [])) {
 				this.asset.push(new ContractTermAsset(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new ContractTermAction(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('group')) {
 			this.group = [];
-			for (const o of obj.group || []) {
+			for (const o of (obj.group instanceof Array ? obj.group : [])) {
 				this.group.push(new ContractTerm(o));
 			}
 		}
@@ -13087,7 +13087,7 @@ export class Contract extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -13134,28 +13134,28 @@ export class Contract extends DomainResource {
 
 		if (obj.hasOwnProperty('subject')) {
 			this.subject = [];
-			for (const o of obj.subject || []) {
+			for (const o of (obj.subject instanceof Array ? obj.subject : [])) {
 				this.subject.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('authority')) {
 			this.authority = [];
-			for (const o of obj.authority || []) {
+			for (const o of (obj.authority instanceof Array ? obj.authority : [])) {
 				this.authority.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('domain')) {
 			this.domain = [];
-			for (const o of obj.domain || []) {
+			for (const o of (obj.domain instanceof Array ? obj.domain : [])) {
 				this.domain.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('site')) {
 			this.site = [];
-			for (const o of obj.site || []) {
+			for (const o of (obj.site instanceof Array ? obj.site : [])) {
 				this.site.push(new Reference(o));
 			}
 		}
@@ -13174,7 +13174,7 @@ export class Contract extends DomainResource {
 
 		if (obj.hasOwnProperty('alias')) {
 			this.alias = [];
-			for (const o of obj.alias || []) {
+			for (const o of (obj.alias instanceof Array ? obj.alias : [])) {
 				this.alias.push(o);
 			}
 		}
@@ -13201,7 +13201,7 @@ export class Contract extends DomainResource {
 
 		if (obj.hasOwnProperty('subType')) {
 			this.subType = [];
-			for (const o of obj.subType || []) {
+			for (const o of (obj.subType instanceof Array ? obj.subType : [])) {
 				this.subType.push(new CodeableConcept(o));
 			}
 		}
@@ -13212,49 +13212,49 @@ export class Contract extends DomainResource {
 
 		if (obj.hasOwnProperty('term')) {
 			this.term = [];
-			for (const o of obj.term || []) {
+			for (const o of (obj.term instanceof Array ? obj.term : [])) {
 				this.term.push(new ContractTerm(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('supportingInfo')) {
 			this.supportingInfo = [];
-			for (const o of obj.supportingInfo || []) {
+			for (const o of (obj.supportingInfo instanceof Array ? obj.supportingInfo : [])) {
 				this.supportingInfo.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relevantHistory')) {
 			this.relevantHistory = [];
-			for (const o of obj.relevantHistory || []) {
+			for (const o of (obj.relevantHistory instanceof Array ? obj.relevantHistory : [])) {
 				this.relevantHistory.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('signer')) {
 			this.signer = [];
-			for (const o of obj.signer || []) {
+			for (const o of (obj.signer instanceof Array ? obj.signer : [])) {
 				this.signer.push(new ContractSigner(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('friendly')) {
 			this.friendly = [];
-			for (const o of obj.friendly || []) {
+			for (const o of (obj.friendly instanceof Array ? obj.friendly : [])) {
 				this.friendly.push(new ContractFriendly(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('legal')) {
 			this.legal = [];
-			for (const o of obj.legal || []) {
+			for (const o of (obj.legal instanceof Array ? obj.legal : [])) {
 				this.legal.push(new ContractLegal(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('rule')) {
 			this.rule = [];
-			for (const o of obj.rule || []) {
+			for (const o of (obj.rule instanceof Array ? obj.rule : [])) {
 				this.rule.push(new ContractRule(o));
 			}
 		}
@@ -13343,7 +13343,7 @@ export class CoverageCostToBeneficiary extends Element {
 
 		if (obj.hasOwnProperty('exception')) {
 			this.exception = [];
-			for (const o of obj.exception || []) {
+			for (const o of (obj.exception instanceof Array ? obj.exception : [])) {
 				this.exception.push(new CoverageCostToBeneficiaryException(o));
 			}
 		}
@@ -13388,7 +13388,7 @@ export class Coverage extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -13431,14 +13431,14 @@ export class Coverage extends DomainResource {
 
 		if (obj.hasOwnProperty('payor')) {
 			this.payor = [];
-			for (const o of obj.payor || []) {
+			for (const o of (obj.payor instanceof Array ? obj.payor : [])) {
 				this.payor.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('class')) {
 			this.class = [];
-			for (const o of obj.class || []) {
+			for (const o of (obj.class instanceof Array ? obj.class : [])) {
 				this.class.push(new CoverageClass(o));
 			}
 		}
@@ -13453,7 +13453,7 @@ export class Coverage extends DomainResource {
 
 		if (obj.hasOwnProperty('costToBeneficiary')) {
 			this.costToBeneficiary = [];
-			for (const o of obj.costToBeneficiary || []) {
+			for (const o of (obj.costToBeneficiary instanceof Array ? obj.costToBeneficiary : [])) {
 				this.costToBeneficiary.push(new CoverageCostToBeneficiary(o));
 			}
 		}
@@ -13464,7 +13464,7 @@ export class Coverage extends DomainResource {
 
 		if (obj.hasOwnProperty('contract')) {
 			this.contract = [];
-			for (const o of obj.contract || []) {
+			for (const o of (obj.contract instanceof Array ? obj.contract : [])) {
 				this.contract.push(new Reference(o));
 			}
 		}
@@ -13515,7 +13515,7 @@ export class CoverageEligibilityRequestItem extends Element {
 
 		if (obj.hasOwnProperty('supportingInfoSequence')) {
 			this.supportingInfoSequence = [];
-			for (const o of obj.supportingInfoSequence || []) {
+			for (const o of (obj.supportingInfoSequence instanceof Array ? obj.supportingInfoSequence : [])) {
 				this.supportingInfoSequence.push(o);
 			}
 		}
@@ -13530,7 +13530,7 @@ export class CoverageEligibilityRequestItem extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
@@ -13553,14 +13553,14 @@ export class CoverageEligibilityRequestItem extends Element {
 
 		if (obj.hasOwnProperty('diagnosis')) {
 			this.diagnosis = [];
-			for (const o of obj.diagnosis || []) {
+			for (const o of (obj.diagnosis instanceof Array ? obj.diagnosis : [])) {
 				this.diagnosis.push(new CoverageEligibilityRequestItemDiagnosis(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('detail')) {
 			this.detail = [];
-			for (const o of obj.detail || []) {
+			for (const o of (obj.detail instanceof Array ? obj.detail : [])) {
 				this.detail.push(new Reference(o));
 			}
 		}
@@ -13634,7 +13634,7 @@ export class CoverageEligibilityRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -13649,7 +13649,7 @@ export class CoverageEligibilityRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('purpose')) {
 			this.purpose = [];
-			for (const o of obj.purpose || []) {
+			for (const o of (obj.purpose instanceof Array ? obj.purpose : [])) {
 				this.purpose.push(o);
 			}
 		}
@@ -13688,21 +13688,21 @@ export class CoverageEligibilityRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('supportingInfo')) {
 			this.supportingInfo = [];
-			for (const o of obj.supportingInfo || []) {
+			for (const o of (obj.supportingInfo instanceof Array ? obj.supportingInfo : [])) {
 				this.supportingInfo.push(new CoverageEligibilityRequestSupportingInfo(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('insurance')) {
 			this.insurance = [];
-			for (const o of obj.insurance || []) {
+			for (const o of (obj.insurance instanceof Array ? obj.insurance : [])) {
 				this.insurance.push(new CoverageEligibilityRequestInsurance(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new CoverageEligibilityRequestItem(o));
 			}
 		}
@@ -13797,7 +13797,7 @@ export class CoverageEligibilityResponseInsuranceItem extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
@@ -13832,7 +13832,7 @@ export class CoverageEligibilityResponseInsuranceItem extends Element {
 
 		if (obj.hasOwnProperty('benefit')) {
 			this.benefit = [];
-			for (const o of obj.benefit || []) {
+			for (const o of (obj.benefit instanceof Array ? obj.benefit : [])) {
 				this.benefit.push(new CoverageEligibilityResponseInsuranceItemBenefit(o));
 			}
 		}
@@ -13843,7 +13843,7 @@ export class CoverageEligibilityResponseInsuranceItem extends Element {
 
 		if (obj.hasOwnProperty('authorizationSupporting')) {
 			this.authorizationSupporting = [];
-			for (const o of obj.authorizationSupporting || []) {
+			for (const o of (obj.authorizationSupporting instanceof Array ? obj.authorizationSupporting : [])) {
 				this.authorizationSupporting.push(new CodeableConcept(o));
 			}
 		}
@@ -13888,7 +13888,7 @@ export class CoverageEligibilityResponseInsurance extends Element {
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new CoverageEligibilityResponseInsuranceItem(o));
 			}
 		}
@@ -13910,7 +13910,7 @@ export class CoverageEligibilityResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -13921,7 +13921,7 @@ export class CoverageEligibilityResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('purpose')) {
 			this.purpose = [];
-			for (const o of obj.purpose || []) {
+			for (const o of (obj.purpose instanceof Array ? obj.purpose : [])) {
 				this.purpose.push(o);
 			}
 		}
@@ -13964,7 +13964,7 @@ export class CoverageEligibilityResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('insurance')) {
 			this.insurance = [];
-			for (const o of obj.insurance || []) {
+			for (const o of (obj.insurance instanceof Array ? obj.insurance : [])) {
 				this.insurance.push(new CoverageEligibilityResponseInsurance(o));
 			}
 		}
@@ -13979,7 +13979,7 @@ export class CoverageEligibilityResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('error')) {
 			this.error = [];
-			for (const o of obj.error || []) {
+			for (const o of (obj.error instanceof Array ? obj.error : [])) {
 				this.error.push(new CoverageEligibilityResponseError(o));
 			}
 		}
@@ -14034,14 +14034,14 @@ export class DetectedIssueEvidence extends Element {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('detail')) {
 			this.detail = [];
-			for (const o of obj.detail || []) {
+			for (const o of (obj.detail instanceof Array ? obj.detail : [])) {
 				this.detail.push(new Reference(o));
 			}
 		}
@@ -14061,7 +14061,7 @@ export class DetectedIssue extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -14096,14 +14096,14 @@ export class DetectedIssue extends DomainResource {
 
 		if (obj.hasOwnProperty('implicated')) {
 			this.implicated = [];
-			for (const o of obj.implicated || []) {
+			for (const o of (obj.implicated instanceof Array ? obj.implicated : [])) {
 				this.implicated.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('evidence')) {
 			this.evidence = [];
-			for (const o of obj.evidence || []) {
+			for (const o of (obj.evidence instanceof Array ? obj.evidence : [])) {
 				this.evidence.push(new DetectedIssueEvidence(o));
 			}
 		}
@@ -14118,7 +14118,7 @@ export class DetectedIssue extends DomainResource {
 
 		if (obj.hasOwnProperty('mitigation')) {
 			this.mitigation = [];
-			for (const o of obj.mitigation || []) {
+			for (const o of (obj.mitigation instanceof Array ? obj.mitigation : [])) {
 				this.mitigation.push(new DetectedIssueMitigation(o));
 			}
 		}
@@ -14151,14 +14151,14 @@ export class DeviceProperty extends Element {
 
 		if (obj.hasOwnProperty('valueQuantity')) {
 			this.valueQuantity = [];
-			for (const o of obj.valueQuantity || []) {
+			for (const o of (obj.valueQuantity instanceof Array ? obj.valueQuantity : [])) {
 				this.valueQuantity.push(new Quantity(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('valueCode')) {
 			this.valueCode = [];
-			for (const o of obj.valueCode || []) {
+			for (const o of (obj.valueCode instanceof Array ? obj.valueCode : [])) {
 				this.valueCode.push(new CodeableConcept(o));
 			}
 		}
@@ -14276,7 +14276,7 @@ export class Device extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -14287,7 +14287,7 @@ export class Device extends DomainResource {
 
 		if (obj.hasOwnProperty('udiCarrier')) {
 			this.udiCarrier = [];
-			for (const o of obj.udiCarrier || []) {
+			for (const o of (obj.udiCarrier instanceof Array ? obj.udiCarrier : [])) {
 				this.udiCarrier.push(new DeviceUdiCarrier(o));
 			}
 		}
@@ -14298,7 +14298,7 @@ export class Device extends DomainResource {
 
 		if (obj.hasOwnProperty('statusReason')) {
 			this.statusReason = [];
-			for (const o of obj.statusReason || []) {
+			for (const o of (obj.statusReason instanceof Array ? obj.statusReason : [])) {
 				this.statusReason.push(new CodeableConcept(o));
 			}
 		}
@@ -14329,7 +14329,7 @@ export class Device extends DomainResource {
 
 		if (obj.hasOwnProperty('deviceName')) {
 			this.deviceName = [];
-			for (const o of obj.deviceName || []) {
+			for (const o of (obj.deviceName instanceof Array ? obj.deviceName : [])) {
 				this.deviceName.push(new DeviceDeviceName(o));
 			}
 		}
@@ -14348,21 +14348,21 @@ export class Device extends DomainResource {
 
 		if (obj.hasOwnProperty('specialization')) {
 			this.specialization = [];
-			for (const o of obj.specialization || []) {
+			for (const o of (obj.specialization instanceof Array ? obj.specialization : [])) {
 				this.specialization.push(new DeviceSpecialization(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('version')) {
 			this.version = [];
-			for (const o of obj.version || []) {
+			for (const o of (obj.version instanceof Array ? obj.version : [])) {
 				this.version.push(new DeviceVersion(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('property')) {
 			this.property = [];
-			for (const o of obj.property || []) {
+			for (const o of (obj.property instanceof Array ? obj.property : [])) {
 				this.property.push(new DeviceProperty(o));
 			}
 		}
@@ -14377,7 +14377,7 @@ export class Device extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactPoint(o));
 			}
 		}
@@ -14392,14 +14392,14 @@ export class Device extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('safety')) {
 			this.safety = [];
-			for (const o of obj.safety || []) {
+			for (const o of (obj.safety instanceof Array ? obj.safety : [])) {
 				this.safety.push(new CodeableConcept(o));
 			}
 		}
@@ -14472,14 +14472,14 @@ export class DeviceDefinitionProperty extends Element {
 
 		if (obj.hasOwnProperty('valueQuantity')) {
 			this.valueQuantity = [];
-			for (const o of obj.valueQuantity || []) {
+			for (const o of (obj.valueQuantity instanceof Array ? obj.valueQuantity : [])) {
 				this.valueQuantity.push(new Quantity(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('valueCode')) {
 			this.valueCode = [];
-			for (const o of obj.valueCode || []) {
+			for (const o of (obj.valueCode instanceof Array ? obj.valueCode : [])) {
 				this.valueCode.push(new CodeableConcept(o));
 			}
 		}
@@ -14501,7 +14501,7 @@ export class DeviceDefinitionCapability extends Element {
 
 		if (obj.hasOwnProperty('description')) {
 			this.description = [];
-			for (const o of obj.description || []) {
+			for (const o of (obj.description instanceof Array ? obj.description : [])) {
 				this.description.push(new CodeableConcept(o));
 			}
 		}
@@ -14580,14 +14580,14 @@ export class DeviceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('udiDeviceIdentifier')) {
 			this.udiDeviceIdentifier = [];
-			for (const o of obj.udiDeviceIdentifier || []) {
+			for (const o of (obj.udiDeviceIdentifier instanceof Array ? obj.udiDeviceIdentifier : [])) {
 				this.udiDeviceIdentifier.push(new DeviceDefinitionUdiDeviceIdentifier(o));
 			}
 		}
@@ -14602,7 +14602,7 @@ export class DeviceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('deviceName')) {
 			this.deviceName = [];
-			for (const o of obj.deviceName || []) {
+			for (const o of (obj.deviceName instanceof Array ? obj.deviceName : [])) {
 				this.deviceName.push(new DeviceDefinitionDeviceName(o));
 			}
 		}
@@ -14617,28 +14617,28 @@ export class DeviceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('specialization')) {
 			this.specialization = [];
-			for (const o of obj.specialization || []) {
+			for (const o of (obj.specialization instanceof Array ? obj.specialization : [])) {
 				this.specialization.push(new DeviceDefinitionSpecialization(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('version')) {
 			this.version = [];
-			for (const o of obj.version || []) {
+			for (const o of (obj.version instanceof Array ? obj.version : [])) {
 				this.version.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('safety')) {
 			this.safety = [];
-			for (const o of obj.safety || []) {
+			for (const o of (obj.safety instanceof Array ? obj.safety : [])) {
 				this.safety.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('shelfLifeStorage')) {
 			this.shelfLifeStorage = [];
-			for (const o of obj.shelfLifeStorage || []) {
+			for (const o of (obj.shelfLifeStorage instanceof Array ? obj.shelfLifeStorage : [])) {
 				this.shelfLifeStorage.push(new ProductShelfLife(o));
 			}
 		}
@@ -14649,21 +14649,21 @@ export class DeviceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('languageCode')) {
 			this.languageCode = [];
-			for (const o of obj.languageCode || []) {
+			for (const o of (obj.languageCode instanceof Array ? obj.languageCode : [])) {
 				this.languageCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('capability')) {
 			this.capability = [];
-			for (const o of obj.capability || []) {
+			for (const o of (obj.capability instanceof Array ? obj.capability : [])) {
 				this.capability.push(new DeviceDefinitionCapability(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('property')) {
 			this.property = [];
-			for (const o of obj.property || []) {
+			for (const o of (obj.property instanceof Array ? obj.property : [])) {
 				this.property.push(new DeviceDefinitionProperty(o));
 			}
 		}
@@ -14674,7 +14674,7 @@ export class DeviceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactPoint(o));
 			}
 		}
@@ -14689,7 +14689,7 @@ export class DeviceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -14704,7 +14704,7 @@ export class DeviceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('material')) {
 			this.material = [];
-			for (const o of obj.material || []) {
+			for (const o of (obj.material instanceof Array ? obj.material : [])) {
 				this.material.push(new DeviceDefinitionMaterial(o));
 			}
 		}
@@ -14769,7 +14769,7 @@ export class DeviceMetric extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -14808,7 +14808,7 @@ export class DeviceMetric extends DomainResource {
 
 		if (obj.hasOwnProperty('calibration')) {
 			this.calibration = [];
-			for (const o of obj.calibration || []) {
+			for (const o of (obj.calibration instanceof Array ? obj.calibration : [])) {
 				this.calibration.push(new DeviceMetricCalibration(o));
 			}
 		}
@@ -14870,35 +14870,35 @@ export class DeviceRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesCanonical')) {
 			this.instantiatesCanonical = [];
-			for (const o of obj.instantiatesCanonical || []) {
+			for (const o of (obj.instantiatesCanonical instanceof Array ? obj.instantiatesCanonical : [])) {
 				this.instantiatesCanonical.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesUri')) {
 			this.instantiatesUri = [];
-			for (const o of obj.instantiatesUri || []) {
+			for (const o of (obj.instantiatesUri instanceof Array ? obj.instantiatesUri : [])) {
 				this.instantiatesUri.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('priorRequest')) {
 			this.priorRequest = [];
-			for (const o of obj.priorRequest || []) {
+			for (const o of (obj.priorRequest instanceof Array ? obj.priorRequest : [])) {
 				this.priorRequest.push(new Reference(o));
 			}
 		}
@@ -14929,7 +14929,7 @@ export class DeviceRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('parameter')) {
 			this.parameter = [];
-			for (const o of obj.parameter || []) {
+			for (const o of (obj.parameter instanceof Array ? obj.parameter : [])) {
 				this.parameter.push(new DeviceRequestParameter(o));
 			}
 		}
@@ -14972,42 +14972,42 @@ export class DeviceRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('insurance')) {
 			this.insurance = [];
-			for (const o of obj.insurance || []) {
+			for (const o of (obj.insurance instanceof Array ? obj.insurance : [])) {
 				this.insurance.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('supportingInfo')) {
 			this.supportingInfo = [];
-			for (const o of obj.supportingInfo || []) {
+			for (const o of (obj.supportingInfo instanceof Array ? obj.supportingInfo : [])) {
 				this.supportingInfo.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relevantHistory')) {
 			this.relevantHistory = [];
-			for (const o of obj.relevantHistory || []) {
+			for (const o of (obj.relevantHistory instanceof Array ? obj.relevantHistory : [])) {
 				this.relevantHistory.push(new Reference(o));
 			}
 		}
@@ -15053,14 +15053,14 @@ export class DeviceUseStatement extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
@@ -15075,7 +15075,7 @@ export class DeviceUseStatement extends DomainResource {
 
 		if (obj.hasOwnProperty('derivedFrom')) {
 			this.derivedFrom = [];
-			for (const o of obj.derivedFrom || []) {
+			for (const o of (obj.derivedFrom instanceof Array ? obj.derivedFrom : [])) {
 				this.derivedFrom.push(new Reference(o));
 			}
 		}
@@ -15106,14 +15106,14 @@ export class DeviceUseStatement extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
@@ -15124,7 +15124,7 @@ export class DeviceUseStatement extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -15176,14 +15176,14 @@ export class DiagnosticReport extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
@@ -15194,7 +15194,7 @@ export class DiagnosticReport extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -15225,42 +15225,42 @@ export class DiagnosticReport extends DomainResource {
 
 		if (obj.hasOwnProperty('performer')) {
 			this.performer = [];
-			for (const o of obj.performer || []) {
+			for (const o of (obj.performer instanceof Array ? obj.performer : [])) {
 				this.performer.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('resultsInterpreter')) {
 			this.resultsInterpreter = [];
-			for (const o of obj.resultsInterpreter || []) {
+			for (const o of (obj.resultsInterpreter instanceof Array ? obj.resultsInterpreter : [])) {
 				this.resultsInterpreter.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specimen')) {
 			this.specimen = [];
-			for (const o of obj.specimen || []) {
+			for (const o of (obj.specimen instanceof Array ? obj.specimen : [])) {
 				this.specimen.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('result')) {
 			this.result = [];
-			for (const o of obj.result || []) {
+			for (const o of (obj.result instanceof Array ? obj.result : [])) {
 				this.result.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('imagingStudy')) {
 			this.imagingStudy = [];
-			for (const o of obj.imagingStudy || []) {
+			for (const o of (obj.imagingStudy instanceof Array ? obj.imagingStudy : [])) {
 				this.imagingStudy.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('media')) {
 			this.media = [];
-			for (const o of obj.media || []) {
+			for (const o of (obj.media instanceof Array ? obj.media : [])) {
 				this.media.push(new DiagnosticReportMedia(o));
 			}
 		}
@@ -15271,14 +15271,14 @@ export class DiagnosticReport extends DomainResource {
 
 		if (obj.hasOwnProperty('conclusionCode')) {
 			this.conclusionCode = [];
-			for (const o of obj.conclusionCode || []) {
+			for (const o of (obj.conclusionCode instanceof Array ? obj.conclusionCode : [])) {
 				this.conclusionCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('presentedForm')) {
 			this.presentedForm = [];
-			for (const o of obj.presentedForm || []) {
+			for (const o of (obj.presentedForm instanceof Array ? obj.presentedForm : [])) {
 				this.presentedForm.push(new Attachment(o));
 			}
 		}
@@ -15338,7 +15338,7 @@ export class DocumentManifest extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -15361,14 +15361,14 @@ export class DocumentManifest extends DomainResource {
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('recipient')) {
 			this.recipient = [];
-			for (const o of obj.recipient || []) {
+			for (const o of (obj.recipient instanceof Array ? obj.recipient : [])) {
 				this.recipient.push(new Reference(o));
 			}
 		}
@@ -15383,14 +15383,14 @@ export class DocumentManifest extends DomainResource {
 
 		if (obj.hasOwnProperty('content')) {
 			this.content = [];
-			for (const o of obj.content || []) {
+			for (const o of (obj.content instanceof Array ? obj.content : [])) {
 				this.content.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('related')) {
 			this.related = [];
-			for (const o of obj.related || []) {
+			for (const o of (obj.related instanceof Array ? obj.related : [])) {
 				this.related.push(new DocumentManifestRelated(o));
 			}
 		}
@@ -15418,14 +15418,14 @@ export class DocumentReferenceContext extends Element {
 
 		if (obj.hasOwnProperty('encounter')) {
 			this.encounter = [];
-			for (const o of obj.encounter || []) {
+			for (const o of (obj.encounter instanceof Array ? obj.encounter : [])) {
 				this.encounter.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('event')) {
 			this.event = [];
-			for (const o of obj.event || []) {
+			for (const o of (obj.event instanceof Array ? obj.event : [])) {
 				this.event.push(new CodeableConcept(o));
 			}
 		}
@@ -15448,7 +15448,7 @@ export class DocumentReferenceContext extends Element {
 
 		if (obj.hasOwnProperty('related')) {
 			this.related = [];
-			for (const o of obj.related || []) {
+			for (const o of (obj.related instanceof Array ? obj.related : [])) {
 				this.related.push(new Reference(o));
 			}
 		}
@@ -15513,7 +15513,7 @@ export class DocumentReference extends DomainResource implements IFhir.IDocument
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -15532,7 +15532,7 @@ export class DocumentReference extends DomainResource implements IFhir.IDocument
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -15547,7 +15547,7 @@ export class DocumentReference extends DomainResource implements IFhir.IDocument
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new Reference(o));
 			}
 		}
@@ -15562,7 +15562,7 @@ export class DocumentReference extends DomainResource implements IFhir.IDocument
 
 		if (obj.hasOwnProperty('relatesTo')) {
 			this.relatesTo = [];
-			for (const o of obj.relatesTo || []) {
+			for (const o of (obj.relatesTo instanceof Array ? obj.relatesTo : [])) {
 				this.relatesTo.push(new DocumentReferenceRelatesTo(o));
 			}
 		}
@@ -15573,14 +15573,14 @@ export class DocumentReference extends DomainResource implements IFhir.IDocument
 
 		if (obj.hasOwnProperty('securityLabel')) {
 			this.securityLabel = [];
-			for (const o of obj.securityLabel || []) {
+			for (const o of (obj.securityLabel instanceof Array ? obj.securityLabel : [])) {
 				this.securityLabel.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('content')) {
 			this.content = [];
-			for (const o of obj.content || []) {
+			for (const o of (obj.content instanceof Array ? obj.content : [])) {
 				this.content.push(new DocumentReferenceContent(o));
 			}
 		}
@@ -15660,21 +15660,21 @@ export class EncounterHospitalization extends Element {
 
 		if (obj.hasOwnProperty('dietPreference')) {
 			this.dietPreference = [];
-			for (const o of obj.dietPreference || []) {
+			for (const o of (obj.dietPreference instanceof Array ? obj.dietPreference : [])) {
 				this.dietPreference.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specialCourtesy')) {
 			this.specialCourtesy = [];
-			for (const o of obj.specialCourtesy || []) {
+			for (const o of (obj.specialCourtesy instanceof Array ? obj.specialCourtesy : [])) {
 				this.specialCourtesy.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specialArrangement')) {
 			this.specialArrangement = [];
-			for (const o of obj.specialArrangement || []) {
+			for (const o of (obj.specialArrangement instanceof Array ? obj.specialArrangement : [])) {
 				this.specialArrangement.push(new CodeableConcept(o));
 			}
 		}
@@ -15729,7 +15729,7 @@ export class EncounterParticipant extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
@@ -15794,7 +15794,7 @@ export class Encounter extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -15805,7 +15805,7 @@ export class Encounter extends DomainResource {
 
 		if (obj.hasOwnProperty('statusHistory')) {
 			this.statusHistory = [];
-			for (const o of obj.statusHistory || []) {
+			for (const o of (obj.statusHistory instanceof Array ? obj.statusHistory : [])) {
 				this.statusHistory.push(new EncounterStatusHistory(o));
 			}
 		}
@@ -15816,14 +15816,14 @@ export class Encounter extends DomainResource {
 
 		if (obj.hasOwnProperty('classHistory')) {
 			this.classHistory = [];
-			for (const o of obj.classHistory || []) {
+			for (const o of (obj.classHistory instanceof Array ? obj.classHistory : [])) {
 				this.classHistory.push(new EncounterClassHistory(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
@@ -15842,28 +15842,28 @@ export class Encounter extends DomainResource {
 
 		if (obj.hasOwnProperty('episodeOfCare')) {
 			this.episodeOfCare = [];
-			for (const o of obj.episodeOfCare || []) {
+			for (const o of (obj.episodeOfCare instanceof Array ? obj.episodeOfCare : [])) {
 				this.episodeOfCare.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('participant')) {
 			this.participant = [];
-			for (const o of obj.participant || []) {
+			for (const o of (obj.participant instanceof Array ? obj.participant : [])) {
 				this.participant.push(new EncounterParticipant(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('appointment')) {
 			this.appointment = [];
-			for (const o of obj.appointment || []) {
+			for (const o of (obj.appointment instanceof Array ? obj.appointment : [])) {
 				this.appointment.push(new Reference(o));
 			}
 		}
@@ -15878,28 +15878,28 @@ export class Encounter extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('diagnosis')) {
 			this.diagnosis = [];
-			for (const o of obj.diagnosis || []) {
+			for (const o of (obj.diagnosis instanceof Array ? obj.diagnosis : [])) {
 				this.diagnosis.push(new EncounterDiagnosis(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('account')) {
 			this.account = [];
-			for (const o of obj.account || []) {
+			for (const o of (obj.account instanceof Array ? obj.account : [])) {
 				this.account.push(new Reference(o));
 			}
 		}
@@ -15910,7 +15910,7 @@ export class Encounter extends DomainResource {
 
 		if (obj.hasOwnProperty('location')) {
 			this.location = [];
-			for (const o of obj.location || []) {
+			for (const o of (obj.location instanceof Array ? obj.location : [])) {
 				this.location.push(new EncounterLocation(o));
 			}
 		}
@@ -15960,7 +15960,7 @@ export class Endpoint extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -15983,7 +15983,7 @@ export class Endpoint extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactPoint(o));
 			}
 		}
@@ -15994,14 +15994,14 @@ export class Endpoint extends DomainResource {
 
 		if (obj.hasOwnProperty('payloadType')) {
 			this.payloadType = [];
-			for (const o of obj.payloadType || []) {
+			for (const o of (obj.payloadType instanceof Array ? obj.payloadType : [])) {
 				this.payloadType.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('payloadMimeType')) {
 			this.payloadMimeType = [];
-			for (const o of obj.payloadMimeType || []) {
+			for (const o of (obj.payloadMimeType instanceof Array ? obj.payloadMimeType : [])) {
 				this.payloadMimeType.push(o);
 			}
 		}
@@ -16012,7 +16012,7 @@ export class Endpoint extends DomainResource {
 
 		if (obj.hasOwnProperty('header')) {
 			this.header = [];
-			for (const o of obj.header || []) {
+			for (const o of (obj.header instanceof Array ? obj.header : [])) {
 				this.header.push(o);
 			}
 		}
@@ -16042,7 +16042,7 @@ export class EnrollmentRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -16092,7 +16092,7 @@ export class EnrollmentResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -16188,7 +16188,7 @@ export class EpisodeOfCare extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -16199,21 +16199,21 @@ export class EpisodeOfCare extends DomainResource {
 
 		if (obj.hasOwnProperty('statusHistory')) {
 			this.statusHistory = [];
-			for (const o of obj.statusHistory || []) {
+			for (const o of (obj.statusHistory instanceof Array ? obj.statusHistory : [])) {
 				this.statusHistory.push(new EpisodeOfCareStatusHistory(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('diagnosis')) {
 			this.diagnosis = [];
-			for (const o of obj.diagnosis || []) {
+			for (const o of (obj.diagnosis instanceof Array ? obj.diagnosis : [])) {
 				this.diagnosis.push(new EpisodeOfCareDiagnosis(o));
 			}
 		}
@@ -16232,7 +16232,7 @@ export class EpisodeOfCare extends DomainResource {
 
 		if (obj.hasOwnProperty('referralRequest')) {
 			this.referralRequest = [];
-			for (const o of obj.referralRequest || []) {
+			for (const o of (obj.referralRequest instanceof Array ? obj.referralRequest : [])) {
 				this.referralRequest.push(new Reference(o));
 			}
 		}
@@ -16243,14 +16243,14 @@ export class EpisodeOfCare extends DomainResource {
 
 		if (obj.hasOwnProperty('team')) {
 			this.team = [];
-			for (const o of obj.team || []) {
+			for (const o of (obj.team instanceof Array ? obj.team : [])) {
 				this.team.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('account')) {
 			this.account = [];
-			for (const o of obj.account || []) {
+			for (const o of (obj.account instanceof Array ? obj.account : [])) {
 				this.account.push(new Reference(o));
 			}
 		}
@@ -16285,7 +16285,7 @@ export class EventDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -16332,7 +16332,7 @@ export class EventDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -16343,14 +16343,14 @@ export class EventDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -16381,49 +16381,49 @@ export class EventDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('topic')) {
 			this.topic = [];
-			for (const o of obj.topic || []) {
+			for (const o of (obj.topic instanceof Array ? obj.topic : [])) {
 				this.topic.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('editor')) {
 			this.editor = [];
-			for (const o of obj.editor || []) {
+			for (const o of (obj.editor instanceof Array ? obj.editor : [])) {
 				this.editor.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reviewer')) {
 			this.reviewer = [];
-			for (const o of obj.reviewer || []) {
+			for (const o of (obj.reviewer instanceof Array ? obj.reviewer : [])) {
 				this.reviewer.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endorser')) {
 			this.endorser = [];
-			for (const o of obj.endorser || []) {
+			for (const o of (obj.endorser instanceof Array ? obj.endorser : [])) {
 				this.endorser.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedArtifact')) {
 			this.relatedArtifact = [];
-			for (const o of obj.relatedArtifact || []) {
+			for (const o of (obj.relatedArtifact instanceof Array ? obj.relatedArtifact : [])) {
 				this.relatedArtifact.push(new RelatedArtifact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('trigger')) {
 			this.trigger = [];
-			for (const o of obj.trigger || []) {
+			for (const o of (obj.trigger instanceof Array ? obj.trigger : [])) {
 				this.trigger.push(new TriggerDefinition(o));
 			}
 		}
@@ -16472,7 +16472,7 @@ export class EvidenceCertainty extends Element {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -16491,7 +16491,7 @@ export class EvidenceCertainty extends Element {
 
 		if (obj.hasOwnProperty('subcomponent')) {
 			this.subcomponent = [];
-			for (const o of obj.subcomponent || []) {
+			for (const o of (obj.subcomponent instanceof Array ? obj.subcomponent : [])) {
 				this.subcomponent.push(new EvidenceCertainty(o));
 			}
 		}
@@ -16520,21 +16520,21 @@ export class EvidenceStatisticModelCharacteristicVariable extends Element {
 
 		if (obj.hasOwnProperty('valueCategory')) {
 			this.valueCategory = [];
-			for (const o of obj.valueCategory || []) {
+			for (const o of (obj.valueCategory instanceof Array ? obj.valueCategory : [])) {
 				this.valueCategory.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('valueQuantity')) {
 			this.valueQuantity = [];
-			for (const o of obj.valueQuantity || []) {
+			for (const o of (obj.valueQuantity instanceof Array ? obj.valueQuantity : [])) {
 				this.valueQuantity.push(new Quantity(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('valueRange')) {
 			this.valueRange = [];
-			for (const o of obj.valueRange || []) {
+			for (const o of (obj.valueRange instanceof Array ? obj.valueRange : [])) {
 				this.valueRange.push(new Range(o));
 			}
 		}
@@ -16562,14 +16562,14 @@ export class EvidenceStatisticModelCharacteristic extends Element {
 
 		if (obj.hasOwnProperty('variable')) {
 			this.variable = [];
-			for (const o of obj.variable || []) {
+			for (const o of (obj.variable instanceof Array ? obj.variable : [])) {
 				this.variable.push(new EvidenceStatisticModelCharacteristicVariable(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('attributeEstimate')) {
 			this.attributeEstimate = [];
-			for (const o of obj.attributeEstimate || []) {
+			for (const o of (obj.attributeEstimate instanceof Array ? obj.attributeEstimate : [])) {
 				this.attributeEstimate.push(new EvidenceStatisticAttributeEstimate(o));
 			}
 		}
@@ -16592,7 +16592,7 @@ export class EvidenceStatisticAttributeEstimate extends Element {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -16615,7 +16615,7 @@ export class EvidenceStatisticAttributeEstimate extends Element {
 
 		if (obj.hasOwnProperty('attributeEstimate')) {
 			this.attributeEstimate = [];
-			for (const o of obj.attributeEstimate || []) {
+			for (const o of (obj.attributeEstimate instanceof Array ? obj.attributeEstimate : [])) {
 				this.attributeEstimate.push(new EvidenceStatisticAttributeEstimate(o));
 			}
 		}
@@ -16641,7 +16641,7 @@ export class EvidenceStatisticSampleSize extends Element {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -16677,7 +16677,7 @@ export class EvidenceStatistic extends Element {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -16708,14 +16708,14 @@ export class EvidenceStatistic extends Element {
 
 		if (obj.hasOwnProperty('attributeEstimate')) {
 			this.attributeEstimate = [];
-			for (const o of obj.attributeEstimate || []) {
+			for (const o of (obj.attributeEstimate instanceof Array ? obj.attributeEstimate : [])) {
 				this.attributeEstimate.push(new EvidenceStatisticAttributeEstimate(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('modelCharacteristic')) {
 			this.modelCharacteristic = [];
-			for (const o of obj.modelCharacteristic || []) {
+			for (const o of (obj.modelCharacteristic instanceof Array ? obj.modelCharacteristic : [])) {
 				this.modelCharacteristic.push(new EvidenceStatisticModelCharacteristic(o));
 			}
 		}
@@ -16744,7 +16744,7 @@ export class EvidenceVariableDefinition extends Element {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -16788,7 +16788,7 @@ export class Evidence extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -16819,7 +16819,7 @@ export class Evidence extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
@@ -16838,42 +16838,42 @@ export class Evidence extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('editor')) {
 			this.editor = [];
-			for (const o of obj.editor || []) {
+			for (const o of (obj.editor instanceof Array ? obj.editor : [])) {
 				this.editor.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reviewer')) {
 			this.reviewer = [];
-			for (const o of obj.reviewer || []) {
+			for (const o of (obj.reviewer instanceof Array ? obj.reviewer : [])) {
 				this.reviewer.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endorser')) {
 			this.endorser = [];
-			for (const o of obj.endorser || []) {
+			for (const o of (obj.endorser instanceof Array ? obj.endorser : [])) {
 				this.endorser.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedArtifact')) {
 			this.relatedArtifact = [];
-			for (const o of obj.relatedArtifact || []) {
+			for (const o of (obj.relatedArtifact instanceof Array ? obj.relatedArtifact : [])) {
 				this.relatedArtifact.push(new RelatedArtifact(o));
 			}
 		}
@@ -16888,14 +16888,14 @@ export class Evidence extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('variableDefinition')) {
 			this.variableDefinition = [];
-			for (const o of obj.variableDefinition || []) {
+			for (const o of (obj.variableDefinition instanceof Array ? obj.variableDefinition : [])) {
 				this.variableDefinition.push(new EvidenceVariableDefinition(o));
 			}
 		}
@@ -16910,14 +16910,14 @@ export class Evidence extends DomainResource {
 
 		if (obj.hasOwnProperty('statistic')) {
 			this.statistic = [];
-			for (const o of obj.statistic || []) {
+			for (const o of (obj.statistic instanceof Array ? obj.statistic : [])) {
 				this.statistic.push(new EvidenceStatistic(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('certainty')) {
 			this.certainty = [];
-			for (const o of obj.certainty || []) {
+			for (const o of (obj.certainty instanceof Array ? obj.certainty : [])) {
 				this.certainty.push(new EvidenceCertainty(o));
 			}
 		}
@@ -16971,7 +16971,7 @@ export class EvidenceReportSection extends Element {
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new Reference(o));
 			}
 		}
@@ -16990,21 +16990,21 @@ export class EvidenceReportSection extends Element {
 
 		if (obj.hasOwnProperty('entryClassifier')) {
 			this.entryClassifier = [];
-			for (const o of obj.entryClassifier || []) {
+			for (const o of (obj.entryClassifier instanceof Array ? obj.entryClassifier : [])) {
 				this.entryClassifier.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('entryReference')) {
 			this.entryReference = [];
-			for (const o of obj.entryReference || []) {
+			for (const o of (obj.entryReference instanceof Array ? obj.entryReference : [])) {
 				this.entryReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('entryQuantity')) {
 			this.entryQuantity = [];
-			for (const o of obj.entryQuantity || []) {
+			for (const o of (obj.entryQuantity instanceof Array ? obj.entryQuantity : [])) {
 				this.entryQuantity.push(new Quantity(o));
 			}
 		}
@@ -17015,7 +17015,7 @@ export class EvidenceReportSection extends Element {
 
 		if (obj.hasOwnProperty('section')) {
 			this.section = [];
-			for (const o of obj.section || []) {
+			for (const o of (obj.section instanceof Array ? obj.section : [])) {
 				this.section.push(new EvidenceReportSection(o));
 			}
 		}
@@ -17113,14 +17113,14 @@ export class EvidenceReportSubject extends Element {
 
 		if (obj.hasOwnProperty('characteristic')) {
 			this.characteristic = [];
-			for (const o of obj.characteristic || []) {
+			for (const o of (obj.characteristic instanceof Array ? obj.characteristic : [])) {
 				this.characteristic.push(new EvidenceReportSubjectCharacteristic(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -17148,21 +17148,21 @@ export class EvidenceReport extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedIdentifier')) {
 			this.relatedIdentifier = [];
-			for (const o of obj.relatedIdentifier || []) {
+			for (const o of (obj.relatedIdentifier instanceof Array ? obj.relatedIdentifier : [])) {
 				this.relatedIdentifier.push(new Identifier(o));
 			}
 		}
@@ -17181,14 +17181,14 @@ export class EvidenceReport extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedArtifact')) {
 			this.relatedArtifact = [];
-			for (const o of obj.relatedArtifact || []) {
+			for (const o of (obj.relatedArtifact instanceof Array ? obj.relatedArtifact : [])) {
 				this.relatedArtifact.push(new RelatedArtifact(o));
 			}
 		}
@@ -17203,49 +17203,49 @@ export class EvidenceReport extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('editor')) {
 			this.editor = [];
-			for (const o of obj.editor || []) {
+			for (const o of (obj.editor instanceof Array ? obj.editor : [])) {
 				this.editor.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reviewer')) {
 			this.reviewer = [];
-			for (const o of obj.reviewer || []) {
+			for (const o of (obj.reviewer instanceof Array ? obj.reviewer : [])) {
 				this.reviewer.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endorser')) {
 			this.endorser = [];
-			for (const o of obj.endorser || []) {
+			for (const o of (obj.endorser instanceof Array ? obj.endorser : [])) {
 				this.endorser.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatesTo')) {
 			this.relatesTo = [];
-			for (const o of obj.relatesTo || []) {
+			for (const o of (obj.relatesTo instanceof Array ? obj.relatesTo : [])) {
 				this.relatesTo.push(new EvidenceReportRelatesTo(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('section')) {
 			this.section = [];
-			for (const o of obj.section || []) {
+			for (const o of (obj.section instanceof Array ? obj.section : [])) {
 				this.section.push(new EvidenceReportSection(o));
 			}
 		}
@@ -17320,7 +17320,7 @@ export class EvidenceVariableCharacteristicTimeFromStart extends Element {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -17404,7 +17404,7 @@ export class EvidenceVariable extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -17443,14 +17443,14 @@ export class EvidenceVariable extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
@@ -17461,42 +17461,42 @@ export class EvidenceVariable extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('editor')) {
 			this.editor = [];
-			for (const o of obj.editor || []) {
+			for (const o of (obj.editor instanceof Array ? obj.editor : [])) {
 				this.editor.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reviewer')) {
 			this.reviewer = [];
-			for (const o of obj.reviewer || []) {
+			for (const o of (obj.reviewer instanceof Array ? obj.reviewer : [])) {
 				this.reviewer.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endorser')) {
 			this.endorser = [];
-			for (const o of obj.endorser || []) {
+			for (const o of (obj.endorser instanceof Array ? obj.endorser : [])) {
 				this.endorser.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedArtifact')) {
 			this.relatedArtifact = [];
-			for (const o of obj.relatedArtifact || []) {
+			for (const o of (obj.relatedArtifact instanceof Array ? obj.relatedArtifact : [])) {
 				this.relatedArtifact.push(new RelatedArtifact(o));
 			}
 		}
@@ -17511,7 +17511,7 @@ export class EvidenceVariable extends DomainResource {
 
 		if (obj.hasOwnProperty('characteristic')) {
 			this.characteristic = [];
-			for (const o of obj.characteristic || []) {
+			for (const o of (obj.characteristic instanceof Array ? obj.characteristic : [])) {
 				this.characteristic.push(new EvidenceVariableCharacteristic(o));
 			}
 		}
@@ -17522,7 +17522,7 @@ export class EvidenceVariable extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new EvidenceVariableCategory(o));
 			}
 		}
@@ -17570,7 +17570,7 @@ export class ExampleScenarioProcessStepAlternative extends Element {
 
 		if (obj.hasOwnProperty('step')) {
 			this.step = [];
-			for (const o of obj.step || []) {
+			for (const o of (obj.step instanceof Array ? obj.step : [])) {
 				this.step.push(new ExampleScenarioProcessStep(o));
 			}
 		}
@@ -17646,7 +17646,7 @@ export class ExampleScenarioProcessStep extends Element {
 
 		if (obj.hasOwnProperty('process')) {
 			this.process = [];
-			for (const o of obj.process || []) {
+			for (const o of (obj.process instanceof Array ? obj.process : [])) {
 				this.process.push(new ExampleScenarioProcess(o));
 			}
 		}
@@ -17661,7 +17661,7 @@ export class ExampleScenarioProcessStep extends Element {
 
 		if (obj.hasOwnProperty('alternative')) {
 			this.alternative = [];
-			for (const o of obj.alternative || []) {
+			for (const o of (obj.alternative instanceof Array ? obj.alternative : [])) {
 				this.alternative.push(new ExampleScenarioProcessStepAlternative(o));
 			}
 		}
@@ -17696,7 +17696,7 @@ export class ExampleScenarioProcess extends Element {
 
 		if (obj.hasOwnProperty('step')) {
 			this.step = [];
-			for (const o of obj.step || []) {
+			for (const o of (obj.step instanceof Array ? obj.step : [])) {
 				this.step.push(new ExampleScenarioProcessStep(o));
 			}
 		}
@@ -17768,14 +17768,14 @@ export class ExampleScenarioInstance extends Element {
 
 		if (obj.hasOwnProperty('version')) {
 			this.version = [];
-			for (const o of obj.version || []) {
+			for (const o of (obj.version instanceof Array ? obj.version : [])) {
 				this.version.push(new ExampleScenarioInstanceVersion(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('containedInstance')) {
 			this.containedInstance = [];
-			for (const o of obj.containedInstance || []) {
+			for (const o of (obj.containedInstance instanceof Array ? obj.containedInstance : [])) {
 				this.containedInstance.push(new ExampleScenarioInstanceContainedInstance(o));
 			}
 		}
@@ -17831,7 +17831,7 @@ export class ExampleScenario extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -17862,21 +17862,21 @@ export class ExampleScenario extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -17891,28 +17891,28 @@ export class ExampleScenario extends DomainResource {
 
 		if (obj.hasOwnProperty('actor')) {
 			this.actor = [];
-			for (const o of obj.actor || []) {
+			for (const o of (obj.actor instanceof Array ? obj.actor : [])) {
 				this.actor.push(new ExampleScenarioActor(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instance')) {
 			this.instance = [];
-			for (const o of obj.instance || []) {
+			for (const o of (obj.instance instanceof Array ? obj.instance : [])) {
 				this.instance.push(new ExampleScenarioInstance(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('process')) {
 			this.process = [];
-			for (const o of obj.process || []) {
+			for (const o of (obj.process instanceof Array ? obj.process : [])) {
 				this.process.push(new ExampleScenarioProcess(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('workflow')) {
 			this.workflow = [];
-			for (const o of obj.workflow || []) {
+			for (const o of (obj.workflow instanceof Array ? obj.workflow : [])) {
 				this.workflow.push(o);
 			}
 		}
@@ -18011,7 +18011,7 @@ export class ExplanationOfBenefitBenefitBalance extends Element {
 
 		if (obj.hasOwnProperty('financial')) {
 			this.financial = [];
-			for (const o of obj.financial || []) {
+			for (const o of (obj.financial instanceof Array ? obj.financial : [])) {
 				this.financial.push(new ExplanationOfBenefitBenefitBalanceFinancial(o));
 			}
 		}
@@ -18122,7 +18122,7 @@ export class ExplanationOfBenefitAddItemDetailSubDetail extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
@@ -18145,14 +18145,14 @@ export class ExplanationOfBenefitAddItemDetailSubDetail extends Element {
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ExplanationOfBenefitItemAdjudication(o));
 			}
 		}
@@ -18179,7 +18179,7 @@ export class ExplanationOfBenefitAddItemDetail extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
@@ -18202,21 +18202,21 @@ export class ExplanationOfBenefitAddItemDetail extends Element {
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ExplanationOfBenefitItemAdjudication(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('subDetail')) {
 			this.subDetail = [];
-			for (const o of obj.subDetail || []) {
+			for (const o of (obj.subDetail instanceof Array ? obj.subDetail : [])) {
 				this.subDetail.push(new ExplanationOfBenefitAddItemDetailSubDetail(o));
 			}
 		}
@@ -18240,28 +18240,28 @@ export class ExplanationOfBenefitAddItem extends Element {
 
 		if (obj.hasOwnProperty('itemSequence')) {
 			this.itemSequence = [];
-			for (const o of obj.itemSequence || []) {
+			for (const o of (obj.itemSequence instanceof Array ? obj.itemSequence : [])) {
 				this.itemSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('detailSequence')) {
 			this.detailSequence = [];
-			for (const o of obj.detailSequence || []) {
+			for (const o of (obj.detailSequence instanceof Array ? obj.detailSequence : [])) {
 				this.detailSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('subDetailSequence')) {
 			this.subDetailSequence = [];
-			for (const o of obj.subDetailSequence || []) {
+			for (const o of (obj.subDetailSequence instanceof Array ? obj.subDetailSequence : [])) {
 				this.subDetailSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('provider')) {
 			this.provider = [];
-			for (const o of obj.provider || []) {
+			for (const o of (obj.provider instanceof Array ? obj.provider : [])) {
 				this.provider.push(new Reference(o));
 			}
 		}
@@ -18272,14 +18272,14 @@ export class ExplanationOfBenefitAddItem extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('programCode')) {
 			this.programCode = [];
-			for (const o of obj.programCode || []) {
+			for (const o of (obj.programCode instanceof Array ? obj.programCode : [])) {
 				this.programCode.push(new CodeableConcept(o));
 			}
 		}
@@ -18326,28 +18326,28 @@ export class ExplanationOfBenefitAddItem extends Element {
 
 		if (obj.hasOwnProperty('subSite')) {
 			this.subSite = [];
-			for (const o of obj.subSite || []) {
+			for (const o of (obj.subSite instanceof Array ? obj.subSite : [])) {
 				this.subSite.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ExplanationOfBenefitItemAdjudication(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('detail')) {
 			this.detail = [];
-			for (const o of obj.detail || []) {
+			for (const o of (obj.detail instanceof Array ? obj.detail : [])) {
 				this.detail.push(new ExplanationOfBenefitAddItemDetail(o));
 			}
 		}
@@ -18399,14 +18399,14 @@ export class ExplanationOfBenefitItemDetailSubDetail extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('programCode')) {
 			this.programCode = [];
-			for (const o of obj.programCode || []) {
+			for (const o of (obj.programCode instanceof Array ? obj.programCode : [])) {
 				this.programCode.push(new CodeableConcept(o));
 			}
 		}
@@ -18429,21 +18429,21 @@ export class ExplanationOfBenefitItemDetailSubDetail extends Element {
 
 		if (obj.hasOwnProperty('udi')) {
 			this.udi = [];
-			for (const o of obj.udi || []) {
+			for (const o of (obj.udi instanceof Array ? obj.udi : [])) {
 				this.udi.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ExplanationOfBenefitItemAdjudication(o));
 			}
 		}
@@ -18487,14 +18487,14 @@ export class ExplanationOfBenefitItemDetail extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('programCode')) {
 			this.programCode = [];
-			for (const o of obj.programCode || []) {
+			for (const o of (obj.programCode instanceof Array ? obj.programCode : [])) {
 				this.programCode.push(new CodeableConcept(o));
 			}
 		}
@@ -18517,28 +18517,28 @@ export class ExplanationOfBenefitItemDetail extends Element {
 
 		if (obj.hasOwnProperty('udi')) {
 			this.udi = [];
-			for (const o of obj.udi || []) {
+			for (const o of (obj.udi instanceof Array ? obj.udi : [])) {
 				this.udi.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ExplanationOfBenefitItemAdjudication(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('subDetail')) {
 			this.subDetail = [];
-			for (const o of obj.subDetail || []) {
+			for (const o of (obj.subDetail instanceof Array ? obj.subDetail : [])) {
 				this.subDetail.push(new ExplanationOfBenefitItemDetailSubDetail(o));
 			}
 		}
@@ -18599,28 +18599,28 @@ export class ExplanationOfBenefitItem extends Element {
 
 		if (obj.hasOwnProperty('careTeamSequence')) {
 			this.careTeamSequence = [];
-			for (const o of obj.careTeamSequence || []) {
+			for (const o of (obj.careTeamSequence instanceof Array ? obj.careTeamSequence : [])) {
 				this.careTeamSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('diagnosisSequence')) {
 			this.diagnosisSequence = [];
-			for (const o of obj.diagnosisSequence || []) {
+			for (const o of (obj.diagnosisSequence instanceof Array ? obj.diagnosisSequence : [])) {
 				this.diagnosisSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('procedureSequence')) {
 			this.procedureSequence = [];
-			for (const o of obj.procedureSequence || []) {
+			for (const o of (obj.procedureSequence instanceof Array ? obj.procedureSequence : [])) {
 				this.procedureSequence.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('informationSequence')) {
 			this.informationSequence = [];
-			for (const o of obj.informationSequence || []) {
+			for (const o of (obj.informationSequence instanceof Array ? obj.informationSequence : [])) {
 				this.informationSequence.push(o);
 			}
 		}
@@ -18639,14 +18639,14 @@ export class ExplanationOfBenefitItem extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('programCode')) {
 			this.programCode = [];
-			for (const o of obj.programCode || []) {
+			for (const o of (obj.programCode instanceof Array ? obj.programCode : [])) {
 				this.programCode.push(new CodeableConcept(o));
 			}
 		}
@@ -18689,7 +18689,7 @@ export class ExplanationOfBenefitItem extends Element {
 
 		if (obj.hasOwnProperty('udi')) {
 			this.udi = [];
-			for (const o of obj.udi || []) {
+			for (const o of (obj.udi instanceof Array ? obj.udi : [])) {
 				this.udi.push(new Reference(o));
 			}
 		}
@@ -18700,35 +18700,35 @@ export class ExplanationOfBenefitItem extends Element {
 
 		if (obj.hasOwnProperty('subSite')) {
 			this.subSite = [];
-			for (const o of obj.subSite || []) {
+			for (const o of (obj.subSite instanceof Array ? obj.subSite : [])) {
 				this.subSite.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('encounter')) {
 			this.encounter = [];
-			for (const o of obj.encounter || []) {
+			for (const o of (obj.encounter instanceof Array ? obj.encounter : [])) {
 				this.encounter.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('noteNumber')) {
 			this.noteNumber = [];
-			for (const o of obj.noteNumber || []) {
+			for (const o of (obj.noteNumber instanceof Array ? obj.noteNumber : [])) {
 				this.noteNumber.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ExplanationOfBenefitItemAdjudication(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('detail')) {
 			this.detail = [];
-			for (const o of obj.detail || []) {
+			for (const o of (obj.detail instanceof Array ? obj.detail : [])) {
 				this.detail.push(new ExplanationOfBenefitItemDetail(o));
 			}
 		}
@@ -18805,7 +18805,7 @@ export class ExplanationOfBenefitInsurance extends Element {
 
 		if (obj.hasOwnProperty('preAuthRef')) {
 			this.preAuthRef = [];
-			for (const o of obj.preAuthRef || []) {
+			for (const o of (obj.preAuthRef instanceof Array ? obj.preAuthRef : [])) {
 				this.preAuthRef.push(o);
 			}
 		}
@@ -18827,7 +18827,7 @@ export class ExplanationOfBenefitProcedure extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
@@ -18846,7 +18846,7 @@ export class ExplanationOfBenefitProcedure extends Element {
 
 		if (obj.hasOwnProperty('udi')) {
 			this.udi = [];
-			for (const o of obj.udi || []) {
+			for (const o of (obj.udi instanceof Array ? obj.udi : [])) {
 				this.udi.push(new Reference(o));
 			}
 		}
@@ -18879,7 +18879,7 @@ export class ExplanationOfBenefitDiagnosis extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
@@ -19048,7 +19048,7 @@ export class ExplanationOfBenefit extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -19107,7 +19107,7 @@ export class ExplanationOfBenefit extends DomainResource {
 
 		if (obj.hasOwnProperty('related')) {
 			this.related = [];
-			for (const o of obj.related || []) {
+			for (const o of (obj.related instanceof Array ? obj.related : [])) {
 				this.related.push(new ExplanationOfBenefitRelated(o));
 			}
 		}
@@ -19150,42 +19150,42 @@ export class ExplanationOfBenefit extends DomainResource {
 
 		if (obj.hasOwnProperty('preAuthRef')) {
 			this.preAuthRef = [];
-			for (const o of obj.preAuthRef || []) {
+			for (const o of (obj.preAuthRef instanceof Array ? obj.preAuthRef : [])) {
 				this.preAuthRef.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('preAuthRefPeriod')) {
 			this.preAuthRefPeriod = [];
-			for (const o of obj.preAuthRefPeriod || []) {
+			for (const o of (obj.preAuthRefPeriod instanceof Array ? obj.preAuthRefPeriod : [])) {
 				this.preAuthRefPeriod.push(new Period(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('careTeam')) {
 			this.careTeam = [];
-			for (const o of obj.careTeam || []) {
+			for (const o of (obj.careTeam instanceof Array ? obj.careTeam : [])) {
 				this.careTeam.push(new ExplanationOfBenefitCareTeam(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('supportingInfo')) {
 			this.supportingInfo = [];
-			for (const o of obj.supportingInfo || []) {
+			for (const o of (obj.supportingInfo instanceof Array ? obj.supportingInfo : [])) {
 				this.supportingInfo.push(new ExplanationOfBenefitSupportingInfo(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('diagnosis')) {
 			this.diagnosis = [];
-			for (const o of obj.diagnosis || []) {
+			for (const o of (obj.diagnosis instanceof Array ? obj.diagnosis : [])) {
 				this.diagnosis.push(new ExplanationOfBenefitDiagnosis(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('procedure')) {
 			this.procedure = [];
-			for (const o of obj.procedure || []) {
+			for (const o of (obj.procedure instanceof Array ? obj.procedure : [])) {
 				this.procedure.push(new ExplanationOfBenefitProcedure(o));
 			}
 		}
@@ -19196,7 +19196,7 @@ export class ExplanationOfBenefit extends DomainResource {
 
 		if (obj.hasOwnProperty('insurance')) {
 			this.insurance = [];
-			for (const o of obj.insurance || []) {
+			for (const o of (obj.insurance instanceof Array ? obj.insurance : [])) {
 				this.insurance.push(new ExplanationOfBenefitInsurance(o));
 			}
 		}
@@ -19207,28 +19207,28 @@ export class ExplanationOfBenefit extends DomainResource {
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new ExplanationOfBenefitItem(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('addItem')) {
 			this.addItem = [];
-			for (const o of obj.addItem || []) {
+			for (const o of (obj.addItem instanceof Array ? obj.addItem : [])) {
 				this.addItem.push(new ExplanationOfBenefitAddItem(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('adjudication')) {
 			this.adjudication = [];
-			for (const o of obj.adjudication || []) {
+			for (const o of (obj.adjudication instanceof Array ? obj.adjudication : [])) {
 				this.adjudication.push(new ExplanationOfBenefitItemAdjudication(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('total')) {
 			this.total = [];
-			for (const o of obj.total || []) {
+			for (const o of (obj.total instanceof Array ? obj.total : [])) {
 				this.total.push(new ExplanationOfBenefitTotal(o));
 			}
 		}
@@ -19247,7 +19247,7 @@ export class ExplanationOfBenefit extends DomainResource {
 
 		if (obj.hasOwnProperty('processNote')) {
 			this.processNote = [];
-			for (const o of obj.processNote || []) {
+			for (const o of (obj.processNote instanceof Array ? obj.processNote : [])) {
 				this.processNote.push(new ExplanationOfBenefitProcessNote(o));
 			}
 		}
@@ -19258,7 +19258,7 @@ export class ExplanationOfBenefit extends DomainResource {
 
 		if (obj.hasOwnProperty('benefitBalance')) {
 			this.benefitBalance = [];
-			for (const o of obj.benefitBalance || []) {
+			for (const o of (obj.benefitBalance instanceof Array ? obj.benefitBalance : [])) {
 				this.benefitBalance.push(new ExplanationOfBenefitBenefitBalance(o));
 			}
 		}
@@ -19345,7 +19345,7 @@ export class FamilyMemberHistoryCondition extends Element {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -19371,21 +19371,21 @@ export class FamilyMemberHistory extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesCanonical')) {
 			this.instantiatesCanonical = [];
-			for (const o of obj.instantiatesCanonical || []) {
+			for (const o of (obj.instantiatesCanonical instanceof Array ? obj.instantiatesCanonical : [])) {
 				this.instantiatesCanonical.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesUri')) {
 			this.instantiatesUri = [];
-			for (const o of obj.instantiatesUri || []) {
+			for (const o of (obj.instantiatesUri instanceof Array ? obj.instantiatesUri : [])) {
 				this.instantiatesUri.push(o);
 			}
 		}
@@ -19468,28 +19468,28 @@ export class FamilyMemberHistory extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('condition')) {
 			this.condition = [];
-			for (const o of obj.condition || []) {
+			for (const o of (obj.condition instanceof Array ? obj.condition : [])) {
 				this.condition.push(new FamilyMemberHistoryCondition(o));
 			}
 		}
@@ -19534,7 +19534,7 @@ export class Flag extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -19545,7 +19545,7 @@ export class Flag extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -19650,7 +19650,7 @@ export class Goal extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -19665,7 +19665,7 @@ export class Goal extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -19692,7 +19692,7 @@ export class Goal extends DomainResource {
 
 		if (obj.hasOwnProperty('target')) {
 			this.target = [];
-			for (const o of obj.target || []) {
+			for (const o of (obj.target instanceof Array ? obj.target : [])) {
 				this.target.push(new GoalTarget(o));
 			}
 		}
@@ -19711,28 +19711,28 @@ export class Goal extends DomainResource {
 
 		if (obj.hasOwnProperty('addresses')) {
 			this.addresses = [];
-			for (const o of obj.addresses || []) {
+			for (const o of (obj.addresses instanceof Array ? obj.addresses : [])) {
 				this.addresses.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('outcomeCode')) {
 			this.outcomeCode = [];
-			for (const o of obj.outcomeCode || []) {
+			for (const o of (obj.outcomeCode instanceof Array ? obj.outcomeCode : [])) {
 				this.outcomeCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('outcomeReference')) {
 			this.outcomeReference = [];
-			for (const o of obj.outcomeReference || []) {
+			for (const o of (obj.outcomeReference instanceof Array ? obj.outcomeReference : [])) {
 				this.outcomeReference.push(new Reference(o));
 			}
 		}
@@ -19810,14 +19810,14 @@ export class GraphDefinitionLinkTarget extends Element {
 
 		if (obj.hasOwnProperty('compartment')) {
 			this.compartment = [];
-			for (const o of obj.compartment || []) {
+			for (const o of (obj.compartment instanceof Array ? obj.compartment : [])) {
 				this.compartment.push(new GraphDefinitionLinkTargetCompartment(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('link')) {
 			this.link = [];
-			for (const o of obj.link || []) {
+			for (const o of (obj.link instanceof Array ? obj.link : [])) {
 				this.link.push(new GraphDefinitionLink(o));
 			}
 		}
@@ -19857,7 +19857,7 @@ export class GraphDefinitionLink extends Element {
 
 		if (obj.hasOwnProperty('target')) {
 			this.target = [];
-			for (const o of obj.target || []) {
+			for (const o of (obj.target instanceof Array ? obj.target : [])) {
 				this.target.push(new GraphDefinitionLinkTarget(o));
 			}
 		}
@@ -19909,7 +19909,7 @@ export class GraphDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -19920,14 +19920,14 @@ export class GraphDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -19946,7 +19946,7 @@ export class GraphDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('link')) {
 			this.link = [];
-			for (const o of obj.link || []) {
+			for (const o of (obj.link instanceof Array ? obj.link : [])) {
 				this.link.push(new GraphDefinitionLink(o));
 			}
 		}
@@ -20051,7 +20051,7 @@ export class Group extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -20086,14 +20086,14 @@ export class Group extends DomainResource {
 
 		if (obj.hasOwnProperty('characteristic')) {
 			this.characteristic = [];
-			for (const o of obj.characteristic || []) {
+			for (const o of (obj.characteristic instanceof Array ? obj.characteristic : [])) {
 				this.characteristic.push(new GroupCharacteristic(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('member')) {
 			this.member = [];
-			for (const o of obj.member || []) {
+			for (const o of (obj.member instanceof Array ? obj.member : [])) {
 				this.member.push(new GroupMember(o));
 			}
 		}
@@ -20126,7 +20126,7 @@ export class GuidanceResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -20165,28 +20165,28 @@ export class GuidanceResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('evaluationMessage')) {
 			this.evaluationMessage = [];
-			for (const o of obj.evaluationMessage || []) {
+			for (const o of (obj.evaluationMessage instanceof Array ? obj.evaluationMessage : [])) {
 				this.evaluationMessage.push(new Reference(o));
 			}
 		}
@@ -20201,7 +20201,7 @@ export class GuidanceResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('dataRequirement')) {
 			this.dataRequirement = [];
-			for (const o of obj.dataRequirement || []) {
+			for (const o of (obj.dataRequirement instanceof Array ? obj.dataRequirement : [])) {
 				this.dataRequirement.push(new DataRequirement(o));
 			}
 		}
@@ -20252,7 +20252,7 @@ export class HealthcareServiceAvailableTime extends Element {
 
 		if (obj.hasOwnProperty('daysOfWeek')) {
 			this.daysOfWeek = [];
-			for (const o of obj.daysOfWeek || []) {
+			for (const o of (obj.daysOfWeek instanceof Array ? obj.daysOfWeek : [])) {
 				this.daysOfWeek.push(o);
 			}
 		}
@@ -20304,7 +20304,7 @@ export class HealthcareService extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -20319,28 +20319,28 @@ export class HealthcareService extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specialty')) {
 			this.specialty = [];
-			for (const o of obj.specialty || []) {
+			for (const o of (obj.specialty instanceof Array ? obj.specialty : [])) {
 				this.specialty.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('location')) {
 			this.location = [];
-			for (const o of obj.location || []) {
+			for (const o of (obj.location instanceof Array ? obj.location : [])) {
 				this.location.push(new Reference(o));
 			}
 		}
@@ -20363,56 +20363,56 @@ export class HealthcareService extends DomainResource {
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('coverageArea')) {
 			this.coverageArea = [];
-			for (const o of obj.coverageArea || []) {
+			for (const o of (obj.coverageArea instanceof Array ? obj.coverageArea : [])) {
 				this.coverageArea.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('serviceProvisionCode')) {
 			this.serviceProvisionCode = [];
-			for (const o of obj.serviceProvisionCode || []) {
+			for (const o of (obj.serviceProvisionCode instanceof Array ? obj.serviceProvisionCode : [])) {
 				this.serviceProvisionCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('eligibility')) {
 			this.eligibility = [];
-			for (const o of obj.eligibility || []) {
+			for (const o of (obj.eligibility instanceof Array ? obj.eligibility : [])) {
 				this.eligibility.push(new HealthcareServiceEligibility(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('program')) {
 			this.program = [];
-			for (const o of obj.program || []) {
+			for (const o of (obj.program instanceof Array ? obj.program : [])) {
 				this.program.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('characteristic')) {
 			this.characteristic = [];
-			for (const o of obj.characteristic || []) {
+			for (const o of (obj.characteristic instanceof Array ? obj.characteristic : [])) {
 				this.characteristic.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('communication')) {
 			this.communication = [];
-			for (const o of obj.communication || []) {
+			for (const o of (obj.communication instanceof Array ? obj.communication : [])) {
 				this.communication.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('referralMethod')) {
 			this.referralMethod = [];
-			for (const o of obj.referralMethod || []) {
+			for (const o of (obj.referralMethod instanceof Array ? obj.referralMethod : [])) {
 				this.referralMethod.push(new CodeableConcept(o));
 			}
 		}
@@ -20423,14 +20423,14 @@ export class HealthcareService extends DomainResource {
 
 		if (obj.hasOwnProperty('availableTime')) {
 			this.availableTime = [];
-			for (const o of obj.availableTime || []) {
+			for (const o of (obj.availableTime instanceof Array ? obj.availableTime : [])) {
 				this.availableTime.push(new HealthcareServiceAvailableTime(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('notAvailable')) {
 			this.notAvailable = [];
-			for (const o of obj.notAvailable || []) {
+			for (const o of (obj.notAvailable instanceof Array ? obj.notAvailable : [])) {
 				this.notAvailable.push(new HealthcareServiceNotAvailable(o));
 			}
 		}
@@ -20441,7 +20441,7 @@ export class HealthcareService extends DomainResource {
 
 		if (obj.hasOwnProperty('endpoint')) {
 			this.endpoint = [];
-			for (const o of obj.endpoint || []) {
+			for (const o of (obj.endpoint instanceof Array ? obj.endpoint : [])) {
 				this.endpoint.push(new Reference(o));
 			}
 		}
@@ -20547,7 +20547,7 @@ export class ImagingStudySeries extends Element {
 
 		if (obj.hasOwnProperty('endpoint')) {
 			this.endpoint = [];
-			for (const o of obj.endpoint || []) {
+			for (const o of (obj.endpoint instanceof Array ? obj.endpoint : [])) {
 				this.endpoint.push(new Reference(o));
 			}
 		}
@@ -20562,7 +20562,7 @@ export class ImagingStudySeries extends Element {
 
 		if (obj.hasOwnProperty('specimen')) {
 			this.specimen = [];
-			for (const o of obj.specimen || []) {
+			for (const o of (obj.specimen instanceof Array ? obj.specimen : [])) {
 				this.specimen.push(new Reference(o));
 			}
 		}
@@ -20573,14 +20573,14 @@ export class ImagingStudySeries extends Element {
 
 		if (obj.hasOwnProperty('performer')) {
 			this.performer = [];
-			for (const o of obj.performer || []) {
+			for (const o of (obj.performer instanceof Array ? obj.performer : [])) {
 				this.performer.push(new ImagingStudySeriesPerformer(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instance')) {
 			this.instance = [];
-			for (const o of obj.instance || []) {
+			for (const o of (obj.instance instanceof Array ? obj.instance : [])) {
 				this.instance.push(new ImagingStudySeriesInstance(o));
 			}
 		}
@@ -20610,7 +20610,7 @@ export class ImagingStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -20621,7 +20621,7 @@ export class ImagingStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('modality')) {
 			this.modality = [];
-			for (const o of obj.modality || []) {
+			for (const o of (obj.modality instanceof Array ? obj.modality : [])) {
 				this.modality.push(new Coding(o));
 			}
 		}
@@ -20640,7 +20640,7 @@ export class ImagingStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
@@ -20651,14 +20651,14 @@ export class ImagingStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('interpreter')) {
 			this.interpreter = [];
-			for (const o of obj.interpreter || []) {
+			for (const o of (obj.interpreter instanceof Array ? obj.interpreter : [])) {
 				this.interpreter.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endpoint')) {
 			this.endpoint = [];
-			for (const o of obj.endpoint || []) {
+			for (const o of (obj.endpoint instanceof Array ? obj.endpoint : [])) {
 				this.endpoint.push(new Reference(o));
 			}
 		}
@@ -20677,7 +20677,7 @@ export class ImagingStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('procedureCode')) {
 			this.procedureCode = [];
-			for (const o of obj.procedureCode || []) {
+			for (const o of (obj.procedureCode instanceof Array ? obj.procedureCode : [])) {
 				this.procedureCode.push(new CodeableConcept(o));
 			}
 		}
@@ -20688,21 +20688,21 @@ export class ImagingStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -20713,7 +20713,7 @@ export class ImagingStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('series')) {
 			this.series = [];
-			for (const o of obj.series || []) {
+			for (const o of (obj.series instanceof Array ? obj.series : [])) {
 				this.series.push(new ImagingStudySeries(o));
 			}
 		}
@@ -20757,7 +20757,7 @@ export class ImmunizationProtocolApplied extends Element {
 
 		if (obj.hasOwnProperty('targetDisease')) {
 			this.targetDisease = [];
-			for (const o of obj.targetDisease || []) {
+			for (const o of (obj.targetDisease instanceof Array ? obj.targetDisease : [])) {
 				this.targetDisease.push(new CodeableConcept(o));
 			}
 		}
@@ -20867,7 +20867,7 @@ export class Immunization extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -20942,28 +20942,28 @@ export class Immunization extends DomainResource {
 
 		if (obj.hasOwnProperty('performer')) {
 			this.performer = [];
-			for (const o of obj.performer || []) {
+			for (const o of (obj.performer instanceof Array ? obj.performer : [])) {
 				this.performer.push(new ImmunizationPerformer(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
@@ -20974,21 +20974,21 @@ export class Immunization extends DomainResource {
 
 		if (obj.hasOwnProperty('subpotentReason')) {
 			this.subpotentReason = [];
-			for (const o of obj.subpotentReason || []) {
+			for (const o of (obj.subpotentReason instanceof Array ? obj.subpotentReason : [])) {
 				this.subpotentReason.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('education')) {
 			this.education = [];
-			for (const o of obj.education || []) {
+			for (const o of (obj.education instanceof Array ? obj.education : [])) {
 				this.education.push(new ImmunizationEducation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('programEligibility')) {
 			this.programEligibility = [];
-			for (const o of obj.programEligibility || []) {
+			for (const o of (obj.programEligibility instanceof Array ? obj.programEligibility : [])) {
 				this.programEligibility.push(new CodeableConcept(o));
 			}
 		}
@@ -20999,14 +20999,14 @@ export class Immunization extends DomainResource {
 
 		if (obj.hasOwnProperty('reaction')) {
 			this.reaction = [];
-			for (const o of obj.reaction || []) {
+			for (const o of (obj.reaction instanceof Array ? obj.reaction : [])) {
 				this.reaction.push(new ImmunizationReaction(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('protocolApplied')) {
 			this.protocolApplied = [];
-			for (const o of obj.protocolApplied || []) {
+			for (const o of (obj.protocolApplied instanceof Array ? obj.protocolApplied : [])) {
 				this.protocolApplied.push(new ImmunizationProtocolApplied(o));
 			}
 		}
@@ -21054,7 +21054,7 @@ export class ImmunizationEvaluation extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -21089,7 +21089,7 @@ export class ImmunizationEvaluation extends DomainResource {
 
 		if (obj.hasOwnProperty('doseStatusReason')) {
 			this.doseStatusReason = [];
-			for (const o of obj.doseStatusReason || []) {
+			for (const o of (obj.doseStatusReason instanceof Array ? obj.doseStatusReason : [])) {
 				this.doseStatusReason.push(new CodeableConcept(o));
 			}
 		}
@@ -21162,7 +21162,7 @@ export class ImmunizationRecommendationRecommendation extends Element {
 
 		if (obj.hasOwnProperty('vaccineCode')) {
 			this.vaccineCode = [];
-			for (const o of obj.vaccineCode || []) {
+			for (const o of (obj.vaccineCode instanceof Array ? obj.vaccineCode : [])) {
 				this.vaccineCode.push(new CodeableConcept(o));
 			}
 		}
@@ -21173,7 +21173,7 @@ export class ImmunizationRecommendationRecommendation extends Element {
 
 		if (obj.hasOwnProperty('contraindicatedVaccineCode')) {
 			this.contraindicatedVaccineCode = [];
-			for (const o of obj.contraindicatedVaccineCode || []) {
+			for (const o of (obj.contraindicatedVaccineCode instanceof Array ? obj.contraindicatedVaccineCode : [])) {
 				this.contraindicatedVaccineCode.push(new CodeableConcept(o));
 			}
 		}
@@ -21184,14 +21184,14 @@ export class ImmunizationRecommendationRecommendation extends Element {
 
 		if (obj.hasOwnProperty('forecastReason')) {
 			this.forecastReason = [];
-			for (const o of obj.forecastReason || []) {
+			for (const o of (obj.forecastReason instanceof Array ? obj.forecastReason : [])) {
 				this.forecastReason.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('dateCriterion')) {
 			this.dateCriterion = [];
-			for (const o of obj.dateCriterion || []) {
+			for (const o of (obj.dateCriterion instanceof Array ? obj.dateCriterion : [])) {
 				this.dateCriterion.push(new ImmunizationRecommendationRecommendationDateCriterion(o));
 			}
 		}
@@ -21222,14 +21222,14 @@ export class ImmunizationRecommendationRecommendation extends Element {
 
 		if (obj.hasOwnProperty('supportingImmunization')) {
 			this.supportingImmunization = [];
-			for (const o of obj.supportingImmunization || []) {
+			for (const o of (obj.supportingImmunization instanceof Array ? obj.supportingImmunization : [])) {
 				this.supportingImmunization.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('supportingPatientInformation')) {
 			this.supportingPatientInformation = [];
-			for (const o of obj.supportingPatientInformation || []) {
+			for (const o of (obj.supportingPatientInformation instanceof Array ? obj.supportingPatientInformation : [])) {
 				this.supportingPatientInformation.push(new Reference(o));
 			}
 		}
@@ -21261,7 +21261,7 @@ export class ImmunizationRecommendation extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -21280,7 +21280,7 @@ export class ImmunizationRecommendation extends DomainResource {
 
 		if (obj.hasOwnProperty('recommendation')) {
 			this.recommendation = [];
-			for (const o of obj.recommendation || []) {
+			for (const o of (obj.recommendation instanceof Array ? obj.recommendation : [])) {
 				this.recommendation.push(new ImmunizationRecommendationRecommendation(o));
 			}
 		}
@@ -21309,7 +21309,7 @@ export class ImplementationGuideManifestPage extends Element {
 
 		if (obj.hasOwnProperty('anchor')) {
 			this.anchor = [];
-			for (const o of obj.anchor || []) {
+			for (const o of (obj.anchor instanceof Array ? obj.anchor : [])) {
 				this.anchor.push(o);
 			}
 		}
@@ -21359,28 +21359,28 @@ export class ImplementationGuideManifest extends Element {
 
 		if (obj.hasOwnProperty('resource')) {
 			this.resource = [];
-			for (const o of obj.resource || []) {
+			for (const o of (obj.resource instanceof Array ? obj.resource : [])) {
 				this.resource.push(new ImplementationGuideManifestResource(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('page')) {
 			this.page = [];
-			for (const o of obj.page || []) {
+			for (const o of (obj.page instanceof Array ? obj.page : [])) {
 				this.page.push(new ImplementationGuideManifestPage(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('image')) {
 			this.image = [];
-			for (const o of obj.image || []) {
+			for (const o of (obj.image instanceof Array ? obj.image : [])) {
 				this.image.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('other')) {
 			this.other = [];
-			for (const o of obj.other || []) {
+			for (const o of (obj.other instanceof Array ? obj.other : [])) {
 				this.other.push(o);
 			}
 		}
@@ -21431,7 +21431,7 @@ export class ImplementationGuideDefinitionParameter extends Element {
 
 	}
 
-  code: ImplementationGuideCode1;
+  code: ImplementationGuideCode1|string;
   value: string;
 }
 
@@ -21457,7 +21457,7 @@ export class ImplementationGuideDefinitionPage extends Element {
 
 		if (obj.hasOwnProperty('page')) {
 			this.page = [];
-			for (const o of obj.page || []) {
+			for (const o of (obj.page instanceof Array ? obj.page : [])) {
 				this.page.push(new ImplementationGuideDefinitionPage(o));
 			}
 		}
@@ -21609,7 +21609,7 @@ export class ImplementationGuideDefinitionResource extends Element {
 
 		if (obj.hasOwnProperty('fhirVersion')) {
 			this.fhirVersion = [];
-			for (const o of obj.fhirVersion || []) {
+			for (const o of (obj.fhirVersion instanceof Array ? obj.fhirVersion : [])) {
 				this.fhirVersion.push(o);
 			}
 		}
@@ -21669,14 +21669,14 @@ export class ImplementationGuideDefinition extends Element {
 
 		if (obj.hasOwnProperty('grouping')) {
 			this.grouping = [];
-			for (const o of obj.grouping || []) {
+			for (const o of (obj.grouping instanceof Array ? obj.grouping : [])) {
 				this.grouping.push(new ImplementationGuideDefinitionGrouping(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('resource')) {
 			this.resource = [];
-			for (const o of obj.resource || []) {
+			for (const o of (obj.resource instanceof Array ? obj.resource : [])) {
 				this.resource.push(new ImplementationGuideDefinitionResource(o));
 			}
 		}
@@ -21687,14 +21687,14 @@ export class ImplementationGuideDefinition extends Element {
 
 		if (obj.hasOwnProperty('parameter')) {
 			this.parameter = [];
-			for (const o of obj.parameter || []) {
+			for (const o of (obj.parameter instanceof Array ? obj.parameter : [])) {
 				this.parameter.push(new ImplementationGuideDefinitionParameter(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('template')) {
 			this.template = [];
-			for (const o of obj.template || []) {
+			for (const o of (obj.template instanceof Array ? obj.template : [])) {
 				this.template.push(new ImplementationGuideDefinitionTemplate(o));
 			}
 		}
@@ -21722,7 +21722,7 @@ export class ImplementationGuideGlobal extends Element {
 
 	}
 
-  type: ImplementationGuideType1;
+  type: ImplementationGuideType1|string;
   profile: string;
 }
 
@@ -21790,7 +21790,7 @@ export class ImplementationGuide extends DomainResource implements IFhir.IImplem
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -21801,14 +21801,14 @@ export class ImplementationGuide extends DomainResource implements IFhir.IImplem
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -21827,21 +21827,21 @@ export class ImplementationGuide extends DomainResource implements IFhir.IImplem
 
 		if (obj.hasOwnProperty('fhirVersion')) {
 			this.fhirVersion = [];
-			for (const o of obj.fhirVersion || []) {
+			for (const o of (obj.fhirVersion instanceof Array ? obj.fhirVersion : [])) {
 				this.fhirVersion.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('dependsOn')) {
 			this.dependsOn = [];
-			for (const o of obj.dependsOn || []) {
+			for (const o of (obj.dependsOn instanceof Array ? obj.dependsOn : [])) {
 				this.dependsOn.push(new ImplementationGuideDependsOn(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('global')) {
 			this.global = [];
-			for (const o of obj.global || []) {
+			for (const o of (obj.global instanceof Array ? obj.global : [])) {
 				this.global.push(new ImplementationGuideGlobal(o));
 			}
 		}
@@ -21872,7 +21872,7 @@ export class ImplementationGuide extends DomainResource implements IFhir.IImplem
   copyright?: string;
   packageId: string;
   license?: ImplementationGuideLicense1;
-  fhirVersion: ImplementationGuideFhirVersion1[];
+  fhirVersion: (ImplementationGuideFhirVersion1|string)[];
   dependsOn?: ImplementationGuideDependsOn[];
   global?: ImplementationGuideGlobal[];
   definition?: ImplementationGuideDefinition;
@@ -21901,7 +21901,7 @@ export class IngredientSubstanceStrengthReferenceStrength extends Element {
 
 		if (obj.hasOwnProperty('country')) {
 			this.country = [];
-			for (const o of obj.country || []) {
+			for (const o of (obj.country instanceof Array ? obj.country : [])) {
 				this.country.push(new CodeableConcept(o));
 			}
 		}
@@ -21949,14 +21949,14 @@ export class IngredientSubstanceStrength extends Element {
 
 		if (obj.hasOwnProperty('country')) {
 			this.country = [];
-			for (const o of obj.country || []) {
+			for (const o of (obj.country instanceof Array ? obj.country : [])) {
 				this.country.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('referenceStrength')) {
 			this.referenceStrength = [];
-			for (const o of obj.referenceStrength || []) {
+			for (const o of (obj.referenceStrength instanceof Array ? obj.referenceStrength : [])) {
 				this.referenceStrength.push(new IngredientSubstanceStrengthReferenceStrength(o));
 			}
 		}
@@ -21984,7 +21984,7 @@ export class IngredientSubstance extends Element {
 
 		if (obj.hasOwnProperty('strength')) {
 			this.strength = [];
-			for (const o of obj.strength || []) {
+			for (const o of (obj.strength instanceof Array ? obj.strength : [])) {
 				this.strength.push(new IngredientSubstanceStrength(o));
 			}
 		}
@@ -22030,7 +22030,7 @@ export class Ingredient extends DomainResource {
 
 		if (obj.hasOwnProperty('for')) {
 			this.for = [];
-			for (const o of obj.for || []) {
+			for (const o of (obj.for instanceof Array ? obj.for : [])) {
 				this.for.push(new Reference(o));
 			}
 		}
@@ -22041,7 +22041,7 @@ export class Ingredient extends DomainResource {
 
 		if (obj.hasOwnProperty('function')) {
 			this.function = [];
-			for (const o of obj.function || []) {
+			for (const o of (obj.function instanceof Array ? obj.function : [])) {
 				this.function.push(new CodeableConcept(o));
 			}
 		}
@@ -22052,7 +22052,7 @@ export class Ingredient extends DomainResource {
 
 		if (obj.hasOwnProperty('manufacturer')) {
 			this.manufacturer = [];
-			for (const o of obj.manufacturer || []) {
+			for (const o of (obj.manufacturer instanceof Array ? obj.manufacturer : [])) {
 				this.manufacturer.push(new IngredientManufacturer(o));
 			}
 		}
@@ -22088,7 +22088,7 @@ export class InsurancePlanPlanSpecificCostBenefitCost extends Element {
 
 		if (obj.hasOwnProperty('qualifiers')) {
 			this.qualifiers = [];
-			for (const o of obj.qualifiers || []) {
+			for (const o of (obj.qualifiers instanceof Array ? obj.qualifiers : [])) {
 				this.qualifiers.push(new CodeableConcept(o));
 			}
 		}
@@ -22115,7 +22115,7 @@ export class InsurancePlanPlanSpecificCostBenefit extends Element {
 
 		if (obj.hasOwnProperty('cost')) {
 			this.cost = [];
-			for (const o of obj.cost || []) {
+			for (const o of (obj.cost instanceof Array ? obj.cost : [])) {
 				this.cost.push(new InsurancePlanPlanSpecificCostBenefitCost(o));
 			}
 		}
@@ -22136,7 +22136,7 @@ export class InsurancePlanPlanSpecificCost extends Element {
 
 		if (obj.hasOwnProperty('benefit')) {
 			this.benefit = [];
-			for (const o of obj.benefit || []) {
+			for (const o of (obj.benefit instanceof Array ? obj.benefit : [])) {
 				this.benefit.push(new InsurancePlanPlanSpecificCostBenefit(o));
 			}
 		}
@@ -22181,7 +22181,7 @@ export class InsurancePlanPlan extends Element {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -22192,28 +22192,28 @@ export class InsurancePlanPlan extends Element {
 
 		if (obj.hasOwnProperty('coverageArea')) {
 			this.coverageArea = [];
-			for (const o of obj.coverageArea || []) {
+			for (const o of (obj.coverageArea instanceof Array ? obj.coverageArea : [])) {
 				this.coverageArea.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('network')) {
 			this.network = [];
-			for (const o of obj.network || []) {
+			for (const o of (obj.network instanceof Array ? obj.network : [])) {
 				this.network.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('generalCost')) {
 			this.generalCost = [];
-			for (const o of obj.generalCost || []) {
+			for (const o of (obj.generalCost instanceof Array ? obj.generalCost : [])) {
 				this.generalCost.push(new InsurancePlanPlanGeneralCost(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specificCost')) {
 			this.specificCost = [];
-			for (const o of obj.specificCost || []) {
+			for (const o of (obj.specificCost instanceof Array ? obj.specificCost : [])) {
 				this.specificCost.push(new InsurancePlanPlanSpecificCost(o));
 			}
 		}
@@ -22260,7 +22260,7 @@ export class InsurancePlanCoverageBenefit extends Element {
 
 		if (obj.hasOwnProperty('limit')) {
 			this.limit = [];
-			for (const o of obj.limit || []) {
+			for (const o of (obj.limit instanceof Array ? obj.limit : [])) {
 				this.limit.push(new InsurancePlanCoverageBenefitLimit(o));
 			}
 		}
@@ -22282,14 +22282,14 @@ export class InsurancePlanCoverage extends Element {
 
 		if (obj.hasOwnProperty('network')) {
 			this.network = [];
-			for (const o of obj.network || []) {
+			for (const o of (obj.network instanceof Array ? obj.network : [])) {
 				this.network.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('benefit')) {
 			this.benefit = [];
-			for (const o of obj.benefit || []) {
+			for (const o of (obj.benefit instanceof Array ? obj.benefit : [])) {
 				this.benefit.push(new InsurancePlanCoverageBenefit(o));
 			}
 		}
@@ -22315,7 +22315,7 @@ export class InsurancePlanContact extends Element {
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
@@ -22341,7 +22341,7 @@ export class InsurancePlan extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -22352,7 +22352,7 @@ export class InsurancePlan extends DomainResource {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
@@ -22363,7 +22363,7 @@ export class InsurancePlan extends DomainResource {
 
 		if (obj.hasOwnProperty('alias')) {
 			this.alias = [];
-			for (const o of obj.alias || []) {
+			for (const o of (obj.alias instanceof Array ? obj.alias : [])) {
 				this.alias.push(o);
 			}
 		}
@@ -22382,42 +22382,42 @@ export class InsurancePlan extends DomainResource {
 
 		if (obj.hasOwnProperty('coverageArea')) {
 			this.coverageArea = [];
-			for (const o of obj.coverageArea || []) {
+			for (const o of (obj.coverageArea instanceof Array ? obj.coverageArea : [])) {
 				this.coverageArea.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new InsurancePlanContact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endpoint')) {
 			this.endpoint = [];
-			for (const o of obj.endpoint || []) {
+			for (const o of (obj.endpoint instanceof Array ? obj.endpoint : [])) {
 				this.endpoint.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('network')) {
 			this.network = [];
-			for (const o of obj.network || []) {
+			for (const o of (obj.network instanceof Array ? obj.network : [])) {
 				this.network.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('coverage')) {
 			this.coverage = [];
-			for (const o of obj.coverage || []) {
+			for (const o of (obj.coverage instanceof Array ? obj.coverage : [])) {
 				this.coverage.push(new InsurancePlanCoverage(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('plan')) {
 			this.plan = [];
-			for (const o of obj.plan || []) {
+			for (const o of (obj.plan instanceof Array ? obj.plan : [])) {
 				this.plan.push(new InsurancePlanPlan(o));
 			}
 		}
@@ -22487,7 +22487,7 @@ export class InvoiceLineItem extends Element {
 
 		if (obj.hasOwnProperty('priceComponent')) {
 			this.priceComponent = [];
-			for (const o of obj.priceComponent || []) {
+			for (const o of (obj.priceComponent instanceof Array ? obj.priceComponent : [])) {
 				this.priceComponent.push(new InvoiceLineItemPriceComponent(o));
 			}
 		}
@@ -22527,7 +22527,7 @@ export class Invoice extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -22558,7 +22558,7 @@ export class Invoice extends DomainResource {
 
 		if (obj.hasOwnProperty('participant')) {
 			this.participant = [];
-			for (const o of obj.participant || []) {
+			for (const o of (obj.participant instanceof Array ? obj.participant : [])) {
 				this.participant.push(new InvoiceParticipant(o));
 			}
 		}
@@ -22573,14 +22573,14 @@ export class Invoice extends DomainResource {
 
 		if (obj.hasOwnProperty('lineItem')) {
 			this.lineItem = [];
-			for (const o of obj.lineItem || []) {
+			for (const o of (obj.lineItem instanceof Array ? obj.lineItem : [])) {
 				this.lineItem.push(new InvoiceLineItem(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('totalPriceComponent')) {
 			this.totalPriceComponent = [];
-			for (const o of obj.totalPriceComponent || []) {
+			for (const o of (obj.totalPriceComponent instanceof Array ? obj.totalPriceComponent : [])) {
 				this.totalPriceComponent.push(new InvoiceLineItemPriceComponent(o));
 			}
 		}
@@ -22599,7 +22599,7 @@ export class Invoice extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -22638,7 +22638,7 @@ export class Library extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -22689,7 +22689,7 @@ export class Library extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -22700,14 +22700,14 @@ export class Library extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -22738,63 +22738,63 @@ export class Library extends DomainResource {
 
 		if (obj.hasOwnProperty('topic')) {
 			this.topic = [];
-			for (const o of obj.topic || []) {
+			for (const o of (obj.topic instanceof Array ? obj.topic : [])) {
 				this.topic.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('editor')) {
 			this.editor = [];
-			for (const o of obj.editor || []) {
+			for (const o of (obj.editor instanceof Array ? obj.editor : [])) {
 				this.editor.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reviewer')) {
 			this.reviewer = [];
-			for (const o of obj.reviewer || []) {
+			for (const o of (obj.reviewer instanceof Array ? obj.reviewer : [])) {
 				this.reviewer.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endorser')) {
 			this.endorser = [];
-			for (const o of obj.endorser || []) {
+			for (const o of (obj.endorser instanceof Array ? obj.endorser : [])) {
 				this.endorser.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedArtifact')) {
 			this.relatedArtifact = [];
-			for (const o of obj.relatedArtifact || []) {
+			for (const o of (obj.relatedArtifact instanceof Array ? obj.relatedArtifact : [])) {
 				this.relatedArtifact.push(new RelatedArtifact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('parameter')) {
 			this.parameter = [];
-			for (const o of obj.parameter || []) {
+			for (const o of (obj.parameter instanceof Array ? obj.parameter : [])) {
 				this.parameter.push(new ParameterDefinition(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('dataRequirement')) {
 			this.dataRequirement = [];
-			for (const o of obj.dataRequirement || []) {
+			for (const o of (obj.dataRequirement instanceof Array ? obj.dataRequirement : [])) {
 				this.dataRequirement.push(new DataRequirement(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('content')) {
 			this.content = [];
-			for (const o of obj.content || []) {
+			for (const o of (obj.content instanceof Array ? obj.content : [])) {
 				this.content.push(new Attachment(o));
 			}
 		}
@@ -22871,7 +22871,7 @@ export class Linkage extends DomainResource {
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new LinkageItem(o));
 			}
 		}
@@ -22921,7 +22921,7 @@ export class List extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -22964,14 +22964,14 @@ export class List extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('entry')) {
 			this.entry = [];
-			for (const o of obj.entry || []) {
+			for (const o of (obj.entry instanceof Array ? obj.entry : [])) {
 				this.entry.push(new ListEntry(o));
 			}
 		}
@@ -23004,7 +23004,7 @@ export class LocationHoursOfOperation extends Element {
 
 		if (obj.hasOwnProperty('daysOfWeek')) {
 			this.daysOfWeek = [];
-			for (const o of obj.daysOfWeek || []) {
+			for (const o of (obj.daysOfWeek instanceof Array ? obj.daysOfWeek : [])) {
 				this.daysOfWeek.push(o);
 			}
 		}
@@ -23061,7 +23061,7 @@ export class Location extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -23080,7 +23080,7 @@ export class Location extends DomainResource {
 
 		if (obj.hasOwnProperty('alias')) {
 			this.alias = [];
-			for (const o of obj.alias || []) {
+			for (const o of (obj.alias instanceof Array ? obj.alias : [])) {
 				this.alias.push(o);
 			}
 		}
@@ -23095,14 +23095,14 @@ export class Location extends DomainResource {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
@@ -23129,7 +23129,7 @@ export class Location extends DomainResource {
 
 		if (obj.hasOwnProperty('hoursOfOperation')) {
 			this.hoursOfOperation = [];
-			for (const o of obj.hoursOfOperation || []) {
+			for (const o of (obj.hoursOfOperation instanceof Array ? obj.hoursOfOperation : [])) {
 				this.hoursOfOperation.push(new LocationHoursOfOperation(o));
 			}
 		}
@@ -23140,7 +23140,7 @@ export class Location extends DomainResource {
 
 		if (obj.hasOwnProperty('endpoint')) {
 			this.endpoint = [];
-			for (const o of obj.endpoint || []) {
+			for (const o of (obj.endpoint instanceof Array ? obj.endpoint : [])) {
 				this.endpoint.push(new Reference(o));
 			}
 		}
@@ -23214,7 +23214,7 @@ export class ManufacturedItemDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -23233,21 +23233,21 @@ export class ManufacturedItemDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('manufacturer')) {
 			this.manufacturer = [];
-			for (const o of obj.manufacturer || []) {
+			for (const o of (obj.manufacturer instanceof Array ? obj.manufacturer : [])) {
 				this.manufacturer.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('ingredient')) {
 			this.ingredient = [];
-			for (const o of obj.ingredient || []) {
+			for (const o of (obj.ingredient instanceof Array ? obj.ingredient : [])) {
 				this.ingredient.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('property')) {
 			this.property = [];
-			for (const o of obj.property || []) {
+			for (const o of (obj.property instanceof Array ? obj.property : [])) {
 				this.property.push(new ManufacturedItemDefinitionProperty(o));
 			}
 		}
@@ -23274,7 +23274,7 @@ export class MeasureSupplementalData extends Element {
 
 		if (obj.hasOwnProperty('usage')) {
 			this.usage = [];
-			for (const o of obj.usage || []) {
+			for (const o of (obj.usage instanceof Array ? obj.usage : [])) {
 				this.usage.push(new CodeableConcept(o));
 			}
 		}
@@ -23336,7 +23336,7 @@ export class MeasureGroupStratifier extends Element {
 
 		if (obj.hasOwnProperty('component')) {
 			this.component = [];
-			for (const o of obj.component || []) {
+			for (const o of (obj.component instanceof Array ? obj.component : [])) {
 				this.component.push(new MeasureGroupStratifierComponent(o));
 			}
 		}
@@ -23386,14 +23386,14 @@ export class MeasureGroup extends Element {
 
 		if (obj.hasOwnProperty('population')) {
 			this.population = [];
-			for (const o of obj.population || []) {
+			for (const o of (obj.population instanceof Array ? obj.population : [])) {
 				this.population.push(new MeasureGroupPopulation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('stratifier')) {
 			this.stratifier = [];
-			for (const o of obj.stratifier || []) {
+			for (const o of (obj.stratifier instanceof Array ? obj.stratifier : [])) {
 				this.stratifier.push(new MeasureGroupStratifier(o));
 			}
 		}
@@ -23419,7 +23419,7 @@ export class Measure extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -23466,7 +23466,7 @@ export class Measure extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -23477,14 +23477,14 @@ export class Measure extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -23515,49 +23515,49 @@ export class Measure extends DomainResource {
 
 		if (obj.hasOwnProperty('topic')) {
 			this.topic = [];
-			for (const o of obj.topic || []) {
+			for (const o of (obj.topic instanceof Array ? obj.topic : [])) {
 				this.topic.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('editor')) {
 			this.editor = [];
-			for (const o of obj.editor || []) {
+			for (const o of (obj.editor instanceof Array ? obj.editor : [])) {
 				this.editor.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reviewer')) {
 			this.reviewer = [];
-			for (const o of obj.reviewer || []) {
+			for (const o of (obj.reviewer instanceof Array ? obj.reviewer : [])) {
 				this.reviewer.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endorser')) {
 			this.endorser = [];
-			for (const o of obj.endorser || []) {
+			for (const o of (obj.endorser instanceof Array ? obj.endorser : [])) {
 				this.endorser.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedArtifact')) {
 			this.relatedArtifact = [];
-			for (const o of obj.relatedArtifact || []) {
+			for (const o of (obj.relatedArtifact instanceof Array ? obj.relatedArtifact : [])) {
 				this.relatedArtifact.push(new RelatedArtifact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('library')) {
 			this.library = [];
-			for (const o of obj.library || []) {
+			for (const o of (obj.library instanceof Array ? obj.library : [])) {
 				this.library.push(o);
 			}
 		}
@@ -23576,7 +23576,7 @@ export class Measure extends DomainResource {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
@@ -23603,7 +23603,7 @@ export class Measure extends DomainResource {
 
 		if (obj.hasOwnProperty('definition')) {
 			this.definition = [];
-			for (const o of obj.definition || []) {
+			for (const o of (obj.definition instanceof Array ? obj.definition : [])) {
 				this.definition.push(o);
 			}
 		}
@@ -23614,14 +23614,14 @@ export class Measure extends DomainResource {
 
 		if (obj.hasOwnProperty('group')) {
 			this.group = [];
-			for (const o of obj.group || []) {
+			for (const o of (obj.group instanceof Array ? obj.group : [])) {
 				this.group.push(new MeasureGroup(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('supplementalData')) {
 			this.supplementalData = [];
-			for (const o of obj.supplementalData || []) {
+			for (const o of (obj.supplementalData instanceof Array ? obj.supplementalData : [])) {
 				this.supplementalData.push(new MeasureSupplementalData(o));
 			}
 		}
@@ -23724,14 +23724,14 @@ export class MeasureReportGroupStratifierStratum extends Element {
 
 		if (obj.hasOwnProperty('component')) {
 			this.component = [];
-			for (const o of obj.component || []) {
+			for (const o of (obj.component instanceof Array ? obj.component : [])) {
 				this.component.push(new MeasureReportGroupStratifierStratumComponent(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('population')) {
 			this.population = [];
-			for (const o of obj.population || []) {
+			for (const o of (obj.population instanceof Array ? obj.population : [])) {
 				this.population.push(new MeasureReportGroupStratifierStratumPopulation(o));
 			}
 		}
@@ -23754,14 +23754,14 @@ export class MeasureReportGroupStratifier extends Element {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('stratum')) {
 			this.stratum = [];
-			for (const o of obj.stratum || []) {
+			for (const o of (obj.stratum instanceof Array ? obj.stratum : [])) {
 				this.stratum.push(new MeasureReportGroupStratifierStratum(o));
 			}
 		}
@@ -23805,7 +23805,7 @@ export class MeasureReportGroup extends Element {
 
 		if (obj.hasOwnProperty('population')) {
 			this.population = [];
-			for (const o of obj.population || []) {
+			for (const o of (obj.population instanceof Array ? obj.population : [])) {
 				this.population.push(new MeasureReportGroupPopulation(o));
 			}
 		}
@@ -23816,7 +23816,7 @@ export class MeasureReportGroup extends Element {
 
 		if (obj.hasOwnProperty('stratifier')) {
 			this.stratifier = [];
-			for (const o of obj.stratifier || []) {
+			for (const o of (obj.stratifier instanceof Array ? obj.stratifier : [])) {
 				this.stratifier.push(new MeasureReportGroupStratifier(o));
 			}
 		}
@@ -23838,7 +23838,7 @@ export class MeasureReport extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -23877,14 +23877,14 @@ export class MeasureReport extends DomainResource {
 
 		if (obj.hasOwnProperty('group')) {
 			this.group = [];
-			for (const o of obj.group || []) {
+			for (const o of (obj.group instanceof Array ? obj.group : [])) {
 				this.group.push(new MeasureReportGroup(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('evaluatedResource')) {
 			this.evaluatedResource = [];
-			for (const o of obj.evaluatedResource || []) {
+			for (const o of (obj.evaluatedResource instanceof Array ? obj.evaluatedResource : [])) {
 				this.evaluatedResource.push(new Reference(o));
 			}
 		}
@@ -23914,21 +23914,21 @@ export class Media extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -23975,7 +23975,7 @@ export class Media extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
@@ -24014,7 +24014,7 @@ export class Media extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -24102,7 +24102,7 @@ export class Medication extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -24129,7 +24129,7 @@ export class Medication extends DomainResource {
 
 		if (obj.hasOwnProperty('ingredient')) {
 			this.ingredient = [];
-			for (const o of obj.ingredient || []) {
+			for (const o of (obj.ingredient instanceof Array ? obj.ingredient : [])) {
 				this.ingredient.push(new MedicationIngredient(o));
 			}
 		}
@@ -24221,21 +24221,21 @@ export class MedicationAdministration extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiates')) {
 			this.instantiates = [];
-			for (const o of obj.instantiates || []) {
+			for (const o of (obj.instantiates instanceof Array ? obj.instantiates : [])) {
 				this.instantiates.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -24246,7 +24246,7 @@ export class MedicationAdministration extends DomainResource {
 
 		if (obj.hasOwnProperty('statusReason')) {
 			this.statusReason = [];
-			for (const o of obj.statusReason || []) {
+			for (const o of (obj.statusReason instanceof Array ? obj.statusReason : [])) {
 				this.statusReason.push(new CodeableConcept(o));
 			}
 		}
@@ -24273,7 +24273,7 @@ export class MedicationAdministration extends DomainResource {
 
 		if (obj.hasOwnProperty('supportingInformation')) {
 			this.supportingInformation = [];
-			for (const o of obj.supportingInformation || []) {
+			for (const o of (obj.supportingInformation instanceof Array ? obj.supportingInformation : [])) {
 				this.supportingInformation.push(new Reference(o));
 			}
 		}
@@ -24288,21 +24288,21 @@ export class MedicationAdministration extends DomainResource {
 
 		if (obj.hasOwnProperty('performer')) {
 			this.performer = [];
-			for (const o of obj.performer || []) {
+			for (const o of (obj.performer instanceof Array ? obj.performer : [])) {
 				this.performer.push(new MedicationAdministrationPerformer(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
@@ -24313,14 +24313,14 @@ export class MedicationAdministration extends DomainResource {
 
 		if (obj.hasOwnProperty('device')) {
 			this.device = [];
-			for (const o of obj.device || []) {
+			for (const o of (obj.device instanceof Array ? obj.device : [])) {
 				this.device.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -24331,7 +24331,7 @@ export class MedicationAdministration extends DomainResource {
 
 		if (obj.hasOwnProperty('eventHistory')) {
 			this.eventHistory = [];
-			for (const o of obj.eventHistory || []) {
+			for (const o of (obj.eventHistory instanceof Array ? obj.eventHistory : [])) {
 				this.eventHistory.push(new Reference(o));
 			}
 		}
@@ -24376,14 +24376,14 @@ export class MedicationDispenseSubstitution extends Element {
 
 		if (obj.hasOwnProperty('reason')) {
 			this.reason = [];
-			for (const o of obj.reason || []) {
+			for (const o of (obj.reason instanceof Array ? obj.reason : [])) {
 				this.reason.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('responsibleParty')) {
 			this.responsibleParty = [];
-			for (const o of obj.responsibleParty || []) {
+			for (const o of (obj.responsibleParty instanceof Array ? obj.responsibleParty : [])) {
 				this.responsibleParty.push(new Reference(o));
 			}
 		}
@@ -24423,14 +24423,14 @@ export class MedicationDispense extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -24469,14 +24469,14 @@ export class MedicationDispense extends DomainResource {
 
 		if (obj.hasOwnProperty('supportingInformation')) {
 			this.supportingInformation = [];
-			for (const o of obj.supportingInformation || []) {
+			for (const o of (obj.supportingInformation instanceof Array ? obj.supportingInformation : [])) {
 				this.supportingInformation.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('performer')) {
 			this.performer = [];
-			for (const o of obj.performer || []) {
+			for (const o of (obj.performer instanceof Array ? obj.performer : [])) {
 				this.performer.push(new MedicationDispensePerformer(o));
 			}
 		}
@@ -24487,7 +24487,7 @@ export class MedicationDispense extends DomainResource {
 
 		if (obj.hasOwnProperty('authorizingPrescription')) {
 			this.authorizingPrescription = [];
-			for (const o of obj.authorizingPrescription || []) {
+			for (const o of (obj.authorizingPrescription instanceof Array ? obj.authorizingPrescription : [])) {
 				this.authorizingPrescription.push(new Reference(o));
 			}
 		}
@@ -24518,21 +24518,21 @@ export class MedicationDispense extends DomainResource {
 
 		if (obj.hasOwnProperty('receiver')) {
 			this.receiver = [];
-			for (const o of obj.receiver || []) {
+			for (const o of (obj.receiver instanceof Array ? obj.receiver : [])) {
 				this.receiver.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('dosageInstruction')) {
 			this.dosageInstruction = [];
-			for (const o of obj.dosageInstruction || []) {
+			for (const o of (obj.dosageInstruction instanceof Array ? obj.dosageInstruction : [])) {
 				this.dosageInstruction.push(new Dosage(o));
 			}
 		}
@@ -24543,14 +24543,14 @@ export class MedicationDispense extends DomainResource {
 
 		if (obj.hasOwnProperty('detectedIssue')) {
 			this.detectedIssue = [];
-			for (const o of obj.detectedIssue || []) {
+			for (const o of (obj.detectedIssue instanceof Array ? obj.detectedIssue : [])) {
 				this.detectedIssue.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('eventHistory')) {
 			this.eventHistory = [];
-			for (const o of obj.eventHistory || []) {
+			for (const o of (obj.eventHistory instanceof Array ? obj.eventHistory : [])) {
 				this.eventHistory.push(new Reference(o));
 			}
 		}
@@ -24592,14 +24592,14 @@ export class MedicationKnowledgeKinetics extends Element {
 
 		if (obj.hasOwnProperty('areaUnderCurve')) {
 			this.areaUnderCurve = [];
-			for (const o of obj.areaUnderCurve || []) {
+			for (const o of (obj.areaUnderCurve instanceof Array ? obj.areaUnderCurve : [])) {
 				this.areaUnderCurve.push(new Quantity(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('lethalDose50')) {
 			this.lethalDose50 = [];
-			for (const o of obj.lethalDose50 || []) {
+			for (const o of (obj.lethalDose50 instanceof Array ? obj.lethalDose50 : [])) {
 				this.lethalDose50.push(new Quantity(o));
 			}
 		}
@@ -24674,14 +24674,14 @@ export class MedicationKnowledgeRegulatory extends Element {
 
 		if (obj.hasOwnProperty('substitution')) {
 			this.substitution = [];
-			for (const o of obj.substitution || []) {
+			for (const o of (obj.substitution instanceof Array ? obj.substitution : [])) {
 				this.substitution.push(new MedicationKnowledgeRegulatorySubstitution(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('schedule')) {
 			this.schedule = [];
-			for (const o of obj.schedule || []) {
+			for (const o of (obj.schedule instanceof Array ? obj.schedule : [])) {
 				this.schedule.push(new MedicationKnowledgeRegulatorySchedule(o));
 			}
 		}
@@ -24759,7 +24759,7 @@ export class MedicationKnowledgeMedicineClassification extends Element {
 
 		if (obj.hasOwnProperty('classification')) {
 			this.classification = [];
-			for (const o of obj.classification || []) {
+			for (const o of (obj.classification instanceof Array ? obj.classification : [])) {
 				this.classification.push(new CodeableConcept(o));
 			}
 		}
@@ -24784,7 +24784,7 @@ export class MedicationKnowledgeAdministrationGuidelinesPatientCharacteristics e
 
 		if (obj.hasOwnProperty('value')) {
 			this.value = [];
-			for (const o of obj.value || []) {
+			for (const o of (obj.value instanceof Array ? obj.value : [])) {
 				this.value.push(o);
 			}
 		}
@@ -24806,7 +24806,7 @@ export class MedicationKnowledgeAdministrationGuidelinesDosage extends Element {
 
 		if (obj.hasOwnProperty('dosage')) {
 			this.dosage = [];
-			for (const o of obj.dosage || []) {
+			for (const o of (obj.dosage instanceof Array ? obj.dosage : [])) {
 				this.dosage.push(new Dosage(o));
 			}
 		}
@@ -24823,7 +24823,7 @@ export class MedicationKnowledgeAdministrationGuidelines extends Element {
 
 		if (obj.hasOwnProperty('dosage')) {
 			this.dosage = [];
-			for (const o of obj.dosage || []) {
+			for (const o of (obj.dosage instanceof Array ? obj.dosage : [])) {
 				this.dosage.push(new MedicationKnowledgeAdministrationGuidelinesDosage(o));
 			}
 		}
@@ -24838,7 +24838,7 @@ export class MedicationKnowledgeAdministrationGuidelines extends Element {
 
 		if (obj.hasOwnProperty('patientCharacteristics')) {
 			this.patientCharacteristics = [];
-			for (const o of obj.patientCharacteristics || []) {
+			for (const o of (obj.patientCharacteristics instanceof Array ? obj.patientCharacteristics : [])) {
 				this.patientCharacteristics.push(new MedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(o));
 			}
 		}
@@ -24948,7 +24948,7 @@ export class MedicationKnowledgeRelatedMedicationKnowledge extends Element {
 
 		if (obj.hasOwnProperty('reference')) {
 			this.reference = [];
-			for (const o of obj.reference || []) {
+			for (const o of (obj.reference instanceof Array ? obj.reference : [])) {
 				this.reference.push(new Reference(o));
 			}
 		}
@@ -24988,42 +24988,42 @@ export class MedicationKnowledge extends DomainResource {
 
 		if (obj.hasOwnProperty('synonym')) {
 			this.synonym = [];
-			for (const o of obj.synonym || []) {
+			for (const o of (obj.synonym instanceof Array ? obj.synonym : [])) {
 				this.synonym.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedMedicationKnowledge')) {
 			this.relatedMedicationKnowledge = [];
-			for (const o of obj.relatedMedicationKnowledge || []) {
+			for (const o of (obj.relatedMedicationKnowledge instanceof Array ? obj.relatedMedicationKnowledge : [])) {
 				this.relatedMedicationKnowledge.push(new MedicationKnowledgeRelatedMedicationKnowledge(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('associatedMedication')) {
 			this.associatedMedication = [];
-			for (const o of obj.associatedMedication || []) {
+			for (const o of (obj.associatedMedication instanceof Array ? obj.associatedMedication : [])) {
 				this.associatedMedication.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('productType')) {
 			this.productType = [];
-			for (const o of obj.productType || []) {
+			for (const o of (obj.productType instanceof Array ? obj.productType : [])) {
 				this.productType.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('monograph')) {
 			this.monograph = [];
-			for (const o of obj.monograph || []) {
+			for (const o of (obj.monograph instanceof Array ? obj.monograph : [])) {
 				this.monograph.push(new MedicationKnowledgeMonograph(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('ingredient')) {
 			this.ingredient = [];
-			for (const o of obj.ingredient || []) {
+			for (const o of (obj.ingredient instanceof Array ? obj.ingredient : [])) {
 				this.ingredient.push(new MedicationKnowledgeIngredient(o));
 			}
 		}
@@ -25034,35 +25034,35 @@ export class MedicationKnowledge extends DomainResource {
 
 		if (obj.hasOwnProperty('intendedRoute')) {
 			this.intendedRoute = [];
-			for (const o of obj.intendedRoute || []) {
+			for (const o of (obj.intendedRoute instanceof Array ? obj.intendedRoute : [])) {
 				this.intendedRoute.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('cost')) {
 			this.cost = [];
-			for (const o of obj.cost || []) {
+			for (const o of (obj.cost instanceof Array ? obj.cost : [])) {
 				this.cost.push(new MedicationKnowledgeCost(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('monitoringProgram')) {
 			this.monitoringProgram = [];
-			for (const o of obj.monitoringProgram || []) {
+			for (const o of (obj.monitoringProgram instanceof Array ? obj.monitoringProgram : [])) {
 				this.monitoringProgram.push(new MedicationKnowledgeMonitoringProgram(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('administrationGuidelines')) {
 			this.administrationGuidelines = [];
-			for (const o of obj.administrationGuidelines || []) {
+			for (const o of (obj.administrationGuidelines instanceof Array ? obj.administrationGuidelines : [])) {
 				this.administrationGuidelines.push(new MedicationKnowledgeAdministrationGuidelines(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('medicineClassification')) {
 			this.medicineClassification = [];
-			for (const o of obj.medicineClassification || []) {
+			for (const o of (obj.medicineClassification instanceof Array ? obj.medicineClassification : [])) {
 				this.medicineClassification.push(new MedicationKnowledgeMedicineClassification(o));
 			}
 		}
@@ -25073,28 +25073,28 @@ export class MedicationKnowledge extends DomainResource {
 
 		if (obj.hasOwnProperty('drugCharacteristic')) {
 			this.drugCharacteristic = [];
-			for (const o of obj.drugCharacteristic || []) {
+			for (const o of (obj.drugCharacteristic instanceof Array ? obj.drugCharacteristic : [])) {
 				this.drugCharacteristic.push(new MedicationKnowledgeDrugCharacteristic(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('contraindication')) {
 			this.contraindication = [];
-			for (const o of obj.contraindication || []) {
+			for (const o of (obj.contraindication instanceof Array ? obj.contraindication : [])) {
 				this.contraindication.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('regulatory')) {
 			this.regulatory = [];
-			for (const o of obj.regulatory || []) {
+			for (const o of (obj.regulatory instanceof Array ? obj.regulatory : [])) {
 				this.regulatory.push(new MedicationKnowledgeRegulatory(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('kinetics')) {
 			this.kinetics = [];
-			for (const o of obj.kinetics || []) {
+			for (const o of (obj.kinetics instanceof Array ? obj.kinetics : [])) {
 				this.kinetics.push(new MedicationKnowledgeKinetics(o));
 			}
 		}
@@ -25219,7 +25219,7 @@ export class MedicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -25238,7 +25238,7 @@ export class MedicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -25277,7 +25277,7 @@ export class MedicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('supportingInformation')) {
 			this.supportingInformation = [];
-			for (const o of obj.supportingInformation || []) {
+			for (const o of (obj.supportingInformation instanceof Array ? obj.supportingInformation : [])) {
 				this.supportingInformation.push(new Reference(o));
 			}
 		}
@@ -25304,35 +25304,35 @@ export class MedicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesCanonical')) {
 			this.instantiatesCanonical = [];
-			for (const o of obj.instantiatesCanonical || []) {
+			for (const o of (obj.instantiatesCanonical instanceof Array ? obj.instantiatesCanonical : [])) {
 				this.instantiatesCanonical.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesUri')) {
 			this.instantiatesUri = [];
-			for (const o of obj.instantiatesUri || []) {
+			for (const o of (obj.instantiatesUri instanceof Array ? obj.instantiatesUri : [])) {
 				this.instantiatesUri.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
@@ -25347,21 +25347,21 @@ export class MedicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('insurance')) {
 			this.insurance = [];
-			for (const o of obj.insurance || []) {
+			for (const o of (obj.insurance instanceof Array ? obj.insurance : [])) {
 				this.insurance.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('dosageInstruction')) {
 			this.dosageInstruction = [];
-			for (const o of obj.dosageInstruction || []) {
+			for (const o of (obj.dosageInstruction instanceof Array ? obj.dosageInstruction : [])) {
 				this.dosageInstruction.push(new Dosage(o));
 			}
 		}
@@ -25380,14 +25380,14 @@ export class MedicationRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('detectedIssue')) {
 			this.detectedIssue = [];
-			for (const o of obj.detectedIssue || []) {
+			for (const o of (obj.detectedIssue instanceof Array ? obj.detectedIssue : [])) {
 				this.detectedIssue.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('eventHistory')) {
 			this.eventHistory = [];
-			for (const o of obj.eventHistory || []) {
+			for (const o of (obj.eventHistory instanceof Array ? obj.eventHistory : [])) {
 				this.eventHistory.push(new Reference(o));
 			}
 		}
@@ -25440,21 +25440,21 @@ export class MedicationStatement extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -25465,7 +25465,7 @@ export class MedicationStatement extends DomainResource {
 
 		if (obj.hasOwnProperty('statusReason')) {
 			this.statusReason = [];
-			for (const o of obj.statusReason || []) {
+			for (const o of (obj.statusReason instanceof Array ? obj.statusReason : [])) {
 				this.statusReason.push(new CodeableConcept(o));
 			}
 		}
@@ -25508,35 +25508,35 @@ export class MedicationStatement extends DomainResource {
 
 		if (obj.hasOwnProperty('derivedFrom')) {
 			this.derivedFrom = [];
-			for (const o of obj.derivedFrom || []) {
+			for (const o of (obj.derivedFrom instanceof Array ? obj.derivedFrom : [])) {
 				this.derivedFrom.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('dosage')) {
 			this.dosage = [];
-			for (const o of obj.dosage || []) {
+			for (const o of (obj.dosage instanceof Array ? obj.dosage : [])) {
 				this.dosage.push(new Dosage(o));
 			}
 		}
@@ -25617,7 +25617,7 @@ export class MedicinalProductDefinitionOperation extends Element {
 
 		if (obj.hasOwnProperty('organization')) {
 			this.organization = [];
-			for (const o of obj.organization || []) {
+			for (const o of (obj.organization instanceof Array ? obj.organization : [])) {
 				this.organization.push(new Reference(o));
 			}
 		}
@@ -25707,14 +25707,14 @@ export class MedicinalProductDefinitionName extends Element {
 
 		if (obj.hasOwnProperty('namePart')) {
 			this.namePart = [];
-			for (const o of obj.namePart || []) {
+			for (const o of (obj.namePart instanceof Array ? obj.namePart : [])) {
 				this.namePart.push(new MedicinalProductDefinitionNameNamePart(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('countryLanguage')) {
 			this.countryLanguage = [];
-			for (const o of obj.countryLanguage || []) {
+			for (const o of (obj.countryLanguage instanceof Array ? obj.countryLanguage : [])) {
 				this.countryLanguage.push(new MedicinalProductDefinitionNameCountryLanguage(o));
 			}
 		}
@@ -25754,7 +25754,7 @@ export class MedicinalProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -25789,7 +25789,7 @@ export class MedicinalProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('route')) {
 			this.route = [];
-			for (const o of obj.route || []) {
+			for (const o of (obj.route instanceof Array ? obj.route : [])) {
 				this.route.push(new CodeableConcept(o));
 			}
 		}
@@ -25808,7 +25808,7 @@ export class MedicinalProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('specialMeasures')) {
 			this.specialMeasures = [];
-			for (const o of obj.specialMeasures || []) {
+			for (const o of (obj.specialMeasures instanceof Array ? obj.specialMeasures : [])) {
 				this.specialMeasures.push(new CodeableConcept(o));
 			}
 		}
@@ -25819,98 +25819,98 @@ export class MedicinalProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('classification')) {
 			this.classification = [];
-			for (const o of obj.classification || []) {
+			for (const o of (obj.classification instanceof Array ? obj.classification : [])) {
 				this.classification.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('marketingStatus')) {
 			this.marketingStatus = [];
-			for (const o of obj.marketingStatus || []) {
+			for (const o of (obj.marketingStatus instanceof Array ? obj.marketingStatus : [])) {
 				this.marketingStatus.push(new MarketingStatus(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('packagedMedicinalProduct')) {
 			this.packagedMedicinalProduct = [];
-			for (const o of obj.packagedMedicinalProduct || []) {
+			for (const o of (obj.packagedMedicinalProduct instanceof Array ? obj.packagedMedicinalProduct : [])) {
 				this.packagedMedicinalProduct.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('ingredient')) {
 			this.ingredient = [];
-			for (const o of obj.ingredient || []) {
+			for (const o of (obj.ingredient instanceof Array ? obj.ingredient : [])) {
 				this.ingredient.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('impurity')) {
 			this.impurity = [];
-			for (const o of obj.impurity || []) {
+			for (const o of (obj.impurity instanceof Array ? obj.impurity : [])) {
 				this.impurity.push(new CodeableReference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('attachedDocument')) {
 			this.attachedDocument = [];
-			for (const o of obj.attachedDocument || []) {
+			for (const o of (obj.attachedDocument instanceof Array ? obj.attachedDocument : [])) {
 				this.attachedDocument.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('masterFile')) {
 			this.masterFile = [];
-			for (const o of obj.masterFile || []) {
+			for (const o of (obj.masterFile instanceof Array ? obj.masterFile : [])) {
 				this.masterFile.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new MedicinalProductDefinitionContact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('clinicalTrial')) {
 			this.clinicalTrial = [];
-			for (const o of obj.clinicalTrial || []) {
+			for (const o of (obj.clinicalTrial instanceof Array ? obj.clinicalTrial : [])) {
 				this.clinicalTrial.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new Coding(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('name')) {
 			this.name = [];
-			for (const o of obj.name || []) {
+			for (const o of (obj.name instanceof Array ? obj.name : [])) {
 				this.name.push(new MedicinalProductDefinitionName(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('crossReference')) {
 			this.crossReference = [];
-			for (const o of obj.crossReference || []) {
+			for (const o of (obj.crossReference instanceof Array ? obj.crossReference : [])) {
 				this.crossReference.push(new MedicinalProductDefinitionCrossReference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('operation')) {
 			this.operation = [];
-			for (const o of obj.operation || []) {
+			for (const o of (obj.operation instanceof Array ? obj.operation : [])) {
 				this.operation.push(new MedicinalProductDefinitionOperation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('characteristic')) {
 			this.characteristic = [];
-			for (const o of obj.characteristic || []) {
+			for (const o of (obj.characteristic instanceof Array ? obj.characteristic : [])) {
 				this.characteristic.push(new MedicinalProductDefinitionCharacteristic(o));
 			}
 		}
@@ -26007,7 +26007,7 @@ export class MessageDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -26026,7 +26026,7 @@ export class MessageDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('replaces')) {
 			this.replaces = [];
-			for (const o of obj.replaces || []) {
+			for (const o of (obj.replaces instanceof Array ? obj.replaces : [])) {
 				this.replaces.push(o);
 			}
 		}
@@ -26049,7 +26049,7 @@ export class MessageDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -26060,14 +26060,14 @@ export class MessageDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -26086,7 +26086,7 @@ export class MessageDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('parent')) {
 			this.parent = [];
-			for (const o of obj.parent || []) {
+			for (const o of (obj.parent instanceof Array ? obj.parent : [])) {
 				this.parent.push(o);
 			}
 		}
@@ -26105,7 +26105,7 @@ export class MessageDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('focus')) {
 			this.focus = [];
-			for (const o of obj.focus || []) {
+			for (const o of (obj.focus instanceof Array ? obj.focus : [])) {
 				this.focus.push(new MessageDefinitionFocus(o));
 			}
 		}
@@ -26116,14 +26116,14 @@ export class MessageDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('allowedResponse')) {
 			this.allowedResponse = [];
-			for (const o of obj.allowedResponse || []) {
+			for (const o of (obj.allowedResponse instanceof Array ? obj.allowedResponse : [])) {
 				this.allowedResponse.push(new MessageDefinitionAllowedResponse(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('graph')) {
 			this.graph = [];
-			for (const o of obj.graph || []) {
+			for (const o of (obj.graph instanceof Array ? obj.graph : [])) {
 				this.graph.push(o);
 			}
 		}
@@ -26259,7 +26259,7 @@ export class MessageHeader extends DomainResource {
 
 		if (obj.hasOwnProperty('destination')) {
 			this.destination = [];
-			for (const o of obj.destination || []) {
+			for (const o of (obj.destination instanceof Array ? obj.destination : [])) {
 				this.destination.push(new MessageHeaderDestination(o));
 			}
 		}
@@ -26294,7 +26294,7 @@ export class MessageHeader extends DomainResource {
 
 		if (obj.hasOwnProperty('focus')) {
 			this.focus = [];
-			for (const o of obj.focus || []) {
+			for (const o of (obj.focus instanceof Array ? obj.focus : [])) {
 				this.focus.push(new Reference(o));
 			}
 		}
@@ -26433,49 +26433,49 @@ export class MolecularSequenceQualityRoc extends Element {
 
 		if (obj.hasOwnProperty('score')) {
 			this.score = [];
-			for (const o of obj.score || []) {
+			for (const o of (obj.score instanceof Array ? obj.score : [])) {
 				this.score.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('numTP')) {
 			this.numTP = [];
-			for (const o of obj.numTP || []) {
+			for (const o of (obj.score instanceof Array ? obj.numTP : [])) {
 				this.numTP.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('numFP')) {
 			this.numFP = [];
-			for (const o of obj.numFP || []) {
+			for (const o of (obj.numFP instanceof Array ? obj.numFP : [])) {
 				this.numFP.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('numFN')) {
 			this.numFN = [];
-			for (const o of obj.numFN || []) {
+			for (const o of (obj.numFN instanceof Array ? obj.numFN : [])) {
 				this.numFN.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('precision')) {
 			this.precision = [];
-			for (const o of obj.precision || []) {
+			for (const o of (obj.precision instanceof Array ? obj.precision : [])) {
 				this.precision.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('sensitivity')) {
 			this.sensitivity = [];
-			for (const o of obj.sensitivity || []) {
+			for (const o of (obj.sensitivity instanceof Array ? obj.sensitivity : [])) {
 				this.sensitivity.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('fMeasure')) {
 			this.fMeasure = [];
-			for (const o of obj.fMeasure || []) {
+			for (const o of (obj.fMeasure instanceof Array ? obj.fMeasure : [])) {
 				this.fMeasure.push(o);
 			}
 		}
@@ -26674,7 +26674,7 @@ export class MolecularSequence extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -26713,7 +26713,7 @@ export class MolecularSequence extends DomainResource {
 
 		if (obj.hasOwnProperty('variant')) {
 			this.variant = [];
-			for (const o of obj.variant || []) {
+			for (const o of (obj.variant instanceof Array ? obj.variant : [])) {
 				this.variant.push(new MolecularSequenceVariant(o));
 			}
 		}
@@ -26724,7 +26724,7 @@ export class MolecularSequence extends DomainResource {
 
 		if (obj.hasOwnProperty('quality')) {
 			this.quality = [];
-			for (const o of obj.quality || []) {
+			for (const o of (obj.quality instanceof Array ? obj.quality : [])) {
 				this.quality.push(new MolecularSequenceQuality(o));
 			}
 		}
@@ -26735,21 +26735,21 @@ export class MolecularSequence extends DomainResource {
 
 		if (obj.hasOwnProperty('repository')) {
 			this.repository = [];
-			for (const o of obj.repository || []) {
+			for (const o of (obj.repository instanceof Array ? obj.repository : [])) {
 				this.repository.push(new MolecularSequenceRepository(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('pointer')) {
 			this.pointer = [];
-			for (const o of obj.pointer || []) {
+			for (const o of (obj.pointer instanceof Array ? obj.pointer : [])) {
 				this.pointer.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('structureVariant')) {
 			this.structureVariant = [];
-			for (const o of obj.structureVariant || []) {
+			for (const o of (obj.structureVariant instanceof Array ? obj.structureVariant : [])) {
 				this.structureVariant.push(new MolecularSequenceStructureVariant(o));
 			}
 		}
@@ -26837,7 +26837,7 @@ export class NamingSystem extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -26856,14 +26856,14 @@ export class NamingSystem extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -26874,7 +26874,7 @@ export class NamingSystem extends DomainResource {
 
 		if (obj.hasOwnProperty('uniqueId')) {
 			this.uniqueId = [];
-			for (const o of obj.uniqueId || []) {
+			for (const o of (obj.uniqueId instanceof Array ? obj.uniqueId : [])) {
 				this.uniqueId.push(new NamingSystemUniqueId(o));
 			}
 		}
@@ -26955,7 +26955,7 @@ export class NutritionOrderEnteralFormula extends Element {
 
 		if (obj.hasOwnProperty('administration')) {
 			this.administration = [];
-			for (const o of obj.administration || []) {
+			for (const o of (obj.administration instanceof Array ? obj.administration : [])) {
 				this.administration.push(new NutritionOrderEnteralFormulaAdministration(o));
 			}
 		}
@@ -26995,7 +26995,7 @@ export class NutritionOrderSupplement extends Element {
 
 		if (obj.hasOwnProperty('schedule')) {
 			this.schedule = [];
-			for (const o of obj.schedule || []) {
+			for (const o of (obj.schedule instanceof Array ? obj.schedule : [])) {
 				this.schedule.push(new Timing(o));
 			}
 		}
@@ -27059,35 +27059,35 @@ export class NutritionOrderOralDiet extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('schedule')) {
 			this.schedule = [];
-			for (const o of obj.schedule || []) {
+			for (const o of (obj.schedule instanceof Array ? obj.schedule : [])) {
 				this.schedule.push(new Timing(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('nutrient')) {
 			this.nutrient = [];
-			for (const o of obj.nutrient || []) {
+			for (const o of (obj.nutrient instanceof Array ? obj.nutrient : [])) {
 				this.nutrient.push(new NutritionOrderOralDietNutrient(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('texture')) {
 			this.texture = [];
-			for (const o of obj.texture || []) {
+			for (const o of (obj.texture instanceof Array ? obj.texture : [])) {
 				this.texture.push(new NutritionOrderOralDietTexture(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('fluidConsistencyType')) {
 			this.fluidConsistencyType = [];
-			for (const o of obj.fluidConsistencyType || []) {
+			for (const o of (obj.fluidConsistencyType instanceof Array ? obj.fluidConsistencyType : [])) {
 				this.fluidConsistencyType.push(new CodeableConcept(o));
 			}
 		}
@@ -27115,28 +27115,28 @@ export class NutritionOrder extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesCanonical')) {
 			this.instantiatesCanonical = [];
-			for (const o of obj.instantiatesCanonical || []) {
+			for (const o of (obj.instantiatesCanonical instanceof Array ? obj.instantiatesCanonical : [])) {
 				this.instantiatesCanonical.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesUri')) {
 			this.instantiatesUri = [];
-			for (const o of obj.instantiatesUri || []) {
+			for (const o of (obj.instantiatesUri instanceof Array ? obj.instantiatesUri : [])) {
 				this.instantiatesUri.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiates')) {
 			this.instantiates = [];
-			for (const o of obj.instantiates || []) {
+			for (const o of (obj.instantiates instanceof Array ? obj.instantiates : [])) {
 				this.instantiates.push(o);
 			}
 		}
@@ -27167,21 +27167,21 @@ export class NutritionOrder extends DomainResource {
 
 		if (obj.hasOwnProperty('allergyIntolerance')) {
 			this.allergyIntolerance = [];
-			for (const o of obj.allergyIntolerance || []) {
+			for (const o of (obj.allergyIntolerance instanceof Array ? obj.allergyIntolerance : [])) {
 				this.allergyIntolerance.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('foodPreferenceModifier')) {
 			this.foodPreferenceModifier = [];
-			for (const o of obj.foodPreferenceModifier || []) {
+			for (const o of (obj.foodPreferenceModifier instanceof Array ? obj.foodPreferenceModifier : [])) {
 				this.foodPreferenceModifier.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('excludeFoodModifier')) {
 			this.excludeFoodModifier = [];
-			for (const o of obj.excludeFoodModifier || []) {
+			for (const o of (obj.excludeFoodModifier instanceof Array ? obj.excludeFoodModifier : [])) {
 				this.excludeFoodModifier.push(new CodeableConcept(o));
 			}
 		}
@@ -27192,7 +27192,7 @@ export class NutritionOrder extends DomainResource {
 
 		if (obj.hasOwnProperty('supplement')) {
 			this.supplement = [];
-			for (const o of obj.supplement || []) {
+			for (const o of (obj.supplement instanceof Array ? obj.supplement : [])) {
 				this.supplement.push(new NutritionOrderSupplement(o));
 			}
 		}
@@ -27203,7 +27203,7 @@ export class NutritionOrder extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -27240,7 +27240,7 @@ export class NutritionProductInstance extends Element {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -27319,7 +27319,7 @@ export class NutritionProductIngredient extends Element {
 
 		if (obj.hasOwnProperty('amount')) {
 			this.amount = [];
-			for (const o of obj.amount || []) {
+			for (const o of (obj.amount instanceof Array ? obj.amount : [])) {
 				this.amount.push(new Ratio(o));
 			}
 		}
@@ -27340,7 +27340,7 @@ export class NutritionProductNutrient extends Element {
 
 		if (obj.hasOwnProperty('amount')) {
 			this.amount = [];
-			for (const o of obj.amount || []) {
+			for (const o of (obj.amount instanceof Array ? obj.amount : [])) {
 				this.amount.push(new Ratio(o));
 			}
 		}
@@ -27364,7 +27364,7 @@ export class NutritionProduct extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -27375,35 +27375,35 @@ export class NutritionProduct extends DomainResource {
 
 		if (obj.hasOwnProperty('manufacturer')) {
 			this.manufacturer = [];
-			for (const o of obj.manufacturer || []) {
+			for (const o of (obj.manufacturer instanceof Array ? obj.manufacturer : [])) {
 				this.manufacturer.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('nutrient')) {
 			this.nutrient = [];
-			for (const o of obj.nutrient || []) {
+			for (const o of (obj.nutrient instanceof Array ? obj.nutrient : [])) {
 				this.nutrient.push(new NutritionProductNutrient(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('ingredient')) {
 			this.ingredient = [];
-			for (const o of obj.ingredient || []) {
+			for (const o of (obj.ingredient instanceof Array ? obj.ingredient : [])) {
 				this.ingredient.push(new NutritionProductIngredient(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('knownAllergen')) {
 			this.knownAllergen = [];
-			for (const o of obj.knownAllergen || []) {
+			for (const o of (obj.knownAllergen instanceof Array ? obj.knownAllergen : [])) {
 				this.knownAllergen.push(new CodeableReference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('productCharacteristic')) {
 			this.productCharacteristic = [];
-			for (const o of obj.productCharacteristic || []) {
+			for (const o of (obj.productCharacteristic instanceof Array ? obj.productCharacteristic : [])) {
 				this.productCharacteristic.push(new NutritionProductProductCharacteristic(o));
 			}
 		}
@@ -27414,7 +27414,7 @@ export class NutritionProduct extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -27492,14 +27492,14 @@ export class ObservationComponent extends Element {
 
 		if (obj.hasOwnProperty('interpretation')) {
 			this.interpretation = [];
-			for (const o of obj.interpretation || []) {
+			for (const o of (obj.interpretation instanceof Array ? obj.interpretation : [])) {
 				this.interpretation.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('referenceRange')) {
 			this.referenceRange = [];
-			for (const o of obj.referenceRange || []) {
+			for (const o of (obj.referenceRange instanceof Array ? obj.referenceRange : [])) {
 				this.referenceRange.push(new ObservationReferenceRange(o));
 			}
 		}
@@ -27541,7 +27541,7 @@ export class ObservationReferenceRange extends Element {
 
 		if (obj.hasOwnProperty('appliesTo')) {
 			this.appliesTo = [];
-			for (const o of obj.appliesTo || []) {
+			for (const o of (obj.appliesTo instanceof Array ? obj.appliesTo : [])) {
 				this.appliesTo.push(new CodeableConcept(o));
 			}
 		}
@@ -27573,21 +27573,21 @@ export class Observation extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -27598,7 +27598,7 @@ export class Observation extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -27613,7 +27613,7 @@ export class Observation extends DomainResource {
 
 		if (obj.hasOwnProperty('focus')) {
 			this.focus = [];
-			for (const o of obj.focus || []) {
+			for (const o of (obj.focus instanceof Array ? obj.focus : [])) {
 				this.focus.push(new Reference(o));
 			}
 		}
@@ -27644,7 +27644,7 @@ export class Observation extends DomainResource {
 
 		if (obj.hasOwnProperty('performer')) {
 			this.performer = [];
-			for (const o of obj.performer || []) {
+			for (const o of (obj.performer instanceof Array ? obj.performer : [])) {
 				this.performer.push(new Reference(o));
 			}
 		}
@@ -27699,14 +27699,14 @@ export class Observation extends DomainResource {
 
 		if (obj.hasOwnProperty('interpretation')) {
 			this.interpretation = [];
-			for (const o of obj.interpretation || []) {
+			for (const o of (obj.interpretation instanceof Array ? obj.interpretation : [])) {
 				this.interpretation.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -27729,28 +27729,28 @@ export class Observation extends DomainResource {
 
 		if (obj.hasOwnProperty('referenceRange')) {
 			this.referenceRange = [];
-			for (const o of obj.referenceRange || []) {
+			for (const o of (obj.referenceRange instanceof Array ? obj.referenceRange : [])) {
 				this.referenceRange.push(new ObservationReferenceRange(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('hasMember')) {
 			this.hasMember = [];
-			for (const o of obj.hasMember || []) {
+			for (const o of (obj.hasMember instanceof Array ? obj.hasMember : [])) {
 				this.hasMember.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('derivedFrom')) {
 			this.derivedFrom = [];
-			for (const o of obj.derivedFrom || []) {
+			for (const o of (obj.derivedFrom instanceof Array ? obj.derivedFrom : [])) {
 				this.derivedFrom.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('component')) {
 			this.component = [];
-			for (const o of obj.component || []) {
+			for (const o of (obj.component instanceof Array ? obj.component : [])) {
 				this.component.push(new ObservationComponent(o));
 			}
 		}
@@ -27815,7 +27815,7 @@ export class ObservationDefinitionQualifiedInterval extends Element {
 
 		if (obj.hasOwnProperty('appliesTo')) {
 			this.appliesTo = [];
-			for (const o of obj.appliesTo || []) {
+			for (const o of (obj.appliesTo instanceof Array ? obj.appliesTo : [])) {
 				this.appliesTo.push(new CodeableConcept(o));
 			}
 		}
@@ -27885,7 +27885,7 @@ export class ObservationDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -27896,14 +27896,14 @@ export class ObservationDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('permittedDataType')) {
 			this.permittedDataType = [];
-			for (const o of obj.permittedDataType || []) {
+			for (const o of (obj.permittedDataType instanceof Array ? obj.permittedDataType : [])) {
 				this.permittedDataType.push(o);
 			}
 		}
@@ -27926,7 +27926,7 @@ export class ObservationDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('qualifiedInterval')) {
 			this.qualifiedInterval = [];
-			for (const o of obj.qualifiedInterval || []) {
+			for (const o of (obj.qualifiedInterval instanceof Array ? obj.qualifiedInterval : [])) {
 				this.qualifiedInterval.push(new ObservationDefinitionQualifiedInterval(o));
 			}
 		}
@@ -27971,7 +27971,7 @@ export class OperationDefinitionOverload extends Element {
 
 		if (obj.hasOwnProperty('parameterName')) {
 			this.parameterName = [];
-			for (const o of obj.parameterName || []) {
+			for (const o of (obj.parameterName instanceof Array ? obj.parameterName : [])) {
 				this.parameterName.push(o);
 			}
 		}
@@ -28052,7 +28052,7 @@ export class OperationDefinitionParameter extends Element {
 
 		if (obj.hasOwnProperty('targetProfile')) {
 			this.targetProfile = [];
-			for (const o of obj.targetProfile || []) {
+			for (const o of (obj.targetProfile instanceof Array ? obj.targetProfile : [])) {
 				this.targetProfile.push(o);
 			}
 		}
@@ -28067,14 +28067,14 @@ export class OperationDefinitionParameter extends Element {
 
 		if (obj.hasOwnProperty('referencedFrom')) {
 			this.referencedFrom = [];
-			for (const o of obj.referencedFrom || []) {
+			for (const o of (obj.referencedFrom instanceof Array ? obj.referencedFrom : [])) {
 				this.referencedFrom.push(new OperationDefinitionParameterReferencedFrom(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('part')) {
 			this.part = [];
-			for (const o of obj.part || []) {
+			for (const o of (obj.part instanceof Array ? obj.part : [])) {
 				this.part.push(new OperationDefinitionParameter(o));
 			}
 		}
@@ -28139,7 +28139,7 @@ export class OperationDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -28150,14 +28150,14 @@ export class OperationDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -28184,7 +28184,7 @@ export class OperationDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('resource')) {
 			this.resource = [];
-			for (const o of obj.resource || []) {
+			for (const o of (obj.resource instanceof Array ? obj.resource : [])) {
 				this.resource.push(o);
 			}
 		}
@@ -28211,14 +28211,14 @@ export class OperationDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('parameter')) {
 			this.parameter = [];
-			for (const o of obj.parameter || []) {
+			for (const o of (obj.parameter instanceof Array ? obj.parameter : [])) {
 				this.parameter.push(new OperationDefinitionParameter(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('overload')) {
 			this.overload = [];
-			for (const o of obj.overload || []) {
+			for (const o of (obj.overload instanceof Array ? obj.overload : [])) {
 				this.overload.push(new OperationDefinitionOverload(o));
 			}
 		}
@@ -28274,14 +28274,14 @@ export class OperationOutcomeIssue implements IFhir.IOperationOutcomeIssue {
 
 		if (obj.hasOwnProperty('location')) {
 			this.location = [];
-			for (const o of obj.location || []) {
+			for (const o of (obj.location instanceof Array ? obj.location : [])) {
 				this.location.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('expression')) {
 			this.expression = [];
-			for (const o of obj.expression || []) {
+			for (const o of (obj.expression instanceof Array ? obj.expression : [])) {
 				this.expression.push(o);
 			}
 		}
@@ -28305,7 +28305,7 @@ export class OperationOutcome extends DomainResource implements IFhir.IOperation
 
 		if (obj.hasOwnProperty('issue')) {
 			this.issue = [];
-			for (const o of obj.issue || []) {
+			for (const o of (obj.issue instanceof Array ? obj.issue : [])) {
 				this.issue.push(new OperationOutcomeIssue(o));
 			}
 		}
@@ -28330,7 +28330,7 @@ export class OrganizationContact extends Element {
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
@@ -28356,7 +28356,7 @@ export class Organization extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -28367,7 +28367,7 @@ export class Organization extends DomainResource {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
@@ -28378,21 +28378,21 @@ export class Organization extends DomainResource {
 
 		if (obj.hasOwnProperty('alias')) {
 			this.alias = [];
-			for (const o of obj.alias || []) {
+			for (const o of (obj.alias instanceof Array ? obj.alias : [])) {
 				this.alias.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('address')) {
 			this.address = [];
-			for (const o of obj.address || []) {
+			for (const o of (obj.address instanceof Array ? obj.address : [])) {
 				this.address.push(new Address(o));
 			}
 		}
@@ -28403,14 +28403,14 @@ export class Organization extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new OrganizationContact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endpoint')) {
 			this.endpoint = [];
-			for (const o of obj.endpoint || []) {
+			for (const o of (obj.endpoint instanceof Array ? obj.endpoint : [])) {
 				this.endpoint.push(new Reference(o));
 			}
 		}
@@ -28439,7 +28439,7 @@ export class OrganizationAffiliation extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -28462,49 +28462,49 @@ export class OrganizationAffiliation extends DomainResource {
 
 		if (obj.hasOwnProperty('network')) {
 			this.network = [];
-			for (const o of obj.network || []) {
+			for (const o of (obj.network instanceof Array ? obj.network : [])) {
 				this.network.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specialty')) {
 			this.specialty = [];
-			for (const o of obj.specialty || []) {
+			for (const o of (obj.specialty instanceof Array ? obj.specialty : [])) {
 				this.specialty.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('location')) {
 			this.location = [];
-			for (const o of obj.location || []) {
+			for (const o of (obj.location instanceof Array ? obj.location : [])) {
 				this.location.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('healthcareService')) {
 			this.healthcareService = [];
-			for (const o of obj.healthcareService || []) {
+			for (const o of (obj.healthcareService instanceof Array ? obj.healthcareService : [])) {
 				this.healthcareService.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endpoint')) {
 			this.endpoint = [];
-			for (const o of obj.endpoint || []) {
+			for (const o of (obj.endpoint instanceof Array ? obj.endpoint : [])) {
 				this.endpoint.push(new Reference(o));
 			}
 		}
@@ -28600,7 +28600,7 @@ export class PackagedProductDefinitionPackageShelfLifeStorage extends Element {
 
 		if (obj.hasOwnProperty('specialPrecautionsForStorage')) {
 			this.specialPrecautionsForStorage = [];
-			for (const o of obj.specialPrecautionsForStorage || []) {
+			for (const o of (obj.specialPrecautionsForStorage instanceof Array ? obj.specialPrecautionsForStorage : [])) {
 				this.specialPrecautionsForStorage.push(new CodeableConcept(o));
 			}
 		}
@@ -28619,7 +28619,7 @@ export class PackagedProductDefinitionPackage extends Element {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -28634,49 +28634,49 @@ export class PackagedProductDefinitionPackage extends Element {
 
 		if (obj.hasOwnProperty('material')) {
 			this.material = [];
-			for (const o of obj.material || []) {
+			for (const o of (obj.material instanceof Array ? obj.material : [])) {
 				this.material.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('alternateMaterial')) {
 			this.alternateMaterial = [];
-			for (const o of obj.alternateMaterial || []) {
+			for (const o of (obj.alternateMaterial instanceof Array ? obj.alternateMaterial : [])) {
 				this.alternateMaterial.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('shelfLifeStorage')) {
 			this.shelfLifeStorage = [];
-			for (const o of obj.shelfLifeStorage || []) {
+			for (const o of (obj.shelfLifeStorage instanceof Array ? obj.shelfLifeStorage : [])) {
 				this.shelfLifeStorage.push(new PackagedProductDefinitionPackageShelfLifeStorage(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('manufacturer')) {
 			this.manufacturer = [];
-			for (const o of obj.manufacturer || []) {
+			for (const o of (obj.manufacturer instanceof Array ? obj.manufacturer : [])) {
 				this.manufacturer.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('property')) {
 			this.property = [];
-			for (const o of obj.property || []) {
+			for (const o of (obj.property instanceof Array ? obj.property : [])) {
 				this.property.push(new PackagedProductDefinitionPackageProperty(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('containedItem')) {
 			this.containedItem = [];
-			for (const o of obj.containedItem || []) {
+			for (const o of (obj.containedItem instanceof Array ? obj.containedItem : [])) {
 				this.containedItem.push(new PackagedProductDefinitionPackageContainedItem(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('package')) {
 			this.package = [];
-			for (const o of obj.package || []) {
+			for (const o of (obj.package instanceof Array ? obj.package : [])) {
 				this.package.push(new PackagedProductDefinitionPackage(o));
 			}
 		}
@@ -28722,7 +28722,7 @@ export class PackagedProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -28737,7 +28737,7 @@ export class PackagedProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('packageFor')) {
 			this.packageFor = [];
-			for (const o of obj.packageFor || []) {
+			for (const o of (obj.packageFor instanceof Array ? obj.packageFor : [])) {
 				this.packageFor.push(new Reference(o));
 			}
 		}
@@ -28752,7 +28752,7 @@ export class PackagedProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('containedItemQuantity')) {
 			this.containedItemQuantity = [];
-			for (const o of obj.containedItemQuantity || []) {
+			for (const o of (obj.containedItemQuantity instanceof Array ? obj.containedItemQuantity : [])) {
 				this.containedItemQuantity.push(new Quantity(o));
 			}
 		}
@@ -28763,21 +28763,21 @@ export class PackagedProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('legalStatusOfSupply')) {
 			this.legalStatusOfSupply = [];
-			for (const o of obj.legalStatusOfSupply || []) {
+			for (const o of (obj.legalStatusOfSupply instanceof Array ? obj.legalStatusOfSupply : [])) {
 				this.legalStatusOfSupply.push(new PackagedProductDefinitionLegalStatusOfSupply(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('marketingStatus')) {
 			this.marketingStatus = [];
-			for (const o of obj.marketingStatus || []) {
+			for (const o of (obj.marketingStatus instanceof Array ? obj.marketingStatus : [])) {
 				this.marketingStatus.push(new MarketingStatus(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('characteristic')) {
 			this.characteristic = [];
-			for (const o of obj.characteristic || []) {
+			for (const o of (obj.characteristic instanceof Array ? obj.characteristic : [])) {
 				this.characteristic.push(new CodeableConcept(o));
 			}
 		}
@@ -28788,7 +28788,7 @@ export class PackagedProductDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('manufacturer')) {
 			this.manufacturer = [];
-			for (const o of obj.manufacturer || []) {
+			for (const o of (obj.manufacturer instanceof Array ? obj.manufacturer : [])) {
 				this.manufacturer.push(new Reference(o));
 			}
 		}
@@ -29030,7 +29030,7 @@ export class ParametersParameter extends Element {
 
 		if (obj.hasOwnProperty('part')) {
 			this.part = [];
-			for (const o of obj.part || []) {
+			for (const o of (obj.part instanceof Array ? obj.part : [])) {
 				this.part.push(new ParametersParameter(o));
 			}
 		}
@@ -29101,7 +29101,7 @@ export class Parameters extends Resource {
 
 		if (obj.hasOwnProperty('parameter')) {
 			this.parameter = [];
-			for (const o of obj.parameter || []) {
+			for (const o of (obj.parameter instanceof Array ? obj.parameter : [])) {
 				this.parameter.push(new ParametersParameter(o));
 			}
 		}
@@ -29154,7 +29154,7 @@ export class PatientContact extends Element {
 
 		if (obj.hasOwnProperty('relationship')) {
 			this.relationship = [];
-			for (const o of obj.relationship || []) {
+			for (const o of (obj.relationship instanceof Array ? obj.relationship : [])) {
 				this.relationship.push(new CodeableConcept(o));
 			}
 		}
@@ -29165,7 +29165,7 @@ export class PatientContact extends Element {
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
@@ -29206,7 +29206,7 @@ export class Patient extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -29217,14 +29217,14 @@ export class Patient extends DomainResource {
 
 		if (obj.hasOwnProperty('name')) {
 			this.name = [];
-			for (const o of obj.name || []) {
+			for (const o of (obj.name instanceof Array ? obj.name : [])) {
 				this.name.push(new HumanName(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
@@ -29247,7 +29247,7 @@ export class Patient extends DomainResource {
 
 		if (obj.hasOwnProperty('address')) {
 			this.address = [];
-			for (const o of obj.address || []) {
+			for (const o of (obj.address instanceof Array ? obj.address : [])) {
 				this.address.push(new Address(o));
 			}
 		}
@@ -29266,28 +29266,28 @@ export class Patient extends DomainResource {
 
 		if (obj.hasOwnProperty('photo')) {
 			this.photo = [];
-			for (const o of obj.photo || []) {
+			for (const o of (obj.photo instanceof Array ? obj.photo : [])) {
 				this.photo.push(new Attachment(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new PatientContact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('communication')) {
 			this.communication = [];
-			for (const o of obj.communication || []) {
+			for (const o of (obj.communication instanceof Array ? obj.communication : [])) {
 				this.communication.push(new PatientCommunication(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('generalPractitioner')) {
 			this.generalPractitioner = [];
-			for (const o of obj.generalPractitioner || []) {
+			for (const o of (obj.generalPractitioner instanceof Array ? obj.generalPractitioner : [])) {
 				this.generalPractitioner.push(new Reference(o));
 			}
 		}
@@ -29298,7 +29298,7 @@ export class Patient extends DomainResource {
 
 		if (obj.hasOwnProperty('link')) {
 			this.link = [];
-			for (const o of obj.link || []) {
+			for (const o of (obj.link instanceof Array ? obj.link : [])) {
 				this.link.push(new PatientLink(o));
 			}
 		}
@@ -29335,7 +29335,7 @@ export class PaymentNotice extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -29486,7 +29486,7 @@ export class PaymentReconciliation extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -29537,7 +29537,7 @@ export class PaymentReconciliation extends DomainResource {
 
 		if (obj.hasOwnProperty('detail')) {
 			this.detail = [];
-			for (const o of obj.detail || []) {
+			for (const o of (obj.detail instanceof Array ? obj.detail : [])) {
 				this.detail.push(new PaymentReconciliationDetail(o));
 			}
 		}
@@ -29548,7 +29548,7 @@ export class PaymentReconciliation extends DomainResource {
 
 		if (obj.hasOwnProperty('processNote')) {
 			this.processNote = [];
-			for (const o of obj.processNote || []) {
+			for (const o of (obj.processNote instanceof Array ? obj.processNote : [])) {
 				this.processNote.push(new PaymentReconciliationProcessNote(o));
 			}
 		}
@@ -29600,21 +29600,21 @@ export class Person extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('name')) {
 			this.name = [];
-			for (const o of obj.name || []) {
+			for (const o of (obj.name instanceof Array ? obj.name : [])) {
 				this.name.push(new HumanName(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
@@ -29629,7 +29629,7 @@ export class Person extends DomainResource {
 
 		if (obj.hasOwnProperty('address')) {
 			this.address = [];
-			for (const o of obj.address || []) {
+			for (const o of (obj.address instanceof Array ? obj.address : [])) {
 				this.address.push(new Address(o));
 			}
 		}
@@ -29648,7 +29648,7 @@ export class Person extends DomainResource {
 
 		if (obj.hasOwnProperty('link')) {
 			this.link = [];
-			for (const o of obj.link || []) {
+			for (const o of (obj.link instanceof Array ? obj.link : [])) {
 				this.link.push(new PersonLink(o));
 			}
 		}
@@ -29776,28 +29776,28 @@ export class PlanDefinitionAction extends Element {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reason')) {
 			this.reason = [];
-			for (const o of obj.reason || []) {
+			for (const o of (obj.reason instanceof Array ? obj.reason : [])) {
 				this.reason.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('documentation')) {
 			this.documentation = [];
-			for (const o of obj.documentation || []) {
+			for (const o of (obj.documentation instanceof Array ? obj.documentation : [])) {
 				this.documentation.push(new RelatedArtifact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('goalId')) {
 			this.goalId = [];
-			for (const o of obj.goalId || []) {
+			for (const o of (obj.goalId instanceof Array ? obj.goalId : [])) {
 				this.goalId.push(o);
 			}
 		}
@@ -29816,35 +29816,35 @@ export class PlanDefinitionAction extends Element {
 
 		if (obj.hasOwnProperty('trigger')) {
 			this.trigger = [];
-			for (const o of obj.trigger || []) {
+			for (const o of (obj.trigger instanceof Array ? obj.trigger : [])) {
 				this.trigger.push(new TriggerDefinition(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('condition')) {
 			this.condition = [];
-			for (const o of obj.condition || []) {
+			for (const o of (obj.condition instanceof Array ? obj.condition : [])) {
 				this.condition.push(new PlanDefinitionActionCondition(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('input')) {
 			this.input = [];
-			for (const o of obj.input || []) {
+			for (const o of (obj.input instanceof Array ? obj.input : [])) {
 				this.input.push(new DataRequirement(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('output')) {
 			this.output = [];
-			for (const o of obj.output || []) {
+			for (const o of (obj.output instanceof Array ? obj.output : [])) {
 				this.output.push(new DataRequirement(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedAction')) {
 			this.relatedAction = [];
-			for (const o of obj.relatedAction || []) {
+			for (const o of (obj.relatedAction instanceof Array ? obj.relatedAction : [])) {
 				this.relatedAction.push(new PlanDefinitionActionRelatedAction(o));
 			}
 		}
@@ -29875,7 +29875,7 @@ export class PlanDefinitionAction extends Element {
 
 		if (obj.hasOwnProperty('participant')) {
 			this.participant = [];
-			for (const o of obj.participant || []) {
+			for (const o of (obj.participant instanceof Array ? obj.participant : [])) {
 				this.participant.push(new PlanDefinitionActionParticipant(o));
 			}
 		}
@@ -29918,14 +29918,14 @@ export class PlanDefinitionAction extends Element {
 
 		if (obj.hasOwnProperty('dynamicValue')) {
 			this.dynamicValue = [];
-			for (const o of obj.dynamicValue || []) {
+			for (const o of (obj.dynamicValue instanceof Array ? obj.dynamicValue : [])) {
 				this.dynamicValue.push(new PlanDefinitionActionDynamicValue(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new PlanDefinitionAction(o));
 			}
 		}
@@ -30024,21 +30024,21 @@ export class PlanDefinitionGoal extends Element {
 
 		if (obj.hasOwnProperty('addresses')) {
 			this.addresses = [];
-			for (const o of obj.addresses || []) {
+			for (const o of (obj.addresses instanceof Array ? obj.addresses : [])) {
 				this.addresses.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('documentation')) {
 			this.documentation = [];
-			for (const o of obj.documentation || []) {
+			for (const o of (obj.documentation instanceof Array ? obj.documentation : [])) {
 				this.documentation.push(new RelatedArtifact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('target')) {
 			this.target = [];
-			for (const o of obj.target || []) {
+			for (const o of (obj.target instanceof Array ? obj.target : [])) {
 				this.target.push(new PlanDefinitionGoalTarget(o));
 			}
 		}
@@ -30067,7 +30067,7 @@ export class PlanDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -30122,7 +30122,7 @@ export class PlanDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -30133,14 +30133,14 @@ export class PlanDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -30171,63 +30171,63 @@ export class PlanDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('topic')) {
 			this.topic = [];
-			for (const o of obj.topic || []) {
+			for (const o of (obj.topic instanceof Array ? obj.topic : [])) {
 				this.topic.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('editor')) {
 			this.editor = [];
-			for (const o of obj.editor || []) {
+			for (const o of (obj.editor instanceof Array ? obj.editor : [])) {
 				this.editor.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reviewer')) {
 			this.reviewer = [];
-			for (const o of obj.reviewer || []) {
+			for (const o of (obj.reviewer instanceof Array ? obj.reviewer : [])) {
 				this.reviewer.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endorser')) {
 			this.endorser = [];
-			for (const o of obj.endorser || []) {
+			for (const o of (obj.endorser instanceof Array ? obj.endorser : [])) {
 				this.endorser.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedArtifact')) {
 			this.relatedArtifact = [];
-			for (const o of obj.relatedArtifact || []) {
+			for (const o of (obj.relatedArtifact instanceof Array ? obj.relatedArtifact : [])) {
 				this.relatedArtifact.push(new RelatedArtifact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('library')) {
 			this.library = [];
-			for (const o of obj.library || []) {
+			for (const o of (obj.library instanceof Array ? obj.library : [])) {
 				this.library.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('goal')) {
 			this.goal = [];
-			for (const o of obj.goal || []) {
+			for (const o of (obj.goal instanceof Array ? obj.goal : [])) {
 				this.goal.push(new PlanDefinitionGoal(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new PlanDefinitionAction(o));
 			}
 		}
@@ -30276,7 +30276,7 @@ export class PractitionerQualification extends Element {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -30310,7 +30310,7 @@ export class Practitioner extends DomainResource implements IFhir.IPractitioner 
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -30321,21 +30321,21 @@ export class Practitioner extends DomainResource implements IFhir.IPractitioner 
 
 		if (obj.hasOwnProperty('name')) {
 			this.name = [];
-			for (const o of obj.name || []) {
+			for (const o of (obj.name instanceof Array ? obj.name : [])) {
 				this.name.push(new HumanName(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('address')) {
 			this.address = [];
-			for (const o of obj.address || []) {
+			for (const o of (obj.address instanceof Array ? obj.address : [])) {
 				this.address.push(new Address(o));
 			}
 		}
@@ -30350,21 +30350,21 @@ export class Practitioner extends DomainResource implements IFhir.IPractitioner 
 
 		if (obj.hasOwnProperty('photo')) {
 			this.photo = [];
-			for (const o of obj.photo || []) {
+			for (const o of (obj.photo instanceof Array ? obj.photo : [])) {
 				this.photo.push(new Attachment(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('qualification')) {
 			this.qualification = [];
-			for (const o of obj.qualification || []) {
+			for (const o of (obj.qualification instanceof Array ? obj.qualification : [])) {
 				this.qualification.push(new PractitionerQualification(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('communication')) {
 			this.communication = [];
-			for (const o of obj.communication || []) {
+			for (const o of (obj.communication instanceof Array ? obj.communication : [])) {
 				this.communication.push(new CodeableConcept(o));
 			}
 		}
@@ -30408,7 +30408,7 @@ export class PractitionerRoleAvailableTime extends Element {
 
 		if (obj.hasOwnProperty('daysOfWeek')) {
 			this.daysOfWeek = [];
-			for (const o of obj.daysOfWeek || []) {
+			for (const o of (obj.daysOfWeek instanceof Array ? obj.daysOfWeek : [])) {
 				this.daysOfWeek.push(o);
 			}
 		}
@@ -30442,7 +30442,7 @@ export class PractitionerRole extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -30465,49 +30465,49 @@ export class PractitionerRole extends DomainResource {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specialty')) {
 			this.specialty = [];
-			for (const o of obj.specialty || []) {
+			for (const o of (obj.specialty instanceof Array ? obj.specialty : [])) {
 				this.specialty.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('location')) {
 			this.location = [];
-			for (const o of obj.location || []) {
+			for (const o of (obj.location instanceof Array ? obj.location : [])) {
 				this.location.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('healthcareService')) {
 			this.healthcareService = [];
-			for (const o of obj.healthcareService || []) {
+			for (const o of (obj.healthcareService instanceof Array ? obj.healthcareService : [])) {
 				this.healthcareService.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('availableTime')) {
 			this.availableTime = [];
-			for (const o of obj.availableTime || []) {
+			for (const o of (obj.availableTime instanceof Array ? obj.availableTime : [])) {
 				this.availableTime.push(new PractitionerRoleAvailableTime(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('notAvailable')) {
 			this.notAvailable = [];
-			for (const o of obj.notAvailable || []) {
+			for (const o of (obj.notAvailable instanceof Array ? obj.notAvailable : [])) {
 				this.notAvailable.push(new PractitionerRoleNotAvailable(o));
 			}
 		}
@@ -30518,7 +30518,7 @@ export class PractitionerRole extends DomainResource {
 
 		if (obj.hasOwnProperty('endpoint')) {
 			this.endpoint = [];
-			for (const o of obj.endpoint || []) {
+			for (const o of (obj.endpoint instanceof Array ? obj.endpoint : [])) {
 				this.endpoint.push(new Reference(o));
 			}
 		}
@@ -30592,35 +30592,35 @@ export class Procedure extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesCanonical')) {
 			this.instantiatesCanonical = [];
-			for (const o of obj.instantiatesCanonical || []) {
+			for (const o of (obj.instantiatesCanonical instanceof Array ? obj.instantiatesCanonical : [])) {
 				this.instantiatesCanonical.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesUri')) {
 			this.instantiatesUri = [];
-			for (const o of obj.instantiatesUri || []) {
+			for (const o of (obj.instantiatesUri instanceof Array ? obj.instantiatesUri : [])) {
 				this.instantiatesUri.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -30679,7 +30679,7 @@ export class Procedure extends DomainResource {
 
 		if (obj.hasOwnProperty('performer')) {
 			this.performer = [];
-			for (const o of obj.performer || []) {
+			for (const o of (obj.performer instanceof Array ? obj.performer : [])) {
 				this.performer.push(new ProcedurePerformer(o));
 			}
 		}
@@ -30690,21 +30690,21 @@ export class Procedure extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('bodySite')) {
 			this.bodySite = [];
-			for (const o of obj.bodySite || []) {
+			for (const o of (obj.bodySite instanceof Array ? obj.bodySite : [])) {
 				this.bodySite.push(new CodeableConcept(o));
 			}
 		}
@@ -30715,56 +30715,56 @@ export class Procedure extends DomainResource {
 
 		if (obj.hasOwnProperty('report')) {
 			this.report = [];
-			for (const o of obj.report || []) {
+			for (const o of (obj.report instanceof Array ? obj.report : [])) {
 				this.report.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('complication')) {
 			this.complication = [];
-			for (const o of obj.complication || []) {
+			for (const o of (obj.complication instanceof Array ? obj.complication : [])) {
 				this.complication.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('complicationDetail')) {
 			this.complicationDetail = [];
-			for (const o of obj.complicationDetail || []) {
+			for (const o of (obj.complicationDetail instanceof Array ? obj.complicationDetail : [])) {
 				this.complicationDetail.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('followUp')) {
 			this.followUp = [];
-			for (const o of obj.followUp || []) {
+			for (const o of (obj.followUp instanceof Array ? obj.followUp : [])) {
 				this.followUp.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('focalDevice')) {
 			this.focalDevice = [];
-			for (const o of obj.focalDevice || []) {
+			for (const o of (obj.focalDevice instanceof Array ? obj.focalDevice : [])) {
 				this.focalDevice.push(new ProcedureFocalDevice(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('usedReference')) {
 			this.usedReference = [];
-			for (const o of obj.usedReference || []) {
+			for (const o of (obj.usedReference instanceof Array ? obj.usedReference : [])) {
 				this.usedReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('usedCode')) {
 			this.usedCode = [];
-			for (const o of obj.usedCode || []) {
+			for (const o of (obj.usedCode instanceof Array ? obj.usedCode : [])) {
 				this.usedCode.push(new CodeableConcept(o));
 			}
 		}
@@ -30820,7 +30820,7 @@ export class ProvenanceEntity extends Element {
 
 		if (obj.hasOwnProperty('agent')) {
 			this.agent = [];
-			for (const o of obj.agent || []) {
+			for (const o of (obj.agent instanceof Array ? obj.agent : [])) {
 				this.agent.push(new ProvenanceAgent(o));
 			}
 		}
@@ -30842,7 +30842,7 @@ export class ProvenanceAgent extends Element {
 
 		if (obj.hasOwnProperty('role')) {
 			this.role = [];
-			for (const o of obj.role || []) {
+			for (const o of (obj.role instanceof Array ? obj.role : [])) {
 				this.role.push(new CodeableConcept(o));
 			}
 		}
@@ -30872,7 +30872,7 @@ export class Provenance extends DomainResource {
 
 		if (obj.hasOwnProperty('target')) {
 			this.target = [];
-			for (const o of obj.target || []) {
+			for (const o of (obj.target instanceof Array ? obj.target : [])) {
 				this.target.push(new Reference(o));
 			}
 		}
@@ -30891,7 +30891,7 @@ export class Provenance extends DomainResource {
 
 		if (obj.hasOwnProperty('policy')) {
 			this.policy = [];
-			for (const o of obj.policy || []) {
+			for (const o of (obj.policy instanceof Array ? obj.policy : [])) {
 				this.policy.push(o);
 			}
 		}
@@ -30902,7 +30902,7 @@ export class Provenance extends DomainResource {
 
 		if (obj.hasOwnProperty('reason')) {
 			this.reason = [];
-			for (const o of obj.reason || []) {
+			for (const o of (obj.reason instanceof Array ? obj.reason : [])) {
 				this.reason.push(new CodeableConcept(o));
 			}
 		}
@@ -30913,21 +30913,21 @@ export class Provenance extends DomainResource {
 
 		if (obj.hasOwnProperty('agent')) {
 			this.agent = [];
-			for (const o of obj.agent || []) {
+			for (const o of (obj.agent instanceof Array ? obj.agent : [])) {
 				this.agent.push(new ProvenanceAgent(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('entity')) {
 			this.entity = [];
-			for (const o of obj.entity || []) {
+			for (const o of (obj.entity instanceof Array ? obj.entity : [])) {
 				this.entity.push(new ProvenanceEntity(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('signature')) {
 			this.signature = [];
-			for (const o of obj.signature || []) {
+			for (const o of (obj.signature instanceof Array ? obj.signature : [])) {
 				this.signature.push(new Signature(o));
 			}
 		}
@@ -31141,7 +31141,7 @@ export class QuestionnaireItem extends Element {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new Coding(o));
 			}
 		}
@@ -31160,7 +31160,7 @@ export class QuestionnaireItem extends Element {
 
 		if (obj.hasOwnProperty('enableWhen')) {
 			this.enableWhen = [];
-			for (const o of obj.enableWhen || []) {
+			for (const o of (obj.enableWhen instanceof Array ? obj.enableWhen : [])) {
 				this.enableWhen.push(new QuestionnaireItemEnableWhen(o));
 			}
 		}
@@ -31191,21 +31191,21 @@ export class QuestionnaireItem extends Element {
 
 		if (obj.hasOwnProperty('answerOption')) {
 			this.answerOption = [];
-			for (const o of obj.answerOption || []) {
+			for (const o of (obj.answerOption instanceof Array ? obj.answerOption : [])) {
 				this.answerOption.push(new QuestionnaireItemAnswerOption(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('initial')) {
 			this.initial = [];
-			for (const o of obj.initial || []) {
+			for (const o of (obj.initial instanceof Array ? obj.initial : [])) {
 				this.initial.push(new QuestionnaireItemInitial(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new QuestionnaireItem(o));
 			}
 		}
@@ -31243,7 +31243,7 @@ export class Questionnaire extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -31262,7 +31262,7 @@ export class Questionnaire extends DomainResource {
 
 		if (obj.hasOwnProperty('derivedFrom')) {
 			this.derivedFrom = [];
-			for (const o of obj.derivedFrom || []) {
+			for (const o of (obj.derivedFrom instanceof Array ? obj.derivedFrom : [])) {
 				this.derivedFrom.push(o);
 			}
 		}
@@ -31277,7 +31277,7 @@ export class Questionnaire extends DomainResource {
 
 		if (obj.hasOwnProperty('subjectType')) {
 			this.subjectType = [];
-			for (const o of obj.subjectType || []) {
+			for (const o of (obj.subjectType instanceof Array ? obj.subjectType : [])) {
 				this.subjectType.push(o);
 			}
 		}
@@ -31292,7 +31292,7 @@ export class Questionnaire extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -31303,14 +31303,14 @@ export class Questionnaire extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -31337,14 +31337,14 @@ export class Questionnaire extends DomainResource {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new Coding(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new QuestionnaireItem(o));
 			}
 		}
@@ -31430,7 +31430,7 @@ export class QuestionnaireResponseItemAnswer extends Element {
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new QuestionnaireResponseItem(o));
 			}
 		}
@@ -31470,14 +31470,14 @@ export class QuestionnaireResponseItem extends Element {
 
 		if (obj.hasOwnProperty('answer')) {
 			this.answer = [];
-			for (const o of obj.answer || []) {
+			for (const o of (obj.answer instanceof Array ? obj.answer : [])) {
 				this.answer.push(new QuestionnaireResponseItemAnswer(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new QuestionnaireResponseItem(o));
 			}
 		}
@@ -31504,14 +31504,14 @@ export class QuestionnaireResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -31546,7 +31546,7 @@ export class QuestionnaireResponse extends DomainResource {
 
 		if (obj.hasOwnProperty('item')) {
 			this.item = [];
-			for (const o of obj.item || []) {
+			for (const o of (obj.item instanceof Array ? obj.item : [])) {
 				this.item.push(new QuestionnaireResponseItem(o));
 			}
 		}
@@ -31593,7 +31593,7 @@ export class RegulatedAuthorizationCase extends Element {
 
 		if (obj.hasOwnProperty('application')) {
 			this.application = [];
-			for (const o of obj.application || []) {
+			for (const o of (obj.application instanceof Array ? obj.application : [])) {
 				this.application.push(new RegulatedAuthorizationCase(o));
 			}
 		}
@@ -31617,14 +31617,14 @@ export class RegulatedAuthorization extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('subject')) {
 			this.subject = [];
-			for (const o of obj.subject || []) {
+			for (const o of (obj.subject instanceof Array ? obj.subject : [])) {
 				this.subject.push(new Reference(o));
 			}
 		}
@@ -31639,7 +31639,7 @@ export class RegulatedAuthorization extends DomainResource {
 
 		if (obj.hasOwnProperty('region')) {
 			this.region = [];
-			for (const o of obj.region || []) {
+			for (const o of (obj.region instanceof Array ? obj.region : [])) {
 				this.region.push(new CodeableConcept(o));
 			}
 		}
@@ -31666,7 +31666,7 @@ export class RegulatedAuthorization extends DomainResource {
 
 		if (obj.hasOwnProperty('basis')) {
 			this.basis = [];
-			for (const o of obj.basis || []) {
+			for (const o of (obj.basis instanceof Array ? obj.basis : [])) {
 				this.basis.push(new CodeableConcept(o));
 			}
 		}
@@ -31729,7 +31729,7 @@ export class RelatedPerson extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -31744,21 +31744,21 @@ export class RelatedPerson extends DomainResource {
 
 		if (obj.hasOwnProperty('relationship')) {
 			this.relationship = [];
-			for (const o of obj.relationship || []) {
+			for (const o of (obj.relationship instanceof Array ? obj.relationship : [])) {
 				this.relationship.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('name')) {
 			this.name = [];
-			for (const o of obj.name || []) {
+			for (const o of (obj.name instanceof Array ? obj.name : [])) {
 				this.name.push(new HumanName(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('telecom')) {
 			this.telecom = [];
-			for (const o of obj.telecom || []) {
+			for (const o of (obj.telecom instanceof Array ? obj.telecom : [])) {
 				this.telecom.push(new ContactPoint(o));
 			}
 		}
@@ -31773,14 +31773,14 @@ export class RelatedPerson extends DomainResource {
 
 		if (obj.hasOwnProperty('address')) {
 			this.address = [];
-			for (const o of obj.address || []) {
+			for (const o of (obj.address instanceof Array ? obj.address : [])) {
 				this.address.push(new Address(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('photo')) {
 			this.photo = [];
-			for (const o of obj.photo || []) {
+			for (const o of (obj.photo instanceof Array ? obj.photo : [])) {
 				this.photo.push(new Attachment(o));
 			}
 		}
@@ -31791,7 +31791,7 @@ export class RelatedPerson extends DomainResource {
 
 		if (obj.hasOwnProperty('communication')) {
 			this.communication = [];
-			for (const o of obj.communication || []) {
+			for (const o of (obj.communication instanceof Array ? obj.communication : [])) {
 				this.communication.push(new RelatedPersonCommunication(o));
 			}
 		}
@@ -31885,28 +31885,28 @@ export class RequestGroupAction extends Element {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('documentation')) {
 			this.documentation = [];
-			for (const o of obj.documentation || []) {
+			for (const o of (obj.documentation instanceof Array ? obj.documentation : [])) {
 				this.documentation.push(new RelatedArtifact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('condition')) {
 			this.condition = [];
-			for (const o of obj.condition || []) {
+			for (const o of (obj.condition instanceof Array ? obj.condition : [])) {
 				this.condition.push(new RequestGroupActionCondition(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedAction')) {
 			this.relatedAction = [];
-			for (const o of obj.relatedAction || []) {
+			for (const o of (obj.relatedAction instanceof Array ? obj.relatedAction : [])) {
 				this.relatedAction.push(new RequestGroupActionRelatedAction(o));
 			}
 		}
@@ -31937,7 +31937,7 @@ export class RequestGroupAction extends Element {
 
 		if (obj.hasOwnProperty('participant')) {
 			this.participant = [];
-			for (const o of obj.participant || []) {
+			for (const o of (obj.participant instanceof Array ? obj.participant : [])) {
 				this.participant.push(new Reference(o));
 			}
 		}
@@ -31972,7 +31972,7 @@ export class RequestGroupAction extends Element {
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new RequestGroupAction(o));
 			}
 		}
@@ -32014,35 +32014,35 @@ export class RequestGroup extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesCanonical')) {
 			this.instantiatesCanonical = [];
-			for (const o of obj.instantiatesCanonical || []) {
+			for (const o of (obj.instantiatesCanonical instanceof Array ? obj.instantiatesCanonical : [])) {
 				this.instantiatesCanonical.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesUri')) {
 			this.instantiatesUri = [];
-			for (const o of obj.instantiatesUri || []) {
+			for (const o of (obj.instantiatesUri instanceof Array ? obj.instantiatesUri : [])) {
 				this.instantiatesUri.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('replaces')) {
 			this.replaces = [];
-			for (const o of obj.replaces || []) {
+			for (const o of (obj.replaces instanceof Array ? obj.replaces : [])) {
 				this.replaces.push(new Reference(o));
 			}
 		}
@@ -32085,28 +32085,28 @@ export class RequestGroup extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new RequestGroupAction(o));
 			}
 		}
@@ -32147,7 +32147,7 @@ export class ResearchDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -32198,7 +32198,7 @@ export class ResearchDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -32209,21 +32209,21 @@ export class ResearchDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('comment')) {
 			this.comment = [];
-			for (const o of obj.comment || []) {
+			for (const o of (obj.comment instanceof Array ? obj.comment : [])) {
 				this.comment.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -32254,49 +32254,49 @@ export class ResearchDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('topic')) {
 			this.topic = [];
-			for (const o of obj.topic || []) {
+			for (const o of (obj.topic instanceof Array ? obj.topic : [])) {
 				this.topic.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('editor')) {
 			this.editor = [];
-			for (const o of obj.editor || []) {
+			for (const o of (obj.editor instanceof Array ? obj.editor : [])) {
 				this.editor.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reviewer')) {
 			this.reviewer = [];
-			for (const o of obj.reviewer || []) {
+			for (const o of (obj.reviewer instanceof Array ? obj.reviewer : [])) {
 				this.reviewer.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endorser')) {
 			this.endorser = [];
-			for (const o of obj.endorser || []) {
+			for (const o of (obj.endorser instanceof Array ? obj.endorser : [])) {
 				this.endorser.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedArtifact')) {
 			this.relatedArtifact = [];
-			for (const o of obj.relatedArtifact || []) {
+			for (const o of (obj.relatedArtifact instanceof Array ? obj.relatedArtifact : [])) {
 				this.relatedArtifact.push(new RelatedArtifact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('library')) {
 			this.library = [];
-			for (const o of obj.library || []) {
+			for (const o of (obj.library instanceof Array ? obj.library : [])) {
 				this.library.push(o);
 			}
 		}
@@ -32379,7 +32379,7 @@ export class ResearchElementDefinitionCharacteristic extends Element {
 
 		if (obj.hasOwnProperty('usageContext')) {
 			this.usageContext = [];
-			for (const o of obj.usageContext || []) {
+			for (const o of (obj.usageContext instanceof Array ? obj.usageContext : [])) {
 				this.usageContext.push(new UsageContext(o));
 			}
 		}
@@ -32486,7 +32486,7 @@ export class ResearchElementDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -32537,7 +32537,7 @@ export class ResearchElementDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -32548,21 +32548,21 @@ export class ResearchElementDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('comment')) {
 			this.comment = [];
-			for (const o of obj.comment || []) {
+			for (const o of (obj.comment instanceof Array ? obj.comment : [])) {
 				this.comment.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -32593,49 +32593,49 @@ export class ResearchElementDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('topic')) {
 			this.topic = [];
-			for (const o of obj.topic || []) {
+			for (const o of (obj.topic instanceof Array ? obj.topic : [])) {
 				this.topic.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('author')) {
 			this.author = [];
-			for (const o of obj.author || []) {
+			for (const o of (obj.author instanceof Array ? obj.author : [])) {
 				this.author.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('editor')) {
 			this.editor = [];
-			for (const o of obj.editor || []) {
+			for (const o of (obj.editor instanceof Array ? obj.editor : [])) {
 				this.editor.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reviewer')) {
 			this.reviewer = [];
-			for (const o of obj.reviewer || []) {
+			for (const o of (obj.reviewer instanceof Array ? obj.reviewer : [])) {
 				this.reviewer.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('endorser')) {
 			this.endorser = [];
-			for (const o of obj.endorser || []) {
+			for (const o of (obj.endorser instanceof Array ? obj.endorser : [])) {
 				this.endorser.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedArtifact')) {
 			this.relatedArtifact = [];
-			for (const o of obj.relatedArtifact || []) {
+			for (const o of (obj.relatedArtifact instanceof Array ? obj.relatedArtifact : [])) {
 				this.relatedArtifact.push(new RelatedArtifact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('library')) {
 			this.library = [];
-			for (const o of obj.library || []) {
+			for (const o of (obj.library instanceof Array ? obj.library : [])) {
 				this.library.push(o);
 			}
 		}
@@ -32650,7 +32650,7 @@ export class ResearchElementDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('characteristic')) {
 			this.characteristic = [];
-			for (const o of obj.characteristic || []) {
+			for (const o of (obj.characteristic instanceof Array ? obj.characteristic : [])) {
 				this.characteristic.push(new ResearchElementDefinitionCharacteristic(o));
 			}
 		}
@@ -32744,7 +32744,7 @@ export class ResearchStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -32755,14 +32755,14 @@ export class ResearchStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('protocol')) {
 			this.protocol = [];
-			for (const o of obj.protocol || []) {
+			for (const o of (obj.protocol instanceof Array ? obj.protocol : [])) {
 				this.protocol.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -32781,49 +32781,49 @@ export class ResearchStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('focus')) {
 			this.focus = [];
-			for (const o of obj.focus || []) {
+			for (const o of (obj.focus instanceof Array ? obj.focus : [])) {
 				this.focus.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('condition')) {
 			this.condition = [];
-			for (const o of obj.condition || []) {
+			for (const o of (obj.condition instanceof Array ? obj.condition : [])) {
 				this.condition.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relatedArtifact')) {
 			this.relatedArtifact = [];
-			for (const o of obj.relatedArtifact || []) {
+			for (const o of (obj.relatedArtifact instanceof Array ? obj.relatedArtifact : [])) {
 				this.relatedArtifact.push(new RelatedArtifact(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('keyword')) {
 			this.keyword = [];
-			for (const o of obj.keyword || []) {
+			for (const o of (obj.keyword instanceof Array ? obj.keyword : [])) {
 				this.keyword.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('location')) {
 			this.location = [];
-			for (const o of obj.location || []) {
+			for (const o of (obj.location instanceof Array ? obj.location : [])) {
 				this.location.push(new CodeableConcept(o));
 			}
 		}
@@ -32834,7 +32834,7 @@ export class ResearchStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('enrollment')) {
 			this.enrollment = [];
-			for (const o of obj.enrollment || []) {
+			for (const o of (obj.enrollment instanceof Array ? obj.enrollment : [])) {
 				this.enrollment.push(new Reference(o));
 			}
 		}
@@ -32853,7 +32853,7 @@ export class ResearchStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('site')) {
 			this.site = [];
-			for (const o of obj.site || []) {
+			for (const o of (obj.site instanceof Array ? obj.site : [])) {
 				this.site.push(new Reference(o));
 			}
 		}
@@ -32864,21 +32864,21 @@ export class ResearchStudy extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('arm')) {
 			this.arm = [];
-			for (const o of obj.arm || []) {
+			for (const o of (obj.arm instanceof Array ? obj.arm : [])) {
 				this.arm.push(new ResearchStudyArm(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('objective')) {
 			this.objective = [];
-			for (const o of obj.objective || []) {
+			for (const o of (obj.objective instanceof Array ? obj.objective : [])) {
 				this.objective.push(new ResearchStudyObjective(o));
 			}
 		}
@@ -32921,7 +32921,7 @@ export class ResearchSubject extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -33024,7 +33024,7 @@ export class RiskAssessment extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -33075,28 +33075,28 @@ export class RiskAssessment extends DomainResource {
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('basis')) {
 			this.basis = [];
-			for (const o of obj.basis || []) {
+			for (const o of (obj.basis instanceof Array ? obj.basis : [])) {
 				this.basis.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('prediction')) {
 			this.prediction = [];
-			for (const o of obj.prediction || []) {
+			for (const o of (obj.prediction instanceof Array ? obj.prediction : [])) {
 				this.prediction.push(new RiskAssessmentPrediction(o));
 			}
 		}
@@ -33107,7 +33107,7 @@ export class RiskAssessment extends DomainResource {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -33144,7 +33144,7 @@ export class Schedule extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -33155,28 +33155,28 @@ export class Schedule extends DomainResource {
 
 		if (obj.hasOwnProperty('serviceCategory')) {
 			this.serviceCategory = [];
-			for (const o of obj.serviceCategory || []) {
+			for (const o of (obj.serviceCategory instanceof Array ? obj.serviceCategory : [])) {
 				this.serviceCategory.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('serviceType')) {
 			this.serviceType = [];
-			for (const o of obj.serviceType || []) {
+			for (const o of (obj.serviceType instanceof Array ? obj.serviceType : [])) {
 				this.serviceType.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specialty')) {
 			this.specialty = [];
-			for (const o of obj.specialty || []) {
+			for (const o of (obj.specialty instanceof Array ? obj.specialty : [])) {
 				this.specialty.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('actor')) {
 			this.actor = [];
-			for (const o of obj.actor || []) {
+			for (const o of (obj.actor instanceof Array ? obj.actor : [])) {
 				this.actor.push(new Reference(o));
 			}
 		}
@@ -33261,7 +33261,7 @@ export class SearchParameter extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -33272,14 +33272,14 @@ export class SearchParameter extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -33294,7 +33294,7 @@ export class SearchParameter extends DomainResource {
 
 		if (obj.hasOwnProperty('base')) {
 			this.base = [];
-			for (const o of obj.base || []) {
+			for (const o of (obj.base instanceof Array ? obj.base : [])) {
 				this.base.push(o);
 			}
 		}
@@ -33317,7 +33317,7 @@ export class SearchParameter extends DomainResource {
 
 		if (obj.hasOwnProperty('target')) {
 			this.target = [];
-			for (const o of obj.target || []) {
+			for (const o of (obj.target instanceof Array ? obj.target : [])) {
 				this.target.push(o);
 			}
 		}
@@ -33332,28 +33332,28 @@ export class SearchParameter extends DomainResource {
 
 		if (obj.hasOwnProperty('comparator')) {
 			this.comparator = [];
-			for (const o of obj.comparator || []) {
+			for (const o of (obj.comparator instanceof Array ? obj.comparator : [])) {
 				this.comparator.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('chain')) {
 			this.chain = [];
-			for (const o of obj.chain || []) {
+			for (const o of (obj.chain instanceof Array ? obj.chain : [])) {
 				this.chain.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('component')) {
 			this.component = [];
-			for (const o of obj.component || []) {
+			for (const o of (obj.component instanceof Array ? obj.component : [])) {
 				this.component.push(new SearchParameterComponent(o));
 			}
 		}
@@ -33398,35 +33398,35 @@ export class ServiceRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesCanonical')) {
 			this.instantiatesCanonical = [];
-			for (const o of obj.instantiatesCanonical || []) {
+			for (const o of (obj.instantiatesCanonical instanceof Array ? obj.instantiatesCanonical : [])) {
 				this.instantiatesCanonical.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('instantiatesUri')) {
 			this.instantiatesUri = [];
-			for (const o of obj.instantiatesUri || []) {
+			for (const o of (obj.instantiatesUri instanceof Array ? obj.instantiatesUri : [])) {
 				this.instantiatesUri.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('replaces')) {
 			this.replaces = [];
-			for (const o of obj.replaces || []) {
+			for (const o of (obj.replaces instanceof Array ? obj.replaces : [])) {
 				this.replaces.push(new Reference(o));
 			}
 		}
@@ -33445,7 +33445,7 @@ export class ServiceRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -33464,7 +33464,7 @@ export class ServiceRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('orderDetail')) {
 			this.orderDetail = [];
-			for (const o of obj.orderDetail || []) {
+			for (const o of (obj.orderDetail instanceof Array ? obj.orderDetail : [])) {
 				this.orderDetail.push(new CodeableConcept(o));
 			}
 		}
@@ -33523,70 +33523,70 @@ export class ServiceRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('performer')) {
 			this.performer = [];
-			for (const o of obj.performer || []) {
+			for (const o of (obj.performer instanceof Array ? obj.performer : [])) {
 				this.performer.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('locationCode')) {
 			this.locationCode = [];
-			for (const o of obj.locationCode || []) {
+			for (const o of (obj.locationCode instanceof Array ? obj.locationCode : [])) {
 				this.locationCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('locationReference')) {
 			this.locationReference = [];
-			for (const o of obj.locationReference || []) {
+			for (const o of (obj.locationReference instanceof Array ? obj.locationReference : [])) {
 				this.locationReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('insurance')) {
 			this.insurance = [];
-			for (const o of obj.insurance || []) {
+			for (const o of (obj.insurance instanceof Array ? obj.insurance : [])) {
 				this.insurance.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('supportingInfo')) {
 			this.supportingInfo = [];
-			for (const o of obj.supportingInfo || []) {
+			for (const o of (obj.supportingInfo instanceof Array ? obj.supportingInfo : [])) {
 				this.supportingInfo.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specimen')) {
 			this.specimen = [];
-			for (const o of obj.specimen || []) {
+			for (const o of (obj.specimen instanceof Array ? obj.specimen : [])) {
 				this.specimen.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('bodySite')) {
 			this.bodySite = [];
-			for (const o of obj.bodySite || []) {
+			for (const o of (obj.bodySite instanceof Array ? obj.bodySite : [])) {
 				this.bodySite.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -33597,7 +33597,7 @@ export class ServiceRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('relevantHistory')) {
 			this.relevantHistory = [];
-			for (const o of obj.relevantHistory || []) {
+			for (const o of (obj.relevantHistory instanceof Array ? obj.relevantHistory : [])) {
 				this.relevantHistory.push(new Reference(o));
 			}
 		}
@@ -33654,28 +33654,28 @@ export class Slot extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('serviceCategory')) {
 			this.serviceCategory = [];
-			for (const o of obj.serviceCategory || []) {
+			for (const o of (obj.serviceCategory instanceof Array ? obj.serviceCategory : [])) {
 				this.serviceCategory.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('serviceType')) {
 			this.serviceType = [];
-			for (const o of obj.serviceType || []) {
+			for (const o of (obj.serviceType instanceof Array ? obj.serviceType : [])) {
 				this.serviceType.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('specialty')) {
 			this.specialty = [];
-			for (const o of obj.specialty || []) {
+			for (const o of (obj.specialty instanceof Array ? obj.specialty : [])) {
 				this.specialty.push(new CodeableConcept(o));
 			}
 		}
@@ -33730,7 +33730,7 @@ export class SpecimenContainer extends Element {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -33784,7 +33784,7 @@ export class SpecimenProcessing extends Element {
 
 		if (obj.hasOwnProperty('additive')) {
 			this.additive = [];
-			for (const o of obj.additive || []) {
+			for (const o of (obj.additive instanceof Array ? obj.additive : [])) {
 				this.additive.push(new Reference(o));
 			}
 		}
@@ -33868,7 +33868,7 @@ export class Specimen extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -33895,14 +33895,14 @@ export class Specimen extends DomainResource {
 
 		if (obj.hasOwnProperty('parent')) {
 			this.parent = [];
-			for (const o of obj.parent || []) {
+			for (const o of (obj.parent instanceof Array ? obj.parent : [])) {
 				this.parent.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('request')) {
 			this.request = [];
-			for (const o of obj.request || []) {
+			for (const o of (obj.request instanceof Array ? obj.request : [])) {
 				this.request.push(new Reference(o));
 			}
 		}
@@ -33913,28 +33913,28 @@ export class Specimen extends DomainResource {
 
 		if (obj.hasOwnProperty('processing')) {
 			this.processing = [];
-			for (const o of obj.processing || []) {
+			for (const o of (obj.processing instanceof Array ? obj.processing : [])) {
 				this.processing.push(new SpecimenProcessing(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('container')) {
 			this.container = [];
-			for (const o of obj.container || []) {
+			for (const o of (obj.container instanceof Array ? obj.container : [])) {
 				this.container.push(new SpecimenContainer(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('condition')) {
 			this.condition = [];
-			for (const o of obj.condition || []) {
+			for (const o of (obj.condition instanceof Array ? obj.condition : [])) {
 				this.condition.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -34037,7 +34037,7 @@ export class SpecimenDefinitionTypeTestedContainer extends Element {
 
 		if (obj.hasOwnProperty('additive')) {
 			this.additive = [];
-			for (const o of obj.additive || []) {
+			for (const o of (obj.additive instanceof Array ? obj.additive : [])) {
 				this.additive.push(new SpecimenDefinitionTypeTestedContainerAdditive(o));
 			}
 		}
@@ -34089,14 +34089,14 @@ export class SpecimenDefinitionTypeTested extends Element {
 
 		if (obj.hasOwnProperty('rejectionCriterion')) {
 			this.rejectionCriterion = [];
-			for (const o of obj.rejectionCriterion || []) {
+			for (const o of (obj.rejectionCriterion instanceof Array ? obj.rejectionCriterion : [])) {
 				this.rejectionCriterion.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('handling')) {
 			this.handling = [];
-			for (const o of obj.handling || []) {
+			for (const o of (obj.handling instanceof Array ? obj.handling : [])) {
 				this.handling.push(new SpecimenDefinitionTypeTestedHandling(o));
 			}
 		}
@@ -34130,7 +34130,7 @@ export class SpecimenDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('patientPreparation')) {
 			this.patientPreparation = [];
-			for (const o of obj.patientPreparation || []) {
+			for (const o of (obj.patientPreparation instanceof Array ? obj.patientPreparation : [])) {
 				this.patientPreparation.push(new CodeableConcept(o));
 			}
 		}
@@ -34141,14 +34141,14 @@ export class SpecimenDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('collection')) {
 			this.collection = [];
-			for (const o of obj.collection || []) {
+			for (const o of (obj.collection instanceof Array ? obj.collection : [])) {
 				this.collection.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('typeTested')) {
 			this.typeTested = [];
-			for (const o of obj.typeTested || []) {
+			for (const o of (obj.typeTested instanceof Array ? obj.typeTested : [])) {
 				this.typeTested.push(new SpecimenDefinitionTypeTested(o));
 			}
 		}
@@ -34170,7 +34170,7 @@ export class StructureDefinitionDifferential extends Element {
 
 		if (obj.hasOwnProperty('element')) {
 			this.element = [];
-			for (const o of obj.element || []) {
+			for (const o of (obj.element instanceof Array ? obj.element : [])) {
 				this.element.push(new ElementDefinition(o));
 			}
 		}
@@ -34186,7 +34186,7 @@ export class StructureDefinitionSnapshot extends Element {
 
 		if (obj.hasOwnProperty('element')) {
 			this.element = [];
-			for (const o of obj.element || []) {
+			for (const o of (obj.element instanceof Array ? obj.element : [])) {
 				this.element.push(new ElementDefinition(o));
 			}
 		}
@@ -34255,7 +34255,7 @@ export class StructureDefinition extends DomainResource implements IFhir.IStruct
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -34290,7 +34290,7 @@ export class StructureDefinition extends DomainResource implements IFhir.IStruct
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -34301,14 +34301,14 @@ export class StructureDefinition extends DomainResource implements IFhir.IStruct
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -34323,7 +34323,7 @@ export class StructureDefinition extends DomainResource implements IFhir.IStruct
 
 		if (obj.hasOwnProperty('keyword')) {
 			this.keyword = [];
-			for (const o of obj.keyword || []) {
+			for (const o of (obj.keyword instanceof Array ? obj.keyword : [])) {
 				this.keyword.push(new Coding(o));
 			}
 		}
@@ -34334,7 +34334,7 @@ export class StructureDefinition extends DomainResource implements IFhir.IStruct
 
 		if (obj.hasOwnProperty('mapping')) {
 			this.mapping = [];
-			for (const o of obj.mapping || []) {
+			for (const o of (obj.mapping instanceof Array ? obj.mapping : [])) {
 				this.mapping.push(new StructureDefinitionMapping(o));
 			}
 		}
@@ -34349,14 +34349,14 @@ export class StructureDefinition extends DomainResource implements IFhir.IStruct
 
 		if (obj.hasOwnProperty('context')) {
 			this.context = [];
-			for (const o of obj.context || []) {
+			for (const o of (obj.context instanceof Array ? obj.context : [])) {
 				this.context.push(new StructureDefinitionContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('contextInvariant')) {
 			this.contextInvariant = [];
-			for (const o of obj.contextInvariant || []) {
+			for (const o of (obj.contextInvariant instanceof Array ? obj.contextInvariant : [])) {
 				this.contextInvariant.push(o);
 			}
 		}
@@ -34425,7 +34425,7 @@ export class StructureMapGroupRuleDependent extends Element {
 
 		if (obj.hasOwnProperty('variable')) {
 			this.variable = [];
-			for (const o of obj.variable || []) {
+			for (const o of (obj.variable instanceof Array ? obj.variable : [])) {
 				this.variable.push(o);
 			}
 		}
@@ -34491,7 +34491,7 @@ export class StructureMapGroupRuleTarget extends Element {
 
 		if (obj.hasOwnProperty('listMode')) {
 			this.listMode = [];
-			for (const o of obj.listMode || []) {
+			for (const o of (obj.listMode instanceof Array ? obj.listMode : [])) {
 				this.listMode.push(o);
 			}
 		}
@@ -34506,7 +34506,7 @@ export class StructureMapGroupRuleTarget extends Element {
 
 		if (obj.hasOwnProperty('parameter')) {
 			this.parameter = [];
-			for (const o of obj.parameter || []) {
+			for (const o of (obj.parameter instanceof Array ? obj.parameter : [])) {
 				this.parameter.push(new StructureMapGroupRuleTargetParameter(o));
 			}
 		}
@@ -34841,28 +34841,28 @@ export class StructureMapGroupRule extends Element {
 
 		if (obj.hasOwnProperty('source')) {
 			this.source = [];
-			for (const o of obj.source || []) {
+			for (const o of (obj.source instanceof Array ? obj.source : [])) {
 				this.source.push(new StructureMapGroupRuleSource(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('target')) {
 			this.target = [];
-			for (const o of obj.target || []) {
+			for (const o of (obj.target instanceof Array ? obj.target : [])) {
 				this.target.push(new StructureMapGroupRuleTarget(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('rule')) {
 			this.rule = [];
-			for (const o of obj.rule || []) {
+			for (const o of (obj.rule instanceof Array ? obj.rule : [])) {
 				this.rule.push(new StructureMapGroupRule(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('dependent')) {
 			this.dependent = [];
-			for (const o of obj.dependent || []) {
+			for (const o of (obj.dependent instanceof Array ? obj.dependent : [])) {
 				this.dependent.push(new StructureMapGroupRuleDependent(o));
 			}
 		}
@@ -34931,14 +34931,14 @@ export class StructureMapGroup extends Element {
 
 		if (obj.hasOwnProperty('input')) {
 			this.input = [];
-			for (const o of obj.input || []) {
+			for (const o of (obj.input instanceof Array ? obj.input : [])) {
 				this.input.push(new StructureMapGroupInput(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('rule')) {
 			this.rule = [];
-			for (const o of obj.rule || []) {
+			for (const o of (obj.rule instanceof Array ? obj.rule : [])) {
 				this.rule.push(new StructureMapGroupRule(o));
 			}
 		}
@@ -34994,7 +34994,7 @@ export class StructureMap extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -35029,7 +35029,7 @@ export class StructureMap extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -35040,14 +35040,14 @@ export class StructureMap extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -35062,21 +35062,21 @@ export class StructureMap extends DomainResource {
 
 		if (obj.hasOwnProperty('structure')) {
 			this.structure = [];
-			for (const o of obj.structure || []) {
+			for (const o of (obj.structure instanceof Array ? obj.structure : [])) {
 				this.structure.push(new StructureMapStructure(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('import')) {
 			this.import = [];
-			for (const o of obj.import || []) {
+			for (const o of (obj.import instanceof Array ? obj.import : [])) {
 				this.import.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('group')) {
 			this.group = [];
-			for (const o of obj.group || []) {
+			for (const o of (obj.group instanceof Array ? obj.group : [])) {
 				this.group.push(new StructureMapGroup(o));
 			}
 		}
@@ -35122,7 +35122,7 @@ export class SubscriptionChannel extends Element {
 
 		if (obj.hasOwnProperty('header')) {
 			this.header = [];
-			for (const o of obj.header || []) {
+			for (const o of (obj.header instanceof Array ? obj.header : [])) {
 				this.header.push(o);
 			}
 		}
@@ -35148,7 +35148,7 @@ export class Subscription extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactPoint(o));
 			}
 		}
@@ -35203,7 +35203,7 @@ export class SubscriptionStatusNotificationEvent extends Element {
 
 		if (obj.hasOwnProperty('additionalContext')) {
 			this.additionalContext = [];
-			for (const o of obj.additionalContext || []) {
+			for (const o of (obj.additionalContext instanceof Array ? obj.additionalContext : [])) {
 				this.additionalContext.push(new Reference(o));
 			}
 		}
@@ -35237,7 +35237,7 @@ export class SubscriptionStatus extends DomainResource {
 
 		if (obj.hasOwnProperty('notificationEvent')) {
 			this.notificationEvent = [];
-			for (const o of obj.notificationEvent || []) {
+			for (const o of (obj.notificationEvent instanceof Array ? obj.notificationEvent : [])) {
 				this.notificationEvent.push(new SubscriptionStatusNotificationEvent(o));
 			}
 		}
@@ -35252,7 +35252,7 @@ export class SubscriptionStatus extends DomainResource {
 
 		if (obj.hasOwnProperty('error')) {
 			this.error = [];
-			for (const o of obj.error || []) {
+			for (const o of (obj.error instanceof Array ? obj.error : [])) {
 				this.error.push(new CodeableConcept(o));
 			}
 		}
@@ -35279,14 +35279,14 @@ export class SubscriptionTopicNotificationShape extends Element {
 
 		if (obj.hasOwnProperty('include')) {
 			this.include = [];
-			for (const o of obj.include || []) {
+			for (const o of (obj.include instanceof Array ? obj.include : [])) {
 				this.include.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('revInclude')) {
 			this.revInclude = [];
-			for (const o of obj.revInclude || []) {
+			for (const o of (obj.revInclude instanceof Array ? obj.revInclude : [])) {
 				this.revInclude.push(o);
 			}
 		}
@@ -35320,7 +35320,7 @@ export class SubscriptionTopicCanFilterBy extends Element {
 
 		if (obj.hasOwnProperty('modifier')) {
 			this.modifier = [];
-			for (const o of obj.modifier || []) {
+			for (const o of (obj.modifier instanceof Array ? obj.modifier : [])) {
 				this.modifier.push(o);
 			}
 		}
@@ -35404,7 +35404,7 @@ export class SubscriptionTopicResourceTrigger extends Element {
 
 		if (obj.hasOwnProperty('supportedInteraction')) {
 			this.supportedInteraction = [];
-			for (const o of obj.supportedInteraction || []) {
+			for (const o of (obj.supportedInteraction instanceof Array ? obj.supportedInteraction : [])) {
 				this.supportedInteraction.push(o);
 			}
 		}
@@ -35439,7 +35439,7 @@ export class SubscriptionTopic extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -35454,7 +35454,7 @@ export class SubscriptionTopic extends DomainResource {
 
 		if (obj.hasOwnProperty('derivedFrom')) {
 			this.derivedFrom = [];
-			for (const o of obj.derivedFrom || []) {
+			for (const o of (obj.derivedFrom instanceof Array ? obj.derivedFrom : [])) {
 				this.derivedFrom.push(o);
 			}
 		}
@@ -35477,7 +35477,7 @@ export class SubscriptionTopic extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -35488,14 +35488,14 @@ export class SubscriptionTopic extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -35522,28 +35522,28 @@ export class SubscriptionTopic extends DomainResource {
 
 		if (obj.hasOwnProperty('resourceTrigger')) {
 			this.resourceTrigger = [];
-			for (const o of obj.resourceTrigger || []) {
+			for (const o of (obj.resourceTrigger instanceof Array ? obj.resourceTrigger : [])) {
 				this.resourceTrigger.push(new SubscriptionTopicResourceTrigger(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('eventTrigger')) {
 			this.eventTrigger = [];
-			for (const o of obj.eventTrigger || []) {
+			for (const o of (obj.eventTrigger instanceof Array ? obj.eventTrigger : [])) {
 				this.eventTrigger.push(new SubscriptionTopicEventTrigger(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('canFilterBy')) {
 			this.canFilterBy = [];
-			for (const o of obj.canFilterBy || []) {
+			for (const o of (obj.canFilterBy instanceof Array ? obj.canFilterBy : [])) {
 				this.canFilterBy.push(new SubscriptionTopicCanFilterBy(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('notificationShape')) {
 			this.notificationShape = [];
-			for (const o of obj.notificationShape || []) {
+			for (const o of (obj.notificationShape instanceof Array ? obj.notificationShape : [])) {
 				this.notificationShape.push(new SubscriptionTopicNotificationShape(o));
 			}
 		}
@@ -35630,7 +35630,7 @@ export class Substance extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -35641,7 +35641,7 @@ export class Substance extends DomainResource {
 
 		if (obj.hasOwnProperty('category')) {
 			this.category = [];
-			for (const o of obj.category || []) {
+			for (const o of (obj.category instanceof Array ? obj.category : [])) {
 				this.category.push(new CodeableConcept(o));
 			}
 		}
@@ -35656,14 +35656,14 @@ export class Substance extends DomainResource {
 
 		if (obj.hasOwnProperty('instance')) {
 			this.instance = [];
-			for (const o of obj.instance || []) {
+			for (const o of (obj.instance instanceof Array ? obj.instance : [])) {
 				this.instance.push(new SubstanceInstance(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('ingredient')) {
 			this.ingredient = [];
-			for (const o of obj.ingredient || []) {
+			for (const o of (obj.ingredient instanceof Array ? obj.ingredient : [])) {
 				this.ingredient.push(new SubstanceIngredient(o));
 			}
 		}
@@ -35702,7 +35702,7 @@ export class SubstanceDefinitionSourceMaterial extends Element {
 
 		if (obj.hasOwnProperty('countryOfOrigin')) {
 			this.countryOfOrigin = [];
-			for (const o of obj.countryOfOrigin || []) {
+			for (const o of (obj.countryOfOrigin instanceof Array ? obj.countryOfOrigin : [])) {
 				this.countryOfOrigin.push(new CodeableConcept(o));
 			}
 		}
@@ -35758,7 +35758,7 @@ export class SubstanceDefinitionRelationship extends Element {
 
 		if (obj.hasOwnProperty('source')) {
 			this.source = [];
-			for (const o of obj.source || []) {
+			for (const o of (obj.source instanceof Array ? obj.source : [])) {
 				this.source.push(new Reference(o));
 			}
 		}
@@ -35822,49 +35822,49 @@ export class SubstanceDefinitionName extends Element {
 
 		if (obj.hasOwnProperty('language')) {
 			this.language = [];
-			for (const o of obj.language || []) {
+			for (const o of (obj.language instanceof Array ? obj.language : [])) {
 				this.language.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('domain')) {
 			this.domain = [];
-			for (const o of obj.domain || []) {
+			for (const o of (obj.domain instanceof Array ? obj.domain : [])) {
 				this.domain.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('synonym')) {
 			this.synonym = [];
-			for (const o of obj.synonym || []) {
+			for (const o of (obj.synonym instanceof Array ? obj.synonym : [])) {
 				this.synonym.push(new SubstanceDefinitionName(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('translation')) {
 			this.translation = [];
-			for (const o of obj.translation || []) {
+			for (const o of (obj.translation instanceof Array ? obj.translation : [])) {
 				this.translation.push(new SubstanceDefinitionName(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('official')) {
 			this.official = [];
-			for (const o of obj.official || []) {
+			for (const o of (obj.official instanceof Array ? obj.official : [])) {
 				this.official.push(new SubstanceDefinitionNameOfficial(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('source')) {
 			this.source = [];
-			for (const o of obj.source || []) {
+			for (const o of (obj.source instanceof Array ? obj.source : [])) {
 				this.source.push(new Reference(o));
 			}
 		}
@@ -35902,14 +35902,14 @@ export class SubstanceDefinitionCode extends Element {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('source')) {
 			this.source = [];
-			for (const o of obj.source || []) {
+			for (const o of (obj.source instanceof Array ? obj.source : [])) {
 				this.source.push(new Reference(o));
 			}
 		}
@@ -35977,21 +35977,21 @@ export class SubstanceDefinitionStructure extends Element {
 
 		if (obj.hasOwnProperty('technique')) {
 			this.technique = [];
-			for (const o of obj.technique || []) {
+			for (const o of (obj.technique instanceof Array ? obj.technique : [])) {
 				this.technique.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('sourceDocument')) {
 			this.sourceDocument = [];
-			for (const o of obj.sourceDocument || []) {
+			for (const o of (obj.sourceDocument instanceof Array ? obj.sourceDocument : [])) {
 				this.sourceDocument.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('representation')) {
 			this.representation = [];
-			for (const o of obj.representation || []) {
+			for (const o of (obj.representation instanceof Array ? obj.representation : [])) {
 				this.representation.push(new SubstanceDefinitionStructureRepresentation(o));
 			}
 		}
@@ -36131,7 +36131,7 @@ export class SubstanceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -36146,7 +36146,7 @@ export class SubstanceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('classification')) {
 			this.classification = [];
-			for (const o of obj.classification || []) {
+			for (const o of (obj.classification instanceof Array ? obj.classification : [])) {
 				this.classification.push(new CodeableConcept(o));
 			}
 		}
@@ -36157,7 +36157,7 @@ export class SubstanceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('grade')) {
 			this.grade = [];
-			for (const o of obj.grade || []) {
+			for (const o of (obj.grade instanceof Array ? obj.grade : [])) {
 				this.grade.push(new CodeableConcept(o));
 			}
 		}
@@ -36168,49 +36168,49 @@ export class SubstanceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('informationSource')) {
 			this.informationSource = [];
-			for (const o of obj.informationSource || []) {
+			for (const o of (obj.informationSource instanceof Array ? obj.informationSource : [])) {
 				this.informationSource.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('manufacturer')) {
 			this.manufacturer = [];
-			for (const o of obj.manufacturer || []) {
+			for (const o of (obj.manufacturer instanceof Array ? obj.manufacturer : [])) {
 				this.manufacturer.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('supplier')) {
 			this.supplier = [];
-			for (const o of obj.supplier || []) {
+			for (const o of (obj.supplier instanceof Array ? obj.supplier : [])) {
 				this.supplier.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('moiety')) {
 			this.moiety = [];
-			for (const o of obj.moiety || []) {
+			for (const o of (obj.moiety instanceof Array ? obj.moiety : [])) {
 				this.moiety.push(new SubstanceDefinitionMoiety(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('property')) {
 			this.property = [];
-			for (const o of obj.property || []) {
+			for (const o of (obj.property instanceof Array ? obj.property : [])) {
 				this.property.push(new SubstanceDefinitionProperty(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('molecularWeight')) {
 			this.molecularWeight = [];
-			for (const o of obj.molecularWeight || []) {
+			for (const o of (obj.molecularWeight instanceof Array ? obj.molecularWeight : [])) {
 				this.molecularWeight.push(new SubstanceDefinitionMolecularWeight(o));
 			}
 		}
@@ -36221,21 +36221,21 @@ export class SubstanceDefinition extends DomainResource {
 
 		if (obj.hasOwnProperty('code')) {
 			this.code = [];
-			for (const o of obj.code || []) {
+			for (const o of (obj.code instanceof Array ? obj.code : [])) {
 				this.code.push(new SubstanceDefinitionCode(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('name')) {
 			this.name = [];
-			for (const o of obj.name || []) {
+			for (const o of (obj.name instanceof Array ? obj.name : [])) {
 				this.name.push(new SubstanceDefinitionName(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relationship')) {
 			this.relationship = [];
-			for (const o of obj.relationship || []) {
+			for (const o of (obj.relationship instanceof Array ? obj.relationship : [])) {
 				this.relationship.push(new SubstanceDefinitionRelationship(o));
 			}
 		}
@@ -36300,21 +36300,21 @@ export class SupplyDelivery extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -36357,7 +36357,7 @@ export class SupplyDelivery extends DomainResource {
 
 		if (obj.hasOwnProperty('receiver')) {
 			this.receiver = [];
-			for (const o of obj.receiver || []) {
+			for (const o of (obj.receiver instanceof Array ? obj.receiver : [])) {
 				this.receiver.push(new Reference(o));
 			}
 		}
@@ -36422,7 +36422,7 @@ export class SupplyRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -36453,7 +36453,7 @@ export class SupplyRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('parameter')) {
 			this.parameter = [];
-			for (const o of obj.parameter || []) {
+			for (const o of (obj.parameter instanceof Array ? obj.parameter : [])) {
 				this.parameter.push(new SupplyRequestParameter(o));
 			}
 		}
@@ -36480,21 +36480,21 @@ export class SupplyRequest extends DomainResource {
 
 		if (obj.hasOwnProperty('supplier')) {
 			this.supplier = [];
-			for (const o of obj.supplier || []) {
+			for (const o of (obj.supplier instanceof Array ? obj.supplier : [])) {
 				this.supplier.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonCode')) {
 			this.reasonCode = [];
-			for (const o of obj.reasonCode || []) {
+			for (const o of (obj.reasonCode instanceof Array ? obj.reasonCode : [])) {
 				this.reasonCode.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('reasonReference')) {
 			this.reasonReference = [];
-			for (const o of obj.reasonReference || []) {
+			for (const o of (obj.reasonReference instanceof Array ? obj.reasonReference : [])) {
 				this.reasonReference.push(new Reference(o));
 			}
 		}
@@ -37070,7 +37070,7 @@ export class TaskRestriction extends Element {
 
 		if (obj.hasOwnProperty('recipient')) {
 			this.recipient = [];
-			for (const o of obj.recipient || []) {
+			for (const o of (obj.recipient instanceof Array ? obj.recipient : [])) {
 				this.recipient.push(new Reference(o));
 			}
 		}
@@ -37091,7 +37091,7 @@ export class Task extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -37106,7 +37106,7 @@ export class Task extends DomainResource {
 
 		if (obj.hasOwnProperty('basedOn')) {
 			this.basedOn = [];
-			for (const o of obj.basedOn || []) {
+			for (const o of (obj.basedOn instanceof Array ? obj.basedOn : [])) {
 				this.basedOn.push(new Reference(o));
 			}
 		}
@@ -37117,7 +37117,7 @@ export class Task extends DomainResource {
 
 		if (obj.hasOwnProperty('partOf')) {
 			this.partOf = [];
-			for (const o of obj.partOf || []) {
+			for (const o of (obj.partOf instanceof Array ? obj.partOf : [])) {
 				this.partOf.push(new Reference(o));
 			}
 		}
@@ -37180,7 +37180,7 @@ export class Task extends DomainResource {
 
 		if (obj.hasOwnProperty('performerType')) {
 			this.performerType = [];
-			for (const o of obj.performerType || []) {
+			for (const o of (obj.performerType instanceof Array ? obj.performerType : [])) {
 				this.performerType.push(new CodeableConcept(o));
 			}
 		}
@@ -37203,21 +37203,21 @@ export class Task extends DomainResource {
 
 		if (obj.hasOwnProperty('insurance')) {
 			this.insurance = [];
-			for (const o of obj.insurance || []) {
+			for (const o of (obj.insurance instanceof Array ? obj.insurance : [])) {
 				this.insurance.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('relevantHistory')) {
 			this.relevantHistory = [];
-			for (const o of obj.relevantHistory || []) {
+			for (const o of (obj.relevantHistory instanceof Array ? obj.relevantHistory : [])) {
 				this.relevantHistory.push(new Reference(o));
 			}
 		}
@@ -37228,14 +37228,14 @@ export class Task extends DomainResource {
 
 		if (obj.hasOwnProperty('input')) {
 			this.input = [];
-			for (const o of obj.input || []) {
+			for (const o of (obj.input instanceof Array ? obj.input : [])) {
 				this.input.push(new TaskInput(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('output')) {
 			this.output = [];
-			for (const o of obj.output || []) {
+			for (const o of (obj.output instanceof Array ? obj.output : [])) {
 				this.output.push(new TaskOutput(o));
 			}
 		}
@@ -37351,7 +37351,7 @@ export class TerminologyCapabilitiesExpansion extends Element {
 
 		if (obj.hasOwnProperty('parameter')) {
 			this.parameter = [];
-			for (const o of obj.parameter || []) {
+			for (const o of (obj.parameter instanceof Array ? obj.parameter : [])) {
 				this.parameter.push(new TerminologyCapabilitiesExpansionParameter(o));
 			}
 		}
@@ -37379,7 +37379,7 @@ export class TerminologyCapabilitiesCodeSystemVersionFilter extends Element {
 
 		if (obj.hasOwnProperty('op')) {
 			this.op = [];
-			for (const o of obj.op || []) {
+			for (const o of (obj.op instanceof Array ? obj.op : [])) {
 				this.op.push(o);
 			}
 		}
@@ -37408,21 +37408,21 @@ export class TerminologyCapabilitiesCodeSystemVersion extends Element {
 
 		if (obj.hasOwnProperty('language')) {
 			this.language = [];
-			for (const o of obj.language || []) {
+			for (const o of (obj.language instanceof Array ? obj.language : [])) {
 				this.language.push(o);
 			}
 		}
 
 		if (obj.hasOwnProperty('filter')) {
 			this.filter = [];
-			for (const o of obj.filter || []) {
+			for (const o of (obj.filter instanceof Array ? obj.filter : [])) {
 				this.filter.push(new TerminologyCapabilitiesCodeSystemVersionFilter(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('property')) {
 			this.property = [];
-			for (const o of obj.property || []) {
+			for (const o of (obj.property instanceof Array ? obj.property : [])) {
 				this.property.push(o);
 			}
 		}
@@ -37447,7 +37447,7 @@ export class TerminologyCapabilitiesCodeSystem extends Element {
 
 		if (obj.hasOwnProperty('version')) {
 			this.version = [];
-			for (const o of obj.version || []) {
+			for (const o of (obj.version instanceof Array ? obj.version : [])) {
 				this.version.push(new TerminologyCapabilitiesCodeSystemVersion(o));
 			}
 		}
@@ -37540,7 +37540,7 @@ export class TerminologyCapabilities extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -37551,14 +37551,14 @@ export class TerminologyCapabilities extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -37589,7 +37589,7 @@ export class TerminologyCapabilities extends DomainResource {
 
 		if (obj.hasOwnProperty('codeSystem')) {
 			this.codeSystem = [];
-			for (const o of obj.codeSystem || []) {
+			for (const o of (obj.codeSystem instanceof Array ? obj.codeSystem : [])) {
 				this.codeSystem.push(new TerminologyCapabilitiesCodeSystem(o));
 			}
 		}
@@ -37662,7 +37662,7 @@ export class TestReportTeardown extends Element {
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new TestReportTeardownAction(o));
 			}
 		}
@@ -37704,7 +37704,7 @@ export class TestReportTest extends Element {
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new TestReportTestAction(o));
 			}
 		}
@@ -37786,7 +37786,7 @@ export class TestReportSetup extends Element {
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new TestReportSetupAction(o));
 			}
 		}
@@ -37860,7 +37860,7 @@ export class TestReport extends DomainResource {
 
 		if (obj.hasOwnProperty('participant')) {
 			this.participant = [];
-			for (const o of obj.participant || []) {
+			for (const o of (obj.participant instanceof Array ? obj.participant : [])) {
 				this.participant.push(new TestReportParticipant(o));
 			}
 		}
@@ -37871,7 +37871,7 @@ export class TestReport extends DomainResource {
 
 		if (obj.hasOwnProperty('test')) {
 			this.test = [];
-			for (const o of obj.test || []) {
+			for (const o of (obj.test instanceof Array ? obj.test : [])) {
 				this.test.push(new TestReportTest(o));
 			}
 		}
@@ -37916,7 +37916,7 @@ export class TestScriptTeardown extends Element {
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new TestScriptTeardownAction(o));
 			}
 		}
@@ -37958,7 +37958,7 @@ export class TestScriptTest extends Element {
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new TestScriptTestAction(o));
 			}
 		}
@@ -38156,7 +38156,7 @@ export class TestScriptSetupActionOperation extends Element {
 
 		if (obj.hasOwnProperty('requestHeader')) {
 			this.requestHeader = [];
-			for (const o of obj.requestHeader || []) {
+			for (const o of (obj.requestHeader instanceof Array ? obj.requestHeader : [])) {
 				this.requestHeader.push(new TestScriptSetupActionOperationRequestHeader(o));
 			}
 		}
@@ -38226,7 +38226,7 @@ export class TestScriptSetup extends Element {
 
 		if (obj.hasOwnProperty('action')) {
 			this.action = [];
-			for (const o of obj.action || []) {
+			for (const o of (obj.action instanceof Array ? obj.action : [])) {
 				this.action.push(new TestScriptSetupAction(o));
 			}
 		}
@@ -38325,7 +38325,7 @@ export class TestScriptMetadataCapability extends Element {
 
 		if (obj.hasOwnProperty('origin')) {
 			this.origin = [];
-			for (const o of obj.origin || []) {
+			for (const o of (obj.origin instanceof Array ? obj.origin : [])) {
 				this.origin.push(o);
 			}
 		}
@@ -38336,7 +38336,7 @@ export class TestScriptMetadataCapability extends Element {
 
 		if (obj.hasOwnProperty('link')) {
 			this.link = [];
-			for (const o of obj.link || []) {
+			for (const o of (obj.link instanceof Array ? obj.link : [])) {
 				this.link.push(o);
 			}
 		}
@@ -38380,14 +38380,14 @@ export class TestScriptMetadata extends Element {
 
 		if (obj.hasOwnProperty('link')) {
 			this.link = [];
-			for (const o of obj.link || []) {
+			for (const o of (obj.link instanceof Array ? obj.link : [])) {
 				this.link.push(new TestScriptMetadataLink(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('capability')) {
 			this.capability = [];
-			for (const o of obj.capability || []) {
+			for (const o of (obj.capability instanceof Array ? obj.capability : [])) {
 				this.capability.push(new TestScriptMetadataCapability(o));
 			}
 		}
@@ -38479,7 +38479,7 @@ export class TestScript extends DomainResource {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -38490,14 +38490,14 @@ export class TestScript extends DomainResource {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -38512,14 +38512,14 @@ export class TestScript extends DomainResource {
 
 		if (obj.hasOwnProperty('origin')) {
 			this.origin = [];
-			for (const o of obj.origin || []) {
+			for (const o of (obj.origin instanceof Array ? obj.origin : [])) {
 				this.origin.push(new TestScriptOrigin(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('destination')) {
 			this.destination = [];
-			for (const o of obj.destination || []) {
+			for (const o of (obj.destination instanceof Array ? obj.destination : [])) {
 				this.destination.push(new TestScriptDestination(o));
 			}
 		}
@@ -38530,21 +38530,21 @@ export class TestScript extends DomainResource {
 
 		if (obj.hasOwnProperty('fixture')) {
 			this.fixture = [];
-			for (const o of obj.fixture || []) {
+			for (const o of (obj.fixture instanceof Array ? obj.fixture : [])) {
 				this.fixture.push(new TestScriptFixture(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('profile')) {
 			this.profile = [];
-			for (const o of obj.profile || []) {
+			for (const o of (obj.profile instanceof Array ? obj.profile : [])) {
 				this.profile.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('variable')) {
 			this.variable = [];
-			for (const o of obj.variable || []) {
+			for (const o of (obj.variable instanceof Array ? obj.variable : [])) {
 				this.variable.push(new TestScriptVariable(o));
 			}
 		}
@@ -38555,7 +38555,7 @@ export class TestScript extends DomainResource {
 
 		if (obj.hasOwnProperty('test')) {
 			this.test = [];
-			for (const o of obj.test || []) {
+			for (const o of (obj.test instanceof Array ? obj.test : [])) {
 				this.test.push(new TestScriptTest(o));
 			}
 		}
@@ -38623,14 +38623,14 @@ export class ValueSetExpansionContains extends Element {
 
 		if (obj.hasOwnProperty('designation')) {
 			this.designation = [];
-			for (const o of obj.designation || []) {
+			for (const o of (obj.designation instanceof Array ? obj.designation : [])) {
 				this.designation.push(new ValueSetComposeIncludeConceptDesignation(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('contains')) {
 			this.contains = [];
-			for (const o of obj.contains || []) {
+			for (const o of (obj.contains instanceof Array ? obj.contains : [])) {
 				this.contains.push(new ValueSetExpansionContains(o));
 			}
 		}
@@ -38717,14 +38717,14 @@ export class ValueSetExpansion extends Element {
 
 		if (obj.hasOwnProperty('parameter')) {
 			this.parameter = [];
-			for (const o of obj.parameter || []) {
+			for (const o of (obj.parameter instanceof Array ? obj.parameter : [])) {
 				this.parameter.push(new ValueSetExpansionParameter(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('contains')) {
 			this.contains = [];
-			for (const o of obj.contains || []) {
+			for (const o of (obj.contains instanceof Array ? obj.contains : [])) {
 				this.contains.push(new ValueSetExpansionContains(o));
 			}
 		}
@@ -38799,7 +38799,7 @@ export class ValueSetComposeIncludeConcept extends Element {
 
 		if (obj.hasOwnProperty('designation')) {
 			this.designation = [];
-			for (const o of obj.designation || []) {
+			for (const o of (obj.designation instanceof Array ? obj.designation : [])) {
 				this.designation.push(new ValueSetComposeIncludeConceptDesignation(o));
 			}
 		}
@@ -38825,21 +38825,21 @@ export class ValueSetComposeInclude extends Element {
 
 		if (obj.hasOwnProperty('concept')) {
 			this.concept = [];
-			for (const o of obj.concept || []) {
+			for (const o of (obj.concept instanceof Array ? obj.concept : [])) {
 				this.concept.push(new ValueSetComposeIncludeConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('filter')) {
 			this.filter = [];
-			for (const o of obj.filter || []) {
+			for (const o of (obj.filter instanceof Array ? obj.filter : [])) {
 				this.filter.push(new ValueSetComposeIncludeFilter(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('valueSet')) {
 			this.valueSet = [];
-			for (const o of obj.valueSet || []) {
+			for (const o of (obj.valueSet instanceof Array ? obj.valueSet : [])) {
 				this.valueSet.push(o);
 			}
 		}
@@ -38867,14 +38867,14 @@ export class ValueSetCompose extends Element {
 
 		if (obj.hasOwnProperty('include')) {
 			this.include = [];
-			for (const o of obj.include || []) {
+			for (const o of (obj.include instanceof Array ? obj.include : [])) {
 				this.include.push(new ValueSetComposeInclude(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('exclude')) {
 			this.exclude = [];
-			for (const o of obj.exclude || []) {
+			for (const o of (obj.exclude instanceof Array ? obj.exclude : [])) {
 				this.exclude.push(new ValueSetComposeInclude(o));
 			}
 		}
@@ -38900,7 +38900,7 @@ export class ValueSet extends DomainResource implements IFhir.IValueSet {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -38935,7 +38935,7 @@ export class ValueSet extends DomainResource implements IFhir.IValueSet {
 
 		if (obj.hasOwnProperty('contact')) {
 			this.contact = [];
-			for (const o of obj.contact || []) {
+			for (const o of (obj.contact instanceof Array ? obj.contact : [])) {
 				this.contact.push(new ContactDetail(o));
 			}
 		}
@@ -38946,14 +38946,14 @@ export class ValueSet extends DomainResource implements IFhir.IValueSet {
 
 		if (obj.hasOwnProperty('useContext')) {
 			this.useContext = [];
-			for (const o of obj.useContext || []) {
+			for (const o of (obj.useContext instanceof Array ? obj.useContext : [])) {
 				this.useContext.push(new UsageContext(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('jurisdiction')) {
 			this.jurisdiction = [];
-			for (const o of obj.jurisdiction || []) {
+			for (const o of (obj.jurisdiction instanceof Array ? obj.jurisdiction : [])) {
 				this.jurisdiction.push(new CodeableConcept(o));
 			}
 		}
@@ -39082,14 +39082,14 @@ export class VerificationResultPrimarySource extends Element {
 
 		if (obj.hasOwnProperty('type')) {
 			this.type = [];
-			for (const o of obj.type || []) {
+			for (const o of (obj.type instanceof Array ? obj.type : [])) {
 				this.type.push(new CodeableConcept(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('communicationMethod')) {
 			this.communicationMethod = [];
-			for (const o of obj.communicationMethod || []) {
+			for (const o of (obj.communicationMethod instanceof Array ? obj.communicationMethod : [])) {
 				this.communicationMethod.push(new CodeableConcept(o));
 			}
 		}
@@ -39108,7 +39108,7 @@ export class VerificationResultPrimarySource extends Element {
 
 		if (obj.hasOwnProperty('pushTypeAvailable')) {
 			this.pushTypeAvailable = [];
-			for (const o of obj.pushTypeAvailable || []) {
+			for (const o of (obj.pushTypeAvailable instanceof Array ? obj.pushTypeAvailable : [])) {
 				this.pushTypeAvailable.push(new CodeableConcept(o));
 			}
 		}
@@ -39133,14 +39133,14 @@ export class VerificationResult extends DomainResource {
 
 		if (obj.hasOwnProperty('target')) {
 			this.target = [];
-			for (const o of obj.target || []) {
+			for (const o of (obj.target instanceof Array ? obj.target : [])) {
 				this.target.push(new Reference(o));
 			}
 		}
 
 		if (obj.hasOwnProperty('targetLocation')) {
 			this.targetLocation = [];
-			for (const o of obj.targetLocation || []) {
+			for (const o of (obj.targetLocation instanceof Array ? obj.targetLocation : [])) {
 				this.targetLocation.push(o);
 			}
 		}
@@ -39163,7 +39163,7 @@ export class VerificationResult extends DomainResource {
 
 		if (obj.hasOwnProperty('validationProcess')) {
 			this.validationProcess = [];
-			for (const o of obj.validationProcess || []) {
+			for (const o of (obj.validationProcess instanceof Array ? obj.validationProcess : [])) {
 				this.validationProcess.push(new CodeableConcept(o));
 			}
 		}
@@ -39186,7 +39186,7 @@ export class VerificationResult extends DomainResource {
 
 		if (obj.hasOwnProperty('primarySource')) {
 			this.primarySource = [];
-			for (const o of obj.primarySource || []) {
+			for (const o of (obj.primarySource instanceof Array ? obj.primarySource : [])) {
 				this.primarySource.push(new VerificationResultPrimarySource(o));
 			}
 		}
@@ -39197,7 +39197,7 @@ export class VerificationResult extends DomainResource {
 
 		if (obj.hasOwnProperty('validator')) {
 			this.validator = [];
-			for (const o of obj.validator || []) {
+			for (const o of (obj.validator instanceof Array ? obj.validator : [])) {
 				this.validator.push(new VerificationResultValidator(o));
 			}
 		}
@@ -39265,7 +39265,7 @@ export class VisionPrescriptionLensSpecification extends Element {
 
 		if (obj.hasOwnProperty('prism')) {
 			this.prism = [];
-			for (const o of obj.prism || []) {
+			for (const o of (obj.prism instanceof Array ? obj.prism : [])) {
 				this.prism.push(new VisionPrescriptionLensSpecificationPrism(o));
 			}
 		}
@@ -39300,7 +39300,7 @@ export class VisionPrescriptionLensSpecification extends Element {
 
 		if (obj.hasOwnProperty('note')) {
 			this.note = [];
-			for (const o of obj.note || []) {
+			for (const o of (obj.note instanceof Array ? obj.note : [])) {
 				this.note.push(new Annotation(o));
 			}
 		}
@@ -39332,7 +39332,7 @@ export class VisionPrescription extends DomainResource {
 
 		if (obj.hasOwnProperty('identifier')) {
 			this.identifier = [];
-			for (const o of obj.identifier || []) {
+			for (const o of (obj.identifier instanceof Array ? obj.identifier : [])) {
 				this.identifier.push(new Identifier(o));
 			}
 		}
@@ -39363,7 +39363,7 @@ export class VisionPrescription extends DomainResource {
 
 		if (obj.hasOwnProperty('lensSpecification')) {
 			this.lensSpecification = [];
-			for (const o of obj.lensSpecification || []) {
+			for (const o of (obj.lensSpecification instanceof Array ? obj.lensSpecification : [])) {
 				this.lensSpecification.push(new VisionPrescriptionLensSpecification(o));
 			}
 		}

@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit Resource</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body">
+  <app-fhir-reference [parentObject]="resource" propertyName="reference" [required]="true" title="Reference" tooltipPath="ImplementationGuide.definition.resource.reference"></app-fhir-reference>
+  <span *ngIf="!resource.reference">You must specify a reference.</span>
+
+  <app-fhir-string [parentObject]="resource" propertyName="name" title="Name" [required]="true" tooltipPath="ImplementationGuide.definition.resource.name"></app-fhir-string>
+  <span *ngIf="!resource.name">You must specify a name.</span>
+
+  <p>
+    <button type="button" class="btn btn-primary" *ngIf="resource.reference && resource.reference.reference" (click)="copyDescription()">Copy description from target resource</button>
+  </p>
+
+  <app-fhir-boolean *ngIf="!resource.exampleCanonical" [parentObject]="resource" propertyName="exampleBoolean" trueLabel="Yes" falseLabel="No" title="Example?" tooltipKey="ig.resource.exampleBoolean" (change)="exampleBooleanChanged()"></app-fhir-boolean>
+
+  <div class="mb-3">
+    <label>
+      Example of Profile (URL) <app-tooltip-icon tooltipKey="ig.resource.exampleCanonical"></app-tooltip-icon>
+    </label>
+    <div class="input-group">
+      <input type="text" class="form-control" [(ngModel)]="resource.exampleCanonical" [disabled]="!enableExampleCanonical" />
+      <button type="button" class="btn btn-primary" title="Select a profile that this resource is an example of" (click)="selectExampleCanonical()">
+        <i class="fas fa-hand-pointer"></i>
+      </button>
+      <button type="button" class="btn btn-primary" title="Remove the canonical url example" (click)="removeExampleCanonical()">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label>
+      Group <app-tooltip-icon tooltipPath="ImplementationGuide.definition.resource.groupingId"></app-tooltip-icon>
+      <i *ngIf="!enableGroups" class="fas fa-exclamation-circle" ngbTooltip="You cannot select a group for the resource because the implementation guide does not define any groups."></i>
+    </label>
+    <select class="form-select" [(ngModel)]="resource.groupingId" [disabled]="!enableGroups">
+      <option [ngValue]="undefined">Unspecified</option>
+      <option *ngFor="let g of implementationGuide.definition.grouping" [ngValue]="g.id">{{g.name}} ({{g.id}})</option>
+    </select>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" (click)="ok()">Done</button>
+</div>

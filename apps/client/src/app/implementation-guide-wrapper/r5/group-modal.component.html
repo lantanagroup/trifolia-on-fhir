@@ -1,0 +1,17 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit Group</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body" *ngIf="group">
+  <app-fhir-string [parentObject]="groupClone" propertyName="id" title="ID" tooltipPath="ImplementationGuide.definition.grouping.id"></app-fhir-string>
+
+  <div class="help-block" *ngIf="!isIdValid">The ID must be unique within the implementation guide. Please select a different ID.</div>
+
+  <app-fhir-string [parentObject]="groupClone" propertyName="name" title="name" tooltipPath="ImplementationGuide.definition.grouping.name"></app-fhir-string>
+
+  <app-fhir-markdown [parentObject]="groupClone" propertyName="description" title="Description" tooltipPath="ImplementationGuide.definition.grouping.description"></app-fhir-markdown>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" [disabled]="!isIdValid" (click)="ok()">OK</button>
+  <button type="button" class="btn btn-outline-primary" (click)="activeModal.dismiss()">Cancel</button>
+</div>

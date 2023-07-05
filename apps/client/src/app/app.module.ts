@@ -28,6 +28,7 @@ import { STU3TypeModalComponent } from './structure-definition/element-definitio
 import { R4TypeModalComponent } from './structure-definition/element-definition-panel/r4-type-modal/type-modal.component';
 import { PageComponentModalComponent as STU3PageComponentModalComponent } from './implementation-guide-wrapper/stu3/page-component-modal.component';
 import { PageComponentModalComponent as R4PageComponentModalComponent } from './implementation-guide-wrapper/r4/page-component-modal.component';
+import { PageComponentModalComponent as R5PageComponentModalComponent } from './implementation-guide-wrapper/r5/page-component-modal.component';
 import { CapabilityStatementsComponent } from './capability-statements/capability-statements.component';
 import { OperationDefinitionsComponent } from './operation-definitions/operation-definitions.component';
 import { OperationDefinitionComponent } from './operation-definition/operation-definition.component';
@@ -92,6 +93,7 @@ import { SearchParametersComponent } from './search-parameters/search-parameters
 import { PublishingRequestComponent } from './implementation-guide-wrapper/publishing-request/publishing-request.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { ProjectComponent } from './project/project.component';
+import {R5ImplementationGuideComponent} from './implementation-guide-wrapper/r5/implementation-guide.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -275,6 +277,7 @@ const authModuleConfig: OAuthModuleConfig = {
     HomeComponent,
     STU3ImplementationGuideComponent,
     R4ImplementationGuideComponent,
+    R5ImplementationGuideComponent,
     ExportComponent,
     ImportComponent,
     StructureDefinitionComponent,
@@ -292,6 +295,7 @@ const authModuleConfig: OAuthModuleConfig = {
     R4TypeModalComponent,
     STU3PageComponentModalComponent,
     R4PageComponentModalComponent,
+    R5PageComponentModalComponent,
     CapabilityStatementsComponent,
     CapabilityStatementWrapperComponent,
     STU3CapabilityStatementComponent,

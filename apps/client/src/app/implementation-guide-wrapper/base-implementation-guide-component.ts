@@ -1,12 +1,13 @@
 import {BaseComponent} from '../base.component';
-import {ImplementationGuide as STU3ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {IContactDetail} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {ImplementationGuide as STU3ImplementationGuide} from '@trifolia-fhir/stu3';
+import {ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
+import {ImplementationGuide as R5ImplementationGuide} from '@trifolia-fhir/r5';
+import {IContactDetail} from '@trifolia-fhir/tof-lib';
+import {Globals} from '@trifolia-fhir/tof-lib';
 
 export class BaseImplementationGuideComponent extends BaseComponent {
   public Globals = Globals;
-  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
+  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide | R5ImplementationGuide;
 
   protected get packageId() {
     return '';

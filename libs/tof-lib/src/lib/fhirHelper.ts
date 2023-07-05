@@ -1,6 +1,7 @@
-import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, ResourceReference} from './r4/fhir';
-import {Extension, ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
-import { customAlphabet } from 'nanoid';
+import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, ResourceReference} from '@trifolia-fhir/r4';
+import {Extension, ImplementationGuide as STU3ImplementationGuide} from '@trifolia-fhir/stu3';
+import {ImplementationGuide as R5ImplementationGuide} from '@trifolia-fhir/r5';
+import {customAlphabet} from 'nanoid';
 import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
 import {Globals} from './globals';
@@ -212,7 +213,7 @@ export class MediaReference {
   description: string;
 }
 
-export function getImplementationGuideMediaReferences(fhirVersion: 'stu3'|'r4', implementationGuide: STU3ImplementationGuide | R4ImplementationGuide) {
+export function getImplementationGuideMediaReferences(fhirVersion: 'stu3'|'r4'|'r5', implementationGuide: STU3ImplementationGuide | R4ImplementationGuide | R5ImplementationGuide) {
   if (!implementationGuide) {
     return [];
   }
