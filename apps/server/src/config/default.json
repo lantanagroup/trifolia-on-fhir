@@ -55,23 +55,6 @@
         "http://snomed.info/sct"
       ]
     },
-    "publishedGuides": "https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json",
-    "servers": [{
-      "id": "lantana_hapi_stu3",
-      "name": "Lantana HAPI STU3 DEV Server",
-      "uri": "https://hapi3-dev.lantanagroup.com/fhir",
-      "version": "stu3",
-      "short": "LCG STU3 DEV",
-      "supportsSnapshot": true,
-      "supportedLogicalTypes": ["FHIR-STU3"]
-    }, {
-      "id": "lantana_hapi_r4",
-      "name": "Lantana HAPI R4 DEV Server",
-      "uri": "https://hapi4-dev.lantanagroup.com/fhir",
-      "version": "r4",
-      "short": "LCG R4 DEV",
-      "supportsSnapshot": true,
-      "supportedLogicalTypes": ["FHIR-R4"]
-    }]
+    "publishedGuides": "https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json"
   }
 }

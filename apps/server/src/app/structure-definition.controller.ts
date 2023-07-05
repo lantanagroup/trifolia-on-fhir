@@ -83,11 +83,14 @@ export class StructureDefinitionController extends ConformanceController  {
 
     let supportedLogicalTypes = [];
 
-   if(fhirServerVersion === 'r4') {
-     supportedLogicalTypes = ["FHIR-R4", "CDA-R2.1"];
-   }else if(fhirServerVersion === 'stu3') {
-     supportedLogicalTypes = ["FHIR-STU3"];
-   }
+    if (fhirServerVersion === 'r5') {
+      supportedLogicalTypes = ["FHIR-R5", "CDA-R2.1"];
+    } else if (fhirServerVersion === 'r4') {
+      supportedLogicalTypes = ["FHIR-R4", "CDA-R2.1"];
+    } else if (fhirServerVersion === 'stu3') {
+      supportedLogicalTypes = ["FHIR-STU3"];
+    }
+
     const allTypes = supportedLogicalTypes
       .map(slt => typesConfig.find(tc => tc.id.toLowerCase() === slt.toLowerCase()))
       .reduce<ILogicalTypeDefinition[]>((previous, current) => {
