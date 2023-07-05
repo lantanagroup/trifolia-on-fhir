@@ -128,12 +128,18 @@ export class StructureDefinitionController extends ConformanceController  {
           ret.base = dependencies.entry[0].resource['resource'];
           return ret;
         }
+
         let profileWithSnapshot: IStructureDefinition = await this.getBaseStructureDefinitionResource(user, request, url);
+
+        if (!profileWithSnapshot) {
+          ret.message = `Could not find a profile defined for base definition ${url}`;
+          ret.success = false;
+          return ret;
+        }
 
         // The snapshot is not already generated for the profile, so we need to generate it now.
         if (!profileWithSnapshot.snapshot) {
             profileWithSnapshot = await this.generateInternalSnapshot( user, request, request.fhir, url);
-
         }
 
         if (profileWithSnapshot && profileWithSnapshot.resourceType === 'StructureDefinition' && profileWithSnapshot.snapshot) {
