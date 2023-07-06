@@ -151,6 +151,11 @@ export class FhirController extends ConformanceController {
 
     // Change the id of the resource
     conf.resource.id = newId;
+
+    // update the old resource with the new resource in Url
+    if(conf.resource['url']){
+      conf.resource['url'] = conf.resource['url'].replace(currentId, newId);
+    }
     await this.conformanceService.updateOne(conf.id, conf);
 
     // Persist the changes to the resources
