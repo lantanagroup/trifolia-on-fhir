@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="implementation-guide.component.css"><h1>Implementation Guide (R5)</h1>
 
+<div class="alert alert-warning">Support for R5 is <strong>under development</strong> and not yet fully tested.</div>
 <div class="alert alert-danger" *ngIf="igNotFound">Implementation Guide with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
 <div class="ig-main" *ngIf="conformance && implementationGuide">
@@ -364,7 +365,7 @@
                       <input type="checkbox" [(ngModel)]="filterGroupsAll" class="form-check-input">
                       <label class="form-check-label">All</label>
                     </div>
-                    <div *ngFor="let group of implementationGuide.definition?.grouping || 0" class="form-check form-check-inline">
+                    <div *ngFor="let group of implementationGuide.definition?.grouping || []" class="form-check form-check-inline">
                       <input (click)="toggleFilterGroup(group.id)" [ngModel]="filterGroups.indexOf(group.id) >= 0" type="checkbox" class="form-check-input">
                       <label class="form-check-label">{{group.name}}</label>
                     </div>

@@ -40,7 +40,6 @@ export function findReferences(obj: any, resourceType?: string, id?: string) {
 }
 
 export function identifyRelease(fhirVersion: string): Versions {
-  const modFhirVersion = fhirVersion ? fhirVersion.replace('-ballot', '') : fhirVersion;
   if (!fhirVersion) {
     return Versions.R4;
   } else if (fhirVersion == Versions.R4.toLowerCase()) {
@@ -365,6 +364,7 @@ export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide
     if (typeof atob === 'function') {
       return decodeURIComponent(atob(documentReference.content[0].attachment.data));
     } else {
+      // @ts-ignore
       return decodeURIComponent(new Buffer(documentReference.content[0].attachment.data, 'base64').toString());
     }
   }
@@ -461,6 +461,7 @@ export function getCustomMenu(implementationGuide: IImplementationGuide): string
     if (typeof atob === 'function') {
       return atob(documentReference.content[0].attachment.data);
     } else {
+      // @ts-ignore
       return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
     }
   }
@@ -557,6 +558,7 @@ export function getJiraSpecValue(implementationGuide: IImplementationGuide): str
     if (typeof atob === 'function') {
       return atob(documentReference.content[0].attachment.data);
     } else {
+      // @ts-ignore
       return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
     }
   }

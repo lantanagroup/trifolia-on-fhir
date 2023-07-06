@@ -771,7 +771,7 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (this.isMovePageInDisabled(pageDef)) return;
     const parentPage = pageDef.parent;
 
-    // Remove the page from it's current parent
+    // Remove the page from its current parent
     const currentIndex = parentPage.page.indexOf(pageDef.page);
     parentPage.page.splice(currentIndex, currentIndex >= 0 ? 1 : 0);
 

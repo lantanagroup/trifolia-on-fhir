@@ -1,16 +1,16 @@
 import {Component, EventEmitter, Input, OnInit} from '@angular/core';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import { IImplementationGuide } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { ImplementationGuide, ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { IImplementationGuide } from '@trifolia-fhir/tof-lib';
+import { ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { ImplementationGuide as R5ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { FhirService } from '../shared/fhir.service';
 import { ConfigService } from '../shared/config.service';
 import { Extension as STU3Extension, ImplementationGuide as STU3ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { Globals } from '@trifolia-fhir/tof-lib';
 import { Router } from '@angular/router';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { identifyRelease } from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import { PublishingRequestModel } from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
+import { getErrorString } from '@trifolia-fhir/tof-lib';
+import { identifyRelease } from '@trifolia-fhir/tof-lib';
+import { PublishingRequestModel } from '@trifolia-fhir/tof-lib';
 import { ProjectService } from '../shared/projects.service';
 import { IConformance, IProject } from '@trifolia-fhir/models';
 @Component({
@@ -61,9 +61,11 @@ export class NewProjectComponent implements OnInit {
     publishingRequest['ci-build'] = 'http://build.fhir.org/ig/';
     publishingRequest.introduction = 'New IG: ' + this.igTitle;
 
-
-    if (this.fhirVersion == 'r4' || this.fhirVersion === 'r5') {
+    if (this.fhirVersion == 'r4') {
       ig = new R4ImplementationGuide();
+      this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
+    } else if (this.fhirVersion === 'r5') {
+      ig = new R5ImplementationGuide();
       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
     } else if (this.fhirVersion == 'stu3') {
       ig = new STU3ImplementationGuide();
@@ -94,7 +96,7 @@ export class NewProjectComponent implements OnInit {
       if (this.isHL7) {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
-        (<R5ImplementationGuide>ig).jurisdiction = this.selectedJurisdiction;
+        (<R5ImplementationGuide>ig).jurisdiction = jurisdiction;
         (<R5ImplementationGuide>ig).packageId = this.packageId;
         (<R5ImplementationGuide>ig).title = this.igTitle;
       }

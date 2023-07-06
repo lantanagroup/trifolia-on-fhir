@@ -59,11 +59,15 @@
   <div class="mb-3">
     <label>FHIR Version: </label>
     <select class="form-select family"  [(ngModel)]="fhirVersion" [class.is-invalid]="!fhirVersion" >
-      <option value ="r4">R4</option>
-      <option value ="stu3">STU3</option>
+      <option value="r4">R4</option>
+      <option value="stu3">STU3</option>
+      <option value="r5">R5</option>
     </select>
    <!-- <input type="text" class="form-control standard" [(ngModel)]="fhirVersion" />-->
   </div>
+
+  <div class="alert alert-warning" *ngIf="fhirVersion === 'r5'">Support for R5 is <strong>under development</strong> and not yet fully tested.</div>
+
   <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
   <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!selectedJurisdiction || !projectCode || !fhirVersion">Next</button>
 </div>
