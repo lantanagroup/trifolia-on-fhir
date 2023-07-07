@@ -266,41 +266,4 @@ export class StructureDefinitionController extends ConformanceController  {
 
     return found;
   }
-
-  /**
-   * Generates a snapshot for the specified profile if the FHIR server is configured to support snapshot
-   * @param fhirServerId
-   * @param body
-   * @deprecated This is no longer used, but may be used in future, so it is preserved.
-   */
-  private async generateProfileSnapshot(fhirServerId: string, body: any) {
-    const fhirServer = this.configService.fhir.servers.find(s => s.id === fhirServerId);
-    const fhirServerBase = fhirServer.uri;
-    if (!fhirServer.supportsSnapshot) {
-      // TODO: add internal snapshot generation logic
-      delete body.snapshot;
-      return body;
-    }
-
-    try {
-      const snapshotUrl = buildUrl(fhirServerBase, 'StructureDefinition', null, '$snapshot');
-      const results = await this.httpService.post(snapshotUrl, body).toPromise();
-
-      if (results.data && results.data.resourceType === 'StructureDefinition' && results.data.snapshot) {
-        body.snapshot = results.data.snapshot;
-        return body;
-      }
-    } catch (ex) {
-      let msg = ex.message;
-      if (ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
-        msg = getErrorString(null, ex.response.data);
-      }
-
-      this.logger.warn(`Could not generate snapshot during update to StructureDefinition ${body.id || 'new'}: ${msg}`);
-    }
-
-    // If snapshot failed to generate, make sure the current profile is not saved with an out-dated snapshot.
-    delete body.snapshot;
-    return body;
-  }
 }

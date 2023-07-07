@@ -1,6 +1,7 @@
 import { Fhir as FhirModule } from "fhir/fhir";
 import { Server } from "socket.io";
 import { ChildProcess, spawn } from "child_process";
+import {ImplementationGuide as R5ImplementationGuide} from '@trifolia-fhir/r5';
 import {
   DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
@@ -47,7 +48,7 @@ export class HtmlExporter {
   private initPromise: Promise<void>;
 
   readonly homedir: string;
-  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
+  public implementationGuide: IImplementationGuide;
   public bundle: IBundle;
   public fhirVersion: 'stu3' | 'r4' | 'r5';
   public packageId: string;
@@ -122,7 +123,9 @@ export class HtmlExporter {
           throw new Error('Bundle export did not include the ImplementationGuide!');
         }
 
-        if (this.fhirVersion === 'r4') {
+        if (this.fhirVersion === 'r5') {
+          this.implementationGuide = new R5ImplementationGuide(implementationGuide);
+        } else if (this.fhirVersion === 'r4') {
           this.implementationGuide = new R4ImplementationGuide(implementationGuide);
         } else if (this.fhirVersion === 'stu3') {
           this.implementationGuide = new STU3ImplementationGuide(implementationGuide);
@@ -316,9 +319,6 @@ export class HtmlExporter {
   public async export(format: Formats, includeIgPublisherJar: boolean,
     version: string, templateType = 'official', template = 'hl7.fhir.template',
     templateVersion = 'current', zipper: JSZip, useTerminologyServer?: boolean): Promise<void> {
-    if (!this.configService.fhir.servers) {
-      throw new Error('This server is not configured with FHIR servers');
-    }
 
     const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
     let control;
@@ -373,7 +373,7 @@ export class HtmlExporter {
       .filter((e) => e.resource.resourceType !== 'ImplementationGuide') // || e.resource.id !== this.implementationGuideId)
       .forEach((entry) => {
 
-        // CDA example 
+        // CDA example
         if ((entry['link'] || []).find((l: LinkComponent) => { return l.relation === 'example-cda' })) {
           this.writeResourceContent(inputDir, entry.resource, isXml, `${entry.resource.id}.xml`, entry.resource['data'] || entry.resource['content']);
         } else {
@@ -484,6 +484,8 @@ export class HtmlExporter {
         return '3.0.2';
       case 'r4':
         return '4.0.1';
+      case 'r5':
+        return '5.0.0';
       default:
         throw new Error(`Unknown FHIR version ${this.fhirVersion}`);
     }
@@ -718,7 +720,7 @@ export class HtmlExporter {
     return fullResourcePath;
   }
 
-  
+
   private writeResourceContent(inputDir: string, resource: DomainResource, isXml: boolean, exampleFileName?: string, exampleContent?: string) {
     const cleanResource = BundleExporter.cleanupResource(resource);
     const resourcePath = this.getResourceFilePath(inputDir, resource, isXml, exampleFileName);

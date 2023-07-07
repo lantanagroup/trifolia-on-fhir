@@ -7371,6 +7371,8 @@ export class BundleEntrySearch extends Element {
 
 export class BundleEntry implements IFhir.IBundleEntry {
   constructor(obj?: any) {
+    if (!obj) return;
+
     if (obj.hasOwnProperty('link')) {
       this.link = [];
       for (const o of (obj.link instanceof Array ? obj.link : [])) {

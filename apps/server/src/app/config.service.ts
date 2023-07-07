@@ -23,14 +23,7 @@ export class ConfigService {
   };
   public fhir: IFhirConfig = {
     nonEditableResources: {},
-    publishedGuides: '',
-    servers: [{
-      id: 'test',
-      name: 'test',
-      uri: 'http://test.com',
-      version: 'stu3',
-      supportedLogicalTypes: []
-    }]
+    publishedGuides: ''
   };
   public auth: IAuthConfig = {
     clientId: 'test',
