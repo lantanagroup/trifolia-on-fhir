@@ -94,6 +94,7 @@ import { PublishingRequestComponent } from './implementation-guide-wrapper/publi
 import { ProjectsComponent } from './projects/projects.component';
 import { ProjectComponent } from './project/project.component';
 import {R5ImplementationGuideComponent} from './implementation-guide-wrapper/r5/implementation-guide.component';
+import {R5ResourceModalComponent} from './implementation-guide-wrapper/r5/resource-modal.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -321,6 +322,7 @@ const authModuleConfig: OAuthModuleConfig = {
     PublishComponent,
     IncludePanelComponent,
     BindingPanelComponent,
+    R5ResourceModalComponent,
     R4ResourceModalComponent,
     STU3ResourceModalComponent,
     GroupModalComponent,

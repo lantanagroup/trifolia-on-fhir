@@ -1,15 +1,15 @@
 import {Component, Input} from '@angular/core';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ImplementationGuide, ImplementationGuideResourceComponent} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ImplementationGuide, ImplementationGuideResourceComponent} from '@trifolia-fhir/r4';
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
-import {parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
+import {parseReference} from '@trifolia-fhir/tof-lib';
 import {ConformanceService} from '../../shared/conformance.service';
 
 @Component({
   templateUrl: './resource-modal.component.html',
   styleUrls: ['./resource-modal.component.css']
 })
-export class R4ResourceModalComponent {
+export class R5ResourceModalComponent {
   @Input() resource: ImplementationGuideResourceComponent;
   @Input() implementationGuide: ImplementationGuide;
   @Input() implementationGuideID: string;

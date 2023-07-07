@@ -23,7 +23,7 @@ import {ConfigService} from '../../shared/config.service';
 import {PublishedIgSelectModalComponent} from '../../modals/published-ig-select-modal/published-ig-select-modal.component';
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {getErrorString, parseReference} from '@trifolia-fhir/tof-lib';
-import {R4ResourceModalComponent} from './resource-modal.component';
+import {R5ResourceModalComponent} from './resource-modal.component';
 import {getDefaultImplementationGuideResourcePath, getImplementationGuideMediaReferences, MediaReference} from '@trifolia-fhir/tof-lib';
 import {ChangeResourceIdModalComponent} from '../../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {GroupModalComponent} from './group-modal.component';
@@ -329,7 +329,7 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   public editResource(resource: ImplementationGuideDefinitionResource) {
-    const modalRef = this.modal.open(R4ResourceModalComponent, { size: 'lg', backdrop: 'static' });
+    const modalRef = this.modal.open(R5ResourceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
     modalRef.componentInstance.implementationGuideID = this.implementationGuideId;
