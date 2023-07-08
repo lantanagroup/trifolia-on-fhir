@@ -37,6 +37,7 @@ import { ValuesetExpandComponent } from './valueset-expand/valueset-expand.compo
 import { CapabilityStatementWrapperComponent } from './capability-statement-wrapper/capability-statement-wrapper.component';
 import { STU3CapabilityStatementComponent } from './capability-statement-wrapper/stu3/capability-statement.component';
 import { R4CapabilityStatementComponent } from './capability-statement-wrapper/r4/capability-statement.component';
+import { R5CapabilityStatementComponent } from './capability-statement-wrapper/r5/capability-statement.component';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { ConfigService } from './shared/config.service';
 import { ConceptCardComponent } from './valueset/concept-card/concept-card.component';
@@ -301,6 +302,7 @@ const authModuleConfig: OAuthModuleConfig = {
     CapabilityStatementWrapperComponent,
     STU3CapabilityStatementComponent,
     R4CapabilityStatementComponent,
+    R5CapabilityStatementComponent,
     OperationDefinitionsComponent,
     OperationDefinitionComponent,
     ParameterModalComponent,

@@ -12,18 +12,18 @@ import {
   Resource,
   StructureDefinition,
   ValueSet
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+} from '@trifolia-fhir/stu3';
 import {forkJoin, Observable} from 'rxjs';
 import {Fhir, Versions} from 'fhir/fhir';
 import {ParseConformance} from 'fhir/parseConformance';
 import {ConfigService} from './config.service';
 import {Severities, ValidatorMessage, ValidatorResponse} from 'fhir/validator';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {Globals, ICoding} from '@trifolia-fhir/tof-lib';
 import {CustomValidator} from './validation/custom-validator';
 import {CustomSTU3Validator} from './validation/custom-STU3-validator';
 import * as vkbeautify from 'vkbeautify';
 import {publishReplay, refCount} from 'rxjs/operators';
-import {IBundle} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle} from '@trifolia-fhir/tof-lib';
 import {IConformance} from '@trifolia-fhir/models';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 
@@ -39,10 +39,6 @@ export class ResourceGithubDetails implements IResourceGithubDetails {
   repository: string;
   branch: string;
   path: string;
-
-  public hasAllDetails(): boolean {
-    return !!(this.owner && this.repository && this.branch && this.path);
-  }
 }
 
 @Injectable()
@@ -53,7 +49,6 @@ export class FhirService {
   public profiles: StructureDefinition[] = [];
   public valueSets: (ValueSet | CodeSystem)[] = [];
   private customValidator: CustomValidator;
-  private validCodes: string[] = ['ignore-warnings', 'custom-menu', 'jira-spec', 'package-list'];
 
   constructor(
     private injector: Injector,
@@ -246,7 +241,7 @@ export class FhirService {
     pathExtension.valueString = details.owner + '/' + details.repository + '/' + (details.path.startsWith('/') ? details.path.substring(1) : details.path);
   }
 
-  public getValueSetCodes(valueSetUrl: string): Coding[] {
+  public getValueSetCodes(valueSetUrl: string): ICoding[] {
     let codes: Coding[] = [];
     const foundValueSet = <ValueSet>this.valueSets
       .filter((item) => item.resourceType === 'ValueSet')

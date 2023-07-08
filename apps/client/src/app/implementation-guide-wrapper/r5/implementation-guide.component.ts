@@ -376,7 +376,7 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (!this.implementationGuide.definition.resource) this.implementationGuide.definition.resource = [];
 
     const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.fhirVersion = 'r4';
+    modalRef.componentInstance.fhirVersion = 'r5';
     modalRef.componentInstance.selectMultiple = true;
 
     modalRef.result.then((results: ResourceSelection[]) => {

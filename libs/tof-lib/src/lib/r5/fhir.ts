@@ -1971,8 +1971,12 @@ export class CodeableConcept implements IFhir.ICodeableConcept {
   text?: string;
 }
 
-export class Coding implements IFhir.ICoding {
+export class Coding extends Element implements IFhir.ICoding {
   constructor(obj?: any) {
+    super(obj);
+
+    if (!obj) return;
+
     if (obj.hasOwnProperty('system')) {
       this.system = obj.system;
     }

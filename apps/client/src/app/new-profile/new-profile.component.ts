@@ -1,26 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { StructureDefinitionService } from '../shared/structure-definition.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FhirService } from '../shared/fhir.service';
-import { StructureDefinition as R5StructureDefinition } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
-import { ImplementationGuide, StructureDefinition as STU3StructureDefinition } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {
-  StructureDefinition as R4StructureDefinition,
-  StructureDefinitionContextComponent
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { AuthService } from '../shared/auth.service';
-import { ConfigService } from '../shared/config.service';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
-import { BaseComponent } from '../base.component';
-import { firstValueFrom, Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { ILogicalTypeDefinition } from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
-import { PublishingRequestModel } from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
-import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import { IDomainResource } from '@trifolia-fhir/tof-lib';
-import { IConformance } from '@trifolia-fhir/models';
+import {Component, OnInit} from '@angular/core';
+import {StructureDefinitionService} from '../shared/structure-definition.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {FhirService} from '../shared/fhir.service';
+import {StructureDefinition as R5StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
+import {ImplementationGuide, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {StructureDefinition as R4StructureDefinition, StructureDefinitionContextComponent} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {AuthService} from '../shared/auth.service';
+import {ConfigService} from '../shared/config.service';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {BaseComponent} from '../base.component';
+import {firstValueFrom, Observable, Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
+import {PublishingRequestModel} from '../../../../../libs/tof-lib/src/lib/publishing-request-model';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import {IDomainResource} from '@trifolia-fhir/tof-lib';
 
 @Component({
   templateUrl: './new-profile.component.html',
@@ -105,9 +101,10 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
   }
 
   public save() {
-    if (this.implementationGuide.fhirVersion.length > 0) {
+    if (this.implementationGuide.fhirVersion && this.implementationGuide.fhirVersion.length > 0) {
       this.conformance.resource.fhirVersion = this.implementationGuide.fhirVersion[0];
     }
+
     this.strucDefService.save(this.structureDefinitionId, this.conformance)
       .subscribe((results) => {
 
@@ -145,7 +142,7 @@ export class NewProfileComponent extends BaseComponent implements OnInit {
     } else if (this.configService.isFhirSTU3) {
       this.structureDefinition = new STU3StructureDefinition(newVal);
     }
-    
+
     if (this.conformance) {
       this.conformance.resource = this.structureDefinition;
     }

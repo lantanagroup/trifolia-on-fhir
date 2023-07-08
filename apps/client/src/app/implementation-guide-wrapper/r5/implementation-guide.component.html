@@ -88,6 +88,8 @@
                 <input type="text" class="form-control" [(ngModel)]="newFhirVersion" (change)="igChanging.emit(true)"/>
                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                 <div class="dropdown-menu">
+                  <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '5.0.0'">5.0.0</a>
+                  <div role="separator" class="dropdown-divider"></div>
                   <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '4.0.1'">4.0.1</a>
                   <a class="dropdown-item" href="javascript:void(0)" (click)="newFhirVersion = '4.0.0'">4.0.0</a>
                   <div role="separator" class="dropdown-divider"></div>

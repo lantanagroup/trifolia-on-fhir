@@ -3,12 +3,12 @@ import { CapabilityStatementService } from '../../shared/capability-statement.se
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import {
   CapabilityStatement,
-  CapabilityStatementResourceComponent,
-  CapabilityStatementRestComponent,
+  CapabilityStatementRestResource,
+  CapabilityStatementRest,
   Coding,
   StructureDefinition
-} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
+} from '@trifolia-fhir/r5';
+import { Globals } from '@trifolia-fhir/tof-lib';
 import {firstValueFrom, Observable, Subject} from 'rxjs';
 import { RecentItemService } from '../../shared/recent-item.service';
 import { FhirService } from '../../shared/fhir.service';
@@ -18,7 +18,7 @@ import { FileService } from '../../shared/file.service';
 import { ConfigService } from '../../shared/config.service';
 import { ClientHelper } from '../../clientHelper';
 import { AuthService } from '../../shared/auth.service';
-import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
+import { getErrorString } from '@trifolia-fhir/tof-lib';
 import { FhirReferenceModalComponent, ResourceSelection } from '../../fhir-edit/reference-modal/reference-modal.component';
 import { BaseComponent } from '../../base.component';
 import { debounceTime } from 'rxjs/operators';
@@ -31,7 +31,7 @@ import { IDomainResource } from '@trifolia-fhir/tof-lib';
   templateUrl: './capability-statement.component.html',
   styleUrls: ['./capability-statement.component.css']
 })
-export class R4CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+export class R5CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   @Input() public capabilityStatement;
 
   public conformance;
@@ -153,7 +153,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
 
 
 
-  public moveRestLeft(rest: CapabilityStatementRestComponent, tabSet: NgbNav) {
+  public moveRestLeft(rest: CapabilityStatementRest, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex > 0) {
@@ -163,7 +163,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     }
   }
 
-  public moveRestRight(rest: CapabilityStatementRestComponent, tabSet: NgbNav) {
+  public moveRestRight(rest: CapabilityStatementRest, tabSet: NgbNav) {
     const currentIndex = this.capabilityStatement.rest.indexOf(rest);
 
     if (currentIndex < this.capabilityStatement.rest.length) {
@@ -173,7 +173,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     }
   }
 
-  public moveResource(rest: CapabilityStatementRestComponent, resource: CapabilityStatementResourceComponent, direction: 'up'|'down') {
+  public moveResource(rest: CapabilityStatementRest, resource: CapabilityStatementRestResource, direction: 'up'|'down') {
     const index = rest.resource.indexOf(resource);
 
     if (direction === 'up') {
@@ -225,13 +225,13 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
   }
 
 
-  public editResource(resource: CapabilityStatementResourceComponent) {
+  public editResource(resource: CapabilityStatementRestResource) {
     const modalRef = this.modal.open(FhirCapabilityStatementResourceModalComponent, {size: 'lg', backdrop: 'static'});
     modalRef.componentInstance.resource = resource;
   }
 
-  public copyResource(rest: CapabilityStatementRestComponent, resource: CapabilityStatementResourceComponent) {
-    const resourceCopy: CapabilityStatementResourceComponent = JSON.parse(JSON.stringify(resource));
+  public copyResource(rest: CapabilityStatementRest, resource: CapabilityStatementRestResource) {
+    const resourceCopy: CapabilityStatementRestResource = JSON.parse(JSON.stringify(resource));
     rest.resource.push(resourceCopy);
   }
 
@@ -245,7 +245,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     });
   }
 
-  public selectResourceProfile(resource: CapabilityStatementResourceComponent) {
+  public selectResourceProfile(resource: CapabilityStatementRestResource) {
     const modalRef = this.modal.open(FhirReferenceModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.resourceType = 'StructureDefinition';
     modalRef.componentInstance.hideResourceType = true;
@@ -275,7 +275,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
 
   private  getCapabilityStatement(): Observable<CapabilityStatement> {
     this.capabilityStatementId = this.route.snapshot.paramMap.get('id');
-    if (this.implementationGuide.fhirVersion && this.implementationGuide.fhirVersion.length > 0) {
+    if(this.implementationGuide.fhirVersion.length > 0) {
       this.conformance.resource.fhirVersion = this.implementationGuide.fhirVersion[0];
       this.capabilityStatement.fhirVersion = this.implementationGuide.fhirVersion[0];
     }
