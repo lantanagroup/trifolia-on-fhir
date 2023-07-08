@@ -96,7 +96,7 @@ export class ConfigService {
 
     return (this.project.dependencies || []).findIndex((d: string) => {
       return [
-        'hl7.fhir.cda'
+        'hl7.fhir.cda', 'hl7.cda.uv.core'
       ].includes((d || '').split('#')[0])
     }) > -1;
   }

@@ -50,7 +50,7 @@
                    [resultTemplate]="typeTemplate"
                    [editable]="false"
                    [class.is-invalid]="!selectedType"
-                   (selectItem)="typeChanged($event.item)" />
+                   (selectItem)="typeChanged($event.item)" placeholder="Begin typing for options" />
 
             <ng-template #typeTemplate let-r="result" let-t="term">
               <ngb-highlight [result]="r.display || r.code" [term]="t"></ngb-highlight>
