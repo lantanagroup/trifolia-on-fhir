@@ -1,6 +1,5 @@
-import {EventEmitter, Injectable, OnDestroy} from '@angular/core';
-import * as io from 'socket.io-client';
-import {Socket} from 'socket.io';
+import { EventEmitter, Injectable, OnDestroy } from '@angular/core';
+import { io, Socket }  from 'socket.io-client';
 import { IUser } from '@trifolia-fhir/models';
 
 export class HtmlExportStatus {

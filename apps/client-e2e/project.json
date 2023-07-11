@@ -1,0 +1,21 @@
+{
+  "name": "client-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "",
+  "targets": {
+    "e2e": {
+      "executor": "@angular-devkit/build-angular:protractor",
+      "options": {
+        "protractorConfig": "apps/client-e2e/protractor.conf.js",
+        "devServerTarget": "client:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "client:serve:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}

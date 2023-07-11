@@ -2,7 +2,7 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app/app.module';
 import {Response} from 'express';
 import type {ITofRequest} from './app/models/tof-request';
-import socketIo from 'socket.io';
+import { Server } from 'socket.io';
 import {ISocketConnection} from './app/models/socket-connection';
 import {NotFoundExceptionFilter} from './not-found-exception-filter';
 import {TofLogger} from './app/tof-logger';
@@ -82,7 +82,7 @@ const parseFhirBody = (req: ITofRequest, res: Response, next) => {
 };
 
 const initSocket = (app) => {
-  io = socketIo(app.getHttpServer());
+  io = new Server(app.getHttpServer());
 
   io.on('connection', (socket) => {
     logger.trace(`Client (id: ${socket.client.id}) connected to socket`);

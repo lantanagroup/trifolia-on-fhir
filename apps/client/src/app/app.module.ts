@@ -75,7 +75,7 @@ import { PackageListComponent } from './implementation-guide-wrapper/package-lis
 import { ResourceGuard } from './guards/resource.guard';
 import { ElementDefinitionConstraintComponent } from './modals/element-definition-constraint/element-definition-constraint.component';
 import { UpdateDiffComponent } from './import/update-diff/update-diff.component';
-import { NgxDiffModule } from 'ngx-diff';
+import { InlineDiffComponent } from 'ngx-diff';
 import { QueueComponent } from './manage/queue/queue.component';
 import { ExamplesComponent } from './examples/examples.component';
 import { BulkEditComponent } from './bulk-edit/bulk-edit.component';
@@ -367,7 +367,7 @@ const authModuleConfig: OAuthModuleConfig = {
     SharedUiModule,
     FhirEditModule,
     ModalsModule,
-    NgxDiffModule,
+    InlineDiffComponent
   ],
   providers: [
     CookieService,
