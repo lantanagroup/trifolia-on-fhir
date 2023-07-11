@@ -4,7 +4,8 @@ export class Globals {
   static readonly securityDelim = '^';
   static readonly securitySystem = 'https://trifolia-fhir.lantanagroup.com/security';
   static readonly regexPatterns = {
-    namePattern: '^[A-Z][A-Za-z0-9_]+$'
+    namePattern: '^[A-Z][A-Za-z0-9_]+$',
+    fhirIdValidRegex: '^[A-Za-z0-9\\-\\.]{1,64}$'
   };
 
   static readonly authNamespace = 'https://auth0.com';
@@ -12,8 +13,6 @@ export class Globals {
 
   static readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'SearchParameter', 'Media'];
   static readonly terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
-
-  static readonly packagedIgPublisherVersion = '1.0.38-SNAPSHOT built 2020-01-11 @ 07:15';
 
   static readonly extensionUrls = {
     'resource-meta-source': 'http://hapifhir.io/fhir/StructureDefinition/resource-meta-source',
