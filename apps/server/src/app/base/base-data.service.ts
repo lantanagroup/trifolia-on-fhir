@@ -1,9 +1,8 @@
-import { Paginated, PaginateOptions } from "@trifolia-fhir/tof-lib";
-import mongoose, { HydratedDocument, Model } from "mongoose";
-import { BaseEntity } from "./base.entity";
-import { TofLogger } from "../tof-logger";
-import type { IBaseDataService } from "./interfaces";
-import { Conformance, ConformanceSchema } from "../conformance/conformance.schema";
+import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
+import {HydratedDocument, Model} from 'mongoose';
+import {BaseEntity} from './base.entity';
+import {TofLogger} from '../tof-logger';
+import type {IBaseDataService} from './interfaces';
 
 
 export class BaseDataService<T extends HydratedDocument<BaseEntity>> implements IBaseDataService {
@@ -48,7 +47,7 @@ export class BaseDataService<T extends HydratedDocument<BaseEntity>> implements 
         return result;
     }
 
-    
+
     public async collectionCount(): Promise<number> {
         return this.model.estimatedDocumentCount().exec();
     }

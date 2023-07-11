@@ -1,54 +1,34 @@
-import {
-  Component,
-  DoCheck,
-  HostListener,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Renderer2,
-  ViewChild
-} from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { StructureDefinitionService } from '../shared/structure-definition.service';
-import { NgbModal, NgbNav } from '@ng-bootstrap/ng-bootstrap';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
-import { ElementTreeModel } from '../../../../../libs/tof-lib/src/lib/element-tree-model';
-import {
-  ConstraintComponent,
-  ElementDefinition as STU3ElementDefinition,
-  StructureDefinition as STU3StructureDefinition,
-  TypeRefComponent
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {Component, DoCheck, HostListener, Inject, Input, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {StructureDefinitionService} from '../shared/structure-definition.service';
+import {NgbModal, NgbNav} from '@ng-bootstrap/ng-bootstrap';
+import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {ElementTreeModel} from '../../../../../libs/tof-lib/src/lib/element-tree-model';
+import {ConstraintComponent, ElementDefinition as STU3ElementDefinition, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {
   ElementDefinition as R4ElementDefinition,
   ElementDefinitionConstraintComponent,
-  ElementDefinitionTypeRefComponent, ImplementationGuide,
+  ImplementationGuide,
   StructureDefinition as R4StructureDefinition
 } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {
-  ElementDefinition as R5ElementDefinition,
-  StructureDefinition as R5StructureDefinition
-} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
-import { RecentItemService } from '../shared/recent-item.service';
-import { FhirService } from '../shared/fhir.service';
-import { FileService } from '../shared/file.service';
-import { DOCUMENT } from '@angular/common';
-import { ConfigService } from '../shared/config.service';
-import { ElementDefinitionPanelComponent } from './element-definition-panel/element-definition-panel.component';
-import { AuthService } from '../shared/auth.service';
-import { BaseComponent } from '../base.component';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { IElementDefinition } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { ConstraintManager } from '../../../../../libs/tof-lib/src/lib/constraint-manager';
-import { BaseDefinitionResponseModel } from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
-import { Severities, ValidatorResponse } from 'fhir/validator';
+import {ElementDefinition as R5ElementDefinition, StructureDefinition as R5StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
+import {RecentItemService} from '../shared/recent-item.service';
+import {FhirService} from '../shared/fhir.service';
+import {FileService} from '../shared/file.service';
+import {DOCUMENT} from '@angular/common';
+import {ConfigService} from '../shared/config.service';
+import {ElementDefinitionPanelComponent} from './element-definition-panel/element-definition-panel.component';
+import {AuthService} from '../shared/auth.service';
+import {BaseComponent} from '../base.component';
+import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
+import {IDomainResource, IElementDefinition} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {ConstraintManager} from '../../../../../libs/tof-lib/src/lib/constraint-manager';
+import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
+import {Severities, ValidatorResponse} from 'fhir/validator';
 import {CanComponentDeactivate} from '../guards/resource.guard';
-import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Versions} from 'fhir/fhir';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import { FshResourceComponent } from '../shared-ui/fsh-resource/fsh-resource.component';
-import { firstValueFrom } from 'rxjs';
+import {FshResourceComponent} from '../shared-ui/fsh-resource/fsh-resource.component';
+import {firstValueFrom} from 'rxjs';
 import {StructureDefinition} from '@trifolia-fhir/r5';
 
 @Component({
@@ -133,7 +113,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
   public toggleMappings() {
     if (this.structureDefinition.mapping) {
       if (this.structureDefinition.mapping.length > 0) {
-        const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.structureDefinition.differential.element;
+        const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]>this.structureDefinition.differential.element;
         const foundElementsWithMappings = elements.filter(e => e.mapping && e.mapping.length > 0);
 
         if (foundElementsWithMappings.length > 0) {
@@ -190,18 +170,13 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    this.baseStructureDefinition = this.baseDefResponse.base;
-
-    if (this.configService.isFhirSTU3) {
-      this.constraintManager = new ConstraintManager(STU3ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
-    } else if (this.configService.isFhirR4) {
-      this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
-    } else if (this.configService.isFhirR5) {
-      this.constraintManager = new ConstraintManager(R5ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
-    } else {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
+    if (!this.baseDefResponse.success) {
+      this.message = this.baseDefResponse.message;
     }
 
+    this.baseStructureDefinition = this.baseDefResponse.base;
+
+    await this.initializeConstraintManager();
 
     this.constraintManager.getStructureDefinition = (url: string) => {
       return new Promise((resolve, reject) => {
@@ -215,13 +190,27 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       });
     };
 
-    await this.constraintManager.initializeRoot();
-
     this.message = 'Done loading base structure definition.';
   }
 
+  private async initializeConstraintManager() {
+
+    if (this.configService.isFhirSTU3) {
+      this.constraintManager = new ConstraintManager(STU3ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else if (this.configService.isFhirR4) {
+      this.constraintManager = new ConstraintManager(R4ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else if (this.configService.isFhirR5) {
+      this.constraintManager = new ConstraintManager(R5ElementDefinition, this.baseStructureDefinition, this.structureDefinition, this.fhirService.fhir.parser);
+    } else {
+      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
+    }
+
+    await this.constraintManager.initializeRoot();
+
+  }
+
   private async getStructureDefinition() {
-     this.sdId = this.route.snapshot.paramMap.get('id');
+    this.sdId = this.route.snapshot.paramMap.get('id');
 
     this.message = 'Loading structure definition...';
     this.structureDefinition = null;
@@ -230,48 +219,16 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     try {
       this.conformance = await this.strucDefService.getStructureDefinition(this.sdId).toPromise();
       const sdr = <StructureDefinition>this.conformance.resource;
+
+      this.loadSD(this.conformance.resource, true, false);
       delete sdr.snapshot;
 
-      if (this.configService.isFhirR5) {
-        this.structureDefinition = new R5StructureDefinition(sdr);
-      } else if (this.configService.isFhirR4) {
-        this.structureDefinition = new R4StructureDefinition(sdr);
-      } else if (this.configService.isFhirSTU3) {
-        this.structureDefinition = new STU3StructureDefinition(sdr);
-      } else {
-        throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
-      }
-
-      this.conformance.resource = this.structureDefinition;
-
-      if (!this.structureDefinition.differential) {
-        this.structureDefinition.differential = {
-          element: []
-        };
-      }
     } catch (err) {
       this.sdNotFound = err.status === 404;
       this.message = getErrorString(err);
       this.recentItemService.removeRecentItem(Globals.cookieKeys.recentStructureDefinitions, this.sdId);
       return;
     }
-
-    this.nameChanged();
-
-    if (this.structureDefinition.differential.element.length === 0) {
-      const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.structureDefinition.differential.element;
-      elements.push({
-        id: this.structureDefinition.type,
-        path: this.structureDefinition.type
-      });
-    }
-
-    await this.loadBaseDefinition();
-
-    this.recentItemService.ensureRecentItem(
-      Globals.cookieKeys.recentStructureDefinitions,
-      this.structureDefinition.id,
-      this.structureDefinition.name);
 
     if (this.route.snapshot.queryParams.copy === 'true') {
       this.message = 'Done copying structure definition';
@@ -285,7 +242,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.structureDefinition.differential.element;
+    const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]>this.structureDefinition.differential.element;
     const found = (elements || []).filter((element) => {
       return element.id.indexOf(elementTreeModel.id + ':') === 0;
     });
@@ -328,17 +285,17 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
     await this.strucDefService.save(this.sdId, this.conformance)
       .subscribe((conf) => {
+        let updatedStructureDefinition = null;
         if (!this.sdId) {
           // noinspection JSIgnoredPromiseFromCall
           this.sdId = conf.id;
           this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${this.sdId}`]);
         } else {
-          let updatedStructureDefinition = <STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition>conf.resource;
-          this.structureDefinition.snapshot = updatedStructureDefinition.snapshot;
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, updatedStructureDefinition.id, updatedStructureDefinition.name);
+
+          this.conformance = conf;
+          this.loadSD(conf.resource, false, false);
+
           this.message = 'Your changes have been saved!';
-          this.isDirty = false;
-          this.nameChanged();
           setTimeout(() => {
             this.message = '';
           }, 3000);
@@ -358,7 +315,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     });
 
 
-    if(index >= 0){
+    if (index >= 0) {
       implementationGuide.definition.resource[index].name =
         this.structureDefinition.title ? this.structureDefinition.title : this.structureDefinition.name;
 
@@ -368,6 +325,73 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     }
 
   }
+
+  public async loadSD(newVal: IDomainResource, reloadBase: boolean, isDirty: boolean) {
+    if (this.configService.isFhirR5) {
+      this.structureDefinition = new R5StructureDefinition(newVal);
+    } else if (this.configService.isFhirR4) {
+      this.structureDefinition = new R4StructureDefinition(newVal);
+    } else if (this.configService.isFhirSTU3) {
+      this.structureDefinition = new STU3StructureDefinition(newVal);
+    }
+
+    if (!this.structureDefinition.differential) {
+      this.structureDefinition.differential = {
+        element: []
+      };
+    }
+
+    if (this.conformance) {
+      this.conformance.resource = this.structureDefinition;
+    }
+
+    this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, this.structureDefinition.id, this.structureDefinition.name);
+    this.isDirty = isDirty;
+    this.nameChanged();
+
+    if (this.structureDefinition.differential.element.length === 0) {
+      const elements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]>this.structureDefinition.differential.element;
+      elements.push({
+        id: this.structureDefinition.type,
+        path: this.structureDefinition.type
+      });
+    }
+
+    // initial page load and raw resource upload requires reloading base def and resetting the constraint manager
+    // saving does not require this
+    if (reloadBase) {
+      await this.loadBaseDefinition();
+    }
+    else {
+
+      // without reloading everything... need to initialize the constraint manager to handle new element collection returned from the server
+      // and match the constraint manager tree to its previous state
+      const prevElements =  [... this.constraintManager.elements];
+      await this.initializeConstraintManager();
+
+      // expand whatever was expanded before...
+      for (const el of prevElements) {
+        if (el.expanded) {
+          const found = (this.constraintManager.elements || []).find(e => e.baseElement.id === el.baseElement.id);
+          if (found && !found.expanded) {
+            await this.constraintManager.toggleExpand(found);
+          }
+        }
+      }
+
+      // element already previously selected... attempt to match it by path to get new reference and expand the tree
+      if (this.selectedElement) {
+        const found = (this.constraintManager.elements || []).find(e => e.id === this.selectedElement.id);
+        if (found) {
+          this.selectedElement = found;
+        } else {
+          this.selectedElement = null;
+        }
+      }
+    }
+
+  }
+
 
   ngOnInit() {
     this.navSubscription = this.router.events.subscribe((e: any) => {
@@ -411,39 +435,39 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.elementSearch = value;
   }
 
-  public checkForMatchingElement(element: IElementDefinition){
+  public checkForMatchingElement(element: IElementDefinition) {
     // Check the following places for a matching string: path, id,
     // constraint.requirements, binding.valueSetUri (or binding.valueset),
     // type.code, type.profile, type.targetProfile, and sliceName
-    if(element.id.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0
+    if (element.id.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0
       || element.path.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0) return true;
 
     let checkConstraint = false;
-    if(<ConstraintComponent[]> element.constraint){
-      for(let i = 0; i < element.constraint.length; i++){
-        if((<ConstraintComponent> element.constraint[i]).requirements && (<ConstraintComponent> element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >=0 ){
+    if (<ConstraintComponent[]>element.constraint) {
+      for (let i = 0; i < element.constraint.length; i++) {
+        if ((<ConstraintComponent>element.constraint[i]).requirements && (<ConstraintComponent>element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0) {
           checkConstraint = true;
           break;
         }
       }
     }
-    else if(<ElementDefinitionConstraintComponent[]> element.constraint){
-      for(let i = 0; i < element.constraint.length; i++){
-        if((<ElementDefinitionConstraintComponent> element.constraint[i]).requirements
-          && (<ElementDefinitionConstraintComponent> element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >=0 ){
+    else if (<ElementDefinitionConstraintComponent[]>element.constraint) {
+      for (let i = 0; i < element.constraint.length; i++) {
+        if ((<ElementDefinitionConstraintComponent>element.constraint[i]).requirements
+          && (<ElementDefinitionConstraintComponent>element.constraint[i]).requirements.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0) {
           checkConstraint = true;
           break;
         }
       }
     }
-    if(checkConstraint) return true;
+    if (checkConstraint) return true;
 
     let checkBinding = false;
-    if((<STU3ElementDefinition> element).binding && (<STU3ElementDefinition> element).binding.valueSetUri){
-      checkBinding = (<STU3ElementDefinition> element).binding.valueSetUri.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
+    if ((<STU3ElementDefinition>element).binding && (<STU3ElementDefinition>element).binding.valueSetUri) {
+      checkBinding = (<STU3ElementDefinition>element).binding.valueSetUri.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
     }
-    else if((<R4ElementDefinition | R5ElementDefinition> element).binding && (<R4ElementDefinition | R5ElementDefinition> element).binding.valueSet){
-      checkBinding = (<R4ElementDefinition | R5ElementDefinition> element).binding.valueSet.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
+    else if ((<R4ElementDefinition | R5ElementDefinition>element).binding && (<R4ElementDefinition | R5ElementDefinition>element).binding.valueSet) {
+      checkBinding = (<R4ElementDefinition | R5ElementDefinition>element).binding.valueSet.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0;
     }
     if (checkBinding) return true;
 
@@ -471,23 +495,23 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       }
     }*/
 
-    if(element.sliceName && element.sliceName.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0){
+    if (element.sliceName && element.sliceName.toLowerCase().indexOf(this.elementSearch.toLowerCase()) >= 0) {
       return true;
     }
   }
 
-  public canDeactivate(): boolean{
+  public canDeactivate(): boolean {
     return !this.isDirty;
   }
 
-  async getSearchElement(){
-    const structureDefElements = <IElementDefinition[]> this.structureDefinition.differential.element;
+  async getSearchElement() {
+    const structureDefElements = <IElementDefinition[]>this.structureDefinition.differential.element;
     let found = structureDefElements.find((element) => {
       return this.checkForMatchingElement(element);
     });
 
     if (!found) {
-      const baseStructDefElements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]> this.baseStructureDefinition.snapshot.element;
+      const baseStructDefElements = <(STU3ElementDefinition | R4ElementDefinition | R5ElementDefinition)[]>this.baseStructureDefinition.snapshot.element;
       found = baseStructDefElements.find((element) => {
         return this.checkForMatchingElement(element);
       });

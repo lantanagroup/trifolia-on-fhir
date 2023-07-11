@@ -8,6 +8,7 @@ import { AuditEvent as STU3AuditEvent, Group as STU3Group, ImplementationGuide a
 import * as fs from 'fs';
 import { Connection, createConnection } from 'mysql';
 import { ungzip } from 'node-gzip';
+import * as Yargs from 'yargs';
 
 interface MigrateDbOptions {
   mysqlHost: string;
@@ -57,6 +58,34 @@ export class MigrateDb extends BaseTools {
   private userMap: { [key: string]: IUser; } = {};
   private groupMap: { [key: string]: IGroup; } = {};
   private resourceMap: { [key: string]: IConformance; } = {};
+
+  public static commandFormat = 'migrate-db [mysqlHost] [mysqlDb] [mysqlUser] [mysqlPass] [fhirVersion] [dbServer] [dbName] [migratedFromLabel]';
+  public static commandDescription = 'Migrate the specific FHIR server to mongo database';
+
+  public static commandBuilder(yargs: Yargs.Argv) {
+    return yargs
+      .positional('mysqlHost', {})
+      .positional('mysqlDb', {})
+      .positional('mysqlUser', {})
+      .positional('mysqlPass', {})
+      .positional('fhirVersion', {})
+      .positional('dbServer', {})
+      .positional('dbName', {})
+      .positional('migratedFromLabel', {})
+      .option('out', {
+        description: 'The file to store log output to'
+      });
+  }
+
+  public static async commandHandler(args: any) {
+    try {
+      const migrator = new MigrateDb(args);
+      await migrator.migrate();
+    } catch (ex) {
+      console.error(ex.message);
+      throw ex;
+    }
+  }
 
   constructor(options: MigrateDbOptions) {
     super();
@@ -219,8 +248,8 @@ export class MigrateDb extends BaseTools {
       fs.unlinkSync(this.options.out);
     }
 
-    // await this.initResourceMapWithIGs();
-    // console.log('resourceMap key count:', Object.keys(this.resourceMap).length);
+    //await this.initResourceMap();
+    //console.log('resourceMap key count:', Object.keys(this.resourceMap).length);
 
     await this.migrateUsers();
     await this.migrateGroups();
@@ -302,6 +331,7 @@ export class MigrateDb extends BaseTools {
         };
       }
 
+      audit['migratedFrom'] = this.options.migratedFromLabel;
       this.log(`Inserting/updating audit ${auditEvent.id}`);
       const results = await this.db.collection('audit').updateOne(
         { timestamp: audit.timestamp, who: audit.who, action: audit.action, what: audit.what },
@@ -840,14 +870,20 @@ export class MigrateDb extends BaseTools {
   }
 
 
-  private async initResourceMapWithIGs() {
+  private async initResourceMap(resourceType?: string) {
 
     if (!this.resourceMap) {
       this.resourceMap = {};
     }
 
-    //const igConfs = this.db.collection('conformance').find<IConformance>({'migratedFrom': this.options.migratedFromLabel});
-    const igConfs = this.db.collection('conformance').find<IConformance>({$and: [{migratedFrom: this.options.migratedFromLabel}, {'resource.resourceType':'ImplementationGuide'}]});
+    let filter = {};
+    if (resourceType) {
+      filter = {$and: [{migratedFrom: this.options.migratedFromLabel}, {'resource.resourceType':resourceType}]};
+    } else {
+      filter = {'migratedFrom': this.options.migratedFromLabel};
+    }
+
+    const igConfs = this.db.collection('conformance').find<IConformance>(filter);
     for await (const ig of igConfs) {
       const key = ig.resource.resourceType + '/' + ig.resource.id;
       this.resourceMap[key] = ig;

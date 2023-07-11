@@ -17,7 +17,7 @@ import {
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import {buildUrl, createOperationOutcome, generateId, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import {buildUrl, createOperationOutcome, findReferences, generateId, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Response} from 'express';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
@@ -128,33 +128,14 @@ export class FhirController extends ConformanceController {
     });
 
 
-    let references: any[] = [];
-    const findReferences = (obj: any) => {
-      if (!obj) return;
-
-      if (obj.hasOwnProperty('reference') && obj.reference === `${resourceType}/${currentId}`) {
-        references.push(obj);
-      }
-
-      const propertyNames = Object.keys(obj);
-
-      for (let i = 0; i < propertyNames.length; i++) {
-        const propertyName = propertyNames[i];
-
-        if (typeof obj[propertyName] === 'object') {
-          findReferences(obj[propertyName]);
-        }
-      }
-      return;
-    };
+    let references: any[];
 
     const allResources = allResults.reduce((prev, curr) => {
       return prev.concat(curr);
     }, []);
 
     allResults.forEach(result => {
-      references = [];
-      findReferences(result.resource);
+      references = findReferences(result.resource, resourceType, currentId);
       if (references.length > 0) {
         const anyResource = <any>conf.resource;
         references.forEach(foundReference => {
@@ -170,6 +151,11 @@ export class FhirController extends ConformanceController {
 
     // Change the id of the resource
     conf.resource.id = newId;
+
+    // update the old resource with the new resource in Url
+    if(conf.resource['url']){
+      conf.resource['url'] = conf.resource['url'].replace(currentId, newId);
+    }
     await this.conformanceService.updateOne(conf.id, conf);
 
     // Persist the changes to the resources
@@ -662,7 +648,7 @@ export class FhirController extends ConformanceController {
   @Get('dependency')
   public async searchDependency(
     @Headers('implementationguideid') implementationGuideId: string,
-    @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4',
+    @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4' | 'r5',
     @Query('resourceType') resourceType?: string,
     @Query('_id') resourceId?: string,
     @Query('name') name?: string,
@@ -683,6 +669,7 @@ export class FhirController extends ConformanceController {
         dependencies = getSTU3Dependencies(<STU3ImplementationGuide>ig.resource);
         break;
       case 'r4':
+      case 'r5':
         dependencies = getR4Dependencies(<R4ImplementationGuide>ig.resource);
         break;
       default:
@@ -707,7 +694,14 @@ export class FhirController extends ConformanceController {
         if (!packageFile.toLowerCase().endsWith('.json')) continue;
 
         const fileContent = fs.readFileSync(path.join(dependencyDir, packageFile)).toString();
-        const resource = JSON.parse(fileContent);
+        let resource;
+
+        try {
+          resource = JSON.parse(fileContent);
+        } catch (ex) {
+          this.logger.warn(`Could not parse JSON file ${packageFile} from dependency ${dependency}`);
+          continue;
+        }
 
         if (!resource.resourceType) continue;
 

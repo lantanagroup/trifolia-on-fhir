@@ -9,17 +9,20 @@
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-6">
-            <app-fhir-string [parentObject]="searchParameter" propertyName="url" title="URL" [required]="true" (change)="urlChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="searchParameter" propertyName="url" title="URL" [required]="true"
+              (change)="urlChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="searchParameter" propertyName="name" title="Name" [required]="true" (change)="nameChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="searchParameter" propertyName="name" [required]="true" title="Name"
+              [required]="true" (change)="nameChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="searchParameter" propertyName="expression" title="Expression" [required]="searchParameter.status === 'active'" requiredMessage="Expression is required to save an Active search parameter"></app-fhir-string>
+            <app-fhir-string [parentObject]="searchParameter" propertyName="expression" title="Expression"
+              [required]="searchParameter.status === 'active'"
+              requiredMessage="Expression is required to save an Active search parameter"></app-fhir-string>
 
             <div class="mb-3">
               <label>Status</label>
-              <select class="form-select" [(ngModel)]="searchParameter.status"
-                      [required]="true"
-                      [class.is-invalid]="!searchParameter.status">
+              <select class="form-select" [(ngModel)]="searchParameter.status" [required]="true"
+                [class.is-invalid]="!searchParameter.status">
                 <option value="draft">Draft</option>
                 <option value="active">Active</option>
                 <option value="retired">Retired</option>
@@ -28,7 +31,7 @@
             </div>
 
             <app-fhir-string [parentObject]="searchParameter" propertyName="version" title="Version"
-                            [required]="false"></app-fhir-string>
+              [required]="false"></app-fhir-string>
 
 
           </div>
@@ -36,7 +39,8 @@
           <div class="col-md-6">
             <div class="mb-3">
               <div [class.input-group]="!isNew">
-                <app-fhir-string [parentObject]="searchParameter" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)="idChangedEvent.next()"></app-fhir-string>
+                <app-fhir-string [parentObject]="searchParameter" propertyName="id" title="ID"
+                  placeholder="Auto generate" *ngIf="isNew" (change)="idChangedEvent.next()"></app-fhir-string>
                 <div class="help-block">{{alreadyInUseIDMessage}}</div>
                 <div class="input-group-btn" *ngIf="!isNew">
                   <button type="button" class="btn btn-primary" (click)="changeId()">Change</button>
@@ -45,22 +49,23 @@
             </div>
 
             <app-fhir-date [parentObject]="searchParameter" propertyName="date" title="Date"
-                          [required]="false"></app-fhir-date>
+              [required]="false"></app-fhir-date>
             <div class="alert alert-warning status-message" *ngIf="searchParameter.date && wrongDateFormat">
               <span>Date must be written as yyyy-MM-dd</span>
             </div>
 
             <app-fhir-boolean [parentObject]="searchParameter" propertyName="experimental" title="Experimental"
-                              [required]="false"></app-fhir-boolean>
+              [required]="false"></app-fhir-boolean>
 
             <app-fhir-boolean [parentObject]="searchParameter" propertyName="multipleOr" title="Multiple OR?"
-                              [required]="false"></app-fhir-boolean>
+              [required]="false"></app-fhir-boolean>
 
             <app-fhir-boolean [parentObject]="searchParameter" propertyName="multipleAnd" title="Multiple AND?"
-                              [required]="false"></app-fhir-boolean>
+              [required]="false"></app-fhir-boolean>
 
-          <app-fhir-string [parentObject]="searchParameter" propertyName="code" title="Code" [required]="true"></app-fhir-string>
-        </div>
+            <app-fhir-string [parentObject]="searchParameter" propertyName="code" title="Code"
+              [required]="true"></app-fhir-string>
+          </div>
 
 
         </div>
@@ -74,11 +79,15 @@
             </div>
           </div>
           <div class="card-body">
-            <a href="javascript:void(0)" *ngIf="!searchParameter.hasOwnProperty('chain')" (click)="searchParameter.chain = ['']">Add a name</a>
-            <div class="input-group" *ngFor="let ch of searchParameter.chain; let ci = index; trackBy: Globals.trackByFn">
-              <input type="text" class="form-control" [(ngModel)]="searchParameter.chain[ci]" [class.is-invalid]="!searchParameter.chain[ci]" />
+            <a href="javascript:void(0)" *ngIf="!searchParameter.hasOwnProperty('chain')"
+              (click)="searchParameter.chain = ['']">Add a name</a>
+            <div class="input-group"
+              *ngFor="let ch of searchParameter.chain; let ci = index; trackBy: Globals.trackByFn">
+              <input type="text" class="form-control" [(ngModel)]="searchParameter.chain[ci]"
+                [class.is-invalid]="!searchParameter.chain[ci]" />
               <div class="input-group-btn">
-                <button type="button" class="btn btn-primary btn-sm" title="Remove this name" (click)="searchParameter.chain.splice(ci, 1)">
+                <button type="button" class="btn btn-primary btn-sm" title="Remove this name"
+                  (click)="searchParameter.chain.splice(ci, 1)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
@@ -97,18 +106,20 @@
           </div>
           <table class="table table-striped" *ngIf="searchParameter.base && searchParameter.base.length > 0">
             <tbody>
-            <tr *ngFor="let f of searchParameter.base; let i = index; trackBy: Globals.trackByFn">
-              <td>
-                <input type="text" class="form-control" [(ngModel)]="searchParameter.base[i]" [class.is-invalid]="!searchParameter.base[i]" />
-              </td>
-              <td class="actions-column-1">
-                <div class="pull-right">
-                  <button type="button" class="btn btn-primary btn-sm" title="Remove this base" [disabled]="searchParameter.base.length === 1" (click)="searchParameter.base.splice(i, 1)">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
+              <tr *ngFor="let f of searchParameter.base; let i = index; trackBy: Globals.trackByFn">
+                <td>
+                  <input type="text" class="form-control" [(ngModel)]="searchParameter.base[i]"
+                    [class.is-invalid]="!searchParameter.base[i]" />
+                </td>
+                <td class="actions-column-1">
+                  <div class="pull-right">
+                    <button type="button" class="btn btn-primary btn-sm" title="Remove this base"
+                      [disabled]="searchParameter.base.length === 1" (click)="searchParameter.base.splice(i, 1)">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -122,24 +133,28 @@
               </button>
             </div>
           </div>
-          <table class="table table-striped" *ngIf="searchParameter.comparator && searchParameter.comparator.length > 0">
+          <table class="table table-striped"
+            *ngIf="searchParameter.comparator && searchParameter.comparator.length > 0">
             <tbody>
-            <tr *ngFor="let f of searchParameter.comparator; let i = index; trackBy: Globals.trackByFn">
-              <td>
-                <input type="text" class="form-control" [(ngModel)]="searchParameter.comparator[i]" [class.is-invalid]="!searchParameter.comparator[i]" />
-              </td>
-              <td class="actions-column-1">
-                <div class="pull-right">
-                  <button type="button" class="btn btn-primary btn-sm" title="Remove this comparator" (click)="searchParameter.comparator.splice(i, 1)">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
+              <tr *ngFor="let f of searchParameter.comparator; let i = index; trackBy: Globals.trackByFn">
+                <td>
+                  <input type="text" class="form-control" [(ngModel)]="searchParameter.comparator[i]"
+                    [class.is-invalid]="!searchParameter.comparator[i]" />
+                </td>
+                <td class="actions-column-1">
+                  <div class="pull-right">
+                    <button type="button" class="btn btn-primary btn-sm" title="Remove this comparator"
+                      (click)="searchParameter.comparator.splice(i, 1)">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
           <div class="card-body" *ngIf="!searchParameter.comparator || searchParameter.comparator.length === 0">
-            <i>This search parameter does not have any comparators, yet. Click <a href="javascript:void(0)" (click)="addComparator()">here</a> to add one.</i>
+            <i>This search parameter does not have any comparators, yet. Click <a href="javascript:void(0)"
+                (click)="addComparator()">here</a> to add one.</i>
           </div>
         </div>
 
@@ -154,31 +169,35 @@
           </div>
           <table class="table table-striped" *ngIf="searchParameter.modifier && searchParameter.modifier.length > 0">
             <tbody>
-            <tr *ngFor="let f of searchParameter.modifier; let i = index; trackBy: Globals.trackByFn">
-              <td>
-                <input type="text" class="form-control" [(ngModel)]="searchParameter.modifier[i]" [class.is-invalid]="!searchParameter.modifier[i]" />
-              </td>
-              <td class="actions-column-1">
-                <div class="pull-right">
-                  <button type="button" class="btn btn-primary btn-sm" title="Remove this modifier" (click)="searchParameter.modifier.splice(i, 1)">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
+              <tr *ngFor="let f of searchParameter.modifier; let i = index; trackBy: Globals.trackByFn">
+                <td>
+                  <input type="text" class="form-control" [(ngModel)]="searchParameter.modifier[i]"
+                    [class.is-invalid]="!searchParameter.modifier[i]" />
+                </td>
+                <td class="actions-column-1">
+                  <div class="pull-right">
+                    <button type="button" class="btn btn-primary btn-sm" title="Remove this modifier"
+                      (click)="searchParameter.modifier.splice(i, 1)">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
           <div class="card-body" *ngIf="!searchParameter.modifier || searchParameter.modifier.length === 0">
-            <i>This search parameter does not have any modifiers, yet. Click <a href="javascript:void(0)" (click)="addModifier()">here</a> to add one.</i>
+            <i>This search parameter does not have any modifiers, yet. Click <a href="javascript:void(0)"
+                (click)="addModifier()">here</a> to add one.</i>
           </div>
         </div>
 
         <app-fhir-select-single-code [parentObject]="searchParameter" propertyName="type" title="Type"
-                                    [isFormGroup]="true" [required]="true"
-                                    valueSetUrl="http://hl7.org/fhir/ValueSet/search-param-type"></app-fhir-select-single-code>
+          [isFormGroup]="true" [required]="true"
+          valueSetUrl="http://hl7.org/fhir/ValueSet/search-param-type"></app-fhir-select-single-code>
 
 
-        <app-fhir-markdown [parentObject]="searchParameter" propertyName="description" title="Description" [isOptional]="false"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="searchParameter" propertyName="description" title="Description"
+          [isOptional]="false"></app-fhir-markdown>
       </ng-template>
     </li>
 
@@ -187,13 +206,14 @@
       <a ngbNavLink>Context</a>
       <ng-template ngbNavContent>
         <app-fhir-multi-use-context [parentObject]="searchParameter"
-                                    propertyName="useContext"></app-fhir-multi-use-context>
+          propertyName="useContext"></app-fhir-multi-use-context>
 
-        <app-fhir-multi-jurisdiction [parentObject]="searchParameter"
-                                    propertyName="jurisdiction" [required]="false"></app-fhir-multi-jurisdiction>
+        <app-fhir-multi-jurisdiction [parentObject]="searchParameter" propertyName="jurisdiction"
+          [required]="false"></app-fhir-multi-jurisdiction>
 
-        <app-fhir-select-single-code [parentObject]="searchParameter" propertyName="target" title="Target" [isFormGroup]="true"
-                                    valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types" [required]="false"></app-fhir-select-single-code>
+        <app-fhir-select-single-code [parentObject]="searchParameter" propertyName="target" title="Target"
+          [isFormGroup]="true" valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"
+          [required]="false"></app-fhir-select-single-code>
 
       </ng-template>
     </li>
@@ -202,45 +222,43 @@
     <li ngbNavItem>
       <a ngbNavLink>Other</a>
       <ng-template ngbNavContent>
-        <app-fhir-markdown [parentObject]="searchParameter" propertyName="purpose"
-                          title="Purpose"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="searchParameter" propertyName="purpose" title="Purpose"></app-fhir-markdown>
 
-        <app-fhir-string [parentObject]="searchParameter" propertyName="publisher" title="Publisher" [required]="false"></app-fhir-string>
+        <app-fhir-string [parentObject]="searchParameter" propertyName="publisher" title="Publisher"
+          [required]="false"></app-fhir-string>
 
-        <app-fhir-string [parentObject]="searchParameter" propertyName="xpath" title="XPath" [required]="false"></app-fhir-string>
+        <app-fhir-string [parentObject]="searchParameter" propertyName="xpath" title="XPath"
+          [required]="false"></app-fhir-string>
 
-        <app-fhir-select-single-code [parentObject]="searchParameter" propertyName="xpathUsage" title="XPathUsage" [isFormGroup]="true"
-                                    valueSetUrl="http://hl7.org/fhir/ValueSet/search-xpath-usage"></app-fhir-select-single-code>
+        <app-fhir-select-single-code [parentObject]="searchParameter" propertyName="xpathUsage" title="XPathUsage"
+          [isFormGroup]="true"
+          valueSetUrl="http://hl7.org/fhir/ValueSet/search-xpath-usage"></app-fhir-select-single-code>
 
         <div class="card">
           <div class="card-header">
             <input type="checkbox" [ngModel]="searchParameter.hasOwnProperty('component')"
-                  (ngModelChange)="Globals.toggleProperty(searchParameter, 'component', [{ definition: '', expression: ''}])" />
+              (ngModelChange)="Globals.toggleProperty(searchParameter, 'component', [{ definition: '', expression: ''}])" />
             Component
           </div>
           <table class="table table-striped" *ngIf="searchParameter.hasOwnProperty('component')">
             <thead>
-            <tr>
-              <th>Definition</th>
-              <th>Expression</th>
-            </tr>
+              <tr>
+                <th>Definition</th>
+                <th>Expression</th>
+              </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let c of searchParameter.component; let i = index">
-              <td>
-                <app-fhir-reference
-                  [parentObject]="c"
-                  propertyName="definition"
-                  [isFormGroup]="false"
-                  [isCanonical]="true"
-                  [required]="true"
-                  [hideResourceType]="true"
-                  resourceType="SearchParameter"></app-fhir-reference>
-              </td>
-              <td>
-                <app-fhir-string [parentObject]="c" propertyName="expression" title="Expression" [required]="true" [label]="false"></app-fhir-string>
-              </td>
-            </tr>
+              <tr *ngFor="let c of searchParameter.component; let i = index">
+                <td>
+                  <app-fhir-reference [parentObject]="c" propertyName="definition" [isFormGroup]="false"
+                    [isCanonical]="true" [required]="true" [hideResourceType]="true"
+                    resourceType="SearchParameter"></app-fhir-reference>
+                </td>
+                <td>
+                  <app-fhir-string [parentObject]="c" propertyName="expression" title="Expression" [required]="true"
+                    [label]="false"></app-fhir-string>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -252,7 +270,8 @@
     <li ngbNavItem>
       <a ngbNavLink>Permissions</a>
       <ng-template ngbNavContent>
-        <trifolia-fhir-resource-permissions [resource]="conformance" (change)="igChanging.emit(true)"></trifolia-fhir-resource-permissions>
+        <trifolia-fhir-resource-permissions [resource]="conformance"
+          (change)="igChanging.emit(true)"></trifolia-fhir-resource-permissions>
       </ng-template>
     </li>
 
@@ -260,7 +279,7 @@
     <li ngbNavItem="validation">
       <ng-template ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span
-        *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
+          *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
       </ng-template>
       <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
@@ -271,19 +290,20 @@
     <li ngbNavItem>
       <a ngbNavLink>RAW</a>
       <ng-template ngbNavContent>
-        <app-raw-resource [resource]="searchParameter"></app-raw-resource>
+        <app-raw-resource [resource]="searchParameter" (resourceChange)="loadSP($event)"></app-raw-resource>
       </ng-template>
     </li>
   </ul>
   <div [ngbNavOutlet]="nav" class="mt-2"></div>
-</ng-container>
 
-<footer class="footer">
-  <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="(conformance && !canEdit(conformance)) || wrongDateFormat || (isNew && !isIdUnique) || (!searchParameter.expression && searchParameter.status === 'active')">
-      Save
-    </button>
-    <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
-  </div>
-  <span class="message">{{message}}</span>
-</footer>
+  <footer class="footer">
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary" (click)="save()"
+        [disabled]="(conformance && !canEdit(conformance)) || wrongDateFormat || (isNew && !isIdUnique) || (!searchParameter.expression && searchParameter.status === 'active')">
+        Save
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
+    </div>
+    <span class="message">{{message}}</span>
+  </footer>
+</ng-container>

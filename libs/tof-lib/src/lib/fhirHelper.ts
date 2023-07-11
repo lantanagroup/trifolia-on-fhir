@@ -1,12 +1,45 @@
-import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, ResourceReference} from './r4/fhir';
-import {Extension, ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
-import { customAlphabet } from 'nanoid';
+import {ImplementationGuide as R4ImplementationGuide, OperationOutcome, ResourceReference} from '@trifolia-fhir/r4';
+import {Extension, ImplementationGuide as STU3ImplementationGuide} from '@trifolia-fhir/stu3';
+import {ImplementationGuide as R5ImplementationGuide} from '@trifolia-fhir/r5';
+import {customAlphabet} from 'nanoid';
 import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
 import {Globals} from './globals';
 
+export function findReferences(obj: any, resourceType?: string, id?: string) {
+  const references = [];
+
+  const next = (obj: any) => {
+    if (!obj) return;
+
+    if (obj.hasOwnProperty('reference') && typeof obj['reference'] === 'string' && obj['reference'].split('/').length === 2) {
+      if (resourceType && id && obj.reference === `${resourceType}/${id}`) {
+        references.push(obj);
+      } else if (resourceType && !id && obj.reference.startsWit(resourceType + '/')) {
+        references.push(obj);
+      } else if (!resourceType && !id) {
+        references.push(obj);
+      }
+    }
+
+    const propertyNames = Object.keys(obj);
+
+    for (let i = 0; i < propertyNames.length; i++) {
+      const propertyName = propertyNames[i];
+
+      if (typeof obj[propertyName] === 'object') {
+        next(obj[propertyName]);
+      }
+    }
+    return;
+  };
+
+  next(obj);
+
+  return references;
+}
+
 export function identifyRelease(fhirVersion: string): Versions {
-  const modFhirVersion = fhirVersion ? fhirVersion.replace('-ballot', '') : fhirVersion;
   if (!fhirVersion) {
     return Versions.R4;
   } else if (fhirVersion == Versions.R4.toLowerCase()) {
@@ -179,7 +212,7 @@ export class MediaReference {
   description: string;
 }
 
-export function getImplementationGuideMediaReferences(fhirVersion: 'stu3'|'r4', implementationGuide: STU3ImplementationGuide | R4ImplementationGuide) {
+export function getImplementationGuideMediaReferences(fhirVersion: 'stu3'|'r4'|'r5', implementationGuide: STU3ImplementationGuide | R4ImplementationGuide | R5ImplementationGuide) {
   if (!implementationGuide) {
     return [];
   }
@@ -331,6 +364,7 @@ export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide
     if (typeof atob === 'function') {
       return decodeURIComponent(atob(documentReference.content[0].attachment.data));
     } else {
+      // @ts-ignore
       return decodeURIComponent(new Buffer(documentReference.content[0].attachment.data, 'base64').toString());
     }
   }
@@ -427,6 +461,7 @@ export function getCustomMenu(implementationGuide: IImplementationGuide): string
     if (typeof atob === 'function') {
       return atob(documentReference.content[0].attachment.data);
     } else {
+      // @ts-ignore
       return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
     }
   }
@@ -523,6 +558,7 @@ export function getJiraSpecValue(implementationGuide: IImplementationGuide): str
     if (typeof atob === 'function') {
       return atob(documentReference.content[0].attachment.data);
     } else {
+      // @ts-ignore
       return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
     }
   }

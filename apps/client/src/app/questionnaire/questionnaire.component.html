@@ -9,9 +9,9 @@
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-8">
-            <app-fhir-string [parentObject]="questionnaire" propertyName="url" title="URL" (change)="urlChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="url" [required]="true" title="URL" (change)="urlChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="questionnaire" propertyName="name" title="Name" (change)="nameChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="name" [required]="true" title="Name" (change)="nameChanged()"></app-fhir-string>
 
             <app-fhir-string [parentObject]="questionnaire" propertyName="title" title="Title" (change)="nameChanged()"></app-fhir-string>
 
@@ -21,7 +21,7 @@
           </div>
 
           <div class="col-md-4">
-            <app-fhir-string [parentObject]="questionnaire" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
             <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
             <app-fhir-string [parentObject]="questionnaire" propertyName="version" title="Version"></app-fhir-string>
@@ -147,7 +147,7 @@
     <li ngbNavItem="raw">
       <a ngbNavLink>RAW</a>
       <ng-template ngbNavContent>
-        <app-raw-resource [resource]="questionnaire" [shown]="qTabs.activeId === 'raw'"></app-raw-resource>
+        <app-raw-resource [resource]="questionnaire" [shown]="qTabs.activeId === 'raw'" (resourceChange)="loadQuestionnaire($event)"></app-raw-resource>
       </ng-template>
     </li>
 

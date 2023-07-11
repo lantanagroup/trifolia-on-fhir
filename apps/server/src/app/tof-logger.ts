@@ -89,24 +89,11 @@ export class TofLogger extends ConsoleLogger {
   }
 
   trace(message: string, context?: string) {
-    if (this.serverConfig.logLevel && this.serverConfig.logLevel !== 'trace') {
+    if (this.serverConfig.logLevel && this.serverConfig.logLevel !== 'all' && this.serverConfig.logLevel !== 'trace') {
       return;
     }
 
-    super.log(`[TRACE] ${message}`, context);
-
-    if (this.serverConfig.logFileName) {
-      this.rotateLogs();
-
-      try {
-        fs.appendFileSync(this.serverConfig.logFileName, `TRACE - ${new Date().toUTCString()} - ${message}\r\n`);
-      } catch (ex) {
-        if (!TofLogger.loggedFileError) {
-          super.error(`Could not write logs to file: ${ex.message}`);
-          TofLogger.loggedFileError = true;
-        }
-      }
-    }
+    this.verbose(message, context);
   }
 
   log(message: string, context?: string) {
@@ -114,7 +101,11 @@ export class TofLogger extends ConsoleLogger {
       return;
     }
 
-    super.log(message, context);
+    if (context) {
+      super.log(message, context);
+    } else {
+      super.log(message);
+    }
 
     if (this.serverConfig.logFileName && !context) {
       this.rotateLogs();
@@ -131,7 +122,11 @@ export class TofLogger extends ConsoleLogger {
   }
 
   error(message: string, trace?: string) {
-    super.error(message, trace);
+    if (trace) {
+      super.error(message, trace);
+    } else {
+      super.error(message);
+    }
 
     if (this.serverConfig.logFileName) {
       this.rotateLogs();
@@ -148,7 +143,11 @@ export class TofLogger extends ConsoleLogger {
   }
 
   verbose(message: string, context?: string) {
-    super.verbose(message, context);
+    if (context) {
+      super.verbose(message, context);
+    } else {
+      super.verbose(message);
+    }
 
     if (this.serverConfig.logFileName) {
       this.rotateLogs();
@@ -169,7 +168,11 @@ export class TofLogger extends ConsoleLogger {
       return;
     }
 
-    super.warn(message, context);
+    if (context) {
+      super.warn(message, context);
+    } else {
+      super.warn(message);
+    }
 
     if (this.serverConfig.logFileName) {
       this.rotateLogs();

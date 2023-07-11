@@ -22,7 +22,7 @@ import {
   IStructureDefinition, IValueSet
 } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { ValueSet } from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import { AuditEventAgent } from '../../../../libs/tof-lib/src/lib/r5/fhir';
+import * as Yargs from 'yargs';
 
 export interface GenerateTypescriptOptions {
   types: string;
@@ -122,6 +122,34 @@ export class GenerateTypescript extends BaseTools {
   private generatedTypes: GeneratedType[] = [];
   private generatedDeclaredTypes: GeneratedDeclaredType[] = [];
   private valueSetsBundle: IBundle;
+
+  public static commandFormat = 'generate-typescript [types] [resources] [valueSets] [output]';
+  public static commandDescription = 'Generates typescript classes based on StructureDefinition resources in bundles within the specified path';
+
+  public static commandBuilder(yargs: Yargs.Argv) {
+    return yargs
+      .positional('types', {
+        required: true,
+        description: 'The path to profiles-types.json'
+      })
+      .positional('resources', {
+        required: true,
+        description: 'The path to profiles-resources.json'
+      })
+      .positional('valueSets', {
+        required: true,
+        description: 'The path to valuesets.json'
+      })
+      .positional('output', {
+        required: true,
+        description: 'Where the typescript generated should be stored'
+      });
+  }
+
+  public static commandHandler(args: any) {
+    const generateTypescript = new GenerateTypescript(args);
+    generateTypescript.execute();
+  }
 
   constructor(options: GenerateTypescriptOptions) {
     super();

@@ -12,9 +12,9 @@
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-8">
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="url" title="URL" (change)="urlChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="url" [required]="true" title="URL" (change)="urlChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="name" title="Name" (change)="nameChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="name"  [required]="true" title="Name" (change)="nameChanged()"></app-fhir-string>
 
             <app-fhir-string [parentObject]="capabilityStatement" propertyName="title" title="Title" (change)="nameChanged()"></app-fhir-string>
 
@@ -92,13 +92,13 @@
           </div>
 
           <div class="col-md-4">
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="id" title="ID" placeholder="AUTO" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
             <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
             <app-fhir-date [parentObject]="capabilityStatement" propertyName="date" title="Date"
                           [required]="false"></app-fhir-date>
             <div class="alert alert-warning status-message" *ngIf="capabilityStatement.date && wrongDateFormat">
-              <span>Date must be written as yyyy-MM-dd</span>
+              <span>Date must be written as YYYY-MM-DD</span>
             </div>
 
             <div class="mb-3">
@@ -860,7 +860,7 @@
     <li ngbNavItem="raw">
       <a ngbNavLink>RAW</a>
       <ng-template ngbNavContent>
-        <app-raw-resource [resource]="capabilityStatement" [shown]="csTabs.activeId === 'raw'"></app-raw-resource>
+        <app-raw-resource [resource]="capabilityStatement" [shown]="csTabs.activeId === 'raw'" (resourceChange)="loadCS($event)"></app-raw-resource>
       </ng-template>
     </li>
 

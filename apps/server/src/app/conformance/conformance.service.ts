@@ -46,6 +46,12 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             throw new BadRequestException(`Invalid conformance resource provided.`);
         }
 
+       // verify that the resource does not already exist
+        let existing = await  this.findOne({'resource.resourceType': newConf.resource.resourceType, 'resource.id' : newConf.resource.id, 'igIds': new ObjectId(implementationGuideId)});
+        if(existing)
+        {
+          throw new BadRequestException(`Conformance resource already exists for this IG`);
+        }
         // ensure meta version ID and lastUpdated are set
         if (!newConf.resource.meta) {
             newConf.resource.meta = {};
@@ -232,9 +238,11 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         }
 
         // set version and timestamp
-        delete existing.resource.meta['security'];
-        existing.resource.meta.versionId = versionId.toString();
-        existing.resource.meta.lastUpdated = lastUpdated;
+        if (existing.resource.meta) {
+          delete existing.resource.meta['security'];
+          existing.resource.meta.versionId = versionId.toString();
+          existing.resource.meta.lastUpdated = lastUpdated;
+        }
         existing.versionId = versionId;
         existing.lastUpdated = lastUpdated;
 
@@ -255,6 +263,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         if (existing.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
             await addToImplementationGuideNew(this, existing, implementationGuideId, isExample);
         }
+
 
         return existing;
 
@@ -315,7 +324,6 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         let igEntry: STU3BundleEntryComponent | R4BundleEntryComponent | R5BundleEntryComponent = new entryType();
         igEntry.resource = implementationGuide.resource;
         bundle.entry.push(igEntry);
-
         (implementationGuide.references || []).forEach((r: IProjectResourceReference) => {
             let entry: STU3BundleEntryComponent | R4BundleEntryComponent | R5BundleEntryComponent = new entryType();
 
@@ -362,6 +370,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         });
 
 
+
         return bundle;
 
     }
@@ -389,7 +398,8 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             }
 
             if (key) {
-                map[key] = r;
+                const newProjectResourceReference: IProjectResourceReference = { value: r.value['id'], valueType: r.valueType };
+                map[key] = newProjectResourceReference;
             }
         });
 

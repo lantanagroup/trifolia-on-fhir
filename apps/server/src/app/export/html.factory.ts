@@ -28,8 +28,11 @@ export async function createHtmlExporter(
       exporter = new STU3HtmlExporter(conformanceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
       break;
     case 'r4':
+    case 'r5':
       exporter = new R4HtmlExporter(conformanceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
       break;
+    default:
+      throw new Error(`Unexpected FHIR version ${fhirVersion}`);
   }
 
   exporter.user = user;

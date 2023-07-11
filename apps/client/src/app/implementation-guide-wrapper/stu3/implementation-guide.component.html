@@ -618,17 +618,17 @@
         <span [attr.data-intro]="Globals.introText['resource.raw-tab']">RAW</span>
       </a>
       <ng-template ngbNavContent>
-        <app-raw-resource [resource]="implementationGuide" [shown]="igTabs.activeId === 'raw'"></app-raw-resource>
+        <app-raw-resource [resource]="implementationGuide" [shown]="igTabs.activeId === 'raw'" (resourceChange)="loadIG($event, true)"></app-raw-resource>
       </ng-template>
     </li>
 
     <!-- Version History -->
-    <li ngbNavItem="history" *ngIf="!isNew">
+    <li ngbNavItem="history" *ngIf="!isNew" (shown)="historyLoaded = true">
       <a ngbNavLink>
         <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
       </a>
       <ng-template ngbNavContent>
-        <app-resource-history [resource]="conformance"  (resourceChange) = "implementationGuide= $event" (change)="igChanging.emit(true);"></app-resource-history>
+        <app-resource-history *ngIf="historyLoaded" [resource]="conformance" (resourceChange)="implementationGuide=$event; conformance.resource=$event;"></app-resource-history>
       </ng-template>
     </li>
   </ul>
@@ -674,7 +674,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance)" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance) || saving" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

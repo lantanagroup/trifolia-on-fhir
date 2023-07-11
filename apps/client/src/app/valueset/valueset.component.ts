@@ -1,22 +1,23 @@
-import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
-import {ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {RecentItemService} from '../shared/recent-item.service';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {ValueSetService} from '../shared/value-set.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {FhirService} from '../shared/fhir.service';
-import {FileService} from '../shared/file.service';
-import {ConfigService} from '../shared/config.service';
-import {FileOpenModalComponent} from '../modals/file-open-modal/file-open-modal.component';
-import {FileModel} from '../models/file-model';
-import {ClientHelper} from '../clientHelper';
-import {AuthService} from '../shared/auth.service';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {BaseComponent} from '../base.component';
+import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
+import { ImplementationGuide, ValueSet } from '@trifolia-fhir/r4';
+import { getErrorString, Globals } from '@trifolia-fhir/tof-lib';
+import { RecentItemService } from '../shared/recent-item.service';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ValueSetService } from '../shared/value-set.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FhirService } from '../shared/fhir.service';
+import { FileService } from '../shared/file.service';
+import { ConfigService } from '../shared/config.service';
+import { FileOpenModalComponent } from '../modals/file-open-modal/file-open-modal.component';
+import { FileModel } from '../models/file-model';
+import { ClientHelper } from '../clientHelper';
+import { AuthService } from '../shared/auth.service';
+import { BaseComponent } from '../base.component';
 import { debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import {IConformance} from '@trifolia-fhir/models';
+import { firstValueFrom, Subject } from 'rxjs';
+import type { IConformance } from '@trifolia-fhir/models';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 
 
 @Component({
@@ -35,6 +36,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
+  public implementationGuide;
 
   private navSubscription: any;
 
@@ -47,24 +49,25 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     private modalService: NgbModal,
     private recentItemService: RecentItemService,
     private fileService: FileService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    private implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
 
     this.valueSet = new ValueSet({ meta: this.authService.getDefaultMeta() });
 
-    this.conformance = { resource: this.valueSet, fhirVersion: <'stu3'|'r4'|'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.conformance = { resource: this.valueSet, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         const isIdUnique = await this.fhirService.checkUniqueId(this.valueSet);
-        if(!isIdUnique){
+        if (!isIdUnique) {
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.valueSet.id  + " is already used in this IG.";
+          this.alreadyInUseIDMessage = "ID " + this.valueSet.id + " is already used in this IG.";
         }
-        else{
+        else {
           this.isIdUnique = true;
-          this.alreadyInUseIDMessage="";
+          this.alreadyInUseIDMessage = "";
         }
       });
   }
@@ -109,7 +112,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
       return;
     }
 
-    const modalRef = this.modalService.open(FileOpenModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalRef = this.modalService.open(FileOpenModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.captureVersion = false;
 
     modalRef.result.then((file: FileModel) => {
@@ -205,20 +208,23 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     }
 
     this.valueSetService.save(this.valueSetId, this.conformance)
-      .subscribe((conf: IConformance) => {
-        if (this.isNew) {
-          // noinspection JSIgnoredPromiseFromCall
-          this.valueSetId = conf.id;
-          this.router.navigate([`${this.configService.baseSessionUrl}/value-set/${this.valueSetId}`]);
-        } else {
-          this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentValueSets, this.valueSetId, this.valueSet.name);
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
+      .subscribe({
+        next: (conf: IConformance) => {
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.valueSetId = conf.id;
+            this.router.navigate([`${this.configService.baseSessionUrl}/value-set/${this.valueSetId}`]);
+          } else {
+            this.loadVS(conf.resource);
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
+          this.message = 'Your changes have been saved!';
+        },
+        error: (err) => {
+          this.message = `An error occurred while saving the value set: ${err.message}`;
         }
-        this.message = 'Your changes have been saved!';
-      }, (err) => {
-        this.message = `An error occurred while saving the value set: ${err.message}`;
       });
   }
 
@@ -227,8 +233,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.valueSet = <ValueSet>this.fileService.file.resource;
-        this.nameChanged();
+        this.loadVS(this.fileService.file.resource);
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -248,12 +253,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
             }
 
             this.conformance = conf;
-            this.valueSet = <ValueSet>conf.resource;
-            this.nameChanged();
-            this.recentItemService.ensureRecentItem(
-              Globals.cookieKeys.recentCodeSystems,
-              this.valueSetId,
-              this.valueSet.name || this.valueSet.title);
+            this.loadVS(conf.resource);
           },
           error: (err) => {
             this.vsNotFound = err.status === 404;
@@ -264,13 +264,34 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     }
   }
 
-  ngOnInit() {
+  public loadVS(newVal: IDomainResource) {
+    this.valueSet = new ValueSet(newVal);
+
+    if (this.conformance) {
+      this.conformance.resource = this.valueSet;
+    }
+
+    this.nameChanged();
+    this.recentItemService.ensureRecentItem(
+      Globals.cookieKeys.recentCodeSystems,
+      this.valueSetId,
+      this.valueSet.name || this.valueSet.title);
+  }
+
+  async ngOnInit() {
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/value-set/')) {
         this.getValueSet();
       }
     });
     this.getValueSet();
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuide = <ImplementationGuide>(await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+
+    const url = this.implementationGuide.url;
+    if (!this.valueSet.url) {
+      this.valueSet.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "ValueSet/" : ""
+    }
   }
 
   ngOnDestroy() {

@@ -50,7 +50,7 @@
                    [resultTemplate]="typeTemplate"
                    [editable]="false"
                    [class.is-invalid]="!selectedType"
-                   (selectItem)="typeChanged($event.item)" />
+                   (selectItem)="typeChanged($event.item)" placeholder="Begin typing for options" />
 
             <ng-template #typeTemplate let-r="result" let-t="term">
               <ngb-highlight [result]="r.display || r.code" [term]="t"></ngb-highlight>
@@ -90,7 +90,7 @@
   <li ngbNavItem>
     <a ngbNavLink>RAW</a>
     <ng-template ngbNavContent>
-      <app-raw-resource [resource]="structureDefinition"></app-raw-resource>
+      <app-raw-resource [resource]="structureDefinition" (resourceChange)="loadSD($event)"></app-raw-resource>
     </ng-template>
   </li>
 </ul>

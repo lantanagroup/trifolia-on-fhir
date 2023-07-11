@@ -1,20 +1,22 @@
-import {Component, DoCheck, OnDestroy, OnInit} from '@angular/core';
-import {OperationDefinition, OperationOutcome, ParameterComponent} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {OperationDefinitionService} from '../shared/operation-definition.service';
-import {RecentItemService} from '../shared/recent-item.service';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ParameterModalComponent} from './parameter-modal/parameter-modal.component';
-import {FhirService} from '../shared/fhir.service';
-import {FileService} from '../shared/file.service';
-import {ConfigService} from '../shared/config.service';
-import {AuthService} from '../shared/auth.service';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
-import {BaseComponent} from '../base.component';
+import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
+import { ImplementationGuide, OperationDefinition, OperationOutcome, ParameterComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { OperationDefinitionService } from '../shared/operation-definition.service';
+import { RecentItemService } from '../shared/recent-item.service';
+import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ParameterModalComponent } from './parameter-modal/parameter-modal.component';
+import { FhirService } from '../shared/fhir.service';
+import { FileService } from '../shared/file.service';
+import { ConfigService } from '../shared/config.service';
+import { AuthService } from '../shared/auth.service';
+import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
+import { BaseComponent } from '../base.component';
 import { debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import {IConformance} from '@trifolia-fhir/models';
+import { firstValueFrom, Subject } from 'rxjs';
+import { IConformance } from '@trifolia-fhir/models';
+import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import { IDomainResource } from '@trifolia-fhir/tof-lib';
 
 
 @Component({
@@ -35,6 +37,8 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
   public alreadyInUseIDMessage = '';
 
   private navSubscription: any;
+  public implementationGuide;
+
 
   constructor(
     public route: ActivatedRoute,
@@ -45,27 +49,28 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
     private opDefService: OperationDefinitionService,
     private recentItemService: RecentItemService,
     private fileService: FileService,
-    private fhirService: FhirService) {
+    private fhirService: FhirService,
+    private implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
 
     this.operationDefinition = new OperationDefinition({ meta: this.authService.getDefaultMeta() });
 
-    this.conformance =  { resource: this.operationDefinition, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.conformance = { resource: this.operationDefinition, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
         const isIdUnique = await this.fhirService.checkUniqueId(this.operationDefinition);
-        if(!isIdUnique){
+        if (!isIdUnique) {
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " +  this.operationDefinition.id  + " is already used in this IG.";
+          this.alreadyInUseIDMessage = "ID " + this.operationDefinition.id + " is already used in this IG.";
         }
-        else{
+        else {
           this.isIdUnique = true;
-          this.alreadyInUseIDMessage="";
+          this.alreadyInUseIDMessage = "";
         }
       });
-    }
+  }
 
   public get isNew(): boolean {
     const id = this.route.snapshot.paramMap.get('id');
@@ -85,7 +90,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
   }
 
   public editParameter(parameter: ParameterComponent) {
-    const modalInstance = this.modal.open(ParameterModalComponent, {size: 'lg', backdrop: 'static'});
+    const modalInstance = this.modal.open(ParameterModalComponent, { size: 'lg', backdrop: 'static' });
     modalInstance.componentInstance.operationDefinition = this.operationDefinition;
     modalInstance.componentInstance.parameter = parameter;
   }
@@ -117,8 +122,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
             this.router.navigate([`${this.configService.baseSessionUrl}/operation-definition/${conf.id}`]);
           } else {
             this.conformance = conf;
-            this.operationDefinition = conf.resource;
-            this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentCodeSystems, conf.id, conf.name);
+            this.loadOD(conf.resource);
             setTimeout(() => {
               this.message = '';
             }, 3000);
@@ -136,8 +140,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.operationDefinition = <OperationDefinition>this.fileService.file.resource;
-        this.nameChanged();
+        this.loadOD(this.fileService.file.resource);
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -155,12 +158,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
             return;
           }
           this.conformance = conf;
-          this.operationDefinition = <OperationDefinition>conf.resource;
-          this.nameChanged();
-          this.recentItemService.ensureRecentItem(
-            Globals.cookieKeys.recentOperationDefinitions,
-            this.operationDefinition.id,
-            this.operationDefinition.name);
+          this.loadOD(conf.resource);
         }, (err) => {
           this.odNotFound = err.status === 404;
           this.message = getErrorString(err);
@@ -173,13 +171,40 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
     this.configService.setTitle(`OperationDefinition - ${this.operationDefinition.name || 'no-name'}`);
   }
 
-  ngOnInit() {
+
+  loadOD(newVal: IDomainResource) {
+
+    this.operationDefinition = new OperationDefinition(newVal);
+
+    if (this.conformance) {
+      this.conformance.resource = this.operationDefinition;
+    }
+
+    this.nameChanged();
+    this.recentItemService.ensureRecentItem(
+      Globals.cookieKeys.recentOperationDefinitions,
+      this.operationDefinition.id,
+      this.operationDefinition.name);
+
+  }
+
+  async ngOnInit() {
+
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/operation-definition/')) {
         this.getOperationDefinition();
       }
     });
     this.getOperationDefinition();
+    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
+    this.implementationGuide = <ImplementationGuide>(await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))).resource;
+
+    const url = this.implementationGuide.url;
+
+    if (!this.operationDefinition.url) {
+      this.operationDefinition.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "OperationDefinition/" : "";
+    }
+
   }
 
   ngOnDestroy() {

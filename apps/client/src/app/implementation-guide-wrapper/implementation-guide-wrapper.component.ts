@@ -5,13 +5,12 @@ import {ConfigService} from '../shared/config.service';
 import {STU3ImplementationGuideComponent} from './stu3/implementation-guide.component';
 import {R4ImplementationGuideComponent} from './r4/implementation-guide.component';
 import {Versions} from 'fhir/fhir';
-import {identifyRelease} from '../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { CanComponentDeactivate } from '../guards/resource.guard';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {IConformance, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
-import {ImplementationGuide} from '@trifolia-fhir/r4';
+import {IConformance} from '@trifolia-fhir/models';
 import {getErrorString} from '@trifolia-fhir/tof-lib';
 import {FhirService} from '../shared/fhir.service';
+import {R5ImplementationGuideComponent} from './r5/implementation-guide.component';
 
 /**
  * This class is responsible for determining which implementation-guide component to render
@@ -34,7 +33,6 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
     private configService: ConfigService,
     private fhirService: FhirService,
     private implementationGuideService: ImplementationGuideService) {
-    this.versionChanged();
   }
 
   canDeactivate(){
@@ -54,11 +52,17 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
       next: (conf: IConformance) => {
         this.configService.fhirVersion = conf.fhirVersion;
         this.fhirService.setFhirVersion(conf.fhirVersion).then( () => {
-            if (conf.fhirVersion === Versions.R4.toLowerCase()) {
+            if (conf.fhirVersion === Versions.R5.toLowerCase()) {
+              componentFactory = this.componentFactoryResolver.resolveComponentFactory(R5ImplementationGuideComponent);
+            } else if (conf.fhirVersion === Versions.R4.toLowerCase()) {
               componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4ImplementationGuideComponent);
-            } else {
+            } else  if (conf.fhirVersion === Versions.STU3.toLowerCase())  {
               componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3ImplementationGuideComponent);
             }
+            else {
+              throw new Error(`Unexpected FHIR version: ${conf.fhirVersion}`);
+            }
+
             this.viewContainerRef.clear();
             this.igComponent = this.viewContainerRef.createComponent(componentFactory);
           }
@@ -73,6 +77,6 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
   }
 
   ngOnInit() {
-      this.versionChanged();
+    this.versionChanged();
   }
 }

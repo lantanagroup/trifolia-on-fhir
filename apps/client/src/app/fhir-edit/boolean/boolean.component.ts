@@ -32,7 +32,6 @@ export class FhirBooleanComponent implements OnInit {
     if (!this.parentObject) {
       return;
     }
-
     return this.parentObject[this.propertyName];
   }
 
@@ -56,7 +55,7 @@ export class FhirBooleanComponent implements OnInit {
 
   ngOnInit() {
     if (this.parentObject && !this.parentObject.hasOwnProperty(this.propertyName) && this.required) {
-      this.parentObject[this.propertyName] = false;
+      this.parentObject[this.propertyName] = this.allowUndefined ? undefined : false;
     }
 
     if (this.cookieKey && this.cookieService.get(this.cookieKey)) {

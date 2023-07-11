@@ -1,16 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {
-  ImplementationGuide as STU3ImplementationGuide
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {
-  ImplementationGuide as R4ImplementationGuide
-} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {getErrorString} from '../../../../../libs/tof-lib/src/lib/helper';
 import {Router} from '@angular/router';
 import {SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
-import {IBundle, IImplementationGuide} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
 import {ConfigService} from './config.service';
 import { IConformance, IExample } from '@trifolia-fhir/models';
@@ -108,7 +100,6 @@ export class ImplementationGuideService extends ConformanceService {
     const url = '/api/implementationGuide/' + encodeURIComponent(id) + "/references";
     return this.http.get<IConformance>(url);
   }
-
 
   public saveImplementationGuide(implementationGuide: IConformance): Observable<IConformance> {
     return this.http.post<IConformance>('/api/implementationGuide', implementationGuide);

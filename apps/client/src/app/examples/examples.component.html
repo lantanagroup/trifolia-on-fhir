@@ -37,10 +37,10 @@
           <tr *ngFor="let example of filteredFhirExamples">
             <td>{{example.resource.resourceType || 'Unknown'}}</td>
             <td>{{example.resource.id || example.name || example.id}}</td>
-            <td>{{example.resource.name || example.name }}</td>
+            <td>{{ example.name || getEntryName(example) }}</td>
             <td>
               <a class="btn btn-primary"
-                routerLink="{{configService.baseSessionUrl}}/other-resources/conformance/{{example.id}}"
+                routerLink="{{configService.baseSessionUrl}}/other-resources/fhir/{{example.id}}"
                 [class.disabled]="!example.id">
                 <i class="fa fa-edit"></i>
               </a>
@@ -79,7 +79,7 @@
             <td>{{example.content.name || example.name }}</td>
             <td>
               <a class="btn btn-primary"
-                routerLink="{{configService.baseSessionUrl}}/other-resources/example/{{example.id}}"
+                routerLink="{{configService.baseSessionUrl}}/other-resources/nonfhir/{{example.id}}"
                 [class.disabled]="!example.id">
                 <i class="fa fa-edit"></i>
               </a>

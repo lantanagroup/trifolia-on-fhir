@@ -1,18 +1,24 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import { saveAs } from 'file-saver';
-import { ExportOptions, ExportService } from '../shared/export.service';
-import { ExportFormats } from '../models/export-formats.enum';
-import { CookieService } from 'ngx-cookie-service';
-import { ConfigService } from '../shared/config.service';
-import { ImplementationGuide } from '@trifolia-fhir/stu3';
-import { Observable } from 'rxjs';
-import { ExportGithubPanelComponent } from '../export-github-panel/export-github-panel.component';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
-import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-import { getErrorString, Globals, SearchImplementationGuideResponseContainer } from '@trifolia-fhir/tof-lib';
-import { HttpClient } from '@angular/common/http';
-import { IConformance } from '@trifolia-fhir/models';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import {saveAs} from 'file-saver';
+import {ExportOptions, ExportService} from '../shared/export.service';
+import {ExportFormats} from '../models/export-formats.enum';
+import {CookieService} from 'ngx-cookie-service';
+import {ConfigService} from '../shared/config.service';
+import {ImplementationGuide} from '@trifolia-fhir/stu3';
+import {Observable} from 'rxjs';
+import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
+import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
+import {NgbNavChangeEvent} from '@ng-bootstrap/ng-bootstrap';
+import {getErrorString, Globals, SearchImplementationGuideResponseContainer} from '@trifolia-fhir/tof-lib';
+import {HttpClient} from '@angular/common/http';
+import {IConformance} from '@trifolia-fhir/models';
+import {FhirService} from '../shared/fhir.service';
+
+interface DocumentOptions {
+  compositionId?: string;
+  format: string;
+}
 
 @Component({
   templateUrl: './export.component.html',
@@ -30,9 +36,17 @@ export class ExportComponent implements OnInit {
 
   public options = new ExportOptions();
   public selectedImplementationGuide: ImplementationGuide;
+  public documentOptions: DocumentOptions = {
+    format: 'application/json'
+  };
+  public compositions: {
+    id: string,
+    name: string
+  }[] = [];
 
   constructor(
     private implementationGuideService: ImplementationGuideService,
+    private fhirService: FhirService,
     private exportService: ExportService,
     private cookieService: CookieService,
     public configService: ConfigService,
@@ -44,6 +58,15 @@ export class ExportComponent implements OnInit {
     this.options.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
     this.options.template = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
     this.options.templateVersion = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion) || this.options.templateVersion;
+  }
+
+  public getSelectedComposition() {
+    const found = this.compositions.find(c => c.id === this.documentOptions.compositionId);
+    if (!found) {
+      return 'Select';
+    } else if (found.name) {
+      return found.name;
+    }
   }
 
   public async templateTypeChanged() {
@@ -104,6 +127,18 @@ export class ExportComponent implements OnInit {
         break;
       case 'github':
         this.options.exportFormat = ExportFormats.GitHub;
+        break;
+      case 'document':
+        this.options.exportFormat = ExportFormats.Document;
+        this.fhirService.search('Composition', null, true, null, null, this.configService.project.implementationGuideId)
+          .subscribe((res) => {
+            this.compositions = res.results.map(c => {
+              return {
+                id: c.resource.id,
+                name: (<any> c.resource).title
+              };
+            });
+          });
         break;
       default:
         throw new Error('Unexpected tab selected. Cannot set export format.');
@@ -195,6 +230,10 @@ export class ExportComponent implements OnInit {
       }
     }
 
+    if (this.options.exportFormat === ExportFormats.Document) {
+      return !this.documentOptions.compositionId || this.documentOptions.compositionId === 'null';
+    }
+
     /* TODO: Uncomment after Export GitHub issue is fixed
     if (this.options.exportFormat === ExportFormats.GitHub && this.githubPanel) {
       return !this.githubPanel.canExport;
@@ -210,9 +249,28 @@ export class ExportComponent implements OnInit {
       return;
     }
 
+    this.message = null;
+
     try {
       await this.githubPanel.export(this.options.responseFormat);
       this.message = 'Done exporting to GitHub!';
+    } catch (ex) {
+      this.message = getErrorString(ex);
+    }
+  }
+
+  private async exportDocument() {
+    console.log("exportDocument:", !this.documentOptions.compositionId, this.documentOptions.compositionId);
+    if (!this.documentOptions.compositionId) {
+      this.message = 'You must specify a composition to export as a document';
+      return;
+    }
+
+    this.message = null;
+
+    try {
+      const response = await this.exportService.exportDocument(this.configService.project.implementationGuideId, this.documentOptions.compositionId, this.documentOptions.format).toPromise();
+      saveAs(response.body, 'bundle-' + this.documentOptions.compositionId + (this.documentOptions.format === 'application/xml' ? '.xml' : '.json'));
     } catch (ex) {
       this.message = getErrorString(ex);
     }
@@ -268,6 +326,9 @@ export class ExportComponent implements OnInit {
           break;
         case ExportFormats.GitHub:
           this.exportGithub();
+          break;
+        case ExportFormats.Document:
+          this.exportDocument();
           break;
       }
     } catch (ex) {

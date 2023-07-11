@@ -94,8 +94,10 @@
     <thead>
       <tr>
         <th *ngIf="selectMultiple" class="actions-column-1"></th>
+        <th>Resource Id</th>
+        <th>Title/Name/Id</th>
         <th>Id</th>
-        <th>Title/Name</th>
+        <th>Implementation Guide</th>
         <th *ngIf="!selectMultiple" class="actions-column-1">&nbsp;</th>
       </tr>
     </thead>
@@ -106,6 +108,8 @@
         </td>
         <td>{{c.resource.id}}</td>
         <td>{{c.resource | fhirDisplay}}</td>
+        <td>{{c.id}}</td>
+        <td>{{c.igIds}}</td>
         <td *ngIf="!selectMultiple">
           <div class="pull-right">
             <button type="button" class="btn btn-primary" (click)="select(c)">Select</button>

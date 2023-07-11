@@ -28,6 +28,7 @@ import { STU3TypeModalComponent } from './structure-definition/element-definitio
 import { R4TypeModalComponent } from './structure-definition/element-definition-panel/r4-type-modal/type-modal.component';
 import { PageComponentModalComponent as STU3PageComponentModalComponent } from './implementation-guide-wrapper/stu3/page-component-modal.component';
 import { PageComponentModalComponent as R4PageComponentModalComponent } from './implementation-guide-wrapper/r4/page-component-modal.component';
+import { PageComponentModalComponent as R5PageComponentModalComponent } from './implementation-guide-wrapper/r5/page-component-modal.component';
 import { CapabilityStatementsComponent } from './capability-statements/capability-statements.component';
 import { OperationDefinitionsComponent } from './operation-definitions/operation-definitions.component';
 import { OperationDefinitionComponent } from './operation-definition/operation-definition.component';
@@ -36,6 +37,7 @@ import { ValuesetExpandComponent } from './valueset-expand/valueset-expand.compo
 import { CapabilityStatementWrapperComponent } from './capability-statement-wrapper/capability-statement-wrapper.component';
 import { STU3CapabilityStatementComponent } from './capability-statement-wrapper/stu3/capability-statement.component';
 import { R4CapabilityStatementComponent } from './capability-statement-wrapper/r4/capability-statement.component';
+import { R5CapabilityStatementComponent } from './capability-statement-wrapper/r5/capability-statement.component';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { ConfigService } from './shared/config.service';
 import { ConceptCardComponent } from './valueset/concept-card/concept-card.component';
@@ -92,6 +94,8 @@ import { SearchParametersComponent } from './search-parameters/search-parameters
 import { PublishingRequestComponent } from './implementation-guide-wrapper/publishing-request/publishing-request.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { ProjectComponent } from './project/project.component';
+import {R5ImplementationGuideComponent} from './implementation-guide-wrapper/r5/implementation-guide.component';
+import {R5ResourceModalComponent} from './implementation-guide-wrapper/r5/resource-modal.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -201,6 +205,24 @@ const appRoutes: Routes = [
   { path: 'manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
 ];
 
+export function createGtag(googleAnalyticsCode: string) {
+  if (!googleAnalyticsCode) {
+    return;
+  }
+
+  const lElement = document.createElement(`script`);
+  lElement.async = true
+  lElement.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsCode}`;
+
+  const gaElementContent= `window.dataLayer = window.dataLayer || [];\n` + `function gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', '${googleAnalyticsCode}');\n`;
+  const gaElement = document.createElement('script');
+  gaElement.setAttribute('type', 'text/javascript');
+  gaElement.innerHTML = gaElementContent;
+
+  document.getElementsByTagName('head')[0].appendChild(lElement);
+  document.getElementsByTagName('head')[0].appendChild(gaElement);
+}
+
 /**
  * Initialization logic.
  * 1. Gets the client application's config from the server
@@ -219,6 +241,8 @@ export function init(
       configService
         .getConfig(true)
         .then(() => {
+          createGtag(configService.config.googleAnalyticsCode);
+
           // Now that the config has been loaded, init the auth module
           authService.init();
           authService.handleAuthentication();
@@ -255,6 +279,7 @@ const authModuleConfig: OAuthModuleConfig = {
     HomeComponent,
     STU3ImplementationGuideComponent,
     R4ImplementationGuideComponent,
+    R5ImplementationGuideComponent,
     ExportComponent,
     ImportComponent,
     StructureDefinitionComponent,
@@ -272,10 +297,12 @@ const authModuleConfig: OAuthModuleConfig = {
     R4TypeModalComponent,
     STU3PageComponentModalComponent,
     R4PageComponentModalComponent,
+    R5PageComponentModalComponent,
     CapabilityStatementsComponent,
     CapabilityStatementWrapperComponent,
     STU3CapabilityStatementComponent,
     R4CapabilityStatementComponent,
+    R5CapabilityStatementComponent,
     OperationDefinitionsComponent,
     OperationDefinitionComponent,
     ParameterModalComponent,
@@ -297,6 +324,7 @@ const authModuleConfig: OAuthModuleConfig = {
     PublishComponent,
     IncludePanelComponent,
     BindingPanelComponent,
+    R5ResourceModalComponent,
     R4ResourceModalComponent,
     STU3ResourceModalComponent,
     GroupModalComponent,

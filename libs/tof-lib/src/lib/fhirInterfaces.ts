@@ -145,7 +145,9 @@ export interface IBundleEntry {
 }
 
 export interface IBundle extends IDomainResource {
+  identifier?: IIdentifier;
   type?: string;
+  timestamp?: string;
   total?: number;
   link?: {
     relation: string;
