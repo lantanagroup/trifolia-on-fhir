@@ -90,10 +90,6 @@ export class MSWordExporter {
 
   async export(bundle: IBundle, version: 'stu3'|'r4'|'r5') {
     this.body = [];
-    this.doc = new Document({
-      sections: [{children: this.body}],
-      externalStyles: readFileSync('./assets/msword-styles.xml').toString()
-    });
 
     this.body.push(new TableOfContents('Table of Contents', {
       hyperlink: true,
@@ -230,6 +226,12 @@ export class MSWordExporter {
       }
 
       this.body.push(MSWordExporter.createPara(''));
+    });
+
+    
+    this.doc = new Document({
+      sections: [{children: this.body}],
+      externalStyles: readFileSync('./assets/msword-styles.xml').toString()
     });
 
     return await Packer.toBuffer(this.doc);
