@@ -902,11 +902,10 @@ export function implementationGuideIsCDA(implementationGuide: IConformance): boo
 
   return (deps || []).findIndex((d: string) => {
     return [
-      'hl7.fhir.cda'
+      'hl7.fhir.cda', 'hl7.cda.uv.core'
     ].includes((d || '').split('#')[0]);
   }) > -1;
 }
-
 
 /**
  * Asserts that the user has the permissions necessary on the resource to edit the resource.
