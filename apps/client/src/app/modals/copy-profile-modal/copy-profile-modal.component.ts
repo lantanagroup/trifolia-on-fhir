@@ -37,7 +37,7 @@ export class CopyProfileModalComponent implements OnInit {
 
   get idIsValid() {
     if (!this.id) return false;
-    const theRegex = /^[A-Za-z0-9\-\.]{1,64}$/gm;
+    const theRegex = new RegExp(Globals.regexPatterns.fhirIdValidRegex, 'gm');
     return theRegex.test(this.id);
   }
 

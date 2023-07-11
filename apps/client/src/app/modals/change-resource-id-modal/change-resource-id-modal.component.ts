@@ -10,6 +10,7 @@ import {StructureDefinition as R5StructureDefinition} from "../../../../../../li
 import {StructureDefinition as R4StructureDefinition} from "../../../../../../libs/tof-lib/src/lib/r4/fhir";
 import {StructureDefinition as STU3StructureDefinition} from "../../../../../../libs/tof-lib/src/lib/stu3/fhir";
 import {debounceTime} from "rxjs/operators";
+import {Globals} from '@trifolia-fhir/tof-lib';
 
 @Component({
   templateUrl: './change-resource-id-modal.component.html',
@@ -81,7 +82,7 @@ export class ChangeResourceIdModalComponent implements OnInit {
 
   get idIsValid() {
     if (!this.newId) return false;
-    const theRegex = /^[A-Za-z0-9\-]{1,64}$/gm;
+    const theRegex = new RegExp(Globals.regexPatterns.fhirIdValidRegex, 'gm');
     return theRegex.test(this.newId);
   }
 
