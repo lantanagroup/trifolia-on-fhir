@@ -8,6 +8,7 @@ import { AuditEvent as STU3AuditEvent, Group as STU3Group, ImplementationGuide a
 import * as fs from 'fs';
 import { Connection, createConnection } from 'mysql';
 import { ungzip } from 'node-gzip';
+import * as Yargs from 'yargs';
 
 interface MigrateDbOptions {
   mysqlHost: string;
@@ -57,6 +58,34 @@ export class MigrateDb extends BaseTools {
   private userMap: { [key: string]: IUser; } = {};
   private groupMap: { [key: string]: IGroup; } = {};
   private resourceMap: { [key: string]: IConformance; } = {};
+
+  public static commandFormat = 'migrate-db [mysqlHost] [mysqlDb] [mysqlUser] [mysqlPass] [fhirVersion] [dbServer] [dbName] [migratedFromLabel]';
+  public static commandDescription = 'Migrate the specific FHIR server to mongo database';
+
+  public static commandBuilder(yargs: Yargs.Argv) {
+    return yargs
+      .positional('mysqlHost', {})
+      .positional('mysqlDb', {})
+      .positional('mysqlUser', {})
+      .positional('mysqlPass', {})
+      .positional('fhirVersion', {})
+      .positional('dbServer', {})
+      .positional('dbName', {})
+      .positional('migratedFromLabel', {})
+      .option('out', {
+        description: 'The file to store log output to'
+      });
+  }
+
+  public static async commandHandler(args: any) {
+    try {
+      const migrator = new MigrateDb(args);
+      await migrator.migrate();
+    } catch (ex) {
+      console.error(ex.message);
+      throw ex;
+    }
+  }
 
   constructor(options: MigrateDbOptions) {
     super();
@@ -853,7 +882,7 @@ export class MigrateDb extends BaseTools {
     } else {
       filter = {'migratedFrom': this.options.migratedFromLabel};
     }
-    
+
     const igConfs = this.db.collection('conformance').find<IConformance>(filter);
     for await (const ig of igConfs) {
       const key = ig.resource.resourceType + '/' + ig.resource.id;
