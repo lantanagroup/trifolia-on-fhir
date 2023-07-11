@@ -85,28 +85,28 @@ const initSocket = (app) => {
   io = socketIo(app.getHttpServer());
 
   io.on('connection', (socket) => {
-    logger.log(`Client (id: ${socket.client.id}) connected to socket`);
+    logger.trace(`Client (id: ${socket.client.id}) connected to socket`);
 
     connections.push({
       id: socket.client.id
     });
 
     socket.on('disconnect', () => {
-      logger.log(`Client (id: ${socket.client.id}) disconnected from socket`);
+      logger.trace(`Client (id: ${socket.client.id}) disconnected from socket`);
 
       const foundConnection = connections.find((connection) => connection.id === socket.client.id);
 
       if (foundConnection) {
         const index = connections.indexOf(foundConnection);
         connections.splice(index, 1);
-        logger.log(`Removed connection with id ${socket.client.id} from connections list`);
+        logger.trace(`Removed connection with id ${socket.client.id} from connections list`);
       } else {
         logger.error(`Socket disconnected, but no connection found for id ${socket.client.id}.`);
       }
     });
 
     socket.on('authenticated', (data) => {
-      logger.log(`Client socket (id: ${socket.client.id}) sent authentication information`);
+      logger.trace(`Client socket (id: ${socket.client.id}) sent authentication information`);
 
       const foundConnection = connections.find((connection) => connection.id === socket.client.id);
 
@@ -119,7 +119,7 @@ const initSocket = (app) => {
     });
 
     socket.on('exporting', (packageId) => {
-      logger.log(`Updating socket id to ${socket.client.id} for html exporters with package id ${packageId}`);
+      logger.trace(`Updating socket id to ${socket.client.id} for html exporters with package id ${packageId}`);
 
       /* TODO: Re-enable
       const exporters = _.filter(ExportController.htmlExports, (exporter) => exporter._packageId === packageId);
@@ -166,13 +166,12 @@ async function bootstrap() {
   let app: NestExpressApplication;
 
   try {
-    console.log('creating application');
+    logger.log('Creating app');
     app = await NestFactory.create<NestExpressApplication>(AppModule, {
       httpsOptions,
       //logger: false
     });
   } catch (ex) {
-    console.log(ex);
     logger.error(ex);
   }
 
