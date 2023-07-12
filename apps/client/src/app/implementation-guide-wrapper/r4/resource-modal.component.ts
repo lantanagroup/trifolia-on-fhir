@@ -4,6 +4,7 @@ import {ImplementationGuide, ImplementationGuideResourceComponent} from '../../.
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {ConformanceService} from '../../shared/conformance.service';
+import {Globals} from '@trifolia-fhir/tof-lib';
 
 @Component({
   templateUrl: './resource-modal.component.html',
@@ -18,6 +19,25 @@ export class R4ResourceModalComponent {
 
   }
 
+  get resourceFormat() {
+    const ext = (this.resource.extension || []).find(e => e.url === Globals.igResourceFormatExtensionUrl);
+    return ext ? ext.valueCode || '' : '';
+  }
+
+  set resourceFormat(value: string) {
+    this.resource.extension = this.resource.extension || [];
+    let ext = this.resource.extension.find(e => e.url === Globals.igResourceFormatExtensionUrl);
+
+    if (!ext) {
+      ext = {
+        url: Globals.igResourceFormatExtensionUrl
+      };
+      this.resource.extension.push(ext);
+    }
+
+    ext.valueCode = value;
+  }
+
   get enableGroups() {
     return this.resource.groupingId ||
       (this.implementationGuide.definition.grouping && this.implementationGuide.definition.grouping.length > 0);
@@ -25,11 +45,6 @@ export class R4ResourceModalComponent {
 
   get enableExampleCanonical() {
     return this.resource.exampleCanonical || !this.resource.hasOwnProperty('exampleBoolean');
-  }
-
-
-  get isDescriptionRequired() {
-    return !this.resource.description && ((this.resource.hasOwnProperty('exampleBoolean') && this.resource.exampleBoolean === true) || (this.resource.hasOwnProperty('exampleCanonical') && this.resource.exampleCanonical !== ''));
   }
 
   exampleBooleanChanged() {
