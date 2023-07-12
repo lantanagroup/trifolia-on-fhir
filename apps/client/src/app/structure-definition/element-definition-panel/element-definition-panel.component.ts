@@ -1,18 +1,15 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {NgbModal, NgbNav} from '@ng-bootstrap/ng-bootstrap';
 import {STU3TypeModalComponent} from './stu3-type-modal/type-modal.component';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {ElementTreeModel} from '../../../../../../libs/tof-lib/src/lib/element-tree-model';
-import {Coding, ExampleComponent, StructureDefinition, TypeRefComponent} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ElementDefinitionExampleComponent, ElementDefinitionTypeRefComponent} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
+import {ConstraintManager, ElementTreeModel, generateId, Globals} from '@trifolia-fhir/tof-lib';
+import {Coding, ExampleComponent, StructureDefinition, TypeRefComponent} from '@trifolia-fhir/stu3';
+import {ElementDefinitionExampleComponent, ElementDefinitionTypeRefComponent} from '@trifolia-fhir/r4';
 import {FhirService} from '../../shared/fhir.service';
 import {MappingModalComponent} from './mapping-modal/mapping-modal.component';
 import {ConfigService} from '../../shared/config.service';
 import {R4TypeModalComponent} from './r4-type-modal/type-modal.component';
-import {IElementDefinition, IElementDefinitionConstraint, IElementDefinitionType} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import type {IElementDefinition, IElementDefinitionConstraint, IElementDefinitionType} from '@trifolia-fhir/tof-lib';
 import {ElementDefinitionConstraintComponent} from '../../modals/element-definition-constraint/element-definition-constraint.component';
-import {generateId} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
-import {ConstraintManager} from '../../../../../../libs/tof-lib/src/lib/constraint-manager';
 
 @Component({
   selector: 'app-element-definition-panel',
@@ -20,7 +17,6 @@ import {ConstraintManager} from '../../../../../../libs/tof-lib/src/lib/constrai
   styleUrls: ['./element-definition-panel.component.css']
 })
 export class ElementDefinitionPanelComponent implements OnInit {
-  @Input() elementTreeModel: ElementTreeModel;
   @Input() elementTreeModels: ElementTreeModel[];
   @Input() structureDefinition: StructureDefinition;
   @Input() disabled = false;
@@ -33,14 +29,15 @@ export class ElementDefinitionPanelComponent implements OnInit {
   public Globals = Globals;
   public editingConstraint: IElementDefinitionConstraint;
 
-  @ViewChild('edTabSet', { static: true }) edTabSet: NgbNav;
-  @ViewChild('idTextField', { static: true }) idTextField: ElementRef;
+  @ViewChild('edTabSet', { static: false }) edTabSet: NgbNav;
+  @ViewChild('idTextField', { static: false }) idTextField: ElementRef;
 
   constructor(
     private modalService: NgbModal,
     private fhirService: FhirService,
     private renderer: Renderer2,
-    public configService: ConfigService) {
+    public configService: ConfigService,
+    private cdr : ChangeDetectorRef) {
 
   }
 
@@ -92,6 +89,29 @@ export class ElementDefinitionPanelComponent implements OnInit {
       this.propertyExistWithPrefix(this.element, 'pattern')) return true;
   }
 
+
+  private _elementTreeModel: ElementTreeModel;
+  get elementTreeModel(): ElementTreeModel {
+    return this._elementTreeModel;
+  }
+
+  @Input()
+  set elementTreeModel(value: ElementTreeModel) {        
+    this._elementTreeModel = value;
+    this.cdr.detectChanges();
+    // slicing is a conditional tab so we reset the active tab for elements with no slicing
+    if (this.edTabSet && this.edTabSet.activeId === 'slicing' && value.constrainedElement && !value.constrainedElement.slicing) {
+      this.edTabSet.select('general');
+    }
+  }
+
+  get element(): IElementDefinition {
+    if (this.elementTreeModel) {
+      return this.elementTreeModel.constrainedElement;
+    }
+  }
+
+
   set min(value: string) {
     if (this.element) {
       if (value === '0') {
@@ -101,12 +121,6 @@ export class ElementDefinitionPanelComponent implements OnInit {
       } else {
         this.element.min = parseInt(value);
       }
-    }
-  }
-
-  get element(): IElementDefinition {
-    if (this.elementTreeModel) {
-      return this.elementTreeModel.constrainedElement;
     }
   }
 

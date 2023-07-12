@@ -1,7 +1,7 @@
 <fieldset [disabled]="disabled">
   <ng-container *ngIf="element">
     <ul ngbNav #edTabSet="ngbNav" class="nav-tabs nav-fill">
-      <li ngbNavItem = "general">
+      <li ngbNavItem="general">
         <a ngbNavLink>
           <span [attr.data-intro]="Globals.introText['sd.element-panel.general-tab']">General</span>
         </a>
@@ -313,7 +313,7 @@
           </div>
         </ng-template>
       </li>
-      <li ngbNavItem *ngIf="element.slicing" id="slicing">
+      <li ngbNavItem="slicing" *ngIf="element.slicing">
         <a ngbNavLink>
           <span [attr.data-intro]="Globals.introText['sd.element-panel.slicing-tab']">Slicing</span>
         </a>
@@ -386,7 +386,7 @@
                             tooltipPath="ElementDefinition.slicing.ordered" (change)="change.emit()"></app-fhir-boolean>
         </ng-template>
       </li>
-      <li ngbNavItem id="narrative">
+      <li ngbNavItem="narrative">
          <a ngbNavLink>
           <span [attr.data-intro]="Globals.introText['sd.element-panel.narrative-tab']">Narrative</span>
          </a>
@@ -432,7 +432,7 @@
                             [displayOnly]="true" tooltipPath="ElementDefinition.meaningWhenMissing" (valueChangeEmitter)="change.emit()"></app-fhir-markdown>
         </ng-template>
       </li>
-      <li ngbNavItem id="binding">
+      <li ngbNavItem="binding">
         <a ngbNavLink>
           <span [attr.data-intro]="Globals.introText['sd.element-panel.binding-tab']">Binding</span>
         </a>
@@ -486,7 +486,7 @@
           </div>
         </ng-template>
       </li>
-      <li ngbNavItem id="json">
+      <li ngbNavItem="json">
         <a ngbNavLink>
           <span [attr.data-intro]="Globals.introText['sd.element-panel.json-tab']">JSON</span>
         </a>
