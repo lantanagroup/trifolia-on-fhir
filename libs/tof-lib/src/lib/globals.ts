@@ -14,6 +14,8 @@ export class Globals {
   static readonly profileTypes = ['ImplementationGuide', 'StructureDefinition', 'CapabilityStatement', 'OperationDefinition', 'SearchParameter', 'Media'];
   static readonly terminologyTypes = ['ValueSet', 'CodeSystem', 'ConceptMap'];
 
+  static readonly igResourceFormatExtensionUrl = 'http://hl7.org/fhir/StructureDefinition/implementationguide-resource-format';
+
   static readonly extensionUrls = {
     'resource-meta-source': 'http://hapifhir.io/fhir/StructureDefinition/resource-meta-source',
     'github-path': 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/github-path',

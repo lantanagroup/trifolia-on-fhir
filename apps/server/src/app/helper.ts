@@ -677,8 +677,8 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
         const display = (<any>resourceToAdd).name || (<any>resourceToAdd).id;
         r4.definition.resource.push({
           extension: [{
-            url: 'http://hl7.org/fhir/StructureDefinition/implementationguide-resource-format',
-            valueString: 'application/xml'
+            url: Globals.igResourceFormatExtensionUrl,
+            valueCode: 'application/xml'
           }],
           reference: {
             reference: resourceReferenceString,
