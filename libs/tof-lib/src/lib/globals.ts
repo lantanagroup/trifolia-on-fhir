@@ -135,6 +135,7 @@ export class Globals {
   };
 
   static readonly tooltips = {
+    'ImplementationGuide.resource.resourceFormatExt': 'The format of the resource, typically only used by examples of logical models, such as in CDA',
     'ElementDefinition.representation': 'This describes how the element or attribute is represented in XML. For example, a CDA model defined as a FHIR StructureDefinition might use typeAttr as a representation to indicate that xsi:type should be used to determine the type of the element.',
     'ElementDefinition.maxLength': 'Max length of string. Can only be set when the element type is Primitive (but not Boolean). Unlike cardinality, the max length can be loosened or expanded regardless of the base definition.',
     'StructureDefinition.context.type': 'The type of context provided within the StructureDefinition. Can be either a FHIR path, an Element, or an Extension.',

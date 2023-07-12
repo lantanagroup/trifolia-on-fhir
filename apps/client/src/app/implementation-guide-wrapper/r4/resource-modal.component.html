@@ -15,6 +15,8 @@
 
   <app-fhir-boolean *ngIf="!resource.exampleCanonical" [parentObject]="resource" propertyName="exampleBoolean" trueLabel="Yes" falseLabel="No" title="Example?" tooltipKey="ig.resource.exampleBoolean" (change)="exampleBooleanChanged()"></app-fhir-boolean>
 
+  <app-fhir-string [parentObject]="this" propertyName="resourceFormat" title="Resource Format" tooltipKey="ImplementationGuide.resource.resourceFormatExt" />
+
   <div class="mb-3">
     <label>
       Example of Profile (URL) <app-tooltip-icon tooltipKey="ig.resource.exampleCanonical"></app-tooltip-icon>
