@@ -5,78 +5,9 @@ declare type AddressUse1 = 'home' | 'work' | 'temp' | 'old' | 'billing';
 declare type AddressType1 = 'postal' | 'physical' | 'both';
 declare type QuantityComparator1 = '<' | '<=' | '>=' | '>';
 declare type ReferenceType1 = 'Resource';
-declare type IdentifierUse1 = 'usual' | 'official' | 'temp' | 'secondary' | 'old';
 declare type ContactPointSystem1 = 'phone' | 'fax' | 'email' | 'pager' | 'url' | 'sms' | 'other';
 declare type ContactPointUse1 = 'home' | 'work' | 'temp' | 'old' | 'mobile';
 declare type ContributorType1 = 'author' | 'editor' | 'reviewer' | 'endorser';
-declare type DataRequirementType1 =
-  'Address'
-  | 'Age'
-  | 'Annotation'
-  | 'Attachment'
-  | 'BackboneElement'
-  | 'CodeableConcept'
-  | 'CodeableReference'
-  | 'Coding'
-  | 'ContactDetail'
-  | 'ContactPoint'
-  | 'Contributor'
-  | 'Count'
-  | 'DataRequirement'
-  | 'Distance'
-  | 'Dosage'
-  | 'Duration'
-  | 'Element'
-  | 'ElementDefinition'
-  | 'Expression'
-  | 'Extension'
-  | 'HumanName'
-  | 'Identifier'
-  | 'MarketingStatus'
-  | 'Meta'
-  | 'Money'
-  | 'MoneyQuantity'
-  | 'Narrative'
-  | 'ParameterDefinition'
-  | 'Period'
-  | 'Population'
-  | 'ProdCharacteristic'
-  | 'ProductShelfLife'
-  | 'Quantity'
-  | 'Range'
-  | 'Ratio'
-  | 'RatioRange'
-  | 'Reference'
-  | 'RelatedArtifact'
-  | 'SampledData'
-  | 'Signature'
-  | 'SimpleQuantity'
-  | 'Timing'
-  | 'TriggerDefinition'
-  | 'UsageContext'
-  | 'base64Binary'
-  | 'boolean'
-  | 'canonical'
-  | 'code'
-  | 'date'
-  | 'dateTime'
-  | 'decimal'
-  | 'id'
-  | 'instant'
-  | 'integer'
-  | 'markdown'
-  | 'oid'
-  | 'positiveInt'
-  | 'string'
-  | 'time'
-  | 'unsignedInt'
-  | 'uri'
-  | 'url'
-  | 'uuid'
-  | 'xhtml'
-  | 'Resource'
-  | 'Type'
-  | 'Any';
 declare type DataRequirementDirection1 = 'ascending' | 'descending';
 declare type TimingDayOfWeek1 = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 declare type TimingWhen1 = 'MORN' | 'MORN.early' | 'MORN.late' | 'NOON' | 'AFT' | 'AFT.early' | 'AFT.late' | 'EVE' | 'EVE.early' | 'EVE.late' | 'NIGHT' | 'PHS';
@@ -1944,7 +1875,7 @@ export class Identifier implements IFhir.IIdentifier {
 
   }
 
-  use?: IdentifierUse1;
+  use?: string;
   type?: CodeableConcept;
   system?: string;
   value?: string;
@@ -2944,7 +2875,7 @@ export class ElementDefinitionExample extends Element {
   valueDateTime?: string;
   valueDecimal?: number;
   valueId?: string;
-  valueInstant?: number;
+  valueInstant?: string;
   valueInteger?: number;
   valueMarkdown?: string;
   valueOid?: string;
@@ -4759,7 +4690,7 @@ export class Extension implements IFhir.IExtension {
   valueDateTime?: string;
   valueDecimal?: number;
   valueId?: string;
-  valueInstant?: number;
+  valueInstant?: string;
   valueInteger?: number;
   valueMarkdown?: string;
   valueOid?: string;
@@ -31633,7 +31564,7 @@ export class ParametersParameter extends Element {
   valueDateTime?: string;
   valueDecimal?: number;
   valueId?: string;
-  valueInstant?: number;
+  valueInstant?: string;
   valueInteger?: number;
   valueMarkdown?: string;
   valueOid?: string;
@@ -39595,7 +39526,7 @@ export class TaskOutput extends Element {
   valueDateTime?: string;
   valueDecimal?: number;
   valueId?: string;
-  valueInstant?: number;
+  valueInstant?: string;
   valueInteger?: number;
   valueMarkdown?: string;
   valueOid?: string;
@@ -39860,7 +39791,7 @@ export class TaskInput extends Element {
   valueDateTime?: string;
   valueDecimal?: number;
   valueId?: string;
-  valueInstant?: number;
+  valueInstant?: string;
   valueInteger?: number;
   valueMarkdown?: string;
   valueOid?: string;

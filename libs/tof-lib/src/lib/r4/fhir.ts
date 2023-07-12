@@ -40,12 +40,56 @@ export class Extension implements IExtension {
   public id?: string;
   public extension?: Extension[];
   public url: string;
+  public valueBase64Binary?: string;
   public valueBoolean?: boolean;
-  public valueString?: string;
+  public valueCanonical?: string;
   public valueCode?: string;
-  public valueUri?: string;
-  public valueReference?: ResourceReference;
+  public valueDate?: string;
+  public valueDateTime?: string;
+  public valueDecimal?: number;
+  public valueId?: string;
+  public valueInstant?: string;
+  public valueInteger?: number;
   public valueMarkdown?: string;
+  public valueOid?: string;
+  public valuePositiveInt?: number;
+  public valueString?: string;
+  public valueTime?: string;
+  public valueUnsignedInt?: number;
+  public valueUri?: string;
+  public valueUrl?: string;
+  public valueUuid?: string;
+  public valueAddress?: Address;
+  public valueAge?: Age;
+  public valueAnnotation?: Annotation;
+  public valueAttachment?: Attachment;
+  public valueCodeableConcept?: CodeableConcept;
+  public valueCoding?: Coding;
+  public valueContactPoint?: ContactPoint;
+  public valueCount?: Count;
+  public valueDistance?: Distance;
+  public valueDuration?: Duration;
+  public valueHumanName?: HumanName;
+  public valueIdentifier?: Identifier;
+  public valueMoney?: Money;
+  public valuePeriod?: Period;
+  public valueQuantity?: Quantity;
+  public valueRange?: Range;
+  public valueRatio?: Ratio;
+  public valueReference?: Reference;
+  public valueSampledData?: SampledData;
+  public valueSignature?: Signature;
+  public valueTiming?: Timing;
+  public valueContactDetail?: ContactDetail;
+  public valueContributor?: Contributor;
+  public valueDataRequirement?: DataRequirement;
+  public valueExpression?: Expression;
+  public valueParameterDefinition?: ParameterDefinition;
+  public valueRelatedArtifact?: RelatedArtifact;
+  public valueTriggerDefinition?: TriggerDefinition;
+  public valueUsageContext?: UsageContext;
+  public valueDosage?: Dosage;
+  public valueMeta?: Meta;
 
   constructor(obj?: any) {
     if (obj) {
@@ -61,26 +105,57 @@ export class Extension implements IExtension {
       if (obj.hasOwnProperty('url')) {
         this.url = obj.url;
       }
-      if (obj.hasOwnProperty('valueBoolean')) {
-        this.valueBoolean = obj.valueBoolean;
-      }
-      if (obj.hasOwnProperty('valueString')) {
-        this.valueString = obj.valueString;
-      }
-      if (obj.hasOwnProperty('valueCode')) {
-        this.valueCode = obj.valueCode;
-      }
-      if (obj.hasOwnProperty('valueUri')) {
-        this.valueUri = obj.valueUri;
-      }
-      if (obj.hasOwnProperty('valueReference')) {
-        this.valueReference = new ResourceReference(obj.valueReference);
-      }
-      if (obj.hasOwnProperty('valueMarkdown')) {
-        this.valueMarkdown = obj.valueMarkdown;
-      }
 
-      // Add other properties as needed
+      if (obj.valueBase64Binary) { this.valueBase64Binary = obj.valueBase64Binary; }
+      if (obj.valueBoolean) { this.valueBoolean = obj.valueBoolean; }
+      if (obj.valueCanonical) { this.valueCanonical = obj.valueCanonical; }
+      if (obj.valueCode) { this.valueCode = obj.valueCode; }
+      if (obj.valueDate) { this.valueDate = obj.valueDate; }
+      if (obj.valueDateTime) { this.valueDateTime = obj.valueDateTime; }
+      if (obj.valueDecimal) { this.valueDecimal = obj.valueDecimal; }
+      if (obj.valueId) { this.valueId = obj.valueId; }
+      if (obj.valueInstant) { this.valueInstant = obj.valueInstant; }
+      if (obj.valueInteger) { this.valueInteger = obj.valueInteger; }
+      if (obj.valueMarkdown) { this.valueMarkdown = obj.valueMarkdown; }
+      if (obj.valueOid) { this.valueOid = obj.valueOid; }
+      if (obj.valuePositiveInt) { this.valuePositiveInt = obj.valuePositiveInt; }
+      if (obj.valueString) { this.valueString = obj.valueString; }
+      if (obj.valueTime) { this.valueTime = obj.valueTime; }
+      if (obj.valueUnsignedInt) { this.valueUnsignedInt = obj.valueUnsignedInt; }
+      if (obj.valueUri) { this.valueUri = obj.valueUri; }
+      if (obj.valueUrl) { this.valueUrl = obj.valueUrl; }
+      if (obj.valueUuid) { this.valueUuid = obj.valueUuid; }
+      if (obj.valueAddress) { this.valueAddress = new Address(obj.valueAddress); }
+      if (obj.valueAge) { this.valueAge = new Age(obj.valueAge); }
+      if (obj.valueAnnotation) { this.valueAnnotation = new Annotation(obj.valueAnnotation); }
+      if (obj.valueAttachment) { this.valueAttachment = new Attachment(obj.valueAttachment); }
+      if (obj.valueCodeableConcept) { this.valueCodeableConcept = new CodeableConcept(obj.valueCodeableConcept); }
+      if (obj.valueCoding) { this.valueCoding = new Coding(obj.valueCoding); }
+      if (obj.valueContactPoint) { this.valueContactPoint = new ContactPoint(obj.valueContactPoint); }
+      if (obj.valueCount) { this.valueCount = new Count(obj.valueCount); }
+      if (obj.valueDistance) { this.valueDistance = new Distance(obj.valueDistance); }
+      if (obj.valueDuration) { this.valueDuration = new Duration(obj.valueDuration); }
+      if (obj.valueHumanName) { this.valueHumanName = new HumanName(obj.valueHumanName); }
+      if (obj.valueIdentifier) { this.valueIdentifier = new Identifier(obj.valueIdentifier); }
+      if (obj.valueMoney) { this.valueMoney = new Money(obj.valueMoney); }
+      if (obj.valuePeriod) { this.valuePeriod = new Period(obj.valuePeriod); }
+      if (obj.valueQuantity) { this.valueQuantity = new Quantity(obj.valueQuantity); }
+      if (obj.valueRange) { this.valueRange = new Range(obj.valueRange); }
+      if (obj.valueRatio) { this.valueRatio = new Ratio(obj.valueRatio); }
+      if (obj.valueReference) { this.valueReference = new Reference(obj.valueReference); }
+      if (obj.valueSampledData) { this.valueSampledData = new SampledData(obj.valueSampledData); }
+      if (obj.valueSignature) { this.valueSignature = new Signature(obj.valueSignature); }
+      if (obj.valueTiming) { this.valueTiming = new Timing(obj.valueTiming); }
+      if (obj.valueContactDetail) { this.valueContactDetail = new ContactDetail(obj.valueContactDetail); }
+      if (obj.valueContributor) { this.valueContributor = new Contributor(obj.valueContributor); }
+      if (obj.valueDataRequirement) { this.valueDataRequirement = new DataRequirement(obj.valueDataRequirement); }
+      if (obj.valueExpression) { this.valueExpression = new Expression(obj.valueExpression); }
+      if (obj.valueParameterDefinition) { this.valueParameterDefinition = new ParameterDefinition(obj.valueParameterDefinition); }
+      if (obj.valueRelatedArtifact) { this.valueRelatedArtifact = new RelatedArtifact(obj.valueRelatedArtifact); }
+      if (obj.valueTriggerDefinition) { this.valueTriggerDefinition = new TriggerDefinition(obj.valueTriggerDefinition); }
+      if (obj.valueUsageContext) { this.valueUsageContext = new UsageContext(obj.valueUsageContext); }
+      if (obj.valueDosage) { this.valueDosage = new Dosage(obj.valueDosage); }
+      if (obj.valueMeta) { this.valueMeta = new Meta(obj.valueMeta); }
     }
   }
 
