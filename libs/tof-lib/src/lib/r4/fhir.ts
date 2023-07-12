@@ -2041,7 +2041,13 @@ export class CodeSystemDesignationComponent extends BackboneElement {
 
 export class CodeSystemConceptPropertyComponent extends BackboneElement {
   public code: string;
-  public value: Element;
+  public valueCode?: string;
+  public valueCoding?: Coding;
+  public valueString?: string;
+  public valueInteger?: number;
+  public valueBoolean?: boolean;
+  public valueDateTime?: string;
+  public valueDecimal?: number;
 
   constructor(obj?: any) {
     super(obj);
@@ -2049,8 +2055,33 @@ export class CodeSystemConceptPropertyComponent extends BackboneElement {
       if (obj.hasOwnProperty('code')) {
         this.code = obj.code;
       }
-      if (obj.hasOwnProperty('value')) {
-        this.value = new Element(obj.value);
+
+      if (obj.hasOwnProperty('valueCode')) {
+        this.valueCode = obj.valueCode;
+      }
+
+      if (obj.hasOwnProperty('valueCoding')) {
+        this.valueCoding = new Coding(obj.valueCoding);
+      }
+
+      if (obj.hasOwnProperty('valueString')) {
+        this.valueString = obj.valueString;
+      }
+
+      if (obj.hasOwnProperty('valueInteger')) {
+        this.valueInteger = obj.valueInteger;
+      }
+
+      if (obj.hasOwnProperty('valueBoolean')) {
+        this.valueBoolean = obj.valueBoolean;
+      }
+
+      if (obj.hasOwnProperty('valueDateTime')) {
+        this.valueDateTime = obj.valueDateTime;
+      }
+
+      if (obj.hasOwnProperty('valueDecimal')) {
+        this.valueDecimal = obj.valueDecimal;
       }
     }
   }
@@ -3882,7 +3913,8 @@ export class AuditEventSourceComponent extends BackboneElement {
 
 export class AuditEventDetailComponent extends BackboneElement implements IDetailComponent {
   public type: string;
-  public value: Element;
+  public valueString: string;
+  public valueBase64Binary: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -3890,8 +3922,11 @@ export class AuditEventDetailComponent extends BackboneElement implements IDetai
       if (obj.hasOwnProperty('type')) {
         this.type = obj.type;
       }
-      if (obj.hasOwnProperty('value')) {
-        this.value = new Element(obj.value);
+      if (obj.hasOwnProperty('valueString')) {
+        this.valueString = obj.valueString;
+      }
+      if (obj.hasOwnProperty('valueBase64Binary')) {
+        this.valueBase64Binary = obj.valueBase64Binary;
       }
     }
   }
@@ -7972,7 +8007,7 @@ export class ContractContractPartyComponent extends BackboneElement {
 }
 
 export class ContractAnswerComponent extends BackboneElement {
-  public value: Element;
+  public value: Element;        // TODO: Replace with parameters for each option
 
   constructor(obj?: any) {
     super(obj);
@@ -13538,7 +13573,7 @@ export class GraphDefinition extends DomainResource {
 
 export class GroupCharacteristicComponent extends BackboneElement {
   public code: CodeableConcept;
-  public value: Element;
+  public value: Element;      // TODO: replace with properties for each option
   public exclude: boolean;
   public period?: Period;
 
@@ -22943,14 +22978,34 @@ export class QuestionnaireEnableWhenComponent extends BackboneElement {
 }
 
 export class QuestionnaireAnswerOptionComponent extends BackboneElement {
-  public value: Element;
+  public valueInteger: number;
+  public valueDate: string;
+  public valueTime: string;
+  public valueString: string;
+  public valueCoding: Coding;
+  public valueReference: ResourceReference;
   public initialSelected?: boolean;
 
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.hasOwnProperty('value')) {
-        this.value = new Element(obj.value);
+      if (obj.hasOwnProperty('valueInteger')) {
+        this.valueInteger = obj.valueInteger;
+      }
+      if (obj.hasOwnProperty('valueDate')) {
+        this.valueDate = obj.valueDate;
+      }
+      if (obj.hasOwnProperty('valueTime')) {
+        this.valueTime = obj.valueTime;
+      }
+      if (obj.hasOwnProperty('valueString')) {
+        this.valueString = obj.valueString;
+      }
+      if (obj.hasOwnProperty('valueCoding')) {
+        this.valueCoding = new Coding(obj.valueCoding);
+      }
+      if (obj.hasOwnProperty('valueReference')) {
+        this.valueReference = new ResourceReference(obj.valueReference);
       }
       if (obj.hasOwnProperty('initialSelected')) {
         this.initialSelected = obj.initialSelected;
@@ -22961,13 +23016,53 @@ export class QuestionnaireAnswerOptionComponent extends BackboneElement {
 }
 
 export class QuestionnaireInitialComponent extends BackboneElement {
-  public value: Element;
+  public valueBoolean: boolean;
+  public valueDecimal: number;
+  public valueInteger: number;
+  public valueDate: string;
+  public valueDateTime: string;
+  public valueString: string;
+  public valueUri: string;
+  public valueAttachment: Attachment;
+  public valueCoding: Coding;
+  public valueQuantity: Quantity;
+  public valueReference: ResourceReference;
 
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.hasOwnProperty('value')) {
-        this.value = new Element(obj.value);
+      if (obj.hasOwnProperty('valueBoolean')) {
+        this.valueBoolean = obj.valueBoolean;
+      }
+      if (obj.hasOwnProperty('valueDecimal')) {
+        this.valueDecimal = obj.valueDecimal;
+      }
+      if (obj.hasOwnProperty('valueInteger')) {
+        this.valueInteger = obj.valueInteger;
+      }
+      if (obj.hasOwnProperty('valueDate')) {
+        this.valueDate = obj.valueDate;
+      }
+      if (obj.hasOwnProperty('valueDateTime')) {
+        this.valueDateTime = obj.valueDateTime;
+      }
+      if (obj.hasOwnProperty('valueString')) {
+        this.valueString = obj.valueString;
+      }
+      if (obj.hasOwnProperty('valueUri')) {
+        this.valueUri = obj.valueUri;
+      }
+      if (obj.hasOwnProperty('valueAttachment')) {
+        this.valueAttachment = new Attachment(obj.valueAttachment);
+      }
+      if (obj.hasOwnProperty('valueCoding')) {
+        this.valueCoding = new Coding(obj.valueCoding);
+      }
+      if (obj.hasOwnProperty('valueQuantity')) {
+        this.valueQuantity = new Quantity(obj.valueQuantity);
+      }
+      if (obj.hasOwnProperty('valueReference')) {
+        this.valueReference = new ResourceReference(obj.valueReference);
       }
     }
   }
@@ -25158,7 +25253,7 @@ export class StructureMapSourceComponent extends BackboneElement {
 }
 
 export class StructureMapParameterComponent extends BackboneElement {
-  public value: Element;
+  public value: Element;      // TODO: Replace with parameters for each option
 
   constructor(obj?: any) {
     super(obj);
@@ -26681,7 +26776,7 @@ export class TaskRestrictionComponent extends BackboneElement {
 
 export class TaskParameterComponent extends BackboneElement {
   public type: CodeableConcept;
-  public value: Element;
+  public value: Element;        // TODO: Replace with parameters for each option
 
   constructor(obj?: any) {
     super(obj);
@@ -26699,7 +26794,7 @@ export class TaskParameterComponent extends BackboneElement {
 
 export class TaskOutputComponent extends BackboneElement {
   public type: CodeableConcept;
-  public value: Element;
+  public value: Element;        // TODO: Replace with parameters for each option
 
   constructor(obj?: any) {
     super(obj);
