@@ -155,8 +155,8 @@
   </div>
   <div class="jumbotron" *ngIf="showRouterOutlet">
     <ng-container *ngTemplateOutlet="bannerTemplate"></ng-container>
-    <div class="alert alert-warning status-message" *ngIf="configService.statusMessage">
-      {{configService.statusMessage}}
+    <div class="alert alert-warning status-message" *ngIf="statusMessage">
+      {{statusMessage}}
     </div>
     <router-outlet></router-outlet>
   <!--  <div *ngIf="!fhirService.loaded">
