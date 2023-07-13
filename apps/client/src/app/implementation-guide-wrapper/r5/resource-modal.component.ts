@@ -2,7 +2,7 @@ import {Component, Input} from '@angular/core';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuide, ImplementationGuideResourceComponent} from '@trifolia-fhir/r4';
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
-import {parseReference} from '@trifolia-fhir/tof-lib';
+import {Globals, parseReference} from '@trifolia-fhir/tof-lib';
 import {ConformanceService} from '../../shared/conformance.service';
 
 @Component({
@@ -16,6 +16,25 @@ export class R5ResourceModalComponent {
 
   constructor(public activeModal: NgbActiveModal, private modalService: NgbModal, private conformanceService: ConformanceService) {
 
+  }
+
+  get resourceFormat() {
+    const ext = (this.resource.extension || []).find(e => e.url === Globals.igResourceFormatExtensionUrl);
+    return ext ? ext.valueCode || '' : '';
+  }
+
+  set resourceFormat(value: string) {
+    this.resource.extension = this.resource.extension || [];
+    let ext = this.resource.extension.find(e => e.url === Globals.igResourceFormatExtensionUrl);
+
+    if (!ext) {
+      ext = {
+        url: Globals.igResourceFormatExtensionUrl
+      };
+      this.resource.extension.push(ext);
+    }
+
+    ext.valueCode = value;
   }
 
   get enableGroups() {

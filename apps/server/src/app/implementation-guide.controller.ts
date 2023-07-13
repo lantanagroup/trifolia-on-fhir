@@ -287,12 +287,29 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
         if (results.data && results.data.guides) {
           results.data.guides.forEach((guide) => {
+            const current = {
+              name: 'current',
+              'ig-version': 'current',
+              package: null,
+              'fhir-version': null
+            };
+
+            if (guide.editions && guide.editions.length > 0) {
+              if (guide.editions[0].package) {
+                current.package = guide.editions[0].package.substring(0, guide.editions[0].package.indexOf('#')) + '#current';
+              }
+
+              if (guide.editions[0]['fhir-version']) {
+                current['fhir-version'] = guide.editions[0]['fhir-version'];
+              }
+            }
+
             guides.push({
               name: guide.name,
               canonical: guide.canonical,
               category: guide.category,
               description: guide.description,
-              editions: guide.editions,
+              editions: (guide.editions || []).concat([current]),
               'npm-name': guide['npm-name']
             });
 

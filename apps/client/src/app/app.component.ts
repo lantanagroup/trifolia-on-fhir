@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router, RoutesRecognized} from '@angular/router';
 import { AuthService } from './shared/auth.service';
 import { ConfigService } from './shared/config.service';
@@ -29,6 +29,7 @@ declare let gtag: Function;
 export class AppComponent implements OnInit {
   public person: Practitioner;
   public initialized = false;
+  public statusMessage: string;
 
   @ViewChild('navbarToggler', { read: ElementRef, static: true }) navbarToggler: ElementRef;
   @ViewChild('navbarCollapse', { read: ElementRef, static: true }) navbarCollapse: ElementRef;
@@ -42,9 +43,9 @@ export class AppComponent implements OnInit {
     private modalService: NgbModal,
     private fileService: FileService,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
     private cookieService: CookieService,
-    private socketService: SocketService) {
+    private socketService: SocketService,
+    private cdr: ChangeDetectorRef) {
     this.router.events.subscribe(async (event) => {
       this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
       if (event instanceof RoutesRecognized && event.state.root.firstChild) {
@@ -199,6 +200,11 @@ export class AppComponent implements OnInit {
     this.socketService.onMessage.subscribe((message) => {
       const modalRef = this.modalService.open(AdminMessageModalComponent, { backdrop: 'static' });
       modalRef.componentInstance.message = message;
+    });
+
+    this.configService.statusMessage.subscribe((s: string) => {
+      this.statusMessage = s;
+      this.cdr.detectChanges();
     });
 
     if (window.location.pathname === '/') {

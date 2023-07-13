@@ -3,7 +3,7 @@ import {Extension, ImplementationGuide as STU3ImplementationGuide} from '@trifol
 import {ImplementationGuide as R5ImplementationGuide} from '@trifolia-fhir/r5';
 import {customAlphabet} from 'nanoid';
 import {Versions} from 'fhir/fhir';
-import {ICodeableConcept, IDocumentReference, IImplementationGuide} from './fhirInterfaces';
+import {ICodeableConcept, IDocumentReference, IImplementationGuide, IResourceReference} from './fhirInterfaces';
 import {Globals} from './globals';
 
 export function findReferences(obj: any, resourceType?: string, id?: string) {
@@ -191,7 +191,7 @@ export function setExtensionString(obj: any, url: string, value: string) {
 }
 
 
-export function getDefaultImplementationGuideResourcePath(reference: ResourceReference) {
+export function getDefaultImplementationGuideResourcePath(reference: IResourceReference) {
   if (reference && reference.reference) {
     const parsed = parseUrl(reference.reference);
 

@@ -2,17 +2,17 @@ import {Injectable, Injector} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ConfigModel} from '../../../../../libs/tof-lib/src/lib/config-model';
 import {Title} from '@angular/platform-browser';
-import {Coding} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Versions} from 'fhir/fhir';
 import {map} from 'rxjs/operators';
 import { ImplementationGuideContext } from '@trifolia-fhir/tof-lib';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class ConfigService {
   public config: ConfigModel;
   public fhirVersion: 'stu3'|'r4'|'r5' = 'r4';
   public project?: ImplementationGuideContext;
-  public statusMessage: string;
+  public statusMessage = new Subject<string>();
   public showingIntroduction = false;
 
 
@@ -134,11 +134,11 @@ export class ConfigService {
 
 
   public setStatusMessage(message: string, timeout?: number) {
-    this.statusMessage = message;
+    this.statusMessage.next(message);
 
     if (timeout) {
       setTimeout(() => {
-        this.statusMessage = '';
+        this.statusMessage.next('');
       }, timeout);
     }
   }

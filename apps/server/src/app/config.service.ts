@@ -178,6 +178,8 @@ export class ConfigService {
         ensureDirSync(path.dirname(filePath));
         await this.downloadJarFile(filePath, downloadUrl);
 
+        this.logger.log(`Done downloading IG Publisher`);
+
         return filePath;
       } catch (ex) {
         // this check for errors and logs errors. If error is caught it also deletes the empty jar file from the directory. This returns the default file path
