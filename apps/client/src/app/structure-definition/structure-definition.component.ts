@@ -232,6 +232,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
 
     if (this.route.snapshot.queryParams.copy === 'true') {
       this.message = 'Done copying structure definition';
+    } else if (!this.baseDefResponse) {
+      this.message = 'Done loading structure definition, loading base definition...';
     } else {
       this.message = 'Done loading structure definition';
     }
