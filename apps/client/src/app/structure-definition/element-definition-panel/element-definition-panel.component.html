@@ -104,10 +104,13 @@
             <div class="col-md-4">
               <div class="mb-3">
                 <label>
-                  <input type="checkbox" [(ngModel)]="element.mustSupport" (change)="change.emit()"/>
-                  Must Support
-                  <app-tooltip-icon tooltipPath="ElementDefinition.mustSupport"></app-tooltip-icon>
+                  Must Support <app-tooltip-icon tooltipPath="ElementDefinition.mustSupport"></app-tooltip-icon>
                 </label>
+                <select class="form-control" [(ngModel)]="element.mustSupport">
+                  <option [ngValue]="undefined">Not Specified</option>
+                  <option [ngValue]="true">True</option>
+                  <option [ngValue]="false">False</option>
+                </select>
               </div>
             </div>
           </div>
