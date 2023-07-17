@@ -160,17 +160,29 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
     if (conf.fhirVersion === 'r4') {
       const igResource = <R4ImplementationGuide>conf.resource;
-      igResource.definition.page = body.page;
-      igResource.description = body.description;
+      if(body.page) {
+        igResource.definition.page = body.page;
+      }
+      if(body.description) {
+        igResource.description = body.description;
+      }
     }
     if (conf.fhirVersion === 'r5') {
       const igResource = <R5ImplementationGuide>conf.resource;
-      igResource.definition.page = body.page;
-      igResource.description = body.description;
+      if(body.page) {
+        igResource.definition.page = body.page;
+      }
+      if(body.description) {
+        igResource.description = body.description;
+      }
     } else {
       const igResource = <STU3ImplementationGuide>conf.resource;
-      igResource.page = body.page;
-      igResource.description = body.description;
+      if(body.page) {
+        igResource.page = body.page;
+      }
+      if(body.description) {
+        igResource.description = body.description;
+      }
     }
 
     await this.conformanceService.updateConformance(conf.id, conf);
