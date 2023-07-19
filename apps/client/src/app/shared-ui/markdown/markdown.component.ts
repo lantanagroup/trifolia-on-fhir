@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import * as simplemde from 'simplemde-antd/dist/simplemde.min';
 import {SimplemdeComponent} from 'ngx-simplemde';
@@ -15,7 +15,7 @@ import {ModalService} from '../../shared/modal.service';
   templateUrl: './markdown.component.html',
   styleUrls: ['./markdown.component.css']
 })
-export class MarkdownComponent implements OnInit {
+export class MarkdownComponent implements AfterViewInit {
   @Input() value: string;
   @Output() valueChange = new EventEmitter();
   @Input() disabled = false;
@@ -243,7 +243,9 @@ export class MarkdownComponent implements OnInit {
     doc.replaceRange(replaceText, cursor);
   }
 
-  ngOnInit() {
-
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.simplemde.Instance.codemirror.refresh();
+    }, 300);
   }
 }

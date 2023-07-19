@@ -171,16 +171,19 @@ export class BulkEditComponent implements OnInit {
         const originalIg = <R5ImplementationGuide> this.originalImplementationGuide;
         const ig = <R5ImplementationGuide> this.implementationGuide;
         bulkUpdateRequest.page = ig.definition.page;
+        bulkUpdateRequest.description =  ig.description;
         bulkUpdateRequest.pageOp = getOp(originalIg.definition ? originalIg.definition.page : undefined, ig.definition ? ig.definition.page : undefined);
       } else if (this.configService.isFhirR4) {
         const originalIg = <R4ImplementationGuide> this.originalImplementationGuide;
         const ig = <R4ImplementationGuide> this.implementationGuide;
         bulkUpdateRequest.page = ig.definition.page;
+        bulkUpdateRequest.description =  ig.description;
         bulkUpdateRequest.pageOp = getOp(originalIg.definition ? originalIg.definition.page : undefined, ig.definition ? ig.definition.page : undefined);
       } else if (this.configService.isFhirSTU3) {
         const originalIg = <STU3ImplementationGuide> this.originalImplementationGuide;
         const ig = <STU3ImplementationGuide> this.implementationGuide;
         bulkUpdateRequest.page = ig.page;
+        bulkUpdateRequest.description =  ig.description;
         bulkUpdateRequest.pageOp = getOp(originalIg.page, ig.page);
       } else {
         throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
