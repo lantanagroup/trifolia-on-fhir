@@ -32,7 +32,11 @@
     "dep-graph": "./node_modules/.bin/nx dep-graph",
     "help": "./node_modules/.bin/nx help",
     "postinstall": "",
-    "workspace-generator": "nx workspace-generator"
+    "workspace-generator": "nx workspace-generator",
+    "migrate:create": "migrate-mongo create -f ./apps/server/src/db-migrations/migrate-mongo-config-cli.js",
+    "migrate:up": "migrate-mongo up -f ./apps/server/src/db-migrations/migrate-mongo-config-cli.js",
+    "migrate:down": "migrate-mongo down -f ./apps/server/src/db-migrations/migrate-mongo-config-cli.js",
+    "migrate:status": "migrate-mongo status -f ./apps/server/src/db-migrations/migrate-mongo-config-cli.js"
   },
   "private": true,
   "dependencies": {
@@ -70,6 +74,7 @@
     "jsonwebtoken": "^9.0.1",
     "jszip": "^3.10.1",
     "jwks-rsa": "^3.0.1",
+    "migrate-mongo": "^10.0.0",
     "mongodb": "^4.13.0",
     "mongoose": "^6.9.0",
     "mustache": "^4.2.0",

@@ -17,6 +17,9 @@ import {NestExpressApplication} from '@nestjs/platform-express';
 import hpropagate from 'hpropagate';
 import {FhirInstances} from './app/helper';
 
+import * as migrate from 'migrate-mongo';
+import { MigrateMongoConfigService } from './db-migrations/migrate-mongo-config';
+
 const config = ConfigService.create();
 
 const logger = new TofLogger('main');
@@ -173,6 +176,16 @@ async function bootstrap() {
     });
   } catch (ex) {
     logger.error(ex);
+  }
+
+  
+  // run db migration if configured to do so
+  const migrateConfig = new MigrateMongoConfigService(config).getConfig();
+  if (config.database.migrateAtStart) {
+    logger.log('Running migrate-mongo up');
+    migrate.config.set(migrateConfig);
+    const { db, client } = await migrate.database.connect();
+    await migrate.up(db, client);
   }
 
   app.useGlobalFilters(new NotFoundExceptionFilter());

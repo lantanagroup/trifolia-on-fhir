@@ -43,7 +43,8 @@ export class ConfigService {
     timeOut: 5000
   };
   public database: IDatabaseConfig = {
-    uri: 'mongodb://localhost:27017/tofDb'
+    uri: 'mongodb://localhost:27017/tofDb',
+    migrateAtStart: true
   };
   public privacyPolicy: string;
   public termsOfUse: string;

@@ -16,6 +16,7 @@
           "apps/server/src/assets",
           "apps/server/src/config",
           "apps/server/src/igs",
+          "apps/server/src/db-migrations",
           {
             "glob": "**/*",
             "input": "libs/tof-lib/src/assets",
