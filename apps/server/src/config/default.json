@@ -19,7 +19,7 @@
   },
   "database": {
     "uri": "mongodb://user:pwd@localhost:27017/tof?authSource=admin",
-    "migrateAtStart": true
+    "migrateAtStart": false
   },
   "privacyPolicy": "https://www.lantanagroup.com/privacypolicy/",
   "termsOfUse": "https://www.lantanagroup.com/termsofuse/",
