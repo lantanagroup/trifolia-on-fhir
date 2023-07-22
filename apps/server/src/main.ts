@@ -179,13 +179,22 @@ async function bootstrap() {
   }
 
   
-  // run db migration if configured to do so
+  // run db migration automatically if configured to do so
   const migrateConfig = new MigrateMongoConfigService(config).getConfig();
+  migrate.config.set(migrateConfig);
+  const { db, client } = await migrate.database.connect();
   if (config.database.migrateAtStart) {
     logger.log('Running migrate-mongo up');
-    migrate.config.set(migrateConfig);
-    const { db, client } = await migrate.database.connect();
     await migrate.up(db, client);
+  } 
+  // otherwise check that there aren't any pending migrations
+  else {
+    const migrationStatus: Array<{ fileName, appliedAt }> = await migrate.status(db);
+    if ((migrationStatus || []).some(s => s.appliedAt === 'PENDING')) {
+      logger.error('Database migrations are pending.  Please run \'npm run migrate:up\' or enable migrateAtStart in the config.');
+      await app.close();
+      process.exit(0);
+    }
   }
 
   app.useGlobalFilters(new NotFoundExceptionFilter());

@@ -10,6 +10,5 @@
     "changelogCollectionName": "migrations",
     "migrationFileExtension": ".js",
     "useFileHash": false,
-    "moduleSystem": "commonjs",
-    "runAtStartup": true
+    "moduleSystem": "commonjs"
   }
