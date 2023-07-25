@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {IDomainResource} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IConformance, IExample} from '@trifolia-fhir/models';
+import {IFhirResource, IExample} from '@trifolia-fhir/models';
 import {HistoryService} from '../../shared/history.service';
 
 @Component({
@@ -10,7 +10,7 @@ import {HistoryService} from '../../shared/history.service';
   styleUrls: ['./resource-history.component.css']
 })
 export class ResourceHistoryComponent implements OnInit {
-  @Input() public resource: IConformance | IExample;
+  @Input() public resource: IFhirResource | IExample;
   @Output() public resourceChange = new EventEmitter<any>();
   @Output() public change: EventEmitter<void> = new EventEmitter<void>();
 
@@ -65,7 +65,7 @@ export class ResourceHistoryComponent implements OnInit {
       let resourceType = "";
       try {
         if(this.resource.hasOwnProperty("resource")){
-          let res =  <IConformance>this.resource;
+          let res =  <IFhirResource>this.resource;
           this.domainResource = res.resource;
           resourceType = "conformance";
         }

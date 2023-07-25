@@ -23,7 +23,7 @@ import {ConformanceController} from './conformance/conformance.controller';
 import {AuthService} from './auth/auth.service';
 import {ConformanceService} from './conformance/conformance.service';
 import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 
 
 @Controller('api/structureDefinition')
@@ -175,13 +175,13 @@ export class StructureDefinitionController extends ConformanceController  {
   }
 
   @Get()
-  public async searchStructureDefinition(@User() user, @Req() req?: any): Promise<Paginated<IConformance>> {
+  public async searchStructureDefinition(@User() user, @Req() req?: any): Promise<Paginated<IFhirResource>> {
     return super.searchConformance(user, req);
 
   }
 
   @Get(':id')
-  public async getStructureDefinition(@User() user, @Param('id') id: string): Promise<IConformance> {
+  public async getStructureDefinition(@User() user, @Param('id') id: string): Promise<IFhirResource> {
     return super.getById(user, id);
   }
 
@@ -190,7 +190,7 @@ export class StructureDefinitionController extends ConformanceController  {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
+    let conformance: IFhirResource = body;
     return await this.conformanceService.createConformance(conformance, implementationGuideId);
   }
 
@@ -200,7 +200,7 @@ export class StructureDefinitionController extends ConformanceController  {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
+    let conformance: IFhirResource = body;
     return this.conformanceService.updateConformance(id, conformance, implementationGuideId);
   }
 

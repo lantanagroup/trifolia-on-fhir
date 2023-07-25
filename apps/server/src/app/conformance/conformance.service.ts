@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IConformance, IExample, IHistory, IProjectResource, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import { IFhirResource, IExample, IHistory, IProjectResource, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import { IBundle, IDomainResource } from '@trifolia-fhir/tof-lib';
 import { Model } from 'mongoose';
 import { BaseDataService } from '../base/base-data.service';
 import { HistoryService } from '../history/history.service';
 import { TofLogger } from '../tof-logger';
-import { Conformance, ConformanceDocument } from './conformance.schema';
+import {FhirResource, FhirResourceDocument} from './fhirResource.schema';
 import { addToImplementationGuideNew, removeFromImplementationGuideNew } from '../helper';
 import { ObjectId } from 'mongodb';
 import { TofNotFoundException } from '../../not-found-exception';
@@ -16,13 +16,13 @@ import { Binary as R5Binary, Bundle as R5Bundle, BundleEntry as R5BundleEntryCom
 import { Example, ExampleDocument } from '../examples/example.schema';
 
 @Injectable()
-export class ConformanceService extends BaseDataService<ConformanceDocument> {
+export class ConformanceService extends BaseDataService<FhirResourceDocument> {
 
     protected readonly logger = new TofLogger(ConformanceService.name);
 
 
     constructor(
-        @InjectModel(Conformance.name) private conformanceModel: Model<ConformanceDocument>,
+        @InjectModel(FhirResource.name) private conformanceModel: Model<FhirResourceDocument>,
         @InjectModel(Example.name) private examplesModel: Model<ExampleDocument>,
         private readonly historyService: HistoryService
     ) {
@@ -31,7 +31,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
 
 
-    public async createConformance(newConf: IConformance, implementationGuideId?: string, isExample?: boolean): Promise<IConformance> {
+    public async createConformance(newConf: IFhirResource, implementationGuideId?: string, isExample?: boolean): Promise<IFhirResource> {
 
         const lastUpdated = new Date();
         let versionId = 1;
@@ -47,7 +47,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         }
 
        // verify that the resource does not already exist
-        let existing = await  this.findOne({'resource.resourceType': newConf.resource.resourceType, 'resource.id' : newConf.resource.id, 'igIds': new ObjectId(implementationGuideId)});
+        let existing = await  this.findOne({'resource.resourceType': newConf.resource.resourceType, 'resource.id' : newConf.resource.id, 'referencedBy.value': new ObjectId(implementationGuideId)});
         if(existing)
         {
           throw new BadRequestException(`Conformance resource already exists for this IG`);
@@ -63,9 +63,10 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
         newConf.lastUpdated = lastUpdated;
 
         if (newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
-            newConf.igIds = newConf.igIds || [];
-            if (newConf.igIds.indexOf(implementationGuideId) < 0) {
-                newConf.igIds.push(implementationGuideId);
+            newConf.referencedBy = newConf.referencedBy || [];
+            let obj = newConf.referencedBy.find(referenced => referenced.value === implementationGuideId)
+            if (obj == null) {
+                newConf.referencedBy.push({'value':implementationGuideId, 'valueType' : 'FhirResource'});
             }
         }
 
@@ -81,6 +82,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             versionId: versionId,
             lastUpdated: lastUpdated,
             targetId: newConf.id,
+            isDeleted: false,
             type: 'conformance'
         }
 
@@ -95,7 +97,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
     }
 
 
-    public async updateConformance(id: string, upConf: IConformance, implementationGuideId?: string, isExample?: boolean): Promise<IConformance> {
+    public async updateConformance(id: string, upConf: IFhirResource, implementationGuideId?: string, isExample?: boolean): Promise<IFhirResource> {
 
         const lastUpdated = new Date();
         let versionId: number = 1;
@@ -205,7 +207,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             if (confIdsRemoved && confIdsRemoved.length > 0) {
                 await this.conformanceModel.updateMany(
                     { '_id': { $in: confIdsRemoved } },
-                    { $pull: { igIds: existing.id } }
+                    { $pull: { 'referencedBy.value': existing.id } }
                 );
             }
 
@@ -219,7 +221,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             if (confIdsAdded && confIdsAdded.length > 0) {
                 await this.conformanceModel.updateMany(
                     { '_id': { $in: confIdsAdded } },
-                    { $push: { igIds: existing.id } }
+                    { $push: { 'referencedBy.value': existing.id } }
                 );
             }
             if (exampleIdsAdded && exampleIdsAdded.length > 0) {
@@ -254,6 +256,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
             versionId: versionId,
             lastUpdated: lastUpdated,
             targetId: existing.id,
+            isDeleted: false,
             type: 'conformance'
         }
 
@@ -269,7 +272,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
 
     }
 
-    public async deleteConformance(id: string): Promise<IConformance> {
+    public async deleteConformance(id: string): Promise<IFhirResource> {
         // remove from IG
         let resource = await super.findById(id);
         await removeFromImplementationGuideNew(this, resource);
@@ -288,7 +291,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
      * @returns FHIR Bundle containing the IG resource and all referenced resources
      */
     public async getBundleFromImplementationGuideId(implementationGuideId: string): Promise<IBundle> {
-        const conformance: IConformance = await this.getWithReferences(implementationGuideId);
+        const conformance: IFhirResource = await this.getWithReferences(implementationGuideId);
         return this.getBundleFromImplementationGuide(conformance);
     }
 
@@ -297,7 +300,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
      * @param implementationGuide Cnformance resource representation of the implementation guide
      * @returns FHIR Bundle containing the IG resource and all referenced resources
      */
-    public async getBundleFromImplementationGuide(implementationGuide: IConformance): Promise<IBundle> {
+    public async getBundleFromImplementationGuide(implementationGuide: IFhirResource): Promise<IBundle> {
 
         if (!implementationGuide || !implementationGuide.resource || implementationGuide.resource.resourceType !== 'ImplementationGuide') {
             throw new TofNotFoundException(`No valid implementation guide found.`);
@@ -331,7 +334,7 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
                 return;
             }
 
-            if (r.valueType === 'Conformance') {
+            if (r.valueType === 'FhirResource') {
                 entry.resource = r.value['resource'];
             }
             else if (r.valueType === 'Example') {
@@ -376,15 +379,15 @@ export class ConformanceService extends BaseDataService<ConformanceDocument> {
     }
 
 
-    public getReferenceMap(conformance: IConformance): IProjectResourceReferenceMap {
+    public getReferenceMap(conformance: IFhirResource): IProjectResourceReferenceMap {
 
         let map: IProjectResourceReferenceMap = {};
         (conformance.references || []).forEach((r: IProjectResourceReference) => {
             if (!r.value || typeof r.value === typeof '') return;
 
             let key: string;
-            if (r.valueType === 'Conformance') {
-                const val: IConformance = <IConformance>r.value;
+            if (r.valueType === 'FhirResource') {
+                const val: IFhirResource = <IFhirResource>r.value;
                 key = `${val.resource.resourceType}/${val.resource.id ?? val.id}`;
             }
             else if (r.valueType === 'Example') {

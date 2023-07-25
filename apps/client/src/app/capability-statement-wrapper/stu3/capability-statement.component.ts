@@ -17,7 +17,7 @@ import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { BaseComponent } from '../../base.component';
 import { debounceTime } from 'rxjs/operators';
 import { firstValueFrom, Subject } from 'rxjs';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
 
@@ -165,7 +165,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
 
     this.csService.save(this.capabilityStatementId, this.conformance)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.capabilityStatementId = conf.id;

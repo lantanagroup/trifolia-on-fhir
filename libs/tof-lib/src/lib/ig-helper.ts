@@ -1,6 +1,6 @@
 import { getR4Dependencies, getSTU3Dependencies } from "./fhirHelper";
 import { ICoding, IImplementationGuide } from "./fhirInterfaces";
-import { IConformance } from "./models";
+import { IFhirResource } from "./models";
 import {ImplementationGuide as R4ImplementationGuide} from './r4/fhir';
 import {ImplementationGuide as STU3ImplementationGuide} from './stu3/fhir';
 
@@ -13,7 +13,7 @@ export class ImplementationGuideContext {
 }
 
 
-export function getImplementationGuideContext(igConformance: IConformance): ImplementationGuideContext {
+export function getImplementationGuideContext(igConformance: IFhirResource): ImplementationGuideContext {
 
     const ig = <IImplementationGuide>igConformance.resource;
 

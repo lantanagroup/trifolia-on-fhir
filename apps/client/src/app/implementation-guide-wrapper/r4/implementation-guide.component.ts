@@ -30,10 +30,10 @@ import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
 import {ProjectService} from '../../shared/projects.service';
-import {IConformance, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
+import {IFhirResource, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
 import {IDomainResource, getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 
-import {Conformance} from '../../../../../server/src/app/conformance/conformance.schema';
+import {FhirResource} from '../../../../../server/src/app/conformance/fhirResource.schema';
 import {forkJoin} from 'rxjs';
 
 class PageDefinition {
@@ -47,7 +47,7 @@ class PageDefinition {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class R4ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
-  public conformance: IConformance;
+  public conformance: IFhirResource;
   public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
@@ -418,7 +418,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         );
 
         if (!this.conformance.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
-          const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'Conformance' };
+          const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'FhirResource' };
           this.conformance.references.push(newProjectResourceReference);
           this.resourceMap[newReference.reference] = newProjectResourceReference;
         }
@@ -568,9 +568,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         this.implementationGuideService.getReferenceMap(implementationGuideId)
       ])
         .subscribe({
-          next: (results: [IConformance, IProjectResourceReferenceMap]) => {
+          next: (results: [IFhirResource, IProjectResourceReferenceMap]) => {
 
-            const conf: IConformance = results[0];
+            const conf: IFhirResource = results[0];
 
             if (!conf || !conf.resource || conf.resource.resourceType !== 'ImplementationGuide') {
               this.message = 'The specified implementation guide either does not exist or was deleted';
@@ -880,7 +880,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.saving = false;

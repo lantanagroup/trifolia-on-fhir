@@ -14,7 +14,7 @@ import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { BaseComponent } from '../base.component';
 import { config, firstValueFrom, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 import { SearchParameter } from '@trifolia-fhir/r4';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
@@ -134,7 +134,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
 
     this.questionnaireService.save(this.questionnaireId, this.conformance)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.router.navigate([`${this.configService.baseSessionUrl}/questionnaire/${conf.id}`]);
@@ -169,7 +169,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     if (!this.isNew) {
       this.questionnaireService.get(this.questionnaireId)
         .subscribe({
-          next: (conf: IConformance) => {
+          next: (conf: IFhirResource) => {
             if (!conf || !conf.resource || conf.resource.resourceType !== 'Questionnaire') {
               this.message = 'The specified questionnaire either does not exist or was deleted';
               return;

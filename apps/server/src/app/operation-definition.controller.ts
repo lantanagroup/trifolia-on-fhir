@@ -9,7 +9,7 @@ import {ConformanceController} from './conformance/conformance.controller';
 import {AuthService} from './auth/auth.service';
 import {ConformanceService} from './conformance/conformance.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 
 
 @Controller('api/operationDefinition')
@@ -26,13 +26,13 @@ export class OperationDefinitionController extends ConformanceController {
   }
 
   @Get()
-  public async operationDefinition(@User() user, @Request() req?: any): Promise<Paginated<IConformance>> {
+  public async operationDefinition(@User() user, @Request() req?: any): Promise<Paginated<IFhirResource>> {
     return super.searchConformance(user, req);
 
   }
 
   @Get(':id')
-  public async getOperationDefinition(@User() user, @Param('id') id: string): Promise<IConformance> {
+  public async getOperationDefinition(@User() user, @Param('id') id: string): Promise<IFhirResource> {
     return super.getById(user, id);
   }
 
@@ -41,7 +41,7 @@ export class OperationDefinitionController extends ConformanceController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
+    let conformance: IFhirResource = body;
     return this.conformanceService.createConformance(conformance, implementationGuideId);
   }
 
@@ -51,7 +51,7 @@ export class OperationDefinitionController extends ConformanceController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
+    let conformance: IFhirResource = body;
     return this.conformanceService.updateConformance(id, conformance, implementationGuideId);
   }
 

@@ -17,7 +17,7 @@ import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { Media as R5Media } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
 import { ConformanceService } from '../shared/conformance.service';
-import { IConformance, IExample, IProjectResource } from '@trifolia-fhir/models';
+import { IFhirResource, IExample, IProjectResource } from '@trifolia-fhir/models';
 import { ExamplesService } from '../shared/examples.service';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
@@ -104,7 +104,7 @@ export class ImportComponent implements OnInit {
     const modalRef = this.modalService.open(UpdateDiffComponent, { backdrop: 'static', size: 'lg' });
     if (fileModel.resource) {
       modalRef.componentInstance.importResource = fileModel.resource;
-      modalRef.componentInstance.existingResource = (<IConformance>fileModel.existingResource).resource;
+      modalRef.componentInstance.existingResource = (<IFhirResource>fileModel.existingResource).resource;
     }
     else {
       modalRef.componentInstance.importResource = fileModel.content;
@@ -395,22 +395,22 @@ export class ImportComponent implements OnInit {
       }
     }
 
-    let newResource: IConformance | IExample = <IConformance | IExample>{};
+    let newResource: IFhirResource | IExample = <IFhirResource | IExample>{};
 
     if (this.implementationGuideId) {
-      newResource.igIds = [this.implementationGuideId];
+      newResource.referencedBy = [{'value': this.implementationGuideId, 'valueType': 'FhirResource'}];
     }
 
     newResource.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
 
-    let req: Observable<IConformance | IExample>;
+    let req: Observable<IFhirResource | IExample>;
 
     if (this.textContentIsExample) {
       (<IExample>newResource).content = resource;
       req = this.examplesService.save(null, <IExample>newResource, this.implementationGuideId);
     } else {
-      (<IConformance>newResource).resource = resource;
-      req = this.conformanceService.save(null, <IConformance>newResource, this.implementationGuideId);
+      (<IFhirResource>newResource).resource = resource;
+      req = this.conformanceService.save(null, <IFhirResource>newResource, this.implementationGuideId);
     }
 
     req.subscribe({
@@ -432,9 +432,9 @@ export class ImportComponent implements OnInit {
     for (const file of this.files) {
 
       if (!file.existingResource) {
-        file.existingResource = <IConformance | IExample>{};
+        file.existingResource = <IFhirResource | IExample>{};
       }
-      (<IConformance | IExample>file.existingResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
+      (<IFhirResource | IExample>file.existingResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
 
       // add/update non-fhir example type
       if (file.isExample && file.isCDAExample) {
@@ -446,7 +446,7 @@ export class ImportComponent implements OnInit {
 
       // add/update fhir type
       else {
-        let conformance: IConformance = <IConformance>{ ...file.existingResource };
+        let conformance: IFhirResource = <IFhirResource>{ ...file.existingResource };
         conformance.resource = file.resource;
         requests.push(this.conformanceService.save(conformance.id, conformance, this.implementationGuideId, file.isExample));
       }

@@ -7,7 +7,7 @@ import {Media as R4Media} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {FhirService} from '../../shared/fhir.service';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../../shared/config.service';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 
 export class ImageItem {
   name: string;

@@ -9,7 +9,7 @@ import { StructureDefinition as R4StructureDefinition } from '../../../../../../
 import { StructureDefinition as STU3StructureDefinition } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 
 @Component({
   selector: 'trifolia-fhir-copy-profile-modal',
@@ -24,7 +24,7 @@ export class CopyProfileModalComponent implements OnInit {
   public url: string;
   public autoUrl = true;
   public structureDefinition: STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition;
-  public conformance: IConformance;
+  public conformance: IFhirResource;
   public Globals = Globals;
 
   @Input() originalID: string;

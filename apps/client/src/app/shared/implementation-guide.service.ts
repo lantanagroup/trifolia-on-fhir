@@ -5,7 +5,7 @@ import {Router} from '@angular/router';
 import {SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
 import {ConfigService} from './config.service';
-import { IConformance, IExample } from '@trifolia-fhir/models';
+import { IFhirResource, IExample } from '@trifolia-fhir/models';
 import { ConformanceService } from './conformance.service';
 
 export class PublishedGuideModel {
@@ -60,7 +60,7 @@ export class ImplementationGuideService extends ConformanceService {
     return this.http.get<any[]>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/profile`);
   }
 
-  public getExamples(implementationGuideId: string): Observable<IConformance[]|IExample[]> {
+  public getExamples(implementationGuideId: string): Observable<IFhirResource[]|IExample[]> {
     return this.http.get<any>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/example`);
   }
 
@@ -91,23 +91,23 @@ export class ImplementationGuideService extends ConformanceService {
     return this.http.get<SearchImplementationGuideResponseContainer>(url);
   }
 
-  public getImplementationGuide(id: string): Observable<IConformance> {
+  public getImplementationGuide(id: string): Observable<IFhirResource> {
     const url = '/api/implementationGuide/' + encodeURIComponent(id);
-    return this.http.get<IConformance>(url);
+    return this.http.get<IFhirResource>(url);
   }
 
-  public getImplementationGuideWithReferences(id: string): Observable<IConformance> {
+  public getImplementationGuideWithReferences(id: string): Observable<IFhirResource> {
     const url = '/api/implementationGuide/' + encodeURIComponent(id) + "/references";
-    return this.http.get<IConformance>(url);
+    return this.http.get<IFhirResource>(url);
   }
 
-  public saveImplementationGuide(implementationGuide: IConformance): Observable<IConformance> {
-    return this.http.post<IConformance>('/api/implementationGuide', implementationGuide);
+  public saveImplementationGuide(implementationGuide: IFhirResource): Observable<IFhirResource> {
+    return this.http.post<IFhirResource>('/api/implementationGuide', implementationGuide);
   }
 
-  public updateImplementationGuide(id: string, implementationGuide: IConformance): Observable<IConformance> {
+  public updateImplementationGuide(id: string, implementationGuide: IFhirResource): Observable<IFhirResource> {
     if (id) {
-      return this.http.put<IConformance>(`/api/implementationGuide/${id}`, implementationGuide);
+      return this.http.put<IFhirResource>(`/api/implementationGuide/${id}`, implementationGuide);
     } else {
      return null;
     }

@@ -3,7 +3,7 @@ import { OperationOutcome, ValueSet } from '../../../../../libs/tof-lib/src/lib/
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import type { ExpandOptions } from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 
 @Injectable()
 export class ValueSetService {
@@ -13,12 +13,12 @@ export class ValueSetService {
 
   }
 
-  public save(valueSetId:string, valueSet: IConformance): Observable<IConformance> {
+  public save(valueSetId:string, valueSet: IFhirResource): Observable<IFhirResource> {
     if (valueSetId) {
       const url = '/api/valueSet/' + encodeURIComponent(valueSetId);
-      return this.http.put<IConformance>(url, valueSet);
+      return this.http.put<IFhirResource>(url, valueSet);
     } else {
-      return this.http.post<IConformance>('/api/valueSet', valueSet);
+      return this.http.post<IFhirResource>('/api/valueSet', valueSet);
     }
   }
 
@@ -48,7 +48,7 @@ export class ValueSetService {
 
   public getValueSet(id: string) {
     const url = '/api/valueSet/' + encodeURIComponent(id);
-    return this.http.get<IConformance>(url);
+    return this.http.get<IFhirResource>(url);
   }
 
  /* public expand(id: string, options: ExpandOptions, terminologyServer?: string): Observable<ValueSet> {

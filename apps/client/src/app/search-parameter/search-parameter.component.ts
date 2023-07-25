@@ -14,7 +14,7 @@ import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChangeResourceIdModalComponent } from '../modals/change-resource-id-modal/change-resource-id-modal.component';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
 
@@ -129,7 +129,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
       this.searchParameter = null;
       this.spService.get(this.searchParameterId)
         .subscribe({
-          next: (conf: IConformance) => {
+          next: (conf: IFhirResource) => {
             if (!conf || !conf.resource || conf.resource.resourceType !== 'SearchParameter') {
               this.message = 'The specified code system either does not exist or was deleted';
               return;
@@ -192,7 +192,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
 
     this.spService.save(this.searchParameterId, this.conformance)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.searchParameterId = conf.id;
@@ -243,7 +243,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     if (this.conformance) {
       this.conformance.resource = newVal;
     }
-    
+
     this.nameChanged();
     this.afterSearchParameterInit();
     this.recentItemService.ensureRecentItem(

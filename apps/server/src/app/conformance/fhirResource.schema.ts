@@ -1,15 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type {IConformance, IPermission, IProjectResource, IProjectResourceReference} from '@trifolia-fhir/models';
+import type {IFhirResource, IPermission,  IProjectResourceReference} from '@trifolia-fhir/models';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 import { Project } from '../projects/project.schema';
 
-export type ConformanceDocument = HydratedDocument<Conformance>;
+export type FhirResourceDocument = HydratedDocument<FhirResource>;
 
 
-@Schema({ collection: 'conformance', toJSON: { getters: true } })
-export class Conformance extends BaseEntity implements IConformance {
+@Schema({ collection: 'fhirResource', toJSON: { getters: true } })
+export class FhirResource extends BaseEntity implements IFhirResource {
 
     @Prop()
     name?: string;
@@ -46,13 +46,16 @@ export class Conformance extends BaseEntity implements IConformance {
     @Prop({ type: Object })
     resource: IDomainResource;
 
-    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: 'Conformance' }])
-    igIds: string[];
+    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['FhirResource', 'Example', 'Project']}}])
+    referencedBy: IProjectResourceReference[];
 
-    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['Conformance', 'Example']}}])
+    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['FhirResource', 'Example']}}])
     references: IProjectResourceReference[];
+
+    @Prop()
+    isDeleted: boolean;
 
 }
 
-export const ConformanceSchema = SchemaFactory.createForClass(Conformance);
-ConformanceSchema.loadClass(Conformance);
+export const FhirResourceSchema = SchemaFactory.createForClass(FhirResource);
+FhirResourceSchema.loadClass(FhirResource);

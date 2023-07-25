@@ -12,7 +12,7 @@ import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/oper
 import {NgbNavChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import {getErrorString, Globals, SearchImplementationGuideResponseContainer} from '@trifolia-fhir/tof-lib';
 import {HttpClient} from '@angular/common/http';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 import {FhirService} from '../shared/fhir.service';
 
 interface DocumentOptions {
@@ -145,7 +145,7 @@ export class ExportComponent implements OnInit {
     }
   }
 
-  public async implementationGuideChanged(igConf: IConformance) {
+  public async implementationGuideChanged(igConf: IFhirResource) {
     this.selectedImplementationGuide = <ImplementationGuide>igConf.resource;
     this.options.implementationGuideId = igConf ? igConf.id : undefined;
 
@@ -344,7 +344,7 @@ export class ExportComponent implements OnInit {
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe({
-          next: (res: IConformance) => {
+          next: (res: IFhirResource) => {
             this.implementationGuideChanged(res);
           },
           error: (err) => this.message = getErrorString(err)
@@ -356,7 +356,7 @@ export class ExportComponent implements OnInit {
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe({
-          next: (res: IConformance) => {
+          next: (res: IFhirResource) => {
             this.selectedImplementationGuide = <ImplementationGuide>res.resource;
           },
           error: (err) => this.message = getErrorString(err)

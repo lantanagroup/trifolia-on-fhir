@@ -51,6 +51,7 @@ export class ExamplesService extends BaseDataService<ExampleDocument> {
             versionId: versionId,
             lastUpdated: lastUpdated,
             targetId: newExample.id,
+            isDeleted: false,
             type: 'example'
         }
 
@@ -104,6 +105,7 @@ export class ExamplesService extends BaseDataService<ExampleDocument> {
             versionId: versionId,
             lastUpdated: lastUpdated,
             targetId: existing.id,
+            isDeleted : false,
             type: 'example'
         }
 

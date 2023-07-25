@@ -3,7 +3,7 @@ import {Bundle, CodeSystem, OperationOutcome} from '../../../../../libs/tof-lib/
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IConformance, IProject} from '@trifolia-fhir/models';
+import {IFhirResource, IProject} from '@trifolia-fhir/models';
 import { ConformanceService } from './conformance.service';
 
 @Injectable()
@@ -14,16 +14,16 @@ export class CodeSystemService extends ConformanceService {
       super(http);
   }
 
-    public save(codeSystemId:string, codeSystem: IConformance): Observable<IConformance> {
+    public save(codeSystemId:string, codeSystem: IFhirResource): Observable<IFhirResource> {
         if (codeSystemId) {
             const url = '/api/codeSystem/' + encodeURIComponent(codeSystemId);
-            return this.http.put<IConformance>(url, codeSystem);
+            return this.http.put<IFhirResource>(url, codeSystem);
         } else {
-            return this.http.post<IConformance>('/api/codeSystem', codeSystem);
+            return this.http.post<IFhirResource>('/api/codeSystem', codeSystem);
         }
     }
 
-    public searchCodeSystem(page = 1, name?: string, implementationGuideId?: string) :  Observable<IConformance[]> {
+    public searchCodeSystem(page = 1, name?: string, implementationGuideId?: string) :  Observable<IFhirResource[]> {
         let url = '/api/codeSystem?resourcetype=CodeSystem&page=' + page + '&';
 
         if (name) {
@@ -36,12 +36,12 @@ export class CodeSystemService extends ConformanceService {
 
         url += '_sort=name';
 
-        return this.http.get<IConformance[]>(url);
+        return this.http.get<IFhirResource[]>(url);
     }
 
-    public getCodeSystem(id: string): Observable<IConformance> {
+    public getCodeSystem(id: string): Observable<IFhirResource> {
         const url = '/api/codeSystem/' + encodeURIComponent(id);
-        return this.http.get<IConformance>(url);
+        return this.http.get<IFhirResource>(url);
     }
 
     public delete(id: string) {

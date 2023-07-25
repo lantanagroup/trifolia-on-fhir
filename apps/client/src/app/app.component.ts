@@ -16,7 +16,7 @@ import { AdminMessageModalComponent } from './modals/admin-message-modal/admin-m
 import introJs from 'intro.js/intro.js';
 import { Practitioner } from '@trifolia-fhir/stu3';
 import { ImplementationGuideService } from './shared/implementation-guide.service';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
 
 declare let gtag: Function;
@@ -168,7 +168,7 @@ export class AppComponent implements OnInit {
 
     return new Promise((resolve, reject) => {
       firstValueFrom(this.implGuideService.getImplementationGuide(implementationGuideId))
-        .then((conf: IConformance) => {
+        .then((conf: IFhirResource) => {
           resolve(getImplementationGuideContext(conf));
         })
         .catch((err) => reject(err));

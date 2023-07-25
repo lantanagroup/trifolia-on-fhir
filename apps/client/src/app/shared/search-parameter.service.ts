@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 
 
 @Injectable()
@@ -11,16 +11,16 @@ export class SearchParameterService  {
     protected http: HttpClient) {
   }
 
-  public save(searchParameterId: string, searchParameter: IConformance) : Observable<IConformance> {
+  public save(searchParameterId: string, searchParameter: IFhirResource) : Observable<IFhirResource> {
     if (searchParameterId) {
       const url = '/api/searchParameter/' + encodeURIComponent(searchParameter.id);
-      return this.http.put<IConformance>(url, searchParameter);
+      return this.http.put<IFhirResource>(url, searchParameter);
     } else {
-      return this.http.post<IConformance>('/api/searchParameter', searchParameter);
+      return this.http.post<IFhirResource>('/api/searchParameter', searchParameter);
     }
   }
 
-  public search(page = 1, name?: string, implementationGuideId?: string) : Observable<IConformance[]> {
+  public search(page = 1, name?: string, implementationGuideId?: string) : Observable<IFhirResource[]> {
     let url = '/api/searchParameter?resourcetype=SearchParameter&page=' + page + '&';
 
     if (name) {
@@ -33,12 +33,12 @@ export class SearchParameterService  {
 
     url += '_sort=name';
 
-    return this.http.get<IConformance[]>(url);
+    return this.http.get<IFhirResource[]>(url);
   }
 
   public get(id: string) {
     const url = '/api/searchParameter/' + encodeURIComponent(id);
-    return this.http.get<IConformance>(url);
+    return this.http.get<IFhirResource>(url);
   }
 
   public delete(id: string) {

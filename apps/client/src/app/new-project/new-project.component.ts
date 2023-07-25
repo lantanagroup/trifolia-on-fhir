@@ -12,7 +12,7 @@ import { getErrorString } from '@trifolia-fhir/tof-lib';
 import { identifyRelease } from '@trifolia-fhir/tof-lib';
 import { PublishingRequestModel } from '@trifolia-fhir/tof-lib';
 import { ProjectService } from '../shared/projects.service';
-import { IConformance, IProject } from '@trifolia-fhir/models';
+import { IFhirResource, IProject } from '@trifolia-fhir/models';
 @Component({
   templateUrl: './new-project.component.html',
   styleUrls: ['./new-project.component.css']
@@ -122,13 +122,13 @@ export class NewProjectComponent implements OnInit {
     let projectName = ig.name;
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirVersion));
 
-    let newConf: IConformance = <IConformance>{fhirVersion: this.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
+    let newConf: IFhirResource = <IFhirResource>{fhirVersion: this.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
     this.igService.saveImplementationGuide(newConf)
       .subscribe({
-        next: async (ig: IConformance) => {
+        next: async (ig: IFhirResource) => {
           let project: IProject = <IProject>{ author: "", fhirVersion: this.fhirVersion, name: projectName, isDeleted: false };
           project.references = project.references || [];
-          project.references.push({'value' : ig, valueType: 'Conformance'});
+          project.references.push({'value' : ig, valueType: 'FhirResource'});
           await this.projectService.save(project).toPromise().then((project) => {
             this.router.navigate([`/projects/${ig.id}/implementation-guide`]);
           }).catch((err) => this.message = getErrorString(err));

@@ -28,7 +28,7 @@ import { existsSync } from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { AuthService } from './auth/auth.service';
 import { ConformanceService } from './conformance/conformance.service';
-import { IConformance, IExample, IProjectResourceReference } from '@trifolia-fhir/models';
+import {IProjectResource, IExample, IProjectResourceReference, IFhirResource} from '@trifolia-fhir/models';
 import { ConformanceController } from './conformance/conformance.controller';
 import { ExamplesService } from './examples/examples.service';
 import { ImplementationGuide as R5ImplementationGuide, StructureDefinition } from '@trifolia-fhir/r5';
@@ -156,7 +156,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
     if (!body) return;
 
     //update ig
-    let conf = <IConformance>await this.conformanceService.findById(id);
+    let conf = <IFhirResource>await this.conformanceService.findById(id);
 
     if (conf.fhirVersion === 'r4') {
       const igResource = <R4ImplementationGuide>conf.resource;
@@ -231,7 +231,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
 
 
   @Get(':id/example')
-  public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4'): Promise<IConformance[] | IExample[]> {
+  public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4'): Promise<IFhirResource[] | IExample[]> {
 
     let examples = [];
 
@@ -275,7 +275,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
     // may not have to actually query the conformance collection
     if (resourceFilters.length > 0) {
       let filter = {
-        $and: [{ 'igIds': id }, { $or: resourceFilters }]
+        $and: [{ 'referencedBy.value': id }, { $or: resourceFilters }]
       }
       let res = await this.conformanceService.findAll(filter);
       examples.push(... res);
@@ -416,7 +416,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
     if (!body || !body.resource) {
       throw new BadRequestException();
     }
-    let conformance: IConformance = body;
+    let conformance: IFhirResource = body;
     ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
     return await this.conformanceService.createConformance(conformance);
   }
@@ -427,7 +427,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
       throw new BadRequestException();
     }
     await this.assertCanWriteById(user, id);
-    let conformance: IConformance = body;
+    let conformance: IFhirResource = body;
     ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
     return await this.conformanceService.updateConformance(id, conformance);
   }

@@ -11,7 +11,7 @@ import { HtmlExportStatus, SocketService } from '../shared/socket.service';
 import { saveAs } from 'file-saver';
 import { NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 
 @Component({
   selector: 'ngbd-typeahead-basic',
@@ -217,7 +217,7 @@ export class PublishComponent implements OnInit {
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe({
-          next: (conf: IConformance) => { this.implementationGuideChanged(<IImplementationGuide>conf?.resource); },
+          next: (conf: IFhirResource) => { this.implementationGuideChanged(<IImplementationGuide>conf?.resource); },
           error: (err) => this.message = getErrorString(err)
         });
     }

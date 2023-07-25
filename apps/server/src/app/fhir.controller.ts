@@ -41,8 +41,7 @@ import {ObjectId} from 'mongodb';
 
 import {ConformanceController} from './conformance/conformance.controller';
 import {AuthService} from './auth/auth.service';
-import {IUserSecurityInfo} from './base.controller';
-import {IConformance} from '@trifolia-fhir/models';
+
 
 
 export interface ProxyResponse {
@@ -70,7 +69,7 @@ export class FhirController extends ConformanceController {
 
     let filter = { 'resource.resourceType': resourceType, 'resource.id': id};
     if (contextImplementationGuideId) {
-      filter['igIds'] = new ObjectId(contextImplementationGuideId);
+      filter['referencedBy.value'] = new ObjectId(contextImplementationGuideId);
     }
     const results = await this.conformanceService.findOne(filter);
     if (results) {
@@ -109,7 +108,7 @@ export class FhirController extends ConformanceController {
     const allResults = await this.conformanceService.findAll({ 'resource.resourceType': 'ImplementationGuide', 'references.value': conf.id });
 
     const allResults1 = await this.conformanceService.findAll({ 'resource.resourceType': 'SearchParameter', 'resource.id': newId });
-    const results = allResults1.map(value => value.igIds);
+    const results = allResults1.map(value => value.referencedBy);
     const allIgs = results.reduce((prev, curr) => {
       return prev.concat(curr);
     }, []);
@@ -118,7 +117,7 @@ export class FhirController extends ConformanceController {
       // check if all Ig-s can be changed
       this.assertCanWriteById(user, result.id);
       // check if the newId already exists for this resource type within the IG
-      const foundIg = allIgs.filter(ig => ig.toString() === result.id);
+      const foundIg = allIgs.filter(ig => ig.value.toString() === result.id);
       if (foundIg.length > 0) {
         const msg = `The new Id ${newId} is already used in other Igs.`;
         this.logger.error(msg);

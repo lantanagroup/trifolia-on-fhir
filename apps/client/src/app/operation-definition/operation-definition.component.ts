@@ -14,7 +14,7 @@ import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { BaseComponent } from '../base.component';
 import { debounceTime } from 'rxjs/operators';
 import { firstValueFrom, Subject } from 'rxjs';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
 
@@ -115,7 +115,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
 
     this.opDefService.save(this.operationDefinitionId, this.conformance)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.operationDefinitionId = conf.id;
@@ -152,7 +152,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
       this.operationDefinition = null;
 
       this.opDefService.get(this.operationDefinitionId)
-        .subscribe((conf: IConformance) => {
+        .subscribe((conf: IFhirResource) => {
           if (!conf || !conf.resource || conf.resource.resourceType !== 'OperationDefinition') {
             this.message = 'The specified operation Definition either does not exist or was deleted';
             return;

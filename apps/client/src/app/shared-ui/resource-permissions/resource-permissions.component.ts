@@ -19,7 +19,7 @@ import {GroupService} from '../../shared/group.service';
 import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 import type {IPractitioner} from '@trifolia-fhir/tof-lib';
-import type {IConformance, IGroup, IPermission, IProject, IProjectResource, IUser} from '@trifolia-fhir/models';
+import type {IFhirResource, IGroup, IPermission, IProject, IProjectResource, IUser} from '@trifolia-fhir/models';
 import { UserService } from '../../shared/user.service';
 
 class ResourceSecurity {

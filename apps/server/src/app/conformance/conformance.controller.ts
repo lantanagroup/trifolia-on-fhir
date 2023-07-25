@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
-import type { IConformance, IExample, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import type { IFhirResource, IExample, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import type { ITofUser, PaginateOptions, Paginated } from '@trifolia-fhir/tof-lib';
 import { RequestHeaders, User } from '../server.decorators';
 import { ConformanceService } from './conformance.service';
 import { BaseDataController } from '../base/base-data.controller';
-import { Conformance, ConformanceDocument } from './conformance.schema';
+import {FhirResourceDocument } from './fhirResource.schema';
 import { TofNotFoundException } from '../../not-found-exception';
 import { ObjectId } from 'mongodb';
 import { TofLogger } from '../tof-logger';
@@ -15,7 +15,7 @@ import { TofLogger } from '../tof-logger';
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Conformance')
 @ApiOAuth2([])
-export class ConformanceController extends BaseDataController<ConformanceDocument> {
+export class ConformanceController extends BaseDataController<FhirResourceDocument> {
     protected resourceType: string
     protected readonly logger = new TofLogger(ConformanceController.name);
 
@@ -26,7 +26,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
     }
 
 
-    protected assertResourceValid(conformance: IConformance) {
+    protected assertResourceValid(conformance: IFhirResource) {
         if (!conformance || (this.resourceType && conformance.resource.resourceType !== this.resourceType)) {
             throw new TofNotFoundException(`No valid resource of type ${this.resourceType} found`);
         }
@@ -68,7 +68,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
             filter['resource.url'] = { $regex: query['url'], $options: 'i' };
         }
         if ('implementationguideid' in query) {
-            filter['igIds'] = new ObjectId(query['implementationguideid']);
+            filter['referencedBy.value'] = new ObjectId(query['implementationguideid']);
         }
 
 
@@ -124,13 +124,13 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
 
 
     @Get('empty')
-    public async getEmpty(): Promise<IConformance> {
+    public async getEmpty(): Promise<IFhirResource> {
         return await this.conformanceService.getEmpty();
     }
 
 
     @Get()
-    public async searchConformance(@User() user: ITofUser, @Request() req): Promise<Paginated<IConformance>> {
+    public async searchConformance(@User() user: ITofUser, @Request() req): Promise<Paginated<IFhirResource>> {
         let options = this.getPaginateOptionsFromRequest(req);
         let baseFilter = this.authService.getPermissionFilterBase(user, 'read');
 
@@ -151,7 +151,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
     }
 
     @Get(':id')
-    public async getById(@User() user: ITofUser, @Param('id') id: string): Promise<IConformance> {
+    public async getById(@User() user: ITofUser, @Param('id') id: string): Promise<IFhirResource> {
         await this.assertCanReadById(user, id);
         let conformance = await this.conformanceService.findById(id);
         this.assertResourceValid(conformance);
@@ -159,7 +159,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
     }
 
     @Post()
-    public async createConformance(@User() user: ITofUser, @Body() conformance: IConformance, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IConformance> {
+    public async createConformance(@User() user: ITofUser, @Body() conformance: IFhirResource, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IFhirResource> {
         if (implementationGuideId) {
             await this.assertCanWriteById(user, implementationGuideId);
         }
@@ -167,7 +167,7 @@ export class ConformanceController extends BaseDataController<ConformanceDocumen
     }
 
     @Put(':id')
-    public async updateConformance(@User() user: ITofUser, @Param('id') id: string, @Body() conformance: IConformance, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IConformance> {
+    public async updateConformance(@User() user: ITofUser, @Param('id') id: string, @Body() conformance: IFhirResource, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IFhirResource> {
         await this.assertIdMatch(id, conformance);
         await this.assertCanWriteById(user, id);
         if (implementationGuideId) {

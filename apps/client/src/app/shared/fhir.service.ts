@@ -24,7 +24,7 @@ import {CustomSTU3Validator} from './validation/custom-STU3-validator';
 import * as vkbeautify from 'vkbeautify';
 import {publishReplay, refCount} from 'rxjs/operators';
 import {IBundle} from '@trifolia-fhir/tof-lib';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 
 export interface IResourceGithubDetails {
@@ -333,7 +333,7 @@ export class FhirService {
 
     if (sortID) url += '_sort=resourceid&';
 
-    return this.http.get<Paginated<IConformance>>(url);
+    return this.http.get<Paginated<IFhirResource>>(url);
   }
 
 
@@ -368,12 +368,12 @@ export class FhirService {
    * @param {string} id
    * @param {Resource} resource
    */
-  public update(id: string, conformance: IConformance): Observable<IConformance> {
+  public update(id: string, conformance: IFhirResource): Observable<IFhirResource> {
     if (id) {
       const url = '/api/conformance/' + encodeURIComponent(id);
-      return this.http.put<IConformance>(url, conformance);
+      return this.http.put<IFhirResource>(url, conformance);
     } else {
-      return this.http.post<IConformance>('/api/codeSystem', conformance);
+      return this.http.post<IFhirResource>('/api/codeSystem', conformance);
     }
   }
 

@@ -1,5 +1,5 @@
 import { BaseTools } from './baseTools';
-import { IAudit, IConformance, IGroup, IHistory, IProject, IPermission, IProjectResource, IUser, IProjectResourceReference } from '@trifolia-fhir/models';
+import { IAudit, IFhirResource, IGroup, IHistory, IProject, IPermission, IProjectResource, IUser, IProjectResourceReference } from '@trifolia-fhir/models';
 import { Globals, IAuditEvent, IContactPoint, IDomainResource, IImplementationGuide, IPractitioner } from '@trifolia-fhir/tof-lib';
 import { Db, MongoClient, ObjectId, ReturnDocument } from 'mongodb';
 import { getHumanNamesDisplay } from '@trifolia-fhir/tof-lib';
@@ -54,10 +54,10 @@ export class MigrateDb extends BaseTools {
   private users: IUser[];
   private groups: IGroup[];
   private projects: IProject[];
-  private implementationGuides: IConformance[];
+  private implementationGuides: IFhirResource[];
   private userMap: { [key: string]: IUser; } = {};
   private groupMap: { [key: string]: IGroup; } = {};
-  private resourceMap: { [key: string]: IConformance; } = {};
+  private resourceMap: { [key: string]: IFhirResource; } = {};
 
   public static commandFormat = 'migrate-db [mysqlHost] [mysqlDb] [mysqlUser] [mysqlPass] [fhirVersion] [dbServer] [dbName] [migratedFromLabel]';
   public static commandDescription = 'Migrate the specific FHIR server to mongo database';
@@ -359,9 +359,9 @@ export class MigrateDb extends BaseTools {
    * @param resourceReference
    * @private
    */
-  private async findImplementationGuides(resourceReference: string): Promise<IConformance[]> {
+  private async findImplementationGuides(resourceReference: string): Promise<IFhirResource[]> {
 
-    let igs: IConformance[] = [];
+    let igs: IFhirResource[] = [];
 
     let igKeys = Object.keys(this.resourceMap).filter(k => this.resourceMap[k].resource.resourceType === 'ImplementationGuide');
 
@@ -556,14 +556,14 @@ export class MigrateDb extends BaseTools {
       }
     }
 
-    const conformance: IConformance = {
+    const conformance: IFhirResource = {
       migratedFrom: this.options.migratedFromLabel,
       versionId: resource.meta?.versionId,
       lastUpdated: resource.meta?.lastUpdated,
       fhirVersion: this.options.fhirVersion,
       resource: resource,
       permissions: permissions,
-      igIds: igs.map(ig => { return ig['_id']; })
+      //igIds: igs.map(ig => { return ig['_id']; })
     };
 
     this.log(`Inserting/updating resource ${resource.resourceType}/${resource.id}`);
@@ -571,13 +571,13 @@ export class MigrateDb extends BaseTools {
       { migratedFrom: conformance.migratedFrom, 'resource.resourceType': conformance.resource.resourceType, 'resource.id': conformance.resource.id },
       { $set: conformance }, { upsert: true, returnDocument: ReturnDocument.AFTER }
     );
-    groupedResource.projectResource = <IConformance><unknown>{ ...results.value };
+    groupedResource.projectResource = <IFhirResource><unknown>{ ...results.value };
     const newId = groupedResource.projectResource['_id'].toString();
-    this.resourceMap[resourceReference] = <IConformance>groupedResource.projectResource;
+    this.resourceMap[resourceReference] = <IFhirResource>groupedResource.projectResource;
 
     // update IG-related db references for this resource
     for (const ig of (igs || [])) {
-      let ref: IProjectResourceReference = { value: groupedResource.projectResource['_id'], valueType: 'Conformance' };
+      let ref: IProjectResourceReference = { value: groupedResource.projectResource['_id'], valueType: 'FhirResource' };
       await this.db.collection('conformance').updateOne({ _id: ig['_id'] }, { $addToSet: { 'references': ref } });
     };
 
@@ -781,7 +781,7 @@ export class MigrateDb extends BaseTools {
         }
       }
 
-      let newIgConf: IConformance = {
+      let newIgConf: IFhirResource = {
         versionId: versionId,
         lastUpdated: lastUpdated,
         migratedFrom: this.options.migratedFromLabel,
@@ -821,7 +821,7 @@ export class MigrateDb extends BaseTools {
         { $set: newIg }, { upsert: true, returnDocument: ReturnDocument.AFTER }
       );
 
-      newIg = <IConformance><unknown>{ ...igResult.value };
+      newIg = <IFhirResource><unknown>{ ...igResult.value };
       let newIgId = igResult.value._id?.toString() || newIg['_id'];
       let igPath = `ImplementationGuide/${newIg.resource.id}`;
 
@@ -883,7 +883,7 @@ export class MigrateDb extends BaseTools {
       filter = {'migratedFrom': this.options.migratedFromLabel};
     }
 
-    const igConfs = this.db.collection('conformance').find<IConformance>(filter);
+    const igConfs = this.db.collection('conformance').find<IFhirResource>(filter);
     for await (const ig of igConfs) {
       const key = ig.resource.resourceType + '/' + ig.resource.id;
       this.resourceMap[key] = ig;

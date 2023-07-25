@@ -24,7 +24,7 @@ import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {TofLogger} from './tof-logger';
-import {IConformance, IExample, IProjectResourceReference} from '@trifolia-fhir/models';
+import {IFhirResource, IExample, IProjectResourceReference} from '@trifolia-fhir/models';
 import {ConformanceService} from './conformance/conformance.service';
 import {ObjectId} from 'mongodb';
 
@@ -561,9 +561,9 @@ export async function addToImplementationGuide(httpService: HttpService, configS
   return Promise.resolve();
 }
 
-export async function addToImplementationGuideNew(service: ConformanceService, resourceToAdd: IConformance | IExample, implementationGuideId: string, isExample: boolean = false): Promise<void> {
+export async function addToImplementationGuideNew(service: ConformanceService, resourceToAdd: IFhirResource | IExample, implementationGuideId: string, isExample: boolean = false): Promise<void> {
   // Don't add implementation guides to other implementation guides (or itself).
-  if (!isExample && (<IConformance>resourceToAdd).resource.resourceType == 'ImplementationGuide') {
+  if (!isExample && (<IFhirResource>resourceToAdd).resource.resourceType == 'ImplementationGuide') {
     return Promise.resolve();
   }
 
@@ -581,7 +581,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
   // if new resource is not an example it can only be treated as a valid fhir resource
   if (!isExample) {
     if ('resource' in resourceToAdd && resourceToAdd.resource) {
-      resourceReferenceString = `${(<IConformance>resourceToAdd).resource.resourceType}/${(<IConformance>resourceToAdd).resource.id || resourceToAdd.id}`;
+      resourceReferenceString = `${(<IFhirResource>resourceToAdd).resource.resourceType}/${(<IFhirResource>resourceToAdd).resource.id || resourceToAdd.id}`;
     } else {
       throw new BadRequestException('Supplied conformance object does not have a valid resource property.');
     }
@@ -647,7 +647,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
 
   let exampleFor: string;
   if (resourceToAdd['resource']) {
-    let profile = (<IConformance>resourceToAdd).resource?.meta?.profile;
+    let profile = (<IFhirResource>resourceToAdd).resource?.meta?.profile;
     if (profile) {
       exampleFor = profile[0];
     }
@@ -805,7 +805,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
         if (r.valueType !== (isNotFhir ? 'Example' : 'Conformance')) return false;
         if (r.value && r.value.toString() === resourceToAdd.id) return true;
       })) {
-        implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'Example' : 'Conformance' });
+        implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'Example' : 'FhirResource' });
       }
     }
     if(implGuideResource.id) {
@@ -850,19 +850,19 @@ function getName(name: any) {
 }
 
 
-export async function removeFromImplementationGuideNew(service: ConformanceService, resourceToRemove: IConformance): Promise<void> {
+export async function removeFromImplementationGuideNew(service: ConformanceService, resourceToRemove: IFhirResource): Promise<void> {
 
   let ref = `${resourceToRemove.resource.resourceType}/${resourceToRemove.resource.id ?? resourceToRemove.id}`;
 
   // remove from all version 4 Ig-s that reference it  -- later based on permissions
-  let confRes = <IConformance[]>await service.findAll({ 'resource.definition.resource.reference.reference': ref });
+  let confRes = <IFhirResource[]>await service.findAll({ 'resource.definition.resource.reference.reference': ref });
 
-  async function updateReference(conf: IConformance) {
+  async function updateReference(conf: IFhirResource) {
     let conformance = await service.getModel().findById(conf.id).populate('references.value');
     (conformance.references || []).forEach((r: IProjectResourceReference, index) => {
       if (!r.value || typeof r.value === typeof '') return;
-      if (r.valueType === 'Conformance' || r.valueType === 'Example') {
-        const val: IConformance = <IConformance>r.value;
+      if (r.valueType === 'FhirResource' || r.valueType === 'Example') {
+        const val: IFhirResource = <IFhirResource>r.value;
         if (val.id === resourceToRemove.id) {
           conf.references.splice(index, 1);
         }
@@ -882,7 +882,7 @@ export async function removeFromImplementationGuideNew(service: ConformanceServi
   }
 
   // remove from all version 3 Ig-s that reference it  - later based on permissions
-  confRes = <IConformance[]>await service.findAll({ 'resource.package.resource.sourceReference.reference': ref });
+  confRes = <IFhirResource[]>await service.findAll({ 'resource.package.resource.sourceReference.reference': ref });
   for (const conf of (confRes || [])) {
     if (conf.resource.resourceType == 'ImplementationGuide') {
       let ig = <STU3ImplementationGuide>conf.resource;
@@ -895,7 +895,7 @@ export async function removeFromImplementationGuideNew(service: ConformanceServi
   }
 }
 
-export function implementationGuideIsCDA(implementationGuide: IConformance): boolean {
+export function implementationGuideIsCDA(implementationGuide: IFhirResource): boolean {
   let deps = implementationGuide.fhirVersion === 'stu3' ?
     getSTU3Dependencies(<STU3ImplementationGuide>implementationGuide.resource) :
     getR4Dependencies(<R4ImplementationGuide>implementationGuide.resource);

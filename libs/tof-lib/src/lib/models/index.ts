@@ -53,22 +53,22 @@ export interface IProjectResource {
   versionId: number;
   lastUpdated: Date;
   permissions?: IPermission[];
+  referencedBy?: IProjectResourceReference[];
+  references?: IProjectResourceReference[];
+  isDeleted?: boolean;
 }
 
 export interface IProjectResourceReference {
-  value: IConformance|IExample|string;
-  valueType: 'Conformance'|'Example';
+  value: IFhirResource|IExample|string|IProject;
+  valueType: 'FhirResource'|'Example'|'Project';
 }
 
 export interface IProjectResourceReferenceMap {
   [key: string]: IProjectResourceReference;
 }
 
-export interface IConformance extends IProjectResource {
-  //groupingId?: string;    // from ImplementationGuide.definition.grouping. Not used in STU3
+export interface IFhirResource  extends IProjectResource {
   fhirVersion: 'stu3'|'r4'|'r5';
-  igIds?: string[];
-  references?: IProjectResourceReference[];
   resource: IDomainResource;
 }
 
@@ -78,6 +78,12 @@ export interface IExample extends IProjectResource {
   exampleFor?: string;    // StructureDefinition in which this is a profile for
   igIds?: string[];
 }
+
+export interface INonFhirResource extends IProjectResource {
+  type: 'page'|'media'|'binary'|'other';
+  content?: any;
+}
+
 
 export interface IHistory extends IProjectResource {
   fhirVersion?: 'stu3'|'r4'|'r5';

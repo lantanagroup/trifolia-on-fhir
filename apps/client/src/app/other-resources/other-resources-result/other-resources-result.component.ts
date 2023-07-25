@@ -14,7 +14,7 @@ import { debounceTime } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import { ConformanceService } from '../../shared/conformance.service';
 import { ExamplesService } from '../../shared/examples.service';
-import { IConformance, IExample, IProjectResource } from '@trifolia-fhir/models';
+import { IFhirResource, IExample, IProjectResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../../shared/implementation-guide.service';
 
 @Component({
@@ -22,7 +22,7 @@ import { ImplementationGuideService } from '../../shared/implementation-guide.se
   styleUrls: ['./other-resources-result.component.css']
 })
 export class OtherResourcesResultComponent extends BaseComponent implements OnInit {
-  public resource: IConformance | IExample;
+  public resource: IFhirResource | IExample;
   activeSub: 'json/xml' | 'permissions' = 'json/xml';
   message: string;
   data: any;
@@ -71,7 +71,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
               this.data = this.fhirService.deserialize(this.content);
               this.message = 'The content has been updated';
             }
-            (<IConformance>this.resource).resource = this.data;            
+            (<IFhirResource>this.resource).resource = this.data;
             this.validation = this.fhirService.validate(this.data);
 
             if (!this.validation.valid) {
@@ -130,11 +130,11 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
       });
     } else {
       this.conformanceService.get(this.route.snapshot.params.id).subscribe({
-        next: (res: IConformance) => {
+        next: (res: IFhirResource) => {
           this.resource = res;
           this.data = res.resource;
           this.content = JSON.stringify(res.resource, null, '\t');
-          this.validation = this.fhirService.validate((<IConformance>this.resource).resource);
+          this.validation = this.fhirService.validate((<IFhirResource>this.resource).resource);
           this.isFhir = true;
           setTimeout(() => {
             this.message = 'Resource opened.';
@@ -166,7 +166,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
   changeType() {
     setTimeout(() => {
-      this.data = this.isFhir ? (<IConformance>this.resource).resource : (<IExample>this.resource).content;
+      this.data = this.isFhir ? (<IFhirResource>this.resource).resource : (<IExample>this.resource).content;
       switch (this.selected) {
         case 'JSON':
           this.content = JSON.stringify(this.data, null, '\t');
@@ -235,16 +235,16 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
   public save() {
 
-    let request: Observable<IConformance | IExample>;
+    let request: Observable<IFhirResource | IExample>;
 
     if (this.isFhir) {
-      request = this.conformanceService.save(this.resource.id, <IConformance>this.resource, this.configService.project?.implementationGuideId, this.isExample);
+      request = this.conformanceService.save(this.resource.id, <IFhirResource>this.resource, this.configService.project?.implementationGuideId, this.isExample);
     } else {
       request = this.examplesService.save(this.resource.id, <IExample>this.resource, this.configService.project?.implementationGuideId);
     }
 
     request.subscribe({
-      next: (res: IConformance | IExample) => {
+      next: (res: IFhirResource | IExample) => {
         Object.assign(this.resource, res);
         this.message = `Successfully updated resource!`;
       },
@@ -260,7 +260,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
       return;
     }
 
-    let request: Observable<IConformance | IExample>;
+    let request: Observable<IFhirResource | IExample>;
 
     if (this.isFhir) {
       request = this.conformanceService.delete(this.resource.id);
@@ -269,7 +269,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     }
 
     request.subscribe({
-      next: (res: IConformance | IExample) => {
+      next: (res: IFhirResource | IExample) => {
         this.router.navigate([`${this.configService.baseSessionUrl}/${this.isExample ? 'examples' : 'other-resources'}`]);
         alert(`Successfully removed resource.`);
       },

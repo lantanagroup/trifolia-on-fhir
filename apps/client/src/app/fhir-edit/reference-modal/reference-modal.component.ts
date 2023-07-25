@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfigService } from '../../shared/config.service';
 import { ConformanceService } from '../../shared/conformance.service';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 import { Paginated } from '@trifolia-fhir/tof-lib';
 
 export interface ResourceSelection {
@@ -39,7 +39,7 @@ export class FhirReferenceModalComponent implements OnInit {
   public nameSearch?: string;
   public titleSearch?: string;
   public selected: ResourceSelection[] = [];
-  public results?: IConformance[];
+  public results?: IFhirResource[];
   public total: number;
   public currentPage: number = 1;
   public pageChanged: Subject<void> = new Subject<void>();
@@ -87,11 +87,11 @@ export class FhirReferenceModalComponent implements OnInit {
     return true;
   }
 
-  public isSelected(con: IConformance) {
+  public isSelected(con: IFhirResource) {
     return !!this.selected.find((selected) => selected.projectResourceId === con.resource.id);
   }
 
-  public setSelected(conf: IConformance, isSelected) {
+  public setSelected(conf: IFhirResource, isSelected) {
     const found = this.selected.find((selected) => selected.projectResourceId === conf.id);
 
     if (found && !isSelected) {
@@ -109,7 +109,7 @@ export class FhirReferenceModalComponent implements OnInit {
     }
   }
 
-  public select(conf?: IConformance) {
+  public select(conf?: IFhirResource) {
     if (conf) {
       this.activeModal.close(<ResourceSelection>{
         projectResourceId: conf.id,
@@ -144,7 +144,7 @@ export class FhirReferenceModalComponent implements OnInit {
        this.titleSearch ? this.titleSearch : null,
       this.idSearch
     ).subscribe({
-      next: (res: Paginated<IConformance>) => {
+      next: (res: Paginated<IFhirResource>) => {
 
         this.results = res.results;
         this.total = res.total;

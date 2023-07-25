@@ -15,7 +15,7 @@ import { AuthService } from '../shared/auth.service';
 import { BaseComponent } from '../base.component';
 import { debounceTime } from 'rxjs/operators';
 import { firstValueFrom, Subject } from 'rxjs';
-import type { IConformance } from '@trifolia-fhir/models';
+import type { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 
@@ -209,7 +209,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
 
     this.valueSetService.save(this.valueSetId, this.conformance)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.valueSetId = conf.id;
@@ -246,7 +246,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
 
       this.valueSetService.getValueSet(this.valueSetId)
         .subscribe({
-          next: (conf: IConformance) => {
+          next: (conf: IFhirResource) => {
             if (!conf || !conf.resource || conf.resource.resourceType !== 'ValueSet') {
               this.message = 'The specified code system either does not exist or was deleted';
               return;

@@ -4,9 +4,9 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ProjectsService} from './projects.service';
 import {BaseDataController} from '../base/base-data.controller';
 import {ProjectDocument} from './project.schema';
-import type {IConformance, IProject} from '@trifolia-fhir/models';
+import type {IFhirResource, IProject} from '@trifolia-fhir/models';
 import {User} from '../server.decorators';
-import {Conformance} from '../conformance/conformance.schema';
+import {FhirResource} from '../conformance/fhirResource.schema';
 import {ConformanceService} from '../conformance/conformance.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
@@ -70,11 +70,11 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
     const confResource = await this.conformanceService.getModel().findById(project.references[0].value['id']);
     if (confResource != null) {
       project.references[0].value = confResource.id;
-      project.references[0].valueType = 'Conformance';
+      project.references[0].valueType = 'FhirResource';
       createdProject = await super.create(project);
       confResource.projects = [];
       for (const ref of createdProject.references) {
-        const confResource: IConformance = <IConformance>(await this.conformanceService.findById(ref.value.toString()));
+        const confResource: IFhirResource = <IFhirResource>(await this.conformanceService.findById(ref.value.toString()));
         confResource.projects.push(createdProject);
         await this.conformanceService.updateOne(ref.value.toString(), confResource);
       }
@@ -96,8 +96,8 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
     project.contributors = [...updatedProject.contributors];
     project.references = [];
     for (const m of updatedProject.references) {
-      const confResource = <Conformance>(await this.conformanceService.findById(typeof m.value === 'string' ? m.value : m.value.id));
-      project.references.push({ 'value': confResource, 'valueType': 'Conformance' });
+      const confResource = <FhirResource>(await this.conformanceService.findById(typeof m.value === 'string' ? m.value : m.value.id));
+      project.references.push({ 'value': confResource, 'valueType': 'FhirResource' });
     }
     return await super.update(id, project);
 

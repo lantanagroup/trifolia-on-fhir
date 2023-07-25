@@ -22,7 +22,7 @@ import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { FhirReferenceModalComponent, ResourceSelection } from '../../fhir-edit/reference-modal/reference-modal.component';
 import { BaseComponent } from '../../base.component';
 import { debounceTime } from 'rxjs/operators';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 import {ImplementationGuide} from '@trifolia-fhir/stu3';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
@@ -201,7 +201,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
 
     this.csService.save(this.capabilityStatementId, this.conformance)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.capabilityStatementId = conf.id;

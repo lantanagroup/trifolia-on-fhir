@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type {IProject, IProjectContributor, IPermission} from '@trifolia-fhir/models';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
-import { Conformance } from '../conformance/conformance.schema';
+import { FhirResource } from '../conformance/fhirResource.schema';
 import {IProjectResourceReference} from '@trifolia-fhir/models';
 
 export type ProjectDocument = HydratedDocument<Project>;
@@ -28,7 +28,7 @@ export class Project extends BaseEntity implements IProject {
     @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['Project']}}])
     referencedBy: IProjectResourceReference[];
 
-    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['Conformance', 'Example']}}])
+    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['FhirResource', 'Example']}}])
     references: IProjectResourceReference[];
 
     @Prop()

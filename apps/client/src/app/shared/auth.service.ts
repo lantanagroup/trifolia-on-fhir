@@ -8,7 +8,7 @@ import {GroupService} from './group.service';
 import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import { UserService } from './user.service';
-import type {IConformance, IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
+import type {IFhirResource, IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
@@ -151,7 +151,7 @@ export class AuthService {
         //path = '/';
         path = this.activatedRoute.snapshot.queryParams.pathname || `/projects`;
       }
-      
+
       let navigateTo: string;
 
       if (path && path !== '/' && path !== '/logout' && path !== '/login' && !path.endsWith('/home')) {
@@ -246,7 +246,7 @@ export class AuthService {
 
 
   public getDefaultPermissions(): IPermission[] {
-    let conf: IConformance|IProject = <IConformance|IProject>{}
+    let conf: IFhirResource|IProject = <IFhirResource|IProject>{}
     addPermission(conf, 'everyone', 'write');
     return conf.permissions;
   }

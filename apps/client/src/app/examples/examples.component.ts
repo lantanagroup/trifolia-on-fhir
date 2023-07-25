@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {ConfigService} from '../shared/config.service';
-import { IConformance, IExample } from '@trifolia-fhir/models';
+import { IFhirResource, IExample } from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -11,7 +11,7 @@ import { firstValueFrom } from 'rxjs';
   styleUrls: ['./examples.component.css']
 })
 export class ExamplesComponent implements OnInit {
-  public examplesFhir: IConformance[] = [];
+  public examplesFhir: IFhirResource[] = [];
   public examplesOther: IExample[] = [];
   public searchText: string;
 
@@ -71,9 +71,9 @@ export class ExamplesComponent implements OnInit {
     }
 
     return '';
-    
+
   }
-  
+
 
   async ngOnInit() {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
@@ -84,11 +84,11 @@ export class ExamplesComponent implements OnInit {
         this.examplesFhir = [];
         this.examplesOther = [];
       }
-      
 
-      (res || []).forEach((r: IConformance|IExample) => {
+
+      (res || []).forEach((r: IFhirResource|IExample) => {
         if (r['resource']) {
-          this.examplesFhir.push(<IConformance>r);
+          this.examplesFhir.push(<IFhirResource>r);
         } else {
           this.examplesOther.push(<IExample>r);
         }
@@ -119,7 +119,7 @@ export class ExamplesComponent implements OnInit {
         return aResourceType.localeCompare(bResourceType);
       });
 
-      
+
     }
   }
 }

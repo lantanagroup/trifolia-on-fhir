@@ -8,7 +8,7 @@ import {StructureDefinition as R4StructureDefinition} from '../../../../../libs/
 import {StructureDefinition as R5StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
 import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 
 @Injectable()
 export class StructureDefinitionService {
@@ -32,7 +32,7 @@ export class StructureDefinitionService {
     return this.http.get<ILogicalTypeDefinition[]>(url);
   }
 
-  public getStructureDefinitions(page?: number, nameText?: string, IDText?: string, urlText?: string, implementationGuideId?: string, titleText?: string, typeText?: string): Observable<IConformance[]> {
+  public getStructureDefinitions(page?: number, nameText?: string, IDText?: string, urlText?: string, implementationGuideId?: string, titleText?: string, typeText?: string): Observable<IFhirResource[]> {
     let url = '/api/structureDefinition?resourcetype=StructureDefinition&';
 
     if (page) {
@@ -65,21 +65,21 @@ export class StructureDefinitionService {
 
     url += '_sort=name';
 
-    return this.http.get<IConformance[]>(url);
+    return this.http.get<IFhirResource[]>(url);
   }
 
-  public getStructureDefinition(id: string): Observable<IConformance> {
+  public getStructureDefinition(id: string): Observable<IFhirResource> {
     if (id === 'from-file') {
       if (this.fileService.file) {
-        return new Observable<IConformance>((observer) => {
+        return new Observable<IFhirResource>((observer) => {
           const conformance =  { resource: this.fileService.file.resource };
-          observer.next(<IConformance> conformance);
+          observer.next(<IFhirResource> conformance);
         });
       }
     }
     else {
       const url = '/api/structureDefinition/' + encodeURIComponent(id);
-      return this.http.get<IConformance>(url);
+      return this.http.get<IFhirResource>(url);
     }
   }
 
@@ -93,7 +93,7 @@ export class StructureDefinitionService {
     return this.http.get<BaseDefinitionResponseModel>(url);
   }
 
-  public save(structureDefinitionId : string, structureDefinition: IConformance): Observable<IConformance> {
+  public save(structureDefinitionId : string, structureDefinition: IFhirResource): Observable<IFhirResource> {
     let url = '/api/structureDefinition';
 
     if(structureDefinition.resource.text && structureDefinition.resource.text.div && structureDefinition.resource.text.div.indexOf("<br>") > 0){
@@ -103,9 +103,9 @@ export class StructureDefinitionService {
 
     if (structureDefinitionId) {
       url += '/' + encodeURIComponent(structureDefinitionId);
-      return this.http.put<IConformance>(url, structureDefinition);
+      return this.http.put<IFhirResource>(url, structureDefinition);
     } else {
-      return this.http.post<IConformance>(url, structureDefinition);
+      return this.http.post<IFhirResource>(url, structureDefinition);
     }
   }
 

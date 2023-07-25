@@ -8,7 +8,7 @@ import {ConfigService} from './config.service';
 import {ConformanceController} from './conformance/conformance.controller';
 import {ConformanceService} from './conformance/conformance.service';
 import {AuthService} from './auth/auth.service';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 
 @Controller('api/capabilityStatement')
 @UseGuards(AuthGuard('bearer'))
@@ -23,7 +23,7 @@ export class CapabilityStatementController extends ConformanceController {
     super(conformanceService);
   }
   @Get(':id')
-  public async getCapabilityStatement(@User() user, @Param('id') id: string): Promise<IConformance> {
+  public async getCapabilityStatement(@User() user, @Param('id') id: string): Promise<IFhirResource> {
     return super.getById(user, id);
   }
 
@@ -32,7 +32,7 @@ export class CapabilityStatementController extends ConformanceController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
+    let conformance: IFhirResource = body;
     return this.conformanceService.createConformance(conformance, implementationGuideId);
   }
 
@@ -42,7 +42,7 @@ export class CapabilityStatementController extends ConformanceController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
+    let conformance: IFhirResource = body;
     return this.conformanceService.updateConformance(id, conformance, implementationGuideId);
   }
 

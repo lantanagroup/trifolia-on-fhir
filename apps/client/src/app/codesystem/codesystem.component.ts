@@ -22,7 +22,7 @@ import { BaseComponent } from '../base.component';
 import { ICodeSystem, IDomainResource } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 
 @Component({
@@ -30,7 +30,7 @@ import { ImplementationGuideService } from '../shared/implementation-guide.servi
   styleUrls: ['./codesystem.component.css']
 })
 export class CodesystemComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  public conformance: IConformance;
+  public conformance: IFhirResource;
   public codeSystem: ICodeSystem;
   public filteredConcepts: ConceptDefinitionComponent[] = [];
   public pagedConcepts: ConceptDefinitionComponent[] = [];
@@ -74,7 +74,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     } else {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
-    this.conformance = <IConformance>{ resource: this.codeSystem, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.conformance = <IFhirResource>{ resource: this.codeSystem, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -201,7 +201,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     this.conformance.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion;
     this.codeSystemService.save(this.codeSystemId, this.conformance)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.codeSystemId = conf.id;
@@ -244,7 +244,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
 
       this.codeSystemService.getCodeSystem(this.codeSystemId)
         .subscribe({
-          next: (conf: IConformance) => {
+          next: (conf: IFhirResource) => {
             if (!conf || !conf.resource || conf.resource.resourceType !== 'CodeSystem') {
               this.message = 'The specified code system either does not exist or was deleted';
               return;

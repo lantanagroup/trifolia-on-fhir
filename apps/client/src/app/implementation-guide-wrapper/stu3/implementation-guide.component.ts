@@ -26,7 +26,7 @@ import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-
 import { BaseImplementationGuideComponent } from '../base-implementation-guide-component';
 import { CanComponentDeactivate } from '../../guards/resource.guard';
 import { ProjectService } from '../../shared/projects.service';
-import {IConformance, IExample, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
+import {IFhirResource, IExample, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
 import { forkJoin } from 'rxjs';
 import { IDomainResource, getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
 
@@ -291,7 +291,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
         }
 
         if (!this.conformance.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
-          const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'Conformance' };
+          const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'FhirResource' };
           this.conformance.references.push(newProjectResourceReference);
           this.resourceMap[result.resourceType + '/' + result.id] = newProjectResourceReference;
         }
@@ -447,7 +447,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   private getImplementationGuide() {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
-    this.conformance = <IConformance>{};
+    this.conformance = <IFhirResource>{};
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -465,9 +465,9 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
         this.implementationGuideService.getReferenceMap(implementationGuideId)
       ])
         .subscribe({
-          next: (results: [IConformance, IProjectResourceReferenceMap]) => {
+          next: (results: [IFhirResource, IProjectResourceReferenceMap]) => {
 
-            const conf: IConformance = results[0];
+            const conf: IFhirResource = results[0];
 
             if (!conf || !conf.resource || conf.resource.resourceType !== 'ImplementationGuide') {
               this.message = 'The specified implementation guide either does not exist or was deleted';
@@ -686,7 +686,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
     this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);

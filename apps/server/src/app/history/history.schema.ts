@@ -44,7 +44,8 @@ export class History extends BaseEntity implements IHistory {
     @Prop()
     type: 'conformance'|'example';
 
-
+    @Prop()
+    isDeleted: boolean;
 }
 
 export const HistorySchema = SchemaFactory.createForClass(History);

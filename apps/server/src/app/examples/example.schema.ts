@@ -51,6 +51,9 @@ export class Example extends BaseEntity implements IExample {
     @Prop([{type: mongoose.Schema.Types.ObjectId, ref: 'Example' }])
     igIds: string[];
 
+    @Prop()
+    isDeleted: boolean;
+
 }
 
 export const ExampleSchema = SchemaFactory.createForClass(Example);
