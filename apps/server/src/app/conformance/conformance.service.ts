@@ -207,7 +207,7 @@ export class ConformanceService extends BaseDataService<FhirResourceDocument> {
             if (confIdsRemoved && confIdsRemoved.length > 0) {
                 await this.conformanceModel.updateMany(
                     { '_id': { $in: confIdsRemoved } },
-                    { $pull: { 'referencedBy.value': existing.id } }
+                    { $pull: { referencedBy: {value: existing.id, valueType: 'FhirResource' } } }
                 );
             }
 
@@ -221,7 +221,7 @@ export class ConformanceService extends BaseDataService<FhirResourceDocument> {
             if (confIdsAdded && confIdsAdded.length > 0) {
                 await this.conformanceModel.updateMany(
                     { '_id': { $in: confIdsAdded } },
-                    { $push: { 'referencedBy.value': existing.id } }
+                    { $pull: { referencedBy: {value: existing.id, valueType: 'FhirResource' } } }
                 );
             }
             if (exampleIdsAdded && exampleIdsAdded.length > 0) {
