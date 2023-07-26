@@ -22,66 +22,65 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
 
 
     constructor(
-        @InjectModel(FhirResource.name) private conformanceModel: Model<FhirResourceDocument>,
+        @InjectModel(FhirResource.name) private fhirResourceModel: Model<FhirResourceDocument>,
         @InjectModel(Example.name) private examplesModel: Model<ExampleDocument>,
         private readonly historyService: HistoryService
     ) {
-        super(conformanceModel);
+        super(fhirResourceModel);
     }
 
 
 
-    public async createConformance(newConf: IFhirResource, implementationGuideId?: string, isExample?: boolean): Promise<IFhirResource> {
+    public async createFhirResource(newFhirResource: IFhirResource, implementationGuideId?: string, isExample?: boolean): Promise<IFhirResource> {
 
         const lastUpdated = new Date();
         let versionId = 1;
 
-        delete newConf.id;
-        delete newConf['_id'];
+        delete newFhirResource.id;
+        delete newFhirResource['_id'];
 
 
         // validate FHIR resource
         // TODO: actually use FHIR validator
-        if (!(newConf.resource && newConf.resource instanceof Object)) {
-            throw new BadRequestException(`Invalid conformance resource provided.`);
+        if (!(newFhirResource.resource && newFhirResource.resource instanceof Object)) {
+            throw new BadRequestException(`Invalid fhirResource resource provided.`);
         }
 
        // verify that the resource does not already exist
-        let existing = await  this.findOne({'resource.resourceType': newConf.resource.resourceType, 'resource.id' : newConf.resource.id, 'referencedBy.value': new ObjectId(implementationGuideId)});
+        let existing = await  this.findOne({'resource.resourceType': newFhirResource.resource.resourceType, 'resource.id' : newFhirResource.resource.id, 'referencedBy.value': new ObjectId(implementationGuideId)});
         if(existing)
         {
-          throw new BadRequestException(`Conformance resource already exists for this IG`);
+          throw new BadRequestException(`fhirResource resource already exists for this IG`);
         }
         // ensure meta version ID and lastUpdated are set
-        if (!newConf.resource.meta) {
-            newConf.resource.meta = {};
+        if (!newFhirResource.resource.meta) {
+          newFhirResource.resource.meta = {};
         }
-        delete newConf.resource.meta['security'];
-        newConf.resource.meta.versionId = versionId.toString();
-        newConf.resource.meta.lastUpdated = lastUpdated;
-        newConf.versionId = versionId;
-        newConf.lastUpdated = lastUpdated;
+        delete newFhirResource.resource.meta['security'];
+        newFhirResource.resource.meta.versionId = versionId.toString();
+        newFhirResource.resource.meta.lastUpdated = lastUpdated;
+        newFhirResource.versionId = versionId;
+        newFhirResource.lastUpdated = lastUpdated;
 
-        if (newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
-            newConf.referencedBy = newConf.referencedBy || [];
-            let obj = newConf.referencedBy.find(referenced => referenced.value === implementationGuideId)
+        if (newFhirResource.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
+          newFhirResource.referencedBy = newFhirResource.referencedBy || [];
+            let obj = newFhirResource.referencedBy.find(referenced => referenced.value === implementationGuideId)
             if (obj == null) {
-                newConf.referencedBy.push({'value':implementationGuideId, 'valueType' : 'FhirResource'});
+              newFhirResource.referencedBy.push({'value':implementationGuideId, 'valueType' : 'FhirResource'});
             }
         }
 
-        if(!newConf.resource.id){
-           newConf.resource.id = new ObjectId().toHexString();
-          //newConf.resource.id = Math.floor(Math.random() * Date.now()).toString(16);
+        if(!newFhirResource.resource.id){
+          newFhirResource.resource.id = new ObjectId().toHexString();
         }
 
-        newConf = await this.conformanceModel.create(newConf);
+      newFhirResource = await this.fhirResourceModel.create(newFhirResource);
 
         let newHistory: IHistory = {
-            content: newConf.resource,
+            content: newFhirResource.resource,
             versionId: versionId,
             lastUpdated: lastUpdated,
-            targetId: newConf.id,
+            targetId: newFhirResource.id,
             isDeleted: false,
             type: 'fhirResource'
         }
@@ -89,24 +88,24 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         await this.historyService.create(newHistory);
 
         //Add it to the implementation Guide
-        if (newConf.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
-            await addToImplementationGuideNew(this, newConf, implementationGuideId, isExample);
+        if (newFhirResource.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
+            await addToImplementationGuideNew(this, newFhirResource, implementationGuideId, isExample);
         }
 
-        return newConf;
+        return newFhirResource;
     }
 
 
-    public async updateConformance(id: string, upConf: IFhirResource, implementationGuideId?: string, isExample?: boolean): Promise<IFhirResource> {
+    public async updateFhirResource(id: string, upFhirResource: IFhirResource, implementationGuideId?: string, isExample?: boolean): Promise<IFhirResource> {
 
         const lastUpdated = new Date();
         let versionId: number = 1;
 
-        if (upConf.id && upConf.id !== id) {
+        if (upFhirResource.id && upFhirResource.id !== id) {
             throw new BadRequestException();
         }
 
-        let existing = await this.conformanceModel.findById(id);
+        let existing = await this.fhirResourceModel.findById(id);
 
         if (!existing) {
             throw new TofNotFoundException();
@@ -119,8 +118,8 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
 
         // validate FHIR resource
         // TODO: actually use FHIR validator
-        if (!(upConf.resource && upConf.resource instanceof Object)) {
-            throw new BadRequestException(`Invalid conformance resource provided.`);
+        if (!(upFhirResource.resource && upFhirResource.resource instanceof Object)) {
+            throw new BadRequestException(`Invalid fhirResource resource provided.`);
         }
 
 
@@ -146,7 +145,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
 
 
             // references removed -- references in existing but not in updated
-            let confIdsRemoved: ObjectId[] = [];
+            let fhirResIdsRemoved: ObjectId[] = [];
             let exampleIdsRemoved: ObjectId[] = [];
 
 
@@ -156,7 +155,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                     let exRefId: ObjectId = (typeof exRef.value === typeof '') ?
                         new ObjectId(<string>exRef.value) : new ObjectId((<IProjectResource>exRef.value).id);
 
-                    if (!(upConf.references || []).find(
+                    if (!(upFhirResource.references || []).find(
                         (upRef: IProjectResourceReference) => {
                             let upRefId: ObjectId = (typeof upRef.value === typeof '') ?
                                 new ObjectId(<string>upRef.value) : new ObjectId((<IProjectResource>upRef.value).id);
@@ -168,17 +167,17 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                         if (exRef.valueType == 'Example') {
                             exampleIdsRemoved.push(exRefId);
                         } else {
-                            confIdsRemoved.push(exRefId);
+                            fhirResIdsRemoved.push(exRefId);
                         }
                     }
                 });
             }
 
             // references added -- references not in existing but in updated
-            let confIdsAdded: ObjectId[] = [];
+            let fhirResIdsAdded: ObjectId[] = [];
             let exampleIdsAdded: ObjectId[] = [];
-            if (upConf.references && upConf.references.length > 0) {
-                upConf.references.forEach((upRef: IProjectResourceReference) => {
+            if (upFhirResource.references && upFhirResource.references.length > 0) {
+               upFhirResource.references.forEach((upRef: IProjectResourceReference) => {
                     let upRefId: ObjectId = (typeof upRef.value === typeof '') ?
                         new ObjectId(<string>upRef.value) : new ObjectId((<IProjectResource>upRef.value).id);
                     upRef.value = upRefId.toString();
@@ -195,7 +194,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                             exampleIdsAdded.push(upRefId);
                         }
                         else {
-                            confIdsAdded.push(upRefId);
+                          fhirResIdsAdded.push(upRefId);
                         }
 
                     }
@@ -204,9 +203,9 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
 
             }
 
-            if (confIdsRemoved && confIdsRemoved.length > 0) {
-                await this.conformanceModel.updateMany(
-                    { '_id': { $in: confIdsRemoved } },
+            if (fhirResIdsRemoved && fhirResIdsRemoved.length > 0) {
+                await this.fhirResourceModel.updateMany(
+                    { '_id': { $in: fhirResIdsRemoved } },
                     { $pull: { referencedBy: {value: existing.id, valueType: 'FhirResource' } } }
                 );
             }
@@ -218,9 +217,9 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                 );
             }
 
-            if (confIdsAdded && confIdsAdded.length > 0) {
-                await this.conformanceModel.updateMany(
-                    { '_id': { $in: confIdsAdded } },
+            if (fhirResIdsAdded && fhirResIdsAdded.length > 0) {
+                await this.fhirResourceModel.updateMany(
+                    { '_id': { $in: fhirResIdsAdded } },
                     { $pull: { referencedBy: {value: existing.id, valueType: 'FhirResource' } } }
                 );
             }
@@ -235,8 +234,8 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
 
 
         // update every property supplied from updated object
-        for (let key in upConf) {
-            existing[key] = upConf[key];
+        for (let key in upFhirResource) {
+            existing[key] = upFhirResource[key];
         }
 
         // set version and timestamp
@@ -248,7 +247,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         existing.versionId = versionId;
         existing.lastUpdated = lastUpdated;
 
-        await this.conformanceModel.findByIdAndUpdate(existing.id, existing, { new: true });
+        await this.fhirResourceModel.findByIdAndUpdate(existing.id, existing, { new: true });
 
 
         let newHistory: IHistory = {
@@ -272,7 +271,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
 
     }
 
-    public async deleteConformance(id: string): Promise<IFhirResource> {
+    public async deleteFhirResource(id: string): Promise<IFhirResource> {
         // remove from IG
         let resource = await super.findById(id);
         await removeFromImplementationGuideNew(this, resource);
@@ -280,8 +279,8 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
     }
 
 
-    public async getWithReferences(conformanceId: string) {
-        return this.conformanceModel.findById(conformanceId).populate('references.value');
+    public async getWithReferences(fhirResourceId: string) {
+        return this.fhirResourceModel.findById(fhirResourceId).populate('references.value');
     }
 
 
@@ -291,8 +290,8 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
      * @returns FHIR Bundle containing the IG resource and all referenced resources
      */
     public async getBundleFromImplementationGuideId(implementationGuideId: string): Promise<IBundle> {
-        const conformance: IFhirResource = await this.getWithReferences(implementationGuideId);
-        return this.getBundleFromImplementationGuide(conformance);
+        const fhirResource: IFhirResource = await this.getWithReferences(implementationGuideId);
+        return this.getBundleFromImplementationGuide(fhirResource);
     }
 
     /**
@@ -379,10 +378,10 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
     }
 
 
-    public getReferenceMap(conformance: IFhirResource): IProjectResourceReferenceMap {
+    public getReferenceMap(fhirResource: IFhirResource): IProjectResourceReferenceMap {
 
         let map: IProjectResourceReferenceMap = {};
-        (conformance.references || []).forEach((r: IProjectResourceReference) => {
+        (fhirResource.references || []).forEach((r: IProjectResourceReference) => {
             if (!r.value || typeof r.value === typeof '') return;
 
             let key: string;

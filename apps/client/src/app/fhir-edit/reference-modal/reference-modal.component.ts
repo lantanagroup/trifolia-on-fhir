@@ -54,7 +54,7 @@ export class FhirReferenceModalComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     public configService: ConfigService,
-    protected conformanceService: FhirResourceService,
+    protected fhirResourceService: FhirResourceService,
     private http: HttpClient,
     private fhirService: FhirService) {
 
@@ -139,7 +139,7 @@ export class FhirReferenceModalComponent implements OnInit {
     }
 
 
-    this.conformanceService.search(this.currentPage, 'name', this.configService.fhirVersion, igId, this.resourceType,
+    this.fhirResourceService.search(this.currentPage, 'name', this.configService.fhirVersion, igId, this.resourceType,
       this.nameSearch ? this.nameSearch : null,
        this.titleSearch ? this.titleSearch : null,
       this.idSearch

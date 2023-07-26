@@ -13,21 +13,21 @@ import { TofLogger } from '../tof-logger';
 
 @Controller('api/fhirResources')
 @UseGuards(AuthGuard('bearer'))
-@ApiTags('Conformance')
+@ApiTags('FhirResource')
 @ApiOAuth2([])
 export class FhirResourcesController extends BaseDataController<FhirResourceDocument> {
     protected resourceType: string
     protected readonly logger = new TofLogger(FhirResourcesController.name);
 
     constructor(
-        protected readonly conformanceService: FhirResourcesService
+        protected readonly fhirResourceService: FhirResourcesService
     ) {
-        super(conformanceService);
+        super(fhirResourceService);
     }
 
 
-    protected assertResourceValid(conformance: IFhirResource) {
-        if (!conformance || (this.resourceType && conformance.resource.resourceType !== this.resourceType)) {
+    protected assertResourceValid(fhirResource: IFhirResource) {
+        if (!fhirResource || (this.resourceType && fhirResource.resource.resourceType !== this.resourceType)) {
             throw new TofNotFoundException(`No valid resource of type ${this.resourceType} found`);
         }
     }
@@ -125,12 +125,12 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
 
     @Get('empty')
     public async getEmpty(): Promise<IFhirResource> {
-        return await this.conformanceService.getEmpty();
+        return await this.fhirResourceService.getEmpty();
     }
 
 
     @Get()
-    public async searchConformance(@User() user: ITofUser, @Request() req): Promise<Paginated<IFhirResource>> {
+    public async searchFhirResource(@User() user: ITofUser, @Request() req): Promise<Paginated<IFhirResource>> {
         let options = this.getPaginateOptionsFromRequest(req);
         let baseFilter = this.authService.getPermissionFilterBase(user, 'read');
 
@@ -141,45 +141,45 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
             ]
         };
 
-        return await this.conformanceService.search(options);
+        return await this.fhirResourceService.search(options);
     }
 
     @Get(':id/references')
     public async getReferences(@User() user: ITofUser, @Param('id') id: string): Promise<any> {
         await this.assertCanReadById(user, id);
-        return await this.conformanceService.getWithReferences(id);
+        return await this.fhirResourceService.getWithReferences(id);
     }
 
     @Get(':id')
     public async getById(@User() user: ITofUser, @Param('id') id: string): Promise<IFhirResource> {
         await this.assertCanReadById(user, id);
-        let conformance = await this.conformanceService.findById(id);
-        this.assertResourceValid(conformance);
-        return conformance;
+        let fhirResource = await this.fhirResourceService.findById(id);
+        this.assertResourceValid(fhirResource);
+        return fhirResource;
     }
 
     @Post()
-    public async createConformance(@User() user: ITofUser, @Body() conformance: IFhirResource, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IFhirResource> {
+    public async createFhirResource(@User() user: ITofUser, @Body() fhirResource: IFhirResource, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IFhirResource> {
         if (implementationGuideId) {
             await this.assertCanWriteById(user, implementationGuideId);
         }
-        return await this.conformanceService.createConformance(conformance, implementationGuideId, isExample);
+        return await this.fhirResourceService.createFhirResource(fhirResource, implementationGuideId, isExample);
     }
 
     @Put(':id')
-    public async updateConformance(@User() user: ITofUser, @Param('id') id: string, @Body() conformance: IFhirResource, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IFhirResource> {
-        await this.assertIdMatch(id, conformance);
+    public async updateFhirResource(@User() user: ITofUser, @Param('id') id: string, @Body() fhirResource: IFhirResource, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IFhirResource> {
+        await this.assertIdMatch(id, fhirResource);
         await this.assertCanWriteById(user, id);
         if (implementationGuideId) {
             await this.assertCanWriteById(user, implementationGuideId);
         }
-        return await this.conformanceService.updateConformance(id, conformance, implementationGuideId, isExample);
+        return await this.fhirResourceService.updateFhirResource(id, fhirResource, implementationGuideId, isExample);
     }
 
     @Delete(':id')
-    public async deleteConformance(@User() user: ITofUser, @Param('id') id: string) {
+    public async deleteFhirResource(@User() user: ITofUser, @Param('id') id: string) {
         await this.assertCanWriteById(user, id);
-        this.conformanceService.delete(id);
+        this.fhirResourceService.delete(id);
     }
 
 
@@ -187,9 +187,9 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
     public async getReferenceMap(@User() user: ITofUser, @Param('id') id: string): Promise<IProjectResourceReferenceMap> {
         await this.assertCanReadById(user, id);
 
-        let conformance = await this.conformanceService.getModel().findById(id).populate("references.value");
-        this.assertResourceValid(conformance);
-        return this.conformanceService.getReferenceMap(conformance);
+        let fhirResource = await this.fhirResourceService.getModel().findById(id).populate("references.value");
+        this.assertResourceValid(fhirResource);
+        return this.fhirResourceService.getReferenceMap(fhirResource);
     }
 
 }

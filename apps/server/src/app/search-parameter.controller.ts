@@ -21,13 +21,13 @@ export class SearchParameterController extends FhirResourcesController {
 
   protected readonly logger = new TofLogger(SearchParameterController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
-    super(conformanceService);
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected fhirResourcesService: FhirResourcesService, protected configService: ConfigService) {
+    super(fhirResourcesService);
   }
 
   @Get()
   public async searchParameter(@User() user, @Request() req?: any): Promise<Paginated<IFhirResource>> {
-    return super.searchConformance(user, req);
+    return super.searchFhirResource(user, req);
 
   }
 
@@ -41,8 +41,8 @@ export class SearchParameterController extends FhirResourcesController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IFhirResource = body;
-    return this.conformanceService.createConformance(conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourcesService.createFhirResource(fhirResource, implementationGuideId);
   }
 
   @Put(':id')
@@ -52,12 +52,12 @@ export class SearchParameterController extends FhirResourcesController {
       await this.assertCanWriteById(user, implementationGuideId);
     }
     let conformance: IFhirResource = body;
-    return this.conformanceService.updateConformance(id, conformance, implementationGuideId);
+    return this.fhirResourcesService.updateFhirResource(id, conformance, implementationGuideId);
   }
 
   @Delete(':id')
   public async deleteSearchParameter(@User() user, @Param('id') id: string ) {
     await this.assertCanWriteById(user, id);
-    return this.conformanceService.deleteConformance(id);
+    return this.fhirResourcesService.deleteFhirResource(id);
   }
 }

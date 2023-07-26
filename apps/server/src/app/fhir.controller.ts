@@ -57,8 +57,8 @@ export interface ProxyResponse {
 export class FhirController extends FhirResourcesController {
   protected readonly logger = new TofLogger(FhirController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
-    super(conformanceService);
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected fhirResourceService: FhirResourcesService, protected configService: ConfigService) {
+    super(fhirResourceService);
   }
 
 
@@ -71,7 +71,7 @@ export class FhirController extends FhirResourcesController {
     if (contextImplementationGuideId) {
       filter['referencedBy.value'] = new ObjectId(contextImplementationGuideId);
     }
-    const results = await this.conformanceService.findOne(filter);
+    const results = await this.fhirResourceService.findOne(filter);
     if (results) {
       return false;
     }
@@ -95,7 +95,7 @@ export class FhirController extends FhirResourcesController {
     if (resourceType !== 'ImplementationGuide' && contextImplementationGuideId) {
       filter['igIds'] = new ObjectId(contextImplementationGuideId);
     }
-    const conf = await this.conformanceService.findOne(filter);
+    const conf = await this.fhirResourceService.findOne(filter);
     if (!conf || !conf.resource.id) {
       const msg = `No resource found for ${resourceType} with id ${currentId} `;
       this.logger.error(msg);
@@ -105,9 +105,9 @@ export class FhirController extends FhirResourcesController {
     // check if the resource can be changed
     await this.assertCanWriteById(user, conf.id);
 
-    const allResults = await this.conformanceService.findAll({ 'resource.resourceType': 'ImplementationGuide', 'references.value': conf.id });
+    const allResults = await this.fhirResourceService.findAll({ 'resource.resourceType': 'ImplementationGuide', 'references.value': conf.id });
 
-    const allResults1 = await this.conformanceService.findAll({ 'resource.resourceType': 'SearchParameter', 'resource.id': newId });
+    const allResults1 = await this.fhirResourceService.findAll({ 'resource.resourceType': 'SearchParameter', 'resource.id': newId });
     const results = allResults1.map(value => value.referencedBy);
     const allIgs = results.reduce((prev, curr) => {
       return prev.concat(curr);
@@ -154,12 +154,12 @@ export class FhirController extends FhirResourcesController {
     if(conf.resource['url']){
       conf.resource['url'] = conf.resource['url'].replace(currentId, newId);
     }
-    await this.conformanceService.updateOne(conf.id, conf);
+    await this.fhirResourceService.updateOne(conf.id, conf);
 
     // Persist the changes to the resources
 
     allResources.map((conf) => {
-      this.conformanceService.updateConformance(conf.id, conf);
+      this.fhirResourceService.updateFhirResource(conf.id, conf);
     });
 
 
@@ -656,7 +656,7 @@ export class FhirController extends FhirResourcesController {
     @Query('url') structureDefinitionUrl?: string,
     @Query('isLightweight') isLightweight = true) {
 
-    const ig = await this.conformanceService.findById(implementationGuideId);
+    const ig = await this.fhirResourceService.findById(implementationGuideId);
 
     let dependencies: string[];
 

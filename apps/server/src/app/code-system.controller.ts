@@ -20,13 +20,13 @@ export class CodeSystemController extends FhirResourcesController {
 
   protected readonly logger = new TofLogger(CodeSystemController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
-    super(conformanceService);
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected fhirResourceService: FhirResourcesService, protected configService: ConfigService) {
+    super(fhirResourceService);
   }
 
   @Get()
   public async searchCodeSystem(@User() user, @Request() req?: any): Promise<Paginated<IFhirResource>> {
-    return super.searchConformance(user, req);
+    return super.searchFhirResource(user, req);
   }
 
   @Get(':id')
@@ -39,8 +39,8 @@ export class CodeSystemController extends FhirResourcesController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IFhirResource = body;
-    return this.conformanceService.createConformance(conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourceService.createFhirResource(fhirResource, implementationGuideId);
   }
 
   @Put(':id')
@@ -49,13 +49,13 @@ export class CodeSystemController extends FhirResourcesController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IFhirResource = body;
-    return this.conformanceService.updateConformance(id,  conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourceService.updateFhirResource(id,  fhirResource, implementationGuideId);
   }
 
   @Delete(':id')
   public async deleteCodeSystem(@User() user, @Param('id') id: string) {
     await this.assertCanWriteById(user, id);
-    return this.conformanceService.deleteConformance(id);
+    return this.fhirResourceService.deleteFhirResource(id);
   }
 }

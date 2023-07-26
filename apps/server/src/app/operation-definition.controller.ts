@@ -21,13 +21,13 @@ export class OperationDefinitionController extends FhirResourcesController {
 
   protected readonly logger = new TofLogger(OperationDefinitionController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
-    super(conformanceService);
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected fhirResourcesService: FhirResourcesService, protected configService: ConfigService) {
+    super(fhirResourcesService);
   }
 
   @Get()
   public async operationDefinition(@User() user, @Request() req?: any): Promise<Paginated<IFhirResource>> {
-    return super.searchConformance(user, req);
+    return super.searchFhirResource(user, req);
 
   }
 
@@ -41,8 +41,8 @@ export class OperationDefinitionController extends FhirResourcesController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IFhirResource = body;
-    return this.conformanceService.createConformance(conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourcesService.createFhirResource(fhirResource, implementationGuideId);
   }
 
   @Put(':id')
@@ -51,13 +51,13 @@ export class OperationDefinitionController extends FhirResourcesController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IFhirResource = body;
-    return this.conformanceService.updateConformance(id, conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourcesService.updateFhirResource(id, fhirResource, implementationGuideId);
   }
 
   @Delete(':id')
   public async deleteOperationDefinition(@User() user, @Param('id') id: string ) {
     await this.assertCanWriteById(user, id);
-    return this.conformanceService.deleteConformance(id);
+    return this.fhirResourcesService.deleteFhirResource(id);
   }
 }

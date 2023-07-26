@@ -34,10 +34,10 @@ export class StructureDefinitionController extends FhirResourcesController  {
   resourceType = 'StructureDefinition';
 
   private fhirController;
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected fhirResourcesService: FhirResourcesService, protected configService: ConfigService) {
 
-    super(conformanceService);
-    this.fhirController = new FhirController(authService, this.httpService, this.conformanceService, this.configService);
+    super(fhirResourcesService);
+    this.fhirController = new FhirController(authService, this.httpService, this.fhirResourcesService, this.configService);
   }
 
 
@@ -49,7 +49,7 @@ export class StructureDefinitionController extends FhirResourcesController  {
   @Get('base/:type')
   public async getBaseStructureDefinitions(@User() user,  @Req() request: ITofRequest, @Param('type') type: string): Promise<string[]> {
 
-    const results = await super.searchConformance(user, request);
+    const results = await super.searchFhirResource(user, request);
     const ret = (results.results  || []).map((entry) => {
       const structureDefinition = <StructureDefinition> entry.resource;
       return structureDefinition.url;
@@ -63,7 +63,7 @@ export class StructureDefinitionController extends FhirResourcesController  {
 
   private async getBaseStructureDefinitionResource(@User() user, @Req() request: ITofRequest, url: string) {
     try {
-      const results = await super.searchConformance(user, request);
+      const results = await super.searchFhirResource(user, request);
 
       if (results && results.total === 1) {
         return <IStructureDefinition> results[0].resource;
@@ -115,7 +115,7 @@ export class StructureDefinitionController extends FhirResourcesController  {
    */
   @Get('base')
   public async getBaseStructureDefinition(@User() user, @Req() request: ITofRequest, @Query('url') url: string, @Query('type') type: string, @RequestHeaders("implementationGuideId") implementationGuideId: string,
-                                          @FhirServerVersion() fhirServerVersion: 'stu3'|'r4'): Promise<BaseDefinitionResponseModel> {
+                                          @FhirServerVersion() fhirServerVersion: 'stu3'|'r4'|'r5'): Promise<BaseDefinitionResponseModel> {
     const ret = new BaseDefinitionResponseModel();
 
     if (!url.startsWith('http://hl7.org/fhir/StructureDefinition/')) {
@@ -176,7 +176,7 @@ export class StructureDefinitionController extends FhirResourcesController  {
 
   @Get()
   public async searchStructureDefinition(@User() user, @Req() req?: any): Promise<Paginated<IFhirResource>> {
-    return super.searchConformance(user, req);
+    return super.searchFhirResource(user, req);
 
   }
 
@@ -190,8 +190,8 @@ export class StructureDefinitionController extends FhirResourcesController  {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IFhirResource = body;
-    return await this.conformanceService.createConformance(conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return await this.fhirResourcesService.createFhirResource(fhirResource, implementationGuideId);
   }
 
   @Put(':id')
@@ -200,14 +200,14 @@ export class StructureDefinitionController extends FhirResourcesController  {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IFhirResource = body;
-    return this.conformanceService.updateConformance(id, conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourcesService.updateFhirResource(id, fhirResource, implementationGuideId);
   }
 
   @Delete(':id')
   public async deleteStructureDefinition(@User() user, @Param('id') id: string ) {
     await this.assertCanWriteById(user, id);
-    return this.conformanceService.deleteConformance(id);
+    return this.fhirResourcesService.deleteFhirResource(id);
   }
 
   /**
@@ -237,7 +237,7 @@ export class StructureDefinitionController extends FhirResourcesController  {
           itemsPerPage: 10,
           filter: filter
         };
-        const results =  await this.conformanceService.search(options);
+        const results =  await this.fhirResourcesService.search(options);
 
         const base = <StructureDefinition>results.results[0].resource;
 

@@ -19,8 +19,8 @@ export class CapabilityStatementController extends FhirResourcesController {
 
   protected readonly logger = new TofLogger(CapabilityStatementController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
-    super(conformanceService);
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected fhirResourcesService: FhirResourcesService, protected configService: ConfigService) {
+    super(fhirResourcesService);
   }
   @Get(':id')
   public async getCapabilityStatement(@User() user, @Param('id') id: string): Promise<IFhirResource> {
@@ -33,7 +33,7 @@ export class CapabilityStatementController extends FhirResourcesController {
       await this.assertCanWriteById(user, implementationGuideId);
     }
     let conformance: IFhirResource = body;
-    return this.conformanceService.createConformance(conformance, implementationGuideId);
+    return this.fhirResourcesService.createFhirResource(conformance, implementationGuideId);
   }
 
   @Put(':id')
@@ -43,12 +43,12 @@ export class CapabilityStatementController extends FhirResourcesController {
       await this.assertCanWriteById(user, implementationGuideId);
     }
     let conformance: IFhirResource = body;
-    return this.conformanceService.updateConformance(id, conformance, implementationGuideId);
+    return this.fhirResourcesService.updateFhirResource(id, conformance, implementationGuideId);
   }
 
   @Delete(':id')
   public async deleteCapabilityStatement(@User() user, @Param('id') id: string ) {
     await this.assertCanWriteById(user, id);
-    return this.conformanceService.deleteConformance(id);
+    return this.fhirResourcesService.deleteFhirResource(id);
   }
 }

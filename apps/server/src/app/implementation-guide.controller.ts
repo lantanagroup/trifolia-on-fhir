@@ -59,10 +59,10 @@ export class ImplementationGuideController extends FhirResourcesController { // 
     protected configService: ConfigService,
     protected examplesService: ExamplesService,
     protected projectService: ProjectsService,
-    protected conformanceService: FhirResourcesService,
+    protected fhirResourceService: FhirResourcesService,
     protected authService: AuthService) {
 
-    super(conformanceService);
+    super(fhirResourceService);
 
   }
 
@@ -156,7 +156,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
     if (!body) return;
 
     //update ig
-    let conf = <IFhirResource>await this.conformanceService.findById(id);
+    let conf = <IFhirResource>await this.fhirResourceService.findById(id);
 
     if (conf.fhirVersion === 'r4') {
       const igResource = <R4ImplementationGuide>conf.resource;
@@ -185,11 +185,11 @@ export class ImplementationGuideController extends FhirResourcesController { // 
       }
     }
 
-    await this.conformanceService.updateConformance(conf.id, conf);
+    await this.fhirResourceService.updateFhirResource(conf.id, conf);
 
     //update profiles
     for (const profile of (body.profiles || [])) {
-      let conf = await this.conformanceService.findOne({ 'resource.resourceType': 'StructureDefinition', 'resource.id': profile.id, 'igIds': id });
+      let conf = await this.fhirResourceService.findOne({ 'resource.resourceType': 'StructureDefinition', 'resource.id': profile.id, 'igIds': id });
       const sdr = <StructureDefinition>conf.resource;
       sdr.description = profile.description;
       sdr.extension = profile.extension ? [...profile.extension] : [];
@@ -198,7 +198,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
       }
       sdr.differential.element = profile.diffElement ? [...profile.diffElement] : [];
 
-      await this.conformanceService.updateConformance(conf.id, conf);
+      await this.fhirResourceService.updateFhirResource(conf.id, conf);
     }
   }
 
@@ -235,7 +235,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
 
     let examples = [];
 
-    let igConf = await this.conformanceService.findById(id);
+    let igConf = await this.fhirResourceService.findById(id);
     if (!igConf || igConf.resource.resourceType !== 'ImplementationGuide') {
       throw new BadRequestException();
     }
@@ -277,7 +277,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
       let filter = {
         $and: [{ 'referencedBy.value': id }, { $or: resourceFilters }]
       }
-      let res = await this.conformanceService.findAll(filter);
+      let res = await this.fhirResourceService.findAll(filter);
       examples.push(... res);
     }
 
@@ -418,7 +418,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
     }
     let conformance: IFhirResource = body;
     ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
-    return await this.conformanceService.createConformance(conformance);
+    return await this.fhirResourceService.createFhirResource(conformance);
   }
 
   @Put(':id')
@@ -429,18 +429,18 @@ export class ImplementationGuideController extends FhirResourcesController { // 
     await this.assertCanWriteById(user, id);
     let conformance: IFhirResource = body;
     ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
-    return await this.conformanceService.updateConformance(id, conformance);
+    return await this.fhirResourceService.updateFhirResource(id, conformance);
   }
 
   @Delete(':id')
   public async deleteImplementationGuide(@User() user, @Param('id') id: string) {
     await this.assertCanWriteById(user, id);
-    return this.conformanceService.deleteConformance(id);
+    return this.fhirResourceService.deleteFhirResource(id);
   }
 
   @Get(':id/list')
   public async getResourceList(@FhirInstance() fhir, @Param('id') id: string) {
-    const exporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, fhir, id);
+    const exporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, fhir, id);
     const bundle = await exporter.getBundle(false, true);
 
     return (bundle.entry || []).map((entry) => {
@@ -463,7 +463,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
 
   @Post(':id/copy-permissions')
   public async copyPermissions(@User() user: ITofUser, @FhirInstance() fhir, @Param('id') id: string): Promise<number> {
-    const exporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, fhir, id);
+    const exporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, fhir, id);
     const bundle = await exporter.getBundle(false, true);
     //const usi = await this.getUserSecurityInfo(user, fhirServerBase);
 
@@ -517,7 +517,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
   @Get(':id/bundle')
   public async getBundle(@User() user: ITofUser, @Param('id') id: string) {
     await this.assertCanReadById(user, id);
-    let bundle = await this.conformanceService.getBundleFromImplementationGuideId(id);
+    let bundle = await this.fhirResourceService.getBundleFromImplementationGuideId(id);
     return bundle;
   }
 
