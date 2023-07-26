@@ -12,7 +12,7 @@ export type BundleTypes = 'searchset' | 'transaction';
 
 export class BundleExporter {
   readonly httpService: HttpService;
-  readonly conformanceService: FhirResourcesService;
+  readonly fhirResourceService: FhirResourcesService;
   readonly logger: LoggerService;
   readonly fhir: Fhir;
   readonly implementationGuideId: string;
@@ -20,13 +20,13 @@ export class BundleExporter {
   public fhirVersion: 'stu3'|'r4'|'r5';
 
   constructor(
-    conformanceService: FhirResourcesService,
+    fhirResourceService: FhirResourcesService,
     httpService: HttpService,
     logger: LoggerService,
     fhir: Fhir,
     implementationGuideId: string) {
 
-    this.conformanceService = conformanceService;
+    this.fhirResourceService = fhirResourceService;
     this.httpService = httpService;
     this.logger = logger;
     this.fhir = fhir;
@@ -156,8 +156,8 @@ export class BundleExporter {
 
     this.logger.log(`Getting bundle of resources for implementation guide ${this.implementationGuideId}`);
 
-    const conf = await this.conformanceService.getWithReferences(this.implementationGuideId);
-    const bundle: IBundle = await this.conformanceService.getBundleFromImplementationGuide(conf);
+    const conf = await this.fhirResourceService.getWithReferences(this.implementationGuideId);
+    const bundle: IBundle = await this.fhirResourceService.getBundleFromImplementationGuide(conf);
     this.fhirVersion = conf.fhirVersion;
 
     bundle.total = (bundle.entry || []).length;

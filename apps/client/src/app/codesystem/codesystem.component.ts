@@ -30,7 +30,7 @@ import { ImplementationGuideService } from '../shared/implementation-guide.servi
   styleUrls: ['./codesystem.component.css']
 })
 export class CodesystemComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  public conformance: IFhirResource;
+  public fhirResource: IFhirResource;
   public codeSystem: ICodeSystem;
   public filteredConcepts: ConceptDefinitionComponent[] = [];
   public pagedConcepts: ConceptDefinitionComponent[] = [];
@@ -74,7 +74,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     } else {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
-    this.conformance = <IFhirResource>{ resource: this.codeSystem, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.fhirResource = <IFhirResource>{ resource: this.codeSystem, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -198,8 +198,8 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       this.fileService.saveFile();
       return;
     }
-    this.conformance.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion;
-    this.codeSystemService.save(this.codeSystemId, this.conformance)
+    this.fhirResource.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion;
+    this.codeSystemService.save(this.codeSystemId, this.fhirResource)
       .subscribe({
         next: (conf: IFhirResource) => {
           if (this.isNew) {
@@ -207,7 +207,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
             this.codeSystemId = conf.id;
             this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${conf.id}`]);
           } else {
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadCS(conf.resource);
             setTimeout(() => {
               this.message = '';
@@ -250,7 +250,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
               return;
             }
 
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadCS(conf.resource);
           },
           error: (err) => {
@@ -278,8 +278,8 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
 
-    if (this.conformance) {
-      this.conformance.resource = this.codeSystem;
+    if (this.fhirResource) {
+      this.fhirResource.resource = this.codeSystem;
     }
 
     this.nameChanged();

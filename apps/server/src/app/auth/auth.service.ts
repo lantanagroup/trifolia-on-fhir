@@ -17,7 +17,7 @@ export class AuthService {
         private readonly configService: ConfigService,
         private readonly groupsService: GroupsService,
         private readonly projectsService: ProjectsService,
-        private readonly conformanceService: FhirResourcesService
+        private readonly fhirResourceService: FhirResourcesService
     ) {
     }
 
@@ -102,10 +102,10 @@ export class AuthService {
 
 
 
-    public async userCanByType(user: ITofUser, targetId: string, type: 'project' | 'conformance', grant: 'read' | 'write'): Promise<boolean> {
+    public async userCanByType(user: ITofUser, targetId: string, type: 'project' | 'fhirResource', grant: 'read' | 'write'): Promise<boolean> {
 
 
-        const service = type === 'conformance' ? this.conformanceService : this.projectsService;
+        const service = type === 'fhirResource' ? this.fhirResourceService : this.projectsService;
 
         return this.userCanByService(user, targetId, service, grant);
     }
@@ -142,12 +142,12 @@ export class AuthService {
         return this.userCanByType(user, projectId, 'project', 'write');
     }
 
-    public async userCanReadConformance(user: ITofUser, conformanceId: string) {
-        return this.userCanByType(user, conformanceId, 'conformance', 'read');
+    public async userCanReadFhirResource(user: ITofUser, fhirResourceId: string) {
+        return this.userCanByType(user, fhirResourceId, 'fhirResource', 'read');
     }
 
-    public async userCanWriteConformance(user: ITofUser, conformanceId: string) {
-        return this.userCanByType(user, conformanceId, 'conformance', 'write');
+    public async userCanWriteFhirResource(user: ITofUser, fhirResourceId: string) {
+        return this.userCanByType(user, fhirResourceId, 'fhirResource', 'write');
     }
 
 

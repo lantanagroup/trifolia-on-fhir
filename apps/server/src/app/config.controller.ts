@@ -12,7 +12,7 @@ import {FhirResourcesService} from './fhirResources/fhirResources.service';
 export class ConfigController extends BaseController {
   private static serverMetadata = {};
 
-  constructor(protected httpService: HttpService, protected configService: ConfigService, protected conformanceService: FhirResourcesService) {
+  constructor(protected httpService: HttpService, protected configService: ConfigService, protected fhirResourceService: FhirResourcesService) {
     super(configService, httpService);
   }
 

@@ -16,7 +16,7 @@ import {FhirResourcesService} from '../fhirResources/fhirResources.service';
 export class ExamplesController extends BaseDataController<ExampleDocument> {
 
     constructor(
-        protected readonly examplesService: ExamplesService, protected readonly conformanceService: FhirResourcesService
+        protected readonly examplesService: ExamplesService, protected readonly fhirResourceService: FhirResourcesService
         ) {
         super(examplesService);
     }
@@ -31,7 +31,7 @@ export class ExamplesController extends BaseDataController<ExampleDocument> {
     public async createExample(@User() user: ITofUser, @Body() example: IExample, @Query('implementationguideid') implementationGuideId?: string): Promise<IExample> {
         console.log('POST -- checking perms on IG:', implementationGuideId);
         if (implementationGuideId) {
-          if (! await this.authService.userCanWriteConformance(user, implementationGuideId)) {
+          if (! await this.authService.userCanWriteFhirResource(user, implementationGuideId)) {
             throw new UnauthorizedException();
           }
            // await this.assertCanWriteById(user, implementationGuideId);
@@ -45,7 +45,7 @@ export class ExamplesController extends BaseDataController<ExampleDocument> {
         await this.assertIdMatch(id, example);
         await this.assertCanWriteById(user, id);
         if (implementationGuideId) {
-          if (! await this.authService.userCanWriteConformance(user, implementationGuideId)) {
+          if (! await this.authService.userCanWriteFhirResource(user, implementationGuideId)) {
             throw new UnauthorizedException();
           }
          // await this.assertCanWriteById(user, implementationGuideId);
