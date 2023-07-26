@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { HistoryModule } from '../history/history.module';
-import { ConformanceController } from './conformance.controller';
+import { FhirResourcesController } from './fhirResources.controller';
 import { FhirResource, FhirResourceSchema } from './fhirResource.schema';
-import { ConformanceService } from './conformance.service';
+import { FhirResourcesService } from './fhirResources.service';
 import { Example, ExampleSchema } from '../examples/example.schema';
 
 @Module({
@@ -14,8 +14,8 @@ import { Example, ExampleSchema } from '../examples/example.schema';
       { name: Example.name, schema: ExampleSchema }
     ])
   ],
-  controllers: [ConformanceController],
-  exports: [ConformanceService],
-  providers: [ConformanceService]
+  controllers: [FhirResourcesController],
+  exports: [FhirResourcesService],
+  providers: [FhirResourcesService]
 })
-export class ConformanceModule {}
+export class FhirResourcesModule {}

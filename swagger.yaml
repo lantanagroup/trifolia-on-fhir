@@ -61,7 +61,7 @@ paths:
           application/json:
   /config/fhir:
     get:
-      summary: "Gets the /metadata conformance for the FHIR server specified by the 'fhirserver' header."
+      summary: "Gets the /metadata fhirResources for the FHIR server specified by the 'fhirserver' header."
       tags:
         - Config
       responses:

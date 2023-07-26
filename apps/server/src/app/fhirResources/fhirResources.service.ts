@@ -16,9 +16,9 @@ import { Binary as R5Binary, Bundle as R5Bundle, BundleEntry as R5BundleEntryCom
 import { Example, ExampleDocument } from '../examples/example.schema';
 
 @Injectable()
-export class ConformanceService extends BaseDataService<FhirResourceDocument> {
+export class FhirResourcesService extends BaseDataService<FhirResourceDocument> {
 
-    protected readonly logger = new TofLogger(ConformanceService.name);
+    protected readonly logger = new TofLogger(FhirResourcesService.name);
 
 
     constructor(
@@ -83,7 +83,7 @@ export class ConformanceService extends BaseDataService<FhirResourceDocument> {
             lastUpdated: lastUpdated,
             targetId: newConf.id,
             isDeleted: false,
-            type: 'conformance'
+            type: 'fhirResource'
         }
 
         await this.historyService.create(newHistory);
@@ -257,7 +257,7 @@ export class ConformanceService extends BaseDataService<FhirResourceDocument> {
             lastUpdated: lastUpdated,
             targetId: existing.id,
             isDeleted: false,
-            type: 'conformance'
+            type: 'fhirResource'
         }
 
         await this.historyService.create(newHistory);
@@ -287,7 +287,7 @@ export class ConformanceService extends BaseDataService<FhirResourceDocument> {
 
     /**
      * Returns a FHIR Bundle with the IG and its referenced resources
-     * @param implementationGuideId Database ID of the conformance resource for the implementation guide
+     * @param implementationGuideId Database ID of the fhirResources resource for the implementation guide
      * @returns FHIR Bundle containing the IG resource and all referenced resources
      */
     public async getBundleFromImplementationGuideId(implementationGuideId: string): Promise<IBundle> {

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type {IProject, IProjectContributor, IPermission} from '@trifolia-fhir/models';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
-import { FhirResource } from '../conformance/fhirResource.schema';
+import { FhirResource } from '../fhirResources/fhirResource.schema';
 import {IProjectResourceReference} from '@trifolia-fhir/models';
 
 export type ProjectDocument = HydratedDocument<Project>;

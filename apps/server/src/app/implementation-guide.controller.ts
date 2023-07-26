@@ -27,9 +27,9 @@ import os from 'os';
 import { existsSync } from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { AuthService } from './auth/auth.service';
-import { ConformanceService } from './conformance/conformance.service';
+import { FhirResourcesService } from './fhirResources/fhirResources.service';
 import {IProjectResource, IExample, IProjectResourceReference, IFhirResource} from '@trifolia-fhir/models';
-import { ConformanceController } from './conformance/conformance.controller';
+import { FhirResourcesController } from './fhirResources/fhirResources.controller';
 import { ExamplesService } from './examples/examples.service';
 import { ImplementationGuide as R5ImplementationGuide, StructureDefinition } from '@trifolia-fhir/r5';
 import { forkJoin } from 'rxjs';
@@ -51,7 +51,7 @@ class PatchRequest {
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Implementation Guide')
 @ApiOAuth2([])
-export class ImplementationGuideController extends ConformanceController { // extends BaseFhirController {
+export class ImplementationGuideController extends FhirResourcesController { // extends BaseFhirController {
   resourceType = 'ImplementationGuide';
   private readonly httpService1: HttpService;
 
@@ -59,7 +59,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
     protected configService: ConfigService,
     protected examplesService: ExamplesService,
     protected projectService: ProjectsService,
-    protected conformanceService: ConformanceService,
+    protected conformanceService: FhirResourcesService,
     protected authService: AuthService) {
 
     super(conformanceService);
@@ -240,7 +240,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
       throw new BadRequestException();
     }
 
-    // fhir examples for this IG are stored in conformance collection
+    // fhir examples for this IG are stored in fhirResources collection
     // find any example references from the IG
     let resourceFilters: { 'resource.resourceType': string, 'resource.id': string }[] = [];
 
@@ -272,7 +272,7 @@ export class ImplementationGuideController extends ConformanceController { // ex
       }
     }
 
-    // may not have to actually query the conformance collection
+    // may not have to actually query the fhirResources collection
     if (resourceFilters.length > 0) {
       let filter = {
         $and: [{ 'referencedBy.value': id }, { $or: resourceFilters }]

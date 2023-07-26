@@ -9,7 +9,7 @@ import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
-import { ConformanceService } from '../shared/conformance.service';
+import { FhirResourceService } from '../shared/fhir-resource.service';
 import { Paginated } from '@trifolia-fhir/tof-lib';
 import { IFhirResource } from '@trifolia-fhir/models';
 
@@ -36,7 +36,7 @@ export class OtherResourcesComponent implements OnInit {
 
   constructor(
     public configService: ConfigService,
-    private conformanceService: ConformanceService,
+    private conformanceService: FhirResourceService,
     private fhirService: FhirService,
     public route: ActivatedRoute
     ) {

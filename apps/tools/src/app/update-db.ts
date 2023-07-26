@@ -41,13 +41,13 @@ export class UpdateDb extends BaseTools {
     this.client = new MongoClient(this.args.connectionString);
     await this.client.connect();
     this.db = await this.client.db(this.args.dbName);
-    this.conformanceColl = this.db.collection('conformance');
+    this.conformanceColl = this.db.collection('fhirResources');
   }
 
   private async fixVersionIdType() {
-    console.log('Updating conformance resources with a numeric meta.versionId to be a string');
+    console.log('Updating fhirResources resources with a numeric meta.versionId to be a string');
 
-    // Ensure all conformance resources have a string meta.versionId
+    // Ensure all fhirResources resources have a string meta.versionId
     const results = await this.conformanceColl
       .find({ "resource.meta.versionId": { "$type": "number" }});
 

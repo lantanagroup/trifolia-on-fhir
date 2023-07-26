@@ -5,9 +5,9 @@ import {TofLogger} from './tof-logger';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import {ConformanceController} from './conformance/conformance.controller';
+import {FhirResourcesController} from './fhirResources/fhirResources.controller';
 import {AuthService} from './auth/auth.service';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesService} from './fhirResources/fhirResources.service';
 import {IFhirResource} from '@trifolia-fhir/models';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 
@@ -15,13 +15,13 @@ import {Paginated} from '@trifolia-fhir/tof-lib';
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Search Parameter')
 @ApiOAuth2([])
-export class SearchParameterController extends ConformanceController {
+export class SearchParameterController extends FhirResourcesController {
 
   resourceType = 'SearchParameter';
 
   protected readonly logger = new TofLogger(SearchParameterController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
     super(conformanceService);
   }
 

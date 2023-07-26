@@ -7,7 +7,7 @@ import { FhirService } from '../../shared/fhir.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfigService } from '../../shared/config.service';
-import { ConformanceService } from '../../shared/conformance.service';
+import { FhirResourceService } from '../../shared/fhir-resource.service';
 import { IFhirResource } from '@trifolia-fhir/models';
 import { Paginated } from '@trifolia-fhir/tof-lib';
 
@@ -54,7 +54,7 @@ export class FhirReferenceModalComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     public configService: ConfigService,
-    protected conformanceService: ConformanceService,
+    protected conformanceService: FhirResourceService,
     private http: HttpClient,
     private fhirService: FhirService) {
 

@@ -12,7 +12,7 @@ import { BaseComponent } from '../../base.component';
 import { AuthService } from '../../shared/auth.service';
 import { debounceTime } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
-import { ConformanceService } from '../../shared/conformance.service';
+import { FhirResourceService } from '../../shared/fhir-resource.service';
 import { ExamplesService } from '../../shared/examples.service';
 import { IFhirResource, IExample, IProjectResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../../shared/implementation-guide.service';
@@ -42,7 +42,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     private modalService: NgbModal,
     public configService: ConfigService,
     protected authService: AuthService,
-    protected conformanceService: ConformanceService,
+    protected conformanceService: FhirResourceService,
     protected examplesService: ExamplesService,
     protected implementationGuideService: ImplementationGuideService) {
 

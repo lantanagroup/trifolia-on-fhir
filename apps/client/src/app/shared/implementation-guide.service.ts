@@ -6,7 +6,7 @@ import {SearchImplementationGuideResponseContainer} from '../../../../../libs/to
 import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
 import {ConfigService} from './config.service';
 import { IFhirResource, IExample } from '@trifolia-fhir/models';
-import { ConformanceService } from './conformance.service';
+import { FhirResourceService } from './fhir-resource.service';
 
 export class PublishedGuideModel {
   public name: string;
@@ -30,7 +30,7 @@ export class PublishedGuideEditionsModel {
 }
 
 @Injectable()
-export class ImplementationGuideService extends ConformanceService {
+export class ImplementationGuideService extends FhirResourceService {
 
   constructor(protected http: HttpClient,
               public configService: ConfigService,

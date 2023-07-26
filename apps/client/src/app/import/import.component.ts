@@ -16,7 +16,7 @@ import { ConfigService } from '../shared/config.service';
 import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { Media as R5Media } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
-import { ConformanceService } from '../shared/conformance.service';
+import { FhirResourceService } from '../shared/fhir-resource.service';
 import { IFhirResource, IExample, IProjectResource } from '@trifolia-fhir/models';
 import { ExamplesService } from '../shared/examples.service';
 
@@ -85,7 +85,7 @@ export class ImportComponent implements OnInit {
     public configService: ConfigService,
     private httpClient: HttpClient,
     private importService: ImportService,
-    private conformanceService: ConformanceService,
+    private conformanceService: FhirResourceService,
     private examplesService: ExamplesService,
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService,

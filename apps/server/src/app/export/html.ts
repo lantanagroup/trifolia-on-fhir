@@ -37,7 +37,7 @@ import * as tmp from "tmp";
 import * as vkbeautify from "vkbeautify";
 import { ConfigService } from "../config.service";
 import JSZip from "jszip";
-import { ConformanceService } from "../conformance/conformance.service";
+import { FhirResourcesService } from "../fhirResources/fhirResources.service";
 import { TofLogger } from "../tof-logger";
 
 export class HtmlExporter {
@@ -87,7 +87,7 @@ export class HtmlExporter {
 
   // TODO: Refactor so that there aren't so many constructor params
   constructor(
-    protected conformanceService: ConformanceService,
+    protected conformanceService: FhirResourcesService,
     protected configService: ConfigService,
     protected httpService: HttpService,
     protected logger: TofLogger,

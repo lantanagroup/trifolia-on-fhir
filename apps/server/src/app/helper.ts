@@ -25,7 +25,7 @@ import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {TofLogger} from './tof-logger';
 import {IFhirResource, IExample, IProjectResourceReference} from '@trifolia-fhir/models';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesService} from './fhirResources/fhirResources.service';
 import {ObjectId} from 'mongodb';
 
 declare var jasmine;
@@ -561,7 +561,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
   return Promise.resolve();
 }
 
-export async function addToImplementationGuideNew(service: ConformanceService, resourceToAdd: IFhirResource | IExample, implementationGuideId: string, isExample: boolean = false): Promise<void> {
+export async function addToImplementationGuideNew(service: FhirResourcesService, resourceToAdd: IFhirResource | IExample, implementationGuideId: string, isExample: boolean = false): Promise<void> {
   // Don't add implementation guides to other implementation guides (or itself).
   if (!isExample && (<IFhirResource>resourceToAdd).resource.resourceType == 'ImplementationGuide') {
     return Promise.resolve();
@@ -583,7 +583,7 @@ export async function addToImplementationGuideNew(service: ConformanceService, r
     if ('resource' in resourceToAdd && resourceToAdd.resource) {
       resourceReferenceString = `${(<IFhirResource>resourceToAdd).resource.resourceType}/${(<IFhirResource>resourceToAdd).resource.id || resourceToAdd.id}`;
     } else {
-      throw new BadRequestException('Supplied conformance object does not have a valid resource property.');
+      throw new BadRequestException('Supplied fhirResources object does not have a valid resource property.');
     }
   } else {
 
@@ -850,7 +850,7 @@ function getName(name: any) {
 }
 
 
-export async function removeFromImplementationGuideNew(service: ConformanceService, resourceToRemove: IFhirResource): Promise<void> {
+export async function removeFromImplementationGuideNew(service: FhirResourcesService, resourceToRemove: IFhirResource): Promise<void> {
 
   let ref = `${resourceToRemove.resource.resourceType}/${resourceToRemove.resource.id ?? resourceToRemove.id}`;
 

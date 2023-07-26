@@ -6,9 +6,9 @@ import {TofLogger} from './tof-logger';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import {ConformanceController} from './conformance/conformance.controller';
+import {FhirResourcesController} from './fhirResources/fhirResources.controller';
 import {AuthService} from './auth/auth.service';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesService} from './fhirResources/fhirResources.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import {IFhirResource} from '@trifolia-fhir/models';
 
@@ -16,12 +16,12 @@ import {IFhirResource} from '@trifolia-fhir/models';
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Value Set')
 @ApiOAuth2([])
-export class ValueSetController extends ConformanceController {
+export class ValueSetController extends FhirResourcesController {
   resourceType = 'ValueSet';
 
   protected readonly logger = new TofLogger(ValueSetController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
     super(conformanceService);
   }
 

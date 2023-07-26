@@ -89,7 +89,7 @@ export interface IHistory extends IProjectResource {
   fhirVersion?: 'stu3'|'r4'|'r5';
   content?: IDomainResource|any;
   targetId: string;
-  type: 'conformance'|'example';
+  type: 'fhirResource'|'example';
 }
 
 export interface IAudit {

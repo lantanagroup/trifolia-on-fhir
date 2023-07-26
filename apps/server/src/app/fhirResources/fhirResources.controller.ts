@@ -4,23 +4,23 @@ import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
 import type { IFhirResource, IExample, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import type { ITofUser, PaginateOptions, Paginated } from '@trifolia-fhir/tof-lib';
 import { RequestHeaders, User } from '../server.decorators';
-import { ConformanceService } from './conformance.service';
+import { FhirResourcesService } from './fhirResources.service';
 import { BaseDataController } from '../base/base-data.controller';
 import {FhirResourceDocument } from './fhirResource.schema';
 import { TofNotFoundException } from '../../not-found-exception';
 import { ObjectId } from 'mongodb';
 import { TofLogger } from '../tof-logger';
 
-@Controller('api/conformance')
+@Controller('api/fhirResources')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Conformance')
 @ApiOAuth2([])
-export class ConformanceController extends BaseDataController<FhirResourceDocument> {
+export class FhirResourcesController extends BaseDataController<FhirResourceDocument> {
     protected resourceType: string
-    protected readonly logger = new TofLogger(ConformanceController.name);
+    protected readonly logger = new TofLogger(FhirResourcesController.name);
 
     constructor(
-        protected readonly conformanceService: ConformanceService
+        protected readonly conformanceService: FhirResourcesService
     ) {
         super(conformanceService);
     }

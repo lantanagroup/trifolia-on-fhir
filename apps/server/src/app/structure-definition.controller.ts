@@ -19,9 +19,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {ILogicalTypeDefinition} from '../../../../libs/tof-lib/src/lib/logical-type-definition';
 import {ITypeConfig} from '../../../../libs/tof-lib/src/lib/type-config';
-import {ConformanceController} from './conformance/conformance.controller';
+import {FhirResourcesController} from './fhirResources/fhirResources.controller';
 import {AuthService} from './auth/auth.service';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesService} from './fhirResources/fhirResources.service';
 import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
 import {IFhirResource} from '@trifolia-fhir/models';
 
@@ -30,11 +30,11 @@ import {IFhirResource} from '@trifolia-fhir/models';
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Structure Definition')
 @ApiOAuth2([])
-export class StructureDefinitionController extends ConformanceController  {
+export class StructureDefinitionController extends FhirResourcesController  {
   resourceType = 'StructureDefinition';
 
   private fhirController;
-  constructor(protected authService: AuthService,  protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
 
     super(conformanceService);
     this.fhirController = new FhirController(authService, this.httpService, this.conformanceService, this.configService);

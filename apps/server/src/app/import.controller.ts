@@ -26,7 +26,7 @@ import {
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import { addToImplementationGuide } from './helper';
 import { IBundle } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { ConformanceService } from './conformance/conformance.service';
+import { FhirResourcesService } from './fhirResources/fhirResources.service';
 import { ExamplesService } from './examples/examples.service';
 import { ObjectId } from 'mongodb';
 import { IProjectResource } from '@trifolia-fhir/models';
@@ -42,7 +42,7 @@ export class ImportController extends BaseController {
   constructor(
     protected httpService: HttpService,
     protected configService: ConfigService,
-    protected conformanceService: ConformanceService,
+    protected conformanceService: FhirResourcesService,
     protected exampleService: ExamplesService) {
     super(configService, httpService);
   }

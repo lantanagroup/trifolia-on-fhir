@@ -6,10 +6,10 @@ import {Server} from 'socket.io';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {ConfigService} from '../config.service';
 import {TofLogger} from '../tof-logger';
-import { ConformanceService } from '../conformance/conformance.service';
+import { FhirResourcesService } from '../fhirResources/fhirResources.service';
 
 export async function createHtmlExporter(
-  conformanceService: ConformanceService,
+  conformanceService: FhirResourcesService,
   configService: ConfigService,
   httpService: HttpService,
   logger: TofLogger,

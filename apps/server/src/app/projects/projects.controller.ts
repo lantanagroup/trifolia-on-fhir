@@ -6,8 +6,8 @@ import {BaseDataController} from '../base/base-data.controller';
 import {ProjectDocument} from './project.schema';
 import type {IFhirResource, IProject} from '@trifolia-fhir/models';
 import {User} from '../server.decorators';
-import {FhirResource} from '../conformance/fhirResource.schema';
-import {ConformanceService} from '../conformance/conformance.service';
+import {FhirResource} from '../fhirResources/fhirResource.schema';
+import {FhirResourcesService} from '../fhirResources/fhirResources.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {TofNotFoundException} from '../../not-found-exception';
@@ -19,7 +19,7 @@ import {TofNotFoundException} from '../../not-found-exception';
 @ApiOAuth2([])
 export class ProjectsController extends BaseDataController<ProjectDocument> {
 
-  constructor(private readonly projectService: ProjectsService, protected conformanceService: ConformanceService) {
+  constructor(private readonly projectService: ProjectsService, protected conformanceService: FhirResourcesService) {
     super(projectService);
   }
 

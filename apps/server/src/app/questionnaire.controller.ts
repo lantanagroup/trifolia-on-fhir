@@ -8,20 +8,20 @@ import { FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import {IFhirResource} from '@trifolia-fhir/models';
-import {ConformanceController} from './conformance/conformance.controller';
+import {FhirResourcesController} from './fhirResources/fhirResources.controller';
 import {AuthService} from './auth/auth.service';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesService} from './fhirResources/fhirResources.service';
 
 @Controller('api/questionnaire')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Questionnaire')
 @ApiOAuth2([])
-export class QuestionnaireController extends ConformanceController {
+export class QuestionnaireController extends FhirResourcesController {
   resourceType = 'Questionnaire';
 
   protected readonly logger = new TofLogger(QuestionnaireController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
     super(conformanceService);
   }
 
