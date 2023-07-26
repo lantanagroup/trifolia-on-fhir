@@ -4,7 +4,7 @@
 
 <div class="ig-main" *ngIf="conformance && implementationGuide">
   <h2>
-    {{implementationGuide.name || 'no-name'}} <span class="badge bg-warning" *ngIf="!canEdit(conformance)">View-only</span><span class="badge bg-danger" *ngIf="isDirty">Changed!</span>
+    {{implementationGuide.name || 'no-name'}} <span *ngIf="!canEdit(conformance)" class="badge bg-warning">View-only</span>
   </h2>
   <ul ngbNav #igTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
     <li ngbNavItem="general">

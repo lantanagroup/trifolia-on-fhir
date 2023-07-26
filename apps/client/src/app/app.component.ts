@@ -1,23 +1,23 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router, RoutesRecognized} from '@angular/router';
-import { AuthService } from './shared/auth.service';
-import { ConfigService } from './shared/config.service';
-import { Globals, ImplementationGuideContext, getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
-import { FileService } from './shared/file.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FileOpenModalComponent } from './modals/file-open-modal/file-open-modal.component';
-import { FileModel } from './models/file-model';
-import { FhirService } from './shared/fhir.service';
-import { SocketService } from './shared/socket.service';
-import { SettingsModalComponent } from './modals/settings-modal/settings-modal.component';
-import { GithubService } from './shared/github.service';
-import { CookieService } from 'ngx-cookie-service';
-import { AdminMessageModalComponent } from './modals/admin-message-modal/admin-message-modal.component';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {NavigationEnd, Router, RoutesRecognized} from '@angular/router';
+import {AuthService} from './shared/auth.service';
+import {ConfigService} from './shared/config.service';
+import {getImplementationGuideContext, Globals, ImplementationGuideContext} from '@trifolia-fhir/tof-lib';
+import {FileService} from './shared/file.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {FileOpenModalComponent} from './modals/file-open-modal/file-open-modal.component';
+import {FileModel} from './models/file-model';
+import {FhirService} from './shared/fhir.service';
+import {SocketService} from './shared/socket.service';
+import {SettingsModalComponent} from './modals/settings-modal/settings-modal.component';
+import {GithubService} from './shared/github.service';
+import {CookieService} from 'ngx-cookie-service';
+import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-message-modal.component';
 import introJs from 'intro.js/intro.js';
-import { Practitioner } from '@trifolia-fhir/stu3';
-import { ImplementationGuideService } from './shared/implementation-guide.service';
-import { IConformance } from '@trifolia-fhir/models';
-import { firstValueFrom } from 'rxjs';
+import {Practitioner} from '@trifolia-fhir/stu3';
+import {ImplementationGuideService} from './shared/implementation-guide.service';
+import {IConformance} from '@trifolia-fhir/models';
+import {firstValueFrom} from 'rxjs';
 
 declare let gtag: Function;
 
@@ -62,6 +62,7 @@ export class AppComponent implements OnInit {
           this.configService.project = null;
         }
         this.configService.project = await this.getContext(implementationGuideId);
+        this.configService.isChanged = false;
       } else if (event instanceof NavigationEnd) {
         if (this.configService.config.googleAnalyticsCode && event.urlAfterRedirects.indexOf('access_token=') < 0) {
           gtag('event', 'page_view', {

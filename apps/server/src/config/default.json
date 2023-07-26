@@ -18,7 +18,7 @@
     "publishStatusPath": "igs/publishedIGs.json"
   },
   "database": {
-    "uri": "mongodb://user:pwd@localhost:27017/tof?authSource=admin"
+    "uri": "mongodb://user:pwd@localhost:27017/tofdev?authSource=admin"
   },
   "privacyPolicy": "https://www.lantanagroup.com/privacypolicy/",
   "termsOfUse": "https://www.lantanagroup.com/termsofuse/",
