@@ -25,7 +25,7 @@ import type { IDomainResource } from '@trifolia-fhir/tof-lib';
   styleUrls: ['./valueset.component.css']
 })
 export class ValuesetComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  public conformance;
+  public fhirResource;
   public valueSet: ValueSet;
   public message: string;
   public validation: any;
@@ -56,7 +56,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
 
     this.valueSet = new ValueSet({ meta: this.authService.getDefaultMeta() });
 
-    this.conformance = { resource: this.valueSet, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.fhirResource = { resource: this.valueSet, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -207,7 +207,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
       return;
     }
 
-    this.valueSetService.save(this.valueSetId, this.conformance)
+    this.valueSetService.save(this.valueSetId, this.fhirResource)
       .subscribe({
         next: (conf: IFhirResource) => {
           if (this.isNew) {
@@ -252,7 +252,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
               return;
             }
 
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadVS(conf.resource);
           },
           error: (err) => {
@@ -267,8 +267,8 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
   public loadVS(newVal: IDomainResource) {
     this.valueSet = new ValueSet(newVal);
 
-    if (this.conformance) {
-      this.conformance.resource = this.valueSet;
+    if (this.fhirResource) {
+      this.fhirResource.resource = this.valueSet;
     }
 
     this.nameChanged();

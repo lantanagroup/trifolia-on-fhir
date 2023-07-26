@@ -344,7 +344,7 @@ export class FhirService {
    */
   public readById(resourceType: string, id: string) {
     let url = '';
-    if (resourceType == 'conformance') {
+    if (resourceType == 'fhirResource') {
       url = '/api/fhirResources/' + encodeURIComponent(id);
     } else if (resourceType == 'example') {
       url = '/api/example/' + encodeURIComponent(id);
@@ -358,7 +358,7 @@ export class FhirService {
    * @param {string} id
    */
   public delete(id: string) {
-    const url = `/api/conformance/${id}`;
+    const url = `/api/fhirResources/${id}`;
     return this.http.delete(url);
   }
 
@@ -368,12 +368,12 @@ export class FhirService {
    * @param {string} id
    * @param {Resource} resource
    */
-  public update(id: string, conformance: IFhirResource): Observable<IFhirResource> {
+  public update(id: string, fhirResource: IFhirResource): Observable<IFhirResource> {
     if (id) {
       const url = '/api/fhirResources/' + encodeURIComponent(id);
-      return this.http.put<IFhirResource>(url, conformance);
+      return this.http.put<IFhirResource>(url, fhirResource);
     } else {
-      return this.http.post<IFhirResource>('/api/codeSystem', conformance);
+      return this.http.post<IFhirResource>('/api/codeSystem', fhirResource);
     }
   }
 
@@ -528,7 +528,7 @@ export class FhirService {
   }
 
   /* public findResourceTypesWithSearchParam(searchParamName: string): string[] {
-     const cs = <CapabilityStatement>this.configService.fhirConformance;
+     const cs = <CapabilityStatement>this.configService.fhirResource;
      const resourceTypes: string[] = [];
 
      if (!cs) {

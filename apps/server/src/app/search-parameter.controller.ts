@@ -51,8 +51,8 @@ export class SearchParameterController extends FhirResourcesController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IFhirResource = body;
-    return this.fhirResourcesService.updateFhirResource(id, conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourcesService.updateFhirResource(id, fhirResource, implementationGuideId);
   }
 
   @Delete(':id')

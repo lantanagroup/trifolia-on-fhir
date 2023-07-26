@@ -42,7 +42,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     'ParameterDefinition', 'Expression', 'TriggerDefinition'];
 
   @Input() public structureDefinition: STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition;
-  public conformance;
+  public fhirResource;
   public sdId;
   public baseStructureDefinition;
   public selectedElement: ElementTreeModel;
@@ -217,10 +217,10 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.constraintManager = null;
 
     try {
-      this.conformance = await this.strucDefService.getStructureDefinition(this.sdId).toPromise();
-      const sdr = <StructureDefinition>this.conformance.resource;
+      this.fhirResource = await this.strucDefService.getStructureDefinition(this.sdId).toPromise();
+      const sdr = <StructureDefinition>this.fhirResource.resource;
 
-      this.loadSD(this.conformance.resource, true, false);
+      this.loadSD(this.fhirResource.resource, true, false);
       delete sdr.snapshot;
 
     } catch (err) {
@@ -285,7 +285,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    await this.strucDefService.save(this.sdId, this.conformance)
+    await this.strucDefService.save(this.sdId, this.fhirResource)
       .subscribe((conf) => {
         let updatedStructureDefinition = null;
         if (!this.sdId) {
@@ -294,7 +294,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
           this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${this.sdId}`]);
         } else {
 
-          this.conformance = conf;
+          this.fhirResource = conf;
           this.loadSD(conf.resource, false, false);
 
           this.message = 'Your changes have been saved!';
@@ -307,8 +307,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       });
 
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    const conformance = await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))
-    const implementationGuide: ImplementationGuide = <ImplementationGuide>(conformance).resource;
+    const fhirResource = await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))
+    const implementationGuide: ImplementationGuide = <ImplementationGuide>(fhirResource).resource;
     const resources = implementationGuide.definition.resource;
 
 
@@ -321,7 +321,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       implementationGuide.definition.resource[index].name =
         this.structureDefinition.title ? this.structureDefinition.title : this.structureDefinition.name;
 
-      await this.implementationGuideService.saveImplementationGuide(conformance)
+      await this.implementationGuideService.saveImplementationGuide(fhirResource)
         .toPromise()
         .catch(err => console.log(err));
     }
@@ -343,8 +343,8 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       };
     }
 
-    if (this.conformance) {
-      this.conformance.resource = this.structureDefinition;
+    if (this.fhirResource) {
+      this.fhirResource.resource = this.structureDefinition;
     }
 
     this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, this.structureDefinition.id, this.structureDefinition.name);

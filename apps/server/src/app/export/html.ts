@@ -87,7 +87,7 @@ export class HtmlExporter {
 
   // TODO: Refactor so that there aren't so many constructor params
   constructor(
-    protected conformanceService: FhirResourcesService,
+    protected fhirResourceService: FhirResourcesService,
     protected configService: ConfigService,
     protected httpService: HttpService,
     protected logger: TofLogger,
@@ -111,7 +111,7 @@ export class HtmlExporter {
 
         this.logger.log(`Starting export of HTML package. Home directory is ${this.homedir}. Retrieving resources for export.`);
 
-        const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, this.fhir, this.implementationGuideId);
+        const bundleExporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, this.fhir, this.implementationGuideId);
         this.bundle = await bundleExporter.getBundle();
         this.fhirVersion = bundleExporter.fhirVersion;
 

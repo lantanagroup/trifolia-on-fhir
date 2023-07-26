@@ -19,7 +19,7 @@ import {TofNotFoundException} from '../../not-found-exception';
 @ApiOAuth2([])
 export class ProjectsController extends BaseDataController<ProjectDocument> {
 
-  constructor(private readonly projectService: ProjectsService, protected conformanceService: FhirResourcesService) {
+  constructor(private readonly projectService: ProjectsService, protected fhirResourceService: FhirResourcesService) {
     super(projectService);
   }
 
@@ -67,16 +67,16 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
     let contributor = { user: userProfile.user.name };
     project.contributors.push(contributor);
 
-    const confResource = await this.conformanceService.getModel().findById(project.references[0].value['id']);
+    const confResource = await this.fhirResourceService.getModel().findById(project.references[0].value['id']);
     if (confResource != null) {
       project.references[0].value = confResource.id;
       project.references[0].valueType = 'FhirResource';
       createdProject = await super.create(project);
       confResource.projects = [];
       for (const ref of createdProject.references) {
-        const confResource: IFhirResource = <IFhirResource>(await this.conformanceService.findById(ref.value.toString()));
+        const confResource: IFhirResource = <IFhirResource>(await this.fhirResourceService.findById(ref.value.toString()));
         confResource.projects.push(createdProject);
-        await this.conformanceService.updateOne(ref.value.toString(), confResource);
+        await this.fhirResourceService.updateOne(ref.value.toString(), confResource);
       }
     }
     return createdProject;
@@ -96,7 +96,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
     project.contributors = [...updatedProject.contributors];
     project.references = [];
     for (const m of updatedProject.references) {
-      const confResource = <FhirResource>(await this.conformanceService.findById(typeof m.value === 'string' ? m.value : m.value.id));
+      const confResource = <FhirResource>(await this.fhirResourceService.findById(typeof m.value === 'string' ? m.value : m.value.id));
       project.references.push({ 'value': confResource, 'valueType': 'FhirResource' });
     }
     return await super.update(id, project);
@@ -120,14 +120,14 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
 
     if (!userProfile) return null;
 
-    let conformanceDoc = await this.conformanceService.getModel().findById(id);
-    if (!conformanceDoc) {
+    let fhirResourceDoc = await this.fhirResourceService.getModel().findById(id);
+    if (!fhirResourceDoc) {
       throw new TofNotFoundException('No resource found with that Id.');
     }
     // remove it from every project
-    for (const projectId of conformanceDoc.projects) {
+    for (const projectId of fhirResourceDoc.projects) {
       let project = await this.projectService.findById(projectId.toString());
-      project.references.splice(project.references.indexOf(conformanceDoc.id), 1);
+      project.references.splice(project.references.indexOf(fhirResourceDoc.id), 1);
       if (project.references.length != 0) {
         await this.projectService.updateOne(project.id, project);
       } else {

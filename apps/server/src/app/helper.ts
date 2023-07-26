@@ -858,8 +858,8 @@ export async function removeFromImplementationGuideNew(service: FhirResourcesSer
   let confRes = <IFhirResource[]>await service.findAll({ 'resource.definition.resource.reference.reference': ref });
 
   async function updateReference(conf: IFhirResource) {
-    let conformance = await service.getModel().findById(conf.id).populate('references.value');
-    (conformance.references || []).forEach((r: IProjectResourceReference, index) => {
+    let fhirResource = await service.getModel().findById(conf.id).populate('references.value');
+    (fhirResource.references || []).forEach((r: IProjectResourceReference, index) => {
       if (!r.value || typeof r.value === typeof '') return;
       if (r.valueType === 'FhirResource' || r.valueType === 'Example') {
         const val: IFhirResource = <IFhirResource>r.value;

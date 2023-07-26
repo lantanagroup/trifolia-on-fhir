@@ -100,7 +100,7 @@ class ImplementationGuideResource {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class STU3ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
-  public conformance;
+  public fhirResource;
   public implementationGuide;
   public message: string;
   public currentResource: any;
@@ -290,9 +290,9 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
           });
         }
 
-        if (!this.conformance.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
+        if (!this.fhirResource.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
           const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'FhirResource' };
-          this.conformance.references.push(newProjectResourceReference);
+          this.fhirResource.references.push(newProjectResourceReference);
           this.resourceMap[result.resourceType + '/' + result.id] = newProjectResourceReference;
         }
 
@@ -447,7 +447,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   private getImplementationGuide() {
     const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
 
-    this.conformance = <IFhirResource>{};
+    this.fhirResource = <IFhirResource>{};
 
     if (this.isFile) {
       if (this.fileService.file) {
@@ -474,7 +474,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
               return;
             }
 
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.resourceMap = results[1];
             this.loadIG(conf.resource);
           },
@@ -684,7 +684,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       return;
     }
 
-    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
+    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.fhirResource)
       .subscribe({
         next: (conf: IFhirResource) => {
           if (this.isNew) {
@@ -692,7 +692,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
             this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
             this.saving = false;
           } else {
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadIG(conf.resource);
             this.configService.project = getImplementationGuideContext(conf);
             this.message = 'Your changes have been saved!';
@@ -773,17 +773,17 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
 
     let map = this.resourceMap[igResource.resource.sourceReference.reference];
 
-     let index = (this.conformance.references || []).findIndex((ref: IProjectResourceReference) => {
+     let index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
       return ref.value === map.value
     });
 
     if (index > -1) {
-      this.conformance.references.splice(index, 1);
+      this.fhirResource.references.splice(index, 1);
       delete this.resourceMap[igResource.resource.sourceReference.reference];
     }
 
     if (index > -1) {
-      this.conformance.references.splice(index, 1);
+      this.fhirResource.references.splice(index, 1);
     }
 
     this.initResources();
@@ -823,8 +823,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   public loadIG(newVal: IDomainResource, isDirty?: boolean) {
     this.implementationGuide = new ImplementationGuide(newVal);
 
-    if (this.conformance) {
-      this.conformance.resource = this.implementationGuide;
+    if (this.fhirResource) {
+      this.fhirResource.resource = this.implementationGuide;
     }
     this.igChanging.emit(isDirty);
     this.initPages();

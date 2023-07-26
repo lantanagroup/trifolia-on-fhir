@@ -47,7 +47,7 @@ class PageDefinition {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class R5ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
-  public conformance: IFhirResource;
+  public fhirResource: IFhirResource;
   public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
@@ -417,9 +417,9 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
           }
         );
 
-        if (!this.conformance.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
+        if (!this.fhirResource.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
           const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'FhirResource' };
-          this.conformance.references.push(newProjectResourceReference);
+          this.fhirResource.references.push(newProjectResourceReference);
           this.resourceMap[newReference.reference] = newProjectResourceReference;
         }
 
@@ -505,12 +505,12 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
 
       let map = this.resourceMap[resource.reference.reference];
 
-      index = (this.conformance.references || []).findIndex((ref: IProjectResourceReference) => {
+      index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
         return ref.value === map.value
       });
 
       if (index > -1) {
-        this.conformance.references.splice(index, 1);
+        this.fhirResource.references.splice(index, 1);
         delete this.resourceMap[resource.reference.reference];
       }
 
@@ -577,7 +577,7 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
               return;
             }
 
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.resourceMap = results[1];
             this.loadIG(conf.resource);
           },
@@ -878,7 +878,7 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
-    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
+    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.fhirResource)
       .subscribe({
         next: (conf: IFhirResource) => {
           if (this.isNew) {
@@ -886,7 +886,7 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
             this.saving = false;
             this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
           } else {
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadIG(conf.resource);
             this.configService.project = getImplementationGuideContext(conf);
             this.message = 'Your changes have been saved!';
@@ -1123,8 +1123,8 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
   public loadIG(newVal: IDomainResource, isDirty?: boolean) {
     this.implementationGuide = new ImplementationGuide(newVal);
 
-    if (this.conformance) {
-      this.conformance.resource = this.implementationGuide;
+    if (this.fhirResource) {
+      this.fhirResource.resource = this.implementationGuide;
     }
     this.igChanging.emit(isDirty);
     this.initPagesAndGroups();

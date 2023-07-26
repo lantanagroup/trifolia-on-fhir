@@ -11,7 +11,7 @@ export class UpdateDb extends BaseTools {
   private args: UpdateDbArgs;
   private client: MongoClient;
   private db: Db;
-  private conformanceColl: Collection;
+  private fhirResourceColl: Collection;
 
   public static commandFormat = 'update-db [connectionString] [dbName]';
   public static commandDescription = 'Update the mongo database specified in the connection string';
@@ -41,22 +41,22 @@ export class UpdateDb extends BaseTools {
     this.client = new MongoClient(this.args.connectionString);
     await this.client.connect();
     this.db = await this.client.db(this.args.dbName);
-    this.conformanceColl = this.db.collection('fhirResources');
+    this.fhirResourceColl = this.db.collection('fhirResources');
   }
 
   private async fixVersionIdType() {
     console.log('Updating fhirResources resources with a numeric meta.versionId to be a string');
 
     // Ensure all fhirResources resources have a string meta.versionId
-    const results = await this.conformanceColl
+    const results = await this.fhirResourceColl
       .find({ "resource.meta.versionId": { "$type": "number" }});
 
     const promises: Promise<UpdateResult>[] = [];
     await results
-      .forEach(conformance => {
-        conformance.resource.meta.versionId = conformance.resource.meta.versionId.toString();
-        const next = this.conformanceColl.updateOne({ _id: conformance._id}, {
-          $set: conformance
+      .forEach(fhirResource => {
+        fhirResource.resource.meta.versionId = fhirResource.resource.meta.versionId.toString();
+        const next = this.fhirResourceColl.updateOne({ _id: fhirResource._id}, {
+          $set: fhirResource
         });
         promises.push(next);
       });

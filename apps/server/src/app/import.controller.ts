@@ -42,7 +42,7 @@ export class ImportController extends BaseController {
   constructor(
     protected httpService: HttpService,
     protected configService: ConfigService,
-    protected conformanceService: FhirResourcesService,
+    protected fhirResourceService: FhirResourcesService,
     protected exampleService: ExamplesService) {
     super(configService, httpService);
   }
@@ -87,7 +87,7 @@ export class ImportController extends BaseController {
         filter['resource.resourceType'] = e.resourceType;
         filter['resource.id'] = e.id;
 
-        res = await this.conformanceService.findOne(filter);
+        res = await this.fhirResourceService.findOne(filter);
       }
 
       // resource found

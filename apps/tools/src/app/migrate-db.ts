@@ -22,7 +22,7 @@ interface MigrateDbOptions {
   out?: string;
 }
 
-const conformanceResourceTypes = [
+const fhirResourceResourceTypes = [
   'CapabilityStatement',
   'StructureDefinition',
   'ImplementationGuide',
@@ -273,7 +273,7 @@ export class MigrateDb extends BaseTools {
       if (['Practitioner', 'Group', 'AuditEvent'].find(r => r === resource.resourceType)) continue;
       if (resource.resourceType === 'ImplementationGuide' && this.projects.find(p => p.references[0]?.value === resource.id)) continue;
 
-      await this.migrateConformance(groupedResource);
+      await this.migratefhirResource(groupedResource);
 
     }
   }
@@ -294,7 +294,7 @@ export class MigrateDb extends BaseTools {
         continue;
       }
 
-      await this.migrateConformance(gr);
+      await this.migratefhirResource(gr);
 
     }
 
@@ -528,7 +528,7 @@ export class MigrateDb extends BaseTools {
     console.log(msg);
   }
 
-  private async migrateConformance(groupedResource: GroupedResource) {
+  private async migratefhirResource(groupedResource: GroupedResource) {
     const resource = groupedResource.head;
     const resourceReference = `${resource.resourceType}/${resource.id}`;
     const igs = await this.findImplementationGuides(resourceReference);
@@ -556,7 +556,7 @@ export class MigrateDb extends BaseTools {
       }
     }
 
-    const conformance: IFhirResource = {
+    const fhirResource: IFhirResource = {
       migratedFrom: this.options.migratedFromLabel,
       versionId: resource.meta?.versionId,
       lastUpdated: resource.meta?.lastUpdated,
@@ -568,8 +568,8 @@ export class MigrateDb extends BaseTools {
 
     this.log(`Inserting/updating resource ${resource.resourceType}/${resource.id}`);
     const results = await this.db.collection('fhirResources').findOneAndUpdate(
-      { migratedFrom: conformance.migratedFrom, 'resource.resourceType': conformance.resource.resourceType, 'resource.id': conformance.resource.id },
-      { $set: conformance }, { upsert: true, returnDocument: ReturnDocument.AFTER }
+      { migratedFrom: fhirResource.migratedFrom, 'resource.resourceType': fhirResource.resource.resourceType, 'resource.id': fhirResource.resource.id },
+      { $set: fhirResource }, { upsert: true, returnDocument: ReturnDocument.AFTER }
     );
     groupedResource.projectResource = <IFhirResource><unknown>{ ...results.value };
     const newId = groupedResource.projectResource['_id'].toString();

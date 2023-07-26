@@ -42,7 +42,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     private modalService: NgbModal,
     public configService: ConfigService,
     protected authService: AuthService,
-    protected conformanceService: FhirResourceService,
+    protected fhirResourceService: FhirResourceService,
     protected examplesService: ExamplesService,
     protected implementationGuideService: ImplementationGuideService) {
 
@@ -129,7 +129,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
         }
       });
     } else {
-      this.conformanceService.get(this.route.snapshot.params.id).subscribe({
+      this.fhirResourceService.get(this.route.snapshot.params.id).subscribe({
         next: (res: IFhirResource) => {
           this.resource = res;
           this.data = res.resource;
@@ -238,7 +238,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     let request: Observable<IFhirResource | IExample>;
 
     if (this.isFhir) {
-      request = this.conformanceService.save(this.resource.id, <IFhirResource>this.resource, this.configService.project?.implementationGuideId, this.isExample);
+      request = this.fhirResourceService.save(this.resource.id, <IFhirResource>this.resource, this.configService.project?.implementationGuideId, this.isExample);
     } else {
       request = this.examplesService.save(this.resource.id, <IExample>this.resource, this.configService.project?.implementationGuideId);
     }
@@ -263,7 +263,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     let request: Observable<IFhirResource | IExample>;
 
     if (this.isFhir) {
-      request = this.conformanceService.delete(this.resource.id);
+      request = this.fhirResourceService.delete(this.resource.id);
     } else {
       request = this.examplesService.delete(this.resource.id);
     }

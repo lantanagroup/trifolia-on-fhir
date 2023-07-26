@@ -17,7 +17,7 @@ export class ExamplesService extends BaseDataService<ExampleDocument> {
 
     constructor(
         @InjectModel(Example.name) private examplesModel: Model<ExampleDocument>,
-        private readonly conformanceService: FhirResourcesService,
+        private readonly fhirResourceService: FhirResourcesService,
         private readonly historyService: HistoryService) {
         super(examplesModel);
     }
@@ -59,7 +59,7 @@ export class ExamplesService extends BaseDataService<ExampleDocument> {
 
         //Add it to the implementation Guide
         if (implementationGuideId) {
-            await addToImplementationGuideNew(this.conformanceService, newExample, implementationGuideId, true);
+            await addToImplementationGuideNew(this.fhirResourceService, newExample, implementationGuideId, true);
         }
 
         return newExample;
@@ -113,7 +113,7 @@ export class ExamplesService extends BaseDataService<ExampleDocument> {
 
         //Add it to the implementation Guide
         if (implementationGuideId) {
-            await addToImplementationGuideNew(this.conformanceService, existing, implementationGuideId, true);
+            await addToImplementationGuideNew(this.fhirResourceService, existing, implementationGuideId, true);
         }
 
         return existing;

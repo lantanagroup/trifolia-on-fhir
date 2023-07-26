@@ -14,7 +14,7 @@ export class R5ResourceModalComponent {
   @Input() implementationGuide: ImplementationGuide;
   @Input() implementationGuideID: string;
 
-  constructor(public activeModal: NgbActiveModal, private modalService: NgbModal, private conformanceService: FhirResourceService) {
+  constructor(public activeModal: NgbActiveModal, private modalService: NgbModal, private fhirResourceService: FhirResourceService) {
 
   }
 
@@ -82,7 +82,7 @@ export class R5ResourceModalComponent {
       let result = [];
       const parsedReference = parseReference(this.resource.reference.reference);
       if (parsedReference.resourceType !== 'Binary') {
-        results = await this.conformanceService.search(1, null, 'r4', this.implementationGuideID, parsedReference.resourceType, null, null, parsedReference.id).toPromise();
+        results = await this.fhirResourceService.search(1, null, 'r4', this.implementationGuideID, parsedReference.resourceType, null, null, parsedReference.id).toPromise();
         result = results.results;
       }
       else{

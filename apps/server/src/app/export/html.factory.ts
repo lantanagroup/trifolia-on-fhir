@@ -9,7 +9,7 @@ import {TofLogger} from '../tof-logger';
 import { FhirResourcesService } from '../fhirResources/fhirResources.service';
 
 export async function createHtmlExporter(
-  conformanceService: FhirResourcesService,
+  fhirResourceService: FhirResourcesService,
   configService: ConfigService,
   httpService: HttpService,
   logger: TofLogger,
@@ -20,16 +20,16 @@ export async function createHtmlExporter(
   implementationGuideId: string): Promise<STU3HtmlExporter|R4HtmlExporter> {
 
   //const fhirServerConfig = configService.fhir.servers.find((server: IFhirConfigServer) => server.id === fhirServerId);
-  let fhirVersion = (await conformanceService.findById(implementationGuideId)).fhirVersion;
+  let fhirVersion = (await fhirResourceService.findById(implementationGuideId)).fhirVersion;
 
   let exporter: STU3HtmlExporter|R4HtmlExporter;
   switch (fhirVersion) {
     case 'stu3':
-      exporter = new STU3HtmlExporter(conformanceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
+      exporter = new STU3HtmlExporter(fhirResourceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
       break;
     case 'r4':
     case 'r5':
-      exporter = new R4HtmlExporter(conformanceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
+      exporter = new R4HtmlExporter(fhirResourceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
       break;
     default:
       throw new Error(`Unexpected FHIR version ${fhirVersion}`);

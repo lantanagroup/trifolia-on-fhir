@@ -36,7 +36,7 @@ export class OtherResourcesComponent implements OnInit {
 
   constructor(
     public configService: ConfigService,
-    private conformanceService: FhirResourceService,
+    private fhirResourceService: FhirResourceService,
     private fhirService: FhirService,
     public route: ActivatedRoute
     ) {
@@ -56,7 +56,7 @@ export class OtherResourcesComponent implements OnInit {
 
     this.message = 'Searching...';
 
-    this.conformanceService.search(this.page, 'name', this.configService.fhirVersion,
+    this.fhirResourceService.search(this.page, 'name', this.configService.fhirVersion,
       this.ignoreContext ? null : this.configService.project.implementationGuideId,
       this.searchResourceType
     ).subscribe({

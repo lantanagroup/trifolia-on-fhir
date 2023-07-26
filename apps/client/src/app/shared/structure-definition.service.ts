@@ -72,8 +72,8 @@ export class StructureDefinitionService {
     if (id === 'from-file') {
       if (this.fileService.file) {
         return new Observable<IFhirResource>((observer) => {
-          const conformance =  { resource: this.fileService.file.resource };
-          observer.next(<IFhirResource> conformance);
+          const fhirResource =  { resource: this.fileService.file.resource };
+          observer.next(<IFhirResource> fhirResource);
         });
       }
     }

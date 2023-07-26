@@ -13,15 +13,15 @@ export class ImplementationGuideContext {
 }
 
 
-export function getImplementationGuideContext(igConformance: IFhirResource): ImplementationGuideContext {
+export function getImplementationGuideContext(igfhirResource: IFhirResource): ImplementationGuideContext {
 
-    const ig = <IImplementationGuide>igConformance.resource;
+    const ig = <IImplementationGuide>igfhirResource.resource;
 
     return {
-        implementationGuideId: igConformance.id,
-        fhirVersion: igConformance.fhirVersion,
+        implementationGuideId: igfhirResource.id,
+        fhirVersion: igfhirResource.fhirVersion,
         name: ig.name,
         securityTags: ig.meta && ig.meta.security ? ig.meta.security : [],
-        dependencies: igConformance.fhirVersion === 'stu3' ? getSTU3Dependencies(<STU3ImplementationGuide>ig) : getR4Dependencies(<R4ImplementationGuide>ig)
+        dependencies: igfhirResource.fhirVersion === 'stu3' ? getSTU3Dependencies(<STU3ImplementationGuide>ig) : getR4Dependencies(<R4ImplementationGuide>ig)
     }
 }

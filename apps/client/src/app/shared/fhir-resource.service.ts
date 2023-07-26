@@ -49,19 +49,19 @@ export class FhirResourceService {
     }
 
 
-    public save(conformanceId: string, conformance: IFhirResource, implementationGuideId?: string, isExample?: boolean): Observable<IFhirResource> {
-        if (conformanceId) {
-            const url = `/api/fhirResources/${encodeURIComponent(conformanceId)}${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) + (isExample ? '&isexample=true' : '') : ''}`;
-            return this.http.put<IFhirResource>(url, conformance);
+    public save(fhirResourceId: string, fhirResource: IFhirResource, implementationGuideId?: string, isExample?: boolean): Observable<IFhirResource> {
+        if (fhirResourceId) {
+            const url = `/api/fhirResources/${encodeURIComponent(fhirResourceId)}${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) + (isExample ? '&isexample=true' : '') : ''}`;
+            return this.http.put<IFhirResource>(url, fhirResource);
         } else {
             const url = `/api/fhirResources/${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) + (isExample ? '&isexample=true' : '') : ''}`;
-            return this.http.post<IFhirResource>(url, conformance);
+            return this.http.post<IFhirResource>(url, fhirResource);
         }
     }
 
 
-    public delete(conformanceId: string): Observable<any> {
-        const url = `/api/fhirResources/${encodeURIComponent(conformanceId)}`;
+    public delete(fhirResourceId: string): Observable<any> {
+        const url = `/api/fhirResources/${encodeURIComponent(fhirResourceId)}`;
         return this.http.delete(url);
     }
 

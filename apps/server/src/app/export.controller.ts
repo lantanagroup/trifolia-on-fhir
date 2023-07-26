@@ -35,9 +35,9 @@ export class ExportController extends FhirResourcesController {//BaseController 
   constructor(
     protected httpService: HttpService,
     protected configService: ConfigService,
-    protected conformanceService: FhirResourcesService,
+    protected fhirResourceService: FhirResourcesService,
     private exportService: ExportService) {
-    super(conformanceService);
+    super(fhirResourceService);
   }
 
 
@@ -54,7 +54,7 @@ export class ExportController extends FhirResourcesController {//BaseController 
 
     const options = new ExportOptions(request.query);
     const exporter = new BundleExporter(
-      this.conformanceService,
+      this.fhirResourceService,
       this.httpService,
       this.logger,
       request.fhir,
@@ -77,7 +77,7 @@ export class ExportController extends FhirResourcesController {//BaseController 
   public async exportCompositionDocument(@User() user: ITofUser, @Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string, @Param('compositionId') compositionId: string) {
     await this.assertCanReadById(user, implementationGuideId);
 
-    const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, req.fhir, implementationGuideId);
+    const bundleExporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, req.fhir, implementationGuideId);
     const bundle = await bundleExporter.getBundle(false);
 
     if (!bundle || !bundle.entry) {
@@ -164,7 +164,7 @@ export class ExportController extends FhirResourcesController {//BaseController 
 
     await this.assertCanReadById(user, implementationGuideId);
 
-    const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, req.fhir, implementationGuideId);
+    const bundleExporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, req.fhir, implementationGuideId);
     const bundle = await bundleExporter.getBundle(false);
 
     const msWordExporter = new MSWordExporter();
@@ -186,7 +186,7 @@ export class ExportController extends FhirResourcesController {//BaseController 
 
     const options = new ExportOptions(request.query);
     const exporter = await createHtmlExporter(
-      this.conformanceService,
+      this.fhirResourceService,
       this.configService,
       this.httpService,
       this.logger,
@@ -241,7 +241,7 @@ export class ExportController extends FhirResourcesController {//BaseController 
     let fhirVersion: 'stu3' | 'r4' | 'r5';
 
     const exporter: HtmlExporter = await createHtmlExporter(
-      this.conformanceService,
+      this.fhirResourceService,
       this.configService,
       this.httpService,
       this.logger,

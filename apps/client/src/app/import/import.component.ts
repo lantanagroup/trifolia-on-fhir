@@ -85,7 +85,7 @@ export class ImportComponent implements OnInit {
     public configService: ConfigService,
     private httpClient: HttpClient,
     private importService: ImportService,
-    private conformanceService: FhirResourceService,
+    private fhirResourceService: FhirResourceService,
     private examplesService: ExamplesService,
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService,
@@ -410,7 +410,7 @@ export class ImportComponent implements OnInit {
       req = this.examplesService.save(null, <IExample>newResource, this.implementationGuideId);
     } else {
       (<IFhirResource>newResource).resource = resource;
-      req = this.conformanceService.save(null, <IFhirResource>newResource, this.implementationGuideId);
+      req = this.fhirResourceService.save(null, <IFhirResource>newResource, this.implementationGuideId);
     }
 
     req.subscribe({
@@ -446,9 +446,9 @@ export class ImportComponent implements OnInit {
 
       // add/update fhir type
       else {
-        let conformance: IFhirResource = <IFhirResource>{ ...file.existingResource };
-        conformance.resource = file.resource;
-        requests.push(this.conformanceService.save(conformance.id, conformance, this.implementationGuideId, file.isExample));
+        let fhirResource: IFhirResource = <IFhirResource>{ ...file.existingResource };
+        fhirResource.resource = file.resource;
+        requests.push(this.fhirResourceService.save(fhirResource.id, fhirResource, this.implementationGuideId, file.isExample));
       }
     }
 

@@ -24,7 +24,7 @@ import { IDomainResource } from '@trifolia-fhir/tof-lib';
   styleUrls: ['./operation-definition.component.css']
 })
 export class OperationDefinitionComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  public conformance;
+  public fhirResource;
   public operationDefinitionId: string;
   public operationDefinition;
   public message: string;
@@ -56,7 +56,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
 
     this.operationDefinition = new OperationDefinition({ meta: this.authService.getDefaultMeta() });
 
-    this.conformance = { resource: this.operationDefinition, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.fhirResource = { resource: this.operationDefinition, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -113,7 +113,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    this.opDefService.save(this.operationDefinitionId, this.conformance)
+    this.opDefService.save(this.operationDefinitionId, this.fhirResource)
       .subscribe({
         next: (conf: IFhirResource) => {
           if (this.isNew) {
@@ -121,7 +121,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
             this.operationDefinitionId = conf.id;
             this.router.navigate([`${this.configService.baseSessionUrl}/operation-definition/${conf.id}`]);
           } else {
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadOD(conf.resource);
             setTimeout(() => {
               this.message = '';
@@ -157,7 +157,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
             this.message = 'The specified operation Definition either does not exist or was deleted';
             return;
           }
-          this.conformance = conf;
+          this.fhirResource = conf;
           this.loadOD(conf.resource);
         }, (err) => {
           this.odNotFound = err.status === 404;
@@ -176,8 +176,8 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
 
     this.operationDefinition = new OperationDefinition(newVal);
 
-    if (this.conformance) {
-      this.conformance.resource = this.operationDefinition;
+    if (this.fhirResource) {
+      this.fhirResource.resource = this.operationDefinition;
     }
 
     this.nameChanged();

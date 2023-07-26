@@ -416,9 +416,9 @@ export class ImplementationGuideController extends FhirResourcesController { // 
     if (!body || !body.resource) {
       throw new BadRequestException();
     }
-    let conformance: IFhirResource = body;
-    ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
-    return await this.fhirResourceService.createFhirResource(conformance);
+    let fhirResource: IFhirResource = body;
+    ImplementationGuideController.downloadDependencies(body.resource, fhirResource.fhirVersion, this.configService, this.logger);
+    return await this.fhirResourceService.createFhirResource(fhirResource);
   }
 
   @Put(':id')
@@ -427,9 +427,9 @@ export class ImplementationGuideController extends FhirResourcesController { // 
       throw new BadRequestException();
     }
     await this.assertCanWriteById(user, id);
-    let conformance: IFhirResource = body;
-    ImplementationGuideController.downloadDependencies(body.resource, conformance.fhirVersion, this.configService, this.logger);
-    return await this.fhirResourceService.updateFhirResource(id, conformance);
+    let fhirResource: IFhirResource = body;
+    ImplementationGuideController.downloadDependencies(body.resource, fhirResource.fhirVersion, this.configService, this.logger);
+    return await this.fhirResourceService.updateFhirResource(id, fhirResource);
   }
 
   @Delete(':id')

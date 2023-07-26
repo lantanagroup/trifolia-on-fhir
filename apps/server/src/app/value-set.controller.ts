@@ -89,8 +89,8 @@ export class ValueSetController extends FhirResourcesController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IFhirResource = body;
-    return this.fhirResourceService.updateFhirResource(id, conformance, implementationGuideId );
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourceService.updateFhirResource(id, fhirResource, implementationGuideId );
   }
 
   @Delete(':id')

@@ -67,7 +67,7 @@ export class ResourceHistoryComponent implements OnInit {
         if(this.resource.hasOwnProperty("resource")){
           let res =  <IFhirResource>this.resource;
           this.domainResource = res.resource;
-          resourceType = "conformance";
+          resourceType = "fhirResource";
         }
         else if(this.resource.hasOwnProperty("content")){
           let res =  <IExample>this.resource;

@@ -57,7 +57,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
   public validation: any;
   public flattenedItems: ItemModel[];
   public qNotFound = false;
-  public conformance;
+  public fhirResource;
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
@@ -81,7 +81,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     super(configService, authService);
 
     this.questionnaire = new Questionnaire({ meta: this.authService.getDefaultMeta() });
-    this.conformance = { resource: this.questionnaire, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.fhirResource = { resource: this.questionnaire, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -132,14 +132,14 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
       return;
     }
 
-    this.questionnaireService.save(this.questionnaireId, this.conformance)
+    this.questionnaireService.save(this.questionnaireId, this.fhirResource)
       .subscribe({
         next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.router.navigate([`${this.configService.baseSessionUrl}/questionnaire/${conf.id}`]);
           } else {
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadQuestionnaire(conf.resource);
             this.message = 'Your changes have been saved!';
             setTimeout(() => {
@@ -174,7 +174,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
               this.message = 'The specified questionnaire either does not exist or was deleted';
               return;
             }
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadQuestionnaire(conf.resource);
           },
           error: (err) => {
@@ -366,7 +366,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     this.questionnaire = new Questionnaire(newVal);
 
     if (this.configService) {
-      this.conformance.resource = this.questionnaire;
+      this.fhirResource.resource = this.questionnaire;
     }
 
     this.initFlattenedItems();
