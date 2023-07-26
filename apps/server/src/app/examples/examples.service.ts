@@ -7,7 +7,7 @@ import { IExample, IHistory } from '@trifolia-fhir/models';
 import { BaseDataService } from '../base/base-data.service';
 import { addToImplementationGuideNew } from '../helper';
 import { HistoryService } from '../history/history.service';
-import { ConformanceService } from '../conformance/conformance.service';
+import { FhirResourcesService } from '../fhirResources/fhirResources.service';
 import { TofNotFoundException } from '../../not-found-exception';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class ExamplesService extends BaseDataService<ExampleDocument> {
 
     constructor(
         @InjectModel(Example.name) private examplesModel: Model<ExampleDocument>,
-        private readonly conformanceService: ConformanceService,
+        private readonly conformanceService: FhirResourcesService,
         private readonly historyService: HistoryService) {
         super(examplesModel);
     }

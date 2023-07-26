@@ -8,19 +8,19 @@ import {ConfigService} from './config.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import {AuthService} from './auth/auth.service';
 import {IFhirResource} from '@trifolia-fhir/models';
-import {ConformanceService} from './conformance/conformance.service';
-import {ConformanceController} from './conformance/conformance.controller';
+import {FhirResourcesService} from './fhirResources/fhirResources.service';
+import {FhirResourcesController} from './fhirResources/fhirResources.controller';
 
 @Controller('api/codeSystem')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Code System')
 @ApiOAuth2([])
-export class CodeSystemController extends ConformanceController {
+export class CodeSystemController extends FhirResourcesController {
   resourceType = 'CodeSystem';
 
   protected readonly logger = new TofLogger(CodeSystemController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
     super(conformanceService);
   }
 

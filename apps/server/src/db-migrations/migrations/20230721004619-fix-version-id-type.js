@@ -1,11 +1,11 @@
 /**
- * Updates every conformance object that has a meta.versionId that is currently a number to a string
+ * Updates every fhirResources object that has a meta.versionId that is currently a number to a string
  */
 
 module.exports = {
   async up(db, client) {
     console.log(
-      'Updating conformance resources with a numeric meta.versionId to be a string'
+      'Updating fhirResources resources with a numeric meta.versionId to be a string'
     );
 
     const results = await db

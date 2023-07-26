@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { ConformanceModule } from '../conformance/conformance.module';
+import { FhirResourcesModule } from '../fhirResources/fhirResources.module';
 import { GroupsModule } from '../groups/groups.module';
 import { ProjectsModule } from '../projects/projects.module';
 import { SharedModule } from '../shared/shared.module';
@@ -11,13 +11,13 @@ import { AuthService } from './auth.service';
 @Module({
     imports: [
         SharedModule,
-        // forwardRef(() => GroupsModule), 
-        // forwardRef(() => ProjectsModule), 
-        // forwardRef(() => ConformanceModule), 
+        // forwardRef(() => GroupsModule),
+        // forwardRef(() => ProjectsModule),
+        // forwardRef(() => FhirResourcesModule),
         // forwardRef(() => UsersModule)
         GroupsModule,
         ProjectsModule,
-        ConformanceModule,
+        FhirResourcesModule,
         UsersModule
     ],
     controllers: [AuthController],

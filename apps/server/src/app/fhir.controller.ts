@@ -36,10 +36,10 @@ import os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import {ImplementationGuideController} from './implementation-guide.controller';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesService} from './fhirResources/fhirResources.service';
 import {ObjectId} from 'mongodb';
 
-import {ConformanceController} from './conformance/conformance.controller';
+import {FhirResourcesController} from './fhirResources/fhirResources.controller';
 import {AuthService} from './auth/auth.service';
 
 
@@ -54,10 +54,10 @@ export interface ProxyResponse {
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('FHIR Proxy')
 @ApiOAuth2([])
-export class FhirController extends ConformanceController {
+export class FhirController extends FhirResourcesController {
   protected readonly logger = new TofLogger(FhirController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: FhirResourcesService, protected configService: ConfigService) {
     super(conformanceService);
   }
 

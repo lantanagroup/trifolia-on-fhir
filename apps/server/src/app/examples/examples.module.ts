@@ -4,14 +4,14 @@ import { Example, ExampleSchema } from './example.schema';
 import { ExamplesController } from './examples.controller';
 import { ExamplesService } from './examples.service';
 import { HistoryModule } from '../history/history.module';
-import { ConformanceModule } from '../conformance/conformance.module';
+import { FhirResourcesModule } from '../fhirResources/fhirResources.module';
 
 @Module({
     imports: [
         MongooseModule.forFeature([
             { name: Example.name, schema: ExampleSchema }
         ]),
-        ConformanceModule,
+        FhirResourcesModule,
         HistoryModule
     ],
     controllers: [ExamplesController],

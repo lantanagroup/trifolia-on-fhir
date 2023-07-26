@@ -20,22 +20,22 @@ import {User} from './server.decorators';
 import {HtmlExporter} from './export/html';
 import nodemailer from 'nodemailer';
 import JSZip from 'jszip';
-import {ConformanceController} from './conformance/conformance.controller';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesController} from './fhirResources/fhirResources.controller';
+import {FhirResourcesService} from './fhirResources/fhirResources.service';
 import {v4 as uuidv4} from 'uuid';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Export')
 @ApiOAuth2([])
-export class ExportController extends ConformanceController {//BaseController {
+export class ExportController extends FhirResourcesController {//BaseController {
   protected logger = new TofLogger(ExportController.name);
   public jsZipObj = new JSZip();
 
   constructor(
     protected httpService: HttpService,
     protected configService: ConfigService,
-    protected conformanceService: ConformanceService,
+    protected conformanceService: FhirResourcesService,
     private exportService: ExportService) {
     super(conformanceService);
   }

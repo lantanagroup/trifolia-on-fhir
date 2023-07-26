@@ -3,7 +3,7 @@ import type { ITofUser } from '@trifolia-fhir/tof-lib';
 import { ObjectId } from 'mongodb';
 import { IBaseDataService } from '../base/interfaces';
 import { ConfigService } from '../config.service';
-import { ConformanceService } from '../conformance/conformance.service';
+import { FhirResourcesService } from '../fhirResources/fhirResources.service';
 import { GroupsService } from '../groups/groups.service';
 import { ProjectsService } from '../projects/projects.service';
 import { TofLogger } from '../tof-logger';
@@ -17,7 +17,7 @@ export class AuthService {
         private readonly configService: ConfigService,
         private readonly groupsService: GroupsService,
         private readonly projectsService: ProjectsService,
-        private readonly conformanceService: ConformanceService
+        private readonly conformanceService: FhirResourcesService
     ) {
     }
 
@@ -111,7 +111,7 @@ export class AuthService {
     }
 
     public async userCanByService(user: ITofUser, targetId: string, dataService: IBaseDataService, grant: 'read' | 'write'): Promise<boolean> {
-        
+
         if (!this.configService.server.enableSecurity || user?.isAdmin) {
             return true;
         }

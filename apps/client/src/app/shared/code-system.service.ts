@@ -4,10 +4,10 @@ import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {IFhirResource, IProject} from '@trifolia-fhir/models';
-import { ConformanceService } from './conformance.service';
+import { FhirResourceService } from './fhir-resource.service';
 
 @Injectable()
-export class CodeSystemService extends ConformanceService {
+export class CodeSystemService extends FhirResourceService {
 
   constructor(
       protected http: HttpClient) {

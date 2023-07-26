@@ -7,7 +7,7 @@ import { BaseDataController } from '../base/base-data.controller';
 import { ExamplesService } from './examples.service';
 import { ExampleDocument } from './example.schema';
 import { User } from '../server.decorators';
-import {ConformanceService} from '../conformance/conformance.service';
+import {FhirResourcesService} from '../fhirResources/fhirResources.service';
 
 @Controller('api/examples')
 @UseGuards(AuthGuard('bearer'))
@@ -16,7 +16,7 @@ import {ConformanceService} from '../conformance/conformance.service';
 export class ExamplesController extends BaseDataController<ExampleDocument> {
 
     constructor(
-        protected readonly examplesService: ExamplesService, protected readonly conformanceService: ConformanceService
+        protected readonly examplesService: ExamplesService, protected readonly conformanceService: FhirResourcesService
         ) {
         super(examplesService);
     }

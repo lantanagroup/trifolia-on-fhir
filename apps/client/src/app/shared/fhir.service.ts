@@ -294,7 +294,7 @@ export class FhirService {
    * @param ignoreContext Does *not* send the context implementation guide in the headers to limit the search results
    */
   public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, implementationGuideId?: string, additionalQuery?: { [id: string]: string | string[] }, separateArrayQuery = false, sortID = false, page?: number) {
-    let url = '/api/conformance?resourcetype=' + resourceType + '&page=' + page + '&'; //+ `_count=${count}&`;
+    let url = '/api/fhirResources?resourcetype=' + resourceType + '&page=' + page + '&'; //+ `_count=${count}&`;
 
     if (searchContent) {
       url += `_content=${encodeURIComponent(searchContent)}&`;
@@ -345,7 +345,7 @@ export class FhirService {
   public readById(resourceType: string, id: string) {
     let url = '';
     if (resourceType == 'conformance') {
-      url = '/api/conformance/' + encodeURIComponent(id);
+      url = '/api/fhirResources/' + encodeURIComponent(id);
     } else if (resourceType == 'example') {
       url = '/api/example/' + encodeURIComponent(id);
     }
@@ -370,7 +370,7 @@ export class FhirService {
    */
   public update(id: string, conformance: IFhirResource): Observable<IFhirResource> {
     if (id) {
-      const url = '/api/conformance/' + encodeURIComponent(id);
+      const url = '/api/fhirResources/' + encodeURIComponent(id);
       return this.http.put<IFhirResource>(url, conformance);
     } else {
       return this.http.post<IFhirResource>('/api/codeSystem', conformance);

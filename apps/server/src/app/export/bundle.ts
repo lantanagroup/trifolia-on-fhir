@@ -5,14 +5,14 @@ import { Globals } from '@trifolia-fhir/tof-lib';
 import { HttpService } from '@nestjs/axios';
 import { LoggerService } from '@nestjs/common';
 import type { IBundle, IExtension, IStructureDefinition } from '@trifolia-fhir/tof-lib';
-import { ConformanceService } from '../conformance/conformance.service';
+import { FhirResourcesService } from '../fhirResources/fhirResources.service';
 
 export type FormatTypes = 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml';
 export type BundleTypes = 'searchset' | 'transaction';
 
 export class BundleExporter {
   readonly httpService: HttpService;
-  readonly conformanceService: ConformanceService;
+  readonly conformanceService: FhirResourcesService;
   readonly logger: LoggerService;
   readonly fhir: Fhir;
   readonly implementationGuideId: string;
@@ -20,7 +20,7 @@ export class BundleExporter {
   public fhirVersion: 'stu3'|'r4'|'r5';
 
   constructor(
-    conformanceService: ConformanceService,
+    conformanceService: FhirResourcesService,
     httpService: HttpService,
     logger: LoggerService,
     fhir: Fhir,
@@ -162,7 +162,7 @@ export class BundleExporter {
 
     bundle.total = (bundle.entry || []).length;
     bundle.type = type;
-    
+
     if (bundle.entry) {
       bundle.entry.forEach(entry => {
         if (entry.resource.resourceType && entry.resource.resourceType === "StructureDefinition") {
