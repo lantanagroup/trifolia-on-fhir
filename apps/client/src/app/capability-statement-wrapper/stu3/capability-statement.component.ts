@@ -26,7 +26,7 @@ import { IDomainResource } from '@trifolia-fhir/tof-lib';
   styleUrls: ['./capability-statement.component.css']
 })
 export class STU3CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  public conformance;
+  public fhirResource;
   @Input() public capabilityStatement;
   public idChangedEvent = new Subject();
   public isIdUnique = true;
@@ -63,7 +63,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
     this.capabilityStatement.date = this.capabilityStatement.date ? this.capabilityStatement.date.substring(0, this.capabilityStatement.date.indexOf("T")) : "";
 
-    this.conformance = { resource: this.capabilityStatement, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.fhirResource = { resource: this.capabilityStatement, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -163,7 +163,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
       return;
     }
 
-    this.csService.save(this.capabilityStatementId, this.conformance)
+    this.csService.save(this.capabilityStatementId, this.fhirResource)
       .subscribe({
         next: (conf: IFhirResource) => {
           if (this.isNew) {
@@ -171,7 +171,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
             this.capabilityStatementId = conf.id;
             this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${conf.id}`]);
           } else {
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadCS(conf.resource);
             setTimeout(() => {
               this.message = '';
@@ -261,8 +261,8 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
   loadCS(newVal: IDomainResource) {
     this.capabilityStatement = new CapabilityStatement(newVal);
 
-    if (this.conformance) {
-      this.conformance.resource = this.capabilityStatement;
+    if (this.fhirResource) {
+      this.fhirResource.resource = this.capabilityStatement;
     }
     this.nameChanged();
     this.recentItemService.ensureRecentItem(
@@ -329,7 +329,7 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
               return;
             }
 
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadCS(conf.resource);
           },
           error: (err) => {
