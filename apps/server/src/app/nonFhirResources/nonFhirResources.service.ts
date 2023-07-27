@@ -50,9 +50,8 @@ export class NonFhirResourcesService extends BaseDataService<NonFhirResourceDocu
             content: newExample.content,
             versionId: versionId,
             lastUpdated: lastUpdated,
-            targetId: newExample.id,
+            current: { value: newExample.id, valueType: 'NonFhirResource'},
             isDeleted: false,
-            type: 'nonFhirResource'
         }
 
         await this.historyService.create(newHistory);
@@ -104,9 +103,8 @@ export class NonFhirResourcesService extends BaseDataService<NonFhirResourceDocu
             content: existing.content,
             versionId: versionId,
             lastUpdated: lastUpdated,
-            targetId: existing.id,
+            current: { value: existing.id, valueType: 'NonFhirResource'},
             isDeleted : false,
-            type: 'nonFhirResource'
         }
 
         await this.historyService.create(newHistory);

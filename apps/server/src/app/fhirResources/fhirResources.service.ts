@@ -80,9 +80,8 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             content: newFhirResource.resource,
             versionId: versionId,
             lastUpdated: lastUpdated,
-            targetId: newFhirResource.id,
+            current: { value: existing.id, valueType: 'FhirResource'},
             isDeleted: false,
-            type: 'fhirResource'
         }
 
         await this.historyService.create(newHistory);
@@ -254,9 +253,8 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             content: existing.resource,
             versionId: versionId,
             lastUpdated: lastUpdated,
-            targetId: existing.id,
+            current: { value: existing.id, valueType: 'FhirResource'},
             isDeleted: false,
-            type: 'fhirResource'
         }
 
         await this.historyService.create(newHistory);

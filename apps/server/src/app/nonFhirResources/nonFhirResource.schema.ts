@@ -4,10 +4,11 @@ import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 import { Project } from '../projects/project.schema';
+import {CDAExample} from './cdaExample.schema';
 
 export type NonFhirResourceDocument = HydratedDocument<NonFhirResource>;
 
-@Schema({ collection: 'nonFhirResource', toJSON: { getters: true } })
+@Schema({ collection: 'nonFhirResource', toJSON: { getters: true }, discriminatorKey: 'type' })
 export class NonFhirResource extends BaseEntity implements INonFhirResource {
 
     @Prop()
@@ -41,9 +42,13 @@ export class NonFhirResource extends BaseEntity implements INonFhirResource {
     @Prop({ type: Object })
     content?: IDomainResource|any;
 
-    @Prop({ type: String })
+   @Prop({
+    type: String,
+   // required: true,
+    //enum: [CDAExample.name],
+    })
     type: NonFhirResourceType;
-    
+
     @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'referencedBy.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource', 'Project']}}])
     referencedBy: IProjectResourceReference[];
 

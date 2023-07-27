@@ -79,11 +79,10 @@ export interface INonFhirResource extends IProjectResource {
 }
 
 export interface IHistory extends IProjectResource {
-  fhirVersion?: 'stu3'|'r4'|'r5';
   content?: IDomainResource|any;
-  targetId: string;
-  type: 'fhirResource'|'nonFhirResource';
+  current:  IProjectResourceReference;
 }
+
 
 export interface IAudit {
   _id?: string;
