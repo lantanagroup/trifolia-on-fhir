@@ -25,10 +25,10 @@ export class Project extends BaseEntity implements IProject {
     @Prop()
     permissions?: IPermission[];
 
-    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['Project']}}])
+    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'referencedBy.valueType'}, valueType: {type:String, enum:['Project']}}])
     referencedBy: IProjectResourceReference[];
 
-    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['FhirResource', 'Example']}}])
+    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource']}}])
     references: IProjectResourceReference[];
 
     @Prop()

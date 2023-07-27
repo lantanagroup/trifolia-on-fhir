@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IFhirResource, IExample, IHistory, IProjectResource, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import { IFhirResource, INonFhirResource, IHistory, IProjectResource, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import { IBundle, IDomainResource } from '@trifolia-fhir/tof-lib';
 import { Model } from 'mongoose';
 import { BaseDataService } from '../base/base-data.service';
@@ -13,7 +13,7 @@ import { TofNotFoundException } from '../../not-found-exception';
 import { LinkComponent, Binary as STU3Binary, Bundle as STU3Bundle, EntryComponent as STU3BundleEntryComponent } from '@trifolia-fhir/stu3';
 import { Binary as R4Binary, Bundle as R4Bundle, BundleEntryComponent as R4BundleEntryComponent } from '@trifolia-fhir/r4';
 import { Binary as R5Binary, Bundle as R5Bundle, BundleEntry as R5BundleEntryComponent } from '@trifolia-fhir/r5';
-import { Example, ExampleDocument } from '../examples/example.schema';
+import { NonFhirResource, NonFhirResourceDocument } from '../nonFhirResources/nonFhirResource.schema';
 
 @Injectable()
 export class FhirResourcesService extends BaseDataService<FhirResourceDocument> {
@@ -23,7 +23,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
 
     constructor(
         @InjectModel(FhirResource.name) private fhirResourceModel: Model<FhirResourceDocument>,
-        @InjectModel(Example.name) private examplesModel: Model<ExampleDocument>,
+        @InjectModel(NonFhirResource.name) private examplesModel: Model<NonFhirResourceDocument>,
         private readonly historyService: HistoryService
     ) {
         super(fhirResourceModel);
@@ -164,7 +164,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                             return upRefId.equals(exRefId) && upRef.valueType === exRef.valueType;
                         }
                     )) {
-                        if (exRef.valueType == 'Example') {
+                        if (exRef.valueType == 'NonFhirResource') {
                             exampleIdsRemoved.push(exRefId);
                         } else {
                             fhirResIdsRemoved.push(exRefId);
@@ -190,7 +190,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                             return exRefId.equals(upRefId) && exRef.valueType === upRef.valueType;
                         }
                     )) {
-                        if (upRef.valueType == 'Example') {
+                        if (upRef.valueType == 'NonFhirResource') {
                             exampleIdsAdded.push(upRefId);
                         }
                         else {
@@ -213,7 +213,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             if (exampleIdsRemoved && exampleIdsRemoved.length > 0) {
                 await this.examplesModel.updateMany(
                     { '_id': { $in: exampleIdsRemoved } },
-                    { $pull: { igIds: existing.id } }
+                    { $pull: { referencedBy: {value: existing.id, valueType: 'NonFhirResource' } } }
                 );
             }
 
@@ -226,7 +226,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             if (exampleIdsAdded && exampleIdsAdded.length > 0) {
                 await this.examplesModel.updateMany(
                     { '_id': { $in: exampleIdsAdded } },
-                    { $push: { igIds: existing.id } }
+                    { $push: { referencedBy: {value: existing.id, valueType: 'NonFhirResource' } } }
                 );
             }
 
@@ -336,7 +336,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             if (r.valueType === 'FhirResource') {
                 entry.resource = r.value['resource'];
             }
-            else if (r.valueType === 'Example') {
+            else if (r.valueType === 'NonFhirResource') {
                 // attempt to parse content for fhir resource... otherwise create a binary type for the content
                 try {
                     if (typeof r.value['content'] !== typeof '') {
@@ -389,8 +389,8 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                 const val: IFhirResource = <IFhirResource>r.value;
                 key = `${val.resource.resourceType}/${val.resource.id ?? val.id}`;
             }
-            else if (r.valueType === 'Example') {
-                const val: IExample = <IExample>r.value;
+            else if (r.valueType === 'NonFhirResource') {
+                const val: INonFhirResource = <INonFhirResource>r.value;
                 if (typeof val.content === typeof {} && 'resourceType' in val.content && 'id' in val.content) {
                     key = `${val.content['resourceType']}/${val.content['id'] ?? val.id}`;
                 }

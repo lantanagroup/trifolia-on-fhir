@@ -1,14 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type { IExample, IPermission } from '@trifolia-fhir/models';
+import type { INonFhirResource, IPermission, IProjectResourceReference, NonFhirResourceType } from '@trifolia-fhir/models';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 import { Project } from '../projects/project.schema';
 
-export type ExampleDocument = HydratedDocument<Example>;
+export type NonFhirResourceDocument = HydratedDocument<NonFhirResource>;
 
-@Schema({ collection: 'example', toJSON: { getters: true } })
-export class Example extends BaseEntity implements IExample {
+@Schema({ collection: 'nonFhirResource', toJSON: { getters: true } })
+export class NonFhirResource extends BaseEntity implements INonFhirResource {
 
     @Prop()
     name?: string;
@@ -38,23 +38,22 @@ export class Example extends BaseEntity implements IExample {
     })
     permissions?: IPermission[];
 
-
-    @Prop()
-    fhirVersion?: 'stu3'|'r4'|'r5';
-
     @Prop({ type: Object })
     content?: IDomainResource|any;
 
-    @Prop()
-    exampleFor?: string;
+    @Prop({ type: String })
+    type: NonFhirResourceType;
+    
+    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'referencedBy.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource', 'Project']}}])
+    referencedBy: IProjectResourceReference[];
 
-    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: 'Example' }])
-    igIds: string[];
+    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource']}}])
+    references: IProjectResourceReference[];
 
     @Prop()
     isDeleted: boolean;
 
 }
 
-export const ExampleSchema = SchemaFactory.createForClass(Example);
-ExampleSchema.loadClass(Example);
+export const NonFhirResourceSchema = SchemaFactory.createForClass(NonFhirResource);
+NonFhirResourceSchema.loadClass(NonFhirResource);

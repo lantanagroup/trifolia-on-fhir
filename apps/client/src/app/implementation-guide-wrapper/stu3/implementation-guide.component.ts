@@ -26,7 +26,7 @@ import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-
 import { BaseImplementationGuideComponent } from '../base-implementation-guide-component';
 import { CanComponentDeactivate } from '../../guards/resource.guard';
 import { ProjectService } from '../../shared/projects.service';
-import {IFhirResource, IExample, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
+import {IFhirResource, INonFhirResource, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
 import { forkJoin } from 'rxjs';
 import { IDomainResource, getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
 

@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
-import type { IFhirResource, IExample, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import type { IFhirResource, INonFhirResource, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import type { ITofUser, PaginateOptions, Paginated } from '@trifolia-fhir/tof-lib';
 import { RequestHeaders, User } from '../server.decorators';
 import { FhirResourcesService } from './fhirResources.service';

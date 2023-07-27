@@ -1,34 +1,34 @@
 import {Body, Controller, Delete, Get, Param, Post, Put, Query, UnauthorizedException, UseGuards} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
-import type { IExample } from '@trifolia-fhir/models';
+import type { INonFhirResource } from '@trifolia-fhir/models';
 import type { ITofUser } from '@trifolia-fhir/tof-lib';
 import { BaseDataController } from '../base/base-data.controller';
-import { ExamplesService } from './examples.service';
-import { ExampleDocument } from './example.schema';
+import { NonFhirResourcesService } from './nonFhirResources.service';
+import { NonFhirResourceDocument } from './nonFhirResource.schema';
 import { User } from '../server.decorators';
 import {FhirResourcesService} from '../fhirResources/fhirResources.service';
 
-@Controller('api/examples')
+@Controller('api/nonFhirResources')
 @UseGuards(AuthGuard('bearer'))
-@ApiTags('Examples')
+@ApiTags('NonFhirResources')
 @ApiOAuth2([])
-export class ExamplesController extends BaseDataController<ExampleDocument> {
+export class NonFhirResourcesController extends BaseDataController<NonFhirResourceDocument> {
 
     constructor(
-        protected readonly examplesService: ExamplesService, protected readonly fhirResourceService: FhirResourcesService
+        protected readonly nonFhirResourcesService: NonFhirResourcesService, protected readonly fhirResourceService: FhirResourcesService
         ) {
-        super(examplesService);
+        super(nonFhirResourcesService);
     }
 
 
     @Get(':id')
-    public async getById(@User() user: ITofUser, @Param('id') id: string): Promise<IExample> {
-        return await this.examplesService.findById(id);
+    public async getById(@User() user: ITofUser, @Param('id') id: string): Promise<INonFhirResource> {
+        return await this.nonFhirResourcesService.findById(id);
     }
 
     @Post()
-    public async createExample(@User() user: ITofUser, @Body() example: IExample, @Query('implementationguideid') implementationGuideId?: string): Promise<IExample> {
+    public async createExample(@User() user: ITofUser, @Body() example: INonFhirResource, @Query('implementationguideid') implementationGuideId?: string): Promise<INonFhirResource> {
         console.log('POST -- checking perms on IG:', implementationGuideId);
         if (implementationGuideId) {
           if (! await this.authService.userCanWriteFhirResource(user, implementationGuideId)) {
@@ -36,11 +36,11 @@ export class ExamplesController extends BaseDataController<ExampleDocument> {
           }
            // await this.assertCanWriteById(user, implementationGuideId);
         }
-        return await this.examplesService.createExample(example, implementationGuideId);
+        return await this.nonFhirResourcesService.createExample(example, implementationGuideId);
     }
 
     @Put(':id')
-    public async updateExample(@User() user: ITofUser, @Param('id') id: string, @Body() example: IExample, @Query('implementationguideid') implementationGuideId?: string): Promise<IExample> {
+    public async updateExample(@User() user: ITofUser, @Param('id') id: string, @Body() example: INonFhirResource, @Query('implementationguideid') implementationGuideId?: string): Promise<INonFhirResource> {
         console.log('PUT -- checking perms on IG:', implementationGuideId);
         await this.assertIdMatch(id, example);
         await this.assertCanWriteById(user, id);
@@ -50,12 +50,12 @@ export class ExamplesController extends BaseDataController<ExampleDocument> {
           }
          // await this.assertCanWriteById(user, implementationGuideId);
         }
-        return await this.examplesService.updateExample(id, example, implementationGuideId);
+        return await this.nonFhirResourcesService.updateExample(id, example, implementationGuideId);
     }
 
     @Delete(':id')
     public async deleteExample(@User() user: ITofUser, @Param('id') id: string) {
-        this.examplesService.delete(id);
+        this.nonFhirResourcesService.delete(id);
     }
 
 }

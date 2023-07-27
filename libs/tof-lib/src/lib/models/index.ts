@@ -59,8 +59,8 @@ export interface IProjectResource {
 }
 
 export interface IProjectResourceReference {
-  value: IFhirResource|IExample|string|IProject;
-  valueType: 'FhirResource'|'Example'|'Project';
+  value: IFhirResource|INonFhirResource|string|IProject;
+  valueType: 'FhirResource'|'NonFhirResource'|'Project';
 }
 
 export interface IProjectResourceReferenceMap {
@@ -72,24 +72,17 @@ export interface IFhirResource  extends IProjectResource {
   resource: IDomainResource;
 }
 
-export interface IExample extends IProjectResource {
-  fhirVersion?: 'stu3'|'r4'|'r5';
-  content?: IDomainResource|any;  // Ideally this would be a resource OR a string, but not sure how we would populate IG.definition.resource.reference
-  exampleFor?: string;    // StructureDefinition in which this is a profile for
-  igIds?: string[];
-}
-
+export type NonFhirResourceType = 'page'|'media'|'binary'|'other';
 export interface INonFhirResource extends IProjectResource {
-  type: 'page'|'media'|'binary'|'other';
+  type: NonFhirResourceType;
   content?: any;
 }
-
 
 export interface IHistory extends IProjectResource {
   fhirVersion?: 'stu3'|'r4'|'r5';
   content?: IDomainResource|any;
   targetId: string;
-  type: 'fhirResource'|'example';
+  type: 'fhirResource'|'nonFhirResource';
 }
 
 export interface IAudit {

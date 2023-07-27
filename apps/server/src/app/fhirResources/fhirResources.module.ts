@@ -4,14 +4,14 @@ import { HistoryModule } from '../history/history.module';
 import { FhirResourcesController } from './fhirResources.controller';
 import { FhirResource, FhirResourceSchema } from './fhirResource.schema';
 import { FhirResourcesService } from './fhirResources.service';
-import { Example, ExampleSchema } from '../examples/example.schema';
+import { NonFhirResource, NonFhirResourceSchema } from '../nonFhirResources/nonFhirResource.schema';
 
 @Module({
   imports:[
     HistoryModule,
     MongooseModule.forFeature([
       { name: FhirResource.name, schema: FhirResourceSchema },
-      { name: Example.name, schema: ExampleSchema }
+      { name: NonFhirResource.name, schema: NonFhirResourceSchema }
     ])
   ],
   controllers: [FhirResourcesController],

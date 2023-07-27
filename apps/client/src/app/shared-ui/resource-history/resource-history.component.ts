@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
 import {IDomainResource} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IFhirResource, IExample} from '@trifolia-fhir/models';
+import {IFhirResource, INonFhirResource} from '@trifolia-fhir/models';
 import {HistoryService} from '../../shared/history.service';
 
 @Component({
@@ -10,7 +10,7 @@ import {HistoryService} from '../../shared/history.service';
   styleUrls: ['./resource-history.component.css']
 })
 export class ResourceHistoryComponent implements OnInit {
-  @Input() public resource: IFhirResource | IExample;
+  @Input() public resource: IFhirResource | INonFhirResource;
   @Output() public resourceChange = new EventEmitter<any>();
   @Output() public change: EventEmitter<void> = new EventEmitter<void>();
 
@@ -70,9 +70,9 @@ export class ResourceHistoryComponent implements OnInit {
           resourceType = "fhirResource";
         }
         else if(this.resource.hasOwnProperty("content")){
-          let res =  <IExample>this.resource;
+          let res =  <INonFhirResource>this.resource;
           this.domainResource = res.content;
-          resourceType = "example";
+          resourceType = "nonFhirResource";
         }
 
         await this.historyService.getHistory(resourceType, this.resource.id, this.page).then((results) =>  {

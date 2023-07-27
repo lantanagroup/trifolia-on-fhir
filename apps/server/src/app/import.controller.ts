@@ -27,7 +27,7 @@ import {
 import { addToImplementationGuide } from './helper';
 import { IBundle } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { FhirResourcesService } from './fhirResources/fhirResources.service';
-import { ExamplesService } from './examples/examples.service';
+import { NonFhirResourcesService } from './nonFhirResources/nonFhirResources.service';
 import { ObjectId } from 'mongodb';
 import { IProjectResource } from '@trifolia-fhir/models';
 
@@ -43,7 +43,7 @@ export class ImportController extends BaseController {
     protected httpService: HttpService,
     protected configService: ConfigService,
     protected fhirResourceService: FhirResourcesService,
-    protected exampleService: ExamplesService) {
+    protected nonFhirResourcesService: NonFhirResourcesService) {
     super(configService, httpService);
   }
 
@@ -73,7 +73,7 @@ export class ImportController extends BaseController {
 
       let filter = {};
       if (implementationGuideId && "ImplementationGuide" !== e.resourceType) {
-        filter['igIds'] = new ObjectId(implementationGuideId);
+        filter['referencedBy.value'] = new ObjectId(implementationGuideId);
       }
 
       if (e.isExample) {
@@ -82,7 +82,7 @@ export class ImportController extends BaseController {
           {'name': e.id, 'content': {$type: 'string'}}
         ];
 
-        res = await this.exampleService.findOne(filter);
+        res = await this.nonFhirResourcesService.findOne(filter);
       } else {
         filter['resource.resourceType'] = e.resourceType;
         filter['resource.id'] = e.id;

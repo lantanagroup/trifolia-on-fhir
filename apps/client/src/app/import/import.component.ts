@@ -7,7 +7,7 @@ import { FhirService } from '../shared/fhir.service';
 import { CookieService } from 'ngx-cookie-service';
 import { ContentModel, GithubService } from '../shared/github.service';
 import { ImportGithubPanelComponent } from './import-github-panel/import-github-panel.component';
-import { Observable, concat } from 'rxjs';
+import { Observable, concat, using } from 'rxjs';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
@@ -17,7 +17,7 @@ import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { Media as R5Media } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
 import { FhirResourceService } from '../shared/fhir-resource.service';
-import { IFhirResource, IExample, IProjectResource } from '@trifolia-fhir/models';
+import { IFhirResource, INonFhirResource, IProjectResource } from '@trifolia-fhir/models';
 import { ExamplesService } from '../shared/examples.service';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
@@ -108,7 +108,7 @@ export class ImportComponent implements OnInit {
     }
     else {
       modalRef.componentInstance.importResource = fileModel.content;
-      modalRef.componentInstance.existingResource = (<IExample>fileModel.existingResource).content;
+      modalRef.componentInstance.existingResource = (<INonFhirResource>fileModel.existingResource).content;
     }
   }
 
@@ -395,21 +395,20 @@ export class ImportComponent implements OnInit {
       }
     }
 
-    let newResource: IFhirResource | IExample = <IFhirResource | IExample>{};
+    let newResource: IFhirResource | INonFhirResource = <IFhirResource | INonFhirResource>{};
 
     if (this.implementationGuideId) {
       newResource.referencedBy = [{'value': this.implementationGuideId, 'valueType': 'FhirResource'}];
     }
 
-    newResource.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
-
-    let req: Observable<IFhirResource | IExample>;
+    let req: Observable<IFhirResource | INonFhirResource>;
 
     if (this.textContentIsExample) {
-      (<IExample>newResource).content = resource;
-      req = this.examplesService.save(null, <IExample>newResource, this.implementationGuideId);
+      (<INonFhirResource>newResource).content = resource;
+      req = this.examplesService.save(null, <INonFhirResource>newResource, this.implementationGuideId);
     } else {
       (<IFhirResource>newResource).resource = resource;
+      (<IFhirResource>newResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
       req = this.fhirResourceService.save(null, <IFhirResource>newResource, this.implementationGuideId);
     }
 
@@ -432,13 +431,12 @@ export class ImportComponent implements OnInit {
     for (const file of this.files) {
 
       if (!file.existingResource) {
-        file.existingResource = <IFhirResource | IExample>{};
+        file.existingResource = <IFhirResource | INonFhirResource>{};
       }
-      (<IFhirResource | IExample>file.existingResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
 
       // add/update non-fhir example type
       if (file.isExample && file.isCDAExample) {
-        let example: IExample = <IExample>{ ...file.existingResource };
+        let example: INonFhirResource = <INonFhirResource>{ ...file.existingResource };
         example.content = file.isCDAExample ? file.cdaContent : file.resource;
         example.name = this.getIdDisplay(file);
         requests.push(this.examplesService.save(example.id, example, this.implementationGuideId));
@@ -448,6 +446,7 @@ export class ImportComponent implements OnInit {
       else {
         let fhirResource: IFhirResource = <IFhirResource>{ ...file.existingResource };
         fhirResource.resource = file.resource;
+        fhirResource.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
         requests.push(this.fhirResourceService.save(fhirResource.id, fhirResource, this.implementationGuideId, file.isExample));
       }
     }

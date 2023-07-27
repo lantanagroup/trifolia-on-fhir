@@ -14,7 +14,7 @@ import { debounceTime } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import { FhirResourceService } from '../../shared/fhir-resource.service';
 import { ExamplesService } from '../../shared/examples.service';
-import { IFhirResource, IExample, IProjectResource } from '@trifolia-fhir/models';
+import { IFhirResource, INonFhirResource, IProjectResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../../shared/implementation-guide.service';
 
 @Component({
@@ -22,7 +22,7 @@ import { ImplementationGuideService } from '../../shared/implementation-guide.se
   styleUrls: ['./other-resources-result.component.css']
 })
 export class OtherResourcesResultComponent extends BaseComponent implements OnInit {
-  public resource: IFhirResource | IExample;
+  public resource: IFhirResource | INonFhirResource;
   activeSub: 'json/xml' | 'permissions' = 'json/xml';
   message: string;
   data: any;
@@ -103,7 +103,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
     if (!this.isFhir) {
       this.examplesService.get(this.route.snapshot.params.id).subscribe({
-        next: (res: IExample) => {
+        next: (res: INonFhirResource) => {
           this.resource = res;
           this.content = res.content;
 
@@ -119,7 +119,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
           } catch (error) {
             this.isFhir = false;
           }
-          this.validation = this.fhirService.validate((<IExample>this.resource).content);
+          this.validation = this.fhirService.validate((<INonFhirResource>this.resource).content);
           setTimeout(() => {
             this.message = 'Example opened.';
           }, 100);
@@ -166,7 +166,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
   changeType() {
     setTimeout(() => {
-      this.data = this.isFhir ? (<IFhirResource>this.resource).resource : (<IExample>this.resource).content;
+      this.data = this.isFhir ? (<IFhirResource>this.resource).resource : (<INonFhirResource>this.resource).content;
       switch (this.selected) {
         case 'JSON':
           this.content = JSON.stringify(this.data, null, '\t');
@@ -235,16 +235,16 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
   public save() {
 
-    let request: Observable<IFhirResource | IExample>;
+    let request: Observable<IFhirResource | INonFhirResource>;
 
     if (this.isFhir) {
       request = this.fhirResourceService.save(this.resource.id, <IFhirResource>this.resource, this.configService.project?.implementationGuideId, this.isExample);
     } else {
-      request = this.examplesService.save(this.resource.id, <IExample>this.resource, this.configService.project?.implementationGuideId);
+      request = this.examplesService.save(this.resource.id, <INonFhirResource>this.resource, this.configService.project?.implementationGuideId);
     }
 
     request.subscribe({
-      next: (res: IFhirResource | IExample) => {
+      next: (res: IFhirResource | INonFhirResource) => {
         Object.assign(this.resource, res);
         this.message = `Successfully updated resource!`;
       },
@@ -260,7 +260,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
       return;
     }
 
-    let request: Observable<IFhirResource | IExample>;
+    let request: Observable<IFhirResource | INonFhirResource>;
 
     if (this.isFhir) {
       request = this.fhirResourceService.delete(this.resource.id);
@@ -269,7 +269,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     }
 
     request.subscribe({
-      next: (res: IFhirResource | IExample) => {
+      next: (res: IFhirResource | INonFhirResource) => {
         this.router.navigate([`${this.configService.baseSessionUrl}/${this.isExample ? 'examples' : 'other-resources'}`]);
         alert(`Successfully removed resource.`);
       },

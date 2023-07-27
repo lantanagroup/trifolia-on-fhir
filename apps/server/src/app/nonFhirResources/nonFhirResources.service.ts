@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { TofLogger } from '../tof-logger';
-import { Example, ExampleDocument } from './example.schema';
+import { NonFhirResource, NonFhirResourceDocument } from './nonFhirResource.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IExample, IHistory } from '@trifolia-fhir/models';
+import { INonFhirResource, IHistory } from '@trifolia-fhir/models';
 import { BaseDataService } from '../base/base-data.service';
 import { addToImplementationGuideNew } from '../helper';
 import { HistoryService } from '../history/history.service';
@@ -11,19 +11,19 @@ import { FhirResourcesService } from '../fhirResources/fhirResources.service';
 import { TofNotFoundException } from '../../not-found-exception';
 
 @Injectable()
-export class ExamplesService extends BaseDataService<ExampleDocument> {
+export class NonFhirResourcesService extends BaseDataService<NonFhirResourceDocument> {
 
-    protected readonly logger = new TofLogger(ExamplesService.name);
+    protected readonly logger = new TofLogger(NonFhirResourcesService.name);
 
     constructor(
-        @InjectModel(Example.name) private examplesModel: Model<ExampleDocument>,
+        @InjectModel(NonFhirResource.name) private examplesModel: Model<NonFhirResourceDocument>,
         private readonly fhirResourceService: FhirResourcesService,
         private readonly historyService: HistoryService) {
         super(examplesModel);
     }
 
 
-    public async createExample(newExample: IExample, implementationGuideId?: string): Promise<IExample> {
+    public async createExample(newExample: INonFhirResource, implementationGuideId?: string): Promise<INonFhirResource> {
         const lastUpdated = new Date();
         let versionId = 1;
 
@@ -39,9 +39,9 @@ export class ExamplesService extends BaseDataService<ExampleDocument> {
         newExample.lastUpdated = lastUpdated;
 
         if (implementationGuideId) {
-            newExample.igIds = newExample.igIds || [];
-            if (newExample.igIds.indexOf(implementationGuideId) < 0) {
-                newExample.igIds.push(implementationGuideId);
+            newExample.referencedBy = newExample.referencedBy || [];
+            if (!newExample.referencedBy.some(o => o.value === implementationGuideId)) {
+                newExample.referencedBy.push({ value: implementationGuideId, valueType: 'NonFhirResource' });
             }
         }
         newExample = await this.examplesModel.create(newExample);
@@ -52,7 +52,7 @@ export class ExamplesService extends BaseDataService<ExampleDocument> {
             lastUpdated: lastUpdated,
             targetId: newExample.id,
             isDeleted: false,
-            type: 'example'
+            type: 'nonFhirResource'
         }
 
         await this.historyService.create(newHistory);
@@ -65,7 +65,7 @@ export class ExamplesService extends BaseDataService<ExampleDocument> {
         return newExample;
     }
 
-    public async updateExample(id: string, upExample: IExample, implementationGuideId?: string): Promise<IExample> {
+    public async updateExample(id: string, upExample: INonFhirResource, implementationGuideId?: string): Promise<INonFhirResource> {
         const lastUpdated = new Date();
         let versionId: number = 1;
 
@@ -106,7 +106,7 @@ export class ExamplesService extends BaseDataService<ExampleDocument> {
             lastUpdated: lastUpdated,
             targetId: existing.id,
             isDeleted : false,
-            type: 'example'
+            type: 'nonFhirResource'
         }
 
         await this.historyService.create(newHistory);

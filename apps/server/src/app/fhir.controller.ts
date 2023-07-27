@@ -93,7 +93,7 @@ export class FhirController extends FhirResourcesController {
 
     let filter = { 'resource.resourceType': resourceType, 'resource.id': currentId };
     if (resourceType !== 'ImplementationGuide' && contextImplementationGuideId) {
-      filter['igIds'] = new ObjectId(contextImplementationGuideId);
+      filter['referencedBy.value'] = new ObjectId(contextImplementationGuideId);
     }
     const conf = await this.fhirResourceService.findOne(filter);
     if (!conf || !conf.resource.id) {

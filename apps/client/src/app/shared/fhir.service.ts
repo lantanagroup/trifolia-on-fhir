@@ -346,8 +346,8 @@ export class FhirService {
     let url = '';
     if (resourceType == 'fhirResource') {
       url = '/api/fhirResources/' + encodeURIComponent(id);
-    } else if (resourceType == 'example') {
-      url = '/api/example/' + encodeURIComponent(id);
+    } else if (resourceType == 'nonFhirResource') {
+      url = '/api/nonFhirResources/' + encodeURIComponent(id);
     }
     return this.http.get(url);
   }

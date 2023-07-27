@@ -28,9 +28,9 @@ import { existsSync } from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { AuthService } from './auth/auth.service';
 import { FhirResourcesService } from './fhirResources/fhirResources.service';
-import {IProjectResource, IExample, IProjectResourceReference, IFhirResource} from '@trifolia-fhir/models';
+import {IProjectResource, INonFhirResource, IProjectResourceReference, IFhirResource} from '@trifolia-fhir/models';
 import { FhirResourcesController } from './fhirResources/fhirResources.controller';
-import { ExamplesService } from './examples/examples.service';
+import { NonFhirResourcesService } from './nonFhirResources/nonFhirResources.service';
 import { ImplementationGuide as R5ImplementationGuide, StructureDefinition } from '@trifolia-fhir/r5';
 import { forkJoin } from 'rxjs';
 
@@ -57,7 +57,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
 
   constructor(protected httpService: HttpService,
     protected configService: ConfigService,
-    protected examplesService: ExamplesService,
+    protected examplesService: NonFhirResourcesService,
     protected projectService: ProjectsService,
     protected fhirResourceService: FhirResourcesService,
     protected authService: AuthService) {
@@ -189,7 +189,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
 
     //update profiles
     for (const profile of (body.profiles || [])) {
-      let conf = await this.fhirResourceService.findOne({ 'resource.resourceType': 'StructureDefinition', 'resource.id': profile.id, 'igIds': id });
+      let conf = await this.fhirResourceService.findOne({ 'resource.resourceType': 'StructureDefinition', 'resource.id': profile.id, 'referencedBy.value': id });
       const sdr = <StructureDefinition>conf.resource;
       sdr.description = profile.description;
       sdr.extension = profile.extension ? [...profile.extension] : [];
@@ -231,7 +231,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
 
 
   @Get(':id/example')
-  public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4'): Promise<IFhirResource[] | IExample[]> {
+  public async getExamples(@Param('id') id: string, @FhirServerVersion() fhirServerVersion: 'stu3' | 'r4'): Promise<IFhirResource[] | INonFhirResource[]> {
 
     let examples = [];
 
@@ -282,7 +282,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
     }
 
     // non-fhir examples for this ig come from the examples collection
-    examples.push(... await this.examplesService.findAll({ 'igIds': id }) );
+    examples.push(... await this.examplesService.findAll({ 'referencedBy.value': id }) );
 
     return examples;
   }

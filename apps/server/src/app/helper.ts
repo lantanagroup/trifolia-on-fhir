@@ -24,7 +24,7 @@ import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {TofLogger} from './tof-logger';
-import {IFhirResource, IExample, IProjectResourceReference} from '@trifolia-fhir/models';
+import {IFhirResource, INonFhirResource, IProjectResourceReference} from '@trifolia-fhir/models';
 import {FhirResourcesService} from './fhirResources/fhirResources.service';
 import {ObjectId} from 'mongodb';
 
@@ -561,7 +561,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
   return Promise.resolve();
 }
 
-export async function addToImplementationGuideNew(service: FhirResourcesService, resourceToAdd: IFhirResource | IExample, implementationGuideId: string, isExample: boolean = false): Promise<void> {
+export async function addToImplementationGuideNew(service: FhirResourcesService, resourceToAdd: IFhirResource | INonFhirResource, implementationGuideId: string, isExample: boolean = false): Promise<void> {
   // Don't add implementation guides to other implementation guides (or itself).
   if (!isExample && (<IFhirResource>resourceToAdd).resource.resourceType == 'ImplementationGuide') {
     return Promise.resolve();
@@ -657,7 +657,7 @@ export async function addToImplementationGuideNew(service: FhirResourcesService,
   logger.verbose(`Adding resource ${resourceReferenceString} to context implementation guide.  Example? (${isExample})  ExampleFor: "${exampleFor}"`);
 
 
-  if (resourceToAdd.fhirVersion !== 'stu3') {        // r4+
+  if ('fhirVersion' in resourceToAdd && resourceToAdd.fhirVersion !== 'stu3') {        // r4+
     const r4 = <R4ImplementationGuide>implementationGuide;
 
     r4.definition = r4.definition || { resource: [] };
@@ -802,10 +802,10 @@ export async function addToImplementationGuideNew(service: FhirResourcesService,
       implGuideResource.references = implGuideResource.references || [];
       // add to references if not already in the reference list
       if (!implGuideResource.references.find((r: IProjectResourceReference) => {
-        if (r.valueType !== (isNotFhir ? 'Example' : 'Conformance')) return false;
+        if (r.valueType !== (isNotFhir ? 'NonFhirResource' : 'FhirResource')) return false;
         if (r.value && r.value.toString() === resourceToAdd.id) return true;
       })) {
-        implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'Example' : 'FhirResource' });
+        implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'NonFhirResource' : 'FhirResource' });
       }
     }
     if(implGuideResource.id) {
@@ -861,7 +861,7 @@ export async function removeFromImplementationGuideNew(service: FhirResourcesSer
     let fhirResource = await service.getModel().findById(conf.id).populate('references.value');
     (fhirResource.references || []).forEach((r: IProjectResourceReference, index) => {
       if (!r.value || typeof r.value === typeof '') return;
-      if (r.valueType === 'FhirResource' || r.valueType === 'Example') {
+      if (r.valueType === 'FhirResource' || r.valueType === 'NonFhirResource') {
         const val: IFhirResource = <IFhirResource>r.value;
         if (val.id === resourceToRemove.id) {
           conf.references.splice(index, 1);

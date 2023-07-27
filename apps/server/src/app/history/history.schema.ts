@@ -42,7 +42,7 @@ export class History extends BaseEntity implements IHistory {
     targetId: string;
 
     @Prop()
-    type: 'fhirResource'|'example';
+    type: 'fhirResource'|'nonFhirResource';
 
     @Prop()
     isDeleted: boolean;

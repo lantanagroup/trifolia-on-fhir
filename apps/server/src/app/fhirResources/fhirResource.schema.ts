@@ -46,10 +46,10 @@ export class FhirResource extends BaseEntity implements IFhirResource {
     @Prop({ type: Object })
     resource: IDomainResource;
 
-    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['FhirResource', 'Example', 'Project']}}])
+    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'referencedBy.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource', 'Project']}}])
     referencedBy: IProjectResourceReference[];
 
-    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['FhirResource', 'Example']}}])
+    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource']}}])
     references: IProjectResourceReference[];
 
     @Prop()

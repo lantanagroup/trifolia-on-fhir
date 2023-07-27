@@ -5,7 +5,7 @@ import {Router} from '@angular/router';
 import {SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
 import {ConfigService} from './config.service';
-import { IFhirResource, IExample } from '@trifolia-fhir/models';
+import { IFhirResource, INonFhirResource } from '@trifolia-fhir/models';
 import { FhirResourceService } from './fhir-resource.service';
 
 export class PublishedGuideModel {
@@ -60,7 +60,7 @@ export class ImplementationGuideService extends FhirResourceService {
     return this.http.get<any[]>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/profile`);
   }
 
-  public getExamples(implementationGuideId: string): Observable<IFhirResource[]|IExample[]> {
+  public getExamples(implementationGuideId: string): Observable<IFhirResource[]|INonFhirResource[]> {
     return this.http.get<any>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/example`);
   }
 
