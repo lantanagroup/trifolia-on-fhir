@@ -109,7 +109,7 @@
         <td>{{c.resource.id}}</td>
         <td>{{c.resource | fhirDisplay}}</td>
         <td>{{c.id}}</td>
-        <td>{{c.igIds}}</td>
+        <td>{{getImplementationGuideDisplay(c.referencedBy)}}</td>
         <td *ngIf="!selectMultiple">
           <div class="pull-right">
             <button type="button" class="btn btn-primary" (click)="select(c)">Select</button>

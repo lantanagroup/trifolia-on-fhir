@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfigService } from '../../shared/config.service';
 import { FhirResourceService } from '../../shared/fhir-resource.service';
-import { IFhirResource } from '@trifolia-fhir/models';
+import { IFhirResource, IProjectResourceReference } from '@trifolia-fhir/models';
 import { Paginated } from '@trifolia-fhir/tof-lib';
 
 export interface ResourceSelection {
@@ -127,6 +127,11 @@ export class FhirReferenceModalComponent implements OnInit {
   tabChanged(event) {
     this.searchLocation = event.nextId;
     this.criteriaChanged();
+  }
+  
+
+  getImplementationGuideDisplay(referencedBy: IProjectResourceReference[]): string {
+    return (referencedBy || []).map(r => r.value).join(', ');
   }
 
   private searchServer() {
