@@ -2,7 +2,7 @@ import {AuthService} from './shared/auth.service';
 import {DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {findPermission} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './shared/config.service';
-import { IProject, IProjectResource } from '@trifolia-fhir/models';
+import {IProject, IProjectResource} from '@trifolia-fhir/models';
 
 export class BaseComponent {
   protected _isDirty = false;
@@ -19,6 +19,7 @@ export class BaseComponent {
 
   protected set isDirty(value: boolean) {
     this._isDirty = value;
+    this.configService.updateIsChanged(this.isDirty);
   }
 
   private canReadOrWrite(resource: IProject|IProjectResource, permission: 'read'|'write') {

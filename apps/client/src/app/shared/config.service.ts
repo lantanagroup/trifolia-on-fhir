@@ -4,16 +4,17 @@ import {ConfigModel} from '../../../../../libs/tof-lib/src/lib/config-model';
 import {Title} from '@angular/platform-browser';
 import {Versions} from 'fhir/fhir';
 import {map} from 'rxjs/operators';
-import { ImplementationGuideContext } from '@trifolia-fhir/tof-lib';
-import { Subject } from 'rxjs';
+import {ImplementationGuideContext} from '@trifolia-fhir/tof-lib';
+import {Subject} from 'rxjs';
 
 @Injectable()
 export class ConfigService {
   public config: ConfigModel;
-  public fhirVersion: 'stu3'|'r4'|'r5' = 'r4';
+  public fhirVersion: 'stu3' | 'r4' | 'r5' = 'r4';
   public project?: ImplementationGuideContext;
   public statusMessage = new Subject<string>();
   public showingIntroduction = false;
+  public isChanged: boolean;
 
 
   constructor(private injector: Injector) {
@@ -34,6 +35,10 @@ export class ConfigService {
     }
 
   }*/
+
+  public updateIsChanged(isDirty: boolean) {
+    this.isChanged = isDirty;
+  }
 
   public async getTemplateVersions(template: string): Promise<string[]> {
     let url = '';

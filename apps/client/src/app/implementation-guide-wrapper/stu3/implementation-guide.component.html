@@ -5,7 +5,7 @@
 <div class="ig-main" *ngIf="fhirResource && implementationGuide">
   <h2>
     {{implementationGuide.name || 'no-name'}} <span class="badge bg-warning" *ngIf="!canEdit(fhirResource)">View-only</span>
-    <span class="badge bg-danger" *ngIf="isDirty">Changed!</span>
+
   </h2>
   <ul ngbNav #igTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false" (navChange)="tabChange($event)">
     <li ngbNavItem="general">
