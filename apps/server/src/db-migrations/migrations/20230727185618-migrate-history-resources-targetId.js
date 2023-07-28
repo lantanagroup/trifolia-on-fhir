@@ -15,12 +15,30 @@ module.exports = {
     // Sets "current" ObjectId  to an ProjectResourceReference object
     results = await db
       .collection('history')
-      .updateMany({ 'current': { $exists: true }, 'type' : 'example' }, [
+      .updateMany({ 'current': { $exists: true,  $ne : null} }, [
         {
           $set: {
             current: {
               value: '$current',
-              valueType: 'NonFhirResource',
+              valueType: {
+                $switch: {
+                  branches: [
+                    {
+                      case: {
+                        $eq: ["$type", "conformance"],
+                      },
+                      then: "FhirResource",
+                    },
+                    {
+                      case: {
+                        $eq: ["$type", "example"],
+                      },
+                      then: "NonFhirResource",
+                    },
+                  ],
+                  default: "NonFhirResource",
+                },
+              },
               _id: '$_id',
             }
           }
@@ -29,27 +47,7 @@ module.exports = {
 
 
     console.log(
-      `Updated "current" ObjectId to ProjectResourceReference object for ${results.modifiedCount} NonFhirResources  in the "history" collection`
-    );
-
-
-    // Sets "current" ObjectId to an ProjectResourceReference object
-    results = await db
-      .collection('history')
-      .updateMany({ 'current': { $exists: true }, 'type' : 'conformance' }, [
-        {
-          $set: {
-            current: {
-              value: '$current',
-              valueType: 'FhirResource',
-              _id: '$_id',
-            }
-          }
-        },
-      ]);
-
-    console.log(
-      `Updated "current" ObjectId to ProjectResourceReference object for ${results.modifiedCount} FhirResources  in the "history" collection`
+      `Updated "current" ObjectId to ProjectResourceReference object for ${results.modifiedCount} Resources  in the "history" collection`
     );
 
     // unset type
