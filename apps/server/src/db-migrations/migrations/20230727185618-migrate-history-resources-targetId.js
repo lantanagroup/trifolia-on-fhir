@@ -36,7 +36,7 @@ module.exports = {
                       then: "NonFhirResource",
                     },
                   ],
-                  default: "NonFhirResource",
+                  default: "BadData",
                 },
               },
               _id: '$_id',

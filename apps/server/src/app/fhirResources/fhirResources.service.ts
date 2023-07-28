@@ -80,7 +80,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             content: newFhirResource.resource,
             versionId: versionId,
             lastUpdated: lastUpdated,
-            current: { value: existing.id, valueType: 'FhirResource'},
+            current: { value: newFhirResource.id, valueType: 'FhirResource'},
             isDeleted: false,
         }
 

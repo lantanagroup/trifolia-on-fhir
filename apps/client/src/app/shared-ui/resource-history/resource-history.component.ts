@@ -67,12 +67,12 @@ export class ResourceHistoryComponent implements OnInit {
         if(this.resource.hasOwnProperty("resource")){
           let res =  <IFhirResource>this.resource;
           this.domainResource = res.resource;
-          resourceType = "fhirResource";
+          resourceType = "FhirResource";
         }
         else if(this.resource.hasOwnProperty("content")){
           let res =  <INonFhirResource>this.resource;
           this.domainResource = res.content;
-          resourceType = "nonFhirResource";
+          resourceType = "NonFhirResource";
         }
 
         await this.historyService.getHistory(resourceType, this.resource.id, this.page).then((results) =>  {

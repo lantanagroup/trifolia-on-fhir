@@ -591,11 +591,9 @@ export class MigrateDb extends BaseTools {
       delete resourceHistory.meta;
 
       const history: IHistory = {
+        current: {'value':newId, 'valueType' : 'FhirResource' },
         content: resourceHistory,
-        fhirVersion: this.options.fhirVersion,
-        targetId: newId,
         lastUpdated: new Date(meta.lastUpdated),
-        type: 'fhirResource',
         versionId: parseInt(meta.versionId)
       };
 
@@ -851,11 +849,9 @@ export class MigrateDb extends BaseTools {
         delete resourceHistory.meta;
 
         const history: IHistory = {
+          current: {'value':newIgId, 'valueType' : 'FhirResource' },
           content: resourceHistory,
-          fhirVersion: this.options.fhirVersion,
-          targetId: newIgId,
           lastUpdated: new Date(meta.lastUpdated),
-          type: 'fhirResource',
           versionId: parseInt(meta.versionId)
         };
 

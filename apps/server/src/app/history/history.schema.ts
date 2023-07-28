@@ -38,7 +38,7 @@ export class History extends BaseEntity implements IHistory {
     @Prop({type: Object})
     content?: IDomainResource|any;
 
-    @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'references.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource']}}])
+    @Prop({type: Object, value: {type: mongoose.Schema.Types.ObjectId, refPath: 'current.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource']}})
     current: IProjectResourceReference;
 
 

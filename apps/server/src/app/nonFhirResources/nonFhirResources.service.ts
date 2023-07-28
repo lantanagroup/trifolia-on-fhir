@@ -41,7 +41,7 @@ export class NonFhirResourcesService extends BaseDataService<NonFhirResourceDocu
         if (implementationGuideId) {
             newExample.referencedBy = newExample.referencedBy || [];
             if (!newExample.referencedBy.some(o => o.value === implementationGuideId)) {
-                newExample.referencedBy.push({ value: implementationGuideId, valueType: 'NonFhirResource' });
+                newExample.referencedBy.push({ value: implementationGuideId, valueType: 'FhirResource' });
             }
         }
         newExample = await this.examplesModel.create(newExample);
