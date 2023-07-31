@@ -27,6 +27,8 @@ import {TofLogger} from './tof-logger';
 import {IFhirResource, INonFhirResource, IProjectResourceReference} from '@trifolia-fhir/models';
 import {FhirResourcesService} from './fhirResources/fhirResources.service';
 import {ObjectId} from 'mongodb';
+import {NonFhirResource} from './nonFhirResources/nonFhirResource.schema';
+import {NonFhirResourcesService} from './nonFhirResources/nonFhirResources.service';
 
 declare var jasmine;
 
@@ -657,7 +659,7 @@ export async function addToImplementationGuideNew(service: FhirResourcesService,
   logger.verbose(`Adding resource ${resourceReferenceString} to context implementation guide.  Example? (${isExample})  ExampleFor: "${exampleFor}"`);
 
 
-  if ('fhirVersion' in resourceToAdd && resourceToAdd.fhirVersion !== 'stu3') {        // r4+
+  if ('fhirVersion' in resourceToAdd && resourceToAdd.fhirVersion !== 'stu3' || ! ('fhirVersion' in  resourceToAdd)) {        // r4+
     const r4 = <R4ImplementationGuide>implementationGuide;
 
     r4.definition = r4.definition || { resource: [] };
