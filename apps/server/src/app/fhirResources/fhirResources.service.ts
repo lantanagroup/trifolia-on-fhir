@@ -60,6 +60,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         newFhirResource.resource.meta.versionId = versionId.toString();
         newFhirResource.resource.meta.lastUpdated = lastUpdated;
         newFhirResource.versionId = versionId;
+        newFhirResource.isDeleted = false;
         newFhirResource.lastUpdated = lastUpdated;
 
         if (newFhirResource.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
@@ -80,8 +81,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             content: newFhirResource.resource,
             versionId: versionId,
             lastUpdated: lastUpdated,
-            current: { value: newFhirResource.id, valueType: 'FhirResource'},
-            isDeleted: false,
+            current: { value: newFhirResource.id, valueType: 'FhirResource'}
         }
 
         await this.historyService.create(newHistory);
@@ -253,8 +253,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             content: existing.resource,
             versionId: versionId,
             lastUpdated: lastUpdated,
-            current: { value: existing.id, valueType: 'FhirResource'},
-            isDeleted: false,
+            current: { value: existing.id, valueType: 'FhirResource'}
         }
 
         await this.historyService.create(newHistory);
@@ -273,7 +272,8 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         // remove from IG
         let resource = await super.findById(id);
         await removeFromImplementationGuideNew(this, resource);
-        return super.delete(id);
+        resource.isDeleted= true;
+        return super.updateOne(resource.id, resource);
     }
 
 

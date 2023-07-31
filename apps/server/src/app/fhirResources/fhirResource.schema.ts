@@ -53,7 +53,7 @@ export class FhirResource extends BaseEntity implements IFhirResource {
     references: IProjectResourceReference[];
 
     @Prop()
-    isDeleted: boolean;
+    isDeleted: boolean = false;
 
 }
 

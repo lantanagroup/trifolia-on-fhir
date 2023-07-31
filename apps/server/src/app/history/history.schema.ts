@@ -41,9 +41,6 @@ export class History extends BaseEntity implements IHistory {
     @Prop({type: Object, value: {type: mongoose.Schema.Types.ObjectId, refPath: 'current.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource']}})
     current: IProjectResourceReference;
 
-
-    @Prop()
-    isDeleted: boolean;
 }
 
 export const HistorySchema = SchemaFactory.createForClass(History);

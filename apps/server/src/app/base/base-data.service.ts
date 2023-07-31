@@ -33,8 +33,12 @@ export class BaseDataService<T extends HydratedDocument<BaseEntity>> implements 
 
         //console.log(`search filters: ${JSON.stringify(filters)}`);
 
-        const items = await this.model.find(filters).populate(populate).sort(sortBy).limit(limit).skip(skip);
-        const total = await this.model.countDocuments(filters);
+        let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
+
+        let allFilters = { $and: [filters, {$or: deleteClause}] };
+
+        const items = await this.model.find(allFilters).populate(populate).sort(sortBy).limit(limit).skip(skip);
+        const total = await this.model.countDocuments(allFilters);
 
         const result: Paginated<T> = {
             itemsPerPage: limit,

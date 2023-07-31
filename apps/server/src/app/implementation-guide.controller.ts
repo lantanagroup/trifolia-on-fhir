@@ -272,17 +272,22 @@ export class ImplementationGuideController extends FhirResourcesController { // 
       }
     }
 
+    let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
+
     // may not have to actually query the fhirResources collection
     if (resourceFilters.length > 0) {
       let filter = {
-        $and: [{ 'referencedBy.value': id }, { $or: resourceFilters }]
+        $and: [{ 'referencedBy.value': id }, { $or: resourceFilters }, { $or: deleteClause}]
       }
       let res = await this.fhirResourceService.findAll(filter);
       examples.push(... res);
     }
 
     // non-fhir examples for this ig come from the examples collection
-    examples.push(... await this.examplesService.findAll({ 'referencedBy.value': id }) );
+    let filter = {
+      $and: [{ 'referencedBy.value': id }, { $or: deleteClause}]
+    }
+    examples.push(... await this.examplesService.findAll(filter) );
 
     return examples;
   }

@@ -3,9 +3,9 @@ import { TofLogger } from '../tof-logger';
 import { NonFhirResource, NonFhirResourceDocument } from './nonFhirResource.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { INonFhirResource, IHistory } from '@trifolia-fhir/models';
+import {INonFhirResource, IHistory, IFhirResource, NonFhirResourceType} from '@trifolia-fhir/models';
 import { BaseDataService } from '../base/base-data.service';
-import { addToImplementationGuideNew } from '../helper';
+import {addToImplementationGuideNew, removeFromImplementationGuideNew} from '../helper';
 import { HistoryService } from '../history/history.service';
 import { FhirResourcesService } from '../fhirResources/fhirResources.service';
 import { TofNotFoundException } from '../../not-found-exception';
@@ -37,6 +37,7 @@ export class NonFhirResourcesService extends BaseDataService<NonFhirResourceDocu
         // ensure version ID and lastUpdated are set
         newExample.versionId = versionId;
         newExample.lastUpdated = lastUpdated;
+        newExample.isDeleted = false;
 
         if (implementationGuideId) {
             newExample.referencedBy = newExample.referencedBy || [];
@@ -50,8 +51,7 @@ export class NonFhirResourcesService extends BaseDataService<NonFhirResourceDocu
             content: newExample.content,
             versionId: versionId,
             lastUpdated: lastUpdated,
-            current: { value: newExample.id, valueType: 'NonFhirResource'},
-            isDeleted: false,
+            current: { value: newExample.id, valueType: 'NonFhirResource'}
         }
 
         await this.historyService.create(newHistory);
@@ -96,6 +96,7 @@ export class NonFhirResourcesService extends BaseDataService<NonFhirResourceDocu
         existing.versionId = versionId;
         existing.lastUpdated = lastUpdated;
 
+
         await this.examplesModel.findByIdAndUpdate(existing.id, existing, { new: true });
 
 
@@ -103,8 +104,7 @@ export class NonFhirResourcesService extends BaseDataService<NonFhirResourceDocu
             content: existing.content,
             versionId: versionId,
             lastUpdated: lastUpdated,
-            current: { value: existing.id, valueType: 'NonFhirResource'},
-            isDeleted : false,
+            current: { value: existing.id, valueType: 'NonFhirResource'}
         }
 
         await this.historyService.create(newHistory);
@@ -116,6 +116,14 @@ export class NonFhirResourcesService extends BaseDataService<NonFhirResourceDocu
 
         return existing;
 
+    }
+
+    public async deleteNonFhirResource(id: string): Promise<INonFhirResource> {
+      // remove from IG
+      let resource = await super.findById(id);
+      await removeFromImplementationGuideNew(this.fhirResourceService, resource);
+      resource.isDeleted= true;
+      return super.updateOne(resource.id, resource);
     }
 
 }

@@ -852,9 +852,14 @@ function getName(name: any) {
 }
 
 
-export async function removeFromImplementationGuideNew(service: FhirResourcesService, resourceToRemove: IFhirResource): Promise<void> {
-
-  let ref = `${resourceToRemove.resource.resourceType}/${resourceToRemove.resource.id ?? resourceToRemove.id}`;
+export async function removeFromImplementationGuideNew(service: FhirResourcesService, resourceToRemove: IFhirResource | INonFhirResource): Promise<void> {
+  let ref = null;
+  if ('resource' in resourceToRemove && resourceToRemove.resource) {
+    ref = `${resourceToRemove.resource.resourceType}/${resourceToRemove.resource.id ?? resourceToRemove.id}`;
+  }
+  else {
+    ref = `Binary/${resourceToRemove.name ?? resourceToRemove.id}`;
+  }
 
   // remove from all version 4 Ig-s that reference it  -- later based on permissions
   let confRes = <IFhirResource[]>await service.findAll({ 'resource.definition.resource.reference.reference': ref });

@@ -55,7 +55,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
 
     @Delete(':id')
     public async deleteExample(@User() user: ITofUser, @Param('id') id: string) {
-        this.nonFhirResourcesService.delete(id);
+        await this.nonFhirResourcesService.deleteNonFhirResource(id);
     }
 
 }

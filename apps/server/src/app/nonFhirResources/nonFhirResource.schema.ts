@@ -8,7 +8,7 @@ import {CDAExample} from './cdaExample.schema';
 
 export type NonFhirResourceDocument = HydratedDocument<NonFhirResource>;
 
-@Schema({ collection: 'nonFhirResource', toJSON: { getters: true }, discriminatorKey: 'type' })
+@Schema({ collection: 'nonFhirResource', toJSON: { getters: true }})
 export class NonFhirResource extends BaseEntity implements INonFhirResource {
 
     @Prop()
@@ -42,11 +42,7 @@ export class NonFhirResource extends BaseEntity implements INonFhirResource {
     @Prop({ type: Object })
     content?: IDomainResource|any;
 
-   @Prop({
-    type: String,
-   // required: true,
-    //enum: [CDAExample.name],
-    })
+    @Prop({ type: String })
     type: NonFhirResourceType;
 
     @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'referencedBy.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource', 'Project']}}])
