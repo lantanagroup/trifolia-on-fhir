@@ -245,7 +245,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         }
         existing.versionId = versionId;
         existing.lastUpdated = lastUpdated;
-
+        existing.isDeleted = false;
         await this.fhirResourceModel.findByIdAndUpdate(existing.id, existing, { new: true });
 
 

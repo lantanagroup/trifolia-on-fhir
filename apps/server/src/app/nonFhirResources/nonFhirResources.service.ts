@@ -95,7 +95,7 @@ export class NonFhirResourcesService extends BaseDataService<NonFhirResourceDocu
         // set version and timestamp
         existing.versionId = versionId;
         existing.lastUpdated = lastUpdated;
-
+        existing.isDeleted = false;
 
         await this.examplesModel.findByIdAndUpdate(existing.id, existing, { new: true });
 
