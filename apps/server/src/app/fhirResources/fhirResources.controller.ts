@@ -179,7 +179,7 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
     @Delete(':id')
     public async deleteFhirResource(@User() user: ITofUser, @Param('id') id: string) {
         await this.assertCanWriteById(user, id);
-        this.fhirResourceService.delete(id);
+        await this.fhirResourceService.deleteFhirResource(id);
     }
 
 
