@@ -26,9 +26,6 @@ import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../li
 import {TofLogger} from './tof-logger';
 import {IFhirResource, INonFhirResource, IProjectResourceReference} from '@trifolia-fhir/models';
 import {FhirResourcesService} from './fhirResources/fhirResources.service';
-import {ObjectId} from 'mongodb';
-import {NonFhirResource} from './nonFhirResources/nonFhirResource.schema';
-import {NonFhirResourcesService} from './nonFhirResources/nonFhirResources.service';
 
 declare var jasmine;
 

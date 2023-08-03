@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NonFhirResourcesController } from './nonFhirResources.controller';
+import { NonFhirResourcesController } from './non-fhir-resources.controller';
 
-describe('ExamplesController', () => {
+describe('NonFhirResourcesController', () => {
   let controller: NonFhirResourcesController;
 
   beforeEach(async () => {

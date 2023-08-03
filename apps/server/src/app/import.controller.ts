@@ -27,7 +27,7 @@ import {
 import { addToImplementationGuide } from './helper';
 import { IBundle } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { FhirResourcesService } from './fhirResources/fhirResources.service';
-import { NonFhirResourcesService } from './nonFhirResources/nonFhirResources.service';
+import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
 import { ObjectId } from 'mongodb';
 import { IProjectResource } from '@trifolia-fhir/models';
 

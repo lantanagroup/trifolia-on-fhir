@@ -1,4 +1,7 @@
 import type { IDomainResource } from '../fhirInterfaces';
+import { NonFhirResourceType } from './non-fhir-resource-type';
+
+export * from './non-fhir-resource-type';
 
 export interface IPermission {
   targetId?: string;    // no targetId means "everyone"
@@ -72,7 +75,6 @@ export interface IFhirResource  extends IProjectResource {
   resource: IDomainResource;
 }
 
-export type NonFhirResourceType = 'page'|'media'|'binary'|'other';
 export interface INonFhirResource extends IProjectResource {
   type: NonFhirResourceType;
   content?: any;

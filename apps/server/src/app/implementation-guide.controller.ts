@@ -30,7 +30,7 @@ import { AuthService } from './auth/auth.service';
 import { FhirResourcesService } from './fhirResources/fhirResources.service';
 import {IProjectResource, INonFhirResource, IProjectResourceReference, IFhirResource} from '@trifolia-fhir/models';
 import { FhirResourcesController } from './fhirResources/fhirResources.controller';
-import { NonFhirResourcesService } from './nonFhirResources/nonFhirResources.service';
+import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
 import { ImplementationGuide as R5ImplementationGuide, StructureDefinition } from '@trifolia-fhir/r5';
 import { forkJoin } from 'rxjs';
 

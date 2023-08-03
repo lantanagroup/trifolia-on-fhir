@@ -1,15 +1,17 @@
+import { PaginateOptions, Paginated } from "@trifolia-fhir/tof-lib";
 import { BaseEntity } from "../base.entity";
 
 
-export interface IBaseDataService {
+export interface IBaseDataService<T> {
     collectionCount(): Promise<number>;
     count(filter: any): Promise<number>;
-    findAll(filter: any): Promise<any[]>;
-    findOne(filter: any): Promise<any>;
-    findById(id: string): Promise<any>;
-    create(newDoc: BaseEntity): Promise<any>;
-    createMany(newDocs: BaseEntity[]): Promise<any[]>;
-    updateOne(id: string, doc: BaseEntity) : Promise<any>;
-    delete(id: string) : Promise<any>;
+    findAll(filter: any): Promise<T[]>;
+    findOne(filter: any): Promise<T>;
+    findById(id: string): Promise<T>;
+    create(newDoc: BaseEntity): Promise<T>;
+    createMany(newDocs: BaseEntity[]): Promise<T[]>;
+    updateOne(id: string, doc: BaseEntity) : Promise<T>;
+    delete(id: string) : Promise<T>;
+    search(options?: PaginateOptions): Promise<Paginated<T>>;
 }
   

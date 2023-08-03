@@ -79,7 +79,7 @@
     "jwks-rsa": "^3.0.1",
     "migrate-mongo": "^10.0.0",
     "mongodb": "^4.13.0",
-    "mongoose": "^6.9.0",
+    "mongoose": "^7.4.1",
     "mustache": "^4.2.0",
     "mysql": "^2.18.1",
     "nanoid": "^3.3.6",

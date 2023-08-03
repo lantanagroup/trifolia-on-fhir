@@ -26,7 +26,7 @@ import {ManageModule} from './manage/manage.module';
 import {GroupsModule} from './groups/groups.module';
 import {AuthModule} from './auth/auth.module';
 import {FhirResourcesModule} from './fhirResources/fhirResources.module';
-import {NonFhirResourcesModule} from './nonFhirResources/nonFhirResources.module';
+import {NonFhirResourcesModule} from './non-fhir-resources/non-fhir-resources.module';
 import {HistoryModule} from './history/history.module';
 import {AuditModule} from './audit/audit.module';
 

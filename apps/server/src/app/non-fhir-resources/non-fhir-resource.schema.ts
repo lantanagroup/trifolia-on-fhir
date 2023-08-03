@@ -1,14 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type { INonFhirResource, IPermission, IProjectResourceReference, NonFhirResourceType } from '@trifolia-fhir/models';
+import { INonFhirResource, IPermission, IProject, IProjectResourceReference, NonFhirResourceType } from '@trifolia-fhir/models';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 import { Project } from '../projects/project.schema';
-import {CDAExample} from './cdaExample.schema';
 
-export type NonFhirResourceDocument = HydratedDocument<NonFhirResource>;
 
-@Schema({ collection: 'nonFhirResource', toJSON: { getters: true }})
+
+@Schema({ collection: 'nonFhirResource', toJSON: { getters: true }, discriminatorKey: 'type' })
 export class NonFhirResource extends BaseEntity implements INonFhirResource {
 
     @Prop()
@@ -41,9 +40,9 @@ export class NonFhirResource extends BaseEntity implements INonFhirResource {
 
     @Prop({ type: Object })
     content?: IDomainResource|any;
-
-    @Prop({ type: String })
-    type: NonFhirResourceType;
+    
+    @Prop({ type: String, required: true, enum: Object.values(NonFhirResourceType) })
+    readonly type: NonFhirResourceType;
 
     @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'referencedBy.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource', 'Project']}}])
     referencedBy: IProjectResourceReference[];
@@ -58,3 +57,23 @@ export class NonFhirResource extends BaseEntity implements INonFhirResource {
 
 export const NonFhirResourceSchema = SchemaFactory.createForClass(NonFhirResource);
 NonFhirResourceSchema.loadClass(NonFhirResource);
+
+
+export abstract class NonFhirResourceBase implements INonFhirResource {
+    type: NonFhirResourceType;
+    content?: any;
+    id?: string;
+    name?: string;
+    description?: string;
+    projects?: IProject[];
+    migratedFrom?: string;
+    versionId: number;
+    lastUpdated: Date;
+    permissions?: IPermission[];
+    referencedBy?: IProjectResourceReference[];
+    references?: IProjectResourceReference[];
+    isDeleted?: boolean;
+    
+}
+
+

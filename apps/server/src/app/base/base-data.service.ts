@@ -5,7 +5,7 @@ import {TofLogger} from '../tof-logger';
 import type {IBaseDataService} from './interfaces';
 
 
-export class BaseDataService<T extends HydratedDocument<BaseEntity>> implements IBaseDataService {
+export class BaseDataService<T extends BaseEntity> implements IBaseDataService<T> {
 
     protected readonly logger = new TofLogger(BaseDataService.name);
 

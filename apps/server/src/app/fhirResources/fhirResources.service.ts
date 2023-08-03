@@ -13,7 +13,7 @@ import { TofNotFoundException } from '../../not-found-exception';
 import { LinkComponent, Binary as STU3Binary, Bundle as STU3Bundle, EntryComponent as STU3BundleEntryComponent } from '@trifolia-fhir/stu3';
 import { Binary as R4Binary, Bundle as R4Bundle, BundleEntryComponent as R4BundleEntryComponent } from '@trifolia-fhir/r4';
 import { Binary as R5Binary, Bundle as R5Bundle, BundleEntry as R5BundleEntryComponent } from '@trifolia-fhir/r5';
-import { NonFhirResource, NonFhirResourceDocument } from '../nonFhirResources/nonFhirResource.schema';
+import { NonFhirResource } from '../non-fhir-resources/non-fhir-resource.schema';
 
 @Injectable()
 export class FhirResourcesService extends BaseDataService<FhirResourceDocument> {
@@ -23,7 +23,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
 
     constructor(
         @InjectModel(FhirResource.name) private fhirResourceModel: Model<FhirResourceDocument>,
-        @InjectModel(NonFhirResource.name) private examplesModel: Model<NonFhirResourceDocument>,
+        @InjectModel(NonFhirResource.name) private nonFhirResourceModel: Model<NonFhirResource>,
         private readonly historyService: HistoryService
     ) {
         super(fhirResourceModel);
@@ -210,7 +210,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             }
 
             if (exampleIdsRemoved && exampleIdsRemoved.length > 0) {
-                await this.examplesModel.updateMany(
+                await this.nonFhirResourceModel.updateMany(
                     { '_id': { $in: exampleIdsRemoved } },
                     { $pull: { referencedBy: {value: existing.id, valueType: 'NonFhirResource' } } }
                 );
@@ -223,7 +223,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                 );
             }
             if (exampleIdsAdded && exampleIdsAdded.length > 0) {
-                await this.examplesModel.updateMany(
+                await this.nonFhirResourceModel.updateMany(
                     { '_id': { $in: exampleIdsAdded } },
                     { $push: { referencedBy: {value: existing.id, valueType: 'NonFhirResource' } } }
                 );

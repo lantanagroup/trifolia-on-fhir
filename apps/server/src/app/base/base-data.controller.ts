@@ -1,16 +1,15 @@
 import { BaseController } from "./base.controller";
-import { BaseDataService } from "./base-data.service";
 import { BaseEntity } from "./base.entity";
 import { Paginated } from "@trifolia-fhir/tof-lib";
 import { BadRequestException, Body, Delete, Get, Inject, Param, Post, Put, Request, UnauthorizedException } from "@nestjs/common";
-import { HydratedDocument } from "mongoose";
 import { TofNotFoundException } from "../../not-found-exception";
 import { TofLogger } from "../tof-logger";
 import { User } from "../server.decorators";
 import { AuthService } from "../auth/auth.service";
+import { IBaseDataService } from "./interfaces";
 
 
-export class BaseDataController<T extends HydratedDocument<BaseEntity>> extends BaseController {
+export class BaseDataController<T extends BaseEntity> extends BaseController {
 
     protected readonly logger = new TofLogger(BaseDataController.name);
 
@@ -18,7 +17,7 @@ export class BaseDataController<T extends HydratedDocument<BaseEntity>> extends 
     protected authService: AuthService;
 
     constructor(
-        protected dataService: BaseDataService<T>
+        protected dataService: IBaseDataService<T>
     ) {
         super();
     }
