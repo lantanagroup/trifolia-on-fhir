@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NonFhirResourcesService } from './nonFhirResources.service';
 
-describe('ExamplesService', () => {
+describe('NonFhirResourceService', () => {
   let service: NonFhirResourcesService;
 
   beforeEach(async () => {

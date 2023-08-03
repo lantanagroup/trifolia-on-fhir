@@ -14942,16 +14942,16 @@ export class ImplementationGuidePageComponent extends BackboneElement {
     }
 
     if (value) {
-      this.contentMarkdown = null;
+     // this.contentMarkdown = null;
     }
   }
 
-  public get contentMarkdown() {
+ /* public get contentMarkdown() {
     const contentExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);
     if (contentExt) return contentExt.valueMarkdown;
   }
-
-  public set contentMarkdown(value: string) {
+*/
+ /* public set contentMarkdown(value: string) {
     this.extension = this.extension || [];
     let contentExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);
 
@@ -14968,7 +14968,7 @@ export class ImplementationGuidePageComponent extends BackboneElement {
       contentExt.valueMarkdown = value;
     }
   }
-
+*/
 }
 
 export class ImplementationGuideParameterComponent extends BackboneElement {

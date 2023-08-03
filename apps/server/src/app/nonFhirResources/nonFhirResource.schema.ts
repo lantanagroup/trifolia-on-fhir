@@ -4,7 +4,6 @@ import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 import { Project } from '../projects/project.schema';
-import {CDAExample} from './cdaExample.schema';
 
 export type NonFhirResourceDocument = HydratedDocument<NonFhirResource>;
 

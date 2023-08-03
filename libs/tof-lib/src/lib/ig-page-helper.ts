@@ -104,7 +104,7 @@ export class IgPageHelper {
     if (page.reuseDescription) {
       pageInfo.content = this.getIndexContent(implementationGuide);
     } else {
-      pageInfo.content = page.contentMarkdown || 'No content has been defined for this page, yet.';
+      pageInfo.content = "";//page.contentMarkdown || 'No content has been defined for this page, yet.';
     }
 
     theList.push(pageInfo);

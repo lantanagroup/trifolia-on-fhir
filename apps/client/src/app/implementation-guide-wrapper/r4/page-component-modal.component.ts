@@ -10,6 +10,13 @@ import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {getImplementationGuideMediaReferences, MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Observable} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
+import {NonFhirResource} from '../../../../../server/src/app/nonFhirResources/nonFhirResource.schema';
+import {IFhirResource, INonFhirResource} from '@trifolia-fhir/models';
+import {FhirDisplayPipe} from '../../shared-ui/fhir-display-pipe';
+import {ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
+import {FhirResourceService} from '../../shared/fhir-resource.service';
+import {NonFhirResourceService} from '../../shared/nonFhir-resource-.service';
+import {getErrorString, getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 
 @Component({
   templateUrl: './page-component-modal.component.html',
@@ -19,11 +26,13 @@ export class PageComponentModalComponent implements OnInit {
   public inputPage: ImplementationGuidePageComponent;
   public page: ImplementationGuidePageComponent;
   public implementationGuide: ImplementationGuide;
+  public implementationGuideId: string;
   public level: number;
   public rootPage: boolean;
   public pageNavMenus: string[];
+  public resource:  INonFhirResource;
 
-  constructor(public activeModal: NgbActiveModal) {
+  constructor(public activeModal: NgbActiveModal, protected nonFhirResourceService: NonFhirResourceService) {
 
   }
 
@@ -41,7 +50,31 @@ export class PageComponentModalComponent implements OnInit {
     this.page = new ImplementationGuidePageComponent(this.inputPage);
   }
 
-  public get nameType(): 'Url'|'Reference' {
+  public setResource(value: INonFhirResource) {
+    this.resource = value;
+  }
+
+
+  public get contentMarkdown() {
+    return this.resource["content"];
+  }
+
+
+  public set contentMarkdown(value: string) {
+    if(!this.resource){
+     this.resource = <INonFhirResource>{};
+    }
+    this.resource["content"] = value;
+    this.resource["type"] = 'page';
+    this.resource["name"] = this.inputPage.nameUrl.substr(0,this.inputPage.nameUrl.indexOf("."));
+    if (this.implementationGuide) {
+      this.resource["referencedBy"] = [{'value': this.implementationGuideId, 'valueType': 'FhirResource'}];
+    }
+
+  }
+
+
+ /* public get nameType(): 'Url'|'Reference' {
     if (this.page.hasOwnProperty('nameReference')) {
       return 'Reference';
     } else if (this.page.hasOwnProperty('nameUrl')) {
@@ -62,7 +95,7 @@ export class PageComponentModalComponent implements OnInit {
       this.page.nameReference = { reference: '', display: '' };
     }
   }
-
+*/
   pageNavMenuSearch = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
@@ -76,14 +109,26 @@ export class PageComponentModalComponent implements OnInit {
 
     reader.onload = (e: any) => {
       const result = e.target.result;
-      this.page.contentMarkdown = result.substring(5 + file.type.length + 8);
+      this.contentMarkdown = result.substring(5 + file.type.length + 8);
     };
 
     reader.readAsDataURL(file);
   }
 
   ok() {
-    this.activeModal.close(this.page);
+    let page = this.page;
+    let res = this.resource;
+    // update in Db
+    this.nonFhirResourceService.save(this.resource.id, this.resource).subscribe({
+      next: (nonFhir: INonFhirResource) => {
+          res.id = nonFhir.id;
+          this.activeModal.close({page, res});
+        },
+      error: (err) => {
+
+      }
+    });
+
   }
 
   ngOnInit() {
