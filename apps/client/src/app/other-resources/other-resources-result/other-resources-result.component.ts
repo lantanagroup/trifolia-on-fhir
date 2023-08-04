@@ -13,7 +13,7 @@ import { AuthService } from '../../shared/auth.service';
 import { debounceTime } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import { FhirResourceService } from '../../shared/fhir-resource.service';
-import { ExamplesService } from '../../shared/examples.service';
+import { NonFhirResourceService } from '../../shared/nonFhir-resource-.service';
 import { IFhirResource, INonFhirResource, IProjectResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../../shared/implementation-guide.service';
 
@@ -43,7 +43,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     public configService: ConfigService,
     protected authService: AuthService,
     protected fhirResourceService: FhirResourceService,
-    protected examplesService: ExamplesService,
+    protected examplesService: NonFhirResourceService,
     protected implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);

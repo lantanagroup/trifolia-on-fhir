@@ -7,7 +7,7 @@ import { INonFhirResource, IProject, IProjectResourceReferenceMap } from '@trifo
 import { Paginated } from '@trifolia-fhir/tof-lib';
 
 @Injectable()
-export class ExamplesService {
+export class NonFhirResourceService {
 
     constructor(
         protected http: HttpClient) {
@@ -24,15 +24,15 @@ export class ExamplesService {
         return this.http.get<INonFhirResource>(url);
     }
 
-    public search(page: number = 1, sort: string = 'name', fhirVersion: 'stu3'|'r4'|'r5' = 'r4', implementationGuideId?: string, resourceType?: string, name?: string, title?: string, resourceId?: string): Observable<Paginated<INonFhirResource>> {
-        let url = '/api/nonFhirResources?page=' + encodeURIComponent(page) + '&' + '_sort=' + encodeURIComponent(sort) + '&' + 'fhirversion=' + encodeURIComponent(fhirVersion) + '&';
+    public search(page: number = 1, sort: string = 'name', implementationGuideId?: string, resourceType?: string, name?: string, title?: string, resourceId?: string): Observable<Paginated<INonFhirResource>> {
+        let url = '/api/nonFhirResources?page=' + encodeURIComponent(page) + '&' + '_sort=' + encodeURIComponent(sort) + '&';
 
         if (implementationGuideId) {
-            url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;
+            url += `referencedBy=${encodeURIComponent(implementationGuideId)}&`;
         }
 
         if (resourceType) {
-            url += `resourcetype=${encodeURIComponent(resourceType)}&`;
+            url += `type=${encodeURIComponent(resourceType)}&`;
         }
 
         if (name) {
@@ -66,6 +66,6 @@ export class ExamplesService {
         const url = `/api/nonFhirResources/${encodeURIComponent(exampleId)}`;
         return this.http.delete(url);
     }
-    
+
 
 }

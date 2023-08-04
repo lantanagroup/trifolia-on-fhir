@@ -180,7 +180,7 @@
                 <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.title"></app-tooltip-icon>
               </th>
               <th>
-                File Name
+               Page Name
               </th>
               <th class="actions-column-5">
                 <i class="fas fa-keyboard" [ngbTooltip]="pageKeyboardShortcuts" triggers="click"></i>
@@ -193,7 +193,7 @@
                 <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, this.implementationGuide.definition.page === p.page)" [class.is-invalid]="!p.page.title" (change)="igChanging.emit(true)"/>
               </td>
               <td>
-                <input type="text" class="form-control" [(ngModel)]="p.page.fileName" [class.is-invalid]="!p.page.fileName || isFileNameInvalid(p)" (change)="igChanging.emit(true)"/>
+                <input type="text" class="form-control" [(ngModel)]="p.page.nameUrl" [class.is-invalid]="!p.page.fileName || isFileNameInvalid(p)" (change)="igChanging.emit(true)"/>
                 <span *ngIf="isFileNameInvalid(p)" style="color:red">The file name must not include special characters such as "&" and "/"</span>
               </td>
               <td>
