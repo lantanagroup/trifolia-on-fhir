@@ -30,7 +30,8 @@ export class PageComponentModalComponent implements OnInit {
 
   public get isRootPageValid() {
     if (!this.rootPage) return true;
-    return this.page.fileName === 'index' + this.page.getExtension();
+   // return this.page.fileName === 'index' + this.page.getExtension();
+    return this.page.nameUrl === 'index.html';
   }
 
   public getMediaReferences(): MediaReference[] {
@@ -59,9 +60,6 @@ export class PageComponentModalComponent implements OnInit {
     this.resource["content"] = value;
     this.resource["type"] = NonFhirResourceType.Page;
     this.resource["name"] = this.inputPage.nameUrl.substr(0,this.inputPage.nameUrl.indexOf("."));
-    if (this.implementationGuide) {
-      this.resource["referencedBy"] = [{'value': this.implementationGuideId, 'valueType': 'FhirResource'}];
-    }
 
   }
 

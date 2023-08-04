@@ -72,7 +72,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public saving = false;
   public duplicate = false;
   public resourceMap: IProjectResourceReferenceMap = {};
-  public pagesMap     = {};
+  public pagesMap = {};
   public historyLoaded = false;
 
 
@@ -627,21 +627,21 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     componentInstance.setPage(pageDef.page);
     componentInstance.setResource(pageDef.resource);
 
-   /* if (pageDef.page.nameUrl && !pageDef.resource['id']) {
-      let pageName = pageDef.page.nameUrl.substring(0, pageDef.page.nameUrl.indexOf("."));
-      this.nonFhirResourceService.search(1, 'name', this.implementationGuideId, 'page', pageName).subscribe({
-        next: (res: Paginated<INonFhirResource>) => {
-          pageDef.resource = res.results[0] ? res.results[0] : <INonFhirResource>{};
-          componentInstance.setResource(pageDef.resource);
-          //  extracted.call(this);
-        },
-        error: (err) => {
-        },
-        complete: () => {
-        }
-      });
-    }
-*/
+    /* if (pageDef.page.nameUrl && !pageDef.resource['id']) {
+       let pageName = pageDef.page.nameUrl.substring(0, pageDef.page.nameUrl.indexOf("."));
+       this.nonFhirResourceService.search(1, 'name', this.implementationGuideId, 'page', pageName).subscribe({
+         next: (res: Paginated<INonFhirResource>) => {
+           pageDef.resource = res.results[0] ? res.results[0] : <INonFhirResource>{};
+           componentInstance.setResource(pageDef.resource);
+           //  extracted.call(this);
+         },
+         error: (err) => {
+         },
+         complete: () => {
+         }
+       });
+     }
+ */
     modalRef.result.then((result: { page: ImplementationGuidePageComponent, res: INonFhirResource }) => {
         Object.assign(pageDef.page, result.page);
         Object.assign(pageDef.resource, result.res);
@@ -670,7 +670,19 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   private getNewPageTitle() {
     const titles = this.getNewPageTitles();
-    return 'New Page ' + (titles.length + 1).toString();
+    let i = titles.length + 1;
+    let title = '';
+    let found = true;
+    while(found){
+      title = 'New Page ' + i.toString();
+      let pageName = Globals.getCleanFileName(title).toLowerCase();
+      if (!this.pagesMap[pageName])
+      {
+        found = false;
+      }
+      i++;
+    }
+    return title;
   }
 
   public addChildPage(pageDef: PageDefinition, template?: 'downloads') {
@@ -684,12 +696,14 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (template === 'downloads') {
       newPage.title = 'Downloads';
       newPage.navMenu = 'Downloads';
-      newPage.fileName = 'downloads.md';
-      //  newPage.contentMarkdown = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
+      newPage.nameUrl = 'downloads.html';
+      // newPage.contentMarkdown = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
     } else {
       newPage.title = this.getNewPageTitle();
-      newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.md';
+      newPage.nameUrl = Globals.getCleanFileName(newPage.title).toLowerCase() + '.html';
+      //  newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.md';
     }
+    this.pagesMap[newPage.nameUrl.substring(0, newPage.nameUrl.indexOf('.'))] = {};
 
     pageDef.page.page.push(newPage);
 
@@ -729,27 +743,30 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
     let map = this.pagesMap;
     //remove resource
-    this.nonFhirResourceService.delete(pageDef.resource.id).subscribe({
-      next: (nonFhir: INonFhirResource) => {
-        let index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
-          return ref.value === pageDef.resource.id;
-        });
+    if (pageDef.resource['id']) {
+      this.nonFhirResourceService.delete(pageDef.resource.id).subscribe({
+        next: (nonFhir: INonFhirResource) => {
+          let index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
+            return ref.value === pageDef.resource.id;
+          });
 
-        if (index > -1) {
-          this.fhirResource.references.splice(index, 1);
-          delete map[pageDef.resource.name];
+          if (index > -1) {
+            this.fhirResource.references.splice(index, 1);
+            delete map[pageDef.resource.name];
+          }
+          this.initPagesAndGroups();
+          this.igChanging.emit(true);
+        },
+        error: (err) => {
+          this.initPagesAndGroups();
+          this.igChanging.emit(true);
         }
-        this.initPagesAndGroups();
-        this.igChanging.emit(true);
-      },
-      error: (err) => {
-        this.initPagesAndGroups();
-        this.igChanging.emit(true);
-      }
-    });
-
-
-
+      });
+    }
+    else{
+      this.initPagesAndGroups();
+      this.igChanging.emit(true);
+    }
 
   }
 
@@ -964,28 +981,15 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
     // get the resource
-    let resource = <INonFhirResource>{ };
+    let resource = <INonFhirResource>{};
 
-    function extracted() {
-      this.pages.push({
-        page: page,
-        level: level,
-        parent: parent,
-        resource: this.pagesMap[page.nameUrl.substring(0,page.nameUrl.indexOf("."))]
-      });
-      if (page.page) {
-        for (let i = 0; i < page.page.length; i++) {
-          this.initPage(page.page[i], level + 1, page);
-        }
-      }
-    }
-    let existingResource =  this.pagesMap[page.nameUrl.substring(0,page.nameUrl.indexOf("."))];
+    let existingResource = page.nameUrl ? this.pagesMap[page.nameUrl.substring(0, page.nameUrl.indexOf('.'))] : undefined;
 
     this.pages.push({
       page: page,
       level: level,
       parent: parent,
-      resource: existingResource? existingResource: resource
+      resource: existingResource ? existingResource : resource
     });
     if (page.page) {
       for (let i = 0; i < page.page.length; i++) {
@@ -993,32 +997,23 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       }
 
     }
-   /* if (page.nameUrl) {
-      let pageName = page.nameUrl.substring(0,page.nameUrl.indexOf("."));
-      this.nonFhirResourceService.search(1, 'name', this.implementationGuideId,  'page', pageName).subscribe({
-        next: (res: Paginated<INonFhirResource>) => {
-          storedResource = res.results[0]?res.results[0]:<INonFhirResource>{};
-          extracted.call(this);
-        },
-        error: (err) => { },
-        complete: () => {}
-      });
-    }*/
 
-   // extracted.call(this);
   }
 
-  loadPages(){
-      this.nonFhirResourceService.search(1, 'name', this.implementationGuideId,  'page').subscribe({
-        next: (res: Paginated<INonFhirResource>) => {
-          res.results.forEach(result => {
-            this.pagesMap[result.name] = result;
-          })
-        },
-        error: (err) => { },
-        complete: () => {this.initPagesAndGroups();}
-      });
-   }
+  loadPages() {
+    this.nonFhirResourceService.search(1, 'name', this.implementationGuideId, 'page').subscribe({
+      next: (res: Paginated<INonFhirResource>) => {
+        res.results.forEach(result => {
+          this.pagesMap[result.name] = result;
+        });
+      },
+      error: () => {
+      },
+      complete: () => {
+        this.initPagesAndGroups();
+      }
+    });
+  }
 
   private initPagesAndGroups() {
     this.pages = [];
@@ -1226,7 +1221,5 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     this.igChanging.emit(isDirty);
     this.loadPages();
 
-
   }
-
 }

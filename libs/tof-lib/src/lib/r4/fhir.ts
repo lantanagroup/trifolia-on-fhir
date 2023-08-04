@@ -14855,9 +14855,9 @@ export class ImplementationGuidePageComponent extends BackboneElement {
     this.title = value;
 
     if (!isRoot && value) {
-      this.fileName = value.toLowerCase().replace(/\s/g, '_').replace(/[():]/g, '') + this.getExtension();
+      this.nameUrl = value.toLowerCase().replace(/\s/g, '_').replace(/[():]/g, '') + this.getExtension();
     } else if (isRoot) {
-      this.fileName = 'index' + this.getExtension();
+      this.nameUrl = 'index.html';
     }
   }
 
@@ -14885,11 +14885,13 @@ export class ImplementationGuidePageComponent extends BackboneElement {
   }
 
   public get fileName() {
-    const fileNameExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-filename']);
-    if (fileNameExt) return fileNameExt.valueUri;
+   /* const fileNameExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-filename']);
+    if (fileNameExt) return fileNameExt.valueUri;*/
+    return this.nameUrl?this.nameUrl.substring(0, this.nameUrl.lastIndexOf('.')) + this.getExtension(): "";
   }
 
-  public set fileName(value: string) {
+
+ /* public set fileName(value: string) {
     this.extension = this.extension || [];
     let fileNameExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-filename']);
 
@@ -14919,8 +14921,7 @@ export class ImplementationGuidePageComponent extends BackboneElement {
         delete this.nameUrl;
       }
     }
-  }
-
+  }*/
   public get reuseDescription() {
     const reuseDescriptionExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-reuse-description']);
     if (reuseDescriptionExt) return reuseDescriptionExt.valueBoolean;
