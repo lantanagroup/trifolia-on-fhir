@@ -1,22 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {
-  Binary,
-  Extension,
   ImplementationGuide,
   ImplementationGuidePageComponent
-} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {getImplementationGuideMediaReferences, MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+} from '@trifolia-fhir/r4';
+import {getImplementationGuideMediaReferences, MediaReference} from '@trifolia-fhir/tof-lib';
 import {Observable} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
-import {NonFhirResource} from '../../../../../server/src/app/nonFhirResources/nonFhirResource.schema';
-import {IFhirResource, INonFhirResource} from '@trifolia-fhir/models';
-import {FhirDisplayPipe} from '../../shared-ui/fhir-display-pipe';
-import {ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
-import {FhirResourceService} from '../../shared/fhir-resource.service';
+import {INonFhirResource, NonFhirResourceType} from '@trifolia-fhir/models';
 import {NonFhirResourceService} from '../../shared/nonFhir-resource-.service';
-import {getErrorString, getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 
 @Component({
   templateUrl: './page-component-modal.component.html',
@@ -65,7 +57,7 @@ export class PageComponentModalComponent implements OnInit {
      this.resource = <INonFhirResource>{};
     }
     this.resource["content"] = value;
-    this.resource["type"] = 'page';
+    this.resource["type"] = NonFhirResourceType.Page;
     this.resource["name"] = this.inputPage.nameUrl.substr(0,this.inputPage.nameUrl.indexOf("."));
     if (this.implementationGuide) {
       this.resource["referencedBy"] = [{'value': this.implementationGuideId, 'valueType': 'FhirResource'}];
