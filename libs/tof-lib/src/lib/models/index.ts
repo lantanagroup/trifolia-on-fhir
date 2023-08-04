@@ -14,8 +14,11 @@ export interface IProjectContributor {
   name?: string;
 }
 
-export interface IProject {
+export interface IBaseEntity {
   id?: string;
+}
+
+export interface IProject extends IBaseEntity {
   migratedFrom?: string;
   name: string;
   author: string;
@@ -27,8 +30,7 @@ export interface IProject {
   isDeleted: boolean;
 }
 
-export interface IUser {
-  id?: string;
+export interface IUser extends IBaseEntity {
   authId?: string[];
   email?: string;
   phone?: string;
@@ -37,8 +39,7 @@ export interface IUser {
   readonly name: string;
 }
 
-export interface IGroup {
-  id?: string;
+export interface IGroup extends IBaseEntity {
   migratedFrom?: string;
   name?: string;
   description?: string;
@@ -46,8 +47,7 @@ export interface IGroup {
   members?: IUser[];
 }
 
-export interface IProjectResource {
-  id?: string;
+export interface IProjectResource extends IBaseEntity {
   name?: string;
   description?: string;
   projects?: IProject[];
@@ -86,8 +86,7 @@ export interface IHistory extends IProjectResource {
 }
 
 
-export interface IAudit {
-  _id?: string;
+export interface IAudit extends IBaseEntity {
   action: 'read'|'update'|'delete'|'create',
   timestamp: Date,
   who: string;

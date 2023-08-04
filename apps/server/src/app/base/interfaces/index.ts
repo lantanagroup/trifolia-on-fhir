@@ -1,8 +1,10 @@
 import { PaginateOptions, Paginated } from "@trifolia-fhir/tof-lib";
 import { BaseEntity } from "../base.entity";
+import { Model } from "mongoose";
 
 
 export interface IBaseDataService<T> {
+    getModel(): Model<T>;
     collectionCount(): Promise<number>;
     count(filter: any): Promise<number>;
     findAll(filter: any): Promise<T[]>;

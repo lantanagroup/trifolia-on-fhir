@@ -57,7 +57,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
 
   constructor(protected httpService: HttpService,
     protected configService: ConfigService,
-    protected examplesService: NonFhirResourcesService,
+    protected nonFhirResourceService: NonFhirResourcesService,
     protected projectService: ProjectsService,
     protected fhirResourceService: FhirResourcesService,
     protected authService: AuthService) {
@@ -287,7 +287,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
     let filter = {
       $and: [{ 'referencedBy.value': id }, { $or: deleteClause}]
     }
-    examples.push(... await this.examplesService.findAll(filter) );
+    examples.push(... await this.nonFhirResourceService.findAll(filter) );
 
     return examples;
   }

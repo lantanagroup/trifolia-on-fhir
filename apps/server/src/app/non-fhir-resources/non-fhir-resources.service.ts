@@ -1,20 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { TofLogger } from '../tof-logger';
-import { NonFhirResource } from './non-fhir-resource.schema';
+import { NonFhirResourceDocument, NonFhirResource } from './non-fhir-resource.schema';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
-import {INonFhirResource, IHistory} from '@trifolia-fhir/models';
+import {INonFhirResource, IHistory, NonFhirResourceType} from '@trifolia-fhir/models';
 import {addToImplementationGuideNew, removeFromImplementationGuideNew} from '../helper';
 import { HistoryService } from '../history/history.service';
 import { FhirResourcesService } from '../fhirResources/fhirResources.service';
 import { TofNotFoundException } from '../../not-found-exception';
 import { IBaseDataService } from '../base/interfaces';
-import { BaseEntity } from '../base/base.entity';
 import { PaginateOptions, Paginated } from '@trifolia-fhir/tof-lib';
-import { BaseDataService } from '../base/base-data.service';
 
 @Injectable()
-export class NonFhirResourcesService extends BaseDataService<INonFhirResource> { // implements IBaseDataService<INonFhirResource> { //extends BaseDataService<NonFhirResource> {
+export class NonFhirResourcesService implements IBaseDataService<NonFhirResourceDocument> {
 
     protected readonly logger = new TofLogger(NonFhirResourcesService.name);
 
@@ -22,23 +20,72 @@ export class NonFhirResourcesService extends BaseDataService<INonFhirResource> {
         @InjectConnection() private connection: Connection,
         private readonly fhirResourceService: FhirResourcesService,
         private readonly historyService: HistoryService) {
-        //super(nonFhirResourceModel);
-        super(connection.models[NonFhirResource.name])
     }
-    
-    
-    public getModel(nonFhirResource?: INonFhirResource): Model<INonFhirResource> {
-        console.log('in getModel:');
 
-        if (!!nonFhirResource) {
+
+    public getModel(nonFhirResource?: INonFhirResource): Model<NonFhirResourceDocument> {
+
+        // check for corresponding model by resource type if valid
+        if (!!nonFhirResource && Object.values(NonFhirResourceType).includes(nonFhirResource.type)) {
+            return this.connection.models[nonFhirResource.type];
+        }
+
+        // otherwise... check for corresponding model by provided object's constructor name
+        else if (!!nonFhirResource && Object.values(NonFhirResourceType).some(e => e.toString() === nonFhirResource?.constructor?.name)) {
             return this.connection.models[nonFhirResource.constructor.name];
         }
         
         return this.connection.models[NonFhirResource.name];
     }
 
+    public castToModel(res: NonFhirResourceDocument): NonFhirResourceDocument {
+        let model = this.getModel(res);
+        return model.hydrate(model.castObject(res));
+    }
 
-    public async createNonFhirResource(newNonFhirResource: INonFhirResource, implementationGuideId?: string): Promise<INonFhirResource> {
+    
+    public async search(options?: PaginateOptions): Promise<Paginated<NonFhirResourceDocument>> {
+        const page = (options && options.page) ? options.page : 1;
+        const limit = (options && options.itemsPerPage) ? options.itemsPerPage : 10;
+        const filters = (options && options.filter) ? options.filter : {};
+        const skip = (page-1) * limit;
+        const sortBy = (options && options.sortBy)  ? options.sortBy : {};
+        const populate = (options && options.populate)  ? options.populate : [];
+
+        let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
+
+        let allFilters = { $and: [filters, {$or: deleteClause}] };
+
+        const items = await this.getModel().find(allFilters).populate(populate).sort(sortBy).limit(limit).skip(skip);
+        const total = await this.getModel().countDocuments(allFilters);
+
+        const result: Paginated<NonFhirResourceDocument> = {
+            itemsPerPage: limit,
+            results: items,
+            total: total
+        };
+
+        return result;
+    }
+    
+
+    public async collectionCount(): Promise<number> {
+        return this.getModel().estimatedDocumentCount().exec();
+    }
+    public async count(filter: any): Promise<number> {
+        return this.getModel().countDocuments(filter).exec();
+    }
+    public async findAll(filter: any, populated = []): Promise<NonFhirResourceDocument[]> {
+        return this.getModel().find(filter).populate(populated);
+    }
+    public async findOne(filter: any): Promise<NonFhirResourceDocument> {
+        return this.castToModel(await this.getModel().findOne(filter));
+    }
+    public async findById(id: string): Promise<NonFhirResourceDocument> {
+        return this.castToModel(await this.getModel().findById(id));
+    }
+
+    public async create(newNonFhirResource: NonFhirResourceDocument, implementationGuideId?: string): Promise<NonFhirResourceDocument> {
         const lastUpdated = new Date();
         let versionId = 1;
 
@@ -60,13 +107,8 @@ export class NonFhirResourcesService extends BaseDataService<INonFhirResource> {
                 newNonFhirResource.referencedBy.push({ value: implementationGuideId, valueType: 'FhirResource' });
             }
         }
-
-
-        console.log(this.connection.models);
-        let model = this.getModel();
-        console.log('model doc count:', await model.estimatedDocumentCount());
         
-        newNonFhirResource = await model.create(newNonFhirResource);
+        newNonFhirResource = await this.getModel(newNonFhirResource).create(newNonFhirResource);
 
         let newHistory: IHistory = {
             content: newNonFhirResource.content,
@@ -75,7 +117,7 @@ export class NonFhirResourcesService extends BaseDataService<INonFhirResource> {
             current: { value: newNonFhirResource.id, valueType: 'NonFhirResource'}
         }
 
-        //await this.historyService.create(newHistory);
+        await this.historyService.create(newHistory);
 
         //Add it to the implementation Guide
         if (implementationGuideId) {
@@ -85,7 +127,18 @@ export class NonFhirResourcesService extends BaseDataService<INonFhirResource> {
         return newNonFhirResource;
     }
 
-    public async updateNonFhirResource(id: string, upNonFhirResource: INonFhirResource, implementationGuideId?: string): Promise<INonFhirResource> {
+    public async createMany(newDocs: NonFhirResourceDocument[], implementationGuideId?: string): Promise<NonFhirResourceDocument[]> {
+        const res: NonFhirResourceDocument[] = [];
+
+        for(const doc of newDocs) {
+            res.push(await this.create(doc, implementationGuideId));
+        }
+
+        return res;
+    }
+
+
+    public async updateOne(id: string, upNonFhirResource: NonFhirResourceDocument, implementationGuideId?: string): Promise<NonFhirResourceDocument> {
         const lastUpdated = new Date();
         let versionId: number = 1;
 
@@ -93,7 +146,7 @@ export class NonFhirResourcesService extends BaseDataService<INonFhirResource> {
             throw new BadRequestException();
         }
 
-        let existing = await this.getModel().findById(id);
+        let existing = await this.findById(id);
 
         if (!existing) {
             throw new TofNotFoundException();
@@ -120,7 +173,6 @@ export class NonFhirResourcesService extends BaseDataService<INonFhirResource> {
 
         await this.getModel(existing).findByIdAndUpdate(existing.id, existing, { new: true });
 
-
         let newHistory: IHistory = {
             content: existing.content,
             versionId: versionId,
@@ -139,12 +191,12 @@ export class NonFhirResourcesService extends BaseDataService<INonFhirResource> {
 
     }
 
-    public async deleteNonFhirResource(id: string): Promise<INonFhirResource> {
+    public async delete(id: string): Promise<NonFhirResourceDocument> {
       // remove from IG
       let resource = await this.getModel().findById(id);
       await removeFromImplementationGuideNew(this.fhirResourceService, resource);
       resource.isDeleted= true;
-      return this.getModel(resource).findOneAndUpdate(resource.id, resource);
+      return this.castToModel(await this.getModel(resource).findByIdAndUpdate(id, { $set: { isDeleted: true } }));
     }
 
 }

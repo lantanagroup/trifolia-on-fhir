@@ -3,29 +3,15 @@ import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException, Body,
   Controller,
-  Get,
-  Headers,
-  Param, Post, Query,
-  UnauthorizedException,
+  Post, Query,
   UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from './config.service';
 import { TofLogger } from './tof-logger';
-import { FhirController } from './fhir.controller';
-import { FhirServerVersion, RequestHeaders, User } from './server.decorators';
-import { buildUrl } from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import { TofNotFoundException } from '../not-found-exception';
-import { AxiosRequestConfig } from 'axios';
+import { User } from './server.decorators';
 import type { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
-import {
-  ValueSet, ValueSetComposeComponent,
-  ValueSetConceptReferenceComponent,
-  ValueSetConceptSetComponent
-} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import { addToImplementationGuide } from './helper';
-import { IBundle } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { FhirResourcesService } from './fhirResources/fhirResources.service';
 import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
 import { ObjectId } from 'mongodb';

@@ -1,14 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { INonFhirResource, IPermission, IProject, IProjectResourceReference, NonFhirResourceType } from '@trifolia-fhir/models';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
-import mongoose from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 import { Project } from '../projects/project.schema';
 
 
+export type NonFhirResourceDocument = HydratedDocument<NonFhirResource>;
 
 @Schema({ collection: 'nonFhirResource', toJSON: { getters: true }, discriminatorKey: 'type' })
-export class NonFhirResource extends BaseEntity implements INonFhirResource {
+export class NonFhirResource implements INonFhirResource {
 
     @Prop()
     name?: string;
@@ -17,7 +18,7 @@ export class NonFhirResource extends BaseEntity implements INonFhirResource {
     description?: string;
 
     @Prop ([{type: mongoose.Schema.Types.ObjectId, ref: Project.name }])
-    projects: Project[];
+    projects?: IProject[];
 
     @Prop()
     migratedFrom?: string;
@@ -42,7 +43,7 @@ export class NonFhirResource extends BaseEntity implements INonFhirResource {
     content?: IDomainResource|any;
     
     @Prop({ type: String, required: true, enum: Object.values(NonFhirResourceType) })
-    readonly type: NonFhirResourceType;
+    type: NonFhirResourceType;
 
     @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'referencedBy.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource', 'Project']}}])
     referencedBy: IProjectResourceReference[];
@@ -59,10 +60,9 @@ export const NonFhirResourceSchema = SchemaFactory.createForClass(NonFhirResourc
 NonFhirResourceSchema.loadClass(NonFhirResource);
 
 
-export abstract class NonFhirResourceBase implements INonFhirResource {
+export abstract class NonFhirResourceBase extends BaseEntity implements INonFhirResource {
     type: NonFhirResourceType;
     content?: any;
-    id?: string;
     name?: string;
     description?: string;
     projects?: IProject[];

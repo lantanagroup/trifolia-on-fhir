@@ -145,7 +145,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
 
             // references removed -- references in existing but not in updated
             let fhirResIdsRemoved: ObjectId[] = [];
-            let exampleIdsRemoved: ObjectId[] = [];
+            let nonFhirResIdsRemoved: ObjectId[] = [];
 
 
             if (existing.references && existing.references.length > 0) {
@@ -164,7 +164,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                         }
                     )) {
                         if (exRef.valueType == 'NonFhirResource') {
-                            exampleIdsRemoved.push(exRefId);
+                            nonFhirResIdsRemoved.push(exRefId);
                         } else {
                             fhirResIdsRemoved.push(exRefId);
                         }
@@ -174,7 +174,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
 
             // references added -- references not in existing but in updated
             let fhirResIdsAdded: ObjectId[] = [];
-            let exampleIdsAdded: ObjectId[] = [];
+            let nonFhirIdsAdded: ObjectId[] = [];
             if (upFhirResource.references && upFhirResource.references.length > 0) {
                upFhirResource.references.forEach((upRef: IProjectResourceReference) => {
                     let upRefId: ObjectId = (typeof upRef.value === typeof '') ?
@@ -190,7 +190,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                         }
                     )) {
                         if (upRef.valueType == 'NonFhirResource') {
-                            exampleIdsAdded.push(upRefId);
+                            nonFhirIdsAdded.push(upRefId);
                         }
                         else {
                           fhirResIdsAdded.push(upRefId);
@@ -209,9 +209,9 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                 );
             }
 
-            if (exampleIdsRemoved && exampleIdsRemoved.length > 0) {
+            if (nonFhirResIdsRemoved && nonFhirResIdsRemoved.length > 0) {
                 await this.nonFhirResourceModel.updateMany(
-                    { '_id': { $in: exampleIdsRemoved } },
+                    { '_id': { $in: nonFhirResIdsRemoved } },
                     { $pull: { referencedBy: {value: existing.id, valueType: 'NonFhirResource' } } }
                 );
             }
@@ -222,9 +222,9 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
                     { $pull: { referencedBy: {value: existing.id, valueType: 'FhirResource' } } }
                 );
             }
-            if (exampleIdsAdded && exampleIdsAdded.length > 0) {
+            if (nonFhirIdsAdded && nonFhirIdsAdded.length > 0) {
                 await this.nonFhirResourceModel.updateMany(
-                    { '_id': { $in: exampleIdsAdded } },
+                    { '_id': { $in: nonFhirIdsAdded } },
                     { $push: { referencedBy: {value: existing.id, valueType: 'NonFhirResource' } } }
                 );
             }
