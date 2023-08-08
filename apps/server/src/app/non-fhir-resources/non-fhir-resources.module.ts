@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { NonFhirResource, NonFhirResourceSchema } from './non-fhir-resource.schema';
+import { NonFhirResourceSchema } from './non-fhir-resource.schema';
 import { NonFhirResourcesController } from './non-fhir-resources.controller';
 import { NonFhirResourcesService } from './non-fhir-resources.service';
 import { HistoryModule } from '../history/history.module';
 import { FhirResourcesModule } from '../fhirResources/fhirResources.module';
 import { CdaExampleSchema, OtherNonFhirResourceSchema } from './types';
-import { NonFhirResourceType } from '@trifolia-fhir/models';
+import { NonFhirResource, NonFhirResourceType } from '@trifolia-fhir/models';
 
 @Module({
     imports: [
@@ -16,7 +16,7 @@ import { NonFhirResourceType } from '@trifolia-fhir/models';
                 schema: NonFhirResourceSchema,
                 discriminators: [
                     { name: NonFhirResourceType.CdaExample, schema: CdaExampleSchema },
-                    { name: NonFhirResourceType.Other, schema: OtherNonFhirResourceSchema }
+                    { name: NonFhirResourceType.OtherNonFhirResource, schema: OtherNonFhirResourceSchema }
                 ]
             }
         ]),

@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IFhirResource, INonFhirResource, IHistory, IProjectResource, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import type { IFhirResource, INonFhirResource, IHistory, IProjectResource, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import { NonFhirResource } from '@trifolia-fhir/models';
 import { IBundle, IDomainResource } from '@trifolia-fhir/tof-lib';
 import { Model } from 'mongoose';
 import { BaseDataService } from '../base/base-data.service';
@@ -13,7 +14,6 @@ import { TofNotFoundException } from '../../not-found-exception';
 import { LinkComponent, Binary as STU3Binary, Bundle as STU3Bundle, EntryComponent as STU3BundleEntryComponent } from '@trifolia-fhir/stu3';
 import { Binary as R4Binary, Bundle as R4Bundle, BundleEntryComponent as R4BundleEntryComponent } from '@trifolia-fhir/r4';
 import { Binary as R5Binary, Bundle as R5Bundle, BundleEntry as R5BundleEntryComponent } from '@trifolia-fhir/r5';
-import { NonFhirResource } from '../non-fhir-resources/non-fhir-resource.schema';
 
 @Injectable()
 export class FhirResourcesService extends BaseDataService<FhirResourceDocument> {

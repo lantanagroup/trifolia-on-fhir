@@ -4,7 +4,8 @@ import { HistoryModule } from '../history/history.module';
 import { FhirResourcesController } from './fhirResources.controller';
 import { FhirResource, FhirResourceSchema } from './fhirResource.schema';
 import { FhirResourcesService } from './fhirResources.service';
-import { NonFhirResource, NonFhirResourceSchema } from '../non-fhir-resources/non-fhir-resource.schema';
+import { NonFhirResourceSchema } from '../non-fhir-resources/non-fhir-resource.schema';
+import { NonFhirResource } from '@trifolia-fhir/models';
 
 @Module({
   imports:[

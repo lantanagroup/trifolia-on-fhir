@@ -17,7 +17,7 @@ import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { Media as R5Media } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
 import { FhirResourceService } from '../shared/fhir-resource.service';
-import { IFhirResource, INonFhirResource, IProjectResource } from '@trifolia-fhir/models';
+import { CdaExample, type IFhirResource, type INonFhirResource, type IProjectResource } from '@trifolia-fhir/models';
 import { NonFhirResourceService } from '../shared/nonFhir-resource-.service';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
@@ -86,7 +86,7 @@ export class ImportComponent implements OnInit {
     private httpClient: HttpClient,
     private importService: ImportService,
     private fhirResourceService: FhirResourceService,
-    private examplesService: NonFhirResourceService,
+    private nonFhirResourceService: NonFhirResourceService,
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService,
     public githubService: GithubService,
@@ -404,8 +404,10 @@ export class ImportComponent implements OnInit {
     let req: Observable<IFhirResource | INonFhirResource>;
 
     if (this.textContentIsExample) {
-      (<INonFhirResource>newResource).content = resource;
-      req = this.examplesService.save(null, <INonFhirResource>newResource, this.implementationGuideId);
+      // CDA examples are the only non-FHIR resources currently supported for importing
+      newResource = new CdaExample();
+      newResource.content = resource;
+      req = this.nonFhirResourceService.save(null, newResource, this.implementationGuideId);
     } else {
       (<IFhirResource>newResource).resource = resource;
       (<IFhirResource>newResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
@@ -436,10 +438,10 @@ export class ImportComponent implements OnInit {
 
       // add/update non-fhir example type
       if (file.isExample && file.isCDAExample) {
-        let example: INonFhirResource = <INonFhirResource>{ ...file.existingResource };
-        example.content = file.isCDAExample ? file.cdaContent : file.resource;
+        let example: CdaExample = new CdaExample(file.existingResource);
+        example.content = file.cdaContent;
         example.name = this.getIdDisplay(file);
-        requests.push(this.examplesService.save(example.id, example, this.implementationGuideId));
+        requests.push(this.nonFhirResourceService.save(example.id, example, this.implementationGuideId));
       }
 
       // add/update fhir type

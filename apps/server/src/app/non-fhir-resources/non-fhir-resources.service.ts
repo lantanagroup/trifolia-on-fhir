@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { TofLogger } from '../tof-logger';
-import { NonFhirResourceDocument, NonFhirResource } from './non-fhir-resource.schema';
+import { NonFhirResourceDocument } from './non-fhir-resource.schema';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
-import {INonFhirResource, IHistory, NonFhirResourceType} from '@trifolia-fhir/models';
+import {INonFhirResource, IHistory, NonFhirResourceType, NonFhirResource} from '@trifolia-fhir/models';
 import {addToImplementationGuideNew, removeFromImplementationGuideNew} from '../helper';
 import { HistoryService } from '../history/history.service';
 import { FhirResourcesService } from '../fhirResources/fhirResources.service';
