@@ -46,3 +46,4 @@ export class CdaExample extends NonFhirResource {
 export class OtherNonFhirResource extends NonFhirResource {
     readonly type: NonFhirResourceType = NonFhirResourceType.OtherNonFhirResource;
 }
+export interface IPage extends INonFhirResource {}

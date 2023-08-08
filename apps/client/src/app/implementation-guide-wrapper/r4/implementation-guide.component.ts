@@ -30,7 +30,7 @@ import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
 import {ProjectService} from '../../shared/projects.service';
-import {IFhirResource, INonFhirResource, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
+import {IFhirResource, IPage, IProjectResourceReference, IProjectResourceReferenceMap, NonFhirResourceType} from '@trifolia-fhir/models';
 import {IDomainResource, getImplementationGuideContext, Paginated} from '@trifolia-fhir/tof-lib';
 
 import {FhirResource} from '../../../../../server/src/app/fhirResources/fhirResource.schema';
@@ -41,7 +41,7 @@ class PageDefinition {
   public page: ImplementationGuidePageComponent;
   public parent?: ImplementationGuidePageComponent;
   public level: number;
-  public resource: INonFhirResource;
+  public resource: IPage;
 }
 
 @Component({
@@ -602,7 +602,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (value && !this.implementationGuide.definition.page) {
       this.implementationGuide.definition.page = new ImplementationGuidePageComponent();
       this.implementationGuide.definition.page.generation = 'markdown';
-      this.implementationGuide.definition.page.reuseDescription = true;
+     // this.implementationGuide.definition.page.reuseDescription = true;
       this.implementationGuide.definition.page.setTitle('Home Page', true);
     } else if (!value && this.implementationGuide.definition.page) {
       const foundPageDef = this.pages.find((pageDef) => pageDef.page === this.implementationGuide.definition.page);
@@ -616,7 +616,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const modalRef = this.modal.open(PageComponentModalComponent, { size: 'lg', backdrop: 'static' });
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
-    componentInstance.implementationGuide = this.implementationGuide;
+    componentInstance.fhirResource = this.fhirResource;
     componentInstance.level = pageDef.level;
     componentInstance.implementationGuideId = this.implementationGuideId;
 
@@ -627,30 +627,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     componentInstance.setPage(pageDef.page);
     componentInstance.setResource(pageDef.resource);
 
-    /* if (pageDef.page.nameUrl && !pageDef.resource['id']) {
-       let pageName = pageDef.page.nameUrl.substring(0, pageDef.page.nameUrl.indexOf("."));
-       this.nonFhirResourceService.search(1, 'name', this.implementationGuideId, 'page', pageName).subscribe({
-         next: (res: Paginated<INonFhirResource>) => {
-           pageDef.resource = res.results[0] ? res.results[0] : <INonFhirResource>{};
-           componentInstance.setResource(pageDef.resource);
-           //  extracted.call(this);
-         },
-         error: (err) => {
-         },
-         complete: () => {
-         }
-       });
-     }
- */
-    modalRef.result.then((result: { page: ImplementationGuidePageComponent, res: INonFhirResource }) => {
+
+    modalRef.result.then((result: { page: ImplementationGuidePageComponent, res: IPage }) => {
         Object.assign(pageDef.page, result.page);
         Object.assign(pageDef.resource, result.res);
-
-        if (!this.fhirResource.references.find((r: IProjectResourceReference) => r.value == pageDef.resource.id)) {
-          const newProjectResourceReference: IProjectResourceReference = { value: pageDef.resource.id, valueType: 'NonFhirResource' };
-          this.fhirResource.references.push(newProjectResourceReference);
-        }
-        // this.initPagesAndGroups();
+      //  this.initPagesAndGroups();
         this.igChanging.emit(true);
       }
     ).catch((err) => {
@@ -673,11 +654,10 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     let i = titles.length + 1;
     let title = '';
     let found = true;
-    while(found){
+    while (found) {
       title = 'New Page ' + i.toString();
-      let pageName = Globals.getCleanFileName(title).toLowerCase();
-      if (!this.pagesMap[pageName])
-      {
+      let pageName = Globals.getCleanFileName(title).toLowerCase() + '.html';
+      if (!this.pages.find(elem => elem.page.nameUrl === pageName)) {
         found = false;
       }
       i++;
@@ -695,15 +675,19 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     if (template === 'downloads') {
       newPage.title = 'Downloads';
-      newPage.navMenu = 'Downloads';
+    //  newPage.navMenu = 'Downloads';
       newPage.nameUrl = 'downloads.html';
-      // newPage.contentMarkdown = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
+     // newPage.contentMarkdown = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
     } else {
       newPage.title = this.getNewPageTitle();
       newPage.nameUrl = Globals.getCleanFileName(newPage.title).toLowerCase() + '.html';
-      //  newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.md';
     }
-    this.pagesMap[newPage.nameUrl.substring(0, newPage.nameUrl.indexOf('.'))] = {};
+
+    let resource = <IPage>{};
+    resource["type"] = NonFhirResourceType.Page;
+    resource["name"]  = newPage.nameUrl.slice(0, newPage.nameUrl.indexOf("."));
+
+    this.pagesMap[resource["name"]] = resource;
 
     pageDef.page.page.push(newPage);
 
@@ -745,7 +729,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     //remove resource
     if (pageDef.resource['id']) {
       this.nonFhirResourceService.delete(pageDef.resource.id).subscribe({
-        next: (nonFhir: INonFhirResource) => {
+        next: (page: IPage) => {
           let index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
             return ref.value === pageDef.resource.id;
           });
@@ -762,8 +746,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           this.igChanging.emit(true);
         }
       });
-    }
-    else{
+    } else {
       this.initPagesAndGroups();
       this.igChanging.emit(true);
     }
@@ -981,8 +964,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
     // get the resource
-    let resource = <INonFhirResource>{};
-
+    let resource = <IPage>{};
+    resource["type"] = NonFhirResourceType.Page;
+    resource["name"]  = page.nameUrl.substr(0,page.nameUrl.indexOf("."));
     let existingResource = page.nameUrl ? this.pagesMap[page.nameUrl.substring(0, page.nameUrl.indexOf('.'))] : undefined;
 
     this.pages.push({
@@ -1001,8 +985,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   loadPages() {
-    this.nonFhirResourceService.search(1, 'name', this.implementationGuideId, 'page').subscribe({
-      next: (res: Paginated<INonFhirResource>) => {
+    this.nonFhirResourceService.search(1, 'name', this.implementationGuideId, NonFhirResourceType.Page).subscribe({
+      next: (res: Paginated<IPage>) => {
         res.results.forEach(result => {
           this.pagesMap[result.name] = result;
         });

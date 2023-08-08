@@ -34,7 +34,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         else if (!!nonFhirResource && Object.values(NonFhirResourceType).some(e => e.toString() === nonFhirResource?.constructor?.name)) {
             return this.connection.models[nonFhirResource.constructor.name];
         }
-        
+
         return this.connection.models[NonFhirResource.name];
     }
 
@@ -43,7 +43,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         return model.hydrate(model.castObject(res));
     }
 
-    
+
     public async search(options?: PaginateOptions): Promise<Paginated<NonFhirResourceDocument>> {
         const page = (options && options.page) ? options.page : 1;
         const limit = (options && options.itemsPerPage) ? options.itemsPerPage : 10;
@@ -67,19 +67,27 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
 
         return result;
     }
-    
+
 
     public async collectionCount(): Promise<number> {
         return this.getModel().estimatedDocumentCount().exec();
     }
     public async count(filter: any): Promise<number> {
-        return this.getModel().countDocuments(filter).exec();
+      let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
+      let allFilters = { $and: [filter, {$or: deleteClause}] };
+      return this.getModel().countDocuments(allFilters).exec();
     }
+
     public async findAll(filter: any, populated = []): Promise<NonFhirResourceDocument[]> {
-        return this.getModel().find(filter).populate(populated);
+      let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
+      let allFilters = { $and: [filter, {$or: deleteClause}] };
+      return this.getModel().find(allFilters).populate(populated);
     }
+
     public async findOne(filter: any): Promise<NonFhirResourceDocument> {
-        return this.castToModel(await this.getModel().findOne(filter));
+      let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
+      let allFilters = { $and: [filter, {$or: deleteClause}] };
+      return this.castToModel(await this.getModel().findOne(allFilters));
     }
     public async findById(id: string): Promise<NonFhirResourceDocument> {
         return this.castToModel(await this.getModel().findById(id));
@@ -107,7 +115,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
                 newNonFhirResource.referencedBy.push({ value: implementationGuideId, valueType: 'FhirResource' });
             }
         }
-        
+
         newNonFhirResource = await this.getModel(newNonFhirResource).create(newNonFhirResource);
 
         let newHistory: IHistory = {
