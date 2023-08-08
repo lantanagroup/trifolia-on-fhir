@@ -7,15 +7,17 @@ import { HistoryModule } from '../history/history.module';
 import { FhirResourcesModule } from '../fhirResources/fhirResources.module';
 import { CdaExampleSchema, OtherNonFhirResourceSchema } from './types';
 import { NonFhirResourceType } from '@trifolia-fhir/models';
+import {PageSchema} from './types/page.schema';
 
 @Module({
     imports: [
         MongooseModule.forFeature([
-            { 
-                name: NonFhirResource.name, 
+            {
+                name: NonFhirResource.name,
                 schema: NonFhirResourceSchema,
                 discriminators: [
                     { name: NonFhirResourceType.CdaExample, schema: CdaExampleSchema },
+                    { name: NonFhirResourceType.Page, schema: PageSchema },
                     { name: NonFhirResourceType.Other, schema: OtherNonFhirResourceSchema }
                 ]
             }

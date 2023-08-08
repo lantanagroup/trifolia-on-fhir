@@ -101,11 +101,11 @@ export class IgPageHelper {
     pageInfo.page = page;
     pageInfo.fileName = page.fileName || page.nameUrl;
 
-    if (page.reuseDescription) {
+   // if (page.reuseDescription) {
       pageInfo.content = this.getIndexContent(implementationGuide);
-    } else {
-      pageInfo.content = "";//page.contentMarkdown || 'No content has been defined for this page, yet.';
-    }
+   // } else {
+    //  pageInfo.content = "";//page.contentMarkdown || 'No content has been defined for this page, yet.';
+   // }
 
     theList.push(pageInfo);
 

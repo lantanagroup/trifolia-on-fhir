@@ -80,6 +80,12 @@ export interface INonFhirResource extends IProjectResource {
   content?: any;
 }
 
+
+export interface IPage extends INonFhirResource {
+ navMenu:string ;
+}
+
+
 export interface IHistory extends IProjectResource {
   content?: IDomainResource|any;
   current:  IProjectResourceReference;

@@ -75,7 +75,7 @@ export class R4HtmlExporter extends HtmlExporter {
       this.r4ImplementationGuide.definition.page.setTitle('Home Page');
      // this.r4ImplementationGuide.definition.page.fileName = 'index.md';
       this.r4ImplementationGuide.definition.page.nameUrl = 'index.html';
-      this.r4ImplementationGuide.definition.page.reuseDescription = true;
+      //this.r4ImplementationGuide.definition.page.reuseDescription = true;
       this.r4ImplementationGuide.definition.page.generation = 'markdown';
     }
 

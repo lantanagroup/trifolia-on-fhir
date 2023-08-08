@@ -7,7 +7,7 @@ import {
 import {getImplementationGuideMediaReferences, MediaReference} from '@trifolia-fhir/tof-lib';
 import {Observable} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
-import {INonFhirResource, NonFhirResourceType} from '@trifolia-fhir/models';
+import {IFhirResource, INonFhirResource, IPage, IProjectResourceReference, NonFhirResourceType} from '@trifolia-fhir/models';
 import {NonFhirResourceService} from '../../shared/nonFhir-resource-.service';
 
 @Component({
@@ -17,12 +17,12 @@ import {NonFhirResourceService} from '../../shared/nonFhir-resource-.service';
 export class PageComponentModalComponent implements OnInit {
   public inputPage: ImplementationGuidePageComponent;
   public page: ImplementationGuidePageComponent;
-  public implementationGuide: ImplementationGuide;
+  public fhirResource: IFhirResource;
   public implementationGuideId: string;
   public level: number;
   public rootPage: boolean;
   public pageNavMenus: string[];
-  public resource:  INonFhirResource;
+  public resource:  IPage;
 
   constructor(public activeModal: NgbActiveModal, protected nonFhirResourceService: NonFhirResourceService) {
 
@@ -30,12 +30,11 @@ export class PageComponentModalComponent implements OnInit {
 
   public get isRootPageValid() {
     if (!this.rootPage) return true;
-   // return this.page.fileName === 'index' + this.page.getExtension();
     return this.page.nameUrl === 'index.html';
   }
 
   public getMediaReferences(): MediaReference[] {
-    return getImplementationGuideMediaReferences('r4', this.implementationGuide);
+    return getImplementationGuideMediaReferences('r4', <ImplementationGuide>this.fhirResource.resource);
   }
 
   public setPage(value: ImplementationGuidePageComponent) {
@@ -43,7 +42,7 @@ export class PageComponentModalComponent implements OnInit {
     this.page = new ImplementationGuidePageComponent(this.inputPage);
   }
 
-  public setResource(value: INonFhirResource) {
+  public setResource(value: IPage) {
     this.resource = value;
   }
 
@@ -55,37 +54,45 @@ export class PageComponentModalComponent implements OnInit {
 
   public set contentMarkdown(value: string) {
     if(!this.resource){
-     this.resource = <INonFhirResource>{};
+      this.resource = <IPage>{};
+      this.resource["type"] = NonFhirResourceType.Page;
+      this.resource["name"] = this.inputPage.nameUrl.substr(0,this.inputPage.nameUrl.indexOf("."));
     }
     this.resource["content"] = value;
-    this.resource["type"] = NonFhirResourceType.Page;
-    this.resource["name"] = this.inputPage.nameUrl.substr(0,this.inputPage.nameUrl.indexOf("."));
+  }
 
+  public get navMenu() {
+    return this.resource["navMenu"];
   }
 
 
- /* public get nameType(): 'Url'|'Reference' {
-    if (this.page.hasOwnProperty('nameReference')) {
-      return 'Reference';
-    } else if (this.page.hasOwnProperty('nameUrl')) {
-      return 'Url';
+  public set navMenu(value: string) {
+    if(!this.resource){
+      this.resource = <IPage>{};
+      this.resource["type"] = NonFhirResourceType.Page;
+      this.resource["name"] = this.inputPage.nameUrl.substr(0,this.inputPage.nameUrl.indexOf("."));
+    }
+    this.resource["navMenu"] = value;
+  }
+
+  public get reuseDescription() {
+    return this.resource["reuseDescription"];
+  }
+
+
+  public set reuseDescription(value: string) {
+    if(!this.resource){
+      this.resource = <IPage>{};
+      this.resource["type"] = NonFhirResourceType.Page;
+      this.resource["name"] = this.inputPage.nameUrl.slice(0,this.inputPage.nameUrl.indexOf("."));
+    }
+    this.resource["reuseDescription"] = value;
+    if(value) {
+      this.resource["content"] = "";
     }
   }
 
-  public set nameType(value: 'Url'|'Reference') {
-    if (this.nameType === value) {
-      return;
-    }
 
-    if (this.nameType === 'Reference' && value === 'Url') {
-      delete this.page.nameReference;
-      this.page.nameUrl = '';
-    } else if (this.nameType === 'Url' && value === 'Reference') {
-      delete this.page.nameUrl;
-      this.page.nameReference = { reference: '', display: '' };
-    }
-  }
-*/
   pageNavMenuSearch = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
@@ -109,15 +116,46 @@ export class PageComponentModalComponent implements OnInit {
     let page = this.page;
     let res = this.resource;
     // update in Db
-    this.nonFhirResourceService.save(this.resource.id, this.resource).subscribe({
-      next: (nonFhir: INonFhirResource) => {
+    if(this.resource.content || this.resource.navMenu || this.reuseDescription) {
+      //update/create resource
+      this.nonFhirResourceService.save(this.resource.id, this.resource).subscribe({
+        next: (nonFhir: IPage) => {
+          console.log("Here");
           res.id = nonFhir.id;
-          this.activeModal.close({page, res});
+          if(res["id"]) {
+            if (!this.fhirResource.references.find((r: IProjectResourceReference) => r.value == res.id)) {
+              const newProjectResourceReference: IProjectResourceReference = { value: res.id, valueType: 'NonFhirResource' };
+              this.fhirResource.references.push(newProjectResourceReference);
+            }
+          }
+          this.activeModal.close({ page, res });
         },
-      error: (err) => {
+        error: (err) => {
+          console.log(err);
+        }
+      });
+    }
+    else if(this.resource.id){
+      //delete resource
+      this.nonFhirResourceService.delete(this.resource.id).subscribe({
+        next: (page: IPage) => {
 
-      }
-    });
+          let index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
+            return ref.value === this.resource.id;
+          });
+
+          if (index > -1) {
+            this.fhirResource.references.splice(index, 1);
+          }
+          res = <IPage>{};
+          res["type"] = NonFhirResourceType.Page;
+          res["name"] = this.inputPage.nameUrl.slice(0,this.inputPage.nameUrl.indexOf("."));
+          this.activeModal.close({ page, res });
+        }});
+    }
+    else {
+      this.activeModal.close();
+    }
 
   }
 
@@ -127,14 +165,14 @@ export class PageComponentModalComponent implements OnInit {
       allPages.push(parent);
       (parent.page || []).forEach(p => getPages(p));
     };
-
-    if (this.implementationGuide.definition && this.implementationGuide.definition.page) {
-      getPages(this.implementationGuide.definition.page);
+    let implementationGuide = <ImplementationGuide>this.fhirResource.resource
+    if (implementationGuide.definition && implementationGuide.definition.page) {
+      getPages(implementationGuide.definition.page);
     }
 
     this.pageNavMenus = allPages
-      .filter(p => !!p.navMenu)
-      .map(p => p.navMenu)
+      .filter(p => !!this.navMenu)
+      .map(p => this.navMenu)
       .reduce<string[]>((prev, curr) => {
         if (prev.indexOf(curr) < 0) prev.push(curr);
         return prev;

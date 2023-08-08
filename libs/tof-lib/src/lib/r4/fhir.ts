@@ -14855,13 +14855,13 @@ export class ImplementationGuidePageComponent extends BackboneElement {
     this.title = value;
 
     if (!isRoot && value) {
-      this.nameUrl = value.toLowerCase().replace(/\s/g, '_').replace(/[():]/g, '') + this.getExtension();
+      this.nameUrl = value.toLowerCase().replace(/\s/g, '_').replace(/[():]/g, '') + '.html';
     } else if (isRoot) {
       this.nameUrl = 'index.html';
     }
   }
 
-  public get navMenu() {
+ /* public get navMenu() {
     const navMenuExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
     if (navMenuExt) return navMenuExt.valueString;
   }
@@ -14883,7 +14883,7 @@ export class ImplementationGuidePageComponent extends BackboneElement {
       navMenuExt.valueString = value
     }
   }
-
+*/
   public get fileName() {
    /* const fileNameExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-filename']);
     if (fileNameExt) return fileNameExt.valueUri;*/
@@ -14922,7 +14922,7 @@ export class ImplementationGuidePageComponent extends BackboneElement {
       }
     }
   }*/
-  public get reuseDescription() {
+ /* public get reuseDescription() {
     const reuseDescriptionExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-reuse-description']);
     if (reuseDescriptionExt) return reuseDescriptionExt.valueBoolean;
     return false;
@@ -14945,7 +14945,7 @@ export class ImplementationGuidePageComponent extends BackboneElement {
     if (value) {
      // this.contentMarkdown = null;
     }
-  }
+  }*/
 
  /* public get contentMarkdown() {
     const contentExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);

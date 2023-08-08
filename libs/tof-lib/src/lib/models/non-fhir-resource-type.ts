@@ -15,3 +15,4 @@ export enum NonFhirResourceType {
 
 
 export interface ICdaExample extends INonFhirResource {}
+export interface IPage extends INonFhirResource {}
