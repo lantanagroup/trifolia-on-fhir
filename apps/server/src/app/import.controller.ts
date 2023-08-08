@@ -77,7 +77,7 @@ export class ImportController extends BaseController {
       }
 
       // resource found
-      if (res) {
+      if (res && !!res.id) {
         response[path] = { resource: res, action: 'update' };
       } else {
         response[path] = { resource: null, action: 'add' };

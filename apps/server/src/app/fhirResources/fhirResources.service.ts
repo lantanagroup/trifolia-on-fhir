@@ -212,7 +212,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             if (nonFhirResIdsRemoved && nonFhirResIdsRemoved.length > 0) {
                 await this.nonFhirResourceModel.updateMany(
                     { '_id': { $in: nonFhirResIdsRemoved } },
-                    { $pull: { referencedBy: {value: existing.id, valueType: 'NonFhirResource' } } }
+                    { $pull: { referencedBy: {value: existing.id, valueType: 'FhirResource' } } }
                 );
             }
 
@@ -225,7 +225,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             if (nonFhirIdsAdded && nonFhirIdsAdded.length > 0) {
                 await this.nonFhirResourceModel.updateMany(
                     { '_id': { $in: nonFhirIdsAdded } },
-                    { $push: { referencedBy: {value: existing.id, valueType: 'NonFhirResource' } } }
+                    { $push: { referencedBy: {value: existing.id, valueType: 'FhirResource' } } }
                 );
             }
 
