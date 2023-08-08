@@ -1,5 +1,5 @@
+import type { IBaseEntity } from "@trifolia-fhir/models";
 import { PaginateOptions, Paginated } from "@trifolia-fhir/tof-lib";
-import { BaseEntity } from "../base.entity";
 import { Model } from "mongoose";
 
 
@@ -10,9 +10,9 @@ export interface IBaseDataService<T> {
     findAll(filter: any): Promise<T[]>;
     findOne(filter: any): Promise<T>;
     findById(id: string): Promise<T>;
-    create(newDoc: BaseEntity): Promise<T>;
-    createMany(newDocs: BaseEntity[]): Promise<T[]>;
-    updateOne(id: string, doc: BaseEntity) : Promise<T>;
+    create(newDoc: IBaseEntity): Promise<T>;
+    createMany(newDocs: IBaseEntity[]): Promise<T[]>;
+    updateOne(id: string, doc: IBaseEntity) : Promise<T>;
     delete(id: string) : Promise<T>;
     search(options?: PaginateOptions): Promise<Paginated<T>>;
 }

@@ -1,11 +1,11 @@
 import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
-import {HydratedDocument, Model} from 'mongoose';
-import {BaseEntity} from './base.entity';
+import {Model} from 'mongoose';
 import {TofLogger} from '../tof-logger';
 import type {IBaseDataService} from './interfaces';
+import type { IBaseEntity } from '@trifolia-fhir/models';
 
 
-export class BaseDataService<T extends BaseEntity> implements IBaseDataService<T> {
+export class BaseDataService<T extends IBaseEntity> implements IBaseDataService<T> {
 
     protected readonly logger = new TofLogger(BaseDataService.name);
 
@@ -72,15 +72,15 @@ export class BaseDataService<T extends BaseEntity> implements IBaseDataService<T
         return this.model.findById(id).exec();
     }
 
-    public async create(newDoc: BaseEntity) : Promise<T> {
+    public async create(newDoc: IBaseEntity) : Promise<T> {
         return await this.model.create(newDoc);
     }
 
-    public async createMany(newDocs: BaseEntity[]) : Promise<T[]> {
+    public async createMany(newDocs: IBaseEntity[]) : Promise<T[]> {
         return await this.model.create(newDocs);
     }
 
-    public async updateOne(id: string, doc: BaseEntity) : Promise<T> {
+    public async updateOne(id: string, doc: IBaseEntity) : Promise<T> {
         return await this.model.findByIdAndUpdate(id, doc, { new: true });
     }
 

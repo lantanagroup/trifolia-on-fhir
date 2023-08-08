@@ -1,5 +1,4 @@
 import { BaseController } from "./base.controller";
-import { BaseEntity } from "./base.entity";
 import { Paginated } from "@trifolia-fhir/tof-lib";
 import { BadRequestException, Body, Delete, Get, Inject, Param, Post, Put, Request, UnauthorizedException } from "@nestjs/common";
 import { TofNotFoundException } from "../../not-found-exception";
@@ -7,9 +6,10 @@ import { TofLogger } from "../tof-logger";
 import { User } from "../server.decorators";
 import { AuthService } from "../auth/auth.service";
 import { IBaseDataService } from "./interfaces";
+import type { IBaseEntity } from "@trifolia-fhir/models";
 
 
-export class BaseDataController<T extends BaseEntity> extends BaseController {
+export class BaseDataController<T extends IBaseEntity> extends BaseController {
 
     protected readonly logger = new TofLogger(BaseDataController.name);
 
@@ -35,7 +35,7 @@ export class BaseDataController<T extends BaseEntity> extends BaseController {
         }
     }
 
-    public assertIdMatch(id: string, entity: BaseEntity): void {
+    public assertIdMatch(id: string, entity: IBaseEntity): void {
         if (('id' in entity && entity['id'] !== id) || ('_id' in entity && entity['_id'] !== id)) {
             throw new BadRequestException();
         }
@@ -66,17 +66,17 @@ export class BaseDataController<T extends BaseEntity> extends BaseController {
 
 
     @Post()
-    public async create(@Body() body: BaseEntity): Promise<T> {
+    public async create(@Body() body: IBaseEntity): Promise<T> {
         return this.dataService.create(body);
     }
 
     @Post()
-    public async createMany(@Body() body: BaseEntity[]): Promise<T[]> {
+    public async createMany(@Body() body: IBaseEntity[]): Promise<T[]> {
         return this.dataService.createMany(body);
     }
     
     @Put(':id')
-    public async update(@Param('id') id: string, @Body() body: BaseEntity): Promise<T> {
+    public async update(@Param('id') id: string, @Body() body: IBaseEntity): Promise<T> {
         let res = this.dataService.updateOne(id, body);
         return res;
     }
