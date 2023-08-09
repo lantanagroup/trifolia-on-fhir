@@ -151,17 +151,18 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         let versionId: number = 1;
 
         if (upNonFhirResource.id && upNonFhirResource.id !== id) {
-            throw new BadRequestException();
+            throw new BadRequestException('ID does not match');
         }
 
-        let existing = await this.findById(id);
+        if (!upNonFhirResource.type || Object.keys(NonFhirResourceType).indexOf(upNonFhirResource.type) < 0) {
+            throw new BadRequestException('Invalid type provided');
+        }
+        
+        let model = this.getModel(upNonFhirResource);
+        let existing = await model.findById(id);
 
         if (!existing) {
             throw new TofNotFoundException();
-        }
-
-        if (!upNonFhirResource.content) {
-            throw new BadRequestException(`No content provided.`);
         }
 
         // increment version
@@ -179,7 +180,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         existing.lastUpdated = lastUpdated;
         existing.isDeleted = false;
 
-        await this.getModel(existing).findByIdAndUpdate(existing.id, existing, { new: true });
+        await model.findByIdAndUpdate(existing.id, existing, { new: true });
 
         let newHistory: IHistory = {
             content: existing.content,
