@@ -103,7 +103,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
       /*  if (!newNonFhirResource.content) {
             throw new BadRequestException(`No content provided.`);
         }
-
+     */
         // ensure version ID and lastUpdated are set
         newNonFhirResource.versionId = versionId;
         newNonFhirResource.lastUpdated = lastUpdated;
