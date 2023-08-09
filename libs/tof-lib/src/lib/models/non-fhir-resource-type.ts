@@ -1,6 +1,7 @@
 //export type NonFhirResourceType = 'page'|'media'|'binary'|'other';
 
 import { INonFhirResource, IPermission, IProject, IProjectResourceReference } from ".";
+import {Prop} from '@nestjs/mongoose';
 
 
 export enum NonFhirResourceType {
@@ -46,4 +47,12 @@ export class CdaExample extends NonFhirResource {
 export class OtherNonFhirResource extends NonFhirResource {
     readonly type: NonFhirResourceType = NonFhirResourceType.OtherNonFhirResource;
 }
-export interface IPage extends INonFhirResource {}
+
+export class Page extends NonFhirResource  {
+  readonly type: NonFhirResourceType = NonFhirResourceType.Page;
+
+  navMenu? : string;
+  reuseDescription? : boolean;
+
+}
+

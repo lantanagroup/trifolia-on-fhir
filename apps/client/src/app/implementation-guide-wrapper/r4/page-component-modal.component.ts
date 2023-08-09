@@ -7,7 +7,7 @@ import {
 import {getImplementationGuideMediaReferences, MediaReference} from '@trifolia-fhir/tof-lib';
 import {Observable} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
-import {IFhirResource, INonFhirResource, IPage, IProjectResourceReference, NonFhirResourceType} from '@trifolia-fhir/models';
+import {IFhirResource, IProjectResourceReference, NonFhirResourceType, Page} from '@trifolia-fhir/models';
 import {NonFhirResourceService} from '../../shared/nonFhir-resource-.service';
 
 @Component({
@@ -22,7 +22,7 @@ export class PageComponentModalComponent implements OnInit {
   public level: number;
   public rootPage: boolean;
   public pageNavMenus: string[];
-  public resource:  IPage;
+  public resource:  Page;
 
   constructor(public activeModal: NgbActiveModal, protected nonFhirResourceService: NonFhirResourceService) {
 
@@ -42,7 +42,7 @@ export class PageComponentModalComponent implements OnInit {
     this.page = new ImplementationGuidePageComponent(this.inputPage);
   }
 
-  public setResource(value: IPage) {
+  public setResource(value: Page) {
     this.resource = value;
   }
 
@@ -54,9 +54,8 @@ export class PageComponentModalComponent implements OnInit {
 
   public set contentMarkdown(value: string) {
     if(!this.resource){
-      this.resource = <IPage>{};
-      this.resource["type"] = NonFhirResourceType.Page;
-      this.resource["name"] = this.inputPage.nameUrl.substr(0,this.inputPage.nameUrl.indexOf("."));
+      this.resource = new Page();
+      this.resource["name"] = this.inputPage.nameUrl.slice(0,this.inputPage.nameUrl.indexOf("."));
     }
     this.resource["content"] = value;
   }
@@ -68,9 +67,8 @@ export class PageComponentModalComponent implements OnInit {
 
   public set navMenu(value: string) {
     if(!this.resource){
-      this.resource = <IPage>{};
-      this.resource["type"] = NonFhirResourceType.Page;
-      this.resource["name"] = this.inputPage.nameUrl.substr(0,this.inputPage.nameUrl.indexOf("."));
+      this.resource = new Page();
+      this.resource["name"] = this.inputPage.nameUrl.slice(0,this.inputPage.nameUrl.indexOf("."));
     }
     this.resource["navMenu"] = value;
   }
@@ -80,10 +78,9 @@ export class PageComponentModalComponent implements OnInit {
   }
 
 
-  public set reuseDescription(value: string) {
+  public set reuseDescription(value: boolean) {
     if(!this.resource){
-      this.resource = <IPage>{};
-      this.resource["type"] = NonFhirResourceType.Page;
+      this.resource = new Page();
       this.resource["name"] = this.inputPage.nameUrl.slice(0,this.inputPage.nameUrl.indexOf("."));
     }
     this.resource["reuseDescription"] = value;
@@ -116,11 +113,10 @@ export class PageComponentModalComponent implements OnInit {
     let page = this.page;
     let res = this.resource;
     // update in Db
-    if(this.resource.content || this.resource.navMenu || this.reuseDescription) {
+    if(this.resource.content || this.resource.navMenu || !this.reuseDescription) {
       //update/create resource
       this.nonFhirResourceService.save(this.resource.id, this.resource).subscribe({
-        next: (nonFhir: IPage) => {
-          console.log("Here");
+        next: (nonFhir: Page) => {
           res.id = nonFhir.id;
           if(res["id"]) {
             if (!this.fhirResource.references.find((r: IProjectResourceReference) => r.value == res.id)) {
@@ -138,7 +134,7 @@ export class PageComponentModalComponent implements OnInit {
     else if(this.resource.id){
       //delete resource
       this.nonFhirResourceService.delete(this.resource.id).subscribe({
-        next: (page: IPage) => {
+        next: (page: Page) => {
 
           let index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
             return ref.value === this.resource.id;
@@ -147,8 +143,7 @@ export class PageComponentModalComponent implements OnInit {
           if (index > -1) {
             this.fhirResource.references.splice(index, 1);
           }
-          res = <IPage>{};
-          res["type"] = NonFhirResourceType.Page;
+          res = new Page();
           res["name"] = this.inputPage.nameUrl.slice(0,this.inputPage.nameUrl.indexOf("."));
           this.activeModal.close({ page, res });
         }});

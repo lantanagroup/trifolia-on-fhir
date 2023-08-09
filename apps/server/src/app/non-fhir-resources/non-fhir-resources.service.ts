@@ -100,10 +100,10 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         delete newNonFhirResource.id;
         delete newNonFhirResource['_id'];
 
-        if (!newNonFhirResource.content) {
+      /*  if (!newNonFhirResource.content) {
             throw new BadRequestException(`No content provided.`);
         }
-
+     */
         // ensure version ID and lastUpdated are set
         newNonFhirResource.versionId = versionId;
         newNonFhirResource.lastUpdated = lastUpdated;
@@ -157,13 +157,17 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         if (!upNonFhirResource.type || Object.keys(NonFhirResourceType).indexOf(upNonFhirResource.type) < 0) {
             throw new BadRequestException('Invalid type provided');
         }
-        
+
         let model = this.getModel(upNonFhirResource);
         let existing = await model.findById(id);
 
         if (!existing) {
             throw new TofNotFoundException();
         }
+
+     /*   if (!upNonFhirResource.content) {
+            throw new BadRequestException(`No content provided.`);
+        }*/
 
         // increment version
         if (existing.versionId) {

@@ -28,7 +28,7 @@ import { existsSync } from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { AuthService } from './auth/auth.service';
 import { FhirResourcesService } from './fhirResources/fhirResources.service';
-import {IProjectResource, INonFhirResource, IProjectResourceReference, IFhirResource} from '@trifolia-fhir/models';
+import {INonFhirResource, IProjectResourceReference, IFhirResource} from '@trifolia-fhir/models';
 import { FhirResourcesController } from './fhirResources/fhirResources.controller';
 import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
 import { ImplementationGuide as R5ImplementationGuide, StructureDefinition } from '@trifolia-fhir/r5';
