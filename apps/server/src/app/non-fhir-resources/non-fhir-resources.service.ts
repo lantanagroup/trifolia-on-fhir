@@ -100,9 +100,9 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         delete newNonFhirResource.id;
         delete newNonFhirResource['_id'];
 
-        if (!newNonFhirResource.content) {
+      /*  if (!newNonFhirResource.content) {
             throw new BadRequestException(`No content provided.`);
-        }
+        }*/
 
         // ensure version ID and lastUpdated are set
         newNonFhirResource.versionId = versionId;
@@ -160,9 +160,9 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
             throw new TofNotFoundException();
         }
 
-        if (!upNonFhirResource.content) {
+     /*   if (!upNonFhirResource.content) {
             throw new BadRequestException(`No content provided.`);
-        }
+        }*/
 
         // increment version
         if (existing.versionId) {

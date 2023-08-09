@@ -5,7 +5,7 @@ import { NonFhirResourcesController } from './non-fhir-resources.controller';
 import { NonFhirResourcesService } from './non-fhir-resources.service';
 import { HistoryModule } from '../history/history.module';
 import { FhirResourcesModule } from '../fhirResources/fhirResources.module';
-import { CdaExampleSchema, OtherNonFhirResourceSchema } from './types';
+import { CdaExampleSchema, OtherNonFhirResourceSchema , PageSchema} from './types';
 import { NonFhirResource, NonFhirResourceType } from '@trifolia-fhir/models';
 //import {PageSchema} from './types/page.schema';
 
@@ -17,7 +17,7 @@ import { NonFhirResource, NonFhirResourceType } from '@trifolia-fhir/models';
                 schema: NonFhirResourceSchema,
                 discriminators: [
                     { name: NonFhirResourceType.CdaExample, schema: CdaExampleSchema },
-                    //{ name: NonFhirResourceType.Page, schema: PageSchema },
+                    { name: NonFhirResourceType.Page, schema: PageSchema },
                     { name: NonFhirResourceType.OtherNonFhirResource, schema: OtherNonFhirResourceSchema }
                 ]
             }

@@ -30,7 +30,7 @@ import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
 import {ProjectService} from '../../shared/projects.service';
-import {IFhirResource, IPage, IProjectResourceReference, IProjectResourceReferenceMap, NonFhirResourceType} from '@trifolia-fhir/models';
+import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap, NonFhirResourceType} from '@trifolia-fhir/models';
 import {IDomainResource, getImplementationGuideContext, Paginated} from '@trifolia-fhir/tof-lib';
 
 import {FhirResource} from '../../../../../server/src/app/fhirResources/fhirResource.schema';
@@ -41,7 +41,7 @@ class PageDefinition {
   public page: ImplementationGuidePageComponent;
   public parent?: ImplementationGuidePageComponent;
   public level: number;
-  public resource: IPage;
+  public resource: Page;
 }
 
 @Component({
@@ -602,8 +602,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (value && !this.implementationGuide.definition.page) {
       this.implementationGuide.definition.page = new ImplementationGuidePageComponent();
       this.implementationGuide.definition.page.generation = 'markdown';
-     // this.implementationGuide.definition.page.reuseDescription = true;
       this.implementationGuide.definition.page.setTitle('Home Page', true);
+
     } else if (!value && this.implementationGuide.definition.page) {
       const foundPageDef = this.pages.find((pageDef) => pageDef.page === this.implementationGuide.definition.page);
       this.removePage(foundPageDef);
@@ -622,13 +622,16 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     if (this.implementationGuide.definition.page === pageDef.page) {
       componentInstance.rootPage = true;
+      if(pageDef.resource.reuseDescription === undefined) {
+        pageDef.resource["reuseDescription"] = true; // initialize it
+      }
     }
 
     componentInstance.setPage(pageDef.page);
     componentInstance.setResource(pageDef.resource);
 
 
-    modalRef.result.then((result: { page: ImplementationGuidePageComponent, res: IPage }) => {
+    modalRef.result.then((result: { page: ImplementationGuidePageComponent, res: Page }) => {
         Object.assign(pageDef.page, result.page);
         Object.assign(pageDef.resource, result.res);
       //  this.initPagesAndGroups();
@@ -683,8 +686,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       newPage.nameUrl = Globals.getCleanFileName(newPage.title).toLowerCase() + '.html';
     }
 
-    let resource = <IPage>{};
-    resource["type"] = NonFhirResourceType.Page;
+    let resource = new Page();
     resource["name"]  = newPage.nameUrl.slice(0, newPage.nameUrl.indexOf("."));
 
     this.pagesMap[resource["name"]] = resource;
@@ -729,7 +731,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     //remove resource
     if (pageDef.resource['id']) {
       this.nonFhirResourceService.delete(pageDef.resource.id).subscribe({
-        next: (page: IPage) => {
+        next: (page: Page) => {
           let index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
             return ref.value === pageDef.resource.id;
           });
@@ -964,10 +966,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
     // get the resource
-    let resource = <IPage>{};
-    resource["type"] = NonFhirResourceType.Page;
-    resource["name"]  = page.nameUrl.substr(0,page.nameUrl.indexOf("."));
-    let existingResource = page.nameUrl ? this.pagesMap[page.nameUrl.substring(0, page.nameUrl.indexOf('.'))] : undefined;
+    let resource = new Page();
+    resource.name  = page.nameUrl.slice(0,page.nameUrl.indexOf("."));
+    let existingResource = page.nameUrl ? this.pagesMap[resource["name"]] : undefined;
 
     this.pages.push({
       page: page,
@@ -986,7 +987,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   loadPages() {
     this.nonFhirResourceService.search(1, 'name', this.implementationGuideId, NonFhirResourceType.Page).subscribe({
-      next: (res: Paginated<IPage>) => {
+      next: (res: Paginated<Page>) => {
         res.results.forEach(result => {
           this.pagesMap[result.name] = result;
         });
