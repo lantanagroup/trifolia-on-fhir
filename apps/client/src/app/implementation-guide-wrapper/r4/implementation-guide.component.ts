@@ -676,8 +676,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const newPage = new ImplementationGuidePageComponent();
     newPage.generation = 'markdown';
 
-    let resource = new Page();
-    resource["name"]  = newPage.nameUrl.slice(0, newPage.nameUrl.indexOf("."));
+    let resource = new Page
 
     if (template === 'downloads') {
       newPage.title = 'Downloads';
@@ -688,7 +687,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       newPage.title = this.getNewPageTitle();
       newPage.nameUrl = Globals.getCleanFileName(newPage.title).toLowerCase() + '.html';
     }
-
+    resource["name"]  = newPage.nameUrl.slice(0, newPage.nameUrl.indexOf("."));
     this.pagesMap[resource["name"]] = resource;
 
     pageDef.page.page.push(newPage);
