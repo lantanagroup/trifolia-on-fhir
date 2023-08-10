@@ -632,8 +632,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
 
     modalRef.result.then((result: { page: ImplementationGuidePageComponent, res: Page }) => {
-        Object.assign(pageDef.page, result.page);
-        Object.assign(pageDef.resource, result.res);
+         Object.assign(pageDef.page, result.page);
+         Object.assign(pageDef.resource, result.res);
       //  this.initPagesAndGroups();
         this.igChanging.emit(true);
       }
@@ -676,18 +676,18 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const newPage = new ImplementationGuidePageComponent();
     newPage.generation = 'markdown';
 
+    let resource = new Page();
+    resource["name"]  = newPage.nameUrl.slice(0, newPage.nameUrl.indexOf("."));
+
     if (template === 'downloads') {
       newPage.title = 'Downloads';
-    //  newPage.navMenu = 'Downloads';
+      resource["navMenu"]= 'Downloads';
       newPage.nameUrl = 'downloads.html';
-     // newPage.contentMarkdown = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
+      resource["content"]=  '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
     } else {
       newPage.title = this.getNewPageTitle();
       newPage.nameUrl = Globals.getCleanFileName(newPage.title).toLowerCase() + '.html';
     }
-
-    let resource = new Page();
-    resource["name"]  = newPage.nameUrl.slice(0, newPage.nameUrl.indexOf("."));
 
     this.pagesMap[resource["name"]] = resource;
 

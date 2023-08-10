@@ -166,9 +166,9 @@ export class ExportController extends FhirResourcesController {//BaseController 
 
     const bundleExporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, req.fhir, implementationGuideId);
     const bundle = await bundleExporter.getBundle(false);
-
+    let pages  = await bundleExporter.getPages();
     const msWordExporter = new MSWordExporter();
-    const results = await msWordExporter.export(bundle, bundleExporter.fhirVersion);
+    const results = await msWordExporter.export(bundle, pages, bundleExporter.fhirVersion);
 
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Content-Disposition', 'attachment; filename=ig.docx');

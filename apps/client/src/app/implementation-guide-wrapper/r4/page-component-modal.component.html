@@ -8,7 +8,7 @@
     <input type="text" class="form-control" [ngModel]="page.title" (ngModelChange)="page.setTitle($event, implementationGuide.definition.page === inputPage)" [class.is-invalid]="!page.title" />
   </div>
 
-  <app-fhir-string [parentObject]="page" propertyName="nameUrl" *ngIf="page.hasOwnProperty('nameUrl')" title="Page Name" [required]="true" tooltipKey="ig.page.name"></app-fhir-string>
+  <app-fhir-string [parentObject]="page" propertyName="nameUrl" *ngIf="page.hasOwnProperty('nameUrl')" title="Page Name" [required]="true" tooltipKey="ig.page.name" ></app-fhir-string>
 
   <div class="mb-3" *ngIf="page.generation !== 'generated'">
     <label>

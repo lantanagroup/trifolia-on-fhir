@@ -4,6 +4,7 @@ import {ImplementationGuide as STU3ImplementationGuide, ContactDetail, PageCompo
 import {IExtension, IImplementationGuide} from './fhirInterfaces';
 import {createTableFromArray, escapeForXml} from './helper';
 import {Globals} from './globals';
+import {Page} from '@trifolia-fhir/models';
 
 export class PageInfo {
   page: PageComponent | ImplementationGuidePageComponent | ImplementationGuideDefinitionPage;
@@ -69,6 +70,7 @@ export class IgPageHelper {
 
       const pageInfo = new PageInfo();
       pageInfo.page = page;
+      pageInfo.fileName =  page.source.substring(0, page.source.lastIndexOf('.')) + page.getExtension();
 
       if (page.source) {
         if (page.source.lastIndexOf('.') > 0) {
@@ -92,7 +94,7 @@ export class IgPageHelper {
     return theList;
   }
 
-  public static getR4andR5PagesList(theList: PageInfo[], page: ImplementationGuidePageComponent | ImplementationGuideDefinitionPage, implementationGuide: R4ImplementationGuide | R5ImplementationGuide) {
+  public static getR4andR5PagesList(theList: PageInfo[], pages: Page[], page: ImplementationGuidePageComponent | ImplementationGuideDefinitionPage, implementationGuide: R4ImplementationGuide | R5ImplementationGuide) {
     if (!page) {
       return theList;
     }
@@ -101,15 +103,18 @@ export class IgPageHelper {
     pageInfo.page = page;
     pageInfo.fileName = page.fileName || page.nameUrl;
 
-   // if (page.reuseDescription) {
+    // get the resource page
+    let pageFound = (pages || []).find(pageElem => pageElem.name == page.nameUrl.slice(0, page.nameUrl.indexOf(".html")) );
+
+    if (pageFound && pageFound['reuseDescription'] || page.nameUrl == 'index.html') {
       pageInfo.content = this.getIndexContent(implementationGuide);
-   // } else {
-    //  pageInfo.content = "";//page.contentMarkdown || 'No content has been defined for this page, yet.';
-   // }
+     } else {
+      pageInfo.content = pageFound.content || 'No content has been defined for this page, yet.';
+    }
 
     theList.push(pageInfo);
 
-    (page.page || []).forEach((next) => this.getR4andR5PagesList(theList, next, implementationGuide));
+    (page.page || []).forEach((next) => this.getR4andR5PagesList(theList, pages, next, implementationGuide));
 
     return theList;
   }

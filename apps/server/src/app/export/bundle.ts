@@ -1,11 +1,12 @@
 import { Fhir } from 'fhir/fhir';
 import { DomainResource } from '@trifolia-fhir/stu3';
 import { ImplementationGuidePageComponent } from '@trifolia-fhir/r4';
-import { Globals } from '@trifolia-fhir/tof-lib';
+import {Globals, PageInfo} from '@trifolia-fhir/tof-lib';
 import { HttpService } from '@nestjs/axios';
 import { LoggerService } from '@nestjs/common';
 import type { IBundle, IExtension, IStructureDefinition } from '@trifolia-fhir/tof-lib';
 import { FhirResourcesService } from '../fhirResources/fhirResources.service';
+import {Page} from '@trifolia-fhir/models';
 
 export type FormatTypes = 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml';
 export type BundleTypes = 'searchset' | 'transaction';
@@ -188,6 +189,16 @@ export class BundleExporter {
 
     return bundle;
   }
+
+  public async getPages(cleanup = false, summary = false, type: BundleTypes = 'searchset'): Promise<Page[]> {
+
+    this.logger.log(`Getting pages for  implementation guide ${this.implementationGuideId}`);
+
+    const conf = await this.fhirResourceService.getWithReferences(this.implementationGuideId);
+    const pages: Page[] = await this.fhirResourceService.getPagesFromImplementationGuide(conf);
+    return pages;
+  }
+
 
   public export(format: FormatTypes = 'json', removeExtensions = false, type: BundleTypes = 'searchset') {
     return new Promise((resolve, reject) => {

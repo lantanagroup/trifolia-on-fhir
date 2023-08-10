@@ -39,6 +39,7 @@ import { ConfigService } from "../config.service";
 import JSZip from "jszip";
 import { FhirResourcesService } from "../fhirResources/fhirResources.service";
 import { TofLogger } from "../tof-logger";
+import {Page} from '@trifolia-fhir/models';
 
 export class HtmlExporter {
   public queuedAt: Date;
@@ -59,6 +60,7 @@ export class HtmlExporter {
   public logs: string;
   protected igPublisherLocation: string;
   protected pageInfos: PageInfo[];
+  protected pages: Page[];
 
   protected static getExtensionFromFormat(format: Formats) {
     switch (format) {
@@ -113,8 +115,9 @@ export class HtmlExporter {
 
         const bundleExporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, this.fhir, this.implementationGuideId);
         this.bundle = await bundleExporter.getBundle();
+        this.pages  = await bundleExporter.getPages();
         this.fhirVersion = bundleExporter.fhirVersion;
-
+        let  pageInfos = this.pageInfos;
         const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide>this.bundle.entry
           .find((e: IBundleEntry) => e.resource.resourceType === 'ImplementationGuide')// && e.resource.id === this.implementationGuideId)
           .resource;

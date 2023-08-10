@@ -79,7 +79,7 @@ export class R4HtmlExporter extends HtmlExporter {
       this.r4ImplementationGuide.definition.page.generation = 'markdown';
     }
 
-    this.pageInfos = IgPageHelper.getR4andR5PagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
+    this.pageInfos = IgPageHelper.getR4andR5PagesList([], this.pages,this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
   }
 
   protected prepareImplementationGuide(): IImplementationGuide {

@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import type { IFhirResource, INonFhirResource, IHistory, IProjectResource, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
-import { NonFhirResource } from '@trifolia-fhir/models';
-import { IBundle, IDomainResource } from '@trifolia-fhir/tof-lib';
+import {NonFhirResource, NonFhirResourceType, Page} from '@trifolia-fhir/models';
+import {IBundle, IDomainResource, PageInfo} from '@trifolia-fhir/tof-lib';
 import { Model } from 'mongoose';
 import { BaseDataService } from '../base/base-data.service';
 import { HistoryService } from '../history/history.service';
@@ -374,6 +374,34 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         return bundle;
 
     }
+
+
+  public async getPagesFromImplementationGuide(implementationGuide: IFhirResource): Promise<Page[]> {
+
+    let  pages: Page[] = [];
+
+    if (!implementationGuide || !implementationGuide.resource || implementationGuide.resource.resourceType !== 'ImplementationGuide') {
+      throw new TofNotFoundException(`No valid implementation guide found.`);
+    }
+
+    (implementationGuide.references || []).forEach((r: IProjectResourceReference) => {
+
+      if (!r.value) {
+        return;
+      }
+      if (r.valueType === 'NonFhirResource') {
+         if (r.value["type"] === NonFhirResourceType.Page) {
+           let page = new Page();
+           page = <Page>r.value;
+           pages.push(page);
+         }
+      }
+
+    });
+
+    return pages;
+
+  }
 
 
     public getReferenceMap(fhirResource: IFhirResource): IProjectResourceReferenceMap {
