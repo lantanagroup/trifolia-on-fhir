@@ -1,0 +1,90 @@
+<h1>Pages</h1>
+
+<div class="input-group" [attr.data-intro]="Globals.introText['browse.search']">
+    <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name">
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
+            <i class="fa fa-times"></i> Clear
+        </button>
+        <button type="button" class="btn btn-primary" title="Refresh" (click)="getPages()">
+            <i class="fa fa-search"></i> Search
+        </button>
+    </div>
+</div>
+
+<br/>
+
+<div *ngIf="searchPagesResults && total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+    <ngb-pagination class="d-flex justify-content-center"
+                    [maxSize]="5"
+                    [collectionSize]="igPages.total"
+                    [(page)]="page"
+                    [boundaryLinks]="true"
+                    (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+</div>
+
+<table class="table table-striped" *ngIf="searchPagesResults">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th class="actions-column-3">
+            <div class="pull-right">
+                <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/page/new" title="Create a new page" [attr.data-intro]="Globals.introText['browse.add']">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody *ngIf="!configService.showingIntroduction">
+    <tr *ngFor="let ip of searchPagesResults">
+        <td>{{ip.id}}</td>
+        <td>{{ip.name}}</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/page/{{ip.id}}"  title="Edit this resource">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <button type="button" class="btn btn-secondary" (click)="remove(ip)"   [disabled] = "ip.name === 'Index'" title="Remove this resource">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="changeId(ip.resource)"  title="Change this resource's ID">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tbody *ngIf="configService.showingIntroduction">
+    <tr>
+        <td>DEMO-ID</td>
+        <td>Demo Name</td>
+        <td>
+            <div class="btn-group pull-right">
+                <a class="btn btn-primary" href="javascript:void(0)" title="Edit this resource" [attr.data-intro]="Globals.introText['browse.edit']">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <button type="button" class="btn btn-secondary" title="Remove this resource" [attr.data-intro]="Globals.introText['browse.remove']">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button type="button" class="btn btn-secondary" title="Change this resource's ID" [attr.data-intro]="Globals.introText['browse.changeid']">
+                    <i class="fa fa-id-badge"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr *ngIf="searchPagesResults && total === 0">
+        <td colspan="3">No pages! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/page/new">here</a>...</td>
+    </tr>
+    <tr *ngIf="searchPagesResults && total > 0">
+        <td colspan="3">
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5"
+                            [collectionSize]="igPages.total" [(page)]="page" [boundaryLinks]="true"
+                            (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
+        </td>
+    </tr>
+    </tfoot>
+</table>

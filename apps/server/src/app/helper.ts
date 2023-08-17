@@ -15,7 +15,7 @@ import {buildUrl, getR4Dependencies, getSTU3Dependencies} from '../../../../libs
 import {
   AuditEvent as R4AuditEvent,
   DomainResource as R4DomainResource, ImplementationGuide,
-  ImplementationGuide as R4ImplementationGuide
+  ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent
 } from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import {AxiosRequestConfig} from 'axios';
 import {IUserSecurityInfo} from './base.controller';
@@ -24,7 +24,7 @@ import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {TofLogger} from './tof-logger';
-import {IFhirResource, INonFhirResource, IProjectResourceReference} from '@trifolia-fhir/models';
+import {IFhirResource, INonFhirResource, IProjectResourceReference, Page} from '@trifolia-fhir/models';
 import {FhirResourcesService} from './fhirResources/fhirResources.service';
 
 declare var jasmine;
@@ -560,6 +560,73 @@ export async function addToImplementationGuide(httpService: HttpService, configS
   return Promise.resolve();
 }
 
+function searchPage(page: ImplementationGuidePageComponent, name: string) {
+  if (!page) {
+    return false;
+  }
+
+  if (page.nameUrl === name) return true;
+
+  if (page.page) {
+    for (let i = 0; i < page.page.length; i++) {
+      searchPage(page.page[i], name);
+    }
+  }
+}
+
+export async function addPageToImplementationGuide(service: FhirResourcesService, pageToAdd: Page, implementationGuideId: string): Promise<void> {
+
+  let implGuideResource = await service.findById(implementationGuideId);
+  let implementationGuide = <IImplementationGuide>implGuideResource.resource;
+
+  if (implGuideResource.fhirVersion.toLowerCase() === 'r4') {
+    const r4 = <R4ImplementationGuide>implementationGuide;
+    if (!r4.definition.page) {
+      // index page
+      const newPage = new ImplementationGuidePageComponent();
+      newPage.generation = 'markdown';
+      newPage.nameUrl = pageToAdd.name + '.html';
+      newPage.title = pageToAdd.name;
+      r4.definition.page = new ImplementationGuidePageComponent(newPage);
+
+    } else {
+      let foundResource = searchPage(<ImplementationGuidePageComponent>r4.definition.page, pageToAdd.name + ".html");
+      // check all levels
+      if (!foundResource) {
+        const newPage = new ImplementationGuidePageComponent();
+        newPage.generation = 'markdown';
+        newPage.nameUrl = pageToAdd.name + '.html';
+        newPage.title = pageToAdd.name;
+        if (!r4.definition.page.page) {
+          r4.definition.page.page = [];
+        }
+        r4.definition.page.page.push(newPage);
+      }
+      implGuideResource.references = implGuideResource.references || [];
+      // add to references if not already in the reference list
+      if (!implGuideResource.references.find((r: IProjectResourceReference) => {
+        if (r.valueType !== 'NonFhirResource') return false;
+        if (r.value && r.value.toString() === pageToAdd.id) return true;
+      })) {
+        implGuideResource.references.push({ value: pageToAdd, valueType: 'NonFhirResource' });
+      }
+    }
+    if (implGuideResource.id) {
+      let conf = await service.findById(implGuideResource.id);
+      if (conf) {
+        let conf1 = await service.updateOne(implGuideResource.id, implGuideResource);
+      } else {
+        console.log('Ig ' + implGuideResource.id + ' does not exist');
+      }
+    } else {
+      console.log('Ig ' + implGuideResource.id + ' does not exist');
+    }
+
+  }
+  // TO-DO for all Ig types
+
+}
+
 export async function addToImplementationGuideNew(service: FhirResourcesService, resourceToAdd: IFhirResource | INonFhirResource, implementationGuideId: string, isExample: boolean = false): Promise<void> {
   // Don't add implementation guides to other implementation guides (or itself).
   if (!isExample && (<IFhirResource>resourceToAdd).resource.resourceType == 'ImplementationGuide') {
@@ -576,6 +643,7 @@ export async function addToImplementationGuideNew(service: FhirResourcesService,
   let resourceAdded = false;
   let resourceReferenceString;
   let isNotFhir: boolean = false;
+
 
   // if new resource is not an example it can only be treated as a valid fhir resource
   if (!isExample) {
@@ -600,27 +668,27 @@ export async function addToImplementationGuideNew(service: FhirResourcesService,
 
       // example content is probably a valid fhir resource so try that first
       else if ('content' in resourceToAdd && !!resourceToAdd.content) {
-          // try parsing the string to a valid JSON object
-          let content: any;
-          if (typeof resourceToAdd.content !== typeof '') {
-            resourceToAdd.content = JSON.stringify(resourceToAdd.content);
-          }
-          try {
-            content = JSON.parse(resourceToAdd.content);
-            resourceType = content['resourceType'];
-            resourceId = content['id'] || resourceToAdd.id;
-          }
+        // try parsing the string to a valid JSON object
+        let content: any;
+        if (typeof resourceToAdd.content !== typeof '') {
+          resourceToAdd.content = JSON.stringify(resourceToAdd.content);
+        }
+        try {
+          content = JSON.parse(resourceToAdd.content);
+          resourceType = content['resourceType'];
+          resourceId = content['id'] || resourceToAdd.id;
+        }
 
           // JSON parsing failed... if this is a CDA IG we'll add it as a special case
-          catch (error) {
-            if (implementationGuideIsCDA(implGuideResource)) {
-              resourceType = 'Binary';
-              resourceId = resourceToAdd.name?resourceToAdd.name:resourceToAdd.id;
-              isNotFhir = true;
-            } else {
-              throw error;
-            }
+        catch (error) {
+          if (implementationGuideIsCDA(implGuideResource)) {
+            resourceType = 'Binary';
+            resourceId = resourceToAdd.name ? resourceToAdd.name : resourceToAdd.id;
+            isNotFhir = true;
+          } else {
+            throw error;
           }
+        }
 
       }
 
@@ -636,9 +704,9 @@ export async function addToImplementationGuideNew(service: FhirResourcesService,
       resourceReferenceString = `${resourceType}/${resourceId}`;
 
     }
-    // no valid resource supplied
+      // no valid resource supplied
     catch (e) {
-      throw new BadRequestException("Supplied example does not have a valid content property.");
+      throw new BadRequestException('Supplied example does not have a valid content property.');
     }
 
   }
@@ -656,7 +724,7 @@ export async function addToImplementationGuideNew(service: FhirResourcesService,
   logger.verbose(`Adding resource ${resourceReferenceString} to context implementation guide.  Example? (${isExample})  ExampleFor: "${exampleFor}"`);
 
 
-  if ('fhirVersion' in resourceToAdd && resourceToAdd.fhirVersion !== 'stu3' || ! ('fhirVersion' in  resourceToAdd)) {        // r4+
+  if ('fhirVersion' in resourceToAdd && resourceToAdd.fhirVersion !== 'stu3' || !('fhirVersion' in resourceToAdd)) {        // r4+
     const r4 = <R4ImplementationGuide>implementationGuide;
 
     r4.definition = r4.definition || { resource: [] };
@@ -735,7 +803,7 @@ export async function addToImplementationGuideNew(service: FhirResourcesService,
       return foundResources.length > 0;
     });
 
-    let foundResource = null
+    let foundResource = null;
     if (foundInPackages.length > 0) {
       // remove existing
       (stu3.package || []).filter((igPackage) => {
@@ -797,7 +865,7 @@ export async function addToImplementationGuideNew(service: FhirResourcesService,
 
   // update the Ig
   if (changed) {
-    if(resourceAdded) {
+    if (resourceAdded) {
       implGuideResource.references = implGuideResource.references || [];
       // add to references if not already in the reference list
       if (!implGuideResource.references.find((r: IProjectResourceReference) => {
@@ -807,17 +875,15 @@ export async function addToImplementationGuideNew(service: FhirResourcesService,
         implGuideResource.references.push({ value: resourceToAdd, valueType: isNotFhir ? 'NonFhirResource' : 'FhirResource' });
       }
     }
-    if(implGuideResource.id) {
+    if (implGuideResource.id) {
       let conf = await service.findById(implGuideResource.id);
-      if(conf) {
+      if (conf) {
         let conf1 = await service.updateOne(implGuideResource.id, implGuideResource);
+      } else {
+        console.log('Ig ' + implGuideResource.id + ' does not exist');
       }
-      else{
-        console.log("Ig " + implGuideResource.id + " does not exist" );
-      }
-    }
-    else {
-      console.log("Ig " + implGuideResource.id + " does not exist" );
+    } else {
+      console.log('Ig ' + implGuideResource.id + ' does not exist');
     }
 
   }
@@ -853,8 +919,7 @@ export async function removeFromImplementationGuideNew(service: FhirResourcesSer
   let ref = null;
   if ('resource' in resourceToRemove && resourceToRemove.resource) {
     ref = `${resourceToRemove.resource.resourceType}/${resourceToRemove.resource.id ?? resourceToRemove.id}`;
-  }
-  else {
+  } else {
     ref = `Binary/${resourceToRemove.name ?? resourceToRemove.id}`;
   }
 
