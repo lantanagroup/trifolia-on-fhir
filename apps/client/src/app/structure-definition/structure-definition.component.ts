@@ -31,7 +31,7 @@ import {FshResourceComponent} from '../shared-ui/fsh-resource/fsh-resource.compo
 import {firstValueFrom} from 'rxjs';
 import {StructureDefinition} from '@trifolia-fhir/r5';
 import { IFhirResource, INonFhirResource, IProjectResource, IProjectResourceReference, NonFhirResource, StructureDefinitionIntro, StructureDefinitionNotes } from '@trifolia-fhir/models';
-import { NonFhirResourceService } from '../shared/nonFhir-resource-.service';
+import { NonFhirResourceService } from '../shared/non-fhir-resource.service';
 
 @Component({
   templateUrl: './structure-definition.component.html',

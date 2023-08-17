@@ -18,7 +18,7 @@ import { Media as R5Media } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
 import { FhirResourceService } from '../shared/fhir-resource.service';
 import { CdaExample, type IFhirResource, type INonFhirResource, type IProjectResource } from '@trifolia-fhir/models';
-import { NonFhirResourceService } from '../shared/nonFhir-resource-.service';
+import { NonFhirResourceService } from '../shared/non-fhir-resource.service';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 

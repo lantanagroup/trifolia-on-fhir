@@ -11,7 +11,7 @@ import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
 import {ActivatedRoute} from '@angular/router';
 import {IProject, NonFhirResourceType, Page} from '@trifolia-fhir/models';
-import {NonFhirResourceService} from '../shared/nonFhir-resource-.service';
+import {NonFhirResourceService} from '../shared/non-fhir-resource.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 
 @Component({

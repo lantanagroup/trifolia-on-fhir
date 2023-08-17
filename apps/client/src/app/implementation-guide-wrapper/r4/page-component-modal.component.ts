@@ -8,7 +8,7 @@ import {getImplementationGuideMediaReferences, IImplementationGuide, MediaRefere
 import {Observable} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
 import {IFhirResource, IProjectResourceReference, NonFhirResourceType, Page} from '@trifolia-fhir/models';
-import {NonFhirResourceService} from '../../shared/nonFhir-resource-.service';
+import {NonFhirResourceService} from '../../shared/non-fhir-resource.service';
 
 @Component({
   templateUrl: './page-component-modal.component.html',
