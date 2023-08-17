@@ -173,7 +173,8 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
         if (implementationGuideId) {
             await this.assertCanWriteById(user, implementationGuideId);
         }
-        return await this.fhirResourceService.updateFhirResource(id, fhirResource, implementationGuideId, isExample);
+        let res = await this.fhirResourceService.updateFhirResource(id, fhirResource, implementationGuideId, isExample);
+        return res;
     }
 
     @Delete(':id')

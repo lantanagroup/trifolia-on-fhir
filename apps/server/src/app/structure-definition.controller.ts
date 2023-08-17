@@ -182,7 +182,7 @@ export class StructureDefinitionController extends FhirResourcesController  {
 
   @Get(':id')
   public async getStructureDefinition(@User() user, @Param('id') id: string): Promise<IFhirResource> {
-    return super.getById(user, id);
+    return super.getReferences(user, id);
   }
 
   @Post()

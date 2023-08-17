@@ -23,6 +23,7 @@ import JSZip from 'jszip';
 import {FhirResourcesController} from './fhirResources/fhirResources.controller';
 import {FhirResourcesService} from './fhirResources/fhirResources.service';
 import {v4 as uuidv4} from 'uuid';
+import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
@@ -36,6 +37,7 @@ export class ExportController extends FhirResourcesController {//BaseController 
     protected httpService: HttpService,
     protected configService: ConfigService,
     protected fhirResourceService: FhirResourcesService,
+    protected nonFhirResourceService: NonFhirResourcesService,
     private exportService: ExportService) {
     super(fhirResourceService);
   }
@@ -187,6 +189,7 @@ export class ExportController extends FhirResourcesController {//BaseController 
     const options = new ExportOptions(request.query);
     const exporter = await createHtmlExporter(
       this.fhirResourceService,
+      this.nonFhirResourceService,
       this.configService,
       this.httpService,
       this.logger,
@@ -242,6 +245,7 @@ export class ExportController extends FhirResourcesController {//BaseController 
 
     const exporter: HtmlExporter = await createHtmlExporter(
       this.fhirResourceService,
+      this.nonFhirResourceService,
       this.configService,
       this.httpService,
       this.logger,
