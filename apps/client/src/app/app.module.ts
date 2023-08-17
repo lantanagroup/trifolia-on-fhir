@@ -96,6 +96,8 @@ import { ProjectsComponent } from './projects/projects.component';
 import { ProjectComponent } from './project/project.component';
 import {R5ImplementationGuideComponent} from './implementation-guide-wrapper/r5/implementation-guide.component';
 import {R5ResourceModalComponent} from './implementation-guide-wrapper/r5/resource-modal.component';
+import {PagesComponent} from './pages/pages.component';
+import {PageComponent} from './page/page.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -171,6 +173,9 @@ const appRoutes: Routes = [
   { path: 'projects/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always' },
   { path: 'projects/:implementationGuideId/code-system', component: CodesystemsComponent },
   { path: 'projects/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/page', component: PagesComponent },
+  { path: 'projects/:implementationGuideId/page/:id', component: PageComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/page/new', component: PageComponent},
   { path: 'projects/:implementationGuideId/search-parameter', component: SearchParametersComponent },
   { path: 'projects/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
   { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },
@@ -350,6 +355,8 @@ const authModuleConfig: OAuthModuleConfig = {
     PublishingRequestComponent,
     ProjectsComponent,
     ProjectComponent,
+    PagesComponent,
+    PageComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes, {

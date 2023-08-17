@@ -1,15 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { TofLogger } from '../tof-logger';
-import { NonFhirResourceDocument } from './non-fhir-resource.schema';
-import { InjectConnection } from '@nestjs/mongoose';
-import { Connection, Model } from 'mongoose';
-import {INonFhirResource, IHistory, NonFhirResourceType, NonFhirResource} from '@trifolia-fhir/models';
-import {addToImplementationGuideNew, removeFromImplementationGuideNew} from '../helper';
-import { HistoryService } from '../history/history.service';
-import { FhirResourcesService } from '../fhirResources/fhirResources.service';
-import { TofNotFoundException } from '../../not-found-exception';
-import { IBaseDataService } from '../base/interfaces';
-import { PaginateOptions, Paginated } from '@trifolia-fhir/tof-lib';
+import {BadRequestException, Injectable} from '@nestjs/common';
+import {TofLogger} from '../tof-logger';
+import {NonFhirResourceDocument} from './non-fhir-resource.schema';
+import {InjectConnection} from '@nestjs/mongoose';
+import {Connection, Model} from 'mongoose';
+import {IHistory, INonFhirResource, NonFhirResource, NonFhirResourceType} from '@trifolia-fhir/models';
+import {addPageToImplementationGuide, addToImplementationGuideNew, removeFromImplementationGuideNew} from '../helper';
+import {HistoryService} from '../history/history.service';
+import {FhirResourcesService} from '../fhirResources/fhirResources.service';
+import {TofNotFoundException} from '../../not-found-exception';
+import {IBaseDataService} from '../base/interfaces';
+import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
 
 @Injectable()
 export class NonFhirResourcesService implements IBaseDataService<NonFhirResourceDocument> {
@@ -117,6 +117,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         }
 
         newNonFhirResource = await this.getModel(newNonFhirResource).create(newNonFhirResource);
+        let type = newNonFhirResource.type;
 
         let newHistory: IHistory = {
             content: newNonFhirResource.content,
@@ -129,7 +130,12 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
 
         //Add it to the implementation Guide
         if (implementationGuideId) {
+          if(type === NonFhirResourceType.Page){
+            await addPageToImplementationGuide(this.fhirResourceService, newNonFhirResource, implementationGuideId);
+          }
+          else{
             await addToImplementationGuideNew(this.fhirResourceService, newNonFhirResource, implementationGuideId, true);
+          }
         }
 
         return newNonFhirResource;

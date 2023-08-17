@@ -1,11 +1,11 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UnauthorizedException, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Request, UnauthorizedException, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
-import {ApiTags, ApiOAuth2} from '@nestjs/swagger';
+import {ApiTags, ApiOAuth2, ApiOperation} from '@nestjs/swagger';
 import type {INonFhirResource} from '@trifolia-fhir/models';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {BaseDataController} from '../base/base-data.controller';
 import {NonFhirResourcesService} from './non-fhir-resources.service';
-import {User} from '../server.decorators';
+import {RequestHeaders, User} from '../server.decorators';
 import {FhirResourcesService} from '../fhirResources/fhirResources.service';
 import {type NonFhirResourceDocument} from './non-fhir-resource.schema';
 import {ObjectId} from 'mongodb';
@@ -98,6 +98,22 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
     return options;
   }
 
+
+  @Get(':type/:name/([\$])check-name')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'checkName', description: 'CheckId', operationId: 'checkId' })
+  async checkUniqueName(@Param('type') type: string, @Param('name') name: string, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Query('implementationguideid') implementationGuideId?: string): Promise<boolean> {
+
+    let filter = { 'type': type, 'name': name};
+    if (contextImplementationGuideId) {
+      filter['referencedBy.value'] = new ObjectId(implementationGuideId);
+    }
+    const results = await this.nonFhirResourcesService.findOne(filter);
+    if (results) {
+      return false;
+    }
+    return true;
+  }
 
   @Get()
   public async searchFhirResource(@User() user: ITofUser, @Request() req): Promise<Paginated<INonFhirResource>> {
