@@ -13,7 +13,7 @@ import { AuthService } from '../../shared/auth.service';
 import { debounceTime } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import { FhirResourceService } from '../../shared/fhir-resource.service';
-import { NonFhirResourceService } from '../../shared/nonFhir-resource-.service';
+import { NonFhirResourceService } from '../../shared/non-fhir-resource.service';
 import { IFhirResource, INonFhirResource, IProjectResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../../shared/implementation-guide.service';
 

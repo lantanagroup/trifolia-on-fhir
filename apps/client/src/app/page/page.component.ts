@@ -4,7 +4,7 @@ import {getErrorString} from '@trifolia-fhir/tof-lib';
 import {Observable, Subject} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
 import {IFhirResource, Page} from '@trifolia-fhir/models';
-import {NonFhirResourceService} from '../shared/nonFhir-resource-.service';
+import {NonFhirResourceService} from '../shared/non-fhir-resource.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
 

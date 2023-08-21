@@ -35,7 +35,7 @@ import {IDomainResource, getImplementationGuideContext, Paginated} from '@trifol
 
 import {FhirResource} from '../../../../../server/src/app/fhirResources/fhirResource.schema';
 import {forkJoin} from 'rxjs';
-import {NonFhirResourceService} from '../../shared/nonFhir-resource-.service';
+import {NonFhirResourceService} from '../../shared/non-fhir-resource.service';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;

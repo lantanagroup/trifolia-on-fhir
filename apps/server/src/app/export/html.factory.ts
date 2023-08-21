@@ -7,9 +7,11 @@ import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {ConfigService} from '../config.service';
 import {TofLogger} from '../tof-logger';
 import { FhirResourcesService } from '../fhirResources/fhirResources.service';
+import { NonFhirResourcesService } from '../non-fhir-resources/non-fhir-resources.service';
 
 export async function createHtmlExporter(
   fhirResourceService: FhirResourcesService,
+  nonFhirResourceService: NonFhirResourcesService,
   configService: ConfigService,
   httpService: HttpService,
   logger: TofLogger,
@@ -25,11 +27,11 @@ export async function createHtmlExporter(
   let exporter: STU3HtmlExporter|R4HtmlExporter;
   switch (fhirVersion) {
     case 'stu3':
-      exporter = new STU3HtmlExporter(fhirResourceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
+      exporter = new STU3HtmlExporter(fhirResourceService, nonFhirResourceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
       break;
     case 'r4':
     case 'r5':
-      exporter = new R4HtmlExporter(fhirResourceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
+      exporter = new R4HtmlExporter(fhirResourceService, nonFhirResourceService, configService, httpService, logger, fhir, io, socketId, implementationGuideId);
       break;
     default:
       throw new Error(`Unexpected FHIR version ${fhirVersion}`);

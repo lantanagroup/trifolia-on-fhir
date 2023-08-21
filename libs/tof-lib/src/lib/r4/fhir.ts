@@ -1392,33 +1392,8 @@ export class StructureDefinition extends DomainResource implements IStructureDef
     } else if (notes && value) {
       notes.valueMarkdown = value;
     }
-  }
+  }  
 
-  get intro() {
-    if (!this.extension) return '';
-    const extensions: IExtension[] = this.extension;
-    const intro = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
-    return intro ? intro.valueMarkdown || '' : '';
-  }
-
-  set intro(value: string) {
-    this.extension = this.extension || [];
-    const extensions: IExtension[] = this.extension;
-    let intro = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
-
-    if (!intro && value) {
-      intro = {
-        url: Globals.extensionUrls['extension-sd-intro'],
-        valueMarkdown: value
-      };
-      extensions.push(intro);
-    } else if (intro && !value) {
-      const index = extensions.indexOf(intro);
-      extensions.splice(index, index >= 0 ? 1 : 0);
-    } else if (intro && value) {
-      intro.valueMarkdown = value;
-    }
-  }
 }
 
 export class ParametersParameterComponent extends BackboneElement {

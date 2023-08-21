@@ -27,7 +27,7 @@ import {ProjectService} from './projects.service';
 import { FhirResourceService } from './fhir-resource.service';
 import {HistoryService} from './history.service';
 import {SearchParameterService} from './search-parameter.service';
-import { NonFhirResourceService } from './nonFhir-resource-.service';
+import { NonFhirResourceService } from './non-fhir-resource.service';
 
 @NgModule({
   declarations: [],

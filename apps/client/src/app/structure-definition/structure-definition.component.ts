@@ -30,6 +30,8 @@ import {ImplementationGuideService} from '../shared/implementation-guide.service
 import {FshResourceComponent} from '../shared-ui/fsh-resource/fsh-resource.component';
 import {firstValueFrom} from 'rxjs';
 import {StructureDefinition} from '@trifolia-fhir/r5';
+import { IFhirResource, INonFhirResource, IProjectResource, IProjectResourceReference, NonFhirResource, StructureDefinitionIntro, StructureDefinitionNotes } from '@trifolia-fhir/models';
+import { NonFhirResourceService } from '../shared/non-fhir-resource.service';
 
 @Component({
   templateUrl: './structure-definition.component.html',
@@ -42,8 +44,10 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     'ParameterDefinition', 'Expression', 'TriggerDefinition'];
 
   @Input() public structureDefinition: STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition;
-  public fhirResource;
+  public sdFhirResource: IFhirResource;
   public sdId;
+  public intro: StructureDefinitionIntro;
+  public notes: StructureDefinitionNotes;
   public baseStructureDefinition;
   public selectedElement: ElementTreeModel;
   public validation: ValidatorResponse;
@@ -67,6 +71,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     private router: Router,
     private strucDefService: StructureDefinitionService,
     private implementationGuideService: ImplementationGuideService,
+    private nonFhirResourceService: NonFhirResourceService,
     private modalService: NgbModal,
     private recentItemService: RecentItemService,
     private fhirService: FhirService,
@@ -217,10 +222,10 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
     this.constraintManager = null;
 
     try {
-      this.fhirResource = await this.strucDefService.getStructureDefinition(this.sdId).toPromise();
-      const sdr = <StructureDefinition>this.fhirResource.resource;
+      this.sdFhirResource = await this.strucDefService.getStructureDefinition(this.sdId).toPromise();
+      const sdr = <StructureDefinition>this.sdFhirResource.resource;
 
-      this.loadSD(this.fhirResource.resource, true, false);
+      this.loadSD(this.sdFhirResource.resource, true, false);
       delete sdr.snapshot;
 
     } catch (err) {
@@ -285,7 +290,30 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       return;
     }
 
-    await this.strucDefService.save(this.sdId, this.fhirResource)
+
+    // save intro and notes resources before saving the structure definition resource
+    if (!this.sdFhirResource.references) {
+      this.sdFhirResource.references = [];
+    }
+
+    if (this.intro.id || this.intro.content) {
+      this.intro.content = this.intro.content ?? '';
+      this.intro = await firstValueFrom(this.nonFhirResourceService.save(this.intro.id, this.intro));
+      if (!this.sdFhirResource.references.some(r => r.value === this.intro.id && r.valueType === 'NonFhirResource')) {
+        this.sdFhirResource.references.push({ value: this.intro.id, valueType: 'NonFhirResource' });
+      }
+    }
+
+    if (this.notes.id || this.notes.content) {
+      this.notes.content = this.notes.content ?? '';
+      this.notes = await firstValueFrom(this.nonFhirResourceService.save(this.notes.id, this.notes));
+      if (!this.sdFhirResource.references.some(r => r.value === this.notes.id && r.valueType === 'NonFhirResource')) {
+        this.sdFhirResource.references.push({ value: this.notes.id, valueType: 'NonFhirResource' });
+      }
+    }
+
+
+    await this.strucDefService.save(this.sdId, this.sdFhirResource)
       .subscribe((conf) => {
         let updatedStructureDefinition = null;
         if (!this.sdId) {
@@ -294,7 +322,7 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
           this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${this.sdId}`]);
         } else {
 
-          this.fhirResource = conf;
+          this.sdFhirResource = conf;
           this.loadSD(conf.resource, false, false);
 
           this.message = 'Your changes have been saved!';
@@ -343,9 +371,33 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
       };
     }
 
-    if (this.fhirResource) {
-      this.fhirResource.resource = this.structureDefinition;
+    if (this.sdFhirResource) {
+      this.sdFhirResource.resource = this.structureDefinition;
     }
+
+
+    // intro resource
+    if (!this.intro) {
+      const introIndex = (this.sdFhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === StructureDefinitionIntro.name)
+      if (introIndex > -1) {
+        this.intro = this.sdFhirResource.references[introIndex].value as StructureDefinitionIntro;
+        this.sdFhirResource.references[introIndex].value = this.intro.id;
+      } else {
+        this.intro = new StructureDefinitionIntro();
+      }
+    }
+
+    // notes resource
+    if (!this.notes) {
+      const notesIndex = (this.sdFhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === StructureDefinitionNotes.name)
+      if (notesIndex > -1) {
+        this.notes = this.sdFhirResource.references[notesIndex].value as StructureDefinitionNotes;
+        this.sdFhirResource.references[notesIndex].value = this.notes.id;
+      } else {
+        this.notes = new StructureDefinitionNotes();
+      }
+    }
+
 
     this.recentItemService.ensureRecentItem(Globals.cookieKeys.recentStructureDefinitions, this.structureDefinition.id, this.structureDefinition.name);
     this.isDirty = isDirty;

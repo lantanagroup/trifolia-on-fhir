@@ -47,13 +47,13 @@ export class NonFhirResourceService {
     }
 
 
-    public save(exampleId: string, example: INonFhirResource, implementationGuideId?: string): Observable<INonFhirResource> {
-        if (exampleId) {
-            const url = `/api/nonFhirResources/${encodeURIComponent(exampleId)}${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
-            return this.http.put<INonFhirResource>(url, example);
+    public save(nonFhirResourceId: string, nonFhirResource: INonFhirResource, implementationGuideId?: string): Observable<INonFhirResource> {
+        if (nonFhirResourceId) {
+            const url = `/api/nonFhirResources/${encodeURIComponent(nonFhirResourceId)}${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
+            return this.http.put<INonFhirResource>(url, nonFhirResource);
         } else {
             const url = `/api/nonFhirResources/${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
-            return this.http.post<INonFhirResource>(url, example);
+            return this.http.post<INonFhirResource>(url, nonFhirResource);
         }
     }
 

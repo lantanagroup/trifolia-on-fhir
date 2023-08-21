@@ -11,7 +11,9 @@ export enum NonFhirResourceType {
     Media = "Media",
     Binary = "Binary",
 
-    CdaExample = "CdaExample"
+    CdaExample = "CdaExample",
+    StructureDefinitionIntro = "StructureDefinitionIntro",
+    StructureDefinitionNotes = "StructureDefinitionNotes"
 }
 
 
@@ -43,6 +45,15 @@ export abstract class NonFhirResource implements INonFhirResource {
 export class CdaExample extends NonFhirResource {
     readonly type: NonFhirResourceType = NonFhirResourceType.CdaExample;
 }
+
+export class StructureDefinitionIntro extends NonFhirResource {
+    readonly type: NonFhirResourceType = NonFhirResourceType.StructureDefinitionIntro;
+}
+
+export class StructureDefinitionNotes extends NonFhirResource {
+    readonly type: NonFhirResourceType = NonFhirResourceType.StructureDefinitionNotes;
+}
+
 
 export class OtherNonFhirResource extends NonFhirResource {
     readonly type: NonFhirResourceType = NonFhirResourceType.OtherNonFhirResource;
