@@ -78,7 +78,7 @@
     "jszip": "^3.10.1",
     "jwks-rsa": "^1.12.2",
     "mongodb": "^4.13.0",
-    "mongoose": "^6.9.0",
+    "mongoose": "^6.11.3",
     "mustache": "^4.2.0",
     "mysql": "^2.18.1",
     "nanoid": "^3.1.31",
