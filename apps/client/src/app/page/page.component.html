@@ -11,7 +11,7 @@
 
         <div class="row">
           <div class="col-md-8">
-            <app-fhir-string [parentObject]="page" propertyName="name" [required]="true" title="Name" (change)='idChangedEvent.next()'></app-fhir-string>
+            <app-fhir-string [parentObject]="page" propertyName="name" [required]="true" title="Name" [disabled] = "!isNew && page.name === 'index'" (change)='idChangedEvent.next()'></app-fhir-string>
             <div class="help-block">{{alreadyInUseNameMessage}}</div>
 
             <trifolia-fhir-markdown [(value)]="page.content" ></trifolia-fhir-markdown>
@@ -26,7 +26,7 @@
 
             <div class="mb-3" *ngIf="page.name === 'index'">
               <label>
-                <input type="checkbox" [(ngModel)]="page.reuseDescription" /> The content of this page should be the same as the description and contact(s) of the implementation guide (ImplementationGuide.description and ImplementationGuide.contact).
+                <input type="checkbox" [(ngModel)]="reuseDescription" /> The content of this page should be the same as the description and contact(s) of the implementation guide (ImplementationGuide.description and ImplementationGuide.contact).
               </label>
             </div>
           </div>
@@ -40,7 +40,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="(!isIdUnique)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

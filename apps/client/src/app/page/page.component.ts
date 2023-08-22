@@ -33,6 +33,7 @@ export class PageComponent implements OnInit {
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseNameMessage = '';
+  public totalPages = 0;
 
   constructor(public route: ActivatedRoute,
               private router: Router,
@@ -45,16 +46,15 @@ export class PageComponent implements OnInit {
         const isIdUnique = await this.nonFhirResourceService.checkUniqueName(this.page, this.implementationGuideId);
         if (!isIdUnique) {
           this.isIdUnique = false;
-          this.alreadyInUseNameMessage = "Name " + this.page.id + " is already used in this IG";
-        }
-        else {
+          this.alreadyInUseNameMessage = 'Name ' + this.page.id + ' is already used in this IG';
+        } else {
           this.isIdUnique = true;
-          this.alreadyInUseNameMessage = "";
+          this.alreadyInUseNameMessage = '';
         }
-        if(this.page.name == 'index') {
+        if (this.page.name == 'index') {
           this.page.reuseDescription = true;
         }
-        if(this.page.name == 'download') {
+        if (this.page.name == 'download') {
           this.page.navMenu = 'Downloads';
           this.page.content = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
         }
@@ -64,6 +64,18 @@ export class PageComponent implements OnInit {
 
   public setPage(value: Page) {
     this.page = value;
+  }
+
+  public get reuseDescription() {
+    return this.page["reuseDescription"];
+  }
+
+
+  public set reuseDescription(value: boolean) {
+    this.page["reuseDescription"] = value;
+    if(value) {
+      this.page["content"] = "";
+    }
   }
 
 
@@ -89,14 +101,24 @@ export class PageComponent implements OnInit {
 
   public get isNew(): boolean {
     const id = this.route.snapshot.paramMap.get('id');
-    return !id || id === 'new';
+    return !id || id.indexOf('new') > -1;
   }
 
 
   private getPage() {
 
     this.implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    this.pageId = this.isNew ? null : this.route.snapshot.paramMap.get('id');
+    let id = this.route.snapshot.paramMap.get('id');
+
+    if (id.indexOf('?totalPages=') > -1) {
+      let pages = id.slice(id.indexOf('=') + 1);
+      if (pages) {
+        this.totalPages = parseInt(pages);
+      }
+      this.pageId = this.isNew ? null : id.slice(0, this.pageId.indexOf('?totalPages='));
+    } else {
+      this.pageId = this.isNew ? null : id;
+    }
 
     if (!this.isNew) {
       this.page = null;
@@ -112,6 +134,11 @@ export class PageComponent implements OnInit {
           // this.odNotFound = err.status === 404;
           this.message = getErrorString(err);
         });
+    } else {
+      if (this.totalPages == 0) {
+        this.page.name = 'index';
+        this.page.reuseDescription = true;
+      }
     }
   }
 
@@ -131,11 +158,16 @@ export class PageComponent implements OnInit {
       this.nonFhirResourceService.save(this.page.id, this.page, this.implementationGuideId).subscribe({
         next: (page: Page) => {
           this.page.id = page.id;
+          this.getPage();
+          setTimeout(() => {
+            this.message = '';
+          }, 3000);
         },
         error: (err) => {
-          console.log(err);
+          this.message = 'An error occurred while saving the code system: ' + getErrorString(err);
         }
       });
+      this.message = 'Your changes have been saved!';
     }
   }
 
@@ -145,6 +177,7 @@ export class PageComponent implements OnInit {
         this.getPage();
       }
     });
+
     this.getPage();
   }
 }
