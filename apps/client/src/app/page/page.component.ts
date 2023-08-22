@@ -3,7 +3,7 @@ import {ImplementationGuide} from '@trifolia-fhir/r4';
 import {getErrorString} from '@trifolia-fhir/tof-lib';
 import {Observable, Subject} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
-import {IFhirResource, Page} from '@trifolia-fhir/models';
+import {Page} from '@trifolia-fhir/models';
 import {NonFhirResourceService} from '../shared/non-fhir-resource.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 
@@ -32,27 +32,31 @@ export class PageComponent implements OnInit {
   public pageType: PageType = PageType.Index;
   public idChangedEvent = new Subject();
   public isIdUnique = true;
-  public alreadyInUseIDMessage = '';
+  public alreadyInUseNameMessage = '';
 
   constructor(public route: ActivatedRoute,
               private router: Router,
               protected nonFhirResourceService: NonFhirResourceService) {
 
     this.page = new Page();
-    if(this.pageType == PageType.Index){
-      this.page.name = "Index";
-    }
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
-        const isIdUnique = await this.nonFhirResourceService.checkUniqueName(this.page);
+        const isIdUnique = await this.nonFhirResourceService.checkUniqueName(this.page, this.implementationGuideId);
         if (!isIdUnique) {
           this.isIdUnique = false;
-          this.alreadyInUseIDMessage = "ID " + this.page.id + " is already used in this IG";
+          this.alreadyInUseNameMessage = "Name " + this.page.id + " is already used in this IG";
         }
         else {
           this.isIdUnique = true;
-          this.alreadyInUseIDMessage = "";
+          this.alreadyInUseNameMessage = "";
+        }
+        if(this.page.name == 'index') {
+          this.page.reuseDescription = true;
+        }
+        if(this.page.name == 'download') {
+          this.page.navMenu = 'Downloads';
+          this.page.content = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
         }
       });
 
@@ -60,20 +64,6 @@ export class PageComponent implements OnInit {
 
   public setPage(value: Page) {
     this.page = value;
-  }
-
-  public modelChanged(event) {
-    if (event == PageType.Index) {
-      this.page.name = 'Index';
-    } else if (event == PageType.Download) {
-      this.page.name = 'Download';
-      this.page.navMenu = 'Downloads';
-      this.page.content = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
-    } else {
-      this.page.name = '';
-      this.page.navMenu = '';
-      this.page.content = '';
-    }
   }
 
 

@@ -5,12 +5,12 @@ import type {INonFhirResource} from '@trifolia-fhir/models';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {BaseDataController} from '../base/base-data.controller';
 import {NonFhirResourcesService} from './non-fhir-resources.service';
-import {RequestHeaders, User} from '../server.decorators';
+import {User} from '../server.decorators';
 import {FhirResourcesService} from '../fhirResources/fhirResources.service';
 import {type NonFhirResourceDocument} from './non-fhir-resource.schema';
 import {ObjectId} from 'mongodb';
 import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
-import {IFhirResource} from '@trifolia-fhir/models';
+import { NonFhirResource} from '@trifolia-fhir/models';
 
 @Controller('api/nonFhirResources')
 @UseGuards(AuthGuard('bearer'))
@@ -102,14 +102,15 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
   @Get(':type/:name/([\$])check-name')
   @HttpCode(200)
   @ApiOperation({ summary: 'checkName', description: 'CheckId', operationId: 'checkId' })
-  async checkUniqueName(@Param('type') type: string, @Param('name') name: string, @RequestHeaders('implementationGuideId') contextImplementationGuideId, @Query('implementationguideid') implementationGuideId?: string): Promise<boolean> {
+  async checkUniqueName(@Param('type') type: string, @Param('name') name: string, @Query('implementationguideid') implementationGuideId?: string): Promise<boolean> {
 
     let filter = { 'type': type, 'name': name};
-    if (contextImplementationGuideId) {
+    if (implementationGuideId) {
       filter['referencedBy.value'] = new ObjectId(implementationGuideId);
     }
-    const results = await this.nonFhirResourcesService.findOne(filter);
-    if (results) {
+    const res= <NonFhirResource>await this.nonFhirResourcesService.findOne(filter);
+    // resource found
+    if ( res && !!res.id)  {
       return false;
     }
     return true;

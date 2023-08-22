@@ -28,7 +28,7 @@ export class NonFhirResourceService {
         let url = '/api/nonFhirResources?page=' + encodeURIComponent(page) + '&' + '_sort=' + encodeURIComponent(sort) + '&';
 
         if (implementationGuideId) {
-            url += `referencedBy=${encodeURIComponent(implementationGuideId)}&`;
+            url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;
         }
 
         if (resourceType) {
@@ -65,11 +65,8 @@ export class NonFhirResourceService {
 
     public async checkUniqueName(resource: INonFhirResource, implementationGuideId?: string) {
       let url = `/api/nonFhirResources/${resource.type}`;
-      url += `/${encodeURIComponent(resource.name)}${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
-      url += `/$check-name`;
-
+      url += `/${encodeURIComponent(resource.name)}/$check-name${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
       return await this.http.get<boolean>(url).toPromise();
     }
-
 
 }
