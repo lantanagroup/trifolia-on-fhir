@@ -201,7 +201,7 @@
                   <button type="button" class="btn btn-primary" (click)="editPage(p)" title="Edit this page">
                     <i class="fa fa-edit"></i>
                   </button>
-                  <div class="btn-group" role="group">
+                 <!-- <div class="btn-group" role="group">
                     <button type="button" class="btn btn-primary dropdown-toggle" title="Add a page as a child of this page" id="addPageMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="fa fa-plus"></i>
                     </button>
@@ -209,7 +209,7 @@
                       <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p); igChanging.emit(true)">New Generic Page</a>
                       <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p, 'downloads'); igChanging.emit(true)">New "Downloads" Page</a>
                     </div>
-                  </div>
+                  </div>-->
                   <div class="btn-group" role="group">
                     <button type="button" class="btn btn-primary dropdown-toggle" title="Re-arrange the pages" id="rearrangePages" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="fas fa-arrows-alt"></i>
@@ -240,9 +240,9 @@
             <tr>
               <th colspan="3">
                 <p>No pages have been defined for this implementation guide.</p>
-                <button type="button" class="btn btn-primary" (click)="toggleRootPage(true); igChanging.emit(true)">
+                <!--<button type="button" class="btn btn-primary" (click)="toggleRootPage(true); igChanging.emit(true)">
                   Add a narrative page
-                </button>
+                </button>-->
               </th>
             </tr>
             </tfoot>

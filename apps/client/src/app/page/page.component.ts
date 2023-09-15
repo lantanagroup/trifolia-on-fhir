@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ImplementationGuide} from '@trifolia-fhir/r4';
 import {getErrorString} from '@trifolia-fhir/tof-lib';
-import {Observable, Subject} from 'rxjs';
+import { Observable, Subject} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
-import {Page} from '@trifolia-fhir/models';
+import {NonFhirResourceType, Page} from '@trifolia-fhir/models';
 import {NonFhirResourceService} from '../shared/non-fhir-resource.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
 
 
 enum PageType {
@@ -20,7 +21,9 @@ enum PageType {
 })
 
 export class PageComponent implements OnInit {
+  public allPages : Page[] = [];
   public page: Page;
+  public pageNo = 1;
   public implementationGuide: ImplementationGuide;
   public implementationGuideId: string;
   public level: number;
@@ -67,14 +70,14 @@ export class PageComponent implements OnInit {
   }
 
   public get reuseDescription() {
-    return this.page["reuseDescription"];
+    return this.page['reuseDescription'];
   }
 
 
   public set reuseDescription(value: boolean) {
-    this.page["reuseDescription"] = value;
-    if(value) {
-      this.page["content"] = "";
+    this.page['reuseDescription'] = value;
+    if (value) {
+      this.page['content'] = '';
     }
   }
 
@@ -164,14 +167,14 @@ export class PageComponent implements OnInit {
           }, 3000);
         },
         error: (err) => {
-          this.message = 'An error occurred while saving the code system: ' + getErrorString(err);
+          this.message = 'An error occurred while saving the page: ' + getErrorString(err);
         }
       });
       this.message = 'Your changes have been saved!';
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.navSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd && e.url.startsWith('/page/')) {
         this.getPage();
@@ -179,5 +182,19 @@ export class PageComponent implements OnInit {
     });
 
     this.getPage();
+
+    this.nonFhirResourceService.search(this.pageNo, 'name', this.implementationGuideId, NonFhirResourceType.Page).toPromise().then((results) => {
+      this.allPages = results.results;
+      this.pageNavMenus = this.allPages
+        .filter(p => !!p.navMenu)
+        .map(p => p.navMenu)
+        .reduce<string[]>((prev, curr) => {
+          if (prev.indexOf(curr) < 0) prev.push(curr);
+          return prev;
+        }, [])
+        .sort((a, b) => (a > b ? 1 : -1));
+    }).catch((err) => console.log(err));
+
   }
+
 }

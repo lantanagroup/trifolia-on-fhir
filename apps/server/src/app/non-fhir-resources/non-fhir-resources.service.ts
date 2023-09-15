@@ -201,10 +201,17 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
 
         await this.historyService.create(newHistory);
 
+        let type = upNonFhirResource.type;
+
         //Add it to the implementation Guide
         if (implementationGuideId) {
-            await addToImplementationGuideNew(this.fhirResourceService, existing, implementationGuideId, true);
-        }
+          if(type === NonFhirResourceType.Page){
+            await addPageToImplementationGuide(this.fhirResourceService, upNonFhirResource, implementationGuideId);
+          }
+          else{
+            await addToImplementationGuideNew(this.fhirResourceService, upNonFhirResource, implementationGuideId, true);
+          }
+      }
 
         return existing;
 

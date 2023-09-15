@@ -1392,7 +1392,7 @@ export class StructureDefinition extends DomainResource implements IStructureDef
     } else if (notes && value) {
       notes.valueMarkdown = value;
     }
-  }  
+  }
 
 }
 
@@ -14829,11 +14829,11 @@ export class ImplementationGuidePageComponent extends BackboneElement {
   public setTitle(value: string, isRoot = false) {
     this.title = value;
 
-    if (!isRoot && value) {
+   /* if (!isRoot && value) {
       this.nameUrl = value.toLowerCase().replace(/\s/g, '_').replace(/[():]/g, '') + '.html';
     } else if (isRoot) {
       this.nameUrl = 'index.html';
-    }
+    }*/
   }
 
  /* public get navMenu() {
