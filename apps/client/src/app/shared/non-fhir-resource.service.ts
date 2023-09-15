@@ -24,8 +24,12 @@ export class NonFhirResourceService {
         return this.http.get<INonFhirResource>(url);
     }
 
-    public search(page: number = 1, sort: string = 'name', implementationGuideId?: string, resourceType?: string, name?: string, title?: string): Observable<Paginated<INonFhirResource>> {
+    public search(page: number = 1, sort: string = 'name', projections?: any, implementationGuideId?: string, resourceType?: string, name?: string, title?: string): Observable<Paginated<INonFhirResource>> {
         let url = '/api/nonFhirResources?page=' + encodeURIComponent(page) + '&' + '_sort=' + encodeURIComponent(sort) + '&';
+
+        if(projections){
+           url += `_projections=${encodeURIComponent(projections)}&`;
+        }
 
         if (implementationGuideId) {
             url += `implementationguideid=${encodeURIComponent(implementationGuideId)}&`;

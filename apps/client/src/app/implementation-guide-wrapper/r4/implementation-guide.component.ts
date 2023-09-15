@@ -985,7 +985,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   }
 
   loadPages() {
-    this.nonFhirResourceService.search(1, 'name', this.implementationGuideId, NonFhirResourceType.Page).subscribe({
+    this.nonFhirResourceService.search(1, 'name', '{"content": 0}', this.implementationGuideId, NonFhirResourceType.Page).subscribe({
       next: (res: Paginated<Page>) => {
         res.results.forEach(result => {
           this.pagesMap[result.name] = result;

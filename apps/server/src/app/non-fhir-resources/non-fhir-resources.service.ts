@@ -44,7 +44,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
     }
 
 
-    public async search(options?: PaginateOptions): Promise<Paginated<NonFhirResourceDocument>> {
+    public async search(options?: PaginateOptions, projections?: any): Promise<Paginated<NonFhirResourceDocument>> {
         const page = (options && options.page) ? options.page : 1;
         const limit = (options && options.itemsPerPage) ? options.itemsPerPage : 10;
         const filters = (options && options.filter) ? options.filter : {};
@@ -56,7 +56,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
 
         let allFilters = { $and: [filters, {$or: deleteClause}] };
 
-        const items = await this.getModel().find(allFilters).populate(populate).sort(sortBy).limit(limit).skip(skip);
+        const items = await this.getModel().find(allFilters, projections).populate(populate).sort(sortBy).limit(limit).skip(skip);
         const total = await this.getModel().countDocuments(allFilters);
 
         const result: Paginated<NonFhirResourceDocument> = {
@@ -78,9 +78,12 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
       return this.getModel().countDocuments(allFilters).exec();
     }
 
-    public async findAll(filter: any, populated = []): Promise<NonFhirResourceDocument[]> {
+    public async findAll(filter: any, populated = [], projections?: any): Promise<NonFhirResourceDocument[]> {
       let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
       let allFilters = { $and: [filter, {$or: deleteClause}] };
+      if(projections) {
+        return this.getModel().find(allFilters, projections).populate(populated);
+      }
       return this.getModel().find(allFilters).populate(populated);
     }
 

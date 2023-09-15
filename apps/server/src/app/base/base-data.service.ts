@@ -23,7 +23,7 @@ export class BaseDataService<T extends IBaseEntity> implements IBaseDataService<
     }
 
 
-    public async search(options?: PaginateOptions): Promise<Paginated<T>> {
+    public async search(options?: PaginateOptions, projections?: any): Promise<Paginated<T>> {
         const page = (options && options.page) ? options.page : 1;
         const limit = (options && options.itemsPerPage) ? options.itemsPerPage : 10;
         const filters = (options && options.filter) ? options.filter : {};
@@ -37,7 +37,7 @@ export class BaseDataService<T extends IBaseEntity> implements IBaseDataService<
 
         let allFilters = { $and: [filters, {$or: deleteClause}] };
 
-        const items = await this.model.find(allFilters).populate(populate).sort(sortBy).limit(limit).skip(skip);
+        const items = await this.model.find(allFilters, projections).populate(populate).sort(sortBy).limit(limit).skip(skip);
         const total = await this.model.countDocuments(allFilters);
 
         const result: Paginated<T> = {
@@ -60,8 +60,8 @@ export class BaseDataService<T extends IBaseEntity> implements IBaseDataService<
         return this.model.countDocuments(filter).exec();
     }
 
-    public async findAll(filter = {}, populated = []): Promise<T[]> {
-        return this.model.find(filter).populate(populated).exec();
+    public async findAll(filter = {},  populated = [], projections = {}): Promise<T[]> {
+        return this.model.find(filter, projections).populate(populated).exec();
     }
 
     public async findOne(filter = {}): Promise<T> {

@@ -128,7 +128,8 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
       ]
     };
 
-    return await this.nonFhirResourcesService.search(options);
+    let projections =  JSON.parse(req.query['_projections']);
+    return await this.nonFhirResourcesService.search(options, projections);
   }
 
   @Post()
