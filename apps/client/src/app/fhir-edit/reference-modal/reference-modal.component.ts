@@ -1,15 +1,18 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Coding, EntryComponent, StructureDefinition } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { FhirDisplayPipe } from '../../shared-ui/fhir-display-pipe';
-import { HttpClient } from '@angular/common/http';
-import { FhirService } from '../../shared/fhir.service';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { ConfigService } from '../../shared/config.service';
-import { ConformanceService } from '../../shared/conformance.service';
-import { IConformance } from '@trifolia-fhir/models';
-import { Paginated } from '@trifolia-fhir/tof-lib';
+import {Component, Input, OnInit} from '@angular/core';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {Coding} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {FhirDisplayPipe} from '../../shared-ui/fhir-display-pipe';
+import {HttpClient} from '@angular/common/http';
+import {FhirService} from '../../shared/fhir.service';
+import {Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {ConfigService} from '../../shared/config.service';
+import {ConformanceService} from '../../shared/conformance.service';
+import {IConformance} from '@trifolia-fhir/models';
+import {Paginated} from '@trifolia-fhir/tof-lib';
+import {ValueSetService} from '../../shared/value-set.service';
+import {ValueSet} from '@trifolia-fhir/r4';
+
 
 export interface ResourceSelection {
   projectResourceId: string;
@@ -30,16 +33,18 @@ export class FhirReferenceModalComponent implements OnInit {
   @Input() public hideResourceType?: boolean;
   @Input() public selectMultiple = false;
   @Input() public allowCoreProfiles = true;
-  @Input() public searchLocation: 'base' | 'server' | 'dependency' = 'server';
+  @Input() public searchLocation: 'base' | 'server' | 'dependency' | 'vsac' = 'server';
   @Input() public structureDefinitionType?: string;
   @Input() public fhirVersion: 'stu3'|'r4'|'r5' = 'stu3';
   public idSearch?: string;
   public contentSearch?: string;
+  public apiKey: string;
   public criteriaChangedEvent: Subject<string> = new Subject<string>();
   public nameSearch?: string;
   public titleSearch?: string;
   public selected: ResourceSelection[] = [];
   public results?: IConformance[];
+  public valueSetResult?: ValueSet;
   public total: number;
   public currentPage: number = 1;
   public pageChanged: Subject<void> = new Subject<void>();
@@ -54,6 +59,7 @@ export class FhirReferenceModalComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     public configService: ConfigService,
+    public valueSetService: ValueSetService,
     protected conformanceService: ConformanceService,
     private http: HttpClient,
     private fhirService: FhirService) {
@@ -150,10 +156,37 @@ export class FhirReferenceModalComponent implements OnInit {
         this.total = res.total;
 
       },
-      error: (err) => { },
-      complete: () => { this.searching = false; }
+      error: (err) => {
+      },
+      complete: () => {
+        this.searching = false;
+      }
     });
 
+  }
+
+  criteriaChanged() {
+
+    this.results = null;
+
+    if (!this.resourceType) {
+      return;
+    }
+
+    switch (this.searchLocation) {
+      case 'base':
+        this.searchBase();
+        break;
+      case 'server':
+        this.searchServer();
+        break;
+      case 'dependency':
+        this.searchDependency();
+        break;
+      case 'vsac':
+        this.searchVSAC();
+        break;
+    }
   }
 
   private searchDependency() {
@@ -251,25 +284,12 @@ export class FhirReferenceModalComponent implements OnInit {
 
   }
 
-  criteriaChanged() {
+  private searchVSAC() {
 
-    this.results = null;
+    this.searching = true;
 
-    if (!this.resourceType) {
-      return;
-    }
+    const valueSet = this.valueSetService.searchVsacApi(this.idSearch, this.apiKey);
 
-    switch (this.searchLocation) {
-      case 'base':
-        this.searchBase();
-        break;
-      case 'server':
-        this.searchServer();
-        break;
-      case 'dependency':
-        this.searchDependency();
-        break;
-    }
   }
 
   ngOnInit() {
