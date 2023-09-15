@@ -99,8 +99,10 @@ export class BindingPanelComponent implements OnInit {
     modalRef.componentInstance.resourceType = 'ValueSet';
     modalRef.componentInstance.hideResourceType = true;
     modalRef.result.then((result) => {
-      const valueSet: IValueSet = result.resource;
-      this.selectValueSet(valueSet);
+      if (result) {
+        const valueSet: IValueSet = result.resource;
+        this.selectValueSet(valueSet);
+      }
     });
   }
 
