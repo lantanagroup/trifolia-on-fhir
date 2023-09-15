@@ -52,19 +52,10 @@
         <div class="help-block">{{r.url}}</div>
       </ng-template>
       <div class="input-group">
-        <input type="text" class="form-control"
-               [(ngModel)]="selectedValueSet"
-               [ngbTypeahead]="search"
-               [resultTemplate]="valueSetSearchResult"
-               container="body"
-               [editable]="false"
-               (selectItem)="selectValueSet($event.item)"
-               [inputFormatter]="getValueSetText" />
-        <div class="input-group-btn">
-          <button type="button" class="btn btn-primary" title="Select a value set" (click)="openSelectValueSet()">
-            <i class="fas fa-hand-pointer"></i>
-          </button>
-        </div>
+        <input type="text" class="form-control" [(ngModel)]="element.binding.valueSet" (change)="change.emit()" />
+        <button type="button" class="btn btn-primary" title="Select a value set" (click)="openSelectValueSet()">
+          <i class="fas fa-hand-pointer"></i>
+        </button>
       </div>
     </div>
   </div>

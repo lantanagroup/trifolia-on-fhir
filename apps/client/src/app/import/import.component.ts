@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ImportService, VSACImportCriteria } from '../shared/import.service';
-import { Bundle, DomainResource, EntryComponent, Media as STU3Media, OperationOutcome, RequestComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Bundle, DomainResource, EntryComponent, Media as STU3Media, OperationOutcome, RequestComponent } from '@trifolia-fhir/stu3';
 import { NgbModal, NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { FhirService } from '../shared/fhir.service';
@@ -10,15 +10,15 @@ import { ImportGithubPanelComponent } from './import-github-panel/import-github-
 import { Observable, concat } from 'rxjs';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { getErrorString, Globals } from '@trifolia-fhir/tof-lib'; //'../../../../../libs/tof-lib/src/lib/helper';
 import { ConfigService } from '../shared/config.service';
-import { Media as R4Media } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { Media as R5Media } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
+import { Media as R4Media } from '@trifolia-fhir/r4';
+import { Media as R5Media } from '@trifolia-fhir/r5';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
 import { ConformanceService } from '../shared/conformance.service';
 import { IConformance, IExample, IProjectResource } from '@trifolia-fhir/models';
 import { ExamplesService } from '../shared/examples.service';
+import { Conformance } from 'apps/server/src/app/conformance/conformance.schema';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
@@ -481,31 +481,12 @@ export class ImportComponent implements OnInit {
     }
 
     this.importService.importVsac(this.vsacCriteria)
-      .subscribe((results: OperationOutcome | Bundle) => {
-        if (results.resourceType === 'OperationOutcome') {
-          this.outcome = <OperationOutcome>results;
-        } else if (results.resourceType === 'Bundle') {
-          this.resultsBundle = <Bundle>results;
-        }
-
-        this.files = [];
-        this.message = 'Done importing';
-        setTimeout(() => {
-          tabSet.select('results');
-        });
-      }, (err) => {
-        if (err && err.error && err.error.resourceType === 'OperationOutcome') {
-          this.outcome = <OperationOutcome>err.error;
+      .subscribe({
+        next: (res: Conformance) => {
           this.files = [];
-          this.message = 'Import resulted in errors';
-          setTimeout(() => {
-            tabSet.select('results');
-          });
-        } else if (err && err.error && err.error.message) {
-          this.message = err.error.message;
-        } else if (err && err.message) {
-          this.message = 'Error while importing: ' + err.message;
-        } else {
+          this.message = `Successfully imported: ${res.resource.resourceType}/${res.resource.id} (${res.resource['title'] ?? res.resource['name']})`;
+        },
+        error: (err) => {
           this.message = getErrorString(err);
         }
       });

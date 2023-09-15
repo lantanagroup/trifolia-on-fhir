@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable, firstValueFrom} from 'rxjs';
 import * as XLSX from 'xlsx';
 import {Bundle, EntryComponent, ValueSet} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
@@ -39,12 +39,15 @@ export class ImportService {
         'vsacAuthorization': 'Basic ' + authorization
       };
       this.http.get(url, {headers: headers})
-        .subscribe((results) => {
-          subscriber.next(results);
-        }, (err) => {
-          subscriber.error(err);
+        .subscribe({
+          next: (results) => {
+            subscriber.next(results);
+          }, 
+          error: (err) => {
+            subscriber.error(err);
+          }
         });
-    });
+      });
   }
 
   public convertExcelToValueSetBundle(data: Uint8Array): IExcelConversion {

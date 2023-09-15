@@ -13,23 +13,16 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from './config.service';
 import { TofLogger } from './tof-logger';
-import { FhirController } from './fhir.controller';
-import { FhirServerVersion, RequestHeaders, User } from './server.decorators';
-import { buildUrl } from '../../../../libs/tof-lib/src/lib/fhirHelper';
+import { RequestHeaders, User } from './server.decorators';
 import { TofNotFoundException } from '../not-found-exception';
 import { AxiosRequestConfig } from 'axios';
-import type { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
-import {
-  ValueSet, ValueSetComposeComponent,
-  ValueSetConceptReferenceComponent,
-  ValueSetConceptSetComponent
-} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import { addToImplementationGuide } from './helper';
-import { IBundle } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { buildUrl, type ITofUser } from '@trifolia-fhir/tof-lib';
 import { ConformanceService } from './conformance/conformance.service';
 import { ExamplesService } from './examples/examples.service';
 import { ObjectId } from 'mongodb';
 import { IProjectResource } from '@trifolia-fhir/models';
+import { firstValueFrom } from 'rxjs';
+import { Conformance } from './conformance/conformance.schema';
 
 @Controller('api/import')
 @UseGuards(AuthGuard('bearer'))
@@ -169,18 +162,15 @@ export class ImportController extends BaseController {
      return results.data;
    }*/
 
-  /*@Get('vsac/:id')
+  @Get('vsac/:id')
   public async importVsacValueSet(
-    @FhirServerBase() fhirServerBase: string,
-    @FhirServerVersion() fhirServerVersion,
     @User() user: ITofUser,
     @Headers('vsacauthorization') vsacAuthorization: string,
     @Param('id') id: string,
     @Param('applyContextPermissions') applyContextPermissions = true,
     @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
 
-    const contextImplementationGuide = await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId);
-    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
+    const contextImplementationGuide = await this.conformanceService.findById(contextImplementationGuideId);
 
     if (!vsacAuthorization) {
       throw new BadRequestException('Expected vsacauthorization header to be provided');
@@ -198,7 +188,7 @@ export class ImportController extends BaseController {
     let vsacResults;
 
     try {
-      vsacResults = await this.httpService.request(options).toPromise();
+      vsacResults = await firstValueFrom(this.httpService.request(options));
     } catch (ex) {
       if (ex.response && ex.response.status === 404) {
         throw new TofNotFoundException(`The value set ${id} was not found in VSAC`);
@@ -215,16 +205,12 @@ export class ImportController extends BaseController {
     }
 
     try {
-      const proxyUrl = `/${vsacResults.data.resourceType}/${vsacResults.data.id}`;
-      const fhirProxy = new FhirController(this.httpService, this.configService);
-      const proxyResults = await fhirProxy.proxy(proxyUrl, null, 'PUT', fhirServerBase, fhirServerVersion, user, vsacResults.data, applyContextPermissions);
-      if (contextImplementationGuide) {
-        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, proxyResults.data, userSecurityInfo, contextImplementationGuide, true);
-      }
-      return proxyResults.data;
+      const newRes = new Conformance();
+      newRes.resource = vsacResults.data;
+      return await this.conformanceService.createConformance(newRes, contextImplementationGuideId);
     } catch (ex) {
       this.logger.error(`An error occurred while importing value set ${id} from VSAC: ${ex.message}`, ex.stack);
       throw ex;
     }
-  }*/
+  }
 }
