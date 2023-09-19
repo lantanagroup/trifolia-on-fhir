@@ -106,7 +106,7 @@ export class IgPageHelper {
     // get the resource page
     let pageFound = (pages || []).find(pageElem => pageElem.name == page.nameUrl.slice(0, page.nameUrl.indexOf(".html")) );
 
-    if (pageFound && pageFound['reuseDescription'] || page.nameUrl == 'index.html') {
+    if (pageFound && pageFound['reuseDescription']) {
       pageInfo.content = this.getIndexContent(implementationGuide);
      } else {
       pageInfo.content = pageFound.content || 'No content has been defined for this page, yet.';
