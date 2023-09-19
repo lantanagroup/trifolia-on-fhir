@@ -111,50 +111,7 @@ export class PageComponentModalComponent implements OnInit {
   }
 
   ok() {
-    let page = this.page;
-    let res = this.resource;
-    // update in Db
-    if(this.resource.content || this.resource.navMenu || this.reuseDescription) {
-      //update/create resource
-      this.nonFhirResourceService.save(this.resource.id, this.resource).subscribe({
-        next: (nonFhir: Page) => {
-          res.id = nonFhir.id;
-          if(res["id"]) {
-            if (!this.fhirResource.references.find((r: IProjectResourceReference) => r.value == res.id)) {
-              const newProjectResourceReference: IProjectResourceReference = { value: res.id, valueType: 'NonFhirResource' };
-              this.fhirResource.references.push(newProjectResourceReference);
-            }
-          }
-          this.activeModal.close({ page, res });
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      });
-    }
-    else if(this.resource.id){
-      //delete resource
-      this.nonFhirResourceService.delete(this.resource.id).subscribe({
-        next: (nonFhir: Page) => {
-
-          let index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
-            return ref.value === this.resource.id;
-          });
-
-          if (index > -1) {
-            this.fhirResource.references.splice(index, 1);
-          }
-          res = new Page();
-          res["id"] = undefined;
-          res["reuseDescription"] = undefined;
-          res["name"] = this.inputPage.nameUrl.slice(0,this.inputPage.nameUrl.indexOf("."));
-          this.activeModal.close({page, res });
-        }});
-    }
-    else {
       this.activeModal.close();
-    }
-
   }
 
   ngOnInit() {

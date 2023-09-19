@@ -101,7 +101,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
 
   @Get(':type/:name/([\$])check-name')
   @HttpCode(200)
-  @ApiOperation({ summary: 'checkName', description: 'CheckId', operationId: 'checkId' })
+  @ApiOperation({ summary: 'checkName', description: 'checkName', operationId: 'check-name' })
   async checkUniqueName(@Param('type') type: string, @Param('name') name: string, @Query('implementationguideid') implementationGuideId?: string): Promise<boolean> {
 
     let filter = { 'type': type, 'name': name};
@@ -115,6 +115,21 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
     }
     return true;
   }
+
+  @Get(':type/:name')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'getByName', description: 'getByName' })
+  async getByName(@Param('type') type: string, @Param('name') name: string, @Query('implementationguideid') implementationGuideId?: string): Promise<NonFhirResource> {
+
+    let filter = { 'type': type, 'name': name};
+    if (implementationGuideId) {
+      filter['referencedBy.value'] = new ObjectId(implementationGuideId);
+    }
+    const res = <NonFhirResource>await this.nonFhirResourcesService.findOne(filter);
+    // resource found
+    return res;
+  }
+
 
   @Get()
   public async searchFhirResource(@User() user: ITofUser, @Request() req): Promise<Paginated<INonFhirResource>> {
@@ -161,6 +176,16 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
   @Delete(':id')
   public async deleteNonFhirResource(@User() user: ITofUser, @Param('id') id: string) {
     await this.nonFhirResourcesService.delete(id);
+  }
+
+  @Delete(':type/:name')
+  async deleteByName(@Param('type') type: string, @Param('name') name: string, @Query('implementationguideid') implementationGuideId?: string):  Promise<INonFhirResource> {
+    let filter = { 'type': type, 'name': name};
+    if (implementationGuideId) {
+      filter['referencedBy.value'] = new ObjectId(implementationGuideId);
+    }
+    const res = <NonFhirResource>await this.nonFhirResourcesService.findOne(filter);
+    return await this.nonFhirResourcesService.delete(res.id);
   }
 
 }

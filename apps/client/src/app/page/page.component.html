@@ -1,22 +1,17 @@
 
 <h1>Page</h1>
 
-<!--<div class="alert alert-danger" *ngIf="qNotFound">Questionnaire with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>-->
-
 <ng-container *ngIf="page">
   <ul ngbNav #qTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
     <li ngbNavItem>
       <a ngbNavLink>General</a>
       <ng-template ngbNavContent>
-
-        <div class="row">
-          <div class="col-md-8">
+        <div>
+          <div>
             <app-fhir-string [parentObject]="page" propertyName="name" [required]="true" title="Name" [disabled] = "page.name === 'index'" (change)='idChangedEvent.next()'></app-fhir-string>
             <div class="help-block">{{alreadyInUseNameMessage}}</div>
-
             <trifolia-fhir-markdown [(value)]="page.content" ></trifolia-fhir-markdown>
-
-            <div class="mb-3">
+            <div>
               <label>
                 Show on top nav menu
                 <app-tooltip-icon tooltipKey="ig.page.showTopNavMenu"></app-tooltip-icon>
@@ -31,7 +26,6 @@
             </div>
           </div>
         </div>
-
       </ng-template>
     </li>
   </ul>

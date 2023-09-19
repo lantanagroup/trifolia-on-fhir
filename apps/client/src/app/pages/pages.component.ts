@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {CodeSystemService} from '../shared/code-system.service';
 import {CodeSystem, OperationDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -12,7 +11,6 @@ import {AuthService} from '../shared/auth.service';
 import {ActivatedRoute} from '@angular/router';
 import {IProject, NonFhirResourceType, Page} from '@trifolia-fhir/models';
 import {NonFhirResourceService} from '../shared/non-fhir-resource.service';
-import {Paginated} from '@trifolia-fhir/tof-lib';
 
 @Component({
   templateUrl: './pages.component.html',

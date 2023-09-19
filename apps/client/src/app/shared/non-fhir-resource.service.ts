@@ -62,8 +62,8 @@ export class NonFhirResourceService {
     }
 
 
-    public delete(exampleId: string): Observable<any> {
-        const url = `/api/nonFhirResources/${encodeURIComponent(exampleId)}`;
+    public delete(id: string): Observable<any> {
+        const url = `/api/nonFhirResources/${encodeURIComponent(id)}`;
         return this.http.delete(url);
     }
 
@@ -73,4 +73,15 @@ export class NonFhirResourceService {
       return await this.http.get<boolean>(url).toPromise();
     }
 
+    public  getByName(resource: INonFhirResource, implementationGuideId?: string): Observable<INonFhirResource> {
+      let url = `/api/nonFhirResources/${resource.type}`;
+      url += `/${encodeURIComponent(resource.name)}${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
+      return  this.http.get<INonFhirResource>(url);
+    }
+
+    public deleteByName(resource: INonFhirResource, implementationGuideId?: string): Observable<any> {
+      let url = `/api/nonFhirResources/${resource.type}`;
+      url += `/${encodeURIComponent(resource.name)}${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
+      return this.http.delete(url);
+    }
 }

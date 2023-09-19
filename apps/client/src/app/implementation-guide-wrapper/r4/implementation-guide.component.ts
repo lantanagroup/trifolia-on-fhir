@@ -34,7 +34,7 @@ import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenc
 import {IDomainResource, getImplementationGuideContext, Paginated} from '@trifolia-fhir/tof-lib';
 
 import {FhirResource} from '../../../../../server/src/app/fhirResources/fhirResource.schema';
-import {forkJoin} from 'rxjs';
+import {firstValueFrom, forkJoin} from 'rxjs';
 import {NonFhirResourceService} from '../../shared/non-fhir-resource.service';
 
 class PageDefinition {
@@ -72,7 +72,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public saving = false;
   public duplicate = false;
   public resourceMap: IProjectResourceReferenceMap = {};
-  public pagesMap = {};
   public historyLoaded = false;
 
 
@@ -612,7 +611,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     this.initPagesAndGroups();
   }
 
-  public editPage(pageDef: PageDefinition) {
+  public async editPage(pageDef: PageDefinition) {
+
+    // get the page from db
+    pageDef.resource = await firstValueFrom(this.nonFhirResourceService.getByName(pageDef.resource, this.implementationGuideId));
+
     const modalRef = this.modal.open(PageComponentModalComponent, { size: 'lg', backdrop: 'static' });
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
@@ -630,14 +633,14 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     componentInstance.setPage(pageDef.page);
     componentInstance.setResource(pageDef.resource);
 
-
     modalRef.result.then((result: { page: ImplementationGuidePageComponent, res: Page }) => {
          Object.assign(pageDef.page, result.page);
          Object.assign(pageDef.resource, result.res);
-      //  this.initPagesAndGroups();
-        this.igChanging.emit(true);
+         this.initPagesAndGroups();
+         this.igChanging.emit(true);
       }
     ).catch((err) => {
+      console.log(err);
     });
 
   }
@@ -688,8 +691,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       newPage.nameUrl = Globals.getCleanFileName(newPage.title).toLowerCase() + '.html';
     }
     resource["name"]  = newPage.nameUrl.slice(0, newPage.nameUrl.indexOf("."));
-    this.pagesMap[resource["name"]] = resource;
-
     pageDef.page.page.push(newPage);
 
     this.initPagesAndGroups();
@@ -726,18 +727,16 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       }
 
     }
-    let map = this.pagesMap;
     //remove resource
-    if (pageDef.resource['id']) {
-      this.nonFhirResourceService.delete(pageDef.resource.id).subscribe({
+    if (pageDef.resource['name']) {
+      this.nonFhirResourceService.deleteByName(pageDef.resource, this.implementationGuideId).subscribe({
         next: (page: Page) => {
           let index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
-            return ref.value === pageDef.resource.id;
+            return ref.value === page.id;
           });
 
           if (index > -1) {
             this.fhirResource.references.splice(index, 1);
-            delete map[pageDef.resource.name];
           }
           this.initPagesAndGroups();
           this.igChanging.emit(true);
@@ -967,13 +966,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     // get the resource
     let resource = new Page();
     resource.name  = page.nameUrl.slice(0,page.nameUrl.indexOf("."));
-    let existingResource = page.nameUrl ? this.pagesMap[resource["name"]] : undefined;
+    //let existingResource = page.nameUrl ? this.pagesMap[resource["name"]] : undefined;
 
     this.pages.push({
       page: page,
       level: level,
       parent: parent,
-      resource: existingResource ? existingResource : resource
+      resource: resource
     });
     if (page.page) {
       for (let i = 0; i < page.page.length; i++) {
@@ -984,20 +983,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   }
 
-  loadPages() {
-    this.nonFhirResourceService.search(1, 'name', '{"content": 0}', this.implementationGuideId, NonFhirResourceType.Page).subscribe({
-      next: (res: Paginated<Page>) => {
-        res.results.forEach(result => {
-          this.pagesMap[result.name] = result;
-        });
-      },
-      error: () => {
-      },
-      complete: () => {
-        this.initPagesAndGroups();
-      }
-    });
-  }
 
   private initPagesAndGroups() {
     this.pages = [];
@@ -1203,7 +1188,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       this.fhirResource.resource = this.implementationGuide;
     }
     this.igChanging.emit(isDirty);
-    this.loadPages();
-
+    this.initPagesAndGroups();
   }
 }

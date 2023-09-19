@@ -4,7 +4,7 @@ import {NonFhirResourceDocument} from './non-fhir-resource.schema';
 import {InjectConnection} from '@nestjs/mongoose';
 import {Connection, Model} from 'mongoose';
 import {IHistory, INonFhirResource, NonFhirResource, NonFhirResourceType} from '@trifolia-fhir/models';
-import {addPageToImplementationGuide, addToImplementationGuideNew, removeFromImplementationGuideNew} from '../helper';
+import {addPageToImplementationGuide, addToImplementationGuideNew, removeFromImplementationGuideNew, removePageFromImplementationGuide} from '../helper';
 import {HistoryService} from '../history/history.service';
 import {FhirResourcesService} from '../fhirResources/fhirResources.service';
 import {TofNotFoundException} from '../../not-found-exception';
@@ -220,11 +220,20 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
 
     }
 
-    public async delete(id: string): Promise<NonFhirResourceDocument> {
+    public async delete(id: string, implementationGuideId?: string): Promise<NonFhirResourceDocument> {
       // remove from IG
-      let resource = await this.getModel().findById(id);
-      await removeFromImplementationGuideNew(this.fhirResourceService, resource);
+
+      let resource : NonFhirResourceDocument = await this.getModel().findById(id);
+      let type = resource.type;
+
+      if(type === NonFhirResourceType.Page){
+        await removePageFromImplementationGuide(this.fhirResourceService, resource);
+      }
+      else {
+        await removeFromImplementationGuideNew(this.fhirResourceService, resource);
+      }
       resource.isDeleted= true;
+
       return this.castToModel(await this.getModel(resource).findByIdAndUpdate(id, { $set: { isDeleted: true } }));
     }
 

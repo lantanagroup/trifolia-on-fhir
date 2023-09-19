@@ -24,8 +24,10 @@ import {ConfigService} from './config.service';
 import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
 import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import {TofLogger} from './tof-logger';
-import {IFhirResource, INonFhirResource, IProjectResourceReference, Page} from '@trifolia-fhir/models';
+import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, Page} from '@trifolia-fhir/models';
 import {FhirResourcesService} from './fhirResources/fhirResources.service';
+import {ObjectId} from 'mongodb';
+import {FhirResource} from './fhirResources/fhirResource.schema';
 
 declare var jasmine;
 
@@ -561,16 +563,22 @@ export async function addToImplementationGuide(httpService: HttpService, configS
 }
 
 function searchPage(page: ImplementationGuidePageComponent, name: string) {
+  let result;
   if (!page) {
     return false;
   }
 
-  if (page.nameUrl === name) return true;
-
-  if (page.page) {
-    for (let i = 0; i < page.page.length; i++) {
-      searchPage(page.page[i], name);
+  if (page.nameUrl === name) return page;
+  else {
+    if (page.page) {
+      for (let i = 0; i < page.page.length; i++) {
+        result = searchPage(page.page[i], name);
+        if (result !== false) {
+          return result;
+        }
+      }
     }
+    return false;
   }
 }
 
@@ -590,7 +598,7 @@ export async function addPageToImplementationGuide(service: FhirResourcesService
       r4.definition.page = new ImplementationGuidePageComponent(newPage);
 
     } else {
-      let foundResource = searchPage(<ImplementationGuidePageComponent>r4.definition.page, pageToAdd.name + ".html");
+      let foundResource = searchPage(<ImplementationGuidePageComponent>r4.definition.page, pageToAdd.name + '.html');
       // check all levels
       if (!foundResource) {
         const newPage = new ImplementationGuidePageComponent();
@@ -602,30 +610,31 @@ export async function addPageToImplementationGuide(service: FhirResourcesService
         }
         r4.definition.page.page.push(newPage);
       }
-      implGuideResource.references = implGuideResource.references || [];
-      // add to references if not already in the reference list
-      if (!implGuideResource.references.find((r: IProjectResourceReference) => {
-        if (r.valueType !== 'NonFhirResource') return false;
-        if (r.value && r.value.toString() === pageToAdd.id) return true;
-      })) {
-        implGuideResource.references.push({ value: pageToAdd, valueType: 'NonFhirResource' });
-      }
     }
-    if (implGuideResource.id) {
-      let conf = await service.findById(implGuideResource.id);
-      if (conf) {
-        let conf1 = await service.updateOne(implGuideResource.id, implGuideResource);
-      } else {
-        console.log('Ig ' + implGuideResource.id + ' does not exist');
-      }
-    } else {
-      console.log('Ig ' + implGuideResource.id + ' does not exist');
+    implGuideResource.references = implGuideResource.references || [];
+    // add to references if not already in the reference list
+    if (!implGuideResource.references.find((r: IProjectResourceReference) => {
+      if (r.valueType !== 'NonFhirResource') return false;
+      if (r.value && r.value.toString() === pageToAdd.id) return true;
+    })) {
+      implGuideResource.references.push({ value: pageToAdd, valueType: 'NonFhirResource' });
     }
-
   }
   // TO-DO for all Ig types
 
+  if (implGuideResource.id) {
+    let conf = await service.findById(implGuideResource.id);
+    if (conf) {
+      let conf1 = await service.updateOne(implGuideResource.id, implGuideResource);
+    } else {
+      console.log('Ig ' + implGuideResource.id + ' does not exist');
+    }
+  } else {
+    console.log('Ig ' + implGuideResource.id + ' does not exist');
+  }
+
 }
+
 
 export async function addToImplementationGuideNew(service: FhirResourcesService, resourceToAdd: IFhirResource | INonFhirResource, implementationGuideId: string, isExample: boolean = false): Promise<void> {
   // Don't add implementation guides to other implementation guides (or itself).
@@ -913,6 +922,108 @@ function getName(name: any) {
     }
   }
 }
+
+
+
+export async function removePageFromImplementationGuide(service: FhirResourcesService, pageToRemove: INonFhirResource): Promise<void> {
+
+  // let pageUrl = pageToRemove.name + '.html';
+
+  // remove from all version 4 Ig-s that reference it  -- later based on permissions
+  let confRes = [];
+
+  function findPage(page, parent, searchPageName) {
+    let pageName = page.nameUrl.substring(0, page.nameUrl.indexOf('.html'));
+    if (pageName === searchPageName) {
+       return {page, parent};
+    } else {
+        for (let i = 0; i < page.page.length; i++) {
+          let result = findPage(page.page[i], page, searchPageName);
+          if (result !== false) {
+            return result;
+          }
+        }
+        return false;
+    }
+  }
+
+ function removePage(result, ig) {
+   if (result.parent) {
+     // Move child pages to the parent's children
+     if (result.page.page) {
+       result.parent.page.push(...result.page.page);
+     }
+
+     // Remove the page
+     const pageIndex = result.parent.page.indexOf(result.page);
+     result.parent.page.splice(pageIndex, 1);
+   } else {
+     // Remove the root page
+     const children = ig.definition.page.page;
+     delete ig.definition.page;
+
+     // If there are children, move the first child to the root page
+     if (children && children.length >= 1) {
+       ig.definition.page = children[0];
+       children.splice(0, 1);
+
+       if (children.length > 0) {
+         ig.definition.page.page = ig.definition.page.page || [];
+         ig.definition.page.page.splice(0, 0, ...children);
+       }
+     }
+   }
+ }
+
+  async function updateReference(conf: IFhirResource) {
+    let fhirResource: FhirResource = await service.getModel().findById(conf.id).populate('references.value');
+    (fhirResource.references || []).forEach((r: IProjectResourceReference, index) => {
+      if (!r.value || typeof r.value === typeof '') return;
+      if (r.valueType === 'NonFhirResource') {
+        const val: NonFhirResource = <NonFhirResource>r.value;
+        if (val.id === pageToRemove.id) {
+          conf.references.splice(index, 1);
+        }
+      }
+    });
+  }
+
+  for (const refBy of (pageToRemove.referencedBy || [])) {
+    confRes.push(<IFhirResource>await service.findById(refBy.value.toString()));
+  }
+
+  for (const conf of (confRes || [])) {
+    if (conf.resource.resourceType == 'ImplementationGuide') {
+      let ig = <R4ImplementationGuide>conf.resource;
+      // remove page
+      let result = findPage(ig.definition.page, undefined, pageToRemove.name);
+      if(result) {
+        removePage(result, ig);
+      }
+      // remove reference
+      await updateReference(conf);
+
+      await service.updateOne(conf.id, conf);
+    }
+  }
+
+  // remove from all version 3 Ig-s that reference it  - later based on permissions
+  /*for (const conf of (confRes || [])) {
+    if (conf.resource.resourceType == 'ImplementationGuide') {
+      let ig = <STU3ImplementationGuide>conf.resource;
+
+      // remove page
+      let result = findPage(ig.page, undefined, pageToRemove.name);
+      removePage(result, ig);
+      // remove reference
+      await updateReference(conf);
+
+      await service.updateOne(conf.id, conf);
+    }
+  }*/
+
+}
+
 
 
 export async function removeFromImplementationGuideNew(service: FhirResourcesService, resourceToRemove: IFhirResource | INonFhirResource): Promise<void> {
