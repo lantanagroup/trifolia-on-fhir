@@ -51,10 +51,13 @@ export class ProjectComponent extends BaseComponent implements OnInit,  DoCheck 
   public save() {
 
     this.projectService.save(this.project)
-      .subscribe((pr: IProject) => {
-        this.message = 'Your changes have been saved!';
-      }, (err) => {
-        this.message = 'An error occurred while saving the code system: ' + getErrorString(err);
+      .subscribe({
+        next: (pr: IProject) => {
+          this.message = 'Your changes have been saved!';
+        }, 
+        error: (err) => {
+          this.message = 'An error occurred while saving the project: ' + getErrorString(err);
+        }
       });
   }
 
@@ -67,12 +70,14 @@ export class ProjectComponent extends BaseComponent implements OnInit,  DoCheck 
 
     if (!this.isNew) {
 
-      this.projectService.getProject(projectId)
-        .subscribe((project) => {
-          this.project = <IProject>project;
-        }, (err) => {
+      this.projectService.getProject(projectId).subscribe({
+        next: (project: IProject) => {
+          this.project = project;
+        }, 
+        error: (err) => {
           this.message = getErrorString(err);
-        });
+        }
+      });
     }
   }
 

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type {IFhirResource, IPermission,  IProjectResourceReference} from '@trifolia-fhir/models';
+import type {IFhirResource, IPermission,  IProject,  IProjectResourceReference} from '@trifolia-fhir/models';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
@@ -18,7 +18,7 @@ export class FhirResource extends BaseEntity implements IFhirResource {
     description?: string;
 
     @Prop([{type: mongoose.Schema.Types.ObjectId, ref: Project.name }])
-    projects?: Project[];
+    projects?: IProject[];
 
     @Prop()
     migratedFrom?: string;

@@ -6,7 +6,7 @@ import type { IProjectResourceReference } from '@trifolia-fhir/models';
 
 export type ProjectDocument = HydratedDocument<Project>;
 
-@Schema({ collection: 'project' })
+@Schema({ collection: 'project', toJSON: { getters: true } })
 export class Project extends BaseEntity implements IProject {
 
     @Prop()
@@ -21,7 +21,14 @@ export class Project extends BaseEntity implements IProject {
     @Prop()
     fhirVersion: 'stu3'|'r4'|'r5';
 
-    @Prop()
+    @Prop({
+        get: (permissions: IPermission[]) : IPermission[] => {
+            if (!permissions || permissions.length < 1) {
+                return [{type: 'everyone', grant: 'read'}, {type: 'everyone', grant: 'write'}];
+            }
+            return permissions;
+        }
+    })
     permissions?: IPermission[];
 
     @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'referencedBy.valueType'}, valueType: {type:String, enum:['Project']}}])
@@ -36,4 +43,4 @@ export class Project extends BaseEntity implements IProject {
 
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
-
+ProjectSchema.loadClass(Project);

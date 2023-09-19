@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CodeSystemService} from '../shared/code-system.service';
-import {CodeSystem} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { CodeSystem } from '@trifolia-fhir/stu3';
 import {ChangeResourceIdModalComponent} from '../modals/change-resource-id-modal/change-resource-id-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ConfigService} from '../shared/config.service';
@@ -10,14 +10,15 @@ import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
 import {ActivatedRoute} from '@angular/router';
+import { IFhirResource } from '@trifolia-fhir/models';
 
 @Component({
   templateUrl: './codesystems.component.html',
   styleUrls: ['./codesystems.component.css']
 })
 export class CodesystemsComponent extends BaseComponent implements OnInit {
-  public codeSystem;
-  public total: string;
+  public codeSystems: Array<IFhirResource>;
+  public total: number;
   public nameText: string;
   public page = 1;
   public criteriaChangedEvent = new Subject<void>();
@@ -38,20 +39,12 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
       });
   }
 
-  public get codeSystems(): CodeSystem[] {
-    if (!this.codeSystem) {
-      return [];
-    }
-
-    return (this.codeSystem.results || []).map((entry) => <CodeSystem>entry);
-  }
-
-  public isEditDisabled(codeSystem: CodeSystem) {
+  public isEditDisabled(codeSystem: IFhirResource) {
     if (!this.configService.config || !this.configService.config.nonEditableResources || !this.configService.config.nonEditableResources.codeSystems) {
       return false;
     }
 
-    const isNonEditable = this.configService.config.nonEditableResources.codeSystems.indexOf(codeSystem.url) >= 0;
+    const isNonEditable = this.configService.config.nonEditableResources.codeSystems.indexOf((<CodeSystem>codeSystem.resource).url) >= 0;
 
     return isNonEditable || !this.canEdit(codeSystem);
   }
@@ -68,18 +61,21 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
     this.criteriaChangedEvent.next();
   }
 
-  public remove(codeSystem: CodeSystem) {
-    if (!confirm(`Are you sure you want to delete the code system ${codeSystem.title || codeSystem.name || codeSystem.id}`)) {
+  public remove(codeSystem: IFhirResource) {
+    if (!confirm(`Are you sure you want to delete the code system "${(<CodeSystem>codeSystem.resource).title || (<CodeSystem>codeSystem.resource).name || codeSystem.id}"`)) {
       return;
     }
 
     this.codeSystemService.delete(codeSystem.id)
-      .subscribe(() => {
-        const entry = (this.codeSystem.results || []).find((e) => e.id === codeSystem.id);
-        const index = this.codeSystem.results.indexOf(entry);
-        this.codeSystem.results.splice(index, 1);
-      }, (err) => {
-        this.configService.handleError(err, 'An error occurred while deleting the code system');
+      .subscribe({ 
+        next: () => {
+          const entry = (this.codeSystems || []).find((e) => e.id === codeSystem.id);
+          const index = this.codeSystems.indexOf(entry);
+          this.codeSystems.splice(index, 1);
+        }, 
+        error: (err) => {
+          this.configService.handleError(err, 'An error occurred while deleting the code system');
+        }
       });
   }
 
@@ -98,8 +94,8 @@ export class CodesystemsComponent extends BaseComponent implements OnInit {
 
   public async getCodeSystems() {
     await this.codeSystemService.searchCodeSystem(this.page, this.nameText, this.getImplementationGuideId()).toPromise().then((results) => {
-      this.codeSystem = results;
-      this.total = this.codeSystem.total;
+      this.codeSystems = results.results;
+      this.total = results.total;
     }).catch((err) => console.log(err));
 
   }

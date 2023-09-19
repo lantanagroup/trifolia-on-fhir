@@ -43,7 +43,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     public configService: ConfigService,
     protected authService: AuthService,
     protected fhirResourceService: FhirResourceService,
-    protected examplesService: NonFhirResourceService,
+    protected nonFhirResourceService: NonFhirResourceService,
     protected implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
@@ -102,7 +102,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     //this.isExample = this.route.snapshot.params.type === 'fhir-example' || this.route.snapshot.params.type === 'nonfhir-example';
 
     if (!this.isFhir) {
-      this.examplesService.get(this.route.snapshot.params.id).subscribe({
+      this.nonFhirResourceService.get(this.route.snapshot.params.id).subscribe({
         next: (res: INonFhirResource) => {
           this.resource = res;
           this.content = res.content;
@@ -110,16 +110,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
           if (typeof res.content !== typeof '') {
             this.content = JSON.stringify(res.content, null, '\t');
           }
-
-          try {
-            let res = JSON.parse(this.content);
-            if (res['resourceType']) {
-              this.isFhir = true;
-            }
-          } catch (error) {
-            this.isFhir = false;
-          }
-          this.validation = this.fhirService.validate((<INonFhirResource>this.resource).content);
+          
           setTimeout(() => {
             this.message = 'Example opened.';
           }, 100);
@@ -240,7 +231,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     if (this.isFhir) {
       request = this.fhirResourceService.save(this.resource.id, <IFhirResource>this.resource, this.configService.project?.implementationGuideId, this.isExample);
     } else {
-      request = this.examplesService.save(this.resource.id, <INonFhirResource>this.resource, this.configService.project?.implementationGuideId);
+      request = this.nonFhirResourceService.save(this.resource.id, <INonFhirResource>this.resource, this.configService.project?.implementationGuideId);
     }
 
     request.subscribe({
@@ -265,7 +256,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     if (this.isFhir) {
       request = this.fhirResourceService.delete(this.resource.id);
     } else {
-      request = this.examplesService.delete(this.resource.id);
+      request = this.nonFhirResourceService.delete(this.resource.id);
     }
 
     request.subscribe({

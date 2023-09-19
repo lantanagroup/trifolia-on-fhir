@@ -2,7 +2,7 @@ import {AuthService} from './shared/auth.service';
 import {DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {findPermission} from '../../../../libs/tof-lib/src/lib/helper';
 import {ConfigService} from './shared/config.service';
-import {IProject, IProjectResource} from '@trifolia-fhir/models';
+import {IPermission, IProject, IProjectResource} from '@trifolia-fhir/models';
 
 export class BaseComponent {
   protected _isDirty = false;
@@ -22,7 +22,7 @@ export class BaseComponent {
     this.configService.updateIsChanged(this.isDirty);
   }
 
-  private canReadOrWrite(resource: IProject|IProjectResource, permission: 'read'|'write') {
+  private canReadOrWrite(resource: IProjectResource, permission: 'read'|'write') {
     // Security is not enabled
     if (!this.configService.config.enableSecurity) {
       return true;
@@ -38,20 +38,23 @@ export class BaseComponent {
       return false;
     }
 
-    const foundEveryone = findPermission(resource.permissions, 'everyone', permission);
-    const foundUser = findPermission(resource.permissions, 'user', permission, this.authService.user.id);
+    // Get permissions for the project that contains this resource
+    const permissions: Array<IPermission> = resource.permissions;//[];
+
+    const foundEveryone = findPermission(permissions, 'everyone', permission);
+    const foundUser = findPermission(permissions, 'user', permission, this.authService.user.id);
     const foundGroups = this.authService.groups.filter((group) => {
-      return findPermission(resource.permissions, 'group', permission, group.id);
+      return findPermission(permissions, 'group', permission, group.id);
     }).length > 0;
 
     return foundEveryone || foundUser || foundGroups;
   }
 
-  public canView(resource: IProject|IProjectResource|DomainResource) {
+  public canView(resource: IProjectResource) {
     return this.canReadOrWrite(<IProjectResource>resource, 'read');
   }
 
-  public canEdit(resource: IProject|IProjectResource|DomainResource) {
+  public canEdit(resource: IProjectResource) {
     return this.canReadOrWrite(<IProjectResource>resource, 'write');
   }
 }

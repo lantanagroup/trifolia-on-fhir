@@ -18,15 +18,18 @@ export interface IBaseEntity {
   id?: string;
 }
 
-export interface IProject extends IBaseEntity {
+export interface IBaseEntityReferences extends IBaseEntity {
+  referencedBy?: IProjectResourceReference[];
+  references?: IProjectResourceReference[];
+}
+
+export interface IProject extends IBaseEntityReferences {
   migratedFrom?: string;
   name: string;
   author: string;
   contributors?: IProjectContributor[];
   fhirVersion: 'stu3'|'r4'|'r5';
   permissions?: IPermission[];
-  referencedBy?: IProjectResourceReference[];
-  references: IProjectResourceReference[];
   isDeleted: boolean;
 }
 
@@ -47,7 +50,7 @@ export interface IGroup extends IBaseEntity {
   members?: IUser[];
 }
 
-export interface IProjectResource extends IBaseEntity {
+export interface IProjectResource extends IBaseEntityReferences {
   name?: string;
   description?: string;
   projects?: IProject[];
@@ -56,8 +59,6 @@ export interface IProjectResource extends IBaseEntity {
   versionId: number;
   lastUpdated: Date;
   permissions?: IPermission[];
-  referencedBy?: IProjectResourceReference[];
-  references?: IProjectResourceReference[];
   isDeleted?: boolean;
 }
 

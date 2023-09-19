@@ -14,10 +14,10 @@
 
 <br/>
 
-<div *ngIf="codeSystem && codeSystem.total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
+<div *ngIf="codeSystems && total > 0" [attr.data-intro]="Globals.introText['browse.paging']">
     <ngb-pagination class="d-flex justify-content-center"
                     [maxSize]="5"
-                    [collectionSize]="codeSystem.total"
+                    [collectionSize]="total"
                     [(page)]="page"
                     [boundaryLinks]="true"
                     (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
@@ -78,13 +78,13 @@
     </tr>
     </tbody>
     <tfoot>
-    <tr *ngIf="codeSystem && codeSystem.total === 0">
+    <tr *ngIf="codeSystems && total === 0">
         <td colspan="3">No code systems! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/code-system/new">here</a>...</td>
     </tr>
-    <tr *ngIf="codeSystem && codeSystem.total > 0">
+    <tr *ngIf="codeSystems && total > 0">
         <td colspan="3">
             <ngb-pagination class="d-flex justify-content-center" [maxSize]="5"
-                            [collectionSize]="codeSystem.total" [(page)]="page" [boundaryLinks]="true"
+                            [collectionSize]="total" [(page)]="page" [boundaryLinks]="true"
                             (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
         </td>
     </tr>

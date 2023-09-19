@@ -226,22 +226,11 @@ export class AuthService {
 
   /**
    * Creates a default "meta" object that can be assigned to new resources.
-   * Currently defaults the security tags to include "everyone" with both "read" and "write" access.
-   * That *could* be changed to be specific to the currently logged-in user, which is why this method
-   * exists on the AuthService.
+   * This previously contained creating default security tags, but that is no longer needed with permissions moving to the project level.
+   * This is kept here for any potential future use.
    */
   public getDefaultMeta(): Meta {
-    const meta = new Meta();
-
-    if (this.configService.project) {
-      meta.security = this.configService.project.securityTags;
-    }
-
-    if (!meta.security || meta.security.length === 0) {
-      //addPermission(meta, 'everyone', 'write');
-    }
-
-    return meta;
+    return new Meta();
   }
 
 

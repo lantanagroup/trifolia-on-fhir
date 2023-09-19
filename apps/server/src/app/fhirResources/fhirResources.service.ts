@@ -14,6 +14,7 @@ import { TofNotFoundException } from '../../not-found-exception';
 import { LinkComponent, Binary as STU3Binary, Bundle as STU3Bundle, EntryComponent as STU3BundleEntryComponent } from '@trifolia-fhir/stu3';
 import { Binary as R4Binary, Bundle as R4Bundle, BundleEntryComponent as R4BundleEntryComponent } from '@trifolia-fhir/r4';
 import { Binary as R5Binary, Bundle as R5Bundle, BundleEntry as R5BundleEntryComponent } from '@trifolia-fhir/r5';
+import { ProjectsService } from '../projects/projects.service';
 
 @Injectable()
 export class FhirResourcesService extends BaseDataService<FhirResourceDocument> {
@@ -24,7 +25,8 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
     constructor(
         @InjectModel(FhirResource.name) private fhirResourceModel: Model<FhirResourceDocument>,
         @InjectModel(NonFhirResource.name) private nonFhirResourceModel: Model<NonFhirResource>,
-        private readonly historyService: HistoryService
+        private readonly historyService: HistoryService,
+        private readonly projectsService: ProjectsService
     ) {
         super(fhirResourceModel);
     }
@@ -62,6 +64,14 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         newFhirResource.versionId = versionId;
         newFhirResource.isDeleted = false;
         newFhirResource.lastUpdated = lastUpdated;
+
+        if (!newFhirResource.projects) {
+            newFhirResource.projects = [];
+            if (implementationGuideId) {
+                const projects = await this.projectsService.findAll({'references.valueType':'FhirResource', 'references.value': new ObjectId(implementationGuideId)});
+                newFhirResource.projects.push(... (projects || []).map(p => p.id));
+            }
+        }
 
         if (newFhirResource.resource.resourceType !== 'ImplementationGuide' && implementationGuideId) {
           newFhirResource.referencedBy = newFhirResource.referencedBy || [];
@@ -235,6 +245,20 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         // update every property supplied from updated object
         for (let key in upFhirResource) {
             existing[key] = upFhirResource[key];
+        }
+
+
+        // ensure project references are set
+        if (!existing.projects) {
+            existing.projects = [];
+        }
+        if (implementationGuideId) {
+            const projects = await this.projectsService.findAll({'references.valueType':'FhirResource', 'references.value': new ObjectId(implementationGuideId)});
+            (projects || []).forEach(p => {
+                if (!existing.projects.some(r => ('id' in r && r.id === p.id) || (r.toString() === p.id))) {
+                    existing.projects.push(p);
+                }
+            });
         }
 
         // set version and timestamp

@@ -61,7 +61,7 @@ export class AppComponent implements OnInit {
         } else {
           this.configService.project = null;
         }
-        this.configService.project = await this.getContext(implementationGuideId);
+        this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
         this.configService.isChanged = false;
       } else if (event instanceof NavigationEnd) {
         if (this.configService.config.googleAnalyticsCode && event.urlAfterRedirects.indexOf('access_token=') < 0) {
@@ -158,12 +158,12 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private async getContext(implementationGuideId: string): Promise<ImplementationGuideContext> {
+  private async getImplementationGuideContext(implementationGuideId: string): Promise<ImplementationGuideContext> {
     if (!implementationGuideId) {
       return Promise.resolve(this.configService.project);
     }
 
-    if (this.configService.project && this.configService.project.implementationGuideId === implementationGuideId && this.configService.project.name && this.configService.project.securityTags) {
+    if (this.configService.project && this.configService.project.implementationGuideId === implementationGuideId && this.configService.project.name) {
       return Promise.resolve(this.configService.project);
     }
 

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { HistoryModule } from '../history/history.module';
 import { FhirResourcesController } from './fhirResources.controller';
@@ -6,10 +6,12 @@ import { FhirResource, FhirResourceSchema } from './fhirResource.schema';
 import { FhirResourcesService } from './fhirResources.service';
 import { NonFhirResourceSchema } from '../non-fhir-resources/non-fhir-resource.schema';
 import { NonFhirResource } from '@trifolia-fhir/models';
+import { ProjectsModule } from '../projects/projects.module';
 
 @Module({
   imports:[
-    HistoryModule,
+    forwardRef(() => HistoryModule),
+    forwardRef(() => ProjectsModule),
     MongooseModule.forFeature([
       { name: FhirResource.name, schema: FhirResourceSchema },
       { name: NonFhirResource.name, schema: NonFhirResourceSchema }

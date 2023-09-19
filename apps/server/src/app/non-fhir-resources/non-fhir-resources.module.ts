@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { NonFhirResourceSchema } from './non-fhir-resource.schema';
 import { NonFhirResourcesController } from './non-fhir-resources.controller';
@@ -7,6 +7,7 @@ import { HistoryModule } from '../history/history.module';
 import { FhirResourcesModule } from '../fhirResources/fhirResources.module';
 import { CdaExampleSchema, OtherNonFhirResourceSchema , PageSchema, StructureDefinitionIntroSchema, StructureDefinitionNotesSchema} from './types';
 import { NonFhirResource, NonFhirResourceType } from '@trifolia-fhir/models';
+import { ProjectsModule } from '../projects/projects.module';
 //import {PageSchema} from './types/page.schema';
 
 @Module({
@@ -24,8 +25,9 @@ import { NonFhirResource, NonFhirResourceType } from '@trifolia-fhir/models';
                 ]
             }
         ]),
-        FhirResourcesModule,
-        HistoryModule
+        forwardRef(() => FhirResourcesModule),
+        forwardRef(() => HistoryModule),
+        forwardRef(() => ProjectsModule)
     ],
     controllers: [NonFhirResourcesController],
     exports: [NonFhirResourcesService],

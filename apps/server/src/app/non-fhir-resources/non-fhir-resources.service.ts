@@ -10,6 +10,8 @@ import {FhirResourcesService} from '../fhirResources/fhirResources.service';
 import {TofNotFoundException} from '../../not-found-exception';
 import {IBaseDataService} from '../base/interfaces';
 import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
+import { ObjectId } from 'mongodb';
+import { ProjectsService } from '../projects/projects.service';
 
 @Injectable()
 export class NonFhirResourcesService implements IBaseDataService<NonFhirResourceDocument> {
@@ -19,7 +21,8 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
     constructor(
         @InjectConnection() private connection: Connection,
         private readonly fhirResourceService: FhirResourcesService,
-        private readonly historyService: HistoryService) {
+        private readonly historyService: HistoryService,
+        private readonly projectsService: ProjectsService) {
     }
 
 
@@ -103,10 +106,6 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         delete newNonFhirResource.id;
         delete newNonFhirResource['_id'];
 
-      /*  if (!newNonFhirResource.content) {
-            throw new BadRequestException(`No content provided.`);
-        }
-     */
         // ensure version ID and lastUpdated are set
         newNonFhirResource.versionId = versionId;
         newNonFhirResource.lastUpdated = lastUpdated;
@@ -116,6 +115,14 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
             newNonFhirResource.referencedBy = newNonFhirResource.referencedBy || [];
             if (!newNonFhirResource.referencedBy.some(o => o.value === implementationGuideId)) {
                 newNonFhirResource.referencedBy.push({ value: implementationGuideId, valueType: 'FhirResource' });
+            }
+        }
+
+        if (!newNonFhirResource.projects) {
+            newNonFhirResource.projects = [];
+            if (implementationGuideId) {
+                const projects = await this.projectsService.findAll({'references.valueType':'FhirResource', 'references.value': new ObjectId(implementationGuideId)});
+                newNonFhirResource.projects.push(... (projects || []).map(p => p.id));
             }
         }
 
@@ -174,10 +181,6 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
             throw new TofNotFoundException();
         }
 
-     /*   if (!upNonFhirResource.content) {
-            throw new BadRequestException(`No content provided.`);
-        }*/
-
         // increment version
         if (existing.versionId) {
             versionId = existing.versionId + 1;
@@ -186,6 +189,19 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         // update every property supplied from updated object
         for (let key in upNonFhirResource) {
             existing[key] = upNonFhirResource[key];
+        }
+
+        // ensure project references are set
+        if (!existing.projects) {
+            existing.projects = [];
+        }
+        if (implementationGuideId) {
+            const projects = await this.projectsService.findAll({'references.valueType':'FhirResource', 'references.value': new ObjectId(implementationGuideId)});
+            (projects || []).forEach(p => {
+                if (!existing.projects.some(r => ('id' in r && r.id === p.id) || (r.toString() === p.id))) {
+                    existing.projects.push(p);
+                }
+            });
         }
 
         // set version and timestamp

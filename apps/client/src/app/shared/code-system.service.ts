@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
-import {Bundle, CodeSystem, OperationOutcome} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IFhirResource, IProject} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 import { FhirResourceService } from './fhir-resource.service';
+import { Paginated } from '@trifolia-fhir/tof-lib';
 
 @Injectable()
 export class CodeSystemService extends FhirResourceService {
@@ -23,7 +22,7 @@ export class CodeSystemService extends FhirResourceService {
         }
     }
 
-    public searchCodeSystem(page = 1, name?: string, implementationGuideId?: string) :  Observable<IFhirResource[]> {
+    public searchCodeSystem(page = 1, name?: string, implementationGuideId?: string) :  Observable<Paginated<IFhirResource>> {
         let url = '/api/codeSystem?resourcetype=CodeSystem&page=' + page + '&';
 
         if (name) {
@@ -36,7 +35,7 @@ export class CodeSystemService extends FhirResourceService {
 
         url += '_sort=name';
 
-        return this.http.get<IFhirResource[]>(url);
+        return this.http.get<Paginated<IFhirResource>>(url);
     }
 
     public getCodeSystem(id: string): Observable<IFhirResource> {

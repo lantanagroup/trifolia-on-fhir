@@ -1,75 +1,101 @@
-<div class="row" *ngIf="project">
-  <div class="col-md-6">
-    <div class="mb-3">
-      <h6>Project ID</h6>
-      <div>
-        {{project.id}}
-      </div>
-    </div>
-    <div class="mb-3">
-      <h6>Project Name</h6>
-      <div [class.input-group]="true">
-        <input type="text" class="form-control" [disabled]="false" [(ngModel)]="project.name"  />
-      </div>
-    </div>
-    <div class="mb-3">
-      <h6>Author</h6>
-      <div>
-        {{project.author}}
-      </div>
-    </div>
-    <div class="mb-3">
-      <h6>FhirVersion</h6>
-      <div>
-        {{project.fhirVersion}}
-      </div>
-    </div>
-    <div class="mb-3">
-      <h6>Project Contributors</h6>
-      <div [class.input-group]="true">
-        <div *ngFor="let contr of project.contributors">
-          {{contr.user}}
+<ng-container *ngIf="project">
+  <h2>
+    {{project.name || 'no-name'}} <span class="badge bg-warning" *ngIf="!canEdit(project)">View-only</span>
+  </h2>
+  <ul ngbNav #nav="ngbNav" class="nav-tabs">
+    <li ngbNavItem>
+      <a ngbNavLink>General</a>
+      <ng-template ngbNavContent>
+
+        <div class="row">
+          <div class="mb-3">
+            <h6>Project ID</h6>
+            <div>
+              {{project.id}}
+            </div>
+          </div>
+          <div class="mb-3">
+            <h6>Project Name</h6>
+            <div [class.input-group]="true">
+              <input type="text" class="form-control" [disabled]="false" [(ngModel)]="project.name" />
+            </div>
+          </div>
+          <div class="mb-3">
+            <h6>Author</h6>
+            <div>
+              {{project.author}}
+            </div>
+          </div>
+          <div class="mb-3">
+            <h6>FhirVersion</h6>
+            <div>
+              {{project.fhirVersion}}
+            </div>
+          </div>
+          <div class="mb-3">
+            <h6>Project Contributors</h6>
+            <div [class.input-group]="true">
+              <div *ngFor="let contr of project.contributors">
+                {{contr.user}}
+              </div>
+            </div>
+          </div>
+
+
         </div>
-      </div>
-    </div>
+
+
+      </ng-template>
+    </li>
+
+    <li ngbNavItem *ngIf="configService.config.enableSecurity">
+      <a ngbNavLink>Permissions</a>
+      <ng-template ngbNavContent>
+        <trifolia-fhir-resource-permissions [resource]="project"></trifolia-fhir-resource-permissions>
+      </ng-template>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+
+  <hr />
+  <div class="row">
     <div class="mb-3">
-       <table class="table table-striped" *ngIf="project.references">
-          <thead>
-            <tr>
-              <th>
-                Implementation Guide ID
-                <app-tooltip-icon tooltipPath="Resource.id"></app-tooltip-icon>
-              </th>
-              <th>Implementation Guide Name</th>
-              <th>Implementation Guide Version</th>
-   <!--           <th>Published</th>-->
-            </tr>
-          </thead>
-          <tr *ngFor="let ref of project.references">
-            <td><a   role="button" routerLink="/projects/{{ref.value.id}}/implementation-guide"
-                     title="Edit Project Implementation Guides ">
-                     <i> {{ref.value.resource.id || ref.id}}</i>
-                </a>
-            </td>
-            <td>{{ref.value.resource.name}}</td>
-            <td>{{ref.value.fhirVersion}}</td>
-           <!-- <td>
-                <i *ngIf="ig.resource.published === true" class="fas fa-check" style="color:green" title="Success"></i>
-                <i *ngIf="ig.resource.published === false" class="fas fa-times" style="color:red" title="Failed"></i>
-                <i *ngIf="ig.resource.published === null" class="fas fa-question" style="color:black" title="Not Published"></i>
-            </td>-->
+      <table class="table table-striped" *ngIf="project.references">
+        <thead>
+          <tr>
+            <th>
+              Implementation Guide ID
+              <app-tooltip-icon tooltipPath="Resource.id"></app-tooltip-icon>
+            </th>
+            <th>Implementation Guide Name</th>
+            <th>Implementation Guide Version</th>
+            <!--           <th>Published</th>-->
           </tr>
-        </table>
+        </thead>
+        <tr *ngFor="let ref of project.references">
+          <td><a role="button" routerLink="/projects/{{ref.value.id}}/implementation-guide"
+              title="Edit Project Implementation Guides ">
+              <i> {{ref.value.resource.id || ref.id}}</i>
+            </a>
+          </td>
+          <td>{{ref.value.resource.name}}</td>
+          <td>{{ref.value.fhirVersion}}</td>
+          <!-- <td>
+             <i *ngIf="ig.resource.published === true" class="fas fa-check" style="color:green" title="Success"></i>
+             <i *ngIf="ig.resource.published === false" class="fas fa-times" style="color:red" title="Failed"></i>
+             <i *ngIf="ig.resource.published === null" class="fas fa-question" style="color:black" title="Not Published"></i>
+         </td>-->
+        </tr>
+      </table>
     </div>
-
   </div>
-</div>
-<footer class="footer">
-  <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()">Save</button>
-    <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
-  </div>
-  <span class="message">{{message}}</span>
-</footer>
 
+  <footer class="footer">
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary" (click)="save()">Save</button>
+      <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
+    </div>
+    <span class="message">{{message}}</span>
+  </footer>
 
+</ng-container>

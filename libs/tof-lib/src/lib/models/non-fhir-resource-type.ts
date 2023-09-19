@@ -37,7 +37,7 @@ export abstract class NonFhirResource implements INonFhirResource {
     referencedBy?: IProjectResourceReference[];
     references?: IProjectResourceReference[];
     isDeleted?: boolean;
-    type: NonFhirResourceType;
+    type: NonFhirResourceType = NonFhirResourceType.OtherNonFhirResource;
 
 }
 
