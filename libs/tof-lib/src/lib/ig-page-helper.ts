@@ -39,7 +39,7 @@ export class IgPageHelper {
     }
 
     if (implementationGuide.contact) {
-      const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
+      const authorsData = (<any>implementationGuide.contact || []).map((contact: ContactDetail) => {
         const foundEmail = (contact.telecom || []).find(t => t.system === 'email');
         const foundURL = (contact.telecom || []).find(t => t.system === 'url');
 
@@ -60,17 +60,17 @@ export class IgPageHelper {
     return content;
   }
 
-  public static getSTU3PagesList(theList: PageInfo[], page: PageComponent, implementationGuide: STU3ImplementationGuide) {
+  public static getSTU3PagesList(theList: PageInfo[], pages: Page[], page: PageComponent, implementationGuide: STU3ImplementationGuide) {
     if (!page) {
       return theList;
     }
+
 
     if (page.source && !page.source.startsWith('http://') && !page.source.startsWith('https://')) {
       const contentExtension = (page.extension || []).find((ext) => ext.url === Globals.extensionUrls['extension-ig-page-content']);
 
       const pageInfo = new PageInfo();
       pageInfo.page = page;
-      pageInfo.fileName =  page.source.substring(0, page.source.lastIndexOf('.')) + page.getExtension();
 
       if (page.source) {
         if (page.source.lastIndexOf('.') > 0) {
@@ -80,16 +80,19 @@ export class IgPageHelper {
         }
       }
 
-      if (page.reuseDescription) {
+      // get the resource page
+      let pageFound = (pages || []).find(pageElem => pageElem.name == ((page.source.lastIndexOf('.') > 0) ? page.source.slice(0, page.source.indexOf('.')) : page.source));
+
+      if (pageFound && pageFound['reuseDescription']) {
         pageInfo.content = this.getIndexContent(implementationGuide);
       } else {
-        pageInfo.content = page.contentMarkdown || 'No content has been defined for this page, yet.';
+        pageInfo.content = pageFound.content || 'No content has been defined for this page, yet.';
       }
 
       theList.push(pageInfo);
     }
 
-    (page.page || []).forEach((next) => IgPageHelper.getSTU3PagesList(theList, next, implementationGuide));
+    (page.page || []).forEach((next) => IgPageHelper.getSTU3PagesList(theList, pages, next, implementationGuide));
 
     return theList;
   }
@@ -104,11 +107,11 @@ export class IgPageHelper {
     pageInfo.fileName = page.fileName || page.nameUrl;
 
     // get the resource page
-    let pageFound = (pages || []).find(pageElem => pageElem.name == page.nameUrl.slice(0, page.nameUrl.indexOf(".html")) );
+    let pageFound = (pages || []).find(pageElem => pageElem.name == page.nameUrl.slice(0, page.nameUrl.indexOf('.')));
 
     if (pageFound && pageFound['reuseDescription']) {
       pageInfo.content = this.getIndexContent(implementationGuide);
-     } else {
+    } else {
       pageInfo.content = pageFound.content || 'No content has been defined for this page, yet.';
     }
 
@@ -119,39 +122,32 @@ export class IgPageHelper {
     return theList;
   }
 
-  public static getMenuContent(pageInfos: PageInfo[]) {
-    const allPageMenuNames = pageInfos
-      .filter(pi => {
-        const extensions = <IExtension[]>(pi.page.extension || []);
-        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-        return !!extension && extension.valueString;
-      })
-      .map(pi => {
-        const extensions = <IExtension[]>(pi.page.extension || []);
-        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-        return escapeForXml(extension.valueString);
-      });
+  public static getMenuContent(pages: Page[]) {
+
+    const allPageMenuNames = pages
+      .filter(pg => !!pg.navMenu)
+      .map(pg => escapeForXml(pg.navMenu));
+
     const distinctPageMenuNames = allPageMenuNames.reduce((init, next) => {
       if (init.indexOf(next) < 0) init.push(next);
       return init;
     }, []);
+
     const pageMenuContent = distinctPageMenuNames.map(pmn => {
-      const menuPages = pageInfos
+      const menuPages = pages
         .filter(pi => {
-          const extensions = <IExtension[]>(pi.page.extension || []);
-          const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-          return extension && extension.valueString === pmn && pi.fileName;
+          return pi.navMenu && pi.navMenu === pmn;
         });
 
       if (menuPages.length === 1) {
-        const title = escapeForXml(menuPages[0].title);
-        const fileName = menuPages[0].fileName.substring(0, menuPages[0].fileName.lastIndexOf('.')) + '.html';
+        const title = escapeForXml(menuPages[0].name);
+        const fileName = menuPages[0].name + '.html';
         return `  <li><a href="${fileName}">${title}</a></li>\n`;
       } else {
         const pageMenuItems = menuPages
           .map(pi => {
-            const title = escapeForXml(pi.title);
-            const fileName = pi.fileName.substring(0, pi.fileName.lastIndexOf('.')) + '.html';
+            const title = escapeForXml(pi.name);
+            const fileName = pi.name + '.html';
             return `      <li><a href="${fileName}">${title}</a></li>`;   // TODO: Should not show fileName
           });
 

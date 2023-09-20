@@ -584,7 +584,7 @@ export class HtmlExporter {
       return;
     }
 
-    const menuContent = IgPageHelper.getMenuContent(this.pageInfos);
+    const menuContent = IgPageHelper.getMenuContent(this.pages);
     fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), menuContent);
   }
 
@@ -623,14 +623,14 @@ export class HtmlExporter {
     if (resource.resourceType === 'StructureDefinition') {
 
       // find this structure definition in the list of DB references from the containing IG
-      const sdRef = (this.igFhirResource.references || []).find((r: IProjectResourceReference) => 
-        r.valueType == FhirResource.name && typeof r.value == typeof {} 
+      const sdRef = (this.igFhirResource.references || []).find((r: IProjectResourceReference) =>
+        r.valueType == FhirResource.name && typeof r.value == typeof {}
         && (<IFhirResource>r.value).resource.resourceType === 'StructureDefinition'
         && (<IFhirResource>r.value).resource.id === resource.id
       );
 
-      if (!sdRef) { 
-        return; 
+      if (!sdRef) {
+        return;
       }
 
       // get this structure definition and its references from the database
@@ -642,13 +642,13 @@ export class HtmlExporter {
 
 
       // find any intro or notes referenced by this structure definition and write them to corresponding files
-      const intro = (dbRes.references || []).find((r: IProjectResourceReference) =>  
-        r.valueType == NonFhirResource.name && typeof r.value == typeof {} 
+      const intro = (dbRes.references || []).find((r: IProjectResourceReference) =>
+        r.valueType == NonFhirResource.name && typeof r.value == typeof {}
         && (<INonFhirResource>r.value).type === StructureDefinitionIntro.name
       );
 
-      const notes = (dbRes.references || []).find((r: IProjectResourceReference) =>  
-        r.valueType == NonFhirResource.name && typeof r.value == typeof {} 
+      const notes = (dbRes.references || []).find((r: IProjectResourceReference) =>
+        r.valueType == NonFhirResource.name && typeof r.value == typeof {}
         && (<INonFhirResource>r.value).type === StructureDefinitionNotes.name
       );
 

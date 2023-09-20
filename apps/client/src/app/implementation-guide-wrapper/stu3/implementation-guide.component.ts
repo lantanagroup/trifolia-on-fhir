@@ -26,9 +26,10 @@ import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-
 import { BaseImplementationGuideComponent } from '../base-implementation-guide-component';
 import { CanComponentDeactivate } from '../../guards/resource.guard';
 import { ProjectService } from '../../shared/projects.service';
-import {IFhirResource, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
-import { forkJoin } from 'rxjs';
+import {IFhirResource, IProjectResourceReference, IProjectResourceReferenceMap, Page} from '@trifolia-fhir/models';
+import {firstValueFrom, forkJoin} from 'rxjs';
 import { IDomainResource, getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
+import {NonFhirResourceService} from '../../shared/non-fhir-resource.service';
 
 
 class Parameter {
@@ -83,6 +84,7 @@ class PageDefinition {
   public page: PageComponent;
   public parent?: PageComponent;
   public level: number;
+  public resource: Page;
 }
 
 class ImplementationGuideResource {
@@ -127,6 +129,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     public implementationGuideService: ImplementationGuideService,
     private fileService: FileService,
     private fhirService: FhirService,
+    private nonFhirResourceService: NonFhirResourceService,
     protected authService: AuthService,
     public configService: ConfigService,
     public projectService: ProjectService) {
@@ -547,12 +550,24 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     this.initPages();
   }
 
-  public editPage(pageDef: PageDefinition) {
+  public async editPage(pageDef: PageDefinition) {
+
+    // get the page from db
+    pageDef.resource = await firstValueFrom(this.nonFhirResourceService.getByName(pageDef.resource, this.implementationGuideId));
+
     const modalRef = this.modalService.open(PageComponentModalComponent, { size: 'lg', backdrop: 'static' });
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
     componentInstance.implementationGuide = this.implementationGuide;
+
+    if (this.implementationGuide.page === pageDef.page) {
+      if(pageDef.resource.reuseDescription === undefined) {
+        pageDef.resource["reuseDescription"] = true; // initialize it
+      }
+    }
+
     componentInstance.setPage(pageDef.page);
+    componentInstance.setResource(pageDef.resource);
 
     modalRef.result.then((page: PageComponent) => {
       Object.assign(pageDef.page, page);
@@ -802,10 +817,16 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       return;
     }
 
+    // get the resource
+    let resource = new Page();
+    resource.name  = page.source.slice(0,page.source.indexOf("."));
+
+
     this.pages.push({
       page: page,
       level: level,
-      parent: parent
+      parent: parent,
+      resource: resource
     });
 
     if (page.page) {

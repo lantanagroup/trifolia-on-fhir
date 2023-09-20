@@ -171,7 +171,7 @@
               <app-tooltip-icon tooltipPath="ImplementationGuide.page.title"></app-tooltip-icon>
             </th>
             <th>
-              File Name (Source)
+              File Name (Source1)
               <app-tooltip-icon tooltipPath="ImplementationGuide.page.source"></app-tooltip-icon>
             </th>
             <th>
@@ -211,9 +211,9 @@
                 <button type="button" class="btn btn-default" (click)="removePage(p); igChanging.emit(true);" title="Remove this page and all children">
                   <i class="fas fa-trash-alt"></i>
                 </button>
-                <button type="button" class="btn btn-default" (click)="addChildPage(p); igChanging.emit(true);" title="Add a page as a child of this page">
+             <!--   <button type="button" class="btn btn-default" (click)="addChildPage(p); igChanging.emit(true);" title="Add a page as a child of this page">
                   <i class="fa fa-plus"></i>
-                </button>
+                </button>-->
                 <button type="button" class="btn btn-default" [disabled]="isMovePageUpDisabled(p)" (click)="movePageUp(p); igChanging.emit(true);" title="Move sibling page up">
                   <i class="fa fa-arrow-up"></i>
                 </button>

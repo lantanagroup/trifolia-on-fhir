@@ -212,7 +212,7 @@ export class STU3HtmlExporter extends HtmlExporter {
   }
 
   protected populatePageInfos() {
-    this.pageInfos = IgPageHelper.getSTU3PagesList([], this.stu3ImplementationGuide.page, this.stu3ImplementationGuide);
+    this.pageInfos = IgPageHelper.getSTU3PagesList([], this.pages, this.stu3ImplementationGuide.page, this.stu3ImplementationGuide);
   }
 
   protected writePages(rootPath: string) {

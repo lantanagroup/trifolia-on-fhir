@@ -47,7 +47,7 @@ export class CustomMenuComponent implements OnInit, OnChanges {
 
     if (this.configService.isFhirSTU3) {
       const stu3ImplementationGuide = <STU3ImplementationGuide> this.implementationGuide;
-      pageInfos = IgPageHelper.getSTU3PagesList([], stu3ImplementationGuide.page, stu3ImplementationGuide);
+      pageInfos = IgPageHelper.getSTU3PagesList([], null, stu3ImplementationGuide.page, stu3ImplementationGuide);
     } else if (this.configService.isFhirR4) {
       const r4ImplementationGuide = <R4ImplementationGuide> this.implementationGuide;
       if (r4ImplementationGuide.definition) {
@@ -62,7 +62,7 @@ export class CustomMenuComponent implements OnInit, OnChanges {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
 
-    this.customMenuValue = IgPageHelper.getMenuContent(pageInfos);
+    this.customMenuValue = IgPageHelper.getMenuContent(null);
   }
 
   ngOnChanges(changes: SimpleChanges) {

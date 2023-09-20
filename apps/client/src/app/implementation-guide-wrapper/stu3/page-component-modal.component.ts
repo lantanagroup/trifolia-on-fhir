@@ -5,6 +5,8 @@ import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {getImplementationGuideMediaReferences, MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Observable} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
+import {Page} from '@trifolia-fhir/models';
+import {ImplementationGuidePageComponent} from '@trifolia-fhir/r4';
 
 @Component({
   templateUrl: './page-component-modal.component.html',
@@ -16,6 +18,7 @@ export class PageComponentModalComponent implements OnInit {
   public implementationGuide: ImplementationGuide;
   public Globals = Globals;
   public pageNavMenus: string[];
+  public resource:  Page;
 
   constructor(public activeModal: NgbActiveModal) {
 
@@ -46,10 +49,58 @@ export class PageComponentModalComponent implements OnInit {
 
     reader.onload = (e: any) => {
       const result = e.target.result;
-      this.page.contentMarkdown = result.substring(5 + file.type.length + 8);
+      this.contentMarkdown = result.substring(5 + file.type.length + 8);
     };
 
     reader.readAsDataURL(file);
+  }
+
+
+
+  public setResource(value: Page) {
+    this.resource = value;
+  }
+
+  public get contentMarkdown() {
+    return this.resource["content"];
+  }
+
+
+  public set contentMarkdown(value: string) {
+    if(!this.resource){
+      this.resource = new Page();
+      this.resource["name"] = this.inputPage.source.slice(0,this.inputPage.source.indexOf("."));
+    }
+    this.resource["content"] = value;
+  }
+
+  public get navMenu() {
+    return this.resource["navMenu"];
+  }
+
+
+  public set navMenu(value: string) {
+    if(!this.resource){
+      this.resource = new Page();
+      this.resource["name"] = this.inputPage.source.slice(0,this.inputPage.source.indexOf("."));
+    }
+    this.resource["navMenu"] = value;
+  }
+
+  public get reuseDescription() {
+    return this.resource["reuseDescription"];
+  }
+
+
+  public set reuseDescription(value: boolean) {
+    if(!this.resource){
+      this.resource = new Page();
+      this.resource["name"] = this.inputPage.source.slice(0,this.inputPage.source.indexOf("."));
+    }
+    this.resource["reuseDescription"] = value;
+    if(value) {
+      this.resource["content"] = "";
+    }
   }
 
   ok() {
@@ -68,8 +119,8 @@ export class PageComponentModalComponent implements OnInit {
     }
 
     this.pageNavMenus = allPages
-      .filter(p => !!p.navMenu)
-      .map(p => p.navMenu)
+      .filter(p => !!this.navMenu)
+      .map(p => this.navMenu)
       .reduce<string[]>((prev, curr) => {
         if (prev.indexOf(curr) < 0) prev.push(curr);
         return prev;
