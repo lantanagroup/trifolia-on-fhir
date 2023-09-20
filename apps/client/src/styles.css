@@ -797,6 +797,8 @@ simplemde .editor-statusbar {
   min-height: 100px !important;
 }
 
+
+
 simplemde.is-invalid > .editor-toolbar {
   border: 1px solid red;
   border-bottom: inherit;
@@ -805,6 +807,12 @@ simplemde.is-invalid > .editor-toolbar {
 simplemde.is-invalid > .CodeMirror-wrap {
   border: 1px solid red;
   border-top: 1px solid #ddd;
+}
+
+.page .CodeMirror,
+.page .CodeMirror-scroll {
+  max-height: 1000px;
+  min-height: 400px !important;
 }
 
 .bulk-edit .CodeMirror,

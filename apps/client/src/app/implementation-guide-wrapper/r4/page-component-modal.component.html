@@ -15,7 +15,7 @@
       Show on top nav menu
       <app-tooltip-icon tooltipKey="ig.page.showTopNavMenu"></app-tooltip-icon>
     </label>
-    <input type="text" class="form-control" [(ngModel)]="navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
+    <input type="text" class="form-control" [(ngModel)]="navMenu" [disabled] = true [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
   </div>
 
   <div class="mb-3" *ngIf="level === 0">
@@ -33,7 +33,6 @@
 
   <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation" [required]="true" tooltipKey="ig.page.generation"></app-fhir-select-single-code>
 
-<!--  <app-fhir-reference [parentObject]="page" propertyName="nameReference" *ngIf="page.hasOwnProperty('nameReference')" title="Name Reference" [required]="true"></app-fhir-reference>-->
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-primary" (click)="ok()">OK</button>
