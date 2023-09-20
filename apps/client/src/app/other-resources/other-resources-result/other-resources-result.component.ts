@@ -110,7 +110,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
           if (typeof res.content !== typeof '') {
             this.content = JSON.stringify(res.content, null, '\t');
           }
-          
+
           setTimeout(() => {
             this.message = 'Example opened.';
           }, 100);
@@ -140,8 +140,8 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
     // determine if this resource is referenced as an example in the current IG
     this.isExample = false;
-    if (this.configService.project?.implementationGuideId) {
-      this.implementationGuideService.getExamples(this.configService.project.implementationGuideId).subscribe({
+    if (this.configService.igContext?.implementationGuideId) {
+      this.implementationGuideService.getExamples(this.configService.igContext.implementationGuideId).subscribe({
         next: (res: IProjectResource[]) => {
           if ((res || <IProjectResource[]>[]).findIndex(r => r.id === this.route.snapshot.params.id) > -1) {
             this.isExample = true;
@@ -229,9 +229,9 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     let request: Observable<IFhirResource | INonFhirResource>;
 
     if (this.isFhir) {
-      request = this.fhirResourceService.save(this.resource.id, <IFhirResource>this.resource, this.configService.project?.implementationGuideId, this.isExample);
+      request = this.fhirResourceService.save(this.resource.id, <IFhirResource>this.resource, this.configService.igContext?.implementationGuideId, this.isExample);
     } else {
-      request = this.nonFhirResourceService.save(this.resource.id, <INonFhirResource>this.resource, this.configService.project?.implementationGuideId);
+      request = this.nonFhirResourceService.save(this.resource.id, <INonFhirResource>this.resource, this.configService.igContext?.implementationGuideId);
     }
 
     request.subscribe({

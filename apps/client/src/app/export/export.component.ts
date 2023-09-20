@@ -130,7 +130,7 @@ export class ExportComponent implements OnInit {
         break;
       case 'document':
         this.options.exportFormat = ExportFormats.Document;
-        this.fhirService.search('Composition', null, true, null, null, this.configService.project.implementationGuideId)
+        this.fhirService.search('Composition', null, true, null, null, this.configService.igContext.implementationGuideId)
           .subscribe((res) => {
             this.compositions = res.results.map(c => {
               return {
@@ -269,7 +269,7 @@ export class ExportComponent implements OnInit {
     this.message = null;
 
     try {
-      const response = await this.exportService.exportDocument(this.configService.project.implementationGuideId, this.documentOptions.compositionId, this.documentOptions.format).toPromise();
+      const response = await this.exportService.exportDocument(this.configService.igContext.implementationGuideId, this.documentOptions.compositionId, this.documentOptions.format).toPromise();
       saveAs(response.body, 'bundle-' + this.documentOptions.compositionId + (this.documentOptions.format === 'application/xml' ? '.xml' : '.json'));
     } catch (ex) {
       this.message = getErrorString(ex);
@@ -337,8 +337,8 @@ export class ExportComponent implements OnInit {
   }
 
   async ngOnInit() {
-    if (this.configService.project) {
-      this.options.implementationGuideId = this.configService.project.implementationGuideId;
+    if (this.configService.igContext) {
+      this.options.implementationGuideId = this.configService.igContext.implementationGuideId;
     }
 
     if (this.options.implementationGuideId) {

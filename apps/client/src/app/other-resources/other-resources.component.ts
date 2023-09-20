@@ -57,7 +57,7 @@ export class OtherResourcesComponent implements OnInit {
     this.message = 'Searching...';
 
     this.fhirResourceService.search(this.page, 'name', this.configService.fhirVersion,
-      this.ignoreContext ? null : this.configService.project.implementationGuideId,
+      this.ignoreContext ? null : this.configService.igContext.implementationGuideId,
       this.searchResourceType
     ).subscribe({
       next: (res) => {

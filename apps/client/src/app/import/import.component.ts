@@ -332,10 +332,6 @@ export class ImportComponent implements OnInit {
         this.errorMessage = res.errorMessage;
         const importFileModel = res.importFileModel;
 
-        // if (this.configService.project && this.configService.project.implementationGuideId) {
-        //   this.getList(importFileModel);
-        // }
-
         // only add to the list of files to import if it doesn't have a formatting error.
         if (this.errorMessage === '') {
           this.files.push(importFileModel);
@@ -914,8 +910,8 @@ export class ImportComponent implements OnInit {
 
   ngOnInit() {
 
-    if (this.configService.project && this.configService.project.implementationGuideId) {
-      this.implementationGuideId = this.configService.project.implementationGuideId;
+    if (this.configService.igContext && this.configService.igContext.implementationGuideId) {
+      this.implementationGuideId = this.configService.igContext.implementationGuideId;
     }
 
   }

@@ -694,7 +694,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
           } else {
             this.fhirResource = conf;
             this.loadIG(conf.resource);
-            this.configService.project = getImplementationGuideContext(conf);
+            this.configService.igContext = getImplementationGuideContext(conf);
             this.message = 'Your changes have been saved!';
             this.saving = false;
             setTimeout(() => {
@@ -725,7 +725,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       .subscribe(async () => {
         await this.implementationGuideService.removeImplementationGuide(this.implementationGuide.id).toPromise().then((project) => {
           console.log(project);
-          this.configService.project = null;
+          this.configService.igContext = null;
           this.router.navigate([`${this.configService.baseSessionUrl}`]);
           alert(`IG ${name} with id ${this.implementationGuide.id} has been deleted`);
         }).catch((err) => this.message = getErrorString(err));

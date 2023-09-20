@@ -139,8 +139,8 @@ export class FhirReferenceModalComponent implements OnInit {
     this.searching = true;
 
     let igId: string;
-    if (!this.ignoreContext && this.configService.project && this.configService.project.implementationGuideId) {
-      igId = this.configService.project.implementationGuideId;
+    if (!this.ignoreContext && this.configService.igContext && this.configService.igContext.implementationGuideId) {
+      igId = this.configService.igContext.implementationGuideId;
     }
 
 

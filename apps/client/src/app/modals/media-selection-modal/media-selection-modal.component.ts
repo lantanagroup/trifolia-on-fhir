@@ -47,12 +47,12 @@ export class MediaSelectionModalComponent implements OnInit {
 
     if (this.mediaReferences && this.mediaReferences.length > 0) {
       query['_ids'] = this.mediaReferences.map((mr) => mr.id);
-    } else if (this.configService.project && this.configService.project.implementationGuideId) {
-      query['_has:ImplementationGuide:resource:_id'] = this.configService.project.implementationGuideId;
+    } else if (this.configService.igContext && this.configService.igContext.implementationGuideId) {
+      query['_has:ImplementationGuide:resource:_id'] = this.configService.igContext.implementationGuideId;
     }
 
     try {
-      metadataResult = await this.fhirService.search('Media', null, true, null, null, this.configService.project.implementationGuideId, null, false, null, page).toPromise();
+      metadataResult = await this.fhirService.search('Media', null, true, null, null, this.configService.igContext.implementationGuideId, null, false, null, page).toPromise();
     } catch (ex) {
       this.message = getErrorString(ex);
       console.error('Error loading images from server: ' + this.message);

@@ -210,8 +210,8 @@ export class PublishComponent implements OnInit {
   }
 
   async ngOnInit() {
-    if (this.configService.project) {
-      this.options.implementationGuideId = this.configService.project.implementationGuideId;
+    if (this.configService.igContext) {
+      this.options.implementationGuideId = this.configService.igContext.implementationGuideId;
     }
 
     if (this.options.implementationGuideId) {

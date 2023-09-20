@@ -16,8 +16,9 @@ import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-mes
 import introJs from 'intro.js/intro.js';
 import { Practitioner } from '@trifolia-fhir/stu3';
 import { ImplementationGuideService } from './shared/implementation-guide.service';
-import { IFhirResource } from '@trifolia-fhir/models';
+import { IFhirResource, IProject } from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
+import { ProjectService } from './shared/projects.service';
 
 declare let gtag: Function;
 
@@ -39,6 +40,7 @@ export class AppComponent implements OnInit {
     public githubService: GithubService,
     public configService: ConfigService,
     public fhirService: FhirService,
+    public projectService: ProjectService,
     public implGuideService: ImplementationGuideService,
     private modalService: NgbModal,
     private fileService: FileService,
@@ -49,20 +51,22 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe(async (event) => {
       this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
       if (event instanceof RoutesRecognized && event.state.root.firstChild) {
-        //  const fhirServer = event.state.root.firstChild.params.fhirServer;
         const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
+        const projectId = event.state.root.firstChild.params.projectId;
 
         if (implementationGuideId) {
-          if (!this.configService.project || this.configService.project.implementationGuideId !== implementationGuideId) {
-            this.configService.project = {
+          if (!this.configService.igContext || this.configService.igContext.implementationGuideId !== implementationGuideId) {
+            this.configService.igContext = {
               implementationGuideId: implementationGuideId
             };
           }
         } else {
-          this.configService.project = null;
+          this.configService.igContext = null;
         }
-        this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
+        this.configService.igContext = await this.getImplementationGuideContext(implementationGuideId);
+        this.configService.currentProject = await this.getCurrentProject(projectId);
         this.configService.isChanged = false;
+        console.log('currentProject:', this.configService.currentProject);
       } else if (event instanceof NavigationEnd) {
         if (this.configService.config.googleAnalyticsCode && event.urlAfterRedirects.indexOf('access_token=') < 0) {
           gtag('event', 'page_view', {
@@ -106,7 +110,7 @@ export class AppComponent implements OnInit {
   }
 
   public closeProject() {
-    this.configService.project = null;
+    this.configService.igContext = null;
     // noinspection JSIgnoredPromiseFromCall
     this.router.navigate(['/projects']);
   }
@@ -158,13 +162,39 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private async getImplementationGuideContext(implementationGuideId: string): Promise<ImplementationGuideContext> {
-    if (!implementationGuideId) {
-      return Promise.resolve(this.configService.project);
+  private async getCurrentProject(projectId?: string): Promise<IProject> {
+    console.log('AppComponent::getCurrentProject:', projectId, this.configService.currentProject);
+
+    // project already set and has same id so no need to look it up
+    if (projectId && this.configService.currentProject && projectId === this.configService.currentProject.id) {
+      console.log(`AppComponent::getCurrentProject: project ${projectId} already loaded`);
+      return Promise.resolve(this.configService.currentProject);
     }
 
-    if (this.configService.project && this.configService.project.implementationGuideId === implementationGuideId && this.configService.project.name) {
-      return Promise.resolve(this.configService.project);
+    if (projectId) {
+      return firstValueFrom(this.projectService.getProject(projectId));
+    }
+
+    if (this.configService.igContext && this.configService.igContext.implementationGuideId) {
+      const ig = await firstValueFrom(this.implGuideService.getImplementationGuide(this.configService.igContext.implementationGuideId));
+      if (ig && ig.projects && ig.projects[0]) {
+        if (typeof ig.projects[0] === typeof {}) {
+          return Promise.resolve(ig.projects[0]);
+        }
+        return firstValueFrom(this.projectService.getProject(ig.projects[0].toString()));
+      }
+    }
+    
+    return Promise.resolve(this.configService.currentProject);
+  }
+
+  private async getImplementationGuideContext(implementationGuideId?: string): Promise<ImplementationGuideContext> {
+    if (!implementationGuideId) {
+      return Promise.resolve(this.configService.igContext);
+    }
+
+    if (this.configService.igContext && this.configService.igContext.implementationGuideId === implementationGuideId && this.configService.igContext.name) {
+      return Promise.resolve(this.configService.igContext);
     }
 
     return new Promise((resolve, reject) => {
@@ -177,27 +207,7 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-    // Make sure the navbar is collapsed after the user clicks on a nav link to change the route
-    // This needs to be done in the init method so that the navbarCollapse element exists
-
-    /* Remove this commented block if constructor subscription is working fine.
-    this.router.events.subscribe(async (event) => {
-      this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
-      if (event instanceof RoutesRecognized && event.state.root.firstChild) {
-        const fhirServer = event.state.root.firstChild.params.fhirServer;
-        const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
-
-        if (fhirServer) {
-
-          this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
-
-          await this.configService.changeFhirServer(fhirServer);
-
-        }
-      }
-    });
-    */
-
+    
     this.socketService.onMessage.subscribe((message) => {
       const modalRef = this.modalService.open(AdminMessageModalComponent, { backdrop: 'static' });
       modalRef.componentInstance.message = message;

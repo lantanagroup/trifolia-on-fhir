@@ -255,7 +255,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         if (implementationGuideId) {
             const projects = await this.projectsService.findAll({'references.valueType':'FhirResource', 'references.value': new ObjectId(implementationGuideId)});
             (projects || []).forEach(p => {
-                if (!existing.projects.some(r => ('id' in r && r.id === p.id) || (r.toString() === p.id))) {
+                if (!existing.projects.some(r => (typeof r === typeof {} && 'id' in r && r.id === p.id) || (r.toString() === p.id))) {
                     existing.projects.push(p);
                 }
             });

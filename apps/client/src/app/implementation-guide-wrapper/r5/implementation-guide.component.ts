@@ -888,7 +888,7 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
           } else {
             this.fhirResource = conf;
             this.loadIG(conf.resource);
-            this.configService.project = getImplementationGuideContext(conf);
+            this.configService.igContext = getImplementationGuideContext(conf);
             this.message = 'Your changes have been saved!';
             this.saving = false;
 
@@ -1110,7 +1110,7 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
       .subscribe(async () => {
         await this.implementationGuideService.removeImplementationGuide(this.implementationGuideId).toPromise().then((project) => {
           console.log(project);
-          this.configService.project = null;
+          this.configService.igContext = null;
           this.router.navigate([`${this.configService.baseSessionUrl}`]);
           alert(`IG ${name} with id ${this.implementationGuideId} has been deleted`);
         }).catch((err) => this.message = getErrorString(err));

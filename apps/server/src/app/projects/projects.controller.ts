@@ -46,7 +46,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
   public async searchProject(@User() user: ITofUser, @Query() query?: any, @Request() req?: any): Promise<Paginated<IProject>> {
 
     let options = this.getPaginateOptionsFromRequest(req);
-    const baseFilter = await this.authService.getPermissionFilterBase(user, 'read');
+    const baseFilter = await this.authService.getPermissionFilterBase(user, 'read', null, true);
 
     const filter = {
       $and: [baseFilter, this.getFilterFromRequest(req)]
@@ -113,7 +113,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
         refRes.projects = [];
       }
       if (!refRes.projects.some(r => 
-        ('id' in r && r.id === project.id) || (r.toString() === project.id)
+        (typeof r === typeof {} && 'id' in r && r.id === project.id) || (r.toString() === project.id)
         )) {
           refRes.projects.push(project);
           refResUpdated = true;
@@ -124,7 +124,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
         refRes.referencedBy = [];
       }
       if (!refRes.referencedBy.filter(r => r.valueType === 'Project').some(r => 
-        ('id' in <IBaseEntity>r.value && (<IBaseEntity>r.value).id === project.id) || (r.value.toString() === project.id)
+        (typeof r.value === typeof {} && 'id' in <IBaseEntity>r.value && (<IBaseEntity>r.value).id === project.id) || (r.value.toString() === project.id)
         )) {
           refRes.referencedBy.push({value: project.id, valueType: 'Project'});
           refResUpdated = true;

@@ -131,12 +131,12 @@ export class AddHeaderInterceptor implements HttpInterceptor {
       // Pass the implementation guide (project) to the request so that it knows this request
       // is within the context of the project
       if (
-        this.configService.project &&
-        this.configService.project.implementationGuideId
+        this.configService.igContext &&
+        this.configService.igContext.implementationGuideId
       ) {
         headers = headers.set(
           'implementationGuideId',
-          this.configService.project.implementationGuideId
+          this.configService.igContext.implementationGuideId
         );
         headers = headers.set(
           'fhirversion',
@@ -166,7 +166,7 @@ const appRoutes: Routes = [
   { path: 'projects', component: ProjectsComponent },
   { path: 'projects/new', component: NewProjectComponent },
   { path: 'projects/home', component: HomeComponent },
-  { path: 'projects/:id', component: ProjectComponent },
+  { path: 'projects/:projectId', component: ProjectComponent },
   { path: 'projects/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard] },
   { path: 'projects/:implementationGuideId/home', component: HomeComponent },
   { path: 'projects/implementation-guide/open', component: ImplementationGuidesComponent },

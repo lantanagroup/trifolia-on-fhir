@@ -32,15 +32,24 @@ export class AuthController extends BaseController {
         return this.authService.userCanWriteProject(user, projectId);
     }
 
-
-    @Get('resource/:resourceId/can-read')
-    public async userCanReadResource(@User() user: ITofUser, @Param('resourceId') resourceId: string): Promise<boolean> {
+    @Get('fhirResource/:resourceId/can-read')
+    public async userCanReadFhirResource(@User() user: ITofUser, @Param('resourceId') resourceId: string): Promise<boolean> {
         return this.authService.userCanReadFhirResource(user, resourceId);
     }
 
-    @Get('resource/:resourceId/can-write')
-    public async userCanWriteResource(@User() user: ITofUser, @Param('resourceId') resourceId: string) : Promise<boolean> {
+    @Get('fhirResource/:resourceId/can-write')
+    public async userCanWriteFhirResource(@User() user: ITofUser, @Param('resourceId') resourceId: string) : Promise<boolean> {
         return this.authService.userCanWriteFhirResource(user, resourceId);
+    }
+
+    @Get('nonFhirResource/:resourceId/can-read')
+    public async userCanReadNonFhirResource(@User() user: ITofUser, @Param('resourceId') resourceId: string): Promise<boolean> {
+        return this.authService.userCanReadNonFhirResource(user, resourceId);
+    }
+
+    @Get('nonFhirResource/:resourceId/can-write')
+    public async userCanWriteNonFhirResource(@User() user: ITofUser, @Param('resourceId') resourceId: string) : Promise<boolean> {
+        return this.authService.userCanWriteNonFhirResource(user, resourceId);
     }
 
 

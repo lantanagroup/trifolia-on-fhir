@@ -1,4 +1,4 @@
-import {IFhirResource, IGroup, IProject} from '@trifolia-fhir/models';
+import {IProject} from '@trifolia-fhir/models';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
@@ -34,12 +34,13 @@ export class ProjectService {
   }
 
 
-  public getProject(id: string) {
+  public getProject(id: string): Observable<IProject> {
+    console.log("projectService::getProject:", id);
     const url = '/api/project/' + encodeURIComponent(id);
     return this.http.get<IProject>(url);
   }
 
-  public save(project: IProject) {
+  public save(project: IProject): Observable<IProject> {
     if (project.id) {
       const url = '/api/project/' + encodeURIComponent(project.id);
       return this.http.put<IProject>(url, project);
@@ -48,13 +49,13 @@ export class ProjectService {
     }
   }
 
-  public deleteProject(id: string) {
+  public deleteProject(id: string): Observable<IProject> {
     const url = '/api/project/' + encodeURIComponent(id);
     return this.http.delete<IProject>(url);
   }
 
-  public deleteIg(id: string) {
+  public deleteIg(id: string): Observable<IProject> {
     const url = '/api/project/' + encodeURIComponent(id) + '/implementationGuide';
-    return this.http.delete<IFhirResource>(url);
+    return this.http.delete<IProject>(url);
   }
 }
