@@ -12,6 +12,7 @@ import {Paginated} from '@trifolia-fhir/tof-lib';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {TofNotFoundException} from '../../not-found-exception';
 import { NonFhirResourcesService } from '../non-fhir-resources/non-fhir-resources.service';
+import { PipelineStage } from 'mongoose';
 
 
 @Controller('api/project')
@@ -46,12 +47,11 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
   public async searchProject(@User() user: ITofUser, @Query() query?: any, @Request() req?: any): Promise<Paginated<IProject>> {
 
     let options = this.getPaginateOptionsFromRequest(req);
-    const baseFilter = await this.authService.getPermissionFilterBase(user, 'read', null, true);
+    const filter = await this.authService.getPermissionFilterBase(user, 'read', null, true);
 
-    const filter = {
-      $and: [baseFilter, this.getFilterFromRequest(req)]
-    };
-    options.filter = filter;
+    filter.push({$match: this.getFilterFromRequest(req)});
+    
+    options.pipeline = filter;
 
     const res = await this.projectService.search(options);
     return res;

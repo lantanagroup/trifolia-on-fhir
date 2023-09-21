@@ -227,15 +227,13 @@ export class StructureDefinitionController extends FhirResourcesController  {
         const searchFilters = {};
         searchFilters['resource.resourceType'] = { $regex: 'StructureDefinition', $options: 'i' };
         searchFilters['url'] = { $regex: url, $options: 'i' };
-        const baseFilter =  this.authService.getPermissionFilterBase(user, 'read');
-        const filter = {
-          $and: [ baseFilter, searchFilters]
-        };
+        const filter = await this.authService.getPermissionFilterBase(user, 'read');
+        filter.push({$match: searchFilters});
 
         const options: PaginateOptions = {
           page: 1,
           itemsPerPage: 10,
-          filter: filter
+          pipeline: filter
         };
         const results =  await this.fhirResourcesService.search(options);
 

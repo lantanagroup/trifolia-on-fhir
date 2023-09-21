@@ -50,7 +50,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
     public async search(options?: PaginateOptions, projections?: any): Promise<Paginated<NonFhirResourceDocument>> {
         const page = (options && options.page) ? options.page : 1;
         const limit = (options && options.itemsPerPage) ? options.itemsPerPage : 10;
-        const filters = (options && options.filter) ? options.filter : {};
+        const filters = (options && options.pipeline) ? options.pipeline : {};
         const skip = (page-1) * limit;
         const sortBy = (options && options.sortBy)  ? options.sortBy : {};
         const populate = (options && options.populate)  ? options.populate : [];

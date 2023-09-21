@@ -71,7 +71,7 @@ export class ManageController extends BaseController {
         let options: PaginateOptions = {
             page: page,
             itemsPerPage: count,
-            filter: filter
+            pipeline: [{$match: filter}]
         };
         let res = await this.userService.search(options);
 

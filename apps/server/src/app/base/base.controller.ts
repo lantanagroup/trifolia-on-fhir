@@ -46,7 +46,7 @@ export class BaseController {
      * @param req Request parameter decorator
      * @returns object for use in PaginateOptions.filter
      */
-    protected getFilterFromRequest(req?: any): any {
+    protected getFilterFromRequest(req?: any): {[key: string]: object} {
         //this.logger.debug('getFilterFromRequest');
         return {};
     }
@@ -65,7 +65,7 @@ export class BaseController {
             page: (query && query.page) ? query.page : 1,
             itemsPerPage: (query && query.itemsPerPage) ? query.itemsPerPage : 10,
             sortBy: {},
-            filter: this.getFilterFromRequest(req)
+            pipeline: [{$match: this.getFilterFromRequest(req)}]
         };
 
         if ('_sort' in query) {

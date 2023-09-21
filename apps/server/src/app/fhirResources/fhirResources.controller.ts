@@ -33,7 +33,7 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
     }
 
 
-    protected getFilterFromRequest(req?: any): any {
+    protected getFilterFromRequest(req?: any): {[key: string]: object} {
         let filter = super.getFilterFromRequest(req);
 
         if (!req) {
@@ -83,7 +83,7 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
             page: (query && query.page) ? query.page : 1,
             itemsPerPage: (query && query.itemsPerPage) ? query.itemsPerPage : 10,
             sortBy: {},
-            filter: this.getFilterFromRequest(req)
+            pipeline: [{$match: this.getFilterFromRequest(req)}]
         };
 
         if ('_sort' in query) {
@@ -132,14 +132,9 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
     @Get()
     public async searchFhirResource(@User() user: ITofUser, @Request() req): Promise<Paginated<IFhirResource>> {
         let options = this.getPaginateOptionsFromRequest(req);
-        let baseFilter = this.authService.getPermissionFilterBase(user, 'read');
+        let baseFilter = await this.authService.getPermissionFilterBase(user, 'read');
 
-        options.filter = {
-            $and: [
-                options.filter,
-                baseFilter
-            ]
-        };
+        options.pipeline = [...options.pipeline, ...baseFilter];
 
         return await this.fhirResourceService.search(options);
     }

@@ -66,7 +66,7 @@ export class AppComponent implements OnInit {
         this.configService.igContext = await this.getImplementationGuideContext(implementationGuideId);
         this.configService.currentProject = await this.getCurrentProject(projectId);
         this.configService.isChanged = false;
-        console.log('currentProject:', this.configService.currentProject);
+        
       } else if (event instanceof NavigationEnd) {
         if (this.configService.config.googleAnalyticsCode && event.urlAfterRedirects.indexOf('access_token=') < 0) {
           gtag('event', 'page_view', {
@@ -163,11 +163,9 @@ export class AppComponent implements OnInit {
   }
 
   private async getCurrentProject(projectId?: string): Promise<IProject> {
-    console.log('AppComponent::getCurrentProject:', projectId, this.configService.currentProject);
 
     // project already set and has same id so no need to look it up
     if (projectId && this.configService.currentProject && projectId === this.configService.currentProject.id) {
-      console.log(`AppComponent::getCurrentProject: project ${projectId} already loaded`);
       return Promise.resolve(this.configService.currentProject);
     }
 

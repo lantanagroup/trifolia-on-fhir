@@ -25,7 +25,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
     super(nonFhirResourcesService);
   }
 
-  protected getFilterFromRequest(req?: any): any {
+  protected getFilterFromRequest(req?: any): {[key: string]: object} {
     let filter = super.getFilterFromRequest(req);
 
     if (!req) {
@@ -63,7 +63,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
       page: (query && query.page) ? query.page : 1,
       itemsPerPage: (query && query.itemsPerPage) ? query.itemsPerPage : 10,
       sortBy: {},
-      filter: this.getFilterFromRequest(req)
+      pipeline: [{$match: this.getFilterFromRequest(req)}]
     };
 
     if ('_sort' in query) {
@@ -134,14 +134,10 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
   @Get()
   public async searchFhirResource(@User() user: ITofUser, @Request() req): Promise<Paginated<INonFhirResource>> {
     let options = this.getPaginateOptionsFromRequest(req);
-    let baseFilter = this.authService.getPermissionFilterBase(user, 'read');
+    let filter = await this.authService.getPermissionFilterBase(user, 'read');
+    filter.push({$match: options.pipeline});
 
-    options.filter = {
-      $and: [
-        options.filter,
-        baseFilter
-      ]
-    };
+    options.pipeline = filter;
 
     let projections =  JSON.parse(req.query['_projections']);
     return await this.nonFhirResourcesService.search(options, projections);

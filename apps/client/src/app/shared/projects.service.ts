@@ -35,7 +35,6 @@ export class ProjectService {
 
 
   public getProject(id: string): Observable<IProject> {
-    console.log("projectService::getProject:", id);
     const url = '/api/project/' + encodeURIComponent(id);
     return this.http.get<IProject>(url);
   }

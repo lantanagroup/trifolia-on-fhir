@@ -9,6 +9,7 @@ import { ProjectsService } from '../projects/projects.service';
 import { TofLogger } from '../tof-logger';
 import { NonFhirResourcesService } from '../non-fhir-resources/non-fhir-resources.service';
 import { Project } from '../projects/project.schema';
+import { PipelineStage } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -25,11 +26,11 @@ export class AuthService {
     }
 
 
-    public async getPermissionFilterBase(user: ITofUser = undefined, grant: 'read' | 'write' = 'read', targetId: string = '', isProject: boolean = false) : Promise<{}> {
+    public async getPermissionFilterBase(user: ITofUser = undefined, grant: 'read' | 'write' = 'read', targetId: string = '', isProject: boolean = false) : Promise<PipelineStage[]> {
 
 
         if (!this.configService.server.enableSecurity || user?.isAdmin) {
-            return {};
+            return [];
         }
 
         let userId = user?.user?.id;
@@ -99,9 +100,32 @@ export class AuthService {
             };
         }
 
-        // console.log('filter:', JSON.stringify(filter));
+        let pipeline = [];
 
-        return filter;
+        if (!isProject) {
+            pipeline.push(
+                {
+                    $lookup: {
+                        from: "project",
+                        localField: "projects.0",
+                        foreignField: "_id",
+                        as: "projects",
+                    },
+                },
+                {
+                    $set: {
+                        projects: { $first: "$projects" },
+                    }
+                }  
+            );
+        }
+    
+        pipeline.push({$match: filter});
+        
+
+        // console.log('pipeline:', JSON.stringify(pipeline));
+
+        return pipeline;
     }
 
 
@@ -135,9 +159,10 @@ export class AuthService {
             throw new BadRequestException("Invalid target provided");
         }
 
-        const filter = await this.getPermissionFilterBase(user, grant, targetId, isProjectService);
+        const pipeline = await this.getPermissionFilterBase(user, grant, targetId, isProjectService);
         // console.log('filter:', JSON.stringify(filter));
-        const resCount = await dataService.count(filter);
+        const res = await dataService.getModel().aggregate(pipeline).count("count");
+        const resCount: number = res && res.length > 0 ? res[0]['count'] : 0;
         // console.log(`${dataService.getModel().modelName} :: Can ${grant} for user ${userId} count: ${resCount} -- ${targetId}`);
 
         return resCount > 0;

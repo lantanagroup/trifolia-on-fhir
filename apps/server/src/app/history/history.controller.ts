@@ -28,16 +28,13 @@ export class HistoryController extends BaseDataController<HistoryDocument> {
     searchFilters['type'] = { $regex: type,  $options: 'i' };
     searchFilters['targetId'] = id;
 
-    const baseFilter = this.authService.getPermissionFilterBase(user, 'read');
-
-    const filter = {
-      $and: [baseFilter, searchFilters]
-    };
+    const baseFilter = await this.authService.getPermissionFilterBase(user, 'read');
+    const filter = [{$match: searchFilters}, ...baseFilter];
 
     const options: PaginateOptions = {
       page: query.page,
       itemsPerPage: 10,
-      filter: filter
+      pipeline: filter
     };
 
     options.sortBy = {};

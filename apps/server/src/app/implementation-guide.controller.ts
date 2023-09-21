@@ -354,15 +354,12 @@ export class ImplementationGuideController extends FhirResourcesController { // 
       }
 
       const baseFilter = await this.authService.getPermissionFilterBase(user, 'read');
-
-      const filter = {
-        $and: [baseFilter, searchFilters]
-      };
+      const filter = [{$match: searchFilters}, ...baseFilter];
 
       const options: PaginateOptions = {
         page: query.page,
         itemsPerPage: 10,
-        filter: filter
+        pipeline: filter
       };
 
       options.sortBy = {};
