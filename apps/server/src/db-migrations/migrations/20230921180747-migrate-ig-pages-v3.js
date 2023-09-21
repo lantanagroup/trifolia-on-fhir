@@ -10,8 +10,7 @@ module.exports = {
       let navMenu = '';
       let reuseDescription = false;
       let pageName = page.nameUrl.substring(0, page.nameUrl.indexOf('.html'));
-      // add it if only for those extensions
-      // console.log('Page Name is: ' + pageName);
+
       let createPage = false;
       for (let i = 0; i < page.extension.length; i++) {
         console.log('Url ' + page.nameUrl + ' ext' + page.extension[i].url);
@@ -85,14 +84,12 @@ module.exports = {
       }
     }
 
-    //let results = await db.collection('fhirResource').find({ '_id': new ObjectId('645aa11600669ee940513ef1'), 'resource.definition.page.extension': { $exists: true } }).toArray();
-    let results = await db.collection('fhirResource').find({ 'resource.resourceType' : 'ImplementationGuide', 'resource.definition.page.extension': { $exists: true } }).toArray();
+
+    let results = await db.collection('fhirResource').find({ 'resource.resourceType' : 'ImplementationGuide', 'resource.page.extension': { $exists: true } }).toArray();
     for (const result of results) {
-      console.log('Ig: ' + result._id);
-      await migrateExtensions(result._id, result.resource.definition.page);
-      await deleteExtensions(result._id, result.resource.definition.page);
-     /* let str = JSON.stringify(result, null, 4);
-      console.log(str);*/
+      await migrateExtensions(result._id, result.resource.page);
+      await deleteExtensions(result._id, result.resource.page);
+
 
       // update ig
       await db.collection('fhirResource').updateOne({ '_id': new ObjectId( result._id) }, { $set: result });
@@ -109,12 +106,10 @@ module.exports = {
       if (pageName === searchPageName) {
         return page;
       } else {
-        if (page.page) {
-          for (let i = 0; i < page.page.length; i++) {
-            result = findPage(page.page[i], searchPageName);
-            if (result !== false) {
-              return result;
-            }
+        for (let i = 0; i < page.page.length; i++) {
+          result = findPage(page.page[i], searchPageName);
+          if (result !== false) {
+            return result;
           }
         }
         return false;
@@ -180,13 +175,11 @@ module.exports = {
 
     for (const result of results) {
       const ig = await db.collection('fhirResource').findOne({ '_id': new ObjectId(result.referencedBy.value) });
-      let page = findPage(ig["resource"].definition.page, result.name);
+      let page = findPage(ig["resource"].page, result.name);
       if(page !== undefined){
         insertExtension(page, result);
       }
 
-/*      let str = JSON.stringify(ig['resource'].definition.page, null, 4);
-      console.log(str);*/
       await db.collection('fhirResource').updateOne({ '_id': new ObjectId(result.referencedBy.value) }, { $set: ig });
     }
 

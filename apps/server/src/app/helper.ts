@@ -952,10 +952,12 @@ export async function removePageFromImplementationGuide(service: FhirResourcesSe
     if (pageName === searchPageName) {
       return { page, parent };
     } else {
-      for (let i = 0; i < page.page.length; i++) {
-        let result = findPage(page.page[i], page, searchPageName);
-        if (result !== false) {
-          return result;
+      if (page.page){
+        for (let i = 0; i < page.page.length; i++) {
+          let result = findPage(page.page[i], page, searchPageName);
+          if (result !== false) {
+            return result;
+          }
         }
       }
       return false;
