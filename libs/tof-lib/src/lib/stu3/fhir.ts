@@ -1204,7 +1204,7 @@ export class StructureDefinition extends DomainResource implements IStructureDef
       notes.valueMarkdown = value;
     }
   }
-  
+
 }
 
 export class ParameterComponent extends BackboneElement {
@@ -10953,7 +10953,7 @@ export class PageComponent extends BackboneElement {
       }
     }
   }
-
+/*
   public get navMenu() {
     const navMenuExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
     if (navMenuExt) return navMenuExt.valueString;
@@ -10975,7 +10975,7 @@ export class PageComponent extends BackboneElement {
     } else if (navMenuExt && value) {
       navMenuExt.valueString = value
     }
-  }
+  }*/
 
   public getExtension() {
     switch (this.format) {
@@ -10992,14 +10992,18 @@ export class PageComponent extends BackboneElement {
   public setTitle(value: string, isRoot = false) {
     this.title = value;
 
-    if (!isRoot && value) {
+    /*if (!isRoot && value) {
       this.source = value.toLowerCase().replace(/\s/g, '_').replace(/[():]/g, '') + '.html';
     } else if (isRoot) {
       this.source = `index.html`;
-    }
+    }*/
   }
 
-  public get reuseDescription() {
+  public get fileName() {
+    return this.source ? this.source.substring(0, this.source.lastIndexOf('.')) + this.getExtension() : '';
+  }
+
+  /*public get reuseDescription() {
     const reuseDescriptionExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-reuse-description']);
     if (reuseDescriptionExt) return reuseDescriptionExt.valueBoolean;
     return false;
@@ -11045,7 +11049,7 @@ export class PageComponent extends BackboneElement {
     } else if (contentExt && value) {
       contentExt.valueMarkdown = value;
     }
-  }
+  }*/
 }
 
 export class ImplementationGuide extends DomainResource implements IImplementationGuide {

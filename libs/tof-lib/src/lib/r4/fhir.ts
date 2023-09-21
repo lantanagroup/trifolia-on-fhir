@@ -14928,17 +14928,9 @@ export class ImplementationGuidePageComponent extends BackboneElement {
 
   public setTitle(value: string, isRoot = false) {
     this.title = value;
-
-    /* if (!isRoot && value) {
-       this.nameUrl = value.toLowerCase().replace(/\s/g, '_').replace(/[():]/g, '') + '.html';
-     } else if (isRoot) {
-       this.nameUrl = 'index.html';
-     }*/
   }
 
   public get fileName() {
-    /* const fileNameExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-filename']);
-     if (fileNameExt) return fileNameExt.valueUri;*/
     return this.nameUrl ? this.nameUrl.substring(0, this.nameUrl.lastIndexOf('.')) + this.getExtension() : '';
   }
 

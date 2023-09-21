@@ -21,17 +21,11 @@ export class PageComponentModalComponent implements OnInit {
   public implementationGuide: ImplementationGuide;
   public implementationGuideId: string;
   public level: number;
-  public rootPage: boolean;
   public pageNavMenus: string[];
   public resource:  Page;
 
   constructor(public activeModal: NgbActiveModal, protected nonFhirResourceService: NonFhirResourceService) {
 
-  }
-
-  public get isRootPageValid() {
-    if (!this.rootPage) return true;
-    return this.page.nameUrl === 'index.html';
   }
 
   public getMediaReferences(): MediaReference[] {
@@ -46,7 +40,6 @@ export class PageComponentModalComponent implements OnInit {
   public setResource(value: Page) {
     this.resource = value;
   }
-
 
   public get contentMarkdown() {
     return this.resource["content"];

@@ -122,7 +122,7 @@ export class MSWordExporter {
 
       if (version === 'stu3') {
         const stu3ImplementationGuide = <STU3ImplementationGuide> implementationGuide;
-        pageInfos = IgPageHelper.getSTU3PagesList([], stu3ImplementationGuide.page, stu3ImplementationGuide);
+        pageInfos = IgPageHelper.getSTU3PagesList([], pages, stu3ImplementationGuide.page, stu3ImplementationGuide);
       } else if (version === 'r4' || version === 'r5') {
         const ig = <R4ImplementationGuide | R5ImplementationGuide> implementationGuide;
         if (ig.definition) {

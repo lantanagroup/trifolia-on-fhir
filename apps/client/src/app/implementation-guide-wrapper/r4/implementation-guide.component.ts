@@ -624,7 +624,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     componentInstance.implementationGuideId = this.implementationGuideId;
 
     if (this.implementationGuide.definition.page === pageDef.page) {
-      componentInstance.rootPage = true;
       if(pageDef.resource.reuseDescription === undefined) {
         pageDef.resource["reuseDescription"] = true; // initialize it
       }
@@ -966,7 +965,6 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     // get the resource
     let resource = new Page();
     resource.name  = page.nameUrl.slice(0,page.nameUrl.indexOf("."));
-    //let existingResource = page.nameUrl ? this.pagesMap[resource["name"]] : undefined;
 
     this.pages.push({
       page: page,
