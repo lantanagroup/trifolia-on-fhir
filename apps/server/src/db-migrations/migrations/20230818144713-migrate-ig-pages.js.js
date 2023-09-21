@@ -109,14 +109,12 @@ module.exports = {
       if (pageName === searchPageName) {
         return page;
       } else {
-        if (page.page) {
           for (let i = 0; i < page.page.length; i++) {
             result = findPage(page.page[i], searchPageName);
             if (result !== false) {
               return result;
             }
           }
-        }
         return false;
       }
     }
