@@ -193,7 +193,7 @@ export class ImportController extends BaseController {
       if (ex.response && ex.response.status === 404) {
         throw new TofNotFoundException(`The value set ${id} was not found in VSAC`);
       } else if (ex.response && ex.response.status === 401) {
-        throw new UnauthorizedException(`The username/password provided were not accepted by VSAC`);
+        throw new UnauthorizedException('The API key provided was not accepted by VSAC');
       }
 
       this.logger.error(`An error occurred while retrieving value set ${id} from VSAC: ${ex.message}`, ex.stack);

@@ -11,7 +11,7 @@
           <ng-container *ngTemplateOutlet="tabContent"></ng-container>
         </ng-template>
       </li>
-      <li ngbNavItem="dependency" *ngIf="resourceType === 'StructureDefinition'">
+      <!-- <li ngbNavItem="dependency" *ngIf="resourceType === 'StructureDefinition'">
         <a ngbNavLink>Dependency</a>
         <ng-template ngbNavContent>
           <ng-container *ngTemplateOutlet="tabContent"></ng-container>
@@ -21,6 +21,12 @@
         <a ngbNavLink>Base</a>
         <ng-template ngbNavContent>
           <ng-container *ngTemplateOutlet="tabContent"></ng-container>
+        </ng-template>
+      </li> -->
+      <li ngbNavItem="vsac" *ngIf="resourceType === 'ValueSet'">
+        <a ngbNavLink>VSAC</a>
+        <ng-template ngbNavContent>
+          <ng-container *ngTemplateOutlet="vsacContent"></ng-container>
         </ng-template>
       </li>
     </ul>
@@ -79,11 +85,11 @@
       </div>
     </div>
 
-    <div class="col-md-6" *ngIf="!!resourceType">
+    <div *ngIf="!!resourceType" class="col-md-6">
       <div class="input-group">
         <div class="input-group-text">ID</div>
-        <input type="text" class="form-control" [(ngModel)]="idSearch"
-          (ngModelChange)="criteriaChangedEvent.next($event)" />
+        <input (ngModelChange)="criteriaChangedEvent.next($event)" [(ngModel)]="idSearch" class="form-control"
+               type="text" />
       </div>
     </div>
   </div>
@@ -92,11 +98,11 @@
   <p *ngIf="searching"><em>Searching...</em></p>
   <table class="table" *ngIf="results">
     <thead>
-      <tr>
-        <th *ngIf="selectMultiple" class="actions-column-1"></th>
-        <th>Resource Id</th>
-        <th>Title/Name/Id</th>
-        <th>Id</th>
+    <tr>
+      <th *ngIf="selectMultiple" class="actions-column-1"></th>
+      <th>Resource Id</th>
+      <th>Title/Name/Id</th>
+      <th>Id</th>
         <th>Implementation Guide</th>
         <th *ngIf="!selectMultiple" class="actions-column-1">&nbsp;</th>
       </tr>
@@ -119,21 +125,108 @@
       <tr *ngIf="results && results.length < total">
         <td colspan="3">
           <!-- <a href="javascript:void(0)" (click)="criteriaChanged(true)">Load More</a> -->
-          <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="total"
+          <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="pageSize" [collectionSize]="total"
             [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="pageChanged.next()">
           </ngb-pagination>
         </td>
       </tr>
     </tbody>
     <tfoot *ngIf="total > 0">
-      <tr>
-        <th colspan="3">Showing {{results.length}} of {{total}} results</th>
-      </tr>
+    <tr>
+      <th colspan="3">Showing {{results.length}} of {{total}} results</th>
+    </tr>
     </tfoot>
     <tfoot *ngIf="results.length === 0">
-      <tr>
-        <th colspan="3"><em>No resources were found with the specified criteria.</em></th>
-      </tr>
+    <tr>
+      <th colspan="3"><em>No resources were found with the specified criteria.</em></th>
+    </tr>
     </tfoot>
   </table>
+</ng-template>
+
+
+
+
+<!-- VSAC Content -->
+<ng-template #vsacContent>
+    
+  <div class="row">
+    <div class="col-md-12">
+      <div class="mb-3">
+        <label>
+          API Key <app-tooltip-icon tooltipKey="vsac.apikey"></app-tooltip-icon>
+        </label>
+        <input type="password" class="form-control" [(ngModel)]="apiKey"/>
+      </div>
+      <p>
+        <input type="checkbox" [(ngModel)]="rememberVsacCredentials"/> Remember VSAC credentials in the future <app-tooltip-icon tooltipKey="vsac.remember"></app-tooltip-icon>
+      </p>
+    </div>
+
+    <div class="col-md-12" (keyup.enter)="searchVSAC()">
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="input-group">
+            <div class="input-group-text">ID</div>
+            <input [(ngModel)]="idSearch" class="form-control" type="text" />
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group">
+            <div class="input-group-text">Name</div>
+            <input type="text" class="form-control" [(ngModel)]="nameSearch" />
+          </div>
+        </div>
+      </div>
+
+      <div class="my-2">
+        <button (click)="searchVSAC()" [disabled]="vsacSearchDisabled" class="btn btn-primary">Search VSAC</button>
+      </div>
+
+    </div>
+
+
+    <!-- VSAC Results -->
+    <div class="alert alert-info" *ngIf="vsacMessage">{{vsacMessage}}</div>
+    <p *ngIf="searching"><em>Searching...</em></p>
+    <table class="table" *ngIf="valueSetResults">
+      <thead>
+        <th>Resource Id</th>
+        <th>Name</th>
+        <th class="actions-column-1">&nbsp;</th>
+      </thead>
+      <tbody *ngIf="total < 1">
+        <tr>
+          <td colspan="3">No results for the provided criteria.</td>
+        </tr>
+      </tbody>
+      <tbody *ngIf="total > 0">
+        <tr *ngFor="let valueSet of valueSetResults">
+          <td>{{valueSet.id}}</td>
+          <td>{{valueSet.name}}</td>
+          <td>
+            <div class="pull-right">
+              <button type="button" class="btn btn-primary" (click)="selectVsac(valueSet)">Select</button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="valueSetResults && valueSetResults.length < total">
+          <td colspan="3">
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="pageSize" [collectionSize]="total"
+              [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="pageChanged.next()">
+            </ngb-pagination>
+          </td>
+        </tr>
+
+      </tbody>
+      <tfoot *ngIf="total > 0">
+        <tr>
+          <th colspan="2">Showing {{valueSetResults.length}} of {{total}} results</th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </ng-template>

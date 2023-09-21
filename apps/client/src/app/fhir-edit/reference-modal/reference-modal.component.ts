@@ -9,10 +9,12 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfigService } from '../../shared/config.service';
 import { FhirResourceService } from '../../shared/fhir-resource.service';
 import { IFhirResource, IProjectResourceReference } from '@trifolia-fhir/models';
-import { Paginated } from '@trifolia-fhir/tof-lib';
+import { IValueSet, Paginated } from '@trifolia-fhir/tof-lib';
+import {ValueSetService} from '../../shared/value-set.service';
+import { CookieService } from 'ngx-cookie-service';
 
 export interface ResourceSelection {
-  projectResourceId: string;
+  projectResourceId?: string;
   resourceType: string;
   id: string;
   display?: string;
@@ -30,31 +32,40 @@ export class FhirReferenceModalComponent implements OnInit {
   @Input() public hideResourceType?: boolean;
   @Input() public selectMultiple = false;
   @Input() public allowCoreProfiles = true;
-  @Input() public searchLocation: 'base' | 'server' | 'dependency' = 'server';
+  @Input() public searchLocation: 'base' | 'server' | 'dependency' | 'vsac' = 'server';
   @Input() public structureDefinitionType?: string;
   @Input() public fhirVersion: 'stu3'|'r4'|'r5' = 'stu3';
   public idSearch?: string;
   public contentSearch?: string;
+  public apiKey: string;
+  public rememberVsacCredentials: boolean = false;
   public criteriaChangedEvent: Subject<string> = new Subject<string>();
   public nameSearch?: string;
   public titleSearch?: string;
   public selected: ResourceSelection[] = [];
   public results?: IFhirResource[];
+  public valueSetResults?: IValueSet[];
   public total: number;
   public currentPage: number = 1;
+  public pageSize: number = 5;
   public pageChanged: Subject<void> = new Subject<void>();
   public resourceTypeCodes: Coding[] = [];
   public nameSearchTypes: string[] = [];
   public titleSearchTypes: string[] = [];
   public message: string;
+  public vsacMessage: string;
   public baseResourceLength: number;
   public ignoreContext = false;
   public searching = false;
 
+  private readonly vsacPasswordCookieKey = 'vsac_password';
+
   constructor(
     public activeModal: NgbActiveModal,
     public configService: ConfigService,
+    public valueSetService: ValueSetService,
     protected fhirResourceService: FhirResourceService,
+    private cookieService: CookieService,
     private http: HttpClient,
     private fhirService: FhirService) {
 
@@ -64,7 +75,14 @@ export class FhirReferenceModalComponent implements OnInit {
         distinctUntilChanged())
       .subscribe(() => this.criteriaChanged());
 
-      this.pageChanged.subscribe(() => this.criteriaChanged());
+      this.pageChanged.subscribe(() => this.getPage());
+
+      const vsacPassword = this.cookieService.get(this.vsacPasswordCookieKey);
+
+      if (vsacPassword) {
+        this.apiKey = atob(vsacPassword);
+        this.rememberVsacCredentials = true;
+      }
   }
 
   public get resourcesFromContext(): boolean {
@@ -124,6 +142,18 @@ export class FhirReferenceModalComponent implements OnInit {
     }
   }
 
+  public selectVsac(valueSet: IValueSet) {
+    if (valueSet) {
+      this.activeModal.close(<ResourceSelection>{
+        resourceType: 'ValueSet',
+        id: valueSet.id,
+        display: new FhirDisplayPipe().transform(valueSet),
+        fullUrl: valueSet['url'],
+        resource: valueSet
+      })
+    }
+  }
+
   tabChanged(event) {
     this.searchLocation = event.nextId;
     this.criteriaChanged();
@@ -153,12 +183,45 @@ export class FhirReferenceModalComponent implements OnInit {
 
         this.results = res.results;
         this.total = res.total;
-
+        this.pageSize = res.itemsPerPage;
+        this.searching = false;
       },
-      error: (err) => { },
-      complete: () => { this.searching = false; }
+      error: (err) => {
+        this.searching = false;
+      }
     });
 
+  }
+
+
+  criteriaChanged() {
+    this.currentPage = 1;
+    this.getPage();
+  }
+
+  getPage() {
+
+    this.results = null;
+    this.valueSetResults = null;
+
+    if (!this.resourceType) {
+      return;
+    }
+
+    switch (this.searchLocation) {
+      case 'base':
+        this.searchBase();
+        break;
+      case 'server':
+        this.searchServer();
+        break;
+      case 'dependency':
+        this.searchDependency();
+        break;
+      case 'vsac':
+        this.searchVSAC();
+        break;
+    }
   }
 
   private searchDependency() {
@@ -256,25 +319,43 @@ export class FhirReferenceModalComponent implements OnInit {
 
   }
 
-  criteriaChanged() {
+  get vsacSearchDisabled(): boolean {
+    return !this.apiKey || (!this.idSearch && !this.nameSearch);
+  }
 
-    this.results = null;
+  private searchVSAC() {
 
-    if (!this.resourceType) {
+    this.searching = false;
+    this.valueSetResults = null;
+    this.vsacMessage = '';
+
+    if (this.rememberVsacCredentials) {
+      this.cookieService.set(this.vsacPasswordCookieKey, btoa(this.apiKey));
+    }
+
+    if (this.vsacSearchDisabled) {
       return;
     }
 
-    switch (this.searchLocation) {
-      case 'base':
-        this.searchBase();
-        break;
-      case 'server':
-        this.searchServer();
-        break;
-      case 'dependency':
-        this.searchDependency();
-        break;
-    }
+    this.searching = true;
+
+
+    this.valueSetService.searchVsacApi(this.currentPage, this.apiKey, this.idSearch, this.nameSearch).subscribe({
+      next: (res: Paginated<IValueSet>) => {
+        this.valueSetResults = res.results;
+        this.total = res.total;
+        this.pageSize = res.itemsPerPage;
+        this.searching = false;
+      },
+      error: (err) => {
+        console.log('err:', err);
+        this.searching = false;
+        this.vsacMessage = err.error?.message ?? err.message;
+      }
+    });
+
+
+
   }
 
   ngOnInit() {

@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { OperationOutcome, ValueSet } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import type { ExpandOptions } from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
 import {IFhirResource} from '@trifolia-fhir/models';
+import { IValueSet, Paginated } from '@trifolia-fhir/tof-lib';
 
 @Injectable()
 export class ValueSetService {
@@ -44,6 +43,28 @@ export class ValueSetService {
     url += '_sort=name';
 
     return this.http.get(url);
+  }
+
+
+  public searchVsacApi(page = 1, apiKey: string, id?: string, name?: string): Observable<Paginated<IValueSet>> {
+
+    let url = `/api/valueSet/vsac?page=${page}&count=5`;
+
+    if (id) {
+      url += `&id=${encodeURIComponent(id)}`;
+    } else if (name) {
+      url += `&name=${encodeURIComponent(name)}`;
+    } else {
+      return throwError(() => new Error('Either ID or name must be provided.'));
+    }
+
+    let options = {
+      headers: {
+        'vsacauthorization': `Basic ${btoa('apikey:'+apiKey)}`
+      }
+    }
+    
+    return this.http.get<Paginated<IValueSet>>(url, options);
   }
 
   public getValueSet(id: string) {
