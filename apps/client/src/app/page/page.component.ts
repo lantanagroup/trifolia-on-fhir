@@ -183,7 +183,7 @@ export class PageComponent implements OnInit {
 
     this.getPage();
 
-    this.nonFhirResourceService.search(this.pageNo, 'name', '{"content": 0}', this.implementationGuideId, NonFhirResourceType.Page).toPromise().then((results) => {
+    this.nonFhirResourceService.search(this.pageNo, 'name', {"content": 0}, this.implementationGuideId, NonFhirResourceType.Page).toPromise().then((results) => {
       this.allPages = results.results;
       this.pageNavMenus = this.allPages
         .filter(p => !!p.navMenu)

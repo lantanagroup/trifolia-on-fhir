@@ -23,19 +23,25 @@ export class BaseDataService<T extends IBaseEntity> implements IBaseDataService<
     }
 
 
-    public async search(options?: PaginateOptions, projections?: any): Promise<Paginated<T>> {
+    public async search(options?: PaginateOptions): Promise<Paginated<T>> {
         const page = (options && options.page) ? options.page : 1;
         const limit = (options && options.itemsPerPage) ? options.itemsPerPage : 10;
         const pipeline: PipelineStage[] = (options && options.pipeline) ? options.pipeline : [];
         const skip = (page-1) * limit;
         const sortBy = (options && options.sortBy)  ? options.sortBy : {};
         const populate = (options && options.populate)  ? options.populate : [];
+        const projection = (options && options.projection) ? options.projection : {};
 
         let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
         pipeline.push({$match: {$or: deleteClause}});
-        //console.log(`base search filters: ${JSON.stringify(filters)}`);
+        // console.log(`base search pipeline: ${JSON.stringify(pipeline)}`);
 
+        
         let query = this.model.aggregate(pipeline);
+
+        if (Object.keys(projection).length > 0) {
+            query = query.project(projection);
+        }
         
         if (Object.keys(sortBy).length > 0) {
             query = query.sort(sortBy);
@@ -67,8 +73,8 @@ export class BaseDataService<T extends IBaseEntity> implements IBaseDataService<
         return this.model.countDocuments(filter).exec();
     }
 
-    public async findAll(filter = {},  populated = [], projections = {}): Promise<T[]> {
-        return this.model.find(filter, projections).populate(populated).exec();
+    public async findAll(filter = {},  populated = [], projection = {}): Promise<T[]> {
+        return this.model.find(filter, projection).populate(populated).exec();
     }
 
     public async findOne(filter = {}): Promise<T> {

@@ -7,6 +7,7 @@ export class PaginateOptions {
     public pipeline?: PipelineStage[];
     public sortBy?: {[key: string]: 'asc'|'desc'};
     public populate?: string[] = [];
+    public projection?: PipelineStage.Project['$project'];
 }
 
 export class Paginated<T> {

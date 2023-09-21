@@ -107,22 +107,16 @@ export class AuthService {
                 {
                     $lookup: {
                         from: "project",
-                        localField: "projects.0",
+                        localField: "projects",
                         foreignField: "_id",
                         as: "projects",
-                    },
-                },
-                {
-                    $set: {
-                        projects: { $first: "$projects" },
                     }
-                }  
+                }
             );
         }
     
         pipeline.push({$match: filter});
         
-
         // console.log('pipeline:', JSON.stringify(pipeline));
 
         return pipeline;
@@ -160,7 +154,7 @@ export class AuthService {
         }
 
         const pipeline = await this.getPermissionFilterBase(user, grant, targetId, isProjectService);
-        // console.log('filter:', JSON.stringify(filter));
+        // console.log('pipeline:', JSON.stringify(pipeline));
         const res = await dataService.getModel().aggregate(pipeline).count("count");
         const resCount: number = res && res.length > 0 ? res[0]['count'] : 0;
         // console.log(`${dataService.getModel().modelName} :: Can ${grant} for user ${userId} count: ${resCount} -- ${targetId}`);

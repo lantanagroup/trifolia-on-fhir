@@ -109,8 +109,14 @@ export class AppComponent implements OnInit {
     }, 200);
   }
 
+  public navigateToProject() {
+    this.configService.igContext = null;
+    this.router.navigate([`/projects/${this.configService.currentProject.id}`]);
+  }
+
   public closeProject() {
     this.configService.igContext = null;
+    this.configService.currentProject = null;
     // noinspection JSIgnoredPromiseFromCall
     this.router.navigate(['/projects']);
   }
@@ -169,11 +175,20 @@ export class AppComponent implements OnInit {
       return Promise.resolve(this.configService.currentProject);
     }
 
+    // loading a new project context
     if (projectId) {
       return firstValueFrom(this.projectService.getProject(projectId));
     }
 
+    // have an IG open...
     if (this.configService.igContext && this.configService.igContext.implementationGuideId) {
+
+      // may already have retrieved a project context for current IG
+      if (this.configService.currentProject) {
+        return Promise.resolve(this.configService.currentProject);
+      }
+
+      // otherwise... look up the project for this open IG for the first time
       const ig = await firstValueFrom(this.implGuideService.getImplementationGuide(this.configService.igContext.implementationGuideId));
       if (ig && ig.projects && ig.projects[0]) {
         if (typeof ig.projects[0] === typeof {}) {

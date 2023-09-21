@@ -93,7 +93,7 @@ export class PagesComponent extends BaseComponent implements OnInit {
   }
 
   public async getPages() {
-    this.nonFhirResourceService.search(this.page, 'name','{"content": 0}', this.getImplementationGuideId(), NonFhirResourceType.Page).toPromise().then((results) => {
+    this.nonFhirResourceService.search(this.page, 'name', {"content": 0}, this.getImplementationGuideId(), NonFhirResourceType.Page).toPromise().then((results) => {
       this.igPages = results;
       this.total = this.igPages.total;
     }).catch((err) => console.log(err));

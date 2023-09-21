@@ -132,15 +132,14 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
 
 
   @Get()
-  public async searchFhirResource(@User() user: ITofUser, @Request() req): Promise<Paginated<INonFhirResource>> {
+  public async searchNonFhirResource(@User() user: ITofUser, @Request() req): Promise<Paginated<INonFhirResource>> {
     let options = this.getPaginateOptionsFromRequest(req);
     let filter = await this.authService.getPermissionFilterBase(user, 'read');
-    filter.push({$match: options.pipeline});
 
-    options.pipeline = filter;
-
-    let projections =  JSON.parse(req.query['_projections']);
-    return await this.nonFhirResourcesService.search(options, projections);
+    options.pipeline = [...options.pipeline, ...filter];
+    options.projection = JSON.parse(req.query['_projection']);
+    
+    return await this.nonFhirResourcesService.search(options);
   }
 
   @Post()

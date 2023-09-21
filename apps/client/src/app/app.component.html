@@ -19,13 +19,13 @@
           <a class="dropdown-item" routerLink="{{configService.baseSessionUrl}}/home">
             <i class="fa fa-home"></i> Home
           </a>
-          <a class="dropdown-item" routerLink="/projects/new" *ngIf="authService.isAuthenticated() && !configService.igContext" title="Create a new project">
+          <a class="dropdown-item" routerLink="/projects/new" *ngIf="authService.isAuthenticated() && !configService.currentProject" title="Create a new project">
           <i class="fa fa-plus"></i> New Project
           </a>
-           <a class="dropdown-item" href="javascript:void(0)" routerLink="/projects" *ngIf="authService.isAuthenticated() && !configService.igContext" title="Open/select an project to work on">
+           <a class="dropdown-item" href="javascript:void(0)" routerLink="/projects" *ngIf="authService.isAuthenticated() && !configService.currentProject" title="Open/select an project to work on">
              <i class="far fa-folder"></i> Open project
           </a>
-          <a class="dropdown-item" href="javascript:void(0)" (click)="closeProject()" *ngIf="authService.isAuthenticated() && configService.igContext" title="Close the currently opened project implementation guide">
+          <a class="dropdown-item" href="javascript:void(0)" (click)="closeProject()" *ngIf="authService.isAuthenticated() && configService.currentProject" title="Close the currently opened project">
             <i class="fa fa-window-close"></i> Close project
           </a>
           <!--a class="dropdown-item" href="javascript:void(0)" (click)="openFile()" title="Open a resource file from your computer">
@@ -56,6 +56,10 @@
           <a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/examples">Examples</a>
           <a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/page">Pages</a>
           <a class="dropdown-item" routerLink="/{{configService.baseSessionUrl}}/other-resources">Other Resources</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="javascript:void(0)" (click)="navigateToProject()" *ngIf="authService.isAuthenticated() && configService.currentProject && configService.igContext" title="Close the currently opened implementation guide">
+            <i class="fa fa-window-close"></i> Close IG
+          </a>
         </div>
       </li>
       <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.igContext">

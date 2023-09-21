@@ -614,17 +614,6 @@
       </ng-template>
     </li>
 
-    <!-- Permissions -->
-    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
-      <a ngbNavLink>
-        <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions
-          <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(fhirResource)" title="No write permissions for current user specified!"></i></span>
-      </a>
-      <ng-template ngbNavContent>
-        <trifolia-fhir-resource-permissions [resource]="fhirResource" (change)="igChanging.emit(true)"></trifolia-fhir-resource-permissions>
-      </ng-template>
-    </li>
-
     <!-- Validation -->
     <li ngbNavItem="validation">
       <a ngbNavLink>

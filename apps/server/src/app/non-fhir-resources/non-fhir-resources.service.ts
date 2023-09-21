@@ -2,7 +2,7 @@ import {BadRequestException, Injectable} from '@nestjs/common';
 import {TofLogger} from '../tof-logger';
 import {NonFhirResourceDocument} from './non-fhir-resource.schema';
 import {InjectConnection} from '@nestjs/mongoose';
-import {Connection, Model} from 'mongoose';
+import {Connection, Model, PipelineStage} from 'mongoose';
 import {IHistory, INonFhirResource, NonFhirResource, NonFhirResourceType} from '@trifolia-fhir/models';
 import {addPageToImplementationGuide, addToImplementationGuideNew, removeFromImplementationGuideNew, removePageFromImplementationGuide} from '../helper';
 import {HistoryService} from '../history/history.service';
@@ -47,20 +47,37 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
     }
 
 
-    public async search(options?: PaginateOptions, projections?: any): Promise<Paginated<NonFhirResourceDocument>> {
+    public async search(options?: PaginateOptions): Promise<Paginated<NonFhirResourceDocument>> {
         const page = (options && options.page) ? options.page : 1;
         const limit = (options && options.itemsPerPage) ? options.itemsPerPage : 10;
-        const filters = (options && options.pipeline) ? options.pipeline : {};
+        const pipeline: PipelineStage[] = (options && options.pipeline) ? options.pipeline : [];
         const skip = (page-1) * limit;
-        const sortBy = (options && options.sortBy)  ? options.sortBy : {};
-        const populate = (options && options.populate)  ? options.populate : [];
+        const sortBy = (options && options.sortBy) ? options.sortBy : {};
+        const populate = (options && options.populate) ? options.populate : [];
+        const projection = (options && options.projection) ? options.projection : {};
 
         let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
+        pipeline.push({$match: {$or: deleteClause}});
+        // console.log(`search pipeline: ${JSON.stringify(pipeline)}`);
 
-        let allFilters = { $and: [filters, {$or: deleteClause}] };
+        let query = this.getModel().aggregate(pipeline);
 
-        const items = await this.getModel().find(allFilters, projections).populate(populate).sort(sortBy).limit(limit).skip(skip);
-        const total = await this.getModel().countDocuments(allFilters);
+        if (Object.keys(projection).length > 0) {
+            query = query.project(projection);
+        }
+
+        if (Object.keys(sortBy).length > 0) {
+            query = query.sort(sortBy);
+        }
+        query = query.limit(limit).skip(skip);
+
+        let items = ((await query) || []).map(i => this.getModel().hydrate(i));
+        if (populate.length > 0) {
+            items = (await this.getModel().populate(items, populate.map(p => { return { path: p } })) || []);
+        }
+
+        const totalRes = await this.getModel().aggregate(pipeline).count('total');
+        const total = (totalRes && totalRes.length > 0) ? totalRes[0]['total'] : 0;
 
         const result: Paginated<NonFhirResourceDocument> = {
             itemsPerPage: limit,
@@ -81,11 +98,11 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
       return this.getModel().countDocuments(allFilters).exec();
     }
 
-    public async findAll(filter: any, populated = [], projections?: any): Promise<NonFhirResourceDocument[]> {
+    public async findAll(filter: any, populated = [], projection?: {[key: string]: any}): Promise<NonFhirResourceDocument[]> {
       let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
       let allFilters = { $and: [filter, {$or: deleteClause}] };
-      if(projections) {
-        return this.getModel().find(allFilters, projections).populate(populated);
+      if(projection) {
+        return this.getModel().find(allFilters, projection).populate(populated);
       }
       return this.getModel().find(allFilters).populate(populated);
     }
