@@ -71,7 +71,7 @@ export class PagesComponent extends BaseComponent implements OnInit {
           console.log(nonFhir);
           const page = (this.igPages.results || []).find((e) => e.id === id);
           const index = this.igPages.results.indexOf(page);
-
+          this.total --;
           this.igPages.results.splice(index, 1);
         }, (err) => {
           this.configService.handleError(err, 'An error occurred while deleting the code system');

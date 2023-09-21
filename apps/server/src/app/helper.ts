@@ -1009,27 +1009,31 @@ export async function removePageFromImplementationGuide(service: FhirResourcesSe
 
   for (const conf of (confRes || [])) {
     if (conf.resource.resourceType == 'ImplementationGuide') {
-      if (conf.fhirVersion.toLowerCase() === FhirVersions.R4) {
+      if (conf.fhirVersion.toLowerCase() === FhirVersions.R4.toLowerCase()) {
         let ig = <R4ImplementationGuide>conf.resource;
         // remove page
-        let result = findPage(ig.definition.page, undefined, pageToRemove.name);
-        if (result) {
-          removePage(result, ig.definition.page);
+        if (ig.definition.page) {
+          let result = findPage(ig.definition.page, undefined, pageToRemove.name);
+          if (result) {
+            removePage(result, ig.definition.page);
+          }
         }
-      } else if (conf.fhirVersion.toLowerCase() === FhirVersions.STU3) {
+      } else if (conf.fhirVersion.toLowerCase() === FhirVersions.STU3.toLowerCase()) {
         let ig = <STU3ImplementationGuide>conf.resource;
         // remove page
-        let result = findPage(ig.page, undefined, pageToRemove.name);
-        if (result) {
-          removePage(result, ig.page);
-        }
+        if (ig.page) {
+          let result = findPage(ig.page, undefined, pageToRemove.name);
+          if (result) {
+            removePage(result, ig.page);
+          }
       }
-      // remove reference
-      await updateReference(conf);
-
-      await service.updateOne(conf.id, conf);
     }
+    // remove reference
+    await updateReference(conf);
+
+    await service.updateOne(conf.id, conf);
   }
+}
 }
 
 
