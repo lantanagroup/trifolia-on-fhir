@@ -5,7 +5,7 @@ module.exports = {
   async up(db, client) {
 
 
-    async function migrateExtensions(igId, page) {
+    async function migrateExtensions(ig, page) {
       if (!page) {
         return;
       }
@@ -44,16 +44,24 @@ module.exports = {
           navMenu: navMenu,
           reuseDescription: reuseDescription,
           name: pageName,
-          referencedBy: { value: igId, valueType: 'FhirResource' },
+          referencedBy: [{ value: ig._id, valueType: 'FhirResource' }],
           lastUpdated: new Date(),
           versionId: 1,
           isDeleted: false
         };
-        await db.collection('nonFhirResource').updateOne({ name: pageName, type: 'Page', 'referencedBy.value': new ObjectId(igId) }, { $set: newPage }, { upsert: true });
+        let newPageRes = await db.collection('nonFhirResource').updateOne({ name: pageName, type: 'Page', 'referencedBy.value': new ObjectId(ig._id) }, { $set: newPage }, { upsert: true });
+        ig.references = ig.references || [];
+        // add to references if not already in the reference list
+        if (!ig.references.find((r ) => {
+          if (r.valueType !== 'NonFhirResource') return false;
+          if (r.value && r.value.toString() === newPageRes.upsertedId) return true;
+        })) {
+          ig.references.push({ value: newPageRes.upsertedId, valueType: 'NonFhirResource' });
+        }
       }
       if (page.page) {
         for (let i = 0; i < page.page.length; i++) {
-          await migrateExtensions(igId, page.page[i]);
+          await migrateExtensions(ig, page.page[i]);
         }
       }
     }
@@ -98,7 +106,7 @@ module.exports = {
     let results = await db.collection('fhirResource').find({ 'resource.resourceType' : 'ImplementationGuide', 'resource.definition.page.extension': { $exists: true } }).toArray();
     for (const result of results) {
       console.log('Ig: ' + result._id);
-      await migrateExtensions(result._id, result.resource.definition.page);
+      await migrateExtensions(result, result.resource.definition.page);
       await deleteExtensions(result._id, result.resource.definition.page);
      /* let str = JSON.stringify(result, null, 4);
       console.log(str);*/
@@ -192,6 +200,11 @@ module.exports = {
       let page = findPage(ig["resource"].definition.page, result.name);
       if(page !== undefined){
         insertExtension(page, result);
+      }
+
+      let refIndex = (ig.references || []).findIndex(ref => ref.value === result._id && ref.valueType === 'NonFhirResource');
+      if (refIndex > -1) {
+        ig.references.splice(refIndex, 1);
       }
 
 /*      let str = JSON.stringify(ig['resource'].definition.page, null, 4);
