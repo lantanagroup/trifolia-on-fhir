@@ -6,15 +6,24 @@ module.exports = {
 
 
     async function migrateExtensions(igId, page) {
+      if (!page) {
+        return;
+      }
       let pageContent = '';
       let navMenu = '';
       let reuseDescription = false;
-      let pageName = page.nameUrl.substring(0, page.nameUrl.indexOf('.html'));
+
+      let name = page.nameUrl ?? page.nameReference?.reference;
+      if (!name) {
+        return;
+      }
+
+      let pageName = name.substring(0, name.indexOf('.'));
       // add it if only for those extensions
       // console.log('Page Name is: ' + pageName);
       let createPage = false;
       for (let i = 0; i < page.extension.length; i++) {
-        console.log('Url ' + page.nameUrl + ' ext' + page.extension[i].url);
+        console.log('Url ' + name + ' ext' + page.extension[i].url);
         if (page.extension[i].url.indexOf('extension-ig-page-content') > -1) {
           pageContent = page.extension[i].valueMarkdown;
           createPage = true;
@@ -51,7 +60,7 @@ module.exports = {
 
     async function deleteExtensions(igId, page) {
 
-      for (let i = 0; i < page.extension.length; i++) {
+      for (let i = 0; i < (page.extension?.length || 0); i++) {
         let index = page.extension[i].url.indexOf('extension-ig-page-content');
         if (index > -1) {
           console.log('delete ' + page.nameUrl + ' - ' + page.extension[i].url);
