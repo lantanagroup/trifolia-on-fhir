@@ -28,7 +28,7 @@ export class Base {
 
   constructor(obj?: any) {
     if (obj) {
-      if (obj.hasOwnProperty('fhir_comments')) {
+      if (obj.fhir_comments) {
         this.fhir_comments = obj.fhir_comments;
       }
     }
@@ -261,6 +261,7 @@ export class Extension implements IExtension {
 
 }
 
+
 export class Element extends Base {
   public id?: string;
   public extension?: Extension[];
@@ -268,10 +269,10 @@ export class Element extends Base {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.hasOwnProperty('id')) {
+      if (obj.id) {
         this.id = obj.id;
       }
-      if (obj.hasOwnProperty('extension')) {
+      if (obj.extension) {
         this.extension = [];
         for (const o of obj.extension || []) {
           this.extension.push(new Extension(o));
@@ -281,6 +282,7 @@ export class Element extends Base {
   }
 
 }
+
 
 export class Coding extends Element {
   public system?: string;
@@ -650,7 +652,7 @@ export class BackboneElement extends Element {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.hasOwnProperty('modifierExtension')) {
+      if (obj.modifierExtension) {
         this.modifierExtension = [];
         for (const o of obj.modifierExtension || []) {
           this.modifierExtension.push(new Extension(o));
@@ -14895,19 +14897,19 @@ export class ImplementationGuidePageComponent extends BackboneElement {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.hasOwnProperty('nameUrl')) {
+      if (obj.nameUrl) {
         this.nameUrl = obj.nameUrl;
       }
-      if (obj.hasOwnProperty('nameReference')) {
+      if (obj.nameReference) {
         this.nameReference = obj.nameReference;
       }
-      if (obj.hasOwnProperty('title')) {
+      if (obj.title) {
         this.title = obj.title;
       }
-      if (obj.hasOwnProperty('generation')) {
+      if (obj.generation) {
         this.generation = obj.generation;
       }
-      if (obj.hasOwnProperty('page')) {
+      if (obj.page) {
         this.page = [];
         for (const o of obj.page || []) {
           this.page.push(new ImplementationGuidePageComponent(o));
