@@ -69,7 +69,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         if (Object.keys(sortBy).length > 0) {
             query = query.sort(sortBy);
         }
-        query = query.limit(limit).skip(skip);
+        query = query.skip(skip).limit(limit);
 
         let items = ((await query) || []).map(i => this.getModel().hydrate(i));
         if (populate.length > 0) {
