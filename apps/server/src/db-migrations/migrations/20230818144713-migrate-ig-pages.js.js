@@ -20,10 +20,9 @@ module.exports = {
 
       let pageName = name.substring(0, name.indexOf('.'));
       // add it if only for those extensions
-      // console.log('Page Name is: ' + pageName);
+
       let createPage = false;
-      for (let i = 0; i < page.extension.length; i++) {
-        console.log('Url ' + name + ' ext' + page.extension[i].url);
+      for (let i = 0; i < (page.extension?.length || 0); i++) {
         if (page.extension[i].url.indexOf('extension-ig-page-content') > -1) {
           pageContent = page.extension[i].valueMarkdown;
           createPage = true;
@@ -34,6 +33,9 @@ module.exports = {
         }
         if (page.extension[i].url.indexOf('extension-ig-page-reuse-description') > -1) {
           reuseDescription = page.extension[i].valueBoolean;
+          createPage = true;
+        }
+        if (page.extension[i].url.indexOf('extension-ig-page-auto-generate-toc') > -1) {
           createPage = true;
         }
       }
@@ -71,7 +73,6 @@ module.exports = {
       for (let i = 0; i < (page.extension?.length || 0); i++) {
         let index = page.extension[i].url.indexOf('extension-ig-page-content');
         if (index > -1) {
-          console.log('delete ' + page.nameUrl + ' - ' + page.extension[i].url);
           page.extension.splice(i, 1);
           i = i - 1;
           continue;
@@ -94,7 +95,14 @@ module.exports = {
           i = i - 1;
           continue;
         }
+        index = page.extension[i].url.indexOf('extension-ig-page-auto-generate-toc');
+        if (index > -1) {
+          page.extension.splice(i, 1);
+          i = i - 1;
+          continue;
+        }
       }
+
       if (page.page) {
         for (let i = 0; i < page.page.length; i++) {
           await deleteExtensions(igId, page.page[i]);
@@ -105,11 +113,8 @@ module.exports = {
     //let results = await db.collection('fhirResource').find({ '_id': new ObjectId('645aa11600669ee940513ef1'), 'resource.definition.page.extension': { $exists: true } }).toArray();
     let results = await db.collection('fhirResource').find({ 'resource.resourceType' : 'ImplementationGuide', 'resource.definition.page.extension': { $exists: true } }).toArray();
     for (const result of results) {
-      console.log('Ig: ' + result._id);
       await migrateExtensions(result, result.resource.definition.page);
       await deleteExtensions(result._id, result.resource.definition.page);
-     /* let str = JSON.stringify(result, null, 4);
-      console.log(str);*/
 
       // update ig
       await db.collection('fhirResource').updateOne({ '_id': new ObjectId( result._id) }, { $set: result });
@@ -122,7 +127,9 @@ module.exports = {
 
     function findPage(page, searchPageName) {
       let result;
-      let pageName = page.nameUrl.substring(0, page.nameUrl.indexOf('.html'));
+      let name = page.nameUrl ?? page.nameReference?.reference;
+      let pageName = name?name.substring(0, name.indexOf('.')):"";
+
       if (pageName === searchPageName) {
         return page;
       } else {
@@ -150,40 +157,53 @@ module.exports = {
         }
       }
 
-      if(page.extension instanceof  Array) {
-        let contentExt = page.extension.find(e => e.url.indexOf('extension-ig-page-content') > -1);
-        if (result.content) {
-          if (!contentExt) {
-            contentExt = {
-              url: 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
-              valueMarkdown: result.content
-            };
-            page.extension.push(contentExt);
-          }
+      page.extension = page.extension || [];
+
+      if (result.content) {
+        let contentExt =  page.extension.find(e => e.url.indexOf('extension-ig-page-content') > -1);
+        if (!contentExt) {
+          contentExt = {
+            url: 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
+            valueMarkdown: result.content
+          };
+          page.extension.push(contentExt);
         }
-        if (result.reuseDescription) {
-          let pageReuseDescription = page.extension.find(e => e.url.indexOf('extension-ig-page-reuse-description') > -1);
-          if (!pageReuseDescription) {
-            pageReuseDescription = {
-              url: 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-reuse-description',
-              valueBoolean: result.reuseDescription
-            };
-            page.extension.push(pageReuseDescription);
-          }
+      }
+      if (result.reuseDescription) {
+        let pageReuseDescription =  page.extension.find(e => e.url.indexOf('extension-ig-page-reuse-description') > -1);
+        if (!pageReuseDescription) {
+          pageReuseDescription = {
+            url: 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-reuse-description',
+            valueBoolean: result.reuseDescription
+          };
+          page.extension.push(pageReuseDescription);
         }
-        if (result.navMenu) {
-          let pageNavMenu = page.extension.find(e => e.url.indexOf('extension-ig-page-nav-menu') > -1);
-          if (!pageNavMenu) {
-            pageNavMenu = {
-              url: 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-nav-menu',
-              valueString: result.navMenu
-            };
-            page.extension.push(pageNavMenu);
-          }
+      }
+      if (result.navMenu) {
+        let pageNavMenu =  page.extension.find(e => e.url.indexOf('extension-ig-page-nav-menu') > -1);
+        if (!pageNavMenu) {
+          pageNavMenu = {
+            url: 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-nav-menu',
+            valueString: result.navMenu
+          };
+          page.extension.push(pageNavMenu);
         }
-        // add filename based on page url
-        let filename = page.extension.find(e => e.url.indexOf('extension-ig-page-filename') > -1);
-        let pageName = page.nameUrl.substring(0, page.nameUrl.indexOf('.html'));
+      }
+      if(result.name == "toc"){
+        let pageToc =   page.extension.find(e => e.url.indexOf('extension-ig-page-auto-generate-toc') > -1);
+        if (!pageToc) {
+          pageToc = {
+            url: 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc',
+            valueBoolean: true
+          };
+          page.extension.push(pageToc);
+        }
+      }
+      // add filename based on page url
+      let filename =  page.extension.find(e => e.url.indexOf('extension-ig-page-filename') > -1);
+      let name = page.nameUrl ?? page.nameReference?.reference;
+      if (name) {
+        let pageName = name.substring(0, name.indexOf('.'));
         let ext = getExtension(page.generation)
         if (!filename) {
           filename = {
@@ -196,7 +216,8 @@ module.exports = {
     }
 
     for (const result of results) {
-      const ig = await db.collection('fhirResource').findOne({ '_id': new ObjectId(result.referencedBy.value) });
+      const ig = await db.collection('fhirResource').findOne({ '_id': new ObjectId(result.referencedBy[0].value) });
+
       let page = findPage(ig["resource"].definition.page, result.name);
       if(page !== undefined){
         insertExtension(page, result);
@@ -207,9 +228,7 @@ module.exports = {
         ig.references.splice(refIndex, 1);
       }
 
-/*      let str = JSON.stringify(ig['resource'].definition.page, null, 4);
-      console.log(str);*/
-      await db.collection('fhirResource').updateOne({ '_id': new ObjectId(result.referencedBy.value) }, { $set: ig });
+      await db.collection('fhirResource').updateOne({ '_id': new ObjectId(result.referencedBy[0].value) }, { $set: ig });
     }
 
     // drop the pages
