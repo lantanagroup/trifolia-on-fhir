@@ -106,8 +106,9 @@ export class IgPageHelper {
     pageInfo.page = page;
     pageInfo.fileName = page.fileName || page.nameUrl;
 
+    let name = page.nameUrl ?? page.nameReference?.reference;
     // get the resource page
-    let pageFound = (pages || []).find(pageElem => pageElem.name == page.nameUrl.slice(0, page.nameUrl.indexOf('.')));
+    let pageFound = (pages || []).find(pageElem => pageElem.name == name.slice(0, name.indexOf('.')));
 
     if (pageFound && pageFound['reuseDescription']) {
       pageInfo.content = this.getIndexContent(implementationGuide);

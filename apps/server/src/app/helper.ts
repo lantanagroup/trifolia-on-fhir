@@ -567,8 +567,8 @@ function searchPage(page: any, name: string) {
   if (!page) {
     return false;
   }
-
-  if (page.nameUrl === name) return page;
+  let pageName = page.nameUrl ?? page.nameReference?.reference;
+  if (pageName === name) return page;
   else {
     if (page.page) {
       for (let i = 0; i < page.page.length; i++) {
@@ -581,6 +581,27 @@ function searchPage(page: any, name: string) {
     return false;
   }
 }
+
+function searchPageV3(page: any, name: string) {
+  let result;
+  if (!page) {
+    return false;
+  }
+  let pageName = page.source;
+  if (pageName === name) return page;
+  else {
+    if (page.page) {
+      for (let i = 0; i < page.page.length; i++) {
+        result = searchPage(page.page[i], name);
+        if (result !== false) {
+          return result;
+        }
+      }
+    }
+    return false;
+  }
+}
+
 
 export async function addPageToImplementationGuide(service: FhirResourcesService, pageToAdd: Page, implementationGuideId: string): Promise<void> {
 
@@ -620,7 +641,7 @@ export async function addPageToImplementationGuide(service: FhirResourcesService
       newPage.title = pageToAdd.name;
       stu3.page = newPage;
     } else {
-      let foundResource = searchPage(<PageComponent>stu3.page, pageToAdd.name + '.html');
+      let foundResource = searchPageV3(<PageComponent>stu3.page, pageToAdd.name + '.html');
       // check all levels
       if (!foundResource) {
         const newPage = new PageComponent();
