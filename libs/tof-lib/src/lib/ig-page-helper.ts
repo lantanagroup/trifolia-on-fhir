@@ -86,7 +86,7 @@ export class IgPageHelper {
       if (pageFound && pageFound['reuseDescription']) {
         pageInfo.content = this.getIndexContent(implementationGuide);
       } else {
-        pageInfo.content = pageFound.content || 'No content has been defined for this page, yet.';
+        pageInfo.content = pageFound?.content || 'No content has been defined for this page, yet.';
       }
 
       theList.push(pageInfo);
@@ -112,7 +112,7 @@ export class IgPageHelper {
     if (pageFound && pageFound['reuseDescription']) {
       pageInfo.content = this.getIndexContent(implementationGuide);
     } else {
-      pageInfo.content = pageFound.content || 'No content has been defined for this page, yet.';
+      pageInfo.content = pageFound?.content || 'No content has been defined for this page, yet.';
     }
 
     theList.push(pageInfo);
