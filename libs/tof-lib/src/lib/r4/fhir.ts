@@ -14933,12 +14933,21 @@ export class ImplementationGuidePageComponent extends BackboneElement {
   }
 
   public get fileName() {
-    let name = this.nameUrl ?? this.title;
-    name = name.toLowerCase().replace(/\s/g, '_').replace(/[():]/g, '').replace(/\//g, "_");
-    let fileName = name +  this.getExtension();
+
+    let fileName = "";
+    let name = "";
+    if(this.nameUrl){
+      name = this.nameUrl;
+    }
+    else if(this.nameReference && this.title){
+      name = this.title.replace(/\s/g, '').replace(/[():]/g, '');
+    }
     let index = name.lastIndexOf('.');
     if (index > -1) {
        fileName = name.slice(0, name.lastIndexOf('.')) +  this.getExtension();
+    }
+    else{
+      fileName = name +  this.getExtension();
     }
     return fileName;
   }
