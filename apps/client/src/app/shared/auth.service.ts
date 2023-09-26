@@ -235,7 +235,7 @@ export class AuthService {
 
 
   public getDefaultPermissions(): IPermission[] {
-    let conf: IFhirResource|IProject = <IFhirResource|IProject>{}
+    let conf: IProject = <IProject>{};
     addPermission(conf, 'everyone', 'write');
     return conf.permissions;
   }

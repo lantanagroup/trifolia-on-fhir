@@ -24,7 +24,6 @@ export const NonFhirResourceSchema = new Schema<INonFhirResource>({
     migratedFrom: String,
     versionId: Number,
     lastUpdated: Date,
-    permissions: [PermissionSchema],
     content: { type: Object },
     type: { type: String, required: true, enum: Object.values(NonFhirResourceType), default: NonFhirResourceType.OtherNonFhirResource },
     referencedBy: [{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'referencedBy.valueType'}, valueType: {type:String, enum:[FhirResource.name, NonFhirResource.name, Project.name]}}],

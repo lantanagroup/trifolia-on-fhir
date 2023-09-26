@@ -52,7 +52,7 @@ class ResourceSecurity {
   styleUrls: ['./resource-permissions.component.css']
 })
 export class ResourcePermissionsComponent implements OnInit {
-  @Input() resource: IProject|IProjectResource;
+  @Input() resource: IProject;
 
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
 

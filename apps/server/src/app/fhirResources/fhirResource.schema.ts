@@ -29,17 +29,6 @@ export class FhirResource extends BaseEntity implements IFhirResource {
     @Prop()
     lastUpdated: Date;
 
-    @Prop({
-        get: (permissions: IPermission[]) : IPermission[] => {
-            if (!permissions || permissions.length < 1) {
-                return [{type: 'everyone', grant: 'read'}, {type: 'everyone', grant: 'write'}];
-            }
-            return permissions;
-        }
-    })
-    permissions?: IPermission[];
-
-
     @Prop()
     fhirVersion: 'stu3'|'r4'|'r5';
 

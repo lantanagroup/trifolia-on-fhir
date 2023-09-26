@@ -192,7 +192,7 @@ export class BaseController {
     throw new UnauthorizedException();
   }
 
-  protected userHasPermission(userSecurityInfo: IUserSecurityInfo, permission: 'read'|'write', resource: IProject|IProjectResource) {
+  protected userHasPermission(userSecurityInfo: IUserSecurityInfo, permission: 'read'|'write', resource: IProject) {
     if (userSecurityInfo.user && userSecurityInfo.user.isAdmin) {
       return true;
     }
@@ -212,7 +212,7 @@ export class BaseController {
    * @param userSecurityInfo
    * @param resource
    */
-  protected ensureUserCanEdit(userSecurityInfo: IUserSecurityInfo, resource: IProject|IProjectResource) {
+  protected ensureUserCanEdit(userSecurityInfo: IUserSecurityInfo, resource: IProject) {
     if (!this.configService.server.enableSecurity || !userSecurityInfo) {
       return;
     }
