@@ -8,7 +8,9 @@
     <input type="text" class="form-control" [ngModel]="page.title" (ngModelChange)="page.setTitle($event, implementationGuide.definition.page === inputPage)" [class.is-invalid]="!page.title" />
   </div>
 
-  <app-fhir-string [parentObject]="page" propertyName="nameUrl" *ngIf="page.hasOwnProperty('nameUrl')" [disabled] = true title="Page Name" [required]="true" tooltipKey="ig.page.name" ></app-fhir-string>
+  <div class="mb-3">
+    <app-fhir-string [parentObject]="page" propertyName="fileName" [disabled] = true title="File Name" [required]="true" tooltipKey="ig.page.fileName" ></app-fhir-string>
+  </div>
 
   <div class="mb-3" *ngIf="page.generation !== 'generated'">
     <label>
@@ -26,12 +28,16 @@
 
   <div class="mb-3" *ngIf="!reuseDescription">
     <label>Content</label>
-    <trifolia-fhir-markdown [(value)]="contentMarkdown" [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
+    <trifolia-fhir-markdown [(value)]="contentMarkdown"   [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
   </div>
 
   <hr />
 
   <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation" [required]="true" tooltipKey="ig.page.generation"></app-fhir-select-single-code>
+
+  <app-fhir-string [parentObject]="page" propertyName="nameUrl" *ngIf="page.hasOwnProperty('nameUrl')"  disabled = "true" title="Name URL" [required]="true" tooltipKey="ig.page.name"></app-fhir-string>
+
+  <app-fhir-reference [parentObject]="page" propertyName="nameReference" *ngIf="page.hasOwnProperty('nameReference')"  disabled = "true"  title="Name Reference" [required]="true"></app-fhir-reference>
 
 </div>
 <div class="modal-footer">

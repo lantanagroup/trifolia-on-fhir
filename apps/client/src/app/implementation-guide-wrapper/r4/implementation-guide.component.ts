@@ -964,7 +964,11 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
     // get the resource
     let resource = new Page();
-    resource.name  = page.nameUrl.slice(0,page.nameUrl.indexOf("."));
+    let name = page.nameUrl ?? page.nameReference?.reference;
+    resource.name = name;
+    if (name.indexOf(".") > -1) {
+      resource.name = name.slice(0, name.indexOf("."));
+    }
 
     this.pages.push({
       page: page,

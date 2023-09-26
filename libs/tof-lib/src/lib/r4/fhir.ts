@@ -14933,9 +14933,15 @@ export class ImplementationGuidePageComponent extends BackboneElement {
   }
 
   public get fileName() {
-    return this.nameUrl ? this.nameUrl.substring(0, this.nameUrl.lastIndexOf('.')) + this.getExtension() : '';
+    let name = this.nameUrl ?? this.title;
+    name = name.toLowerCase().replace(/\s/g, '_').replace(/[():]/g, '').replace(/\//g, "_");
+    let fileName = name +  this.getExtension();
+    let index = name.lastIndexOf('.');
+    if (index > -1) {
+       fileName = name.slice(0, name.lastIndexOf('.')) +  this.getExtension();
+    }
+    return fileName;
   }
-
 }
 
 export class ImplementationGuideParameterComponent extends BackboneElement {

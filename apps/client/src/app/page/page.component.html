@@ -7,7 +7,7 @@
       <a ngbNavLink>General</a>
       <ng-template ngbNavContent>
           <div class="page">
-            <app-fhir-string [parentObject]="page" propertyName="name" [required]="true" title="Name" [disabled] = "page.name === 'index'" (change)='idChangedEvent.next()'></app-fhir-string>
+            <app-fhir-string [parentObject]="page" propertyName="name" [required]="true" title="Name"  [disabled] = "page.name === 'index'" (change)='idChangedEvent.next()'></app-fhir-string>
             <div class="help-block">{{alreadyInUseNameMessage}}</div>
 
             <div class="mb-3" *ngIf="!reuseDescription">

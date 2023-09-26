@@ -102,7 +102,10 @@ module.exports = {
           continue;
         }
       }
-
+     /* if(page.extension && page.extension.length == 0) {
+        delete page["extension"];
+      }
+*/
       if (page.page) {
         for (let i = 0; i < page.page.length; i++) {
           await deleteExtensions(igId, page.page[i]);
@@ -156,6 +159,10 @@ module.exports = {
             return `.${generation}`;
         }
       }
+
+   /*   if(!page.hasOwnProperty("extension")) {
+        page["extension"] = [];
+      }*/
 
       page.extension = page.extension || [];
 

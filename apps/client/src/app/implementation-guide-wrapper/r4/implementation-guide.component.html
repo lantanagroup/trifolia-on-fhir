@@ -193,7 +193,7 @@
                 <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, this.implementationGuide.definition.page === p.page)" [class.is-invalid]="!p.page.title" (change)="igChanging.emit(true)"/>
               </td>
               <td>
-                <input type="text" class="form-control" [(ngModel)]="p.page.nameUrl" [disabled] = true [class.is-invalid]="!p.page.fileName || isFileNameInvalid(p)" (change)="igChanging.emit(true)"/>
+                <input type="text" class="form-control" [(ngModel)]="p.page.fileName" [disabled] = true [class.is-invalid]="!p.page.fileName || isFileNameInvalid(p)" (change)="igChanging.emit(true)"/>
                 <span *ngIf="isFileNameInvalid(p)" style="color:red">The file name must not include special characters such as "&" and "/"</span>
               </td>
               <td>
@@ -201,15 +201,6 @@
                   <button type="button" class="btn btn-primary" (click)="editPage(p)" title="Edit this page">
                     <i class="fa fa-edit"></i>
                   </button>
-                 <!-- <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" title="Add a page as a child of this page" id="addPageMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i class="fa fa-plus"></i>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="addPageMenu">
-                      <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p); igChanging.emit(true)">New Generic Page</a>
-                      <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p, 'downloads'); igChanging.emit(true)">New "Downloads" Page</a>
-                    </div>
-                  </div>-->
                   <div class="btn-group" role="group">
                     <button type="button" class="btn btn-primary dropdown-toggle" title="Re-arrange the pages" id="rearrangePages" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="fas fa-arrows-alt"></i>

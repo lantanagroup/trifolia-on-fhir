@@ -49,7 +49,8 @@ export class PageComponentModalComponent implements OnInit {
   public set contentMarkdown(value: string) {
     if(!this.resource){
       this.resource = new Page();
-      this.resource["name"] = this.inputPage.nameUrl.slice(0,this.inputPage.nameUrl.indexOf("."));
+      let name = this.inputPage.nameUrl ?? this.inputPage.nameReference?.reference;
+      this.resource["name"] = name.slice(0, name.indexOf("."));
     }
     this.resource["content"] = value;
   }
@@ -61,8 +62,8 @@ export class PageComponentModalComponent implements OnInit {
 
   public set navMenu(value: string) {
     if(!this.resource){
-      this.resource = new Page();
-      this.resource["name"] = this.inputPage.nameUrl.slice(0,this.inputPage.nameUrl.indexOf("."));
+      let name = this.inputPage.nameUrl ?? this.inputPage.nameReference?.reference;
+      this.resource["name"] = name.slice(0, name.indexOf("."));
     }
     this.resource["navMenu"] = value;
   }
@@ -74,8 +75,8 @@ export class PageComponentModalComponent implements OnInit {
 
   public set reuseDescription(value: boolean) {
     if(!this.resource){
-      this.resource = new Page();
-      this.resource["name"] = this.inputPage.nameUrl.slice(0,this.inputPage.nameUrl.indexOf("."));
+      let name = this.inputPage.nameUrl ?? this.inputPage.nameReference?.reference;
+      this.resource["name"] = name.slice(0, name.indexOf("."));
     }
     this.resource["reuseDescription"] = value;
     if(value) {
