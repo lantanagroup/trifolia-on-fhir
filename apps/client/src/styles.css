@@ -172,16 +172,20 @@ button {
 }
 
 /*** ANGULAR-EDITOR ***/
-button.angular-editor-button[title='Insert Image'] {
+/*button.angular-editor-button[title='Insert Image'] {
   display: none;
 }
 
 #editor {
-  background-color: white;
+  background-color: blue;
 }
 
-#editor[contenteditable=false] {
-  background-color: transparent;
+#editor:focus {
+  background-color: blueviolet;
+}*/
+
+.angular-editor-textarea[contenteditable=true] {
+  background-color: white !important;
 }
 
 /*** PROFILE EDITOR ***/
