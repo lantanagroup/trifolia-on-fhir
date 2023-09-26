@@ -74,7 +74,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     } else {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
-    this.fhirResource = <IFhirResource>{ resource: this.codeSystem, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.fhirResource = <IFhirResource>{ resource: this.codeSystem, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {

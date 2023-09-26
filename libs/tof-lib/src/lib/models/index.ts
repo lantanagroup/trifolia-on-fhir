@@ -58,7 +58,6 @@ export interface IProjectResource extends IBaseEntityReferences {
 
   versionId: number;
   lastUpdated: Date;
-  permissions?: IPermission[];
   isDeleted?: boolean;
 }
 

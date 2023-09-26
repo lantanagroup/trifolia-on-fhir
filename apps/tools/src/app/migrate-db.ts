@@ -562,7 +562,6 @@ export class MigrateDb extends BaseTools {
       lastUpdated: resource.meta?.lastUpdated,
       fhirVersion: this.options.fhirVersion,
       resource: resource,
-      permissions: permissions,
       //igIds: igs.map(ig => { return ig['_id']; })
     };
 
@@ -784,7 +783,6 @@ export class MigrateDb extends BaseTools {
         lastUpdated: lastUpdated,
         migratedFrom: this.options.migratedFromLabel,
         fhirVersion: this.options.fhirVersion,
-        permissions: permissions,
         resource: ig
       };
 
