@@ -32,6 +32,13 @@ export class ProjectComponent extends BaseComponent implements OnInit,  DoCheck 
 
   }
 
+  protected set isDirty(value: boolean) {
+    if (value) {
+      this.configService.currentProject = null;
+    }
+    super.isDirty = value;
+  }
+
   public get isNew(): boolean {
     const id = this.getProjectID();
     return !id || id === 'new';

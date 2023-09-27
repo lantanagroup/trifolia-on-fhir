@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {NavigationEnd, Router, RoutesRecognized} from '@angular/router';
+import {ActivationStart, NavigationEnd, Router} from '@angular/router';
 import {AuthService} from './shared/auth.service';
 import {ConfigService} from './shared/config.service';
 import {getImplementationGuideContext, Globals, ImplementationGuideContext} from '@trifolia-fhir/tof-lib';
@@ -50,9 +50,9 @@ export class AppComponent implements OnInit {
     private cdr: ChangeDetectorRef) {
     this.router.events.subscribe(async (event) => {
       this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
-      if (event instanceof RoutesRecognized && event.state.root.firstChild) {
-        const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
-        const projectId = event.state.root.firstChild.params.projectId;
+      if (event instanceof ActivationStart && event.snapshot.root.firstChild) {
+        const implementationGuideId = event.snapshot.root.firstChild.params.implementationGuideId;
+        const projectId = event.snapshot.root.firstChild.params.projectId;
 
         if (implementationGuideId) {
           if (!this.configService.igContext || this.configService.igContext.implementationGuideId !== implementationGuideId) {
@@ -110,15 +110,21 @@ export class AppComponent implements OnInit {
   }
 
   public navigateToProject() {
-    this.configService.igContext = null;
-    this.router.navigate([`/projects/${this.configService.currentProject.id}`]);
+    this.router.navigate([`/projects/${this.configService.currentProject.id}`]).then((value) => {
+      console.log('navigateToProject:', value);
+      if (value) {
+        this.configService.igContext = null;
+      }
+    });
   }
 
   public closeProject() {
-    this.configService.igContext = null;
-    this.configService.currentProject = null;
-    // noinspection JSIgnoredPromiseFromCall
-    this.router.navigate(['/projects']);
+    this.router.navigate(['/projects']).then((value) => {
+      if (value) {
+        this.configService.igContext = null;
+        this.configService.currentProject = null;
+      }
+    });
   }
 
 /*  public get fhirServerDisplay(): string {

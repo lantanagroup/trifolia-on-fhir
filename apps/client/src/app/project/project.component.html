@@ -17,7 +17,7 @@
           <div class="mb-3">
             <h6>Project Name</h6>
             <div [class.input-group]="true">
-              <input type="text" class="form-control" [disabled]="false" [(ngModel)]="project.name" />
+              <input type="text" class="form-control" [disabled]="false" [(ngModel)]="project.name" (change)="isDirty = true" />
             </div>
           </div>
           <div class="mb-3">
@@ -51,7 +51,7 @@
     <li ngbNavItem *ngIf="configService.config.enableSecurity">
       <a ngbNavLink>Permissions</a>
       <ng-template ngbNavContent>
-        <trifolia-fhir-resource-permissions [resource]="project"></trifolia-fhir-resource-permissions>
+        <trifolia-fhir-resource-permissions [resource]="project" (change)="isDirty = true"></trifolia-fhir-resource-permissions>
       </ng-template>
     </li>
   </ul>
