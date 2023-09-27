@@ -1,6 +1,6 @@
 import {ImplementationGuide as R5ImplementationGuide, ImplementationGuideDefinitionPage} from './r5/fhir';
 import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent} from './r4/fhir';
-import {ImplementationGuide as STU3ImplementationGuide, ContactDetail, PageComponent} from './stu3/fhir';
+import {ContactDetail, ImplementationGuide as STU3ImplementationGuide, PageComponent} from './stu3/fhir';
 import {IExtension, IImplementationGuide} from './fhirInterfaces';
 import {createTableFromArray, escapeForXml} from './helper';
 import {Globals} from './globals';
@@ -163,7 +163,7 @@ export class IgPageHelper {
     return '<ul xmlns="http://www.w3.org/1999/xhtml" class="nav navbar-nav">\n' +
       '  <li><a href="index.html">IG Home</a></li>\n' +
       '  <li><a href="toc.html">Table of Contents</a></li>\n' + pageMenuContent.join('\n') +
-      '  <li><a href="artifacts.html">Artifact Index</a></li>\n' +
+      '  <li><a href="artifacts.html">Artifacts</a></li>\n' +
       '</ul>\n';
   }
 }
