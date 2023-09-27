@@ -14942,9 +14942,9 @@ export class ImplementationGuidePageComponent extends BackboneElement {
     else if(this.nameReference && this.title){
       name = this.title.replace(/\s/g, '').replace(/[():]/g, '');
     }
-    let index = name.lastIndexOf('.');
+    let index = name.indexOf('.');
     if (index > -1) {
-       fileName = name.slice(0, name.lastIndexOf('.')) +  this.getExtension();
+       fileName = name.slice(0, index) +  this.getExtension();
     }
     else{
       fileName = name +  this.getExtension();

@@ -104,11 +104,19 @@ export class IgPageHelper {
 
     const pageInfo = new PageInfo();
     pageInfo.page = page;
-    pageInfo.fileName = page.fileName || page.nameUrl;
+    pageInfo.fileName = page.fileName;
 
+    let pageName = "";
     let name = page.nameUrl ?? page.nameReference?.reference;
+    if(name){
+      pageName = name;
+      let index = name.indexOf('.');
+      if (index > -1) {
+        pageName = pageName.slice(0, index);
+      }
+    }
     // get the resource page
-    let pageFound = (pages || []).find(pageElem => pageElem.name == name.slice(0, name.indexOf('.')));
+    let pageFound = (pages || []).find(pageElem => pageElem.name == pageName);
 
     if (pageFound && pageFound['reuseDescription']) {
       pageInfo.content = this.getIndexContent(implementationGuide);
