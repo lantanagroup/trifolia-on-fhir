@@ -13,13 +13,12 @@ module.exports = {
       let navMenu = '';
       let reuseDescription = false;
 
-      let name = page.nameUrl ?? page.nameReference?.reference;
+      let name = page.source;
       if (!name) {
         return;
       }
 
       let pageName = name.substring(0, name.indexOf('.'));
-      // add it if only for those extensions
 
       let createPage = false;
       for (let i = 0; i < (page.extension?.length || 0); i++) {
@@ -46,7 +45,7 @@ module.exports = {
           navMenu: navMenu,
           reuseDescription: reuseDescription,
           name: pageName,
-          referencedBy: [{ value: ig._id, valueType: 'FhirResource' }],
+          referencedBy: [{ _id: new ObjectId(), value: ig._id, valueType: 'FhirResource' }],
           lastUpdated: new Date(),
           versionId: 1,
           isDeleted: false
@@ -58,7 +57,7 @@ module.exports = {
           if (r.valueType !== 'NonFhirResource') return false;
           if (r.value && r.value.toString() === newPageRes.upsertedId) return true;
         })) {
-          ig.references.push({ value: newPageRes.upsertedId, valueType: 'NonFhirResource' });
+          ig.references.push({ _id: new ObjectId(), value: newPageRes.upsertedId, valueType: 'NonFhirResource' });
         }
       }
       if (page.page) {
@@ -102,10 +101,7 @@ module.exports = {
           continue;
         }
       }
-     /* if(page.extension && page.extension.length == 0) {
-        delete page["extension"];
-      }
-*/
+
       if (page.page) {
         for (let i = 0; i < page.page.length; i++) {
           await deleteExtensions(igId, page.page[i]);
@@ -113,11 +109,12 @@ module.exports = {
       }
     }
 
-    //let results = await db.collection('fhirResource').find({ '_id': new ObjectId('645aa11600669ee940513ef1'), 'resource.definition.page.extension': { $exists: true } }).toArray();
-    let results = await db.collection('fhirResource').find({ 'resource.resourceType' : 'ImplementationGuide', 'resource.definition.page.extension': { $exists: true } }).toArray();
+
+    let results = await db.collection('fhirResource').find({ 'resource.resourceType' : 'ImplementationGuide', 'resource.page.extension': { $exists: true } }).toArray();
     for (const result of results) {
-      await migrateExtensions(result, result.resource.definition.page);
-      await deleteExtensions(result._id, result.resource.definition.page);
+      await migrateExtensions(result, result.resource.page);
+      await deleteExtensions(result._id, result.resource.page);
+
 
       // update ig
       await db.collection('fhirResource').updateOne({ '_id': new ObjectId( result._id) }, { $set: result });
@@ -130,18 +127,17 @@ module.exports = {
 
     function findPage(page, searchPageName) {
       let result;
-      let name = page.nameUrl ?? page.nameReference?.reference;
+
+      let name = page.source;
       let pageName = name?name.substring(0, name.indexOf('.')):"";
 
       if (pageName === searchPageName) {
         return page;
       } else {
-        if (page.page) {
-          for (let i = 0; i < page.page.length; i++) {
-            result = findPage(page.page[i], searchPageName);
-            if (result !== false) {
-              return result;
-            }
+        for (let i = 0; (i < page.page?.length || 0); i++) {
+          result = findPage(page.page[i], searchPageName);
+          if (result !== false) {
+            return result;
           }
         }
         return false;
@@ -160,14 +156,10 @@ module.exports = {
         }
       }
 
-   /*   if(!page.hasOwnProperty("extension")) {
-        page["extension"] = [];
-      }*/
-
       page.extension = page.extension || [];
 
       if (result.content) {
-        let contentExt =  page.extension.find(e => e.url.indexOf('extension-ig-page-content') > -1);
+        let contentExt = page.extension.find(e => e.url.indexOf('extension-ig-page-content') > -1);
         if (!contentExt) {
           contentExt = {
             url: 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-content',
@@ -177,7 +169,7 @@ module.exports = {
         }
       }
       if (result.reuseDescription) {
-        let pageReuseDescription =  page.extension.find(e => e.url.indexOf('extension-ig-page-reuse-description') > -1);
+        let pageReuseDescription = page.extension.find(e => e.url.indexOf('extension-ig-page-reuse-description') > -1);
         if (!pageReuseDescription) {
           pageReuseDescription = {
             url: 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-reuse-description',
@@ -187,7 +179,7 @@ module.exports = {
         }
       }
       if (result.navMenu) {
-        let pageNavMenu =  page.extension.find(e => e.url.indexOf('extension-ig-page-nav-menu') > -1);
+        let pageNavMenu = page.extension.find(e => e.url.indexOf('extension-ig-page-nav-menu') > -1);
         if (!pageNavMenu) {
           pageNavMenu = {
             url: 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-nav-menu',
@@ -197,7 +189,7 @@ module.exports = {
         }
       }
       if(result.name == "toc"){
-        let pageToc =   page.extension.find(e => e.url.indexOf('extension-ig-page-auto-generate-toc') > -1);
+        let pageToc = page.extension.find(e => e.url.indexOf('extension-ig-page-auto-generate-toc') > -1);
         if (!pageToc) {
           pageToc = {
             url: 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-page-auto-generate-toc',
@@ -208,7 +200,7 @@ module.exports = {
       }
       // add filename based on page url
       let filename =  page.extension.find(e => e.url.indexOf('extension-ig-page-filename') > -1);
-      let name = page.nameUrl ?? page.nameReference?.reference;
+      let name = page.source;
       if (name) {
         let pageName = name.substring(0, name.indexOf('.'));
         let ext = getExtension(page.generation)
@@ -222,10 +214,15 @@ module.exports = {
       }
     }
 
+
     for (const result of results) {
       const ig = await db.collection('fhirResource').findOne({ '_id': new ObjectId(result.referencedBy[0].value) });
 
-      let page = findPage(ig["resource"].definition.page, result.name);
+      if (ig.fhirVersion != 'stu3'){
+        continue;
+      }
+      let page = findPage(ig["resource"].page, result.name);
+
       if(page !== undefined){
         insertExtension(page, result);
       }
@@ -236,9 +233,10 @@ module.exports = {
       }
 
       await db.collection('fhirResource').updateOne({ '_id': new ObjectId(result.referencedBy[0].value) }, { $set: ig });
+
+      // delete the page
+      await db.collection('nonFhirResource').deleteOne({ '_id': new ObjectId(result._id) });
     }
 
-    // drop the pages
-    await db.collection('nonFhirResource').deleteMany({ 'type': 'Page' });
   }
 };
