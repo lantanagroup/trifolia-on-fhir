@@ -176,12 +176,8 @@ button.angular-editor-button[title='Insert Image'] {
   display: none;
 }
 
-#editor {
-  background-color: white;
-}
-
-#editor[contenteditable=false] {
-  background-color: transparent;
+.angular-editor-textarea[contenteditable=true] {
+  background-color: white !important;
 }
 
 /*** PROFILE EDITOR ***/

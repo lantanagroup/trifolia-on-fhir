@@ -228,15 +228,15 @@ export class ResourcePermissionsComponent implements OnInit {
    */
   private getPermittedResources() {
     const permissions: IPermission[] = this.resource?.permissions ?? [];
-    const groupIds = permissions
+    const groupIds = [... new Set(permissions
       .filter((p) => p.type === 'group')
-      .map((p) => p.targetId);
-    const userIds = permissions
+      .map((p) => p.targetId))];
+    const userIds = [... new Set(permissions
       .filter((p) => p.type === 'user')
-      .map((p) => p.targetId);
+      .map((p) => p.targetId))];
 
     if (groupIds.length > 0) {
-      this.groupService.getMembership(null, groupIds.join(',')).toPromise()
+      firstValueFrom(this.groupService.getGroupInfo(groupIds))
         .then((results: IGroup[]) => this.groupsArray = results)
         .catch((err) => this.message = getErrorString(err));
     }

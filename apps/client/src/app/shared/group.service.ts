@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Bundle, Group} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {IGroup} from '@trifolia-fhir/models';
 
 @Injectable()
@@ -26,6 +26,17 @@ export class GroupService {
     return this.http.delete('/api/group/membership' + group.id);
   }
 
+
+  public getGroupInfo(groupIds: string[]): Observable<IGroup[]> {
+    let url = '/api/group/info?';
+
+    if (groupIds) {
+      url += '_id=' + encodeURIComponent(groupIds.join(',')) + '&';
+      return this.http.get<IGroup[]>(url);
+    }
+
+    return of([]);
+  }
 
   public getMembership(name?: string, id?: string): Observable<IGroup[]> {
     let url = '/api/group/membership?';
