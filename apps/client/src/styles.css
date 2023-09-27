@@ -172,17 +172,9 @@ button {
 }
 
 /*** ANGULAR-EDITOR ***/
-/*button.angular-editor-button[title='Insert Image'] {
+button.angular-editor-button[title='Insert Image'] {
   display: none;
 }
-
-#editor {
-  background-color: blue;
-}
-
-#editor:focus {
-  background-color: blueviolet;
-}*/
 
 .angular-editor-textarea[contenteditable=true] {
   background-color: white !important;

@@ -109,7 +109,6 @@ export class GroupsController extends BaseDataController<GroupDocument> {
 
   @Get('info')
   public async getGroupInfo(@Request() req?: any) {
-    console.log('info:', req.query);
     if (!req) {
       return null;
     }
