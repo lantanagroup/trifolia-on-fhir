@@ -1,4 +1,4 @@
-FROM node:18-alpine AS build-ToF
+FROM node:20-alpine AS build-ToF
 
 # Python and G++ are required for some of the node devDependencies
 # Java is required for Trifolia-on-FHIR to "Publish" implementation guides
