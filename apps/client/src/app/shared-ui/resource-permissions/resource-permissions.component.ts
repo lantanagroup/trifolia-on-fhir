@@ -21,6 +21,8 @@ import {ImplementationGuideService} from '../../shared/implementation-guide.serv
 import type {IPractitioner} from '@trifolia-fhir/tof-lib';
 import type {IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
 import { UserService } from '../../shared/user.service';
+import { BaseComponent } from '../../base.component';
+import { AuthService } from '../../shared/auth.service';
 
 class ResourceSecurity {
   type: 'everyone'|'User'|'Group';
@@ -51,7 +53,7 @@ class ResourceSecurity {
   templateUrl: './resource-permissions.component.html',
   styleUrls: ['./resource-permissions.component.css']
 })
-export class ResourcePermissionsComponent implements OnInit {
+export class ResourcePermissionsComponent extends BaseComponent implements OnInit {
   @Input() resource: IProject;
 
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
@@ -78,13 +80,14 @@ export class ResourcePermissionsComponent implements OnInit {
   public getUserEmail = getUserEmail;
 
   constructor(
+    public authService: AuthService,
     public configService: ConfigService,
     private fhirService: FhirService,
     private groupService: GroupService,
     private userService: UserService,
     private implementationGuideService: ImplementationGuideService,
     private modal: NgbModal) {
-
+      super(configService, authService);
   }
 
   // get meta(): Meta {

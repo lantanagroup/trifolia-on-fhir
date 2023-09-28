@@ -17,10 +17,10 @@
         <td>{{s.canRead ? 'Yes' : 'No'}}</td>
         <td>
           {{s.canWrite ? 'Yes' : 'No'}}
-          <i class="fas fa-times clickable" *ngIf="s.canWrite" title="Remove only write permissions for this group/user" (click)="removePermission(s.type, 'write', s.id); change.emit();"></i>
+          <i class="fas fa-times clickable" *ngIf="s.canWrite && canReadOrWrite(resource.permissions, 'write')" title="Remove only write permissions for this group/user" (click)="removePermission(s.type, 'write', s.id); change.emit();"></i>
         </td>
         <td>
-          <button type="button" class="btn btn-primary" title="Remove all permissions for this group/user" (click)="removePermission(s.type, 'read', s.id); change.emit();">
+          <button type="button" class="btn btn-primary" title="Remove all permissions for this group/user" *ngIf="canReadOrWrite(resource.permissions, 'write')" (click)="removePermission(s.type, 'read', s.id); change.emit();">
             <i class="fas fa-trash"></i>
           </button>
         </td>
@@ -50,8 +50,10 @@
     
   </div>
 
-  <!-- Add Group -->
-  <div class="col-md-6">
+  
+  <div class="col-md-6" *ngIf="canReadOrWrite(resource.permissions, 'write')">
+
+    <!-- Add Group -->
     <div class="card">
       <div class="card-header">Add Group</div>
       <div class="card-body">
