@@ -334,26 +334,6 @@ export class StructureDefinitionComponent extends BaseComponent implements OnIni
         this.message = getErrorString(err);
       });
 
-    const implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
-    const fhirResource = await firstValueFrom(this.implementationGuideService.getImplementationGuide(implementationGuideId))
-    const implementationGuide: ImplementationGuide = <ImplementationGuide>(fhirResource).resource;
-    const resources = implementationGuide.definition.resource;
-
-
-    const index = resources.findIndex(resource => {
-      return resource.reference.reference.indexOf(this.structureDefinition.id) > 0;
-    });
-
-
-    if (index >= 0) {
-      implementationGuide.definition.resource[index].name =
-        this.structureDefinition.title ? this.structureDefinition.title : this.structureDefinition.name;
-
-      await this.implementationGuideService.saveImplementationGuide(fhirResource)
-        .toPromise()
-        .catch(err => console.log(err));
-    }
-
   }
 
   public async loadSD(newVal: IDomainResource, reloadBase: boolean, isDirty: boolean) {

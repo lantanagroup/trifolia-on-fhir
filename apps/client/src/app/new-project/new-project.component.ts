@@ -123,7 +123,7 @@ export class NewProjectComponent implements OnInit {
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirVersion));
 
     let newRes: IFhirResource = <IFhirResource>{fhirVersion: this.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
-    this.igService.saveImplementationGuide(newRes)
+    this.igService.saveImplementationGuide(null, newRes)
       .subscribe({
         next: async (ig: IFhirResource) => {
           let project: IProject = <IProject>{ author: "", fhirVersion: this.fhirVersion, name: projectName, isDeleted: false };

@@ -101,8 +101,14 @@ export class ImplementationGuideService extends FhirResourceService {
     return this.http.get<IFhirResource>(url);
   }
 
-  public saveImplementationGuide(implementationGuide: IFhirResource): Observable<IFhirResource> {
-    return this.http.post<IFhirResource>('/api/implementationGuide', implementationGuide);
+  public saveImplementationGuide(implementationGuideId: string, implementationGuide: IFhirResource): Observable<IFhirResource> {
+    let url = '/api/structureDefinition';
+    if (implementationGuideId) {
+      url += '/' + encodeURIComponent(implementationGuideId);
+      return this.http.put<IFhirResource>(url, implementationGuide);
+    } else {
+      return this.http.post<IFhirResource>('/api/implementationGuide', implementationGuide);
+    }
   }
 
   public updateImplementationGuide(id: string, implementationGuide: IFhirResource): Observable<IFhirResource> {
