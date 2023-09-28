@@ -45,7 +45,7 @@ module.exports = {
           navMenu: navMenu,
           reuseDescription: reuseDescription,
           name: pageName,
-          referencedBy: [{ value: ig._id, valueType: 'FhirResource' }],
+          referencedBy: [{ _id: new ObjectId(), value: ig._id, valueType: 'FhirResource' }],
           lastUpdated: new Date(),
           versionId: 1,
           isDeleted: false
@@ -57,7 +57,7 @@ module.exports = {
           if (r.valueType !== 'NonFhirResource') return false;
           if (r.value && r.value.toString() === newPageRes.upsertedId) return true;
         })) {
-          ig.references.push({ value: newPageRes.upsertedId, valueType: 'NonFhirResource' });
+          ig.references.push({ _id: new ObjectId(), value: newPageRes.upsertedId, valueType: 'NonFhirResource' });
         }
       }
       if (page.page) {
