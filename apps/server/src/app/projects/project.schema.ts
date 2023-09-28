@@ -7,7 +7,7 @@ import type { IProjectResourceReference } from '@trifolia-fhir/models';
 export type ProjectDocument = HydratedDocument<Project>;
 
 const PermissionSchema = new MongooseSchema<IPermission>({
-    targetId: { 
+    target: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: (doc) => { return ['User','Group'].indexOf(doc.type) > -1 ? doc.type : null; }
         // ref: (doc) => { console.log(doc); return 'User'; }

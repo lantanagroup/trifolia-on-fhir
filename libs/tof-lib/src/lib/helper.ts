@@ -241,7 +241,7 @@ export function findPermission(perms: IPermission[], type: 'User' | 'Group' | 'e
     if (type === 'everyone') {
       return p.type === 'everyone' && p.grant == grant;
     } else {
-      return p.type === type && p.grant == grant && p.targetId === targetId;
+      return p.type === type && p.grant == grant && p.target === targetId;
     }
   });
 }
@@ -255,7 +255,7 @@ export function addPermission(resource: IProject, type: 'User' | 'Group' | 'ever
 
   let newPerm: IPermission = { type: type, grant: grant };
   if (type !== 'everyone') {
-    newPerm.targetId = targetId;
+    newPerm.target = targetId;
   }
   let found = false;
 
@@ -286,7 +286,7 @@ export function removePermission(resource: IProject, type: 'User' | 'Group' | 'e
   if (resource && resource.permissions) {
     index = type === 'everyone' ? 
       resource.permissions.findIndex((p: IPermission) => p.type === type && p.grant === grant) : 
-      resource.permissions.findIndex((p: IPermission) => p.type === type && p.grant === grant && p.targetId === targetId);
+      resource.permissions.findIndex((p: IPermission) => p.type === type && p.grant === grant && p.target === targetId);
   }
 
   if (index > -1) {

@@ -4,7 +4,7 @@ import { NonFhirResourceType } from './non-fhir-resource-type';
 export * from './non-fhir-resource-type';
 
 export interface IPermission {
-  targetId?: string|IUser|IGroup;
+  target?: string|IUser|IGroup;
   type: 'User'|'Group'|'everyone';
   grant: 'read'|'write';
 }

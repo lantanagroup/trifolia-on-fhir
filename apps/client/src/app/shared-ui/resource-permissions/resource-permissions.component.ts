@@ -143,14 +143,14 @@ export class ResourcePermissionsComponent implements OnInit {
     }
 
     const perms = this.resource.permissions || [];
-    const grouped = groupBy(perms, (next) => next.type + next.targetId);
+    const grouped = groupBy(perms, (next) => next.type + next.target);
     const groupedKeys = Object.keys(grouped);
 
     return groupedKeys.map((groupedKey) => {
       const group: IPermission[] = grouped[groupedKey];
       const next = new ResourceSecurity();
       next.type = group[0].type;
-      next.id = group[0].targetId?.toString();
+      next.id = group[0].target?.toString();
 
       if (next.type === 'Group' && this.groupsArray) {
         const found = (this.groupsArray || []).find((g: IGroup) => g.id === next.id);
@@ -230,10 +230,10 @@ export class ResourcePermissionsComponent implements OnInit {
     const permissions: IPermission[] = this.resource?.permissions ?? [];
     const groupIds = [... new Set(permissions
       .filter((p) => p.type === 'Group')
-      .map((p) => p.targetId?.toString()))];
+      .map((p) => p.target?.toString()))];
     const userIds = [... new Set(permissions
       .filter((p) => p.type === 'User')
-      .map((p) => p.targetId?.toString()))];
+      .map((p) => p.target?.toString()))];
 
     if (groupIds.length > 0) {
       firstValueFrom(this.groupService.getGroupInfo(groupIds))
@@ -259,7 +259,7 @@ export class ResourcePermissionsComponent implements OnInit {
         return false;
       }
 
-      if (perm.type === 'User' && perm.targetId === this.currentUser.id) {
+      if (perm.type === 'User' && perm.target === this.currentUser.id) {
         return true;
       } else if (perm.type === 'Group' && this.groupsArray) {
         return !!(this.groupsArray || []).find((group: IGroup) => {

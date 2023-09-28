@@ -438,12 +438,12 @@ export class MigrateDb extends BaseTools {
       }
 
       const permission: IPermission = {
-        targetId: targetId,
+        target: targetId,
         type: type,
         grant: 'read'
       };
 
-      let found = permissions.find(p => p.type === permission.type && p.targetId === permission.targetId);
+      let found = permissions.find(p => p.type === permission.type && p.target === permission.target);
 
       if (!found) {
         found = permission;
