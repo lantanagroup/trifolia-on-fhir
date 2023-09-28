@@ -1,15 +1,14 @@
 import { Component, DoCheck, EventEmitter, Input, OnInit } from '@angular/core';
 import { ConfigService } from '../shared/config.service';
-import { Coding, ImplementationGuide, SearchParameter } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { Coding, ImplementationGuide, SearchParameter } from '@trifolia-fhir/r4';
 import { FhirService } from '../shared/fhir.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { BaseComponent } from '../base.component';
 import { AuthService } from '../shared/auth.service';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { getErrorString, Globals } from '@trifolia-fhir/tof-lib';
 import { FileService } from '../shared/file.service';
 import { SearchParameterService } from '../shared/search-parameter.service';
 import { RecentItemService } from '../shared/recent-item.service';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

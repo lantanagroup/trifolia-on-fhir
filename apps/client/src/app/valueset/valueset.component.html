@@ -118,9 +118,9 @@
                 </ng-template>
               </li>
               <li ngbNavItem>
-                <ng-template ngbNavLink>
+                <a ngbNavLink>
                   <button type="button" class="btn btn-primary" title="Add an exclude entry" (click)="addExcludeEntry(excludeTabSet)">Add</button>
-                </ng-template>
+                </a>
                 <ng-template ngbNavContent></ng-template>
               </li>
             </ul>
@@ -133,7 +133,9 @@
 
   <!-- Validation -->
   <li ngbNavItem="validation">
-    <a ngbNavLink>Validation</a>
+    <a ngbNavLink>
+      Validation ({{validation?.messages?.length || 0}})
+    </a>
     <ng-template ngbNavContent>
       <app-validation-results [results]="validation"></app-validation-results>
     </ng-template>
