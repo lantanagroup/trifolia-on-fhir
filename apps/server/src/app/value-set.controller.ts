@@ -7,26 +7,26 @@ import {TofLogger} from './tof-logger';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import {ConformanceController} from './conformance/conformance.controller';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {AuthService} from './auth/auth.service';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
 import { TofNotFoundException } from '../not-found-exception';
 import { BundleEntry } from '@trifolia-fhir/r5';
 
-@Controller('api/valueSet')
+@Controller('api/valueSets')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Value Set')
 @ApiOAuth2([])
-export class ValueSetController extends ConformanceController {
+export class ValueSetController extends FhirResourcesController {
   resourceType = 'ValueSet';
 
   protected readonly logger = new TofLogger(ValueSetController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
-    super(conformanceService);
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected fhirResourceService: FhirResourcesService, protected configService: ConfigService) {
+    super(fhirResourceService);
   }
 
   /*@Post(':id/expand')
@@ -69,8 +69,8 @@ export class ValueSetController extends ConformanceController {
   }
 */
   @Get()
-  public async searchValueSet(@User() user, @Request() req?: any): Promise<Paginated<IConformance>> {
-    return super.searchConformance(user, req);
+  public async searchValueSet(@User() user, @Request() req?: any): Promise<Paginated<IFhirResource>> {
+    return super.searchFhirResource(user, req);
   }
 
   @Get('vsac')
@@ -142,7 +142,7 @@ export class ValueSetController extends ConformanceController {
   }
 
   @Get(':id')
-  public async getValueSet(@User() user, @Param('id') id: string): Promise<IConformance> {
+  public async getValueSet(@User() user, @Param('id') id: string): Promise<IFhirResource> {
     return super.getById(user, id);
   }
 
@@ -151,8 +151,8 @@ export class ValueSetController extends ConformanceController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
-    return this.conformanceService.createConformance(conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourceService.createFhirResource(fhirResource, implementationGuideId);
   }
 
   @Put(':id')
@@ -161,13 +161,13 @@ export class ValueSetController extends ConformanceController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
-    return this.conformanceService.updateConformance(id, conformance, implementationGuideId );
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourceService.updateFhirResource(id, fhirResource, implementationGuideId );
   }
 
   @Delete(':id')
   public async deleteValueSet(@User() user, @Param('id') id: string) {
     await this.assertCanWriteById(user, id);
-    return this.conformanceService.deleteConformance(id);
+    return this.fhirResourceService.deleteFhirResource(id);
   }
 }

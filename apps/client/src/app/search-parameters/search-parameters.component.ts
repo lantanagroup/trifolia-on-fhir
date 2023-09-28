@@ -90,7 +90,7 @@ export class SearchParametersComponent extends BaseComponent implements OnInit {
         this.searchParameterBundle = results;
         this.total = this.searchParameterBundle.total;
       }, (err) => {
-        this.configService.handleError(err, 'An error occurred while searching for capability statements');
+        this.configService.handleError(err, 'An error occurred while searching for search parameters');
       });
   }
 

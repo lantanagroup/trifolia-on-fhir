@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {NavigationEnd, Router, RoutesRecognized} from '@angular/router';
+import {ActivationStart, NavigationEnd, Router} from '@angular/router';
 import {AuthService} from './shared/auth.service';
 import {ConfigService} from './shared/config.service';
 import {getImplementationGuideContext, Globals, ImplementationGuideContext} from '@trifolia-fhir/tof-lib';
@@ -14,10 +14,11 @@ import {GithubService} from './shared/github.service';
 import {CookieService} from 'ngx-cookie-service';
 import {AdminMessageModalComponent} from './modals/admin-message-modal/admin-message-modal.component';
 import introJs from 'intro.js/intro.js';
-import {Practitioner} from '@trifolia-fhir/stu3';
-import {ImplementationGuideService} from './shared/implementation-guide.service';
-import {IConformance} from '@trifolia-fhir/models';
-import {firstValueFrom} from 'rxjs';
+import { Practitioner } from '@trifolia-fhir/stu3';
+import { ImplementationGuideService } from './shared/implementation-guide.service';
+import { IFhirResource, IProject } from '@trifolia-fhir/models';
+import { firstValueFrom } from 'rxjs';
+import { ProjectService } from './shared/projects.service';
 
 declare let gtag: Function;
 
@@ -39,6 +40,7 @@ export class AppComponent implements OnInit {
     public githubService: GithubService,
     public configService: ConfigService,
     public fhirService: FhirService,
+    public projectService: ProjectService,
     public implGuideService: ImplementationGuideService,
     private modalService: NgbModal,
     private fileService: FileService,
@@ -48,21 +50,23 @@ export class AppComponent implements OnInit {
     private cdr: ChangeDetectorRef) {
     this.router.events.subscribe(async (event) => {
       this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
-      if (event instanceof RoutesRecognized && event.state.root.firstChild) {
-        //  const fhirServer = event.state.root.firstChild.params.fhirServer;
-        const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
+      if (event instanceof ActivationStart && event.snapshot.root.firstChild) {
+        const implementationGuideId = event.snapshot.root.firstChild.params.implementationGuideId;
+        const projectId = event.snapshot.root.firstChild.params.projectId;
 
         if (implementationGuideId) {
-          if (!this.configService.project || this.configService.project.implementationGuideId !== implementationGuideId) {
-            this.configService.project = {
+          if (!this.configService.igContext || this.configService.igContext.implementationGuideId !== implementationGuideId) {
+            this.configService.igContext = {
               implementationGuideId: implementationGuideId
             };
           }
         } else {
-          this.configService.project = null;
+          this.configService.igContext = null;
         }
-        this.configService.project = await this.getContext(implementationGuideId);
+        this.configService.igContext = await this.getImplementationGuideContext(implementationGuideId);
+        this.configService.currentProject = await this.getCurrentProject(projectId);
         this.configService.isChanged = false;
+        
       } else if (event instanceof NavigationEnd) {
         if (this.configService.config.googleAnalyticsCode && event.urlAfterRedirects.indexOf('access_token=') < 0) {
           gtag('event', 'page_view', {
@@ -105,10 +109,22 @@ export class AppComponent implements OnInit {
     }, 200);
   }
 
+  public navigateToProject() {
+    this.router.navigate([`/projects/${this.configService.currentProject.id}`]).then((value) => {
+      console.log('navigateToProject:', value);
+      if (value) {
+        this.configService.igContext = null;
+      }
+    });
+  }
+
   public closeProject() {
-    this.configService.project = null;
-    // noinspection JSIgnoredPromiseFromCall
-    this.router.navigate(['/projects']);
+    this.router.navigate(['/projects']).then((value) => {
+      if (value) {
+        this.configService.igContext = null;
+        this.configService.currentProject = null;
+      }
+    });
   }
 
 /*  public get fhirServerDisplay(): string {
@@ -158,18 +174,51 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private async getContext(implementationGuideId: string): Promise<ImplementationGuideContext> {
-    if (!implementationGuideId) {
-      return Promise.resolve(this.configService.project);
+  private async getCurrentProject(projectId?: string): Promise<IProject> {
+
+    // project already set and has same id so no need to look it up
+    if (projectId && this.configService.currentProject && projectId === this.configService.currentProject.id) {
+      return Promise.resolve(this.configService.currentProject);
     }
 
-    if (this.configService.project && this.configService.project.implementationGuideId === implementationGuideId && this.configService.project.name && this.configService.project.securityTags) {
-      return Promise.resolve(this.configService.project);
+    // loading a new project context
+    if (projectId) {
+      return firstValueFrom(this.projectService.getProject(projectId));
+    }
+
+    // have an IG open...
+    if (this.configService.igContext && this.configService.igContext.implementationGuideId) {
+
+      // may already have retrieved a project context for current IG
+      if (this.configService.currentProject) {
+        return Promise.resolve(this.configService.currentProject);
+      }
+
+      // otherwise... look up the project for this open IG for the first time
+      const ig = await firstValueFrom(this.implGuideService.getImplementationGuide(this.configService.igContext.implementationGuideId));
+      if (ig && ig.projects && ig.projects[0]) {
+        if (typeof ig.projects[0] === typeof {}) {
+          return Promise.resolve(ig.projects[0]);
+        }
+        return firstValueFrom(this.projectService.getProject(ig.projects[0].toString()));
+      }
+    }
+    
+    return Promise.resolve(this.configService.currentProject);
+  }
+
+  private async getImplementationGuideContext(implementationGuideId?: string): Promise<ImplementationGuideContext> {
+    if (!implementationGuideId) {
+      return Promise.resolve(this.configService.igContext);
+    }
+
+    if (this.configService.igContext && this.configService.igContext.implementationGuideId === implementationGuideId && this.configService.igContext.name) {
+      return Promise.resolve(this.configService.igContext);
     }
 
     return new Promise((resolve, reject) => {
       firstValueFrom(this.implGuideService.getImplementationGuide(implementationGuideId))
-        .then((conf: IConformance) => {
+        .then((conf: IFhirResource) => {
           resolve(getImplementationGuideContext(conf));
         })
         .catch((err) => reject(err));
@@ -177,27 +226,7 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-    // Make sure the navbar is collapsed after the user clicks on a nav link to change the route
-    // This needs to be done in the init method so that the navbarCollapse element exists
-
-    /* Remove this commented block if constructor subscription is working fine.
-    this.router.events.subscribe(async (event) => {
-      this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
-      if (event instanceof RoutesRecognized && event.state.root.firstChild) {
-        const fhirServer = event.state.root.firstChild.params.fhirServer;
-        const implementationGuideId = event.state.root.firstChild.params.implementationGuideId;
-
-        if (fhirServer) {
-
-          this.configService.project = await this.getImplementationGuideContext(implementationGuideId);
-
-          await this.configService.changeFhirServer(fhirServer);
-
-        }
-      }
-    });
-    */
-
+    
     this.socketService.onMessage.subscribe((message) => {
       const modalRef = this.modalService.open(AdminMessageModalComponent, { backdrop: 'static' });
       modalRef.componentInstance.message = message;

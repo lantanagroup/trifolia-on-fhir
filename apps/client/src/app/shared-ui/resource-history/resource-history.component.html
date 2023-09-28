@@ -14,8 +14,8 @@
       </thead>
       <tbody>
       <tr *ngFor="let entry of historyBundle.results; let ei = index">
-        <td><input [(ngModel)]="leftResource" [value]="entry.content" name="leftSelect" type="radio" /></td>
-        <td><input [(ngModel)]="rightResource" [value]="entry.content" name="rightSelect" type="radio" /></td>
+        <td><input [(ngModel)]="leftVersionId" [value]="entry.versionId" name="leftSelect" type="radio" /></td>
+        <td><input [(ngModel)]="rightVersionId" [value]="entry.versionId" name="rightSelect" type="radio" /></td>
         <td>{{entry.versionId}}{{domainResource?.meta?.versionId === entry.content?.meta?.versionId ? ' (In Editor)' : ''}}</td>
         <td>{{entry.lastUpdated}}</td>
         <td>{{getActionDisplay(entry)}}</td>
@@ -25,7 +25,7 @@
 
     <ngb-pagination
     [(page)]="page"
-    [pageSize]="20"
+    [pageSize]="10"
     [collectionSize]="historyBundle.total"
     [maxSize]="5"
     (pageChange)="getHistory()"></ngb-pagination>
@@ -45,6 +45,6 @@
         <i class="fas fa-upload"></i>
       </button>
     </h3>
-    <inline-diff [oldText]="rightResource | json" [newText]="leftResource | json"></inline-diff>
+    <inline-diff *ngIf="leftResource && rightResource" [oldText]="rightResource.content | json" [newText]="leftResource.content | json"></inline-diff>
   </div>
 </div>

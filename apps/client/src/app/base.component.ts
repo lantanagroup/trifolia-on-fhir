@@ -1,8 +1,9 @@
 import {AuthService} from './shared/auth.service';
-import {DomainResource} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {findPermission} from '../../../../libs/tof-lib/src/lib/helper';
+import {findPermission} from '@trifolia-fhir/tof-lib';
 import {ConfigService} from './shared/config.service';
-import {IProject, IProjectResource} from '@trifolia-fhir/models';
+import {IPermission, IProjectResource} from '@trifolia-fhir/models';
+import { ProjectService } from './shared/projects.service';
+import { firstValueFrom } from 'rxjs';
 
 export class BaseComponent {
   protected _isDirty = false;
@@ -22,7 +23,17 @@ export class BaseComponent {
     this.configService.updateIsChanged(this.isDirty);
   }
 
-  private canReadOrWrite(resource: IProject|IProjectResource, permission: 'read'|'write') {
+  private canReadOrWrite(permissions: IPermission[], permission: 'read'|'write'): boolean {
+    const foundEveryone = findPermission(permissions, 'everyone', permission);
+    const foundUser = findPermission(permissions, 'User', permission, this.authService.user.id);
+    const foundGroups = this.authService.groups.filter((group) => {
+      return findPermission(permissions, 'Group', permission, group.id);
+    }).length > 0;
+
+    return foundEveryone || foundUser || foundGroups;
+  }
+
+  private canReadOrWriteResource(resource: IProjectResource, permission: 'read'|'write'): boolean {
     // Security is not enabled
     if (!this.configService.config.enableSecurity) {
       return true;
@@ -34,24 +45,24 @@ export class BaseComponent {
     }
 
     // Basic error checking to make sure we have the info we need to proceed
-    if (!resource || !this.configService.config || !this.authService.user) {
+    if (!this.authService.user) {
       return false;
     }
 
-    const foundEveryone = findPermission(resource.permissions, 'everyone', permission);
-    const foundUser = findPermission(resource.permissions, 'user', permission, this.authService.user.id);
-    const foundGroups = this.authService.groups.filter((group) => {
-      return findPermission(resource.permissions, 'group', permission, group.id);
-    }).length > 0;
+    // Get permissions for the project that contains this resource
+    let permissions: Array<IPermission> = [];
+    if (this.configService.currentProject && this.configService.currentProject.permissions) {
+      permissions = this.configService.currentProject.permissions;
+    }
 
-    return foundEveryone || foundUser || foundGroups;
+    return this.canReadOrWrite(permissions, permission);
   }
 
-  public canView(resource: IProject|IProjectResource|DomainResource) {
-    return this.canReadOrWrite(<IProjectResource>resource, 'read');
+  public canView(resource: IProjectResource) {
+    return this.canReadOrWriteResource(<IProjectResource>resource, 'read');
   }
 
-  public canEdit(resource: IProject|IProjectResource|DomainResource) {
-    return this.canReadOrWrite(<IProjectResource>resource, 'write');
+  public canEdit(resource: IProjectResource) {
+    return this.canReadOrWriteResource(<IProjectResource>resource, 'write');
   }
 }

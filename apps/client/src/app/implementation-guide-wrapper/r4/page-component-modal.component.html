@@ -9,14 +9,7 @@
   </div>
 
   <div class="mb-3">
-    <label>
-      File Name
-      <app-tooltip-icon tooltipKey="ig.page.fileName"></app-tooltip-icon>
-    </label>
-    <input type="text" class="form-control" [(ngModel)]="page.fileName" [class.is-invalid]="!page.fileName || !page.fileName.endsWith(page.getExtension()) || !isRootPageValid" />
-    <p class="text-muted" *ngIf="!page.fileName">File name is required, or the page will not export/publish correctly.</p>
-    <p class="text-muted" *ngIf="page.fileName && !page.fileName.endsWith(page.getExtension())">This page's file names must end with the {{page.getExtension()}} extension, or the page will not export/publish correctly.</p>
-    <p class="text-muted" *ngIf="isRootPageValid">It is <em>strongly</em> encouraged that the root page of the implementation guide have a file name of "index{{page.getExtension()}}". Otherwise, the published implementation guide may not contain a home page.</p>
+    <app-fhir-string [parentObject]="page" propertyName="fileName" [disabled] = true title="File Name" [required]="true" tooltipKey="ig.page.fileName" ></app-fhir-string>
   </div>
 
   <div class="mb-3" *ngIf="page.generation !== 'generated'">
@@ -24,35 +17,28 @@
       Show on top nav menu
       <app-tooltip-icon tooltipKey="ig.page.showTopNavMenu"></app-tooltip-icon>
     </label>
-    <input type="text" class="form-control" [(ngModel)]="page.navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
+    <input type="text" class="form-control" [(ngModel)]="navMenu" [disabled] = true [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
   </div>
 
   <div class="mb-3" *ngIf="level === 0">
     <label>
-      <input type="checkbox" [(ngModel)]="page.reuseDescription" /> The content of this page should be the same as the description and contact(s) of the implementation guide (ImplementationGuide.description and ImplementationGuide.contact).
+      <input type="checkbox" [(ngModel)]="reuseDescription" /> The content of this page should be the same as the description and contact(s) of the implementation guide (ImplementationGuide.description and ImplementationGuide.contact).
     </label>
   </div>
 
-  <div class="mb-3" *ngIf="!page.reuseDescription">
+  <div class="mb-3" *ngIf="!reuseDescription">
     <label>Content</label>
-    <trifolia-fhir-markdown [(value)]="page.contentMarkdown" [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
+    <trifolia-fhir-markdown [(value)]="contentMarkdown"   [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
   </div>
 
   <hr />
 
   <app-fhir-select-single-code [parentObject]="page" propertyName="generation" title="Generation" valueSetUrl="http://hl7.org/fhir/ValueSet/guide-page-generation" [required]="true" tooltipKey="ig.page.generation"></app-fhir-select-single-code>
 
-  <div class="mb-3">
-    <label>Name Type</label>
-    <select class="form-select" [(ngModel)]="nameType">
-      <option>Url</option>
-      <option>Reference</option>
-    </select>
-  </div>
+  <app-fhir-string [parentObject]="page" propertyName="nameUrl" *ngIf="page.hasOwnProperty('nameUrl')"  disabled = "true" title="Name URL" [required]="true" tooltipKey="ig.page.name"></app-fhir-string>
 
-  <app-fhir-string [parentObject]="page" propertyName="nameUrl" *ngIf="page.hasOwnProperty('nameUrl')" title="Name URL" [required]="true" tooltipKey="ig.page.name"></app-fhir-string>
+  <app-fhir-reference [parentObject]="page" propertyName="nameReference" *ngIf="page.hasOwnProperty('nameReference')"  disabled = "true"  title="Name Reference" [required]="true"></app-fhir-reference>
 
-  <app-fhir-reference [parentObject]="page" propertyName="nameReference" *ngIf="page.hasOwnProperty('nameReference')" title="Name Reference" [required]="true"></app-fhir-reference>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-primary" (click)="ok()">OK</button>

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type { IHistory, IPermission } from '@trifolia-fhir/models';
+import type {IHistory, IPermission, IProjectResourceReference} from '@trifolia-fhir/models';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
@@ -38,12 +38,8 @@ export class History extends BaseEntity implements IHistory {
     @Prop({type: Object})
     content?: IDomainResource|any;
 
-    @Prop()
-    targetId: string;
-
-    @Prop()
-    type: 'conformance'|'example';
-
+    @Prop({type: Object, value: {type: mongoose.Schema.Types.ObjectId, refPath: 'current.valueType'}, valueType: {type:String, enum:['FhirResource', 'NonFhirResource']}})
+    current: IProjectResourceReference;
 
 }
 

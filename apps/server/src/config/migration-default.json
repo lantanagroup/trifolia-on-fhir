@@ -1,0 +1,14 @@
+{
+    "mongodb": {
+      "url": "mongodb://localhost:27017/tof",
+      "options": {
+        "useNewUrlParser": true,
+        "useUnifiedTopology": true
+      }
+    },
+    "migrationsDir": "./apps/server/src/db-migrations/migrations",
+    "changelogCollectionName": "migrations",
+    "migrationFileExtension": ".js",
+    "useFileHash": false,
+    "moduleSystem": "commonjs"
+  }

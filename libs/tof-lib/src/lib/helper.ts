@@ -203,7 +203,7 @@ export function ensureSecurity(meta: IMeta) {
 }
 
 export interface SecurityPermission {
-  type: 'user' | 'group' | 'everyone';
+  type: 'User' | 'Group' | 'everyone';
   permission: 'read' | 'write';
   id?: string;
 }
@@ -231,7 +231,7 @@ export function parsePermissions(meta: IMeta): SecurityPermission[] {
     });
 }
 
-export function findPermission(perms: IPermission[], type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string) {
+export function findPermission(perms: IPermission[], type: 'User' | 'Group' | 'everyone', grant: 'read' | 'write', targetId?: string) {
 
   if (!perms) {
     return false;
@@ -241,12 +241,12 @@ export function findPermission(perms: IPermission[], type: 'user' | 'group' | 'e
     if (type === 'everyone') {
       return p.type === 'everyone' && p.grant == grant;
     } else {
-      return p.type === type && p.grant == grant && p.targetId === targetId;
+      return p.type === type && p.grant == grant && p.target === targetId;
     }
   });
 }
 
-export function addPermission(resource: IProject|IProjectResource, type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
+export function addPermission(resource: IProject, type: 'User' | 'Group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
 
   // Write permissions should always assume read permissions as well
   if (grant === 'write' && !findPermission(resource.permissions, type, 'read', targetId)) {
@@ -255,7 +255,7 @@ export function addPermission(resource: IProject|IProjectResource, type: 'user' 
 
   let newPerm: IPermission = { type: type, grant: grant };
   if (type !== 'everyone') {
-    newPerm.targetId = targetId;
+    newPerm.target = targetId;
   }
   let found = false;
 
@@ -273,7 +273,7 @@ export function addPermission(resource: IProject|IProjectResource, type: 'user' 
   return false;
 }
 
-export function removePermission(resource: IProject|IProjectResource, type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
+export function removePermission(resource: IProject, type: 'User' | 'Group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
   const delim = Globals.securityDelim;
 
   // Assume that if we're removing read permission, they shouldn't have write permission either
@@ -286,7 +286,7 @@ export function removePermission(resource: IProject|IProjectResource, type: 'use
   if (resource && resource.permissions) {
     index = type === 'everyone' ? 
       resource.permissions.findIndex((p: IPermission) => p.type === type && p.grant === grant) : 
-      resource.permissions.findIndex((p: IPermission) => p.type === type && p.grant === grant && p.targetId === targetId);
+      resource.permissions.findIndex((p: IPermission) => p.type === type && p.grant === grant && p.target === targetId);
   }
 
   if (index > -1) {

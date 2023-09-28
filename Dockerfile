@@ -1,4 +1,4 @@
-FROM node:16-alpine AS build-ToF
+FROM node:20-alpine AS build-ToF
 
 # Python and G++ are required for some of the node devDependencies
 # Java is required for Trifolia-on-FHIR to "Publish" implementation guides
@@ -23,9 +23,9 @@ COPY . .
 
 # Need --max_old_space_size to allocate more ram to node when building. Without it,
 # you get an error "Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory"
-RUN node --max_old_space_size=4096 node_modules/@nrwl/cli/bin/nx build client --configuration production
-RUN node --max_old_space_size=4096 node_modules/@nrwl/cli/bin/nx build server --configuration production
-RUN node --max_old_space_size=4096 node_modules/@nrwl/cli/bin/nx build tools --configuration production
+RUN node --max_old_space_size=4096 node_modules/nx/bin/nx build client --configuration production
+RUN node --max_old_space_size=4096 node_modules/nx/bin/nx build server --configuration production
+RUN node --max_old_space_size=4096 node_modules/nx/bin/nx build tools --configuration production
 
 RUN npm prune --production
 

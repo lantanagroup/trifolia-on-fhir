@@ -7,30 +7,30 @@ import {RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import {AuthService} from './auth/auth.service';
-import {IConformance} from '@trifolia-fhir/models';
-import {ConformanceService} from './conformance/conformance.service';
-import {ConformanceController} from './conformance/conformance.controller';
+import {IFhirResource} from '@trifolia-fhir/models';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 
-@Controller('api/codeSystem')
+@Controller('api/codeSystems')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Code System')
 @ApiOAuth2([])
-export class CodeSystemController extends ConformanceController {
+export class CodeSystemController extends FhirResourcesController {
   resourceType = 'CodeSystem';
 
   protected readonly logger = new TofLogger(CodeSystemController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
-    super(conformanceService);
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected fhirResourceService: FhirResourcesService, protected configService: ConfigService) {
+    super(fhirResourceService);
   }
 
   @Get()
-  public async searchCodeSystem(@User() user, @Request() req?: any): Promise<Paginated<IConformance>> {
-    return super.searchConformance(user, req);
+  public async searchCodeSystem(@User() user, @Request() req?: any): Promise<Paginated<IFhirResource>> {
+    return super.searchFhirResource(user, req);
   }
 
   @Get(':id')
-  public async getCodeSystem(@User() user, @Param('id') id: string): Promise<IConformance> {
+  public async getCodeSystem(@User() user, @Param('id') id: string): Promise<IFhirResource> {
     return super.getById(user, id);
   }
 
@@ -39,8 +39,8 @@ export class CodeSystemController extends ConformanceController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
-    return this.conformanceService.createConformance(conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourceService.createFhirResource(fhirResource, implementationGuideId);
   }
 
   @Put(':id')
@@ -49,13 +49,13 @@ export class CodeSystemController extends ConformanceController {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
-    return this.conformanceService.updateConformance(id,  conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourceService.updateFhirResource(id,  fhirResource, implementationGuideId);
   }
 
   @Delete(':id')
   public async deleteCodeSystem(@User() user, @Param('id') id: string) {
     await this.assertCanWriteById(user, id);
-    return this.conformanceService.deleteConformance(id);
+    return this.fhirResourceService.deleteFhirResource(id);
   }
 }

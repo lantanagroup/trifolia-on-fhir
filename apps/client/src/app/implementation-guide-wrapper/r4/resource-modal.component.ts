@@ -3,7 +3,7 @@ import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ImplementationGuide, ImplementationGuideResourceComponent} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {FhirReferenceModalComponent, ResourceSelection} from '../../fhir-edit/reference-modal/reference-modal.component';
 import {parseReference} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {ConformanceService} from '../../shared/conformance.service';
+import {FhirResourceService} from '../../shared/fhir-resource.service';
 import {Globals} from '@trifolia-fhir/tof-lib';
 
 @Component({
@@ -15,7 +15,7 @@ export class R4ResourceModalComponent {
   @Input() implementationGuide: ImplementationGuide;
   @Input() implementationGuideID: string;
 
-  constructor(public activeModal: NgbActiveModal, private modalService: NgbModal, private conformanceService: ConformanceService) {
+  constructor(public activeModal: NgbActiveModal, private modalService: NgbModal, private fhirResourceService: FhirResourceService) {
 
   }
 
@@ -78,7 +78,7 @@ export class R4ResourceModalComponent {
       let result = [];
       const parsedReference = parseReference(this.resource.reference.reference);
       if (parsedReference.resourceType !== 'Binary') {
-        results = await this.conformanceService.search(1, null, 'r4', this.implementationGuideID, parsedReference.resourceType, null, null, parsedReference.id).toPromise();
+        results = await this.fhirResourceService.search(1, null, 'r4', this.implementationGuideID, parsedReference.resourceType, null, null, parsedReference.id).toPromise();
         result = results.results;
       }
       else{

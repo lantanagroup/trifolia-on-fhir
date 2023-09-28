@@ -25,19 +25,16 @@ export class HistoryController extends BaseDataController<HistoryDocument> {
   public async searchHistory(@User() user, @Param('type') type: string, @Param('id') id: string, @Query() query?: any ) {
     const searchFilters = {};
 
-    searchFilters['type'] = { $regex: type,  $options: 'i' };
-    searchFilters['targetId'] = id;
+    searchFilters['current.valueType'] = { $regex: `^${type}$`,  $options: 'i' };
+    searchFilters['current.value'] = id;
 
-    const baseFilter = this.authService.getPermissionFilterBase(user, 'read');
-
-    const filter = {
-      $and: [baseFilter, searchFilters]
-    };
+    const baseFilter = await this.authService.getPermissionFilterBase(user, 'read');
+    const filter = [{$match: searchFilters}, ...baseFilter];
 
     const options: PaginateOptions = {
       page: query.page,
       itemsPerPage: 10,
-      filter: filter
+      pipeline: filter
     };
 
     options.sortBy = {};

@@ -1,0 +1,43 @@
+
+<h1>Page</h1>
+
+<ng-container *ngIf="page" >
+  <ul ngbNav #qTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+    <li ngbNavItem>
+      <a ngbNavLink>General</a>
+      <ng-template ngbNavContent>
+          <div class="page">
+            <app-fhir-string [parentObject]="page" propertyName="name" [required]="true" title="Name"  [disabled] = "page.name === 'index'" (change)='idChangedEvent.next()'></app-fhir-string>
+            <div class="help-block">{{alreadyInUseNameMessage}}</div>
+
+            <div class="mb-3" *ngIf="!reuseDescription">
+              <label>Content</label>
+              <trifolia-fhir-markdown [(value)]="page.content" ></trifolia-fhir-markdown>
+            </div>
+            <div class="mb-3" *ngIf="page.name === 'index'">
+              <label>
+                <input type="checkbox" [(ngModel)]="reuseDescription" /> The content of this page should be the same as the description and contact(s) of the implementation guide (ImplementationGuide.description and ImplementationGuide.contact).
+              </label>
+            </div>
+            <div>
+              <label>
+                Show on top nav menu
+                <app-tooltip-icon tooltipKey="ig.page.showTopNavMenu"></app-tooltip-icon>
+              </label>
+              <input type="text" class="form-control" [(ngModel)]="page.navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
+            </div>
+          </div>
+      </ng-template>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="qTabs" class="mt-2"></div>
+</ng-container>
+
+<footer class="footer">
+  <div class="btn-group">
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="(!isIdUnique)">Save</button>
+    <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
+  </div>
+  <span class="message">{{message}}</span>
+</footer>
+

@@ -7,7 +7,7 @@ import { FhirService } from '../shared/fhir.service';
 import { CookieService } from 'ngx-cookie-service';
 import { ContentModel, GithubService } from '../shared/github.service';
 import { ImportGithubPanelComponent } from './import-github-panel/import-github-panel.component';
-import { Observable, concat } from 'rxjs';
+import { Observable, concat, using } from 'rxjs';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
 import { getErrorString, Globals } from '@trifolia-fhir/tof-lib'; //'../../../../../libs/tof-lib/src/lib/helper';
@@ -15,10 +15,10 @@ import { ConfigService } from '../shared/config.service';
 import { Media as R4Media } from '@trifolia-fhir/r4';
 import { Media as R5Media } from '@trifolia-fhir/r5';
 import { UpdateDiffComponent } from './update-diff/update-diff.component';
-import { ConformanceService } from '../shared/conformance.service';
-import { IConformance, IExample, IProjectResource } from '@trifolia-fhir/models';
-import { ExamplesService } from '../shared/examples.service';
-import { Conformance } from 'apps/server/src/app/conformance/conformance.schema';
+import { FhirResourceService } from '../shared/fhir-resource.service';
+import { CdaExample, type IFhirResource, type INonFhirResource, type IProjectResource } from '@trifolia-fhir/models';
+import { NonFhirResourceService } from '../shared/non-fhir-resource.service';
+import { FhirResource } from 'apps/server/src/app/fhir-resources/fhir-resource.schema';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
@@ -85,8 +85,8 @@ export class ImportComponent implements OnInit {
     public configService: ConfigService,
     private httpClient: HttpClient,
     private importService: ImportService,
-    private conformanceService: ConformanceService,
-    private examplesService: ExamplesService,
+    private fhirResourceService: FhirResourceService,
+    private nonFhirResourceService: NonFhirResourceService,
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService,
     public githubService: GithubService,
@@ -104,11 +104,11 @@ export class ImportComponent implements OnInit {
     const modalRef = this.modalService.open(UpdateDiffComponent, { backdrop: 'static', size: 'lg' });
     if (fileModel.resource) {
       modalRef.componentInstance.importResource = fileModel.resource;
-      modalRef.componentInstance.existingResource = (<IConformance>fileModel.existingResource).resource;
+      modalRef.componentInstance.existingResource = (<IFhirResource>fileModel.existingResource).resource;
     }
     else {
       modalRef.componentInstance.importResource = fileModel.content;
-      modalRef.componentInstance.existingResource = (<IExample>fileModel.existingResource).content;
+      modalRef.componentInstance.existingResource = (<INonFhirResource>fileModel.existingResource).content;
     }
   }
 
@@ -332,10 +332,6 @@ export class ImportComponent implements OnInit {
         this.errorMessage = res.errorMessage;
         const importFileModel = res.importFileModel;
 
-        // if (this.configService.project && this.configService.project.implementationGuideId) {
-        //   this.getList(importFileModel);
-        // }
-
         // only add to the list of files to import if it doesn't have a formatting error.
         if (this.errorMessage === '') {
           this.files.push(importFileModel);
@@ -395,22 +391,23 @@ export class ImportComponent implements OnInit {
       }
     }
 
-    let newResource: IConformance | IExample = <IConformance | IExample>{};
+    let newResource: IFhirResource | INonFhirResource = <IFhirResource | INonFhirResource>{};
 
     if (this.implementationGuideId) {
-      newResource.igIds = [this.implementationGuideId];
+      newResource.referencedBy = [{'value': this.implementationGuideId, 'valueType': 'FhirResource'}];
     }
 
-    newResource.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
-
-    let req: Observable<IConformance | IExample>;
+    let req: Observable<IFhirResource | INonFhirResource>;
 
     if (this.textContentIsExample) {
-      (<IExample>newResource).content = resource;
-      req = this.examplesService.save(null, <IExample>newResource, this.implementationGuideId);
+      // CDA examples are the only non-FHIR resources currently supported for importing
+      newResource = new CdaExample();
+      newResource.content = resource;
+      req = this.nonFhirResourceService.save(null, newResource, this.implementationGuideId);
     } else {
-      (<IConformance>newResource).resource = resource;
-      req = this.conformanceService.save(null, <IConformance>newResource, this.implementationGuideId);
+      (<IFhirResource>newResource).resource = resource;
+      (<IFhirResource>newResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
+      req = this.fhirResourceService.save(null, <IFhirResource>newResource, this.implementationGuideId);
     }
 
     req.subscribe({
@@ -432,23 +429,23 @@ export class ImportComponent implements OnInit {
     for (const file of this.files) {
 
       if (!file.existingResource) {
-        file.existingResource = <IConformance | IExample>{};
+        file.existingResource = <IFhirResource | INonFhirResource>{};
       }
-      (<IConformance | IExample>file.existingResource).fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
 
       // add/update non-fhir example type
       if (file.isExample && file.isCDAExample) {
-        let example: IExample = <IExample>{ ...file.existingResource };
-        example.content = file.isCDAExample ? file.cdaContent : file.resource;
+        let example: CdaExample = new CdaExample(file.existingResource);
+        example.content = file.cdaContent;
         example.name = this.getIdDisplay(file);
-        requests.push(this.examplesService.save(example.id, example, this.implementationGuideId));
+        requests.push(this.nonFhirResourceService.save(example.id, example, this.implementationGuideId));
       }
 
       // add/update fhir type
       else {
-        let conformance: IConformance = <IConformance>{ ...file.existingResource };
-        conformance.resource = file.resource;
-        requests.push(this.conformanceService.save(conformance.id, conformance, this.implementationGuideId, file.isExample));
+        let fhirResource: IFhirResource = <IFhirResource>{ ...file.existingResource };
+        fhirResource.resource = file.resource;
+        fhirResource.fhirVersion = <'stu3' | 'r4' | 'r5'>this.configService.fhirVersion.toLowerCase();
+        requests.push(this.fhirResourceService.save(fhirResource.id, fhirResource, this.implementationGuideId, file.isExample));
       }
     }
 
@@ -482,7 +479,7 @@ export class ImportComponent implements OnInit {
 
     this.importService.importVsac(this.vsacCriteria)
       .subscribe({
-        next: (res: Conformance) => {
+        next: (res: FhirResource) => {
           this.files = [];
           this.message = `Successfully imported: ${res.resource.resourceType}/${res.resource.id} (${res.resource['title'] ?? res.resource['name']})`;
         },
@@ -913,8 +910,8 @@ export class ImportComponent implements OnInit {
 
   ngOnInit() {
 
-    if (this.configService.project && this.configService.project.implementationGuideId) {
-      this.implementationGuideId = this.configService.project.implementationGuideId;
+    if (this.configService.igContext && this.configService.igContext.implementationGuideId) {
+      this.implementationGuideId = this.configService.igContext.implementationGuideId;
     }
 
   }

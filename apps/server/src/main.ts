@@ -2,7 +2,7 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app/app.module';
 import {Response} from 'express';
 import type {ITofRequest} from './app/models/tof-request';
-import socketIo from 'socket.io';
+import { Server } from 'socket.io';
 import {ISocketConnection} from './app/models/socket-connection';
 import {NotFoundExceptionFilter} from './not-found-exception-filter';
 import {TofLogger} from './app/tof-logger';
@@ -16,6 +16,9 @@ import {ConfigService} from './app/config.service';
 import {NestExpressApplication} from '@nestjs/platform-express';
 import hpropagate from 'hpropagate';
 import {FhirInstances} from './app/helper';
+
+import * as migrate from 'migrate-mongo';
+import { MigrateMongoConfigService } from './db-migrations/migrate-mongo-config';
 
 const config = ConfigService.create();
 
@@ -82,7 +85,7 @@ const parseFhirBody = (req: ITofRequest, res: Response, next) => {
 };
 
 const initSocket = (app) => {
-  io = socketIo(app.getHttpServer());
+  io = new Server(app.getHttpServer());
 
   io.on('connection', (socket) => {
     logger.trace(`Client (id: ${socket.client.id}) connected to socket`);
@@ -173,6 +176,25 @@ async function bootstrap() {
     });
   } catch (ex) {
     logger.error(ex);
+  }
+
+  
+  // run db migration automatically if configured to do so
+  const migrateConfig = new MigrateMongoConfigService(config).getConfig();
+  migrate.config.set(migrateConfig);
+  const { db, client } = await migrate.database.connect();
+  if (config.database.migrateAtStart) {
+    logger.log('Running migrate-mongo up');
+    await migrate.up(db, client);
+  } 
+  // otherwise check that there aren't any pending migrations
+  else {
+    const migrationStatus: Array<{ fileName, appliedAt }> = await migrate.status(db);
+    if ((migrationStatus || []).some(s => s.appliedAt === 'PENDING')) {
+      logger.error('Database migrations are pending.  Please run \'npm run migrate:up\' or enable migrateAtStart in the config.');
+      await app.close();
+      process.exit(0);
+    }
   }
 
   app.useGlobalFilters(new NotFoundExceptionFilter());

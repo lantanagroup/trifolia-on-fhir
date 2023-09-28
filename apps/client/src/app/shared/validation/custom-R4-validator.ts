@@ -147,14 +147,14 @@ export class CustomR4Validator extends CustomValidator {
         })
       }
 
-      if (!pageClone.reuseDescription && !pageClone.contentMarkdown) {
+    /*  if (!pageClone.reuseDescription && !pageClone.contentMarkdown) {
         messages.push({
           location: 'ImplementationGuide.definition.page+',
           resourceId: implementationGuide.id,
           severity: Severities.Warning,
           message: `Page with title ${page.title} does not have any content`
         });
-      }
+      }*/
     });
 
     return messages;

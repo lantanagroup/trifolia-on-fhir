@@ -12,7 +12,7 @@ import { getErrorString } from '@trifolia-fhir/tof-lib';
 import { identifyRelease } from '@trifolia-fhir/tof-lib';
 import { PublishingRequestModel } from '@trifolia-fhir/tof-lib';
 import { ProjectService } from '../shared/projects.service';
-import { IConformance, IProject } from '@trifolia-fhir/models';
+import { IFhirResource, IProject } from '@trifolia-fhir/models';
 @Component({
   templateUrl: './new-project.component.html',
   styleUrls: ['./new-project.component.css']
@@ -74,7 +74,6 @@ export class NewProjectComponent implements OnInit {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
 
-  //  this.igId = this.projectCode.replace(/\./g, '-');
     ig.version = '0.1.0';
     ig.name = this.igName.replace(/[^a-zA-Z0-9_]/g, '');
     ig.name  = ig.name.charAt(0).toUpperCase() + ig.name.slice(1);
@@ -111,7 +110,6 @@ export class NewProjectComponent implements OnInit {
     } else if (this.fhirVersion == 'stu3') {
       if (this.isHL7) {
 
-       // (<STU3ImplementationGuide>ig).jurisdiction = jusrisdiction;
         const packageIdExt = new STU3Extension();
         packageIdExt.url = Globals.extensionUrls['extension-ig-package-id'];
         packageIdExt.valueString = this.packageId;
@@ -124,13 +122,13 @@ export class NewProjectComponent implements OnInit {
     let projectName = ig.name;
     PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirVersion));
 
-    let newConf: IConformance = <IConformance>{fhirVersion: this.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
-    this.igService.saveImplementationGuide(newConf)
+    let newRes: IFhirResource = <IFhirResource>{fhirVersion: this.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
+    this.igService.saveImplementationGuide(null, newRes)
       .subscribe({
-        next: async (ig: IConformance) => {
-          let project: IProject = <IProject>{ author: "", fhirVersion: this.fhirVersion, name: projectName };
-          project.igs = project.igs || [];
-          project.igs.push(ig);
+        next: async (ig: IFhirResource) => {
+          let project: IProject = <IProject>{ author: "", fhirVersion: this.fhirVersion, name: projectName, isDeleted: false };
+          project.references = project.references || [];
+          project.references.push({'value' : ig, valueType: 'FhirResource'});
           await this.projectService.save(project).toPromise().then((project) => {
             this.router.navigate([`/projects/${ig.id}/implementation-guide`]);
           }).catch((err) => this.message = getErrorString(err));

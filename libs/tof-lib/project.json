@@ -1,0 +1,21 @@
+{
+  "name": "tof-lib",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/tof-lib/src",
+  "projectType": "library",
+  "prefix": "trifolia-fhir",
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/tof-lib/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": [
+        "coverage/libs/tof-lib"
+      ]
+    }
+  },
+  "generators": {},
+  "tags": []
+}

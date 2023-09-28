@@ -118,9 +118,9 @@
                 </ng-template>
               </li>
               <li ngbNavItem>
-                <ng-template ngbNavLink>
+                <a ngbNavLink>
                   <button type="button" class="btn btn-primary" title="Add an exclude entry" (click)="addExcludeEntry(excludeTabSet)">Add</button>
-                </ng-template>
+                </a>
                 <ng-template ngbNavContent></ng-template>
               </li>
             </ul>
@@ -131,19 +131,11 @@
     </ng-template>
   </li>
 
-  <!-- Permissions -->
-  <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
-    <a ngbNavLink>
-      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i>
-    </a>
-    <ng-template ngbNavContent>
-      <trifolia-fhir-resource-permissions  [resource]="conformance" ></trifolia-fhir-resource-permissions>
-    </ng-template>
-  </li>
-
   <!-- Validation -->
   <li ngbNavItem="validation">
-    <a ngbNavLink>Validation</a>
+    <a ngbNavLink>
+      Validation ({{validation?.messages?.length || 0}})
+    </a>
     <ng-template ngbNavContent>
       <app-validation-results [results]="validation"></app-validation-results>
     </ng-template>
@@ -161,7 +153,7 @@
   <li ngbNavItem="history" *ngIf="!isNew">
     <a ngbNavLink>History</a>
     <ng-template ngbNavContent>
-      <app-resource-history  [resource]="conformance" (resourceChange) = "valueSet = $event; conformance.resource = $event;"></app-resource-history>
+      <app-resource-history  [resource]="fhirResource" (resourceChange) = "valueSet = $event; fhirResource.resource = $event;"></app-resource-history>
     </ng-template>
   </li>
 </ul>
@@ -170,7 +162,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance) || (isNew && !isIdUnique)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(fhirResource) || (isNew && !isIdUnique)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

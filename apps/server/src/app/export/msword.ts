@@ -16,6 +16,7 @@ import {
 import {Globals, IgPageHelper, PageInfo} from '@trifolia-fhir/tof-lib';
 import type {IBundle, IImplementationGuide} from '@trifolia-fhir/tof-lib';
 import {readFileSync} from 'fs';
+import {Page} from '@trifolia-fhir/models';
 
 
 /**
@@ -88,10 +89,7 @@ export class MSWordExporter {
     ];
   }
 
-  async export(bundle: IBundle, version: 'stu3'|'r4'|'r5') {
-    this.doc = new Document({
-      externalStyles: readFileSync('./assets/msword-styles.xml').toString()
-    });
+  async export(bundle: IBundle, pages: Page[], version: 'stu3'|'r4'|'r5') {
     this.body = [];
 
     this.body.push(new TableOfContents('Table of Contents', {
@@ -124,11 +122,11 @@ export class MSWordExporter {
 
       if (version === 'stu3') {
         const stu3ImplementationGuide = <STU3ImplementationGuide> implementationGuide;
-        pageInfos = IgPageHelper.getSTU3PagesList([], stu3ImplementationGuide.page, stu3ImplementationGuide);
+        pageInfos = IgPageHelper.getSTU3PagesList([], pages, stu3ImplementationGuide.page, stu3ImplementationGuide);
       } else if (version === 'r4' || version === 'r5') {
         const ig = <R4ImplementationGuide | R5ImplementationGuide> implementationGuide;
         if (ig.definition) {
-          pageInfos = IgPageHelper.getR4andR5PagesList([], ig.definition.page, ig);
+          pageInfos = IgPageHelper.getR4andR5PagesList([], pages, ig.definition.page, ig);
         }
       }
 
@@ -231,9 +229,10 @@ export class MSWordExporter {
       this.body.push(MSWordExporter.createPara(''));
     });
 
-    this.doc.addSection({
-      properties: {},
-      children: this.body
+
+    this.doc = new Document({
+      sections: [{children: this.body}],
+      externalStyles: readFileSync('./assets/msword-styles.xml').toString()
     });
 
     return await Packer.toBuffer(this.doc);

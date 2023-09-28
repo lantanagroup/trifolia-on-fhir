@@ -1,5 +1,5 @@
 import { Component, DoCheck, Input, OnDestroy, OnInit } from '@angular/core';
-import { ImplementationGuide, OperationOutcome, Questionnaire, QuestionnaireItemComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { ImplementationGuide, Questionnaire, QuestionnaireItemComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,10 +12,9 @@ import { QuestionnaireItemModalComponent } from './questionnaire-item-modal.comp
 import { AuthService } from '../shared/auth.service';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { BaseComponent } from '../base.component';
-import { config, firstValueFrom, Subject } from 'rxjs';
+import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { IConformance } from '@trifolia-fhir/models';
-import { SearchParameter } from '@trifolia-fhir/r4';
+import { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
 
@@ -57,7 +56,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
   public validation: any;
   public flattenedItems: ItemModel[];
   public qNotFound = false;
-  public conformance;
+  public fhirResource;
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
@@ -65,6 +64,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
   public implementationGuide;
 
   private navSubscription: any;
+  public Globals = Globals;
 
   constructor(
     public route: ActivatedRoute,
@@ -81,7 +81,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     super(configService, authService);
 
     this.questionnaire = new Questionnaire({ meta: this.authService.getDefaultMeta() });
-    this.conformance = { resource: this.questionnaire, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.fhirResource = { resource: this.questionnaire, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -132,14 +132,14 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
       return;
     }
 
-    this.questionnaireService.save(this.questionnaireId, this.conformance)
+    this.questionnaireService.save(this.questionnaireId, this.fhirResource)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.router.navigate([`${this.configService.baseSessionUrl}/questionnaire/${conf.id}`]);
           } else {
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadQuestionnaire(conf.resource);
             this.message = 'Your changes have been saved!';
             setTimeout(() => {
@@ -169,12 +169,12 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     if (!this.isNew) {
       this.questionnaireService.get(this.questionnaireId)
         .subscribe({
-          next: (conf: IConformance) => {
+          next: (conf: IFhirResource) => {
             if (!conf || !conf.resource || conf.resource.resourceType !== 'Questionnaire') {
               this.message = 'The specified questionnaire either does not exist or was deleted';
               return;
             }
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadQuestionnaire(conf.resource);
           },
           error: (err) => {
@@ -366,7 +366,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     this.questionnaire = new Questionnaire(newVal);
 
     if (this.configService) {
-      this.conformance.resource = this.questionnaire;
+      this.fhirResource.resource = this.questionnaire;
     }
 
     this.initFlattenedItems();

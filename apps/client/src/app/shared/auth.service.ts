@@ -8,7 +8,7 @@ import {GroupService} from './group.service';
 import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import { UserService } from './user.service';
-import type {IConformance, IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
+import type {IFhirResource, IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
@@ -151,7 +151,7 @@ export class AuthService {
         //path = '/';
         path = this.activatedRoute.snapshot.queryParams.pathname || `/projects`;
       }
-      
+
       let navigateTo: string;
 
       if (path && path !== '/' && path !== '/logout' && path !== '/login' && !path.endsWith('/home')) {
@@ -226,27 +226,16 @@ export class AuthService {
 
   /**
    * Creates a default "meta" object that can be assigned to new resources.
-   * Currently defaults the security tags to include "everyone" with both "read" and "write" access.
-   * That *could* be changed to be specific to the currently logged-in user, which is why this method
-   * exists on the AuthService.
+   * This previously contained creating default security tags, but that is no longer needed with permissions moving to the project level.
+   * This is kept here for any potential future use.
    */
   public getDefaultMeta(): Meta {
-    const meta = new Meta();
-
-    if (this.configService.project) {
-      meta.security = this.configService.project.securityTags;
-    }
-
-    if (!meta.security || meta.security.length === 0) {
-      //addPermission(meta, 'everyone', 'write');
-    }
-
-    return meta;
+    return new Meta();
   }
 
 
   public getDefaultPermissions(): IPermission[] {
-    let conf: IConformance|IProject = <IConformance|IProject>{}
+    let conf: IProject = <IProject>{};
     addPermission(conf, 'everyone', 'write');
     return conf.permissions;
   }

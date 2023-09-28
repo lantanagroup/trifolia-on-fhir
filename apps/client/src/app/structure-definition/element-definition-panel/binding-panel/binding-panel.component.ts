@@ -10,7 +10,7 @@ import { IElementDefinition, IValueSet } from '../../../../../../../libs/tof-lib
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { ValueSetService } from '../../../shared/value-set.service';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 import { Paginated } from '@trifolia-fhir/tof-lib';
 
 @Component({
@@ -137,7 +137,7 @@ export class BindingPanelComponent implements OnInit {
       switchMap((term: string) => {
         if (term.length <= 2) return [];
         return this.valueSetService.searchValueSet(1, term).pipe(
-          map((response: Paginated<IConformance>) => (response.results || []).map(results => <IValueSet>results.resource))
+          map((response: Paginated<IFhirResource>) => (response.results || []).map(results => <IValueSet>results.resource))
         );
       })
     );

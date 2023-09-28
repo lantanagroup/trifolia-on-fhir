@@ -9,7 +9,7 @@ import { StructureDefinition as R4StructureDefinition } from '../../../../../../
 import { StructureDefinition as STU3StructureDefinition } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { Globals } from '../../../../../../libs/tof-lib/src/lib/globals';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 
 @Component({
   selector: 'trifolia-fhir-copy-profile-modal',
@@ -24,7 +24,7 @@ export class CopyProfileModalComponent implements OnInit {
   public url: string;
   public autoUrl = true;
   public structureDefinition: STU3StructureDefinition | R4StructureDefinition | R5StructureDefinition;
-  public conformance: IConformance;
+  public fhirResource: IFhirResource;
   public Globals = Globals;
 
   @Input() originalID: string;
@@ -52,13 +52,13 @@ export class CopyProfileModalComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.conformance = await this.structureDefinitionService.getStructureDefinition(this.originalID).toPromise();
+    this.fhirResource = await this.structureDefinitionService.getStructureDefinition(this.originalID).toPromise();
     if (this.configService.isFhirSTU3) {
-      this.structureDefinition = new STU3StructureDefinition(this.conformance.resource);
+      this.structureDefinition = new STU3StructureDefinition(this.fhirResource.resource);
     } else if (this.configService.isFhirR4) {
-      this.structureDefinition = new R4StructureDefinition(this.conformance.resource);
+      this.structureDefinition = new R4StructureDefinition(this.fhirResource.resource);
     } else if (this.configService.isFhirR5) {
-      this.structureDefinition = new R5StructureDefinition(this.conformance.resource);
+      this.structureDefinition = new R5StructureDefinition(this.fhirResource.resource);
     } else {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
@@ -79,8 +79,8 @@ export class CopyProfileModalComponent implements OnInit {
     this.structureDefinition.url = this.url;
     this.structureDefinition.name = this.name;
     this.message = "Loading new copy...";
-    this.conformance.resource = this.structureDefinition;
-    this.structureDefinitionService.save(this.structureDefinition.id, this.conformance)
+    this.fhirResource.resource = this.structureDefinition;
+    this.structureDefinitionService.save(this.structureDefinition.id, this.fhirResource)
       .subscribe({
         next: (results) => {
           this.router.navigate([`${this.configService.baseSessionUrl}/structure-definition/${results.id}`], {

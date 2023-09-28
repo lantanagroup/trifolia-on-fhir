@@ -28,7 +28,7 @@ import {
   setIgnoreWarningsValue,
   setJiraSpecValue
 } from "@trifolia-fhir/tof-lib";
-import { getErrorString, Globals, PublishingRequestModel } from "@trifolia-fhir/tof-lib";
+import { getErrorString, PublishingRequestModel } from "@trifolia-fhir/tof-lib";
 import type { IBundle, IBundleEntry, IImplementationGuide, ITofUser } from "@trifolia-fhir/tof-lib";
 import { FhirInstances, unzip } from "../helper";
 import * as path from "path";
@@ -37,8 +37,11 @@ import * as tmp from "tmp";
 import * as vkbeautify from "vkbeautify";
 import { ConfigService } from "../config.service";
 import JSZip from "jszip";
-import { ConformanceService } from "../conformance/conformance.service";
+import { FhirResourcesService } from "../fhir-resources/fhir-resources.service";
 import { TofLogger } from "../tof-logger";
+import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, Page, StructureDefinitionIntro, StructureDefinitionNotes} from '@trifolia-fhir/models';
+import { NonFhirResourcesService } from "../non-fhir-resources/non-fhir-resources.service";
+import { FhirResource } from "../fhir-resources/fhir-resource.schema";
 
 export class HtmlExporter {
   public queuedAt: Date;
@@ -58,7 +61,9 @@ export class HtmlExporter {
   public publishing: Promise<void>;
   public logs: string;
   protected igPublisherLocation: string;
+  protected igFhirResource: IFhirResource;
   protected pageInfos: PageInfo[];
+  protected pages: Page[];
 
   protected static getExtensionFromFormat(format: Formats) {
     switch (format) {
@@ -87,7 +92,8 @@ export class HtmlExporter {
 
   // TODO: Refactor so that there aren't so many constructor params
   constructor(
-    protected conformanceService: ConformanceService,
+    protected fhirResourceService: FhirResourcesService,
+    protected nonFhirResourceService: NonFhirResourcesService,
     protected configService: ConfigService,
     protected httpService: HttpService,
     protected logger: TofLogger,
@@ -111,10 +117,16 @@ export class HtmlExporter {
 
         this.logger.log(`Starting export of HTML package. Home directory is ${this.homedir}. Retrieving resources for export.`);
 
-        const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, this.fhir, this.implementationGuideId);
-        this.bundle = await bundleExporter.getBundle();
-        this.fhirVersion = bundleExporter.fhirVersion;
+        this.igFhirResource = await this.fhirResourceService.getWithReferences(this.implementationGuideId);
+        if (!this.igFhirResource || this.igFhirResource.resource.resourceType != 'ImplementationGuide') {
+          throw new Error(`No ImplementationGuide found for ${this.implementationGuideId}`);
+        }
 
+        const bundleExporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, this.fhir, this.implementationGuideId);
+        this.bundle = await bundleExporter.getBundle();
+        this.pages  = await bundleExporter.getPages();
+        this.fhirVersion = bundleExporter.fhirVersion;
+        let  pageInfos = this.pageInfos;
         const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide>this.bundle.entry
           .find((e: IBundleEntry) => e.resource.resourceType === 'ImplementationGuide')// && e.resource.id === this.implementationGuideId)
           .resource;
@@ -429,7 +441,9 @@ export class HtmlExporter {
     fs.ensureDirSync(path.join(inputDir, 'pagecontent'));
 
     // Write the intro, summary and search MD files for each resource
-    (this.bundle.entry || []).forEach((entry) => this.writeFilesForResources(this.rootPath, entry.resource));
+    for (const entry of (this.bundle.entry || [])) {
+      await this.writeFilesForResources(this.rootPath, entry.resource);
+    }
 
     this.logger.log('Writing pages for the implementation guide to the temp directory');
 
@@ -570,7 +584,7 @@ export class HtmlExporter {
       return;
     }
 
-    const menuContent = IgPageHelper.getMenuContent(this.pageInfos);
+    const menuContent = IgPageHelper.getMenuContent(this.pages);
     fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), menuContent);
   }
 
@@ -582,7 +596,7 @@ export class HtmlExporter {
    * @param rootPath
    * @param resource
    */
-  private writeFilesForResources(rootPath: string, resource: DomainResource) {
+  private async writeFilesForResources(rootPath: string, resource: DomainResource) {
     if (!resource || !resource.resourceType || resource.resourceType === 'ImplementationGuide') {
       return;
     }
@@ -607,18 +621,47 @@ export class HtmlExporter {
     }
 
     if (resource.resourceType === 'StructureDefinition') {
-      const intro = (resource.extension || []).find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
-      const notes = (resource.extension || []).find(e => e.url === Globals.extensionUrls['extension-sd-notes']);
 
-      if (intro && intro.valueMarkdown) {
+      // find this structure definition in the list of DB references from the containing IG
+      const sdRef = (this.igFhirResource.references || []).find((r: IProjectResourceReference) =>
+        r.valueType == FhirResource.name && typeof r.value == typeof {}
+        && (<IFhirResource>r.value).resource.resourceType === 'StructureDefinition'
+        && (<IFhirResource>r.value).resource.id === resource.id
+      );
+
+      if (!sdRef) {
+        return;
+      }
+
+      // get this structure definition and its references from the database
+      const dbRes = await this.fhirResourceService.getWithReferences((<IFhirResource>sdRef.value).id);
+
+      if (!dbRes) {
+        return;
+      }
+
+
+      // find any intro or notes referenced by this structure definition and write them to corresponding files
+      const intro = (dbRes.references || []).find((r: IProjectResourceReference) =>
+        r.valueType == NonFhirResource.name && typeof r.value == typeof {}
+        && (<INonFhirResource>r.value).type === StructureDefinitionIntro.name
+      );
+
+      const notes = (dbRes.references || []).find((r: IProjectResourceReference) =>
+        r.valueType == NonFhirResource.name && typeof r.value == typeof {}
+        && (<INonFhirResource>r.value).type === StructureDefinitionNotes.name
+      );
+
+      if (intro && (<INonFhirResource>intro.value).content) {
         const introPath = path.join(rootPath, `input/pagecontent/StructureDefinition-${resource.id}-intro.md`);
-        fs.writeFileSync(introPath, intro.valueMarkdown);
+        fs.writeFileSync(introPath, (<INonFhirResource>intro.value).content);
       }
 
-      if (notes && notes.valueMarkdown) {
+      if (notes && (<INonFhirResource>notes.value).content) {
         const notesPath = path.join(rootPath, `input/pagecontent/StructureDefinition-${resource.id}-notes.md`);
-        fs.writeFileSync(notesPath, notes.valueMarkdown);
+        fs.writeFileSync(notesPath, (<INonFhirResource>notes.value).content);
       }
+
     }
   }
 

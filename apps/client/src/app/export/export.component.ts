@@ -12,7 +12,7 @@ import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/oper
 import {NgbNavChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import {getErrorString, Globals, SearchImplementationGuideResponseContainer} from '@trifolia-fhir/tof-lib';
 import {HttpClient} from '@angular/common/http';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 import {FhirService} from '../shared/fhir.service';
 
 interface DocumentOptions {
@@ -130,7 +130,7 @@ export class ExportComponent implements OnInit {
         break;
       case 'document':
         this.options.exportFormat = ExportFormats.Document;
-        this.fhirService.search('Composition', null, true, null, null, this.configService.project.implementationGuideId)
+        this.fhirService.search('Composition', null, true, null, null, this.configService.igContext.implementationGuideId)
           .subscribe((res) => {
             this.compositions = res.results.map(c => {
               return {
@@ -145,7 +145,7 @@ export class ExportComponent implements OnInit {
     }
   }
 
-  public async implementationGuideChanged(igConf: IConformance) {
+  public async implementationGuideChanged(igConf: IFhirResource) {
     this.selectedImplementationGuide = <ImplementationGuide>igConf.resource;
     this.options.implementationGuideId = igConf ? igConf.id : undefined;
 
@@ -269,7 +269,7 @@ export class ExportComponent implements OnInit {
     this.message = null;
 
     try {
-      const response = await this.exportService.exportDocument(this.configService.project.implementationGuideId, this.documentOptions.compositionId, this.documentOptions.format).toPromise();
+      const response = await this.exportService.exportDocument(this.configService.igContext.implementationGuideId, this.documentOptions.compositionId, this.documentOptions.format).toPromise();
       saveAs(response.body, 'bundle-' + this.documentOptions.compositionId + (this.documentOptions.format === 'application/xml' ? '.xml' : '.json'));
     } catch (ex) {
       this.message = getErrorString(ex);
@@ -337,14 +337,14 @@ export class ExportComponent implements OnInit {
   }
 
   async ngOnInit() {
-    if (this.configService.project) {
-      this.options.implementationGuideId = this.configService.project.implementationGuideId;
+    if (this.configService.igContext) {
+      this.options.implementationGuideId = this.configService.igContext.implementationGuideId;
     }
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe({
-          next: (res: IConformance) => {
+          next: (res: IFhirResource) => {
             this.implementationGuideChanged(res);
           },
           error: (err) => this.message = getErrorString(err)
@@ -356,7 +356,7 @@ export class ExportComponent implements OnInit {
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe({
-          next: (res: IConformance) => {
+          next: (res: IFhirResource) => {
             this.selectedImplementationGuide = <ImplementationGuide>res.resource;
           },
           error: (err) => this.message = getErrorString(err)

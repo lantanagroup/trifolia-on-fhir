@@ -1,4 +1,4 @@
-import {Post} from '@nestjs/common';
+import {Post, Request} from '@nestjs/common';
 import {InjectConnection} from '@nestjs/mongoose';
 import {ApiTags, ApiOAuth2, ApiOperation} from '@nestjs/swagger';
 import {Connection} from 'mongoose';
@@ -14,7 +14,7 @@ import type {IGroup} from '@trifolia-fhir/models';
 import { ObjectId } from 'mongodb';
 
 
-@Controller('api/group')
+@Controller('api/groups')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Group')
 @ApiOAuth2([])
@@ -105,6 +105,21 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     }
 
     return super.update(id, persistedGroup);
+  }
+
+  @Get('info')
+  public async getGroupInfo(@Request() req?: any) {
+    if (!req) {
+      return null;
+    }
+    const query = req.query;
+
+    if (query && '_id' in query) {
+      const ids = (query['_id'] || '').split(',').map(id => { return { _id: new ObjectId(id) } });
+      const idFilter = { $or: ids };
+      return await this.groupsService.findAll(idFilter);
+    }
+    return null;
   }
 
 

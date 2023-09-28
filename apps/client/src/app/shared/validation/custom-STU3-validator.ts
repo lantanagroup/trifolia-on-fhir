@@ -115,14 +115,14 @@ export class CustomSTU3Validator extends CustomValidator {
         });
       }
 
-      if (!pageClone.contentMarkdown) {
+      /*if (!pageClone.contentMarkdown) {
         messages.push({
           location: 'ImplementationGuide.page+',
           resourceId: implementationGuide.id,
           severity: Severities.Warning,
           message: `The page with title ${page.title} does not specify content.`
         });
-      }
+      }*/
     });
 
     allResources.forEach((resource: PackageResourceComponent) => {

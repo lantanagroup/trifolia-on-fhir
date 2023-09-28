@@ -5,14 +5,14 @@ import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
 import {ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import modulePackage from '../../../../package.json';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 
 @Controller('api/config')
 @ApiTags('Config')
 export class ConfigController extends BaseController {
   private static serverMetadata = {};
 
-  constructor(protected httpService: HttpService, protected configService: ConfigService, protected conformanceService: ConformanceService) {
+  constructor(protected httpService: HttpService, protected configService: ConfigService, protected fhirResourceService: FhirResourcesService) {
     super(configService, httpService);
   }
 
