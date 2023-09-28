@@ -1,45 +1,34 @@
 import {HttpService} from '@nestjs/axios';
 import {
   BadRequestException,
-  Body,
   Controller,
-  Delete,
   Get,
   Header,
   Headers,
   HttpCode,
-  InternalServerErrorException,
   Param,
   Post,
-  Put,
   Query,
-  Res,
-  UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import {buildUrl, createOperationOutcome, findReferences, generateId, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Response} from 'express';
+import {findReferences, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
-import {AxiosRequestConfig} from 'axios';
 import {ApiOAuth2, ApiOperation, ApiTags} from '@nestjs/swagger';
-import {FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User} from './server.decorators';
+import {FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl} from './helper';
-import {Bundle, DomainResource, EntryComponent, Group, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide, OperationOutcome} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
+import {ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
-import {IBundle, IImplementationGuide, IOperationOutcome, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IImplementationGuide, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import {ImplementationGuideController} from './implementation-guide.controller';
-import {FhirResourcesService} from './fhirResources/fhirResources.service';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {ObjectId} from 'mongodb';
 
-import {FhirResourcesController} from './fhirResources/fhirResources.controller';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {AuthService} from './auth/auth.service';
 
 

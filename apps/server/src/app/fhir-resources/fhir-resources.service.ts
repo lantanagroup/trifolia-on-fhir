@@ -7,7 +7,7 @@ import { Model } from 'mongoose';
 import { BaseDataService } from '../base/base-data.service';
 import { HistoryService } from '../history/history.service';
 import { TofLogger } from '../tof-logger';
-import {FhirResource, FhirResourceDocument} from './fhirResource.schema';
+import {FhirResource, FhirResourceDocument} from './fhir-resource.schema';
 import { addToImplementationGuideNew, removeFromImplementationGuideNew } from '../helper';
 import { ObjectId } from 'mongodb';
 import { TofNotFoundException } from '../../not-found-exception';

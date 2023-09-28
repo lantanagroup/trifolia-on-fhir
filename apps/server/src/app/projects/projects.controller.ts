@@ -4,18 +4,16 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ProjectsService} from './projects.service';
 import {BaseDataController} from '../base/base-data.controller';
 import {ProjectDocument} from './project.schema';
-import type {IBaseEntity, IFhirResource, INonFhirResource, IProject} from '@trifolia-fhir/models';
+import type {IBaseEntity, IFhirResource, IProject} from '@trifolia-fhir/models';
 import {User} from '../server.decorators';
-import {FhirResource} from '../fhirResources/fhirResource.schema';
-import {FhirResourcesService} from '../fhirResources/fhirResources.service';
+import {FhirResourcesService} from '../fhir-resources/fhir-resources.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {TofNotFoundException} from '../../not-found-exception';
 import { NonFhirResourcesService } from '../non-fhir-resources/non-fhir-resources.service';
-import { PipelineStage } from 'mongoose';
 
 
-@Controller('api/project')
+@Controller('api/projects')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Project')
 @ApiOAuth2([])

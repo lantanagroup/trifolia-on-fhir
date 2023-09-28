@@ -20,8 +20,8 @@ import {User} from './server.decorators';
 import {HtmlExporter} from './export/html';
 import nodemailer from 'nodemailer';
 import JSZip from 'jszip';
-import {FhirResourcesController} from './fhirResources/fhirResources.controller';
-import {FhirResourcesService} from './fhirResources/fhirResources.service';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {v4 as uuidv4} from 'uuid';
 import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
 

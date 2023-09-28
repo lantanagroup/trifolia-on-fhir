@@ -10,24 +10,23 @@ import {
   DomainResource as STU3DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
   PackageResourceComponent, PageComponent
-} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {buildUrl, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
+} from '@trifolia-fhir/stu3';
+import {buildUrl, getR4Dependencies, getSTU3Dependencies} from '@trifolia-fhir/tof-lib';
 import {
   AuditEvent as R4AuditEvent,
-  DomainResource as R4DomainResource, ImplementationGuide,
+  DomainResource as R4DomainResource, 
   ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent
-} from '../../../../libs/tof-lib/src/lib/r4/fhir';
+} from '@trifolia-fhir/r4';
 import {AxiosRequestConfig} from 'axios';
 import {IUserSecurityInfo} from './base.controller';
-import {addPermission, findPermission, getErrorString, parsePermissions} from '../../../../libs/tof-lib/src/lib/helper';
+import {findPermission, getErrorString, parsePermissions} from '@trifolia-fhir/tof-lib';
 import {ConfigService} from './config.service';
-import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {IAuditEvent, IDomainResource, IImplementationGuide} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {Globals} from '@trifolia-fhir/tof-lib';
+import type {IAuditEvent, IDomainResource, IImplementationGuide} from '@trifolia-fhir/tof-lib';
 import {TofLogger} from './tof-logger';
 import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, Page} from '@trifolia-fhir/models';
-import {FhirResourcesService} from './fhirResources/fhirResources.service';
-import {ObjectId} from 'mongodb';
-import {FhirResource} from './fhirResources/fhirResource.schema';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
+import {FhirResource} from './fhir-resources/fhir-resource.schema';
 
 declare var jasmine;
 

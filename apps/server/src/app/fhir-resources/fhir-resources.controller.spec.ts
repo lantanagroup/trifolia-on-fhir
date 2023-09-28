@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FhirResourcesController } from './fhirResources.controller';
+import { FhirResourcesController } from './fhir-resources.controller';
 
 describe('FhirResourceController', () => {
   let controller: FhirResourcesController;

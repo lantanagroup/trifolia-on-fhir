@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Bundle, OperationOutcome, Questionnaire} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Observable} from 'rxjs';
 import {IFhirResource} from '@trifolia-fhir/models';
 
@@ -16,15 +15,15 @@ export class QuestionnaireService {
 
     public save(questionnaireId: string, questionnaire: IFhirResource): Observable<IFhirResource> {
         if (questionnaireId) {
-            const url = '/api/questionnaire/' + encodeURIComponent(questionnaireId);
+            const url = '/api/questionnaires/' + encodeURIComponent(questionnaireId);
             return this.http.put<IFhirResource>(url, questionnaire);
         } else {
-            return this.http.post<IFhirResource>('/api/questionnaire', questionnaire);
+            return this.http.post<IFhirResource>('/api/questionnaires', questionnaire);
         }
     }
 
     public search(page = 1, name?: string, implementationGuideId?: string) {
-        let url = '/api/questionnaire?resourcetype=Questionnaire' + '&page=' + encodeURIComponent(page.toString()) + '&';
+        let url = '/api/questionnaires?resourcetype=Questionnaire' + '&page=' + encodeURIComponent(page.toString()) + '&';
 
         if (name) {
             url += 'name=' + encodeURIComponent(name) + '&';
@@ -38,18 +37,18 @@ export class QuestionnaireService {
     }
 
     public get(id: string) {
-        let url = '/api/questionnaire/' + encodeURIComponent(id);
+        let url = '/api/questionnaires/' + encodeURIComponent(id);
         url += "?_sort=name";
         return this.http.get<IFhirResource>(url);
     }
 
     public expand(id: string) {
-        const url = '/api/questionnaire/' + encodeURIComponent(id) + '/expand';
+        const url = '/api/questionnaires/' + encodeURIComponent(id) + '/expand';
         return this.http.get<IFhirResource>(url);
     }
 
     public delete(id: string) {
-        const url = '/api/questionnaire/' + encodeURIComponent(id);
+        const url = '/api/questionnaires/' + encodeURIComponent(id);
         return this.http.delete(url);
     }
 }

@@ -5,12 +5,12 @@ import {TofLogger} from './tof-logger';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import {FhirResourcesController} from './fhirResources/fhirResources.controller';
-import {FhirResourcesService} from './fhirResources/fhirResources.service';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {AuthService} from './auth/auth.service';
 import {IFhirResource} from '@trifolia-fhir/models';
 
-@Controller('api/capabilityStatement')
+@Controller('api/capabilityStatements')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Capability Statement')
 @ApiOAuth2([])

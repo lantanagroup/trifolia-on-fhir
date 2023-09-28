@@ -3,7 +3,7 @@ import type { ITofUser } from '@trifolia-fhir/tof-lib';
 import { ObjectId } from 'mongodb';
 import { IBaseDataService } from '../base/interfaces';
 import { ConfigService } from '../config.service';
-import { FhirResourcesService } from '../fhirResources/fhirResources.service';
+import { FhirResourcesService } from '../fhir-resources/fhir-resources.service';
 import { GroupsService } from '../groups/groups.service';
 import { ProjectsService } from '../projects/projects.service';
 import { TofLogger } from '../tof-logger';

@@ -15,15 +15,15 @@ export class CodeSystemService extends FhirResourceService {
 
     public save(codeSystemId:string, codeSystem: IFhirResource): Observable<IFhirResource> {
         if (codeSystemId) {
-            const url = '/api/codeSystem/' + encodeURIComponent(codeSystemId);
+            const url = '/api/codeSystems/' + encodeURIComponent(codeSystemId);
             return this.http.put<IFhirResource>(url, codeSystem);
         } else {
-            return this.http.post<IFhirResource>('/api/codeSystem', codeSystem);
+            return this.http.post<IFhirResource>('/api/codeSystems', codeSystem);
         }
     }
 
     public searchCodeSystem(page = 1, name?: string, implementationGuideId?: string) :  Observable<Paginated<IFhirResource>> {
-        let url = '/api/codeSystem?resourcetype=CodeSystem&page=' + page + '&';
+        let url = '/api/codeSystems?resourcetype=CodeSystem&page=' + page + '&';
 
         if (name) {
             url += `name=${encodeURIComponent(name)}&`;
@@ -39,12 +39,12 @@ export class CodeSystemService extends FhirResourceService {
     }
 
     public getCodeSystem(id: string): Observable<IFhirResource> {
-        const url = '/api/codeSystem/' + encodeURIComponent(id);
+        const url = '/api/codeSystems/' + encodeURIComponent(id);
         return this.http.get<IFhirResource>(url);
     }
 
     public delete(id: string) {
-        const url = '/api/codeSystem/' + encodeURIComponent(id);
+        const url = '/api/codeSystems/' + encodeURIComponent(id);
         return this.http.delete(url);
     }
 }

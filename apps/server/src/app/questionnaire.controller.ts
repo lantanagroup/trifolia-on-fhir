@@ -1,18 +1,17 @@
-import {BaseFhirController} from './base-fhir.controller';
 import {HttpService} from '@nestjs/axios';
-import {Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Request, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
-import { FhirServerVersion, RequestHeaders, User} from './server.decorators';
+import { RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import {IFhirResource} from '@trifolia-fhir/models';
-import {FhirResourcesController} from './fhirResources/fhirResources.controller';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {AuthService} from './auth/auth.service';
-import {FhirResourcesService} from './fhirResources/fhirResources.service';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 
-@Controller('api/questionnaire')
+@Controller('api/questionnaires')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Questionnaire')
 @ApiOAuth2([])

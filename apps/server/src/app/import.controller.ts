@@ -15,15 +15,15 @@ import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from './config.service';
 import { TofLogger } from './tof-logger';
 import { RequestHeaders, User } from './server.decorators';
-import type { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
-import { FhirResourcesService } from './fhirResources/fhirResources.service';
+import type { ITofUser } from '@trifolia-fhir/tof-lib';
+import { FhirResourcesService } from './fhir-resources/fhir-resources.service';
 import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
 import { ObjectId } from 'mongodb';
 import { IProjectResource } from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
 import { AxiosRequestConfig } from 'axios';
 import { buildUrl } from '@trifolia-fhir/tof-lib';
-import { FhirResource } from './fhirResources/fhirResource.schema';
+import { FhirResource } from './fhir-resources/fhir-resource.schema';
 import { TofNotFoundException } from '../not-found-exception';
 
 @Controller('api/import')

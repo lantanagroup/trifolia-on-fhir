@@ -18,7 +18,7 @@ import { UpdateDiffComponent } from './update-diff/update-diff.component';
 import { FhirResourceService } from '../shared/fhir-resource.service';
 import { CdaExample, type IFhirResource, type INonFhirResource, type IProjectResource } from '@trifolia-fhir/models';
 import { NonFhirResourceService } from '../shared/non-fhir-resource.service';
-import { FhirResource } from 'apps/server/src/app/fhirResources/fhirResource.schema';
+import { FhirResource } from 'apps/server/src/app/fhir-resources/fhir-resource.schema';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 

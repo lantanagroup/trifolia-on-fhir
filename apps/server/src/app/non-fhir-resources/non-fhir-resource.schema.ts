@@ -2,7 +2,7 @@ import type { INonFhirResource } from '@trifolia-fhir/models';
 import { NonFhirResource, NonFhirResourceType } from '@trifolia-fhir/models';
 import mongoose, { HydratedDocument, Schema } from 'mongoose';
 import { Project } from '../projects/project.schema';
-import { FhirResource } from '../fhirResources/fhirResource.schema';
+import { FhirResource } from '../fhir-resources/fhir-resource.schema';
 
 
 

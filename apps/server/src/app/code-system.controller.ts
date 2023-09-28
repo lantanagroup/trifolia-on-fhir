@@ -8,10 +8,10 @@ import {ConfigService} from './config.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import {AuthService} from './auth/auth.service';
 import {IFhirResource} from '@trifolia-fhir/models';
-import {FhirResourcesService} from './fhirResources/fhirResources.service';
-import {FhirResourcesController} from './fhirResources/fhirResources.controller';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 
-@Controller('api/codeSystem')
+@Controller('api/codeSystems')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Code System')
 @ApiOAuth2([])

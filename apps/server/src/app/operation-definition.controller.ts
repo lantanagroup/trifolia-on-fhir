@@ -5,14 +5,14 @@ import {TofLogger} from './tof-logger';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import {FhirResourcesController} from './fhirResources/fhirResources.controller';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {AuthService} from './auth/auth.service';
-import {FhirResourcesService} from './fhirResources/fhirResources.service';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import {IFhirResource} from '@trifolia-fhir/models';
 
 
-@Controller('api/operationDefinition')
+@Controller('api/operationDefinitions')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Operation Definition')
 @ApiOAuth2([])

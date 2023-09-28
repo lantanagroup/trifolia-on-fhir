@@ -28,7 +28,7 @@ import {
   setIgnoreWarningsValue,
   setJiraSpecValue
 } from "@trifolia-fhir/tof-lib";
-import { getErrorString, Globals, PublishingRequestModel } from "@trifolia-fhir/tof-lib";
+import { getErrorString, PublishingRequestModel } from "@trifolia-fhir/tof-lib";
 import type { IBundle, IBundleEntry, IImplementationGuide, ITofUser } from "@trifolia-fhir/tof-lib";
 import { FhirInstances, unzip } from "../helper";
 import * as path from "path";
@@ -37,11 +37,11 @@ import * as tmp from "tmp";
 import * as vkbeautify from "vkbeautify";
 import { ConfigService } from "../config.service";
 import JSZip from "jszip";
-import { FhirResourcesService } from "../fhirResources/fhirResources.service";
+import { FhirResourcesService } from "../fhir-resources/fhir-resources.service";
 import { TofLogger } from "../tof-logger";
-import {IFhirResource, INonFhirResource, IProjectResource, IProjectResourceReference, NonFhirResource, Page, StructureDefinitionIntro, StructureDefinitionNotes} from '@trifolia-fhir/models';
+import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, Page, StructureDefinitionIntro, StructureDefinitionNotes} from '@trifolia-fhir/models';
 import { NonFhirResourcesService } from "../non-fhir-resources/non-fhir-resources.service";
-import { FhirResource } from "../fhirResources/fhirResource.schema";
+import { FhirResource } from "../fhir-resources/fhir-resource.schema";
 
 export class HtmlExporter {
   public queuedAt: Date;

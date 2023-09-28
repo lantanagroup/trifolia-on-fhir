@@ -5,7 +5,7 @@ import {ConfigModel} from '../../../../libs/tof-lib/src/lib/config-model';
 import {ApiTags} from '@nestjs/swagger';
 import {ConfigService} from './config.service';
 import modulePackage from '../../../../package.json';
-import {FhirResourcesService} from './fhirResources/fhirResources.service';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 
 @Controller('api/config')
 @ApiTags('Config')
