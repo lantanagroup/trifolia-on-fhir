@@ -203,7 +203,7 @@ export function ensureSecurity(meta: IMeta) {
 }
 
 export interface SecurityPermission {
-  type: 'user' | 'group' | 'everyone';
+  type: 'User' | 'Group' | 'everyone';
   permission: 'read' | 'write';
   id?: string;
 }
@@ -231,7 +231,7 @@ export function parsePermissions(meta: IMeta): SecurityPermission[] {
     });
 }
 
-export function findPermission(perms: IPermission[], type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string) {
+export function findPermission(perms: IPermission[], type: 'User' | 'Group' | 'everyone', grant: 'read' | 'write', targetId?: string) {
 
   if (!perms) {
     return false;
@@ -246,7 +246,7 @@ export function findPermission(perms: IPermission[], type: 'user' | 'group' | 'e
   });
 }
 
-export function addPermission(resource: IProject, type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
+export function addPermission(resource: IProject, type: 'User' | 'Group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
 
   // Write permissions should always assume read permissions as well
   if (grant === 'write' && !findPermission(resource.permissions, type, 'read', targetId)) {
@@ -273,7 +273,7 @@ export function addPermission(resource: IProject, type: 'user' | 'group' | 'ever
   return false;
 }
 
-export function removePermission(resource: IProject, type: 'user' | 'group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
+export function removePermission(resource: IProject, type: 'User' | 'Group' | 'everyone', grant: 'read' | 'write', targetId?: string): boolean {
   const delim = Globals.securityDelim;
 
   // Assume that if we're removing read permission, they shouldn't have write permission either

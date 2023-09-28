@@ -1,4 +1,4 @@
-import type { INonFhirResource, IPermission } from '@trifolia-fhir/models';
+import type { INonFhirResource } from '@trifolia-fhir/models';
 import { NonFhirResource, NonFhirResourceType } from '@trifolia-fhir/models';
 import mongoose, { HydratedDocument, Schema } from 'mongoose';
 import { Project } from '../projects/project.schema';
@@ -9,13 +9,6 @@ import { FhirResource } from '../fhirResources/fhirResource.schema';
 
 export type NonFhirResourceDocument = HydratedDocument<NonFhirResource>;
 
-
-
-const PermissionSchema = new Schema<IPermission>({
-    targetId: String,
-    type: { type: String, enum: ['user','group','everyone'] },
-    grant: { type: String, enum: ['read','write'] }
-}, {toJSON: { getters: true } });
 
 export const NonFhirResourceSchema = new Schema<INonFhirResource>({
     name: String,

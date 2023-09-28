@@ -1157,14 +1157,14 @@ export function assertUserCanEdit(configService: ConfigService, userSecurityInfo
   }
 
   if (userSecurityInfo.practitioner) {
-    if (findPermission(resource.meta, 'user', 'write', userSecurityInfo.practitioner.id)) {
+    if (findPermission(resource.meta, 'User', 'write', userSecurityInfo.practitioner.id)) {
       return;
     }
   }
 
   if (userSecurityInfo.groups) {
     const foundGroups = userSecurityInfo.groups.filter((group) => {
-      return findPermission(resource.meta, 'group', 'write', group.id);
+      return findPermission(resource.meta, 'Group', 'write', group.id);
     });
 
     if (foundGroups.length > 0) {

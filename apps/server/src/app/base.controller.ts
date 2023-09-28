@@ -176,12 +176,12 @@ export class BaseController {
     const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
 
     // Resource allows this user/practitioner
-    if (userSecurityInfo.practitioner && findPermission(resource.meta, 'user', 'read', userSecurityInfo.practitioner.id)) {
+    if (userSecurityInfo.practitioner && findPermission(resource.meta, 'User', 'read', userSecurityInfo.practitioner.id)) {
       return;
     }
 
     const foundGroups = (userSecurityInfo.groups || []).filter((group) => {
-      return findPermission(resource.meta, 'group', 'read', group.id);
+      return findPermission(resource.meta, 'Group', 'read', group.id);
     });
 
     // User is associated with a group that is permitted to view the resource
@@ -199,9 +199,9 @@ export class BaseController {
 
     const foundEveryone = findPermission(resource.permissions, 'everyone', permission);
     const foundGroup = userSecurityInfo.groups.find((group) => {
-      return findPermission(resource.permissions, 'group', permission, group.id);
+      return findPermission(resource.permissions, 'Group', permission, group.id);
     });
-    const foundUser = findPermission(resource.permissions, 'user', permission, userSecurityInfo.practitioner.id);
+    const foundUser = findPermission(resource.permissions, 'User', permission, userSecurityInfo.practitioner.id);
 
     return foundEveryone || foundGroup || foundUser;
   }
@@ -226,12 +226,12 @@ export class BaseController {
 
     // Make sure user can read
     if (!this.userHasPermission(userSecurityInfo, 'read', resource)) {
-      addPermission(resource, 'user', 'read', userSecurityInfo.practitioner.id);
+      addPermission(resource, 'User', 'read', userSecurityInfo.practitioner.id);
     }
 
     // Make sure user can write
     if (!this.userHasPermission(userSecurityInfo, 'write', resource)) {
-      addPermission(resource, 'user', 'write', userSecurityInfo.practitioner.id);
+      addPermission(resource, 'User', 'write', userSecurityInfo.practitioner.id);
     }
   }
 

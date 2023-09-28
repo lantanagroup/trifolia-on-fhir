@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {Bundle, DomainResource} from '@trifolia-fhir/stu3';
+import {DomainResource} from '@trifolia-fhir/stu3';
 import {getAuthIdIdentifier, getAuthIdSource, Globals, Paginated} from '@trifolia-fhir/tof-lib';
 import {FhirService} from '../../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -14,16 +14,16 @@ import {
   removePermission
 } from '@trifolia-fhir/tof-lib';
 import {firstValueFrom, mergeMap, Observable} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {GroupService} from '../../shared/group.service';
 import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 import type {IPractitioner} from '@trifolia-fhir/tof-lib';
-import type {IFhirResource, IGroup, IPermission, IProject, IProjectResource, IUser} from '@trifolia-fhir/models';
+import type {IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
 import { UserService } from '../../shared/user.service';
 
 class ResourceSecurity {
-  type: 'everyone'|'user'|'group';
+  type: 'everyone'|'User'|'Group';
   id?: string;
   display?: string;
   canRead: boolean;
@@ -150,16 +150,16 @@ export class ResourcePermissionsComponent implements OnInit {
       const group: IPermission[] = grouped[groupedKey];
       const next = new ResourceSecurity();
       next.type = group[0].type;
-      next.id = group[0].targetId;
+      next.id = group[0].targetId?.toString();
 
-      if (next.type === 'group' && this.groupsArray) {
+      if (next.type === 'Group' && this.groupsArray) {
         const found = (this.groupsArray || []).find((g: IGroup) => g.id === next.id);
         if (found) {
           next.display = found.name;
         }
       }
 
-      if (next.type === 'user' && this.usersArray) {
+      if (next.type === 'User' && this.usersArray) {
         const found = (this.usersArray || []).find((u: IUser) => u.id === next.id);
         if (found) {
           next.display = found.name;
@@ -208,13 +208,13 @@ export class ResourcePermissionsComponent implements OnInit {
       .catch((err) => this.message = getErrorString(err));
   }
 
-  public addPermission(type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
+  public addPermission(type: 'User'|'Group'|'everyone', permission: 'read'|'write', id?: string) {
     if (addPermission(this.resource, type, permission, id)) {
       this.getPermittedResources();
     }
   }
 
-  public removePermission(type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
+  public removePermission(type: 'User'|'Group'|'everyone', permission: 'read'|'write', id?: string) {
     removePermission(this.resource, type, permission, id);
   }
 
@@ -229,11 +229,11 @@ export class ResourcePermissionsComponent implements OnInit {
   private getPermittedResources() {
     const permissions: IPermission[] = this.resource?.permissions ?? [];
     const groupIds = [... new Set(permissions
-      .filter((p) => p.type === 'group')
-      .map((p) => p.targetId))];
+      .filter((p) => p.type === 'Group')
+      .map((p) => p.targetId?.toString()))];
     const userIds = [... new Set(permissions
-      .filter((p) => p.type === 'user')
-      .map((p) => p.targetId))];
+      .filter((p) => p.type === 'User')
+      .map((p) => p.targetId?.toString()))];
 
     if (groupIds.length > 0) {
       firstValueFrom(this.groupService.getGroupInfo(groupIds))
@@ -259,9 +259,9 @@ export class ResourcePermissionsComponent implements OnInit {
         return false;
       }
 
-      if (perm.type === 'user' && perm.targetId === this.currentUser.id) {
+      if (perm.type === 'User' && perm.targetId === this.currentUser.id) {
         return true;
-      } else if (perm.type === 'group' && this.groupsArray) {
+      } else if (perm.type === 'Group' && this.groupsArray) {
         return !!(this.groupsArray || []).find((group: IGroup) => {
 
           return !!(group.members || []).find((member: IUser|string) => {
@@ -299,10 +299,10 @@ export class ResourcePermissionsComponent implements OnInit {
       const meCanWrite = this.findCurrentUserPermission('write');
 
       if (!meCanRead) {
-        this.addPermission('user', 'read', this.currentUser.id);
+        this.addPermission('User', 'read', this.currentUser.id);
       }
       if (!meCanWrite) {
-        this.addPermission('user', 'write', this.currentUser.id);
+        this.addPermission('User', 'write', this.currentUser.id);
       }
 
       this.getPermittedResources();

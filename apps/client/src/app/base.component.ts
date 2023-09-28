@@ -25,9 +25,9 @@ export class BaseComponent {
 
   private canReadOrWrite(permissions: IPermission[], permission: 'read'|'write'): boolean {
     const foundEveryone = findPermission(permissions, 'everyone', permission);
-    const foundUser = findPermission(permissions, 'user', permission, this.authService.user.id);
+    const foundUser = findPermission(permissions, 'User', permission, this.authService.user.id);
     const foundGroups = this.authService.groups.filter((group) => {
-      return findPermission(permissions, 'group', permission, group.id);
+      return findPermission(permissions, 'Group', permission, group.id);
     }).length > 0;
 
     return foundEveryone || foundUser || foundGroups;

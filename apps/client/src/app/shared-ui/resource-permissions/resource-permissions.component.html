@@ -89,12 +89,12 @@
           <tr *ngFor="let g of foundGroups">
             <td>{{g.name}}</td>
             <td>
-              <button type="button" class="btn btn-primary" title="Add read/view permissions for this group" (click)="addPermission('group', 'read', g.id); change.emit();">
+              <button type="button" class="btn btn-primary" title="Add read/view permissions for this group" (click)="addPermission('Group', 'read', g.id); change.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
             <td>
-              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this group" (click)="addPermission('group', 'write', g.id); change.emit();">
+              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this group" (click)="addPermission('Group', 'write', g.id); change.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
@@ -137,12 +137,12 @@
             </td>
             <td>{{getUserEmail(u)}}</td>
             <td class="actions-column-1">
-              <button type="button" class="btn btn-primary" title="Add read/view permissions for this user" (click)="addPermission('user', 'read', u.id); change.emit();">
+              <button type="button" class="btn btn-primary" title="Add read/view permissions for this user" (click)="addPermission('User', 'read', u.id); change.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
             <td class="actions-column-1">
-              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this user" (click)="addPermission('user', 'write', u.id); change.emit();">
+              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this user" (click)="addPermission('User', 'write', u.id); change.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
