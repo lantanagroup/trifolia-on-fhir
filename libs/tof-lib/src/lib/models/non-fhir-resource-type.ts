@@ -1,8 +1,6 @@
 //export type NonFhirResourceType = 'page'|'media'|'binary'|'other';
 
 import { INonFhirResource, IPermission, IProject, IProjectResourceReference } from ".";
-import {Prop} from '@nestjs/mongoose';
-
 
 export enum NonFhirResourceType {
     OtherNonFhirResource = "OtherNonFhirResource",
@@ -15,6 +13,10 @@ export enum NonFhirResourceType {
     StructureDefinitionIntro = "StructureDefinitionIntro",
     StructureDefinitionNotes = "StructureDefinitionNotes"
 }
+
+export const ImplementationGuideExampleTypes: NonFhirResourceType[] = [
+    NonFhirResourceType.CdaExample
+];
 
 
 export abstract class NonFhirResource implements INonFhirResource {
