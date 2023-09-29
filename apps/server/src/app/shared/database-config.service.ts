@@ -21,6 +21,11 @@ export class DatabaseConfigService implements MongooseOptionsFactory {
         }
         delete ret['_id'];
 
+        // remove migratedFrom property from returned JSON
+        if ('migratedFrom' in ret) {
+          delete ret['migratedFrom'];
+        }
+
         // remove any property starting with "__" from returned JSON
         Object.keys(ret).forEach(key => {
           if (key.startsWith('__')) {

@@ -16,7 +16,7 @@
       <tr *ngFor="let entry of historyBundle.results; let ei = index">
         <td><input [(ngModel)]="leftVersionId" [value]="entry.versionId" name="leftSelect" type="radio" /></td>
         <td><input [(ngModel)]="rightVersionId" [value]="entry.versionId" name="rightSelect" type="radio" /></td>
-        <td>{{entry.versionId}}{{domainResource?.meta?.versionId === entry.content?.meta?.versionId ? ' (In Editor)' : ''}}</td>
+        <td>{{entry.versionId}}{{resource.versionId === entry.versionId ? ' (In Editor)' : ''}}</td>
         <td>{{entry.lastUpdated}}</td>
         <td>{{getActionDisplay(entry)}}</td>
       </tr>
