@@ -1,6 +1,6 @@
 <div *ngIf="resource">
   <h1 *ngIf="isFhir">{{ resource.resource.resourceType || 'Unknown' }} - {{ resource.resource.id || resource.id}}</h1>
-  <h1 *ngIf="!isFhir">{{ resource.content.resourceType || 'Unknown' }} - {{ resource.content.id || resource.name || resource.id}}</h1>
+  <h1 *ngIf="!isFhir">{{ resource.content?.resourceType || 'Unknown' }} - {{ resource.content?.id || resource.name || resource.id}}</h1>
   <input type="file" style="display: none;" #fileUpload accept="application/json, application/xml" (change)="uploadFile($event)"/>
   <div class="btn-toolbar">
     <div class="btn-group me-2" role="group" aria-label="Generic actions for the resource">

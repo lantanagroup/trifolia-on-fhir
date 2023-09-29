@@ -10,7 +10,6 @@ const PermissionSchema = new MongooseSchema<IPermission>({
     target: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: (doc) => { return ['User','Group'].indexOf(doc.type) > -1 ? doc.type : null; }
-        // ref: (doc) => { console.log(doc); return 'User'; }
     },
     type: { type: String, enum: ['User','Group','everyone'] },
     grant: { type: String, enum: ['read','write'] },

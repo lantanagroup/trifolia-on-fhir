@@ -108,14 +108,14 @@ export class ExamplesComponent implements OnInit {
       });
 
       this.examplesOther.sort((a, b) => {
-        if (a.content.resourceType === b.content.resourceType) {
-          const aName = a.content.name || '';
-          const bName = b.content.name || '';
+        if (a.content?.resourceType === b.content?.resourceType) {
+          const aName = a.content?.name || '';
+          const bName = b.content?.name || '';
           return aName.localeCompare(bName);
         }
 
-        const aResourceType = a.content.resourceType || '';
-        const bResourceType = b.content.resourceType || '';
+        const aResourceType = a.content?.resourceType || '';
+        const bResourceType = b.content?.resourceType || '';
         return aResourceType.localeCompare(bResourceType);
       });
 

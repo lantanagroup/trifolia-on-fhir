@@ -74,9 +74,9 @@
         </thead>
         <tbody *ngIf="examplesOther">
           <tr *ngFor="let example of filteredOtherExamples">
-            <td>{{example.content.resourceType || 'Unknown'}}</td>
-            <td>{{example.content.id || example.name || example.id}}</td>
-            <td>{{example.content.name || example.name }}</td>
+            <td>{{example.content?.resourceType || 'Unknown'}}</td>
+            <td>{{example.content?.id || example.name || example.id}}</td>
+            <td>{{example.content?.name || example.name }}</td>
             <td>
               <a class="btn btn-primary"
                 routerLink="{{configService.baseSessionUrl}}/other-resources/nonfhir/{{example.id}}"
