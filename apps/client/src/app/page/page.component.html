@@ -12,7 +12,7 @@
 
             <div class="mb-3" *ngIf="!reuseDescription">
               <label>Content</label>
-              <trifolia-fhir-markdown [(value)]="page.content" ></trifolia-fhir-markdown>
+              <trifolia-fhir-markdown  [(value)]="page.content" ></trifolia-fhir-markdown>
             </div>
             <div class="mb-3" *ngIf="page.name === 'index'">
               <label>
@@ -29,6 +29,13 @@
           </div>
       </ng-template>
     </li>
+  <!-- Version History -->
+  <li ngbNavItem="history"  *ngIf="!isNew">
+    <a ngbNavLink>History</a>
+    <ng-template ngbNavContent>
+      <app-resource-history [resource]="page" (resourceChange)="page = $event; page.content = $event;"></app-resource-history>
+    </ng-template>
+  </li>
   </ul>
   <div [ngbNavOutlet]="qTabs" class="mt-2"></div>
 </ng-container>

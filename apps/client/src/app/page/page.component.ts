@@ -6,7 +6,7 @@ import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators'
 import {NonFhirResourceType, Page} from '@trifolia-fhir/models';
 import {NonFhirResourceService} from '../shared/non-fhir-resource.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import {ConfigService} from '../shared/config.service';
 
 
 enum PageType {
@@ -23,6 +23,7 @@ enum PageType {
 export class PageComponent implements OnInit {
   public allPages : Page[] = [];
   public page: Page;
+  public content;
   public pageNo = 1;
   public implementationGuide: ImplementationGuide;
   public implementationGuideId: string;
@@ -40,7 +41,9 @@ export class PageComponent implements OnInit {
 
   constructor(public route: ActivatedRoute,
               private router: Router,
+              public configService: ConfigService,
               protected nonFhirResourceService: NonFhirResourceService) {
+
 
     this.page = new Page();
 
@@ -101,12 +104,10 @@ export class PageComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-
   public get isNew(): boolean {
     const id = this.route.snapshot.paramMap.get('id');
     return !id || id.indexOf('new') > -1;
   }
-
 
   private getPage() {
 
@@ -133,6 +134,7 @@ export class PageComponent implements OnInit {
             return;
           }
           this.page = page;
+
         }, (err) => {
           // this.odNotFound = err.status === 404;
           this.message = getErrorString(err);
@@ -156,21 +158,30 @@ export class PageComponent implements OnInit {
 
   save() {
     // update in Db
-    if (this.page.content || this.page.navMenu || this.page.reuseDescription) {
+    if (this.page.content || this.page.reuseDescription) {
       //update/create resource
       this.nonFhirResourceService.save(this.page.id, this.page, this.implementationGuideId).subscribe({
         next: (page: Page) => {
-          this.page.id = page.id;
-          this.getPage();
-          setTimeout(() => {
-            this.message = '';
-          }, 3000);
+          if (this.isNew) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.router.navigate([`${this.configService.baseSessionUrl}/page/${page.id}`]);
+          }
+          else {
+            this.page.id = page.id;
+            this.getPage();
+            setTimeout(() => {
+              this.message = '';
+            }, 3000);
+          }
         },
         error: (err) => {
           this.message = 'An error occurred while saving the page: ' + getErrorString(err);
         }
       });
       this.message = 'Your changes have been saved!';
+    }
+    else{
+      this.message = "Content should be entered."
     }
   }
 
