@@ -14,7 +14,7 @@ import type {IGroup} from '@trifolia-fhir/models';
 import { ObjectId } from 'mongodb';
 
 
-@Controller('api/group')
+@Controller('api/groups')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Group')
 @ApiOAuth2([])

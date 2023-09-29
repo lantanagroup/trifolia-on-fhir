@@ -6,7 +6,7 @@ import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {BaseDataController} from '../base/base-data.controller';
 import {NonFhirResourcesService} from './non-fhir-resources.service';
 import {User} from '../server.decorators';
-import {FhirResourcesService} from '../fhirResources/fhirResources.service';
+import {FhirResourcesService} from '../fhir-resources/fhir-resources.service';
 import {type NonFhirResourceDocument} from './non-fhir-resource.schema';
 import {ObjectId} from 'mongodb';
 import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';

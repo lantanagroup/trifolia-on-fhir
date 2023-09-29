@@ -6,7 +6,7 @@ import {Connection, Model, PipelineStage} from 'mongoose';
 import {IHistory, INonFhirResource, NonFhirResource, NonFhirResourceType} from '@trifolia-fhir/models';
 import {addPageToImplementationGuide, addToImplementationGuideNew, removeFromImplementationGuideNew, removePageFromImplementationGuide} from '../helper';
 import {HistoryService} from '../history/history.service';
-import {FhirResourcesService} from '../fhirResources/fhirResources.service';
+import {FhirResourcesService} from '../fhir-resources/fhir-resources.service';
 import {TofNotFoundException} from '../../not-found-exception';
 import {IBaseDataService} from '../base/interfaces';
 import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';

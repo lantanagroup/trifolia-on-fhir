@@ -1,11 +1,9 @@
-import {BaseFhirController} from './base-fhir.controller';
 import {HttpService} from '@nestjs/axios';
-import {Body, Controller, Delete, Headers, Get, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
 import {FhirController} from './fhir.controller';
 import type {ITofRequest} from './models/tof-request';
 import {StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {StructureDefinition as PCStructureDefinition} from 'fhir/model/structure-definition';
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
@@ -19,14 +17,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {ILogicalTypeDefinition} from '../../../../libs/tof-lib/src/lib/logical-type-definition';
 import {ITypeConfig} from '../../../../libs/tof-lib/src/lib/type-config';
-import {FhirResourcesController} from './fhirResources/fhirResources.controller';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {AuthService} from './auth/auth.service';
-import {FhirResourcesService} from './fhirResources/fhirResources.service';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
 import {IFhirResource} from '@trifolia-fhir/models';
 
 
-@Controller('api/structureDefinition')
+@Controller('api/structureDefinitions')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Structure Definition')
 @ApiOAuth2([])

@@ -1,11 +1,11 @@
 import { Fhir } from 'fhir/fhir';
 import { DomainResource } from '@trifolia-fhir/stu3';
 import { ImplementationGuidePageComponent } from '@trifolia-fhir/r4';
-import {Globals, PageInfo} from '@trifolia-fhir/tof-lib';
+import {Globals} from '@trifolia-fhir/tof-lib';
 import { HttpService } from '@nestjs/axios';
 import { LoggerService } from '@nestjs/common';
 import type { IBundle, IExtension, IStructureDefinition } from '@trifolia-fhir/tof-lib';
-import { FhirResourcesService } from '../fhirResources/fhirResources.service';
+import { FhirResourcesService } from '../fhir-resources/fhir-resources.service';
 import {Page} from '@trifolia-fhir/models';
 
 export type FormatTypes = 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml';

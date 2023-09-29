@@ -664,11 +664,11 @@
               </ng-template>
             </li>
             <li ngbNavItem="add">
-              <ng-template ngbNavLink>
+              <a ngbNavLink>
                 <button type="button" class="btn btn-primary" title="Add a REST entry" (click)="addRestEntry(restTabSet)">
                   Add
                 </button>
-              </ng-template>
+              </a>
             </li>
           </ul>
           <div [ngbNavOutlet]="restTabSet" class="mt-2"></div>
@@ -893,12 +893,12 @@
                 </div>
               </ng-template>
             </li>
-            <li ngbNavItem [disabled]="true">
-              <ng-template ngbNavLink>
+            <li ngbNavItem>
+              <a ngbNavLink>
                 <button type="button" class="btn btn-primary" title="Add a messaging entry"
                         (click)="addMessagingEntry(messagingTabSet)">Add
                 </button>
-              </ng-template>
+              </a>
               <ng-template ngbNavContent></ng-template>
             </li>
           </ul>

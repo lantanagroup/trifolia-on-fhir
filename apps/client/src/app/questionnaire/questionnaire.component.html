@@ -127,7 +127,10 @@
 
     <!-- Validation -->
     <li ngbNavItem="validation">
-      <a ngbNavLink>Validation</a>
+      <a ngbNavLink>
+        <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span>
+        <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
+      </a>
       <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>

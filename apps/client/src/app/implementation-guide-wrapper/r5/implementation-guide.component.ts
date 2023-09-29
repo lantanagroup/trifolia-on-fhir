@@ -32,7 +32,6 @@ import {ProjectService} from '../../shared/projects.service';
 import {IFhirResource, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
 import {IDomainResource, getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 
-import {FhirResource} from '../../../../../server/src/app/fhirResources/fhirResource.schema';
 import {forkJoin} from 'rxjs';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 

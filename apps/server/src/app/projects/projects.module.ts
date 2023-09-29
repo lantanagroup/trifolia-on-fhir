@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { FhirResourcesModule } from '../fhirResources/fhirResources.module';
+import { FhirResourcesModule } from '../fhir-resources/fhir-resources.module';
 import { Project, ProjectSchema } from './project.schema';
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';

@@ -1,5 +1,5 @@
 import { Global, Module, forwardRef } from '@nestjs/common';
-import { FhirResourcesModule } from '../fhirResources/fhirResources.module';
+import { FhirResourcesModule } from '../fhir-resources/fhir-resources.module';
 import { GroupsModule } from '../groups/groups.module';
 import { ProjectsModule } from '../projects/projects.module';
 import { SharedModule } from '../shared/shared.module';

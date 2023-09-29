@@ -13,15 +13,15 @@ export class SearchParameterService  {
 
   public save(searchParameterId: string, searchParameter: IFhirResource) : Observable<IFhirResource> {
     if (searchParameterId) {
-      const url = '/api/searchParameter/' + encodeURIComponent(searchParameter.id);
+      const url = '/api/searchParameters/' + encodeURIComponent(searchParameter.id);
       return this.http.put<IFhirResource>(url, searchParameter);
     } else {
-      return this.http.post<IFhirResource>('/api/searchParameter', searchParameter);
+      return this.http.post<IFhirResource>('/api/searchParameters', searchParameter);
     }
   }
 
   public search(page = 1, name?: string, implementationGuideId?: string) : Observable<IFhirResource[]> {
-    let url = '/api/searchParameter?resourcetype=SearchParameter&page=' + page + '&';
+    let url = '/api/searchParameters?resourcetype=SearchParameter&page=' + page + '&';
 
     if (name) {
       url += 'name=' + encodeURIComponent(name) + '&';
@@ -37,12 +37,12 @@ export class SearchParameterService  {
   }
 
   public get(id: string) {
-    const url = '/api/searchParameter/' + encodeURIComponent(id);
+    const url = '/api/searchParameters/' + encodeURIComponent(id);
     return this.http.get<IFhirResource>(url);
   }
 
   public delete(id: string) {
-    const url = '/api/searchParameter/' + encodeURIComponent(id);
+    const url = '/api/searchParameters/' + encodeURIComponent(id);
     return this.http.delete(url);
   }
 }

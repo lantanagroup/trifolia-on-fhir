@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FhirResourcesService } from './fhirResources.service';
+import { FhirResourcesService } from './fhir-resources.service';
 
 describe('FhirResourceService', () => {
   let service: FhirResourcesService;

@@ -1,5 +1,5 @@
 import { Component, DoCheck, Input, OnDestroy, OnInit } from '@angular/core';
-import { ImplementationGuide, OperationOutcome, Questionnaire, QuestionnaireItemComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { ImplementationGuide, Questionnaire, QuestionnaireItemComponent } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,10 +12,9 @@ import { QuestionnaireItemModalComponent } from './questionnaire-item-modal.comp
 import { AuthService } from '../shared/auth.service';
 import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { BaseComponent } from '../base.component';
-import { config, firstValueFrom, Subject } from 'rxjs';
+import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { IFhirResource } from '@trifolia-fhir/models';
-import { SearchParameter } from '@trifolia-fhir/r4';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
 
@@ -65,6 +64,7 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
   public implementationGuide;
 
   private navSubscription: any;
+  public Globals = Globals;
 
   constructor(
     public route: ActivatedRoute,

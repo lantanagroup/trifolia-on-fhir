@@ -10,7 +10,7 @@ export class ProjectService {
   }
 
   public getProjects(page?: number, name?: string, author?:string, Id?: string): Observable<IProject[]> {
-    let url = '/api/project?';
+    let url = '/api/projects?';
 
     if (page) {
       url += `page=${page.toString()}&`;
@@ -35,26 +35,26 @@ export class ProjectService {
 
 
   public getProject(id: string): Observable<IProject> {
-    const url = '/api/project/' + encodeURIComponent(id);
+    const url = '/api/projects/' + encodeURIComponent(id);
     return this.http.get<IProject>(url);
   }
 
   public save(project: IProject): Observable<IProject> {
     if (project.id) {
-      const url = '/api/project/' + encodeURIComponent(project.id);
+      const url = '/api/projects/' + encodeURIComponent(project.id);
       return this.http.put<IProject>(url, project);
     } else {
-      return this.http.post<IProject>('/api/project', project);
+      return this.http.post<IProject>('/api/projects', project);
     }
   }
 
   public deleteProject(id: string): Observable<IProject> {
-    const url = '/api/project/' + encodeURIComponent(id);
+    const url = '/api/projects/' + encodeURIComponent(id);
     return this.http.delete<IProject>(url);
   }
 
   public deleteIg(id: string): Observable<IProject> {
-    const url = '/api/project/' + encodeURIComponent(id) + '/implementationGuide';
+    const url = '/api/projects/' + encodeURIComponent(id) + '/implementationGuide';
     return this.http.delete<IProject>(url);
   }
 }

@@ -30,10 +30,9 @@ import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
 import {ProjectService} from '../../shared/projects.service';
-import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap, NonFhirResourceType} from '@trifolia-fhir/models';
-import {IDomainResource, getImplementationGuideContext, Paginated} from '@trifolia-fhir/tof-lib';
+import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
+import {IDomainResource, getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 
-import {FhirResource} from '../../../../../server/src/app/fhirResources/fhirResource.schema';
 import {firstValueFrom, forkJoin} from 'rxjs';
 import {NonFhirResourceService} from '../../shared/non-fhir-resource.service';
 

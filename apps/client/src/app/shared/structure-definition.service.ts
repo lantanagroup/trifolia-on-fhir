@@ -1,11 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {Bundle, StructureDefinition as STU3StructureDefinition} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {FhirService} from './fhir.service';
 import {FileService} from './file.service';
-import {StructureDefinition as R4StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {StructureDefinition as R5StructureDefinition} from '../../../../../libs/tof-lib/src/lib/r5/fhir';
 import {BaseDefinitionResponseModel} from '../../../../../libs/tof-lib/src/lib/base-definition-response-model';
 import {ILogicalTypeDefinition} from '../../../../../libs/tof-lib/src/lib/logical-type-definition';
 import {IFhirResource} from '@trifolia-fhir/models';
@@ -20,12 +17,12 @@ export class StructureDefinitionService {
   }
 
   public getBaseStructureDefinitions(type: string) {
-    const url = `/api/structureDefinition/base/${type}`;
+    const url = `/api/structureDefinitions/base/${type}`;
     return this.http.get<string[]>(url);
   }
 
   public getSupportedLogicalTypes(search?: string) {
-    let url = '/api/structureDefinition/type?';
+    let url = '/api/structureDefinitions/type?';
 
     if (search) url += `search=${encodeURIComponent(search)}&`;
 
@@ -33,7 +30,7 @@ export class StructureDefinitionService {
   }
 
   public getStructureDefinitions(page?: number, nameText?: string, IDText?: string, urlText?: string, implementationGuideId?: string, titleText?: string, typeText?: string): Observable<IFhirResource[]> {
-    let url = '/api/structureDefinition?resourcetype=StructureDefinition&';
+    let url = '/api/structureDefinitions?resourcetype=StructureDefinition&';
 
     if (page) {
       url += `page=${page.toString()}&`;
@@ -78,13 +75,13 @@ export class StructureDefinitionService {
       }
     }
     else {
-      const url = '/api/structureDefinition/' + encodeURIComponent(id);
+      const url = '/api/structureDefinitions/' + encodeURIComponent(id);
       return this.http.get<IFhirResource>(url);
     }
   }
 
   public getBaseStructureDefinition(baseDefinition: string, type?: string): Observable<BaseDefinitionResponseModel> {
-    let url = `/api/structureDefinition/base?url=${encodeURIComponent(baseDefinition)}&`;
+    let url = `/api/structureDefinitions/base?url=${encodeURIComponent(baseDefinition)}&`;
 
     if (type) {
       url += `type=${encodeURIComponent(type)}&`;
@@ -94,7 +91,7 @@ export class StructureDefinitionService {
   }
 
   public save(structureDefinitionId : string, structureDefinition: IFhirResource): Observable<IFhirResource> {
-    let url = '/api/structureDefinition';
+    let url = '/api/structureDefinitions';
 
     if(structureDefinition.resource.text && structureDefinition.resource.text.div && structureDefinition.resource.text.div.indexOf("<br>") > 0){
       structureDefinition.resource.text.div = structureDefinition.resource.text.div.replace("<br>", "");
@@ -110,6 +107,6 @@ export class StructureDefinitionService {
   }
 
   public delete(id: string) {
-    return this.http.delete('/api/structureDefinition/' + encodeURIComponent(id));
+    return this.http.delete('/api/structureDefinitions/' + encodeURIComponent(id));
   }
 }

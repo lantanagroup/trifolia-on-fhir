@@ -6,7 +6,7 @@ import {Server} from 'socket.io';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {ConfigService} from '../config.service';
 import {TofLogger} from '../tof-logger';
-import { FhirResourcesService } from '../fhirResources/fhirResources.service';
+import { FhirResourcesService } from '../fhir-resources/fhir-resources.service';
 import { NonFhirResourcesService } from '../non-fhir-resources/non-fhir-resources.service';
 
 export async function createHtmlExporter(

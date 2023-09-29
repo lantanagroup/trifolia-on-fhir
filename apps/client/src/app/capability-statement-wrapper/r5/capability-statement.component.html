@@ -343,7 +343,7 @@
               (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This
         capability statement includes REST entries
 
-        <ng-continer *ngIf="capabilityStatement.hasOwnProperty('rest')">
+        <ng-container *ngIf="capabilityStatement.hasOwnProperty('rest')">
           <ul ngbNav #restTabSet="ngbNav" class="nav-tabs" [destroyOnHide]="false">
             <li *ngFor="let r of capabilityStatement.rest; let ri = index" ngbNavItem="rest-{{ri}}">
               <a ngbNavLink>
@@ -636,7 +636,7 @@
             </li>
           </ul>
           <div [ngbNavOutlet]="restTabSet" class="mt-2"></div>
-        </ng-continer>
+        </ng-container>
       </ng-template>
     </li>
     <li ngbNavItem>
@@ -764,12 +764,12 @@
                 </div>
               </ng-template>
             </li>
-            <li [disabled]="true">
-              <ng-template ngbNavLink>
+            <li>
+              <a ngbNavLink>
                 <button type="button" class="btn btn-primary" title="Add a messaging entry"
                         (click)="addMessagingEntry(messagingTabSet)">Add
                 </button>
-              </ng-template>
+              </a>
               <ng-template ngbNavContent></ng-template>
             </li>
           </ul>

@@ -27,12 +27,11 @@ import os from 'os';
 import { existsSync } from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { AuthService } from './auth/auth.service';
-import { FhirResourcesService } from './fhirResources/fhirResources.service';
+import { FhirResourcesService } from './fhir-resources/fhir-resources.service';
 import {INonFhirResource, IProjectResourceReference, IFhirResource} from '@trifolia-fhir/models';
-import { FhirResourcesController } from './fhirResources/fhirResources.controller';
+import { FhirResourcesController } from './fhir-resources/fhir-resources.controller';
 import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
 import { ImplementationGuide as R5ImplementationGuide, StructureDefinition } from '@trifolia-fhir/r5';
-import { forkJoin } from 'rxjs';
 
 
 class PatchRequest {
@@ -47,7 +46,7 @@ class PatchRequest {
   }
 }
 
-@Controller('api/implementationGuide')
+@Controller('api/implementationGuides')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Implementation Guide')
 @ApiOAuth2([])
