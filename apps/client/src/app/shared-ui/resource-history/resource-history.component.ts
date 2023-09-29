@@ -110,23 +110,26 @@ export class ResourceHistoryComponent implements OnInit, AfterContentChecked {
   }
 
 
-  ngAfterContentChecked(): void {
+  async ngAfterContentChecked() {
     if (this.initialized && this.resource.versionId !== this.currentVersion) {
-      this.currentVersion = this.resource.versionId;
-      this.getHistory();
+      await this.refreshHistory();
     }
-
   }
 
-  async ngOnInit() {
+  private async refreshHistory() {
+
     this.currentVersion = this.resource.versionId;
     await this.getHistory();
 
-    // Default the left and right selection to the two most recent versions
-    if (this.historyBundle  && this.historyBundle.results.length > 1) {
+    if (this.historyBundle && this.historyBundle.results.length > 1) {
       this.leftVersionId = this.historyBundle.results[0]?.versionId;
       this.rightVersionId = this.historyBundle.results[1]?.versionId;
     }
+  }
+
+  async ngOnInit() {
+
+    await this.refreshHistory();
 
     this.initialized = true;
   }
