@@ -28,7 +28,7 @@
 
   <div class="mb-3" *ngIf="!reuseDescription">
     <label>Content</label>
-    <trifolia-fhir-markdown [(value)]="contentMarkdown"   [mediaReferences]="getMediaReferences()"></trifolia-fhir-markdown>
+    <trifolia-fhir-markdown [(value)]="contentMarkdown" [mediaReferences]="getMediaReferences()" [disabled]="true"></trifolia-fhir-markdown>
   </div>
 
   <hr />

@@ -107,10 +107,6 @@ body.structure-definition div.sd-main .tab-content > div.tab-pane {
   height: 30px;
 }
 
-.disable-markdown .CodeMirror-line {
-  display: none;
-}
-
 .disable-markdown .editor-toolbar {
   display: none;
 }
