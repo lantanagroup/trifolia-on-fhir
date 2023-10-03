@@ -104,7 +104,9 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
   @ApiOperation({ summary: 'checkName', description: 'checkName', operationId: 'check-name' })
   async checkUniqueName(@Param('type') type: string, @Param('name') name: string, @Query('implementationguideid') implementationGuideId?: string): Promise<boolean> {
 
-    let filter = { 'type': type, 'name': name};
+    let filter = {};
+    filter['type'] = type;
+    filter['name'] = { $regex: name, $options: 'i' };
     if (implementationGuideId) {
       filter['referencedBy.value'] = new ObjectId(implementationGuideId);
     }
@@ -121,7 +123,9 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
   @ApiOperation({ summary: 'getByName', description: 'getByName' })
   async getByName(@Param('type') type: string, @Param('name') name: string, @Query('implementationguideid') implementationGuideId?: string): Promise<NonFhirResource> {
 
-    let filter = { 'type': type, 'name': name};
+    let filter = {};
+    filter['type'] = type;
+    filter['name'] = { $regex: name, $options: 'i' };
     if (implementationGuideId) {
       filter['referencedBy.value'] = new ObjectId(implementationGuideId);
     }
@@ -138,7 +142,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
 
     options.pipeline = [...options.pipeline, ...filter];
     options.projection = JSON.parse(req.query['_projection']);
-    
+
     return await this.nonFhirResourcesService.search(options);
   }
 
