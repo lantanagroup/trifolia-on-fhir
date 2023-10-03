@@ -25,6 +25,10 @@ export class Group extends BaseEntity implements IGroup {
     @Prop ([{type: mongoose.Schema.Types.ObjectId, ref: User.name }])
     members: IUser[];
 
+    // legacy migration field that doesn't need returned and isn't part of the model
+    @Prop({select: false})
+    originalGroupId?: string;
+
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);

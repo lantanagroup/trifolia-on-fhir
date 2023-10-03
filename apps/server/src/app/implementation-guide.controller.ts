@@ -28,7 +28,7 @@ import { existsSync } from 'fs';
 import { ProjectsService } from './projects/projects.service';
 import { AuthService } from './auth/auth.service';
 import { FhirResourcesService } from './fhir-resources/fhir-resources.service';
-import {INonFhirResource, IProjectResourceReference, IFhirResource} from '@trifolia-fhir/models';
+import {INonFhirResource, IProjectResourceReference, IFhirResource, ImplementationGuideExampleTypes} from '@trifolia-fhir/models';
 import { FhirResourcesController } from './fhir-resources/fhir-resources.controller';
 import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
 import { ImplementationGuide as R5ImplementationGuide, StructureDefinition } from '@trifolia-fhir/r5';
@@ -282,9 +282,10 @@ export class ImplementationGuideController extends FhirResourcesController { // 
       examples.push(... res);
     }
 
-    // non-fhir examples for this ig come from the examples collection
+    // non-fhir examples for this ig come from the nonFhirResources collection
+    // restricted to only IG example types so as to not return all non-fhir resources referenced by the IG resource
     let filter = {
-      $and: [{ 'referencedBy.value': id }, { $or: deleteClause}]
+      $and: [{ 'referencedBy.value': id }, { 'type': { $in: ImplementationGuideExampleTypes } }, { $or: deleteClause}]
     }
     examples.push(... await this.nonFhirResourceService.findAll(filter) );
 
