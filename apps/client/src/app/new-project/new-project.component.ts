@@ -1,18 +1,15 @@
-import {Component, EventEmitter, Input, OnInit} from '@angular/core';
-import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import { IImplementationGuide } from '@trifolia-fhir/tof-lib';
-import { ImplementationGuide as R4ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { ImplementationGuide as R5ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/r5/fhir';
-import { FhirService } from '../shared/fhir.service';
-import { ConfigService } from '../shared/config.service';
-import { Extension as STU3Extension, ImplementationGuide as STU3ImplementationGuide } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { Globals } from '@trifolia-fhir/tof-lib';
-import { Router } from '@angular/router';
-import { getErrorString } from '@trifolia-fhir/tof-lib';
-import { identifyRelease } from '@trifolia-fhir/tof-lib';
-import { PublishingRequestModel } from '@trifolia-fhir/tof-lib';
-import { ProjectService } from '../shared/projects.service';
-import { IFhirResource, IProject } from '@trifolia-fhir/models';
+import {Component, EventEmitter, OnInit} from '@angular/core';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import {getErrorString, Globals, identifyRelease, IImplementationGuide, PublishingRequestModel} from '@trifolia-fhir/tof-lib';
+import {ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
+import {ImplementationGuide as R5ImplementationGuide} from '@trifolia-fhir/r5';
+import {FhirService} from '../shared/fhir.service';
+import {ConfigService} from '../shared/config.service';
+import {Extension as STU3Extension, ImplementationGuide as STU3ImplementationGuide} from '@trifolia-fhir/stu3';
+import {Router} from '@angular/router';
+import {ProjectService} from '../shared/projects.service';
+import {IFhirResource, IProject} from '@trifolia-fhir/models';
+
 @Component({
   templateUrl: './new-project.component.html',
   styleUrls: ['./new-project.component.css']
@@ -28,7 +25,7 @@ export class NewProjectComponent implements OnInit {
   public projectCode: string;
   public packageId: string;
   public canonicalURL: string;
-  public igUrl: string
+  public igUrl: string;
   public igName: string;
   public igTitle: string;
   public igId: string;
@@ -37,7 +34,8 @@ export class NewProjectComponent implements OnInit {
   public hl7WorkGroup: string;
 
 
-  constructor(private igService: ImplementationGuideService,
+  constructor(
+    private igService: ImplementationGuideService,
     private projectService: ProjectService,
     private fhirService: FhirService,
     private configService: ConfigService,
@@ -74,6 +72,7 @@ export class NewProjectComponent implements OnInit {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
 
+  //  this.igId = this.projectCode.replace(/\./g, '-');
     ig.version = '0.1.0';
     ig.name = this.igName.replace(/[^a-zA-Z0-9_]/g, '');
     ig.name  = ig.name.charAt(0).toUpperCase() + ig.name.slice(1);
@@ -100,16 +99,16 @@ export class NewProjectComponent implements OnInit {
         (<R5ImplementationGuide>ig).title = this.igTitle;
       }
     } else if (this.fhirVersion === 'r4') {
-      if (this.isHL7) {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
         (<R4ImplementationGuide>ig).jurisdiction = jurisdiction;
         (<R4ImplementationGuide>ig).packageId = this.packageId;
         (<R4ImplementationGuide>ig).title = this.igTitle;
-      }
+
     } else if (this.fhirVersion == 'stu3') {
       if (this.isHL7) {
 
+       // (<STU3ImplementationGuide>ig).jurisdiction = jusrisdiction;
         const packageIdExt = new STU3Extension();
         packageIdExt.url = Globals.extensionUrls['extension-ig-package-id'];
         packageIdExt.valueString = this.packageId;
@@ -126,7 +125,7 @@ export class NewProjectComponent implements OnInit {
     this.igService.saveImplementationGuide(null, newRes)
       .subscribe({
         next: async (ig: IFhirResource) => {
-          let project: IProject = <IProject>{ author: "", fhirVersion: this.fhirVersion, name: projectName, isDeleted: false };
+          let project: IProject = <IProject>{ author: "", fhirVersion: this.fhirVersion, name: projectName };
           project.references = project.references || [];
           project.references.push({'value' : ig, valueType: 'FhirResource'});
           await this.projectService.save(project).toPromise().then((project) => {
@@ -170,15 +169,20 @@ export class NewProjectComponent implements OnInit {
 
   setProjectCode(value: string) {
     this.projectCode = value;
-    this.packageIdCriteriaChanged();
+    this.hl7packageIdCriteriaChanged();
   }
 
 
-  packageIdCriteriaChanged() {
+  hl7packageIdCriteriaChanged() {
     const projectCode = this.projectCode.replace(/[^a-zA-Z0-9_-]/gi, '');
-    this.packageId = `hl7.${this.isFHIR ? 'fhir' : 'cda'}.${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}.${projectCode|| 'unknown'}`;
+    this.packageId = `hl7.${this.isFHIR ? 'fhir' : 'cda'}.${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}.${projectCode || 'unknown'}`;
     this.canonicalURL = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}/${projectCode || 'unknown'}`;
     this.igUrl = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}/${projectCode || 'unknown'}/ImplementationGuide`;
+  }
+
+  nonHl7packageIdChanged() {
+    const projectCode = this.projectCode.replace(/[^a-zA-Z0-9_-]/gi, '');
+    this.packageId = '.' + projectCode;
   }
 
   setIgCanonicalUrl(value: string) {
@@ -189,6 +193,7 @@ export class NewProjectComponent implements OnInit {
   setIgId(value: string) {
     this.projectCode = value.split('.').join('-');
     this.igUrlChanged();
+    this.nonHl7packageIdChanged();
   }
 
   igUrlChanged() {
@@ -210,7 +215,13 @@ export class NewProjectComponent implements OnInit {
 
 
   isValidId(id: string) {
-    const results = /^[A-Za-z0-9\-\\.]{1,64}$/.exec(id);
+    const results = /^[^.][A-Za-z0-9\-\\.]{1,64}$/.exec(id);
+    return !!results;
+  }
+
+  isValidPrivatePackageId(id: string) {
+    const results = /^(?!\.)[A-z0-9\.]+$/.exec(id);
+
     return !!results;
   }
 

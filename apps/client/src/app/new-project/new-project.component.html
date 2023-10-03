@@ -16,7 +16,7 @@
 
   <div class="mb-3">
     <label>Family</label>
-    <select class="form-select family" [(ngModel)]="isFHIR" (change)="packageIdCriteriaChanged()">
+    <select (change)="hl7packageIdCriteriaChanged()" [(ngModel)]="isFHIR" class="form-select family">
       <option [ngValue]="false">CDA</option>
       <option [ngValue]="true">FHIR</option>
     </select>
@@ -24,7 +24,7 @@
 
   <div class="mb-3">
     <label>Realm</label>
-    <select class="form-select realm" [(ngModel)]="selectedJurisdiction" (change)="packageIdCriteriaChanged()" [class.is-invalid]="!selectedJurisdiction">
+    <select (change)="hl7packageIdCriteriaChanged()" [(ngModel)]="selectedJurisdiction" [class.is-invalid]="!selectedJurisdiction" class="form-select realm">
       <option *ngFor="let jc of jurisdictionCodes" [ngValue]="jc">{{jc.display}} ({{jc.code}})</option>
     </select>
     <div class="help-block" *ngIf="!selectedJurisdiction">Realm is required</div>
@@ -116,6 +116,13 @@
   </div>
 
   <div class="mb-3">
+    <label>Package ID</label>
+    <input [(ngModel)]="packageId" [class.is-invalid]="!packageId || !isValidPrivatePackageId(packageId)" class="form-control standard" type="text" />
+    <div *ngIf="!packageId" class="help-block">Package ID is required</div>
+    <div *ngIf="packageId && !isValidPrivatePackageId(packageId)" class="help-block">Package ID is not formatted correctly</div>
+  </div>
+
+  <div class="mb-3">
     <label>IG URL:</label>
     <input type="text" class="form-control extended" [(ngModel)]="igUrl" [class.is-invalid]="!igUrl || !isValidUrl(igUrl)" />
     <div class="help-block" *ngIf="!igUrl">IG URL is required</div>
@@ -135,14 +142,17 @@
 
   <div class="mb-3">
     <label>FHIR Version: </label>
-    <select  class="form-select family" [(ngModel)]="fhirVersion"  [class.is-invalid]="!fhirVersion">
-      <option value ="r4">R4</option>
-      <option value ="stu3">STU3</option>
+    <select class="form-select family" [(ngModel)]="fhirVersion" [class.is-invalid]="!fhirVersion">
+      <option value="r4">R4</option>
+      <option value="stu3">STU3</option>
     </select>
     <!-- <input type="text" class="form-control standard" [(ngModel)]="fhirVersion" />-->
   </div>
 
 
   <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
-  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!canonicalURL || !projectCode || !igUrl || !igName || !isValidId(projectCode) || !isValidUrl(canonicalURL) || !isValidUrl(igUrl) || !fhirVersion">Finish</button>
+  <button (click)="nextStep()"
+          [disabled]="!canonicalURL || !projectCode || !igUrl || !igName || !packageId || !isValidId(projectCode) || !isValidUrl(canonicalURL) || !isValidUrl(igUrl) || !fhirVersion || !isValidPrivatePackageId(packageId)"
+          class="btn btn-primary" type="button">Finish
+  </button>
 </div>

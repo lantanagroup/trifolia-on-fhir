@@ -67,8 +67,8 @@ export class AuthService {
         if (userId) {
             orClauses.push(
                 isProject ? 
-                    { "permissions": { $elemMatch: { targetId: new ObjectId(userId), type: "user", $or: grantClause } } } :
-                    { "projects.permissions": { $elemMatch: { targetId: new ObjectId(userId), type: "user", $or: grantClause } } }
+                    { "permissions": { $elemMatch: { target: new ObjectId(userId), type: "User", $or: grantClause } } } :
+                    { "projects.permissions": { $elemMatch: { target: new ObjectId(userId), type: "User", $or: grantClause } } }
             );
         }
 
@@ -77,8 +77,8 @@ export class AuthService {
         if (groupIds.length > 0) {
             orClauses.push(
                 isProject ?
-                    { "permissions": { $elemMatch: { targetId: { $in: groupIds.map(g => new ObjectId(g)) }, type: "group", $or: grantClause } } } :
-                    { "projects.permissions": { $elemMatch: { targetId: { $in: groupIds.map(g => new ObjectId(g)) }, type: "group", $or: grantClause } } }
+                    { "permissions": { $elemMatch: { target: { $in: groupIds.map(g => new ObjectId(g)) }, type: "Group", $or: grantClause } } } :
+                    { "projects.permissions": { $elemMatch: { target: { $in: groupIds.map(g => new ObjectId(g)) }, type: "Group", $or: grantClause } } }
                 );
         }
 
