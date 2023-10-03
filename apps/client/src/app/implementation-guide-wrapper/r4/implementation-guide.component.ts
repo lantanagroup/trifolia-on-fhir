@@ -964,6 +964,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     // get the resource
     let resource = new Page();
     let name = page.nameUrl ?? page.nameReference?.reference;
+    // if page does not exist in pages, create it
+
+
     resource.name = name;
     if (name.indexOf(".") > -1) {
       resource.name = name.slice(0, name.indexOf("."));

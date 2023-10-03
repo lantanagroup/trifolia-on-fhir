@@ -358,7 +358,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             if (r.valueType === 'FhirResource') {
                 entry.resource = r.value['resource'];
             }
-            else if (r.valueType === 'NonFhirResource') {
+            else if (r.valueType === 'NonFhirResource' && (r.value["type"] == NonFhirResourceType.CdaExample)) {
                 // attempt to parse content for fhir resource... otherwise create a binary type for the content
                 try {
                     if (typeof r.value['content'] !== typeof '') {

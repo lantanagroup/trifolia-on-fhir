@@ -37,7 +37,7 @@ export class PageComponent implements OnInit {
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseNameMessage = '';
-  public totalPages = 0;
+  public defaultName = "";
 
   constructor(public route: ActivatedRoute,
               private router: Router,
@@ -114,12 +114,9 @@ export class PageComponent implements OnInit {
     this.implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
     let id = this.route.snapshot.paramMap.get('id');
 
-    if (id.indexOf('?totalPages=') > -1) {
-      let pages = id.slice(id.indexOf('=') + 1);
-      if (pages) {
-        this.totalPages = parseInt(pages);
-      }
-      this.pageId = this.isNew ? null : id.slice(0, this.pageId.indexOf('?totalPages='));
+    if (id.indexOf('?defaultName=') > -1) {
+      this.defaultName = id.slice(id.indexOf('=') + 1);
+      this.pageId = this.isNew ? null : id.slice(0, this.pageId.indexOf('?defaultName='));
     } else {
       this.pageId = this.isNew ? null : id;
     }
@@ -140,8 +137,8 @@ export class PageComponent implements OnInit {
           this.message = getErrorString(err);
         });
     } else {
-      if (this.totalPages == 0) {
-        this.page.name = 'index';
+      this.page.name = this.defaultName;
+      if (this.defaultName == 'index') {
         this.page.reuseDescription = true;
       }
     }
