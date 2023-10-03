@@ -77,16 +77,6 @@
     </ng-template>
   </li>
 
-  <!-- Permissions -->
-  <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
-    <a ngbNavLink>
-      Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i>
-    </a>
-    <ng-template ngbNavContent>
-      <trifolia-fhir-resource-permissions [resource]="conformance"></trifolia-fhir-resource-permissions>
-    </ng-template>
-  </li>
-
   <li ngbNavItem>
     <a ngbNavLink>RAW</a>
     <ng-template ngbNavContent>

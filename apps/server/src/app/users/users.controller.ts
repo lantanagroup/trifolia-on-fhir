@@ -1,8 +1,8 @@
-import { BadRequestException, Body, ConflictException, Controller, Get, Param, Post, Put, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, ConflictException, Controller, Delete, Get, HttpCode, Param, Post, Put, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
 import type { IUser } from '@trifolia-fhir/models';
-import type { ITofUser } from '@trifolia-fhir/tof-lib';
+import { type ITofUser, Paginated } from '@trifolia-fhir/tof-lib';
 import { BaseDataController } from '../base/base-data.controller';
 import { User } from '../server.decorators';
 import { TofLogger } from '../tof-logger';
@@ -50,6 +50,23 @@ export class UsersController extends BaseDataController<UserDocument> {
     }
 
 
+    @Get()
+    public async search(@User() user: ITofUser, @Request() req?: any) : Promise<Paginated<UserDocument>> {
+
+        let options = this.getPaginateOptionsFromRequest(req);
+
+        if (!user.isAdmin) {
+            options.projection = {
+                authId: 0,
+                email: 0,
+                phone: 0
+            }
+        }
+
+        return this.usersService.search(options);
+    }
+
+
     @Get('me')
     public async getMe(@User() user: ITofUser) : Promise<IUser> {
         
@@ -69,6 +86,17 @@ export class UsersController extends BaseDataController<UserDocument> {
 
         if (!res) {
             throw new TofNotFoundException("No user found with the provided credentials.");
+        }
+
+        return res;
+    }
+
+    @Get(':id')
+    public async getUser(@Param('id') id: string, @User() user: ITofUser) : Promise<UserDocument> {
+        let res = await this.dataService.findById(id);
+
+        if (!res) {
+            throw new TofNotFoundException();
         }
 
         return res;
@@ -108,6 +136,17 @@ export class UsersController extends BaseDataController<UserDocument> {
         }
 
         return super.update(id, updatedUser);
+    }
+
+    @HttpCode(204)
+    @Delete()
+    public async deleteUser(@Param('id') id: string, @User() user: ITofUser) {
+        let me = await this.getMe(user);
+        if (!(user.isAdmin || (me && me.id === id))) {
+            throw new UnauthorizedException();
+        }
+
+        this.usersService.delete(id);
     }
 
 }

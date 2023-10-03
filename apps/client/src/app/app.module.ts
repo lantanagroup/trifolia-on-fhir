@@ -75,7 +75,7 @@ import { PackageListComponent } from './implementation-guide-wrapper/package-lis
 import { ResourceGuard } from './guards/resource.guard';
 import { ElementDefinitionConstraintComponent } from './modals/element-definition-constraint/element-definition-constraint.component';
 import { UpdateDiffComponent } from './import/update-diff/update-diff.component';
-import { NgxDiffModule } from 'ngx-diff';
+import { InlineDiffComponent } from 'ngx-diff';
 import { QueueComponent } from './manage/queue/queue.component';
 import { ExamplesComponent } from './examples/examples.component';
 import { BulkEditComponent } from './bulk-edit/bulk-edit.component';
@@ -96,6 +96,8 @@ import { ProjectsComponent } from './projects/projects.component';
 import { ProjectComponent } from './project/project.component';
 import {R5ImplementationGuideComponent} from './implementation-guide-wrapper/r5/implementation-guide.component';
 import {R5ResourceModalComponent} from './implementation-guide-wrapper/r5/resource-modal.component';
+import {PagesComponent} from './pages/pages.component';
+import {PageComponent} from './page/page.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -129,12 +131,12 @@ export class AddHeaderInterceptor implements HttpInterceptor {
       // Pass the implementation guide (project) to the request so that it knows this request
       // is within the context of the project
       if (
-        this.configService.project &&
-        this.configService.project.implementationGuideId
+        this.configService.igContext &&
+        this.configService.igContext.implementationGuideId
       ) {
         headers = headers.set(
           'implementationGuideId',
-          this.configService.project.implementationGuideId
+          this.configService.igContext.implementationGuideId
         );
         headers = headers.set(
           'fhirversion',
@@ -164,13 +166,16 @@ const appRoutes: Routes = [
   { path: 'projects', component: ProjectsComponent },
   { path: 'projects/new', component: NewProjectComponent },
   { path: 'projects/home', component: HomeComponent },
-  { path: 'projects/:id', component: ProjectComponent },
+  { path: 'projects/:projectId', component: ProjectComponent },
   { path: 'projects/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard] },
   { path: 'projects/:implementationGuideId/home', component: HomeComponent },
   { path: 'projects/implementation-guide/open', component: ImplementationGuidesComponent },
   { path: 'projects/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always' },
   { path: 'projects/:implementationGuideId/code-system', component: CodesystemsComponent },
   { path: 'projects/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/page', component: PagesComponent },
+  { path: 'projects/:implementationGuideId/page/:id', component: PageComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/page/new', component: PageComponent},
   { path: 'projects/:implementationGuideId/search-parameter', component: SearchParametersComponent },
   { path: 'projects/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
   { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },
@@ -350,6 +355,8 @@ const authModuleConfig: OAuthModuleConfig = {
     PublishingRequestComponent,
     ProjectsComponent,
     ProjectComponent,
+    PagesComponent,
+    PageComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes, {
@@ -367,7 +374,7 @@ const authModuleConfig: OAuthModuleConfig = {
     SharedUiModule,
     FhirEditModule,
     ModalsModule,
-    NgxDiffModule,
+    InlineDiffComponent
   ],
   providers: [
     CookieService,

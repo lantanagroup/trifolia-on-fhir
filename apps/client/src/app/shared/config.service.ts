@@ -6,12 +6,14 @@ import {Versions} from 'fhir/fhir';
 import {map} from 'rxjs/operators';
 import {ImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 import {Subject} from 'rxjs';
+import { IProject } from '@trifolia-fhir/models';
 
 @Injectable()
 export class ConfigService {
   public config: ConfigModel;
   public fhirVersion: 'stu3' | 'r4' | 'r5' = 'r4';
-  public project?: ImplementationGuideContext;
+  public igContext?: ImplementationGuideContext;
+  public currentProject?: IProject;
   public statusMessage = new Subject<string>();
   public showingIntroduction = false;
   public isChanged: boolean;
@@ -35,6 +37,7 @@ export class ConfigService {
     }
 
   }*/
+  
 
   public updateIsChanged(isDirty: boolean) {
     this.isChanged = isDirty;
@@ -74,8 +77,8 @@ export class ConfigService {
   }
 
   public get baseSessionUrl(): string {
-    if (this.project && this.project.implementationGuideId) {
-      return `/projects/${this.project.implementationGuideId}`;
+    if (this.igContext && this.igContext.implementationGuideId) {
+      return `/projects/${this.igContext.implementationGuideId}`;
     } else {
       return `/projects`;
     }
@@ -95,11 +98,11 @@ export class ConfigService {
   }
 
   public get isCDA(): boolean {
-    if (!this.project || !this.project.dependencies) {
+    if (!this.igContext || !this.igContext.dependencies) {
       return false;
     }
 
-    return (this.project.dependencies || []).findIndex((d: string) => {
+    return (this.igContext.dependencies || []).findIndex((d: string) => {
       return [
         'hl7.fhir.cda', 'hl7.cda.uv.core'
       ].includes((d || '').split('#')[0])

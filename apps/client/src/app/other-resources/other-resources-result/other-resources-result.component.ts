@@ -12,9 +12,9 @@ import { BaseComponent } from '../../base.component';
 import { AuthService } from '../../shared/auth.service';
 import { debounceTime } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
-import { ConformanceService } from '../../shared/conformance.service';
-import { ExamplesService } from '../../shared/examples.service';
-import { IConformance, IExample, IProjectResource } from '@trifolia-fhir/models';
+import { FhirResourceService } from '../../shared/fhir-resource.service';
+import { NonFhirResourceService } from '../../shared/non-fhir-resource.service';
+import { IFhirResource, INonFhirResource, IProjectResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../../shared/implementation-guide.service';
 
 @Component({
@@ -22,7 +22,7 @@ import { ImplementationGuideService } from '../../shared/implementation-guide.se
   styleUrls: ['./other-resources-result.component.css']
 })
 export class OtherResourcesResultComponent extends BaseComponent implements OnInit {
-  public resource: IConformance | IExample;
+  public resource: IFhirResource | INonFhirResource;
   activeSub: 'json/xml' | 'permissions' = 'json/xml';
   message: string;
   data: any;
@@ -42,8 +42,8 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     private modalService: NgbModal,
     public configService: ConfigService,
     protected authService: AuthService,
-    protected conformanceService: ConformanceService,
-    protected examplesService: ExamplesService,
+    protected fhirResourceService: FhirResourceService,
+    protected nonFhirResourceService: NonFhirResourceService,
     protected implementationGuideService: ImplementationGuideService) {
 
     super(configService, authService);
@@ -71,7 +71,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
               this.data = this.fhirService.deserialize(this.content);
               this.message = 'The content has been updated';
             }
-            (<IConformance>this.resource).resource = this.data;            
+            (<IFhirResource>this.resource).resource = this.data;
             this.validation = this.fhirService.validate(this.data);
 
             if (!this.validation.valid) {
@@ -102,8 +102,8 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     //this.isExample = this.route.snapshot.params.type === 'fhir-example' || this.route.snapshot.params.type === 'nonfhir-example';
 
     if (!this.isFhir) {
-      this.examplesService.get(this.route.snapshot.params.id).subscribe({
-        next: (res: IExample) => {
+      this.nonFhirResourceService.get(this.route.snapshot.params.id).subscribe({
+        next: (res: INonFhirResource) => {
           this.resource = res;
           this.content = res.content;
 
@@ -111,15 +111,6 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
             this.content = JSON.stringify(res.content, null, '\t');
           }
 
-          try {
-            let res = JSON.parse(this.content);
-            if (res['resourceType']) {
-              this.isFhir = true;
-            }
-          } catch (error) {
-            this.isFhir = false;
-          }
-          this.validation = this.fhirService.validate((<IExample>this.resource).content);
           setTimeout(() => {
             this.message = 'Example opened.';
           }, 100);
@@ -129,12 +120,12 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
         }
       });
     } else {
-      this.conformanceService.get(this.route.snapshot.params.id).subscribe({
-        next: (res: IConformance) => {
+      this.fhirResourceService.get(this.route.snapshot.params.id).subscribe({
+        next: (res: IFhirResource) => {
           this.resource = res;
           this.data = res.resource;
           this.content = JSON.stringify(res.resource, null, '\t');
-          this.validation = this.fhirService.validate((<IConformance>this.resource).resource);
+          this.validation = this.fhirService.validate((<IFhirResource>this.resource).resource);
           this.isFhir = true;
           setTimeout(() => {
             this.message = 'Resource opened.';
@@ -149,8 +140,8 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
     // determine if this resource is referenced as an example in the current IG
     this.isExample = false;
-    if (this.configService.project?.implementationGuideId) {
-      this.implementationGuideService.getExamples(this.configService.project.implementationGuideId).subscribe({
+    if (this.configService.igContext?.implementationGuideId) {
+      this.implementationGuideService.getExamples(this.configService.igContext.implementationGuideId).subscribe({
         next: (res: IProjectResource[]) => {
           if ((res || <IProjectResource[]>[]).findIndex(r => r.id === this.route.snapshot.params.id) > -1) {
             this.isExample = true;
@@ -166,7 +157,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
   changeType() {
     setTimeout(() => {
-      this.data = this.isFhir ? (<IConformance>this.resource).resource : (<IExample>this.resource).content;
+      this.data = this.isFhir ? (<IFhirResource>this.resource).resource : (<INonFhirResource>this.resource).content;
       switch (this.selected) {
         case 'JSON':
           this.content = JSON.stringify(this.data, null, '\t');
@@ -235,16 +226,16 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
 
   public save() {
 
-    let request: Observable<IConformance | IExample>;
+    let request: Observable<IFhirResource | INonFhirResource>;
 
     if (this.isFhir) {
-      request = this.conformanceService.save(this.resource.id, <IConformance>this.resource, this.configService.project?.implementationGuideId, this.isExample);
+      request = this.fhirResourceService.save(this.resource.id, <IFhirResource>this.resource, this.configService.igContext?.implementationGuideId, this.isExample);
     } else {
-      request = this.examplesService.save(this.resource.id, <IExample>this.resource, this.configService.project?.implementationGuideId);
+      request = this.nonFhirResourceService.save(this.resource.id, <INonFhirResource>this.resource, this.configService.igContext?.implementationGuideId);
     }
 
     request.subscribe({
-      next: (res: IConformance | IExample) => {
+      next: (res: IFhirResource | INonFhirResource) => {
         Object.assign(this.resource, res);
         this.message = `Successfully updated resource!`;
       },
@@ -260,16 +251,16 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
       return;
     }
 
-    let request: Observable<IConformance | IExample>;
+    let request: Observable<IFhirResource | INonFhirResource>;
 
     if (this.isFhir) {
-      request = this.conformanceService.delete(this.resource.id);
+      request = this.fhirResourceService.delete(this.resource.id);
     } else {
-      request = this.examplesService.delete(this.resource.id);
+      request = this.nonFhirResourceService.delete(this.resource.id);
     }
 
     request.subscribe({
-      next: (res: IConformance | IExample) => {
+      next: (res: IFhirResource | INonFhirResource) => {
         this.router.navigate([`${this.configService.baseSessionUrl}/${this.isExample ? 'examples' : 'other-resources'}`]);
         alert(`Successfully removed resource.`);
       },

@@ -30,16 +30,17 @@ import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
 import {ProjectService} from '../../shared/projects.service';
-import {IConformance, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
+import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
 import {IDomainResource, getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 
-import {Conformance} from '../../../../../server/src/app/conformance/conformance.schema';
-import {forkJoin} from 'rxjs';
+import {firstValueFrom, forkJoin} from 'rxjs';
+import {NonFhirResourceService} from '../../shared/non-fhir-resource.service';
 
 class PageDefinition {
   public page: ImplementationGuidePageComponent;
   public parent?: ImplementationGuidePageComponent;
   public level: number;
+  public resource: Page;
 }
 
 @Component({
@@ -47,7 +48,7 @@ class PageDefinition {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class R4ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
-  public conformance: IConformance;
+  public fhirResource: IFhirResource;
   public implementationGuide: ImplementationGuide;
   public message: string;
   public validation: any;
@@ -72,12 +73,14 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public resourceMap: IProjectResourceReferenceMap = {};
   public historyLoaded = false;
 
+
   constructor(
     private modal: NgbModal,
     private router: Router,
     public implementationGuideService: ImplementationGuideService,
     private fileService: FileService,
     private fhirService: FhirService,
+    private nonFhirResourceService: NonFhirResourceService,
     protected authService: AuthService,
     public configService: ConfigService,
     public projectService: ProjectService,
@@ -333,7 +336,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     modalRef.componentInstance.resource = resource;
     modalRef.componentInstance.implementationGuide = this.implementationGuide;
     modalRef.componentInstance.implementationGuideID = this.implementationGuideId;
-    modalRef.result.then(() => {
+    modalRef.componentInstance.modalRef.result.then(() => {
       this.igChanging.emit(true);
     });
   }
@@ -417,9 +420,9 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           }
         );
 
-        if (!this.conformance.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
-          const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'Conformance' };
-          this.conformance.references.push(newProjectResourceReference);
+        if (!this.fhirResource.references.find((r: IProjectResourceReference) => r.value == result.projectResourceId)) {
+          const newProjectResourceReference: IProjectResourceReference = { value: result.projectResourceId, valueType: 'FhirResource' };
+          this.fhirResource.references.push(newProjectResourceReference);
           this.resourceMap[newReference.reference] = newProjectResourceReference;
         }
 
@@ -505,12 +508,12 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
       let map = this.resourceMap[resource.reference.reference];
 
-      index = (this.conformance.references || []).findIndex((ref: IProjectResourceReference) => {
-        return ref.value === map.value
+      index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
+        return ref.value === map.value;
       });
 
       if (index > -1) {
-        this.conformance.references.splice(index, 1);
+        this.fhirResource.references.splice(index, 1);
         delete this.resourceMap[resource.reference.reference];
       }
 
@@ -568,16 +571,16 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         this.implementationGuideService.getReferenceMap(implementationGuideId)
       ])
         .subscribe({
-          next: (results: [IConformance, IProjectResourceReferenceMap]) => {
+          next: (results: [IFhirResource, IProjectResourceReferenceMap]) => {
 
-            const conf: IConformance = results[0];
+            const conf: IFhirResource = results[0];
 
             if (!conf || !conf.resource || conf.resource.resourceType !== 'ImplementationGuide') {
               this.message = 'The specified implementation guide either does not exist or was deleted';
               return;
             }
 
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.resourceMap = results[1];
             this.loadIG(conf.resource);
           },
@@ -597,8 +600,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (value && !this.implementationGuide.definition.page) {
       this.implementationGuide.definition.page = new ImplementationGuidePageComponent();
       this.implementationGuide.definition.page.generation = 'markdown';
-      this.implementationGuide.definition.page.reuseDescription = true;
       this.implementationGuide.definition.page.setTitle('Home Page', true);
+
     } else if (!value && this.implementationGuide.definition.page) {
       const foundPageDef = this.pages.find((pageDef) => pageDef.page === this.implementationGuide.definition.page);
       this.removePage(foundPageDef);
@@ -607,24 +610,36 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     this.initPagesAndGroups();
   }
 
-  public editPage(pageDef: PageDefinition) {
+  public async editPage(pageDef: PageDefinition) {
+
+    // get the page from db
+    pageDef.resource = await firstValueFrom(this.nonFhirResourceService.getByName(pageDef.resource, this.implementationGuideId));
+
     const modalRef = this.modal.open(PageComponentModalComponent, { size: 'lg', backdrop: 'static' });
     const componentInstance: PageComponentModalComponent = modalRef.componentInstance;
 
-    componentInstance.implementationGuide = this.implementationGuide;
+    componentInstance.fhirResource = this.fhirResource;
     componentInstance.level = pageDef.level;
+    componentInstance.implementationGuideId = this.implementationGuideId;
 
     if (this.implementationGuide.definition.page === pageDef.page) {
-      componentInstance.rootPage = true;
+      if(pageDef.resource.reuseDescription === undefined) {
+        pageDef.resource["reuseDescription"] = true; // initialize it
+      }
     }
 
     componentInstance.setPage(pageDef.page);
+    componentInstance.setResource(pageDef.resource);
 
-    modalRef.result.then((page: ImplementationGuidePageComponent) => {
-      Object.assign(pageDef.page, page);
-      this.initPagesAndGroups();
-      this.igChanging.emit(true);
-    }).catch((err) => {});
+    modalRef.result.then((result: { page: ImplementationGuidePageComponent, res: Page }) => {
+         Object.assign(pageDef.page, result.page);
+         Object.assign(pageDef.resource, result.res);
+         this.initPagesAndGroups();
+         this.igChanging.emit(true);
+      }
+    ).catch((err) => {
+      console.log(err);
+    });
 
   }
 
@@ -640,7 +655,18 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   private getNewPageTitle() {
     const titles = this.getNewPageTitles();
-    return 'New Page ' + (titles.length + 1).toString();
+    let i = titles.length + 1;
+    let title = '';
+    let found = true;
+    while (found) {
+      title = 'New Page ' + i.toString();
+      let pageName = Globals.getCleanFileName(title).toLowerCase() + '.html';
+      if (!this.pages.find(elem => elem.page.nameUrl === pageName)) {
+        found = false;
+      }
+      i++;
+    }
+    return title;
   }
 
   public addChildPage(pageDef: PageDefinition, template?: 'downloads') {
@@ -651,16 +677,18 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const newPage = new ImplementationGuidePageComponent();
     newPage.generation = 'markdown';
 
+    let resource = new Page
+
     if (template === 'downloads') {
       newPage.title = 'Downloads';
-      newPage.navMenu = 'Downloads';
-      newPage.fileName = 'downloads.md';
-      newPage.contentMarkdown = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
+      resource["navMenu"]= 'Downloads';
+      newPage.nameUrl = 'downloads.html';
+      resource["content"]=  '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
     } else {
       newPage.title = this.getNewPageTitle();
-      newPage.fileName = Globals.getCleanFileName(newPage.title).toLowerCase() + '.md';
+      newPage.nameUrl = Globals.getCleanFileName(newPage.title).toLowerCase() + '.html';
     }
-
+    resource["name"]  = newPage.nameUrl.slice(0, newPage.nameUrl.indexOf("."));
     pageDef.page.page.push(newPage);
 
     this.initPagesAndGroups();
@@ -695,10 +723,32 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
           this.implementationGuide.definition.page.page.splice(0, 0, ...children);
         }
       }
+
+    }
+    //remove resource
+    if (pageDef.resource['name']) {
+      this.nonFhirResourceService.deleteByName(pageDef.resource, this.implementationGuideId).subscribe({
+        next: (page: Page) => {
+          let index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
+            return ref.value === page.id;
+          });
+
+          if (index > -1) {
+            this.fhirResource.references.splice(index, 1);
+          }
+          this.initPagesAndGroups();
+          this.igChanging.emit(true);
+        },
+        error: (err) => {
+          this.initPagesAndGroups();
+          this.igChanging.emit(true);
+        }
+      });
+    } else {
+      this.initPagesAndGroups();
+      this.igChanging.emit(true);
     }
 
-    this.initPagesAndGroups();
-    this.igChanging.emit(true);
   }
 
   public isMovePageUpDisabled(pageDef: PageDefinition) {
@@ -871,6 +921,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
     this.saving = true;
 
+    let pages = this.pages;
+
     if (this.isFile) {
       this.fileService.saveFile();
       this.igChanging.emit(false);
@@ -878,17 +930,17 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
-    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.conformance)
+    this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.fhirResource)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.saving = false;
             this.router.navigate([`projects/${this.implementationGuideId}/implementation-guide`]);
           } else {
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadIG(conf.resource);
-            this.configService.project = getImplementationGuideContext(conf);
+            this.configService.igContext = getImplementationGuideContext(conf);
             this.message = 'Your changes have been saved!';
             this.saving = false;
 
@@ -909,19 +961,32 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (!page) {
       return;
     }
+    // get the resource
+    let resource = new Page();
+    let name = page.nameUrl ?? page.nameReference?.reference;
+    // if page does not exist in pages, create it
+
+
+    resource.name = name;
+    if (name.indexOf(".") > -1) {
+      resource.name = name.slice(0, name.indexOf("."));
+    }
 
     this.pages.push({
       page: page,
       level: level,
-      parent: parent
+      parent: parent,
+      resource: resource
     });
-
     if (page.page) {
       for (let i = 0; i < page.page.length; i++) {
         this.initPage(page.page[i], level + 1, page);
       }
+
     }
+
   }
+
 
   private initPagesAndGroups() {
     this.pages = [];
@@ -1110,7 +1175,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       .subscribe(async () => {
         await this.implementationGuideService.removeImplementationGuide(this.implementationGuideId).toPromise().then((project) => {
           console.log(project);
-          this.configService.project = null;
+          this.configService.igContext = null;
           this.router.navigate([`${this.configService.baseSessionUrl}`]);
           alert(`IG ${name} with id ${this.implementationGuideId} has been deleted`);
         }).catch((err) => this.message = getErrorString(err));
@@ -1123,11 +1188,10 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public loadIG(newVal: IDomainResource, isDirty?: boolean) {
     this.implementationGuide = new ImplementationGuide(newVal);
 
-    if (this.conformance) {
-      this.conformance.resource = this.implementationGuide;
+    if (this.fhirResource) {
+      this.fhirResource.resource = this.implementationGuide;
     }
     this.igChanging.emit(isDirty);
     this.initPagesAndGroups();
   }
-
 }

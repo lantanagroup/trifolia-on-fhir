@@ -3,10 +3,13 @@ import type { ITofUser } from '@trifolia-fhir/tof-lib';
 import { ObjectId } from 'mongodb';
 import { IBaseDataService } from '../base/interfaces';
 import { ConfigService } from '../config.service';
-import { ConformanceService } from '../conformance/conformance.service';
+import { FhirResourcesService } from '../fhir-resources/fhir-resources.service';
 import { GroupsService } from '../groups/groups.service';
 import { ProjectsService } from '../projects/projects.service';
 import { TofLogger } from '../tof-logger';
+import { NonFhirResourcesService } from '../non-fhir-resources/non-fhir-resources.service';
+import { Project } from '../projects/project.schema';
+import { PipelineStage } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -17,16 +20,17 @@ export class AuthService {
         private readonly configService: ConfigService,
         private readonly groupsService: GroupsService,
         private readonly projectsService: ProjectsService,
-        private readonly conformanceService: ConformanceService
+        private readonly fhirResourceService: FhirResourcesService,
+        private readonly nonFhirResourceService: NonFhirResourcesService
     ) {
     }
 
 
-    public async getPermissionFilterBase(user: ITofUser = undefined, grant: 'read' | 'write' = 'read', targetId: string = '') : Promise<{}> {
+    public async getPermissionFilterBase(user: ITofUser = undefined, grant: 'read' | 'write' = 'read', targetId: string = '', isProject: boolean = false) : Promise<PipelineStage[]> {
 
 
         if (!this.configService.server.enableSecurity || user?.isAdmin) {
-            return {};
+            return [];
         }
 
         let userId = user?.user?.id;
@@ -49,33 +53,33 @@ export class AuthService {
 
         let orClauses: any[] = [
             // no permissions assigned -- everybody gets write
-            { "permissions.0": { $exists: false } },
+            isProject ? 
+                { "permissions.0": { $exists: false } } : 
+                { "projects.permissions.0": { $exists: false } },
 
             // "everyone" assigned overrides
-            {
-                "permissions": {
-                    $elemMatch: { type: "everyone", $or: grantClause }
-                }
-            }
+            isProject ? 
+                { "permissions": { $elemMatch: { type: "everyone", $or: grantClause } } } : 
+                { "projects.permissions": { $elemMatch: { type: "everyone", $or: grantClause } } }
         ];
 
         // check for user assignment if userId is provided
         if (userId) {
-            orClauses.push({
-                "permissions": {
-                    $elemMatch: { targetId: userId, type: "user", $or: grantClause }
-                }
-            });
+            orClauses.push(
+                isProject ? 
+                    { "permissions": { $elemMatch: { target: new ObjectId(userId), type: "User", $or: grantClause } } } :
+                    { "projects.permissions": { $elemMatch: { target: new ObjectId(userId), type: "User", $or: grantClause } } }
+            );
         }
 
 
         // check for group assignments if needed
         if (groupIds.length > 0) {
-            orClauses.push({
-                "permissions": {
-                    $elemMatch: { targetId: { $in: groupIds }, type: "group", $or: grantClause }
-                }
-            });
+            orClauses.push(
+                isProject ?
+                    { "permissions": { $elemMatch: { target: { $in: groupIds.map(g => new ObjectId(g)) }, type: "Group", $or: grantClause } } } :
+                    { "projects.permissions": { $elemMatch: { target: { $in: groupIds.map(g => new ObjectId(g)) }, type: "Group", $or: grantClause } } }
+                );
         }
 
 
@@ -96,22 +100,46 @@ export class AuthService {
             };
         }
 
-        return filter;
+        let pipeline = [];
+
+        if (!isProject) {
+            pipeline.push(
+                {
+                    $lookup: {
+                        from: "project",
+                        localField: "projects",
+                        foreignField: "_id",
+                        as: "projects",
+                    }
+                }
+            );
+        }
+    
+        pipeline.push({$match: filter});
+        
+        // console.log('pipeline:', JSON.stringify(pipeline));
+
+        return pipeline;
     }
 
 
 
 
-    public async userCanByType(user: ITofUser, targetId: string, type: 'project' | 'conformance', grant: 'read' | 'write'): Promise<boolean> {
+    public async userCanByType(user: ITofUser, targetId: string, type: 'project' | 'nonFhirResource' | 'fhirResource', grant: 'read' | 'write'): Promise<boolean> {
 
-
-        const service = type === 'conformance' ? this.conformanceService : this.projectsService;
+        const service = 
+            type === 'project' ? this.projectsService : 
+            type === 'nonFhirResource' ? this.nonFhirResourceService : 
+                this.fhirResourceService;
 
         return this.userCanByService(user, targetId, service, grant);
     }
 
-    public async userCanByService(user: ITofUser, targetId: string, dataService: IBaseDataService, grant: 'read' | 'write'): Promise<boolean> {
-        
+    public async userCanByService(user: ITofUser, targetId: string, dataService: IBaseDataService<unknown>, grant: 'read' | 'write'): Promise<boolean> {
+
+        // ProjectService is special case and doesn't need the additional lookup to join related permissions
+        const isProjectService = dataService.getModel().modelName === Project.name;
+
         if (!this.configService.server.enableSecurity || user?.isAdmin) {
             return true;
         }
@@ -125,10 +153,11 @@ export class AuthService {
             throw new BadRequestException("Invalid target provided");
         }
 
-        const filter = await this.getPermissionFilterBase(user, grant, targetId);
-        //console.log('filter:', JSON.stringify(filter));
-        const resCount = await dataService.count(filter);
-        //console.log(`Can ${grant} for user ${userId} count: ${resCount} -- ${targetId}`);
+        const pipeline = await this.getPermissionFilterBase(user, grant, targetId, isProjectService);
+        // console.log('pipeline:', JSON.stringify(pipeline));
+        const res = await dataService.getModel().aggregate(pipeline).count("count");
+        const resCount: number = res && res.length > 0 ? res[0]['count'] : 0;
+        // console.log(`${dataService.getModel().modelName} :: Can ${grant} for user ${userId} count: ${resCount} -- ${targetId}`);
 
         return resCount > 0;
     }
@@ -142,12 +171,20 @@ export class AuthService {
         return this.userCanByType(user, projectId, 'project', 'write');
     }
 
-    public async userCanReadConformance(user: ITofUser, conformanceId: string) {
-        return this.userCanByType(user, conformanceId, 'conformance', 'read');
+    public async userCanReadFhirResource(user: ITofUser, fhirResourceId: string) {
+        return this.userCanByType(user, fhirResourceId, 'fhirResource', 'read');
     }
 
-    public async userCanWriteConformance(user: ITofUser, conformanceId: string) {
-        return this.userCanByType(user, conformanceId, 'conformance', 'write');
+    public async userCanWriteFhirResource(user: ITofUser, fhirResourceId: string) {
+        return this.userCanByType(user, fhirResourceId, 'fhirResource', 'write');
+    }
+
+    public async userCanReadNonFhirResource(user: ITofUser, nonFhirResourceId: string) {
+        return this.userCanByType(user, nonFhirResourceId, 'nonFhirResource', 'read');
+    }
+
+    public async userCanWriteNonFhirResource(user: ITofUser, nonFhirResourceId: string) {
+        return this.userCanByType(user, nonFhirResourceId, 'nonFhirResource', 'write');
     }
 
 

@@ -22,7 +22,7 @@ import { getErrorString } from '../../../../../../libs/tof-lib/src/lib/helper';
 import { FhirReferenceModalComponent, ResourceSelection } from '../../fhir-edit/reference-modal/reference-modal.component';
 import { BaseComponent } from '../../base.component';
 import { debounceTime } from 'rxjs/operators';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 import {ImplementationGuide} from '@trifolia-fhir/stu3';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
@@ -34,7 +34,7 @@ import { IDomainResource } from '@trifolia-fhir/tof-lib';
 export class R4CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
   @Input() public capabilityStatement;
 
-  public conformance;
+  public fhirResource;
   public capabilityStatementId: string;
 
   public idChangedEvent = new Subject();
@@ -68,7 +68,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
 
     this.capabilityStatement = new CapabilityStatement({ meta: this.authService.getDefaultMeta() });
     this.capabilityStatement.date = this.capabilityStatement.date?this.capabilityStatement.date.substring(0, this.capabilityStatement.date.indexOf("T") ) : "";
-    this.conformance =  { resource: this.capabilityStatement, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.fhirResource =  { resource: this.capabilityStatement, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -199,15 +199,15 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
       return;
     }
 
-    this.csService.save(this.capabilityStatementId, this.conformance)
+    this.csService.save(this.capabilityStatementId, this.fhirResource)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.capabilityStatementId = conf.id;
             this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${conf.id}`]);
           } else {
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadCS(conf.resource);
             setTimeout(() => {
               this.message = '';
@@ -276,7 +276,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
   private  getCapabilityStatement(): Observable<CapabilityStatement> {
     this.capabilityStatementId = this.route.snapshot.paramMap.get('id');
     if (this.implementationGuide.fhirVersion && this.implementationGuide.fhirVersion.length > 0) {
-      this.conformance.resource.fhirVersion = this.implementationGuide.fhirVersion[0];
+      this.fhirResource.resource.fhirVersion = this.implementationGuide.fhirVersion[0];
       this.capabilityStatement.fhirVersion = this.implementationGuide.fhirVersion[0];
     }
     if (this.isFile) {
@@ -299,7 +299,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
               this.message = 'The specified capability statement either does not exist or was deleted';
               return;
             }
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadCS(conf.resource);
           },
           error: (err) => {
@@ -325,8 +325,8 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
   loadCS(newVal: IDomainResource) {
     this.capabilityStatement = new CapabilityStatement(newVal);
 
-    if (this.conformance) {
-      this.conformance.resource = this.capabilityStatement;
+    if (this.fhirResource) {
+      this.fhirResource.resource = this.capabilityStatement;
     }
 
     this.nameChanged();

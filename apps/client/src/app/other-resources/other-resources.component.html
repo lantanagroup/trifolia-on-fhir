@@ -14,7 +14,7 @@
           </select>
         </div>
 
-        <div class="mb-3" *ngIf="configService.project">
+        <div class="mb-3" *ngIf="configService.igContext">
           <label>Only show resources for the project (the context implementation guide)?</label>
           <select class="form-select" [(ngModel)]="ignoreContext">
             <option [ngValue]="false">Yes</option>

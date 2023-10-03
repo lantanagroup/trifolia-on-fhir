@@ -12,6 +12,7 @@
         "jwksUri": "AUTH_JWKSURI"
     },
     "database": {
-        "uri": "DATABASE_URI"
+        "uri": "DATABASE_URI",
+        "migrateAtStart": "DATABASE_MIGRATEATSTART"
     }
 }

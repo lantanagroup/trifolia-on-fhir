@@ -65,7 +65,6 @@ export class ChangeResourceIdModalComponent implements OnInit {
     const newId = this.newId;
     this.fhirService.changeResourceId(this.resourceType, this.originalId, newId)
       .subscribe(() => {
-       // if (this.resourceType === 'ImplementationGuide' && this.igId === this.configService.project.implementationGuideId) {
           // noinspection JSIgnoredPromiseFromCall
           const url = this.router.url;
           this.router.navigateByUrl('/',{skipLocationChange:true}).then(()=>{

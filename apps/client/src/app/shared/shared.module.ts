@@ -24,10 +24,10 @@ import {ManageService} from './manage.service';
 import {ModalService} from './modal.service';
 import { FshService } from './fsh.service';
 import {ProjectService} from './projects.service';
-import { ConformanceService } from './conformance.service';
+import { FhirResourceService } from './fhir-resource.service';
 import {HistoryService} from './history.service';
 import {SearchParameterService} from './search-parameter.service';
-import { ExamplesService } from './examples.service';
+import { NonFhirResourceService } from './non-fhir-resource.service';
 
 @NgModule({
   declarations: [],
@@ -59,8 +59,8 @@ import { ExamplesService } from './examples.service';
     ModalService,
     FshService,
     ProjectService,
-    ConformanceService,
-    ExamplesService,
+    FhirResourceService,
+    NonFhirResourceService,
     SearchParameterService,
     HistoryService
   ],

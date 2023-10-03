@@ -107,10 +107,6 @@ body.structure-definition div.sd-main .tab-content > div.tab-pane {
   height: 30px;
 }
 
-.disable-markdown .CodeMirror-line {
-  display: none;
-}
-
 .disable-markdown .editor-toolbar {
   display: none;
 }
@@ -172,17 +168,9 @@ button {
 }
 
 /*** ANGULAR-EDITOR ***/
-/*button.angular-editor-button[title='Insert Image'] {
+button.angular-editor-button[title='Insert Image'] {
   display: none;
 }
-
-#editor {
-  background-color: blue;
-}
-
-#editor:focus {
-  background-color: blueviolet;
-}*/
 
 .angular-editor-textarea[contenteditable=true] {
   background-color: white !important;
@@ -801,6 +789,8 @@ simplemde .editor-statusbar {
   min-height: 100px !important;
 }
 
+
+
 simplemde.is-invalid > .editor-toolbar {
   border: 1px solid red;
   border-bottom: inherit;
@@ -809,6 +799,12 @@ simplemde.is-invalid > .editor-toolbar {
 simplemde.is-invalid > .CodeMirror-wrap {
   border: 1px solid red;
   border-top: 1px solid #ddd;
+}
+
+.page .CodeMirror,
+.page .CodeMirror-scroll {
+  max-height: 1000px;
+  min-height: 400px !important;
 }
 
 .bulk-edit .CodeMirror,

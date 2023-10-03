@@ -245,7 +245,9 @@ export class MarkdownComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     setTimeout(() => {
-      this.simplemde.Instance.codemirror.refresh();
+      if (this.simplemde.Instance) {
+        this.simplemde.Instance.codemirror.refresh();
+      }
     }, 300);
   }
 }

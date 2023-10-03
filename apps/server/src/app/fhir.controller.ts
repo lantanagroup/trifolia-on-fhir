@@ -1,49 +1,36 @@
 import {HttpService} from '@nestjs/axios';
 import {
   BadRequestException,
-  Body,
   Controller,
-  Delete,
   Get,
   Header,
   Headers,
   HttpCode,
-  InternalServerErrorException,
   Param,
   Post,
-  Put,
   Query,
-  Res,
-  UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import {buildUrl, createOperationOutcome, findReferences, generateId, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import {Response} from 'express';
+import {findReferences, getR4Dependencies, getSTU3Dependencies} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {AuthGuard} from '@nestjs/passport';
 import {TofLogger} from './tof-logger';
-import {AxiosRequestConfig} from 'axios';
 import {ApiOAuth2, ApiOperation, ApiTags} from '@nestjs/swagger';
-import {FhirServerVersion, RequestHeaders, RequestMethod, RequestUrl, User} from './server.decorators';
+import {FhirServerVersion, RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
-import {Globals} from '../../../../libs/tof-lib/src/lib/globals';
-import {addToImplementationGuide, assertUserCanEdit, copyPermissions, createAuditEvent, parseFhirUrl} from './helper';
-import {Bundle, DomainResource, EntryComponent, Group, ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {ImplementationGuide as R4ImplementationGuide, OperationOutcome} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import {format as formatUrl, parse as parseUrl, UrlWithStringQuery} from 'url';
+import {ImplementationGuide as STU3ImplementationGuide} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
+import {ImplementationGuide as R4ImplementationGuide} from '../../../../libs/tof-lib/src/lib/r4/fhir';
 import type {ITofUser} from '../../../../libs/tof-lib/src/lib/tof-user';
-import PQueue from 'p-queue';
-import {IBundle, IImplementationGuide, IOperationOutcome, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {IBundle, IImplementationGuide, IStructureDefinition} from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import {ImplementationGuideController} from './implementation-guide.controller';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {ObjectId} from 'mongodb';
 
-import {ConformanceController} from './conformance/conformance.controller';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {AuthService} from './auth/auth.service';
-import {IUserSecurityInfo} from './base.controller';
-import {IConformance} from '@trifolia-fhir/models';
+
 
 
 export interface ProxyResponse {
@@ -56,11 +43,11 @@ export interface ProxyResponse {
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('FHIR Proxy')
 @ApiOAuth2([])
-export class FhirController extends ConformanceController {
+export class FhirController extends FhirResourcesController {
   protected readonly logger = new TofLogger(FhirController.name);
 
-  constructor(protected authService: AuthService, protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
-    super(conformanceService);
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected fhirResourceService: FhirResourcesService, protected configService: ConfigService) {
+    super(fhirResourceService);
   }
 
 
@@ -71,9 +58,9 @@ export class FhirController extends ConformanceController {
 
     let filter = { 'resource.resourceType': resourceType, 'resource.id': id};
     if (contextImplementationGuideId) {
-      filter['igIds'] = new ObjectId(contextImplementationGuideId);
+      filter['referencedBy.value'] = new ObjectId(contextImplementationGuideId);
     }
-    const results = await this.conformanceService.findOne(filter);
+    const results = await this.fhirResourceService.findOne(filter);
     if (results) {
       return false;
     }
@@ -95,9 +82,9 @@ export class FhirController extends ConformanceController {
 
     let filter = { 'resource.resourceType': resourceType, 'resource.id': currentId };
     if (resourceType !== 'ImplementationGuide' && contextImplementationGuideId) {
-      filter['igIds'] = new ObjectId(contextImplementationGuideId);
+      filter['referencedBy.value'] = new ObjectId(contextImplementationGuideId);
     }
-    const conf = await this.conformanceService.findOne(filter);
+    const conf = await this.fhirResourceService.findOne(filter);
     if (!conf || !conf.resource.id) {
       const msg = `No resource found for ${resourceType} with id ${currentId} `;
       this.logger.error(msg);
@@ -107,10 +94,10 @@ export class FhirController extends ConformanceController {
     // check if the resource can be changed
     await this.assertCanWriteById(user, conf.id);
 
-    const allResults = await this.conformanceService.findAll({ 'resource.resourceType': 'ImplementationGuide', 'references.value': conf.id });
+    const allResults = await this.fhirResourceService.findAll({ 'resource.resourceType': 'ImplementationGuide', 'references.value': conf.id });
 
-    const allResults1 = await this.conformanceService.findAll({ 'resource.resourceType': 'SearchParameter', 'resource.id': newId });
-    const results = allResults1.map(value => value.igIds);
+    const allResults1 = await this.fhirResourceService.findAll({ 'resource.resourceType': 'SearchParameter', 'resource.id': newId });
+    const results = allResults1.map(value => value.referencedBy);
     const allIgs = results.reduce((prev, curr) => {
       return prev.concat(curr);
     }, []);
@@ -119,7 +106,7 @@ export class FhirController extends ConformanceController {
       // check if all Ig-s can be changed
       this.assertCanWriteById(user, result.id);
       // check if the newId already exists for this resource type within the IG
-      const foundIg = allIgs.filter(ig => ig.toString() === result.id);
+      const foundIg = allIgs.filter(ig => ig.value.toString() === result.id);
       if (foundIg.length > 0) {
         const msg = `The new Id ${newId} is already used in other Igs.`;
         this.logger.error(msg);
@@ -156,12 +143,12 @@ export class FhirController extends ConformanceController {
     if(conf.resource['url']){
       conf.resource['url'] = conf.resource['url'].replace(currentId, newId);
     }
-    await this.conformanceService.updateOne(conf.id, conf);
+    await this.fhirResourceService.updateOne(conf.id, conf);
 
     // Persist the changes to the resources
 
     allResources.map((conf) => {
-      this.conformanceService.updateConformance(conf.id, conf);
+      this.fhirResourceService.updateFhirResource(conf.id, conf);
     });
 
 
@@ -658,7 +645,7 @@ export class FhirController extends ConformanceController {
     @Query('url') structureDefinitionUrl?: string,
     @Query('isLightweight') isLightweight = true) {
 
-    const ig = await this.conformanceService.findById(implementationGuideId);
+    const ig = await this.fhirResourceService.findById(implementationGuideId);
 
     let dependencies: string[];
 

@@ -25,8 +25,8 @@ import {UsersModule} from './users/users.module';
 import {ManageModule} from './manage/manage.module';
 import {GroupsModule} from './groups/groups.module';
 import {AuthModule} from './auth/auth.module';
-import {ConformanceModule} from './conformance/conformance.module';
-import {ExamplesModule} from './examples/examples.module';
+import {FhirResourcesModule} from './fhir-resources/fhir-resources.module';
+import {NonFhirResourcesModule} from './non-fhir-resources/non-fhir-resources.module';
 import {HistoryModule} from './history/history.module';
 import {AuditModule} from './audit/audit.module';
 
@@ -39,8 +39,8 @@ import {AuditModule} from './audit/audit.module';
     ManageModule,
     GroupsModule,
     AuthModule,
-    ConformanceModule,
-    ExamplesModule,
+    FhirResourcesModule,
+    NonFhirResourcesModule,
     HistoryModule,
     AuditModule
   ],

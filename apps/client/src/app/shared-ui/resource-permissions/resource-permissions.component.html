@@ -17,10 +17,10 @@
         <td>{{s.canRead ? 'Yes' : 'No'}}</td>
         <td>
           {{s.canWrite ? 'Yes' : 'No'}}
-          <i class="fas fa-times clickable" *ngIf="s.canWrite" title="Remove only write permissions for this group/user" (click)="removePermission(s.type, 'write', s.id); change.emit();"></i>
+          <i class="fas fa-times clickable" *ngIf="s.canWrite && canReadOrWrite(resource.permissions, 'write')" title="Remove only write permissions for this group/user" (click)="removePermission(s.type, 'write', s.id); change.emit();"></i>
         </td>
         <td>
-          <button type="button" class="btn btn-primary" title="Remove all permissions for this group/user" (click)="removePermission(s.type, 'read', s.id); change.emit();">
+          <button type="button" class="btn btn-primary" title="Remove all permissions for this group/user" *ngIf="canReadOrWrite(resource.permissions, 'write')" (click)="removePermission(s.type, 'read', s.id); change.emit();">
             <i class="fas fa-trash"></i>
           </button>
         </td>
@@ -47,56 +47,13 @@
     <ng-template #rt let-r="result" let-t="term">
       {{copyTypeaheadFormatter(r)}}
     </ng-template>
-
-    <div class="card" *ngIf="resource.resourceType === 'ImplementationGuide'">
-      <div class="card-header">Copy IG permissions</div>
-      <div class="card-body">
-        <p>Add permissions from this IG to resources referenced by the IG. This <em>does not</em> overwrite or remove permissions that already exist on the resources, it <em>adds</em> permissions from the IG that don't already exist.</p>
-      </div>
-      <button type="button" class="btn btn-primary" (click)="copyIgPermissions(); change.emit();">
-        <i class="fas fa-copy"></i> Copy
-      </button>
-    </div>
-
-    <div class="card" [attr.data-intro]="Globals.introText['resource-permissions.copy']">
-      <div class="card-header">Copy permissions to this resource</div>
-      <div class="card-body">
-        <p>Add permissions from a different resource to this resource. This <em>does not</em> overwrite or remove permissions that already exist on this resource, it <em>adds</em> permissions from the specified resource that don't already exist on this resource.</p>
-
-        <div class="mb-3">
-          <div class="input-group">
-            <select class="form-select" [(ngModel)]="copyResourceType" [attr.data-intro]="Globals.introText['resource-permissions.copy.resource-type']">
-              <option [ngValue]="undefined">SELECT</option>
-              <option *ngFor="let rt of resourceTypes" [ngValue]="rt.code">{{rt.code}}</option>
-            </select>
-            <input type="text" class="form-control"
-                   [(ngModel)]="copyResource"
-                   [disabled]="!copyResourceType"
-                   [ngbTypeahead]="copyTypeaheadSearch"
-                   [inputFormatter]="copyTypeaheadFormatter"
-                   [resultTemplate]="rt"
-                   [attr.data-intro]="Globals.introText['resource-permissions.copy.criteria']" />
-            <div class="input-group-btn">
-              <button type="button" class="btn btn-outline-primary" title="Use a more advanced search window to find the resource you would like to copy permissions from"
-                      (click)="selectCopyResource()" [attr.data-intro]="Globals.introText['resource-permissions.copy.select']">
-                <i class="fas fa-hand-pointer"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <button type="button" class="btn btn-primary" title="Copy the selected resource's permissions to this resource"
-              (click)="copyPermissions(); change.emit();"
-              [disabled]="!copyResource || !copyResource.resourceType"
-              [attr.data-intro]="Globals.introText['resource-permissions.copy.copy-btn']">
-        <i class="fas fa-copy"></i> Copy
-      </button>
-    </div>
+    
   </div>
 
-  <!-- Add Group -->
-  <div class="col-md-6">
+  
+  <div class="col-md-6" *ngIf="canReadOrWrite(resource.permissions, 'write')">
+
+    <!-- Add Group -->
     <div class="card">
       <div class="card-header">Add Group</div>
       <div class="card-body">
@@ -134,12 +91,12 @@
           <tr *ngFor="let g of foundGroups">
             <td>{{g.name}}</td>
             <td>
-              <button type="button" class="btn btn-primary" title="Add read/view permissions for this group" (click)="addPermission('group', 'read', g.id); change.emit();">
+              <button type="button" class="btn btn-primary" title="Add read/view permissions for this group" (click)="addPermission('Group', 'read', g.id); change.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
             <td>
-              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this group" (click)="addPermission('group', 'write', g.id); change.emit();">
+              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this group" (click)="addPermission('Group', 'write', g.id); change.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
@@ -182,12 +139,12 @@
             </td>
             <td>{{getUserEmail(u)}}</td>
             <td class="actions-column-1">
-              <button type="button" class="btn btn-primary" title="Add read/view permissions for this user" (click)="addPermission('user', 'read', u.id); change.emit();">
+              <button type="button" class="btn btn-primary" title="Add read/view permissions for this user" (click)="addPermission('User', 'read', u.id); change.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>
             <td class="actions-column-1">
-              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this user" (click)="addPermission('user', 'write', u.id); change.emit();">
+              <button type="button" class="btn btn-primary" title="Add write/edit permissions for this user" (click)="addPermission('User', 'write', u.id); change.emit();">
                 <i class="fas fa-plus"></i>
               </button>
             </td>

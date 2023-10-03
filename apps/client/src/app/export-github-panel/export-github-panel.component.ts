@@ -143,11 +143,11 @@ export class ExportGithubPanelComponent implements OnInit {
   }
 
   private async loadFiles() {
-    if (this.configService.project && this.configService.project.implementationGuideId) {
+    if (this.configService.igContext && this.configService.igContext.implementationGuideId) {
       let htmlPackage;
       try {
         htmlPackage = await this.exportService.exportHtml(<any>{
-          implementationGuideId: this.configService.project.implementationGuideId,
+          implementationGuideId: this.configService.igContext.implementationGuideId,
           includeIgPublisherJar: false,
           responseFormat: this.responseFormat
         }).toPromise();

@@ -47,22 +47,22 @@ export class CustomMenuComponent implements OnInit, OnChanges {
 
     if (this.configService.isFhirSTU3) {
       const stu3ImplementationGuide = <STU3ImplementationGuide> this.implementationGuide;
-      pageInfos = IgPageHelper.getSTU3PagesList([], stu3ImplementationGuide.page, stu3ImplementationGuide);
+      pageInfos = IgPageHelper.getSTU3PagesList([], null, stu3ImplementationGuide.page, stu3ImplementationGuide);
     } else if (this.configService.isFhirR4) {
       const r4ImplementationGuide = <R4ImplementationGuide> this.implementationGuide;
       if (r4ImplementationGuide.definition) {
-        pageInfos = IgPageHelper.getR4andR5PagesList([], r4ImplementationGuide.definition.page, r4ImplementationGuide);
+        pageInfos = IgPageHelper.getR4andR5PagesList([], null, r4ImplementationGuide.definition.page, r4ImplementationGuide);
       }
     } else if (this.configService.isFhirR5) {
       const r5ImplementationGuide = <R5ImplementationGuide> this.implementationGuide;
       if (r5ImplementationGuide.definition) {
-        pageInfos = IgPageHelper.getR4andR5PagesList([], r5ImplementationGuide.definition.page, r5ImplementationGuide);
+        pageInfos = IgPageHelper.getR4andR5PagesList([], null,  r5ImplementationGuide.definition.page, r5ImplementationGuide);
       }
     } else {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
 
-    this.customMenuValue = IgPageHelper.getMenuContent(pageInfos);
+    this.customMenuValue = IgPageHelper.getMenuContent(null);
   }
 
   ngOnChanges(changes: SimpleChanges) {

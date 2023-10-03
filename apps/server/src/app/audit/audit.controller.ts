@@ -4,7 +4,7 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {BaseDataController} from '../base/base-data.controller';
 import {AuditDocument} from './audit.schema';
 
-@Controller('api/audit')
+@Controller('api/audits')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Audit')
 @ApiOAuth2([])

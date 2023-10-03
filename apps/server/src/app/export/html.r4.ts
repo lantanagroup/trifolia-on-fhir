@@ -73,12 +73,13 @@ export class R4HtmlExporter extends HtmlExporter {
     if (!this.r4ImplementationGuide.definition.page) {
       this.r4ImplementationGuide.definition.page = new ImplementationGuidePageComponent();
       this.r4ImplementationGuide.definition.page.setTitle('Home Page');
-      this.r4ImplementationGuide.definition.page.fileName = 'index.md';
-      this.r4ImplementationGuide.definition.page.reuseDescription = true;
+     // this.r4ImplementationGuide.definition.page.fileName = 'index.md';
+      this.r4ImplementationGuide.definition.page.nameUrl = 'index.html';
+      //this.r4ImplementationGuide.definition.page.reuseDescription = true;
       this.r4ImplementationGuide.definition.page.generation = 'markdown';
     }
 
-    this.pageInfos = IgPageHelper.getR4andR5PagesList([], this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
+    this.pageInfos = IgPageHelper.getR4andR5PagesList([], this.pages,this.r4ImplementationGuide.definition ? this.r4ImplementationGuide.definition.page : null, this.r4ImplementationGuide);
   }
 
   protected prepareImplementationGuide(): IImplementationGuide {

@@ -78,7 +78,7 @@ export class RawResourceComponent {
           return;
         }
 
-        Object.assign(this.resource, obj);
+        this.resource = obj;
         this.resourceChange.emit(this.resource);
       } catch (ex) {
         alert('Error parsing JSON as FHIR');
@@ -110,7 +110,7 @@ export class RawResourceComponent {
           return;
         }
 
-        Object.assign(this.resource, obj);
+        this.resource = obj;
         this.resourceChange.emit(this.resource);
       } catch (ex) {
         alert('Error parsing XML as FHIR');

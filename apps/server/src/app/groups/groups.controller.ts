@@ -1,4 +1,4 @@
-import {Post} from '@nestjs/common';
+import {Post, Request} from '@nestjs/common';
 import {InjectConnection} from '@nestjs/mongoose';
 import {ApiTags, ApiOAuth2, ApiOperation} from '@nestjs/swagger';
 import {Connection} from 'mongoose';
@@ -14,7 +14,7 @@ import type {IGroup} from '@trifolia-fhir/models';
 import { ObjectId } from 'mongodb';
 
 
-@Controller('api/group')
+@Controller('api/groups')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Group')
 @ApiOAuth2([])
@@ -49,7 +49,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
   @Post('managing')
   public async createManagingGroup(@User() userProfile: ITofUser, @Body() newGroup: IGroup) {
 
-    console.log(JSON.stringify(userProfile.user));
+    // console.log(JSON.stringify(userProfile.user));
 
     // move data from dto to entity
     const persistedGroup = new Group();
@@ -107,6 +107,29 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     return super.update(id, persistedGroup);
   }
 
+  @Get('info')
+  public async getGroupInfo(@User() user, @Request() req?: any): Promise<IGroup[]> {
+    if (!req) {
+      return null;
+    }
+    const query = req.query;
+
+    if (query && '_id' in query) {
+      const ids = (query['_id'] || '').split(',').map(id => { return { _id: new ObjectId(id) } });
+      const idFilter = { $or: ids };
+      let projection = {};
+      if (!user.isAdmin) {
+        projection = {
+          managingUser: 0,
+          members: 0
+        };
+      }
+
+      return this.groupsService.findAll(idFilter, null, projection);
+    }
+    return null;
+  }
+
 
   @Get('membership')
   public async getMembership(@User() userProfile) {
@@ -119,16 +142,10 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     description: 'Gets the groups that the currently logged-in user is an admin/manager of'
   })
   @Get('managing')
-  public async getManaging(@User() userProfile) {
+  public async getManaging(@User() userProfile): Promise<IGroup[]> {
     if (!userProfile) return null;
 
-    const results = await this.groupsService.findAll({ 'managingUser': userProfile.user.id }, ["managingUser", "members"]);
-    if (results) {
-      results.forEach(result => console.log(result));
-    }
-
-    return results;
-
+    return this.groupsService.findAll({ 'managingUser': userProfile.user.id }, ["managingUser", "members"]);
   }
 
 
@@ -139,12 +156,10 @@ export class GroupsController extends BaseDataController<GroupDocument> {
   @Delete('managing/:id')
   public async deleteManagingGroup(@User() userProfile: ITofUser, @Param('id') id: string) {
 
-    console.log(JSON.stringify(userProfile));
     // get group first
     const group = await this.groupsService.findById(id);
-    console.log(JSON.stringify(group));
 
-    if (group.managingUser.toString() !== userProfile.user.id) {
+    if (!userProfile.isAdmin && group.managingUser.toString() !== userProfile.user.id) {
       throw new UnauthorizedException();
     }
 

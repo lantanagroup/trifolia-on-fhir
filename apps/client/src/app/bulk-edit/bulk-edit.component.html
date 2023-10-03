@@ -17,12 +17,6 @@
           <div class="btn-group" aria-label="Profile Fields">
             <input type="checkbox" class="btn-check" id="btnProfileDescription" [(ngModel)]="enabledFields.profileDescription" autocomplete="off">
             <label class="btn btn-outline-primary" for="btnProfileDescription">Description</label>
-
-            <input type="checkbox" class="btn-check" id="btnProfileIntro" [(ngModel)]="enabledFields.profileIntro" autocomplete="off">
-            <label class="btn btn-outline-primary" for="btnProfileIntro">Intro</label>
-
-            <input type="checkbox" class="btn-check" id="btnProfileNotes" [(ngModel)]="enabledFields.profileNotes" autocomplete="off">
-            <label class="btn btn-outline-primary" for="btnProfileNotes">Notes</label>
           </div>
         </div>
 
@@ -35,18 +29,6 @@
               <label>Description</label>
               <pre *ngIf="!editFields[profile.id + 'description']" (click)="editFields[profile.id + 'description'] = true">{{profile.description}}</pre>
               <trifolia-fhir-markdown [(value)]="profile.description" *ngIf="editFields[profile.id + 'description']" (valueChange)="changedProfiles[profile.id] = true"></trifolia-fhir-markdown>
-            </div>
-
-            <div class="mb-3" *ngIf="enabledFields.profileIntro">
-              <label>Intro</label>
-              <pre *ngIf="!editFields[profile.id + 'intro']" (click)="editFields[profile.id + 'intro'] = true">{{profile.intro}}</pre>
-              <trifolia-fhir-markdown [(value)]="profile.intro" *ngIf="editFields[profile.id + 'intro']" (valueChange)="changedProfiles[profile.id] = true"></trifolia-fhir-markdown>
-            </div>
-
-            <div class="mb-3" *ngIf="enabledFields.profileNotes">
-              <label>Notes</label>
-              <pre *ngIf="!editFields[profile.id + 'notes']" (click)="editFields[profile.id + 'notes'] = true">{{profile.notes}}</pre>
-              <trifolia-fhir-markdown [(value)]="profile.notes" *ngIf="editFields[profile.id + 'notes']" (valueChange)="changedProfiles[profile.id] = true"></trifolia-fhir-markdown>
             </div>
           </div>
         </div>

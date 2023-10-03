@@ -1,18 +1,17 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Coding} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import {FhirDisplayPipe} from '../../shared-ui/fhir-display-pipe';
-import {HttpClient} from '@angular/common/http';
-import {FhirService} from '../../shared/fhir.service';
-import {Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
-import {ConfigService} from '../../shared/config.service';
-import {ConformanceService} from '../../shared/conformance.service';
-import {IConformance} from '@trifolia-fhir/models';
-import {IValueSet, Paginated} from '@trifolia-fhir/tof-lib';
+import { Component, Input, OnInit } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Coding, EntryComponent, StructureDefinition } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { FhirDisplayPipe } from '../../shared-ui/fhir-display-pipe';
+import { HttpClient } from '@angular/common/http';
+import { FhirService } from '../../shared/fhir.service';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ConfigService } from '../../shared/config.service';
+import { FhirResourceService } from '../../shared/fhir-resource.service';
+import { IFhirResource, IProjectResourceReference } from '@trifolia-fhir/models';
+import { IValueSet, Paginated } from '@trifolia-fhir/tof-lib';
 import {ValueSetService} from '../../shared/value-set.service';
 import { CookieService } from 'ngx-cookie-service';
-
 
 export interface ResourceSelection {
   projectResourceId?: string;
@@ -44,7 +43,7 @@ export class FhirReferenceModalComponent implements OnInit {
   public nameSearch?: string;
   public titleSearch?: string;
   public selected: ResourceSelection[] = [];
-  public results?: IConformance[];
+  public results?: IFhirResource[];
   public valueSetResults?: IValueSet[];
   public total: number;
   public currentPage: number = 1;
@@ -65,7 +64,7 @@ export class FhirReferenceModalComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public configService: ConfigService,
     public valueSetService: ValueSetService,
-    protected conformanceService: ConformanceService,
+    protected fhirResourceService: FhirResourceService,
     private cookieService: CookieService,
     private http: HttpClient,
     private fhirService: FhirService) {
@@ -106,11 +105,11 @@ export class FhirReferenceModalComponent implements OnInit {
     return true;
   }
 
-  public isSelected(con: IConformance) {
+  public isSelected(con: IFhirResource) {
     return !!this.selected.find((selected) => selected.projectResourceId === con.resource.id);
   }
 
-  public setSelected(conf: IConformance, isSelected) {
+  public setSelected(conf: IFhirResource, isSelected) {
     const found = this.selected.find((selected) => selected.projectResourceId === conf.id);
 
     if (found && !isSelected) {
@@ -128,7 +127,7 @@ export class FhirReferenceModalComponent implements OnInit {
     }
   }
 
-  public select(conf?: IConformance) {
+  public select(conf?: IFhirResource) {
     if (conf) {
       this.activeModal.close(<ResourceSelection>{
         projectResourceId: conf.id,
@@ -159,23 +158,29 @@ export class FhirReferenceModalComponent implements OnInit {
     this.searchLocation = event.nextId;
     this.criteriaChanged();
   }
+  
+
+  getImplementationGuideDisplay(referencedBy: IProjectResourceReference[]): string {
+    return (referencedBy || []).map(r => r.value).join(', ');
+  }
 
   private searchServer() {
 
     this.searching = true;
 
     let igId: string;
-    if (!this.ignoreContext && this.configService.project && this.configService.project.implementationGuideId) {
-      igId = this.configService.project.implementationGuideId;
+    if (!this.ignoreContext && this.configService.igContext && this.configService.igContext.implementationGuideId) {
+      igId = this.configService.igContext.implementationGuideId;
     }
 
 
-    this.conformanceService.search(this.currentPage, 'name', this.configService.fhirVersion, igId, this.resourceType,
+    this.fhirResourceService.search(this.currentPage, 'name', this.configService.fhirVersion, igId, this.resourceType,
       this.nameSearch ? this.nameSearch : null,
        this.titleSearch ? this.titleSearch : null,
       this.idSearch
     ).subscribe({
-      next: (res: Paginated<IConformance>) => {
+      next: (res: Paginated<IFhirResource>) => {
+
         this.results = res.results;
         this.total = res.total;
         this.pageSize = res.itemsPerPage;

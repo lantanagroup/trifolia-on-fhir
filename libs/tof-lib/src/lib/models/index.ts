@@ -1,8 +1,11 @@
 import type { IDomainResource } from '../fhirInterfaces';
+import { NonFhirResourceType } from './non-fhir-resource-type';
+
+export * from './non-fhir-resource-type';
 
 export interface IPermission {
-  targetId?: string;    // no targetId means "everyone"
-  type: 'user'|'group'|'everyone';
+  target?: string|IUser|IGroup;
+  type: 'User'|'Group'|'everyone';
   grant: 'read'|'write';
 }
 
@@ -11,19 +14,26 @@ export interface IProjectContributor {
   name?: string;
 }
 
-export interface IProject {
+export interface IBaseEntity {
   id?: string;
+}
+
+export interface IBaseEntityReferences extends IBaseEntity {
+  referencedBy?: IProjectResourceReference[];
+  references?: IProjectResourceReference[];
+}
+
+export interface IProject extends IBaseEntityReferences {
   migratedFrom?: string;
   name: string;
   author: string;
   contributors?: IProjectContributor[];
   fhirVersion: 'stu3'|'r4'|'r5';
   permissions?: IPermission[];
-  igs: IConformance[];
+  isDeleted: boolean;
 }
 
-export interface IUser {
-  id?: string;
+export interface IUser extends IBaseEntity {
   authId?: string[];
   email?: string;
   phone?: string;
@@ -32,8 +42,7 @@ export interface IUser {
   readonly name: string;
 }
 
-export interface IGroup {
-  id?: string;
+export interface IGroup extends IBaseEntity {
   migratedFrom?: string;
   name?: string;
   description?: string;
@@ -41,8 +50,7 @@ export interface IGroup {
   members?: IUser[];
 }
 
-export interface IProjectResource {
-  id?: string;
+export interface IProjectResource extends IBaseEntityReferences {
   name?: string;
   description?: string;
   projects?: IProject[];
@@ -50,42 +58,36 @@ export interface IProjectResource {
 
   versionId: number;
   lastUpdated: Date;
-  permissions?: IPermission[];
+  isDeleted?: boolean;
 }
 
 export interface IProjectResourceReference {
-  value: IConformance|IExample|string;
-  valueType: 'Conformance'|'Example';
+  value: IFhirResource|INonFhirResource|string|IProject;
+  valueType: 'FhirResource'|'NonFhirResource'|'Project';
 }
 
 export interface IProjectResourceReferenceMap {
   [key: string]: IProjectResourceReference;
 }
 
-export interface IConformance extends IProjectResource {
-  //groupingId?: string;    // from ImplementationGuide.definition.grouping. Not used in STU3
+export interface IFhirResource  extends IProjectResource {
   fhirVersion: 'stu3'|'r4'|'r5';
-  igIds?: string[];
-  references?: IProjectResourceReference[];
   resource: IDomainResource;
 }
 
-export interface IExample extends IProjectResource {
-  fhirVersion?: 'stu3'|'r4'|'r5';
-  content?: IDomainResource|any;  // Ideally this would be a resource OR a string, but not sure how we would populate IG.definition.resource.reference
-  exampleFor?: string;    // StructureDefinition in which this is a profile for
-  igIds?: string[];
+export interface INonFhirResource extends IProjectResource {
+  type: NonFhirResourceType;
+  content?: any;
 }
+
 
 export interface IHistory extends IProjectResource {
-  fhirVersion?: 'stu3'|'r4'|'r5';
   content?: IDomainResource|any;
-  targetId: string;
-  type: 'conformance'|'example';
+  current:  IProjectResourceReference;
 }
 
-export interface IAudit {
-  _id?: string;
+
+export interface IAudit extends IBaseEntity {
   action: 'read'|'update'|'delete'|'create',
   timestamp: Date,
   who: string;

@@ -664,11 +664,11 @@
               </ng-template>
             </li>
             <li ngbNavItem="add">
-              <ng-template ngbNavLink>
+              <a ngbNavLink>
                 <button type="button" class="btn btn-primary" title="Add a REST entry" (click)="addRestEntry(restTabSet)">
                   Add
                 </button>
-              </ng-template>
+              </a>
             </li>
           </ul>
           <div [ngbNavOutlet]="restTabSet" class="mt-2"></div>
@@ -893,12 +893,12 @@
                 </div>
               </ng-template>
             </li>
-            <li ngbNavItem [disabled]="true">
-              <ng-template ngbNavLink>
+            <li ngbNavItem>
+              <a ngbNavLink>
                 <button type="button" class="btn btn-primary" title="Add a messaging entry"
                         (click)="addMessagingEntry(messagingTabSet)">Add
                 </button>
-              </ng-template>
+              </a>
               <ng-template ngbNavContent></ng-template>
             </li>
           </ul>
@@ -981,16 +981,6 @@
       </ng-template>
     </li>
 
-    <!-- Permissions -->
-    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
-      <a ngbNavLink>
-        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i>
-      </a>
-      <ng-template ngbNavContent>
-        <trifolia-fhir-resource-permissions [resource]="conformance"></trifolia-fhir-resource-permissions>
-      </ng-template>
-    </li>
-
     <!-- RAW -->
     <li ngbNavItem="raw">
       <a ngbNavLink>RAW</a>
@@ -1003,7 +993,7 @@
     <li ngbNavItem="history" *ngIf="!isNew">
       <a ngbNavLink>History</a>
       <ng-template ngbNavContent>
-        <app-resource-history  [resource]="conformance" (resourceChange) = "capabilityStatement = $event; conformance.resource = $event;"></app-resource-history>
+        <app-resource-history  [resource]="fhirResource" (resourceChange) = "capabilityStatement = $event; fhirResource.resource = $event;"></app-resource-history>
       </ng-template>
     </li>
   </ul>
@@ -1012,7 +1002,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance) || (isNew && !isIdUnique)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(fhirResource) || (isNew && !isIdUnique)">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

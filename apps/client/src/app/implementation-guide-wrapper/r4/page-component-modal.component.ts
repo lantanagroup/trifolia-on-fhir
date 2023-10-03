@@ -1,15 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {
-  Binary,
-  Extension,
   ImplementationGuide,
   ImplementationGuidePageComponent
-} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
-import {getImplementationGuideMediaReferences, MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
+} from '@trifolia-fhir/r4';
+import {getImplementationGuideMediaReferences, IImplementationGuide, MediaReference} from '@trifolia-fhir/tof-lib';
 import {Observable} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
+import {IFhirResource, IProjectResourceReference, NonFhirResourceType, Page} from '@trifolia-fhir/models';
+import {NonFhirResourceService} from '../../shared/non-fhir-resource.service';
 
 @Component({
   templateUrl: './page-component-modal.component.html',
@@ -18,22 +17,19 @@ import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators'
 export class PageComponentModalComponent implements OnInit {
   public inputPage: ImplementationGuidePageComponent;
   public page: ImplementationGuidePageComponent;
+  public fhirResource: IFhirResource;
   public implementationGuide: ImplementationGuide;
+  public implementationGuideId: string;
   public level: number;
-  public rootPage: boolean;
   public pageNavMenus: string[];
+  public resource:  Page;
 
-  constructor(public activeModal: NgbActiveModal) {
+  constructor(public activeModal: NgbActiveModal, protected nonFhirResourceService: NonFhirResourceService) {
 
-  }
-
-  public get isRootPageValid() {
-    if (!this.rootPage) return true;
-    return this.page.fileName === 'index' + this.page.getExtension();
   }
 
   public getMediaReferences(): MediaReference[] {
-    return getImplementationGuideMediaReferences('r4', this.implementationGuide);
+    return getImplementationGuideMediaReferences('r4', <ImplementationGuide>this.fhirResource.resource);
   }
 
   public setPage(value: ImplementationGuidePageComponent) {
@@ -41,27 +37,53 @@ export class PageComponentModalComponent implements OnInit {
     this.page = new ImplementationGuidePageComponent(this.inputPage);
   }
 
-  public get nameType(): 'Url'|'Reference' {
-    if (this.page.hasOwnProperty('nameReference')) {
-      return 'Reference';
-    } else if (this.page.hasOwnProperty('nameUrl')) {
-      return 'Url';
+  public setResource(value: Page) {
+    this.resource = value;
+  }
+
+  public get contentMarkdown() {
+    return this.resource["content"];
+  }
+
+
+  public set contentMarkdown(value: string) {
+    if(!this.resource){
+      this.resource = new Page();
+      let name = this.inputPage.nameUrl ?? this.inputPage.nameReference?.reference;
+      this.resource["name"] = name.slice(0, name.indexOf("."));
+    }
+    this.resource["content"] = value;
+  }
+
+  public get navMenu() {
+    return this.resource["navMenu"];
+  }
+
+
+  public set navMenu(value: string) {
+    if(!this.resource){
+      let name = this.inputPage.nameUrl ?? this.inputPage.nameReference?.reference;
+      this.resource["name"] = name.slice(0, name.indexOf("."));
+    }
+    this.resource["navMenu"] = value;
+  }
+
+  public get reuseDescription() {
+    return this.resource["reuseDescription"];
+  }
+
+
+  public set reuseDescription(value: boolean) {
+    if(!this.resource){
+      let name = this.inputPage.nameUrl ?? this.inputPage.nameReference?.reference;
+      this.resource["name"] = name.slice(0, name.indexOf("."));
+    }
+    this.resource["reuseDescription"] = value;
+    if(value) {
+      this.resource["content"] = "";
     }
   }
 
-  public set nameType(value: 'Url'|'Reference') {
-    if (this.nameType === value) {
-      return;
-    }
-
-    if (this.nameType === 'Reference' && value === 'Url') {
-      delete this.page.nameReference;
-      this.page.nameUrl = '';
-    } else if (this.nameType === 'Url' && value === 'Reference') {
-      delete this.page.nameUrl;
-      this.page.nameReference = { reference: '', display: '' };
-    }
-  }
 
   pageNavMenuSearch = (text$: Observable<string>) =>
     text$.pipe(
@@ -76,14 +98,14 @@ export class PageComponentModalComponent implements OnInit {
 
     reader.onload = (e: any) => {
       const result = e.target.result;
-      this.page.contentMarkdown = result.substring(5 + file.type.length + 8);
+      this.contentMarkdown = result.substring(5 + file.type.length + 8);
     };
 
     reader.readAsDataURL(file);
   }
 
   ok() {
-    this.activeModal.close(this.page);
+      this.activeModal.close();
   }
 
   ngOnInit() {
@@ -92,14 +114,14 @@ export class PageComponentModalComponent implements OnInit {
       allPages.push(parent);
       (parent.page || []).forEach(p => getPages(p));
     };
-
+    this.implementationGuide = <ImplementationGuide>this.fhirResource.resource
     if (this.implementationGuide.definition && this.implementationGuide.definition.page) {
       getPages(this.implementationGuide.definition.page);
     }
 
     this.pageNavMenus = allPages
-      .filter(p => !!p.navMenu)
-      .map(p => p.navMenu)
+      .filter(p => !!this.navMenu)
+      .map(p => this.navMenu)
       .reduce<string[]>((prev, curr) => {
         if (prev.indexOf(curr) < 0) prev.push(curr);
         return prev;

@@ -15,7 +15,7 @@ import { AuthService } from '../shared/auth.service';
 import { BaseComponent } from '../base.component';
 import { debounceTime } from 'rxjs/operators';
 import { firstValueFrom, Subject } from 'rxjs';
-import type { IConformance } from '@trifolia-fhir/models';
+import type { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
 
@@ -25,7 +25,7 @@ import type { IDomainResource } from '@trifolia-fhir/tof-lib';
   styleUrls: ['./valueset.component.css']
 })
 export class ValuesetComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
-  public conformance;
+  public fhirResource;
   public valueSet: ValueSet;
   public message: string;
   public validation: any;
@@ -56,7 +56,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
 
     this.valueSet = new ValueSet({ meta: this.authService.getDefaultMeta() });
 
-    this.conformance = { resource: this.valueSet, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.fhirResource = { resource: this.valueSet, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -207,9 +207,9 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
       return;
     }
 
-    this.valueSetService.save(this.valueSetId, this.conformance)
+    this.valueSetService.save(this.valueSetId, this.fhirResource)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.valueSetId = conf.id;
@@ -246,13 +246,13 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
 
       this.valueSetService.getValueSet(this.valueSetId)
         .subscribe({
-          next: (conf: IConformance) => {
+          next: (conf: IFhirResource) => {
             if (!conf || !conf.resource || conf.resource.resourceType !== 'ValueSet') {
               this.message = 'The specified code system either does not exist or was deleted';
               return;
             }
 
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadVS(conf.resource);
           },
           error: (err) => {
@@ -267,8 +267,8 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
   public loadVS(newVal: IDomainResource) {
     this.valueSet = new ValueSet(newVal);
 
-    if (this.conformance) {
-      this.conformance.resource = this.valueSet;
+    if (this.fhirResource) {
+      this.fhirResource.resource = this.valueSet;
     }
 
     this.nameChanged();

@@ -266,21 +266,12 @@
       </ng-template>
     </li>
 
-    <!-- Permissions -->
-    <li ngbNavItem>
-      <a ngbNavLink>Permissions</a>
-      <ng-template ngbNavContent>
-        <trifolia-fhir-resource-permissions [resource]="conformance"
-          (change)="igChanging.emit(true)"></trifolia-fhir-resource-permissions>
-      </ng-template>
-    </li>
-
     <!-- Validation -->
     <li ngbNavItem="validation">
-      <ng-template ngbNavLink>
-        <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> <span
-          *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
-      </ng-template>
+      <a ngbNavLink>
+        <span [attr.data-intro]="Globals.introText['resource.validation-tab']">Validation</span> 
+        <span *ngIf="validation && validation.messages && validation.messages.length > 0">({{validation.messages.length}})</span>
+      </a>
       <ng-template ngbNavContent>
         <app-validation-results [results]="validation"></app-validation-results>
       </ng-template>
@@ -299,7 +290,7 @@
   <footer class="footer">
     <div class="btn-group">
       <button type="button" class="btn btn-primary" (click)="save()"
-        [disabled]="(conformance && !canEdit(conformance)) || wrongDateFormat || (isNew && !isIdUnique) || (!searchParameter.expression && searchParameter.status === 'active')">
+        [disabled]="(fhirResource && !canEdit(fhirResource)) || wrongDateFormat || (isNew && !isIdUnique) || (!searchParameter.expression && searchParameter.status === 'active')">
         Save
       </button>
       <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>

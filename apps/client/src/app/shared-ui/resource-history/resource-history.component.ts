@@ -1,20 +1,20 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {getErrorString} from '../../../../../../libs/tof-lib/src/lib/helper';
-import {IDomainResource} from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IConformance, IExample} from '@trifolia-fhir/models';
+import {AfterContentChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {type IDomainResource, getErrorString, Paginated} from '@trifolia-fhir/tof-lib';
+import type {IFhirResource, IHistory, INonFhirResource} from '@trifolia-fhir/models';
 import {HistoryService} from '../../shared/history.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-resource-history',
   templateUrl: './resource-history.component.html',
   styleUrls: ['./resource-history.component.css']
 })
-export class ResourceHistoryComponent implements OnInit {
-  @Input() public resource: IConformance | IExample;
+export class ResourceHistoryComponent implements OnInit, AfterContentChecked {
+  @Input() public resource: IFhirResource | INonFhirResource;
   @Output() public resourceChange = new EventEmitter<any>();
   @Output() public change: EventEmitter<void> = new EventEmitter<void>();
 
-  public historyBundle;
+  public historyBundle: Paginated<IHistory>;
   public message: string;
   public leftResource: any;
   public rightResource: any;
@@ -22,8 +22,12 @@ export class ResourceHistoryComponent implements OnInit {
   public page = 1;
   public domainResource: IDomainResource;
 
-  constructor(private historyService: HistoryService) {
+  public currentVersion: number;
+  public initialized = false;
 
+  constructor(
+    private historyService: HistoryService
+    ) {
   }
 
   public getActionDisplay(entry) {
@@ -57,7 +61,6 @@ export class ResourceHistoryComponent implements OnInit {
     this.resourceChange.emit(resource1);
     this.domainResource = resource1;
     this.change.emit();
-
   }
 
   public async getHistory() {
@@ -65,50 +68,69 @@ export class ResourceHistoryComponent implements OnInit {
       let resourceType = "";
       try {
         if(this.resource.hasOwnProperty("resource")){
-          let res =  <IConformance>this.resource;
+          let res =  <IFhirResource>this.resource;
           this.domainResource = res.resource;
-          resourceType = "conformance";
+          resourceType = "FhirResource";
         }
         else if(this.resource.hasOwnProperty("content")){
-          let res =  <IExample>this.resource;
+          let res =  <INonFhirResource>this.resource;
           this.domainResource = res.content;
-          resourceType = "example";
+          resourceType = "NonFhirResource";
         }
 
-        await this.historyService.getHistory(resourceType, this.resource.id, this.page).then((results) =>  {
-          this.historyBundle = results;
-        }).catch((err) => console.log(err));
 
-        if (this.historyBundle && this.historyBundle && this.historyBundle.results.length > 0) {
-          if (this.leftResource) {
-            const foundLeft = this.historyBundle.results.find(e => e.versionId === this.leftResource.meta.versionId);
+        this.historyBundle = await firstValueFrom(this.historyService.getHistory(resourceType, this.resource.id, this.page));
 
-            if (foundLeft) {
-              this.leftResource = foundLeft.content;
-            }
-          }
-
-          if (this.rightResource) {
-            const foundRight = this.historyBundle.results.find(e => e.versionId === this.rightResource.meta.versionId);
-
-            if (foundRight) {
-              this.rightResource = foundRight.content;
-            }
-          }
-        }
       } catch (ex) {
         this.message = getErrorString(ex);
       }
     }
   }
 
-  async ngOnInit() {
+  private _leftVersionId: number;
+  public get leftVersionId(): number {
+    return this._leftVersionId;
+  }
+  public set leftVersionId(value: number) {
+    this._leftVersionId = value;
+    this.leftResource = this.getVersion(value);
+  }
+
+  private _rightVersionId: number;
+  public get rightVersionId(): number {
+    return this._rightVersionId;
+  }
+  public set rightVersionId(value: number) {
+    this._rightVersionId = value;
+    this.rightResource = this.getVersion(value);
+  }
+
+  public getVersion(versionId: number) {
+    return this.historyBundle.results.find(e => e.versionId === versionId);
+  }
+
+
+  async ngAfterContentChecked() {
+    if (this.initialized && this.resource.versionId !== this.currentVersion) {
+      await this.refreshHistory();
+    }
+  }
+
+  private async refreshHistory() {
+
+    this.currentVersion = this.resource.versionId;
     await this.getHistory();
 
-    // Default the left and right selection to the two most recent versions
-    if (this.historyBundle  && this.historyBundle.results.length > 2) {
-      this.leftResource = this.historyBundle.results[0].content;
-      this.rightResource = this.historyBundle.results[1].content;
+    if (this.historyBundle && this.historyBundle.results.length > 1) {
+      this.leftVersionId = this.historyBundle.results[0]?.versionId;
+      this.rightVersionId = this.historyBundle.results[1]?.versionId;
     }
+  }
+
+  async ngOnInit() {
+
+    await this.refreshHistory();
+
+    this.initialized = true;
   }
 }
