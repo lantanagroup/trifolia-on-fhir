@@ -19,6 +19,7 @@ import { ImplementationGuideService } from './shared/implementation-guide.servic
 import { IFhirResource, IProject } from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
 import { ProjectService } from './shared/projects.service';
+import { BaseComponent } from './base.component';
 
 declare let gtag: Function;
 
@@ -27,7 +28,7 @@ declare let gtag: Function;
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent extends BaseComponent implements OnInit {
   public person: Practitioner;
   public initialized = false;
   public statusMessage: string;
@@ -48,6 +49,9 @@ export class AppComponent implements OnInit {
     private cookieService: CookieService,
     private socketService: SocketService,
     private cdr: ChangeDetectorRef) {
+      
+    super(configService, authService);
+      
     this.router.events.subscribe(async (event) => {
       this.navbarCollapse.nativeElement.className = 'navbar-collapse collapse';
       if (event instanceof ActivationStart && event.snapshot.root.firstChild) {

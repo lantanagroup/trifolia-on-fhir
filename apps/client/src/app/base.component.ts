@@ -23,7 +23,7 @@ export class BaseComponent {
     this.configService.updateIsChanged(this.isDirty);
   }
 
-  private canReadOrWrite(permissions: IPermission[], permission: 'read'|'write'): boolean {
+  protected canReadOrWrite(permissions: IPermission[], permission: 'read'|'write'): boolean {
     const foundEveryone = findPermission(permissions, 'everyone', permission);
     const foundUser = findPermission(permissions, 'User', permission, this.authService.user.id);
     const foundGroups = this.authService.groups.filter((group) => {
@@ -33,7 +33,7 @@ export class BaseComponent {
     return foundEveryone || foundUser || foundGroups;
   }
 
-  private canReadOrWriteResource(resource: IProjectResource, permission: 'read'|'write'): boolean {
+  protected canReadOrWriteResource(resource: IProjectResource, permission: 'read'|'write'): boolean {
     // Security is not enabled
     if (!this.configService.config.enableSecurity) {
       return true;

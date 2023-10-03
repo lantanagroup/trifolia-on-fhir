@@ -68,7 +68,7 @@
       <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.igContext">
         <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/export">Export</a>
       </li>
-      <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.igContext">
+      <li class="nav-item" *ngIf="authService.isAuthenticated() && configService.igContext && canReadOrWrite(configService.currentProject?.permissions, 'write')">
         <a class="nav-link" routerLink="{{configService.baseSessionUrl}}/publish">Publish</a>
       </li>
       <li class="nav-item dropdown" *ngIf="authService.userProfile && authService.userProfile.isAdmin">

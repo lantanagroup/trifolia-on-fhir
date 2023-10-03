@@ -243,6 +243,8 @@ export class ExportController extends FhirResourcesController {//BaseController 
     let bundle: IBundle;
     let fhirVersion: 'stu3' | 'r4' | 'r5';
 
+    await this.assertCanWriteById(user, implementationGuideId);
+
     const exporter: HtmlExporter = await createHtmlExporter(
       this.fhirResourceService,
       this.nonFhirResourceService,
