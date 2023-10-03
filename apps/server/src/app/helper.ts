@@ -15,7 +15,7 @@ import {buildUrl, getR4Dependencies, getSTU3Dependencies} from '@trifolia-fhir/t
 import {
   AuditEvent as R4AuditEvent,
   DomainResource as R4DomainResource,
-  ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent
+  ImplementationGuide as R4ImplementationGuide, ImplementationGuideDefinitionComponent, ImplementationGuidePageComponent
 } from '@trifolia-fhir/r4';
 import {AxiosRequestConfig} from 'axios';
 import {IUserSecurityInfo} from './base.controller';
@@ -597,9 +597,12 @@ export async function addPageToImplementationGuide(service: FhirResourcesService
 
   if (conf.fhirVersion.toLowerCase() === FhirVersions.R4.toLowerCase()) {
     const r4 = <R4ImplementationGuide>implementationGuide;
+    if (!r4.definition) {
+      r4.definition = <ImplementationGuideDefinitionComponent> {};
+    }
     if (!r4.definition.page) {
       // index page
-      const newPage = new ImplementationGuidePageComponent();
+      const newPage = <ImplementationGuidePageComponent> {};
       newPage.generation = 'markdown';
       newPage.nameUrl = pageToAdd.name + '.html';
       newPage.title = pageToAdd.name;
@@ -610,7 +613,7 @@ export async function addPageToImplementationGuide(service: FhirResourcesService
       let foundResource = searchPage(<ImplementationGuidePageComponent>r4.definition.page, pageToAdd.name + '.html', conf.fhirVersion);
       // check all levels
       if (!foundResource) {
-        const newPage = new ImplementationGuidePageComponent();
+        const newPage = <ImplementationGuidePageComponent> {};
         newPage.generation = 'markdown';
         newPage.nameUrl = pageToAdd.name + '.html';
         newPage.title = pageToAdd.name;
@@ -624,7 +627,7 @@ export async function addPageToImplementationGuide(service: FhirResourcesService
     const stu3 = <STU3ImplementationGuide>implementationGuide;
     if (!stu3.page) {
       // index page
-      const newPage = new PageComponent();
+      const newPage = <PageComponent>{};
       newPage.source = pageToAdd.name + '.html';
       newPage.title = pageToAdd.name;
       stu3.page = newPage;
@@ -633,7 +636,7 @@ export async function addPageToImplementationGuide(service: FhirResourcesService
       let foundResource = searchPage(<PageComponent>stu3.page, pageToAdd.name + '.html', conf.fhirVersion);
       // check all levels
       if (!foundResource) {
-        const newPage = new PageComponent();
+        const newPage = <PageComponent>{};
         newPage.format = 'markdown';
         newPage.source = pageToAdd.name + '.html';
         newPage.title = pageToAdd.name;
@@ -1041,7 +1044,7 @@ export async function removePageFromImplementationGuide(service: FhirResourcesSe
       if (conf.fhirVersion.toLowerCase() === FhirVersions.R4.toLowerCase()) {
         let ig = <R4ImplementationGuide>conf.resource;
         // remove page
-        if (ig.definition.page) {
+        if (ig.definition && ig.definition.page) {
           let result = findPage(ig.definition.page, undefined, pageToRemove.name, conf.fhirVersion);
           if (result) {
             removePage(result, ig, conf.fhirVersion);

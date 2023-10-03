@@ -59,6 +59,7 @@ export class PageComponent implements OnInit {
         }
         if (this.page.name == 'index') {
           this.page.reuseDescription = true;
+          this.page['content'] = "No content has been defined for this page, yet.";
         }
         if (this.page.name == 'download') {
           this.page.navMenu = 'Downloads';
@@ -80,10 +81,12 @@ export class PageComponent implements OnInit {
   public set reuseDescription(value: boolean) {
     this.page['reuseDescription'] = value;
     if (value) {
-      this.page['content'] = '';
+      this.page['content'] = "No content has been defined for this page, yet.";
+    }
+    else{
+      this.page['content'] = "";
     }
   }
-
 
   pageNavMenuSearch = (text$: Observable<string>) =>
     text$.pipe(
@@ -140,6 +143,7 @@ export class PageComponent implements OnInit {
       this.page.name = this.defaultName;
       if (this.defaultName == 'index') {
         this.page.reuseDescription = true;
+        this.page['content'] = "No content has been defined for this page, yet.";
       }
     }
   }
@@ -170,12 +174,13 @@ export class PageComponent implements OnInit {
               this.message = '';
             }, 3000);
           }
+          this.message = 'Your changes have been saved!';
         },
         error: (err) => {
           this.message = 'An error occurred while saving the page: ' + getErrorString(err);
         }
       });
-      this.message = 'Your changes have been saved!';
+
     }
     else{
       this.message = "Content should be entered."

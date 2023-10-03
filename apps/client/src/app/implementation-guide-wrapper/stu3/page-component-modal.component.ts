@@ -44,17 +44,6 @@ export class PageComponentModalComponent implements OnInit {
     this.page = new PageComponent(this.inputPage);
   }
 
-  public importFile(file: File) {
-    const reader = new FileReader();
-
-    reader.onload = (e: any) => {
-      const result = e.target.result;
-      this.contentMarkdown = result.substring(5 + file.type.length + 8);
-    };
-
-    reader.readAsDataURL(file);
-  }
-
 
 
   public setResource(value: Page) {
@@ -66,42 +55,14 @@ export class PageComponentModalComponent implements OnInit {
   }
 
 
-  public set contentMarkdown(value: string) {
-    if(!this.resource){
-      this.resource = new Page();
-      this.resource["name"] = this.inputPage.source.slice(0,this.inputPage.source.indexOf("."));
-    }
-    this.resource["content"] = value;
-  }
-
   public get navMenu() {
     return this.resource["navMenu"];
-  }
-
-
-  public set navMenu(value: string) {
-    if(!this.resource){
-      this.resource = new Page();
-      this.resource["name"] = this.inputPage.source.slice(0,this.inputPage.source.indexOf("."));
-    }
-    this.resource["navMenu"] = value;
   }
 
   public get reuseDescription() {
     return this.resource["reuseDescription"];
   }
 
-
-  public set reuseDescription(value: boolean) {
-    if(!this.resource){
-      this.resource = new Page();
-      this.resource["name"] = this.inputPage.source.slice(0,this.inputPage.source.indexOf("."));
-    }
-    this.resource["reuseDescription"] = value;
-    if(value) {
-      this.resource["content"] = "";
-    }
-  }
 
   ok() {
     this.activeModal.close(this.page);
@@ -118,7 +79,7 @@ export class PageComponentModalComponent implements OnInit {
       getPages(this.implementationGuide.page);
     }
 
-    this.pageNavMenus = allPages
+   /* this.pageNavMenus = allPages
       .filter(p => !!this.navMenu)
       .map(p => this.navMenu)
       .reduce<string[]>((prev, curr) => {
@@ -126,5 +87,6 @@ export class PageComponentModalComponent implements OnInit {
         return prev;
       }, [])
       .sort((a, b) => (a > b ? -1 : 1));
+      */
   }
 }

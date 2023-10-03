@@ -1,5 +1,19 @@
 <h2>Pages</h2>
 
+<div class="input-group" [attr.data-intro]="Globals.introText['browse.search']">
+  <input type="text" class="form-control" [ngModel]="nameText" (ngModelChange)="nameTextChanged($event)" placeholder="Search name">
+  <div class="input-group-btn">
+    <button type="button" class="btn btn-primary" title="Clear filters" (click)="clearFilters()">
+      <i class="fa fa-times"></i> Clear
+    </button>
+    <button type="button" class="btn btn-primary" title="Refresh" (click)="getPages()">
+      <i class="fa fa-search"></i> Search
+    </button>
+  </div>
+</div>
+
+
+
 <ul ngbNav #nav="ngbNav" class="nav-tabs mt-2">
 
   <li ngbNavItem>
@@ -44,10 +58,10 @@
           </tr>
         </tbody>
         <tfoot>
-          <tr *ngIf="searchPagesResults && this.igPages.total === 0">
+          <tr *ngIf="searchPagesResults && igPages.total === 0">
               <td colspan="3">No pages! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/page/new?defaultName={{defaultName}}">here</a>...</td>
           </tr>
-          <tr *ngIf="searchPagesResults && this.igPages.total > 0">
+          <tr *ngIf="searchPagesResults && igPages.total > 0">
               <td colspan="3">
                   <ngb-pagination class="d-flex justify-content-center" [maxSize]="5"
                                   [collectionSize]="igPages.total" [(page)]="page" [boundaryLinks]="true"
@@ -60,7 +74,7 @@
   </li>
 
   <li ngbNavItem *ngIf = "missingPages.length > 0">
-    <a ngbNavLink>Missing Pages <span class="badge bg-primary">{{missingPages?.length || 0}}</span></a>
+    <a ngbNavLink>Missing Pages <span class="badge bg-primary">{{missingPages.length}}</span></a>
     <ng-template ngbNavContent>
       <table>
         <thead>
@@ -68,7 +82,7 @@
           <th>Name</th>
         </tr>
         </thead>
-        <tbody *ngIf = "missingPages">
+        <tbody>
           <tr *ngFor="let mp of missingPages">
             <td>{{mp}}</td>
             <td class="actions-column-2">

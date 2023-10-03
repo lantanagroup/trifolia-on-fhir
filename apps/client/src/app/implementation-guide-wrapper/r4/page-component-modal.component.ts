@@ -46,42 +46,8 @@ export class PageComponentModalComponent implements OnInit {
   }
 
 
-  public set contentMarkdown(value: string) {
-    if(!this.resource){
-      this.resource = new Page();
-      let name = this.inputPage.nameUrl ?? this.inputPage.nameReference?.reference;
-      this.resource["name"] = name.slice(0, name.indexOf("."));
-    }
-    this.resource["content"] = value;
-  }
-
-  public get navMenu() {
-    return this.resource["navMenu"];
-  }
-
-
-  public set navMenu(value: string) {
-    if(!this.resource){
-      let name = this.inputPage.nameUrl ?? this.inputPage.nameReference?.reference;
-      this.resource["name"] = name.slice(0, name.indexOf("."));
-    }
-    this.resource["navMenu"] = value;
-  }
-
   public get reuseDescription() {
     return this.resource["reuseDescription"];
-  }
-
-
-  public set reuseDescription(value: boolean) {
-    if(!this.resource){
-      let name = this.inputPage.nameUrl ?? this.inputPage.nameReference?.reference;
-      this.resource["name"] = name.slice(0, name.indexOf("."));
-    }
-    this.resource["reuseDescription"] = value;
-    if(value) {
-      this.resource["content"] = "";
-    }
   }
 
 
@@ -93,16 +59,6 @@ export class PageComponentModalComponent implements OnInit {
       distinct()
     )
 
-  public importFile(file: File) {
-    const reader = new FileReader();
-
-    reader.onload = (e: any) => {
-      const result = e.target.result;
-      this.contentMarkdown = result.substring(5 + file.type.length + 8);
-    };
-
-    reader.readAsDataURL(file);
-  }
 
   ok() {
       this.activeModal.close();
@@ -119,13 +75,13 @@ export class PageComponentModalComponent implements OnInit {
       getPages(this.implementationGuide.definition.page);
     }
 
-    this.pageNavMenus = allPages
+/*    this.pageNavMenus = allPages
       .filter(p => !!this.navMenu)
       .map(p => this.navMenu)
       .reduce<string[]>((prev, curr) => {
         if (prev.indexOf(curr) < 0) prev.push(curr);
         return prev;
       }, [])
-      .sort((a, b) => (a > b ? 1 : -1));
+      .sort((a, b) => (a > b ? 1 : -1));*/
   }
 }

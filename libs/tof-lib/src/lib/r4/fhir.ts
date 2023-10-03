@@ -28,7 +28,7 @@ export class Base {
 
   constructor(obj?: any) {
     if (obj) {
-      if (obj.fhir_comments) {
+      if (obj.hasOwnProperty('fhir_comments')) {
         this.fhir_comments = obj.fhir_comments;
       }
     }
@@ -269,10 +269,10 @@ export class Element extends Base {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.id) {
+      if (obj.hasOwnProperty('id')) {
         this.id = obj.id;
       }
-      if (obj.extension) {
+      if (obj.hasOwnProperty('extension')) {
         this.extension = [];
         for (const o of obj.extension || []) {
           this.extension.push(new Extension(o));
@@ -652,7 +652,7 @@ export class BackboneElement extends Element {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.modifierExtension) {
+      if (obj.hasOwnProperty('modifierExtension')) {
         this.modifierExtension = [];
         for (const o of obj.modifierExtension || []) {
           this.modifierExtension.push(new Extension(o));
@@ -14897,19 +14897,19 @@ export class ImplementationGuidePageComponent extends BackboneElement {
   constructor(obj?: any) {
     super(obj);
     if (obj) {
-      if (obj.nameUrl) {
+      if (obj.hasOwnProperty('nameUrl')) {
         this.nameUrl = obj.nameUrl;
       }
-      if (obj.nameReference) {
+      if (obj.hasOwnProperty('nameReference')) {
         this.nameReference = obj.nameReference;
       }
-      if (obj.title) {
+      if (obj.hasOwnProperty('title')) {
         this.title = obj.title;
       }
-      if (obj.generation) {
+      if (obj.hasOwnProperty('generation')) {
         this.generation = obj.generation;
       }
-      if (obj.page) {
+      if (obj.hasOwnProperty('page')) {
         this.page = [];
         for (const o of obj.page || []) {
           this.page.push(new ImplementationGuidePageComponent(o));
