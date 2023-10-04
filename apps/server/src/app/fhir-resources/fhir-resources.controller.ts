@@ -53,10 +53,10 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
             filter['resource.resourceType'] = query['resourcetype'];
         }
         if ('name' in query) {
-            filter['resource.name'] = { $regex: query['name'], $options: 'i' };
+            filter['resource.name'] = { $regex: this.escapeRegExp(query['name']), $options: 'i' };
         }
         if ('title' in query) {
-            filter['resource.title'] = { $regex: query['title'], $options: 'i' };
+            filter['resource.title'] = { $regex: this.escapeRegExp(query['title']), $options: 'i' };
         }
         if ('resourceid' in query) {
             filter['resource.id'] = { $regex: query['resourceid'], $options: 'i' };

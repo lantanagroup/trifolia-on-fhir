@@ -87,5 +87,9 @@ export class BaseController {
         return options;
     }
 
+    protected escapeRegExp(value: string) {
+      return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    }
+
 
 }

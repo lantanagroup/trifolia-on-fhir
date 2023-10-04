@@ -43,10 +43,10 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
       filter['type'] = query['type'];
     }
     if ('name' in query) {
-      filter['name'] = { $regex: query['name'], $options: 'i' };
+      filter['name'] = { $regex: this.escapeRegExp(query['name']), $options: 'i' };
     }
     if ('title' in query) {
-      filter['title'] = { $regex: query['title'], $options: 'i' };
+      filter['title'] = { $regex: this.escapeRegExp(query['title']), $options: 'i' };
     }
     if ('implementationguideid' in query) {
       filter['referencedBy.value'] = new ObjectId(query['implementationguideid']);
@@ -106,7 +106,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
 
     let filter = {};
     filter['type'] = type;
-    filter['name'] = { $regex: name, $options: 'i' };
+    filter['name'] = { $regex: `^${this.escapeRegExp(name)}$`, $options: 'i' };
     if (implementationGuideId) {
       filter['referencedBy.value'] = new ObjectId(implementationGuideId);
     }
@@ -125,7 +125,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
 
     let filter = {};
     filter['type'] = type;
-    filter['name'] = { $regex: name, $options: 'i' };
+    filter['name'] = { $regex: `^${this.escapeRegExp(name)}$`, $options: 'i' };
     if (implementationGuideId) {
       filter['referencedBy.value'] = new ObjectId(implementationGuideId);
     }
