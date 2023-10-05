@@ -34,10 +34,10 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     const query = req.query;
 
     if ('name' in query) {
-      filter['name'] = { $regex: query['name'], $options: 'i' };
+      filter['name'] = { $regex: this.escapeRegExp(query['name']), $options: 'i' };
     }
     if ('description' in query) {
-      filter['description'] = { $regex: query['description'], $options: 'i' };
+      filter['description'] = { $regex: this.escapeRegExp(query['description']), $options: 'i' };
     }
     if ('_id' in query) {
       filter['$or'] = query['_id'].split(',').map(id => { return {'_id': new ObjectId(id)} });
@@ -132,9 +132,11 @@ export class GroupsController extends BaseDataController<GroupDocument> {
 
 
   @Get('membership')
-  public async getMembership(@User() userProfile) {
+  public async getMembership(@User() userProfile, @Request() req?: any): Promise<IGroup[]> {
     if (!userProfile || !userProfile.user) return null;
-    return await this.groupsService.findAll({ 'members': userProfile.user.id }, ["managingUser", "members"]);;
+    const filter = this.getFilterFromRequest(req);
+    filter['members'] = userProfile.user.id;
+    return await this.groupsService.findAll(filter, ["managingUser", "members"]);;
   }
 
   @ApiOperation({

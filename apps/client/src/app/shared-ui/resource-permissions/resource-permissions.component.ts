@@ -194,15 +194,16 @@ export class ResourcePermissionsComponent extends BaseComponent implements OnIni
 
   public searchGroups() {
     this.isSearchingGroups = true;
-    this.groupService.getMembership(this.searchGroupsCriteria).toPromise()
-      .then((results: IGroup[]) => {
+    this.groupService.getMembership(this.searchGroupsCriteria).subscribe({
+      next: (results: IGroup[]) => {
         this.foundGroupsArray = results;
         this.isSearchingGroups = false;
-      })
-      .catch((err) => {
+      },
+      error: (err) => {
         this.message = getErrorString(err);
         this.isSearchingGroups = false;
-      });
+      }
+    });
   }
 
   public searchUsers() {
