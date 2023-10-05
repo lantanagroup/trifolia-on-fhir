@@ -45,6 +45,9 @@ export class PageComponentModalComponent implements OnInit {
     return this.resource["content"];
   }
 
+  public get navMenu() {
+    return this.resource["navMenu"];
+  }
 
   public get reuseDescription() {
     return this.resource["reuseDescription"];

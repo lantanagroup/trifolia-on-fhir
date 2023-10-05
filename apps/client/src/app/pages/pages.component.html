@@ -30,7 +30,6 @@
     <table class="table table-striped" *ngIf="searchPagesResults">
         <thead>
         <tr>
-            <th>ID</th>
             <th>Name</th>
             <th class="actions-column-3">
                 <div class="pull-right">
@@ -43,7 +42,6 @@
         </thead>
         <tbody *ngIf="searchPagesResults">
           <tr *ngFor="let ip of searchPagesResults">
-              <td>{{ip.id}}</td>
               <td>{{ip.name}}</td>
               <td>
                   <div class="btn-group pull-right">
