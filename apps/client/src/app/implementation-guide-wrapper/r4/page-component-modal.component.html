@@ -2,7 +2,7 @@
   <h4 class="modal-title">Edit R4 Page</h4>
   <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
-<div class="modal-body" *ngIf="page">
+<div class="modal-body page" *ngIf="page">
   <div class="mb-3">
     <label>Title</label>
     <input type="text" class="form-control" [ngModel]="page.title" (ngModelChange)="page.setTitle($event, implementationGuide.definition.page === inputPage)" [class.is-invalid]="!page.title" />

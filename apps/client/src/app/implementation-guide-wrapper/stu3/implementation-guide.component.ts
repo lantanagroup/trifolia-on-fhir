@@ -651,8 +651,30 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
         }
       }
     }
+    //remove resource
+    if (pageDef.resource['name']) {
+      this.nonFhirResourceService.deleteByName(pageDef.resource, this.implementationGuideId).subscribe({
+        next: (page: Page) => {
+          let index = (this.fhirResource.references || []).findIndex((ref: IProjectResourceReference) => {
+            return ref.value === page.id;
+          });
 
-    this.initPages();
+          if (index > -1) {
+            this.fhirResource.references.splice(index, 1);
+          }
+          this.initPages();
+          this.igChanging.emit(true);
+        },
+        error: (err) => {
+          this.initPages();
+          this.igChanging.emit(true);
+        }
+      });
+    } else {
+      this.initPages();
+      this.igChanging.emit(true);
+    }
+
   }
 
   public isMovePageUpDisabled(pageDef: PageDefinition) {
