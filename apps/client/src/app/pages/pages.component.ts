@@ -8,7 +8,7 @@ import {debounceTime} from 'rxjs/operators';
 import {BaseComponent} from '../base.component';
 import {AuthService} from '../shared/auth.service';
 import {ActivatedRoute} from '@angular/router';
-import {NonFhirResourceType, Page} from '@trifolia-fhir/models';
+import {IFhirResource, NonFhirResourceType, Page} from '@trifolia-fhir/models';
 import {NonFhirResourceService} from '../shared/non-fhir-resource.service';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {Versions as FhirVersions} from 'fhir/fhir';
@@ -20,13 +20,14 @@ import {ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
   styleUrls: ['./pages.component.css']
 })
 export class PagesComponent extends BaseComponent implements OnInit {
-  public igPages;
+  public pages;
   public nameText: string;
   public page = 1;
   public criteriaChangedEvent = new Subject<void>();
   public Globals = Globals;
   public missingPages = [];
   public total;
+  public igPages = [];
 
 
   constructor(
@@ -46,13 +47,18 @@ export class PagesComponent extends BaseComponent implements OnInit {
   }
 
   public get searchPagesResults(): [] {
-    if (this.igPages) {
-      return (this.igPages.results || []);
+    if (this.pages) {
+      return (this.pages.results || []);
     }
     return [];
   }
 
-
+  public isIgReferenced(pageName) : boolean {
+    if(this.igPages.indexOf(pageName) == -1) {
+      return false;
+    }
+    return true;
+  }
 
   public nameTextChanged(value: string) {
     this.nameText = value;
@@ -77,10 +83,10 @@ export class PagesComponent extends BaseComponent implements OnInit {
     let id = page.id;
     this.nonFhirResourceService.delete(page.id)
       .subscribe((nonFhir: Page) => {
-        const page = (this.igPages.results || []).find((e) => e.id === id);
-        const index = this.igPages.results.indexOf(page);
-        this.igPages.results.splice(index, 1);
-        this.igPages.total--;
+        const page = (this.pages.results || []).find((e) => e.id === id);
+        const index = this.pages.results.indexOf(page);
+        this.pages.results.splice(index, 1);
+        this.pages.total--;
         this.total--;
       }, (err) => {
         this.configService.handleError(err, 'An error occurred while deleting the page.');
@@ -98,17 +104,9 @@ export class PagesComponent extends BaseComponent implements OnInit {
     let implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
     if (implementationGuideId) {
       let conf = await firstValueFrom(this.igService.getImplementationGuide(implementationGuideId));
-      let implementationGuide = <IImplementationGuide>conf.resource;
-      if (conf.fhirVersion.toLowerCase() == FhirVersions.R4.toLowerCase()) {
-        const ig4 = <R4ImplementationGuide>implementationGuide;
-        if (ig4.definition && ig4.definition.page) {
-          results = this.findIgPages(ig4.definition.page, [], conf.fhirVersion);
-        }
-      } else if (conf.fhirVersion.toLowerCase() == FhirVersions.STU3.toLowerCase()) {
-        const stu3 = <STU3ImplementationGuide>implementationGuide;
-        results = this.findIgPages(stu3.page, [], conf.fhirVersion);
-      }
-      for (const res of (results || [])) {
+      this.igPages = this.getIgPages(conf);
+
+      for (const res of (this.igPages || [])) {
           let page = new Page();
           page.name = res;
           let foundPage = await firstValueFrom(this.nonFhirResourceService.getByName(page, implementationGuideId));
@@ -119,10 +117,26 @@ export class PagesComponent extends BaseComponent implements OnInit {
     }
   }
 
+
+  private getIgPages(conf: IFhirResource) {
+    let results = [];
+    let implementationGuide = <IImplementationGuide>conf.resource;
+    if (conf.fhirVersion.toLowerCase() == FhirVersions.R4.toLowerCase()) {
+      const ig4 = <R4ImplementationGuide>implementationGuide;
+      if (ig4.definition && ig4.definition.page) {
+        results = this.findIgPages(ig4.definition.page, [], conf.fhirVersion);
+      }
+    } else if (conf.fhirVersion.toLowerCase() == FhirVersions.STU3.toLowerCase()) {
+      const stu3 = <STU3ImplementationGuide>implementationGuide;
+      results = this.findIgPages(stu3.page, [], conf.fhirVersion);
+    }
+    return results;
+  }
+
   public async getPages() {
     this.nonFhirResourceService.search(this.page, 'name', { 'content': 0 }, this.getImplementationGuideId(), NonFhirResourceType.Page).toPromise().then((results) => {
-      this.igPages = results;
-      this.total = this.igPages.total;
+      this.pages = results;
+      this.total = this.pages.total;
       this.setMissingPages();
 
     }).catch((err) => console.log(err));
@@ -131,7 +145,7 @@ export class PagesComponent extends BaseComponent implements OnInit {
 
   public async searchPagesByName() {
     this.nonFhirResourceService.search(this.page, 'name', { 'content': 0 }, this.getImplementationGuideId(), NonFhirResourceType.Page, this.nameText).toPromise().then((results) => {
-      this.igPages = results;
+      this.pages = results;
 
     }).catch((err) => console.log(err));
 

@@ -12,17 +12,15 @@
   </div>
 </div>
 
-
-
 <ul ngbNav #nav="ngbNav" class="nav-tabs mt-2">
 
   <li ngbNavItem>
     <a ngbNavLink>Pages <span class="badge bg-primary"></span></a>
     <ng-template ngbNavContent>
     <div  [attr.data-intro]="Globals.introText['browse.paging']">
-    <ngb-pagination *ngIf="searchPagesResults && igPages.total > 0" class="d-flex justify-content-center"
+    <ngb-pagination *ngIf="searchPagesResults && pages.total > 0" class="d-flex justify-content-center"
                     [maxSize]="5"
-                    [collectionSize]="igPages.total"
+                    [collectionSize]="pages.total"
                     [(page)]="page"
                     [boundaryLinks]="true"
                     (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
@@ -31,6 +29,7 @@
         <thead>
         <tr>
             <th>Name</th>
+            <th>Referenced in IG</th>
             <th class="actions-column-3">
                 <div class="pull-right">
                     <button type="button" class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/page/new?defaultName={{defaultName}}" title="Create a new page" [attr.data-intro]="Globals.introText['browse.add']">
@@ -43,6 +42,7 @@
         <tbody *ngIf="searchPagesResults">
           <tr *ngFor="let ip of searchPagesResults">
               <td>{{ip.name}}</td>
+              <td>{{isIgReferenced(ip.name)? 'Yes': 'No'}}</td>
               <td>
                   <div class="btn-group pull-right">
                       <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/page/{{ip.id}}"  title="Edit this resource">
@@ -56,13 +56,13 @@
           </tr>
         </tbody>
         <tfoot>
-          <tr *ngIf="searchPagesResults && igPages.total === 0">
+          <tr *ngIf="searchPagesResults && pages.total === 0">
               <td colspan="3">No pages! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/page/new?defaultName={{defaultName}}">here</a>...</td>
           </tr>
-          <tr *ngIf="searchPagesResults && igPages.total > 0">
+          <tr *ngIf="searchPagesResults && pages.total > 0">
               <td colspan="3">
                   <ngb-pagination class="d-flex justify-content-center" [maxSize]="5"
-                                  [collectionSize]="igPages.total" [(page)]="page" [boundaryLinks]="true"
+                                  [collectionSize]="pages.total" [(page)]="page" [boundaryLinks]="true"
                                   (pageChange)="criteriaChangedEvent.next()"></ngb-pagination>
               </td>
           </tr>
@@ -95,6 +95,8 @@
       </table>
     </ng-template>
   </li>
+
+
 </ul>
 
 <div [ngbNavOutlet]="nav"></div>
