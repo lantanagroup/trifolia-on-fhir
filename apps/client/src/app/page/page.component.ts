@@ -52,7 +52,7 @@ export class PageComponent implements OnInit {
         const isIdUnique = await this.nonFhirResourceService.checkUniqueName(this.page, this.implementationGuideId);
         if (!isIdUnique) {
           this.isIdUnique = false;
-          this.alreadyInUseNameMessage = 'Name ' + this.page.id + ' is already used in this IG';
+          this.alreadyInUseNameMessage = 'Name ' + this.page.name + ' is already used in this IG';
         } else {
           this.isIdUnique = true;
           this.alreadyInUseNameMessage = '';
