@@ -60,7 +60,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         }
         delete newFhirResource.resource.meta['security'];
         newFhirResource.resource.meta.versionId = versionId.toString();
-        newFhirResource.resource.meta.lastUpdated = lastUpdated;
+        newFhirResource.resource.meta.lastUpdated = lastUpdated.toISOString();
         newFhirResource.versionId = versionId;
         newFhirResource.isDeleted = false;
         newFhirResource.lastUpdated = lastUpdated;
@@ -265,7 +265,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         if (existing.resource.meta) {
           delete existing.resource.meta['security'];
           existing.resource.meta.versionId = versionId.toString();
-          existing.resource.meta.lastUpdated = lastUpdated;
+          existing.resource.meta.lastUpdated = lastUpdated.toISOString();
         }
         existing.versionId = versionId;
         existing.lastUpdated = lastUpdated;
