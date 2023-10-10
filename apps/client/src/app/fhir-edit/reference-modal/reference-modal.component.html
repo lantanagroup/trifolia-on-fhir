@@ -3,7 +3,7 @@
   <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
-  <div class="d-flex">
+  <div class="d-flex align-items-start">
     <ul ngbNav #nav="ngbNav" class="nav-pills" orientation="vertical" (navChange)="tabChanged($event)">
       <li ngbNavItem="server">
         <a ngbNavLink>Server</a>
@@ -30,7 +30,7 @@
         </ng-template>
       </li>
     </ul>
-    <div [ngbNavOutlet]="nav" class="ms-4"></div>
+    <div [ngbNavOutlet]="nav" class="ms-4 overflow-hidden"></div>
   </div>
 </div>
 <div class="modal-footer">
@@ -96,52 +96,54 @@
 
   <div class="alert alert-info" *ngIf="message">{{message}}</div>
   <p *ngIf="searching"><em>Searching...</em></p>
-  <table class="table" *ngIf="results">
-    <thead>
-    <tr>
-      <th *ngIf="selectMultiple" class="actions-column-1"></th>
-      <th>Resource Id</th>
-      <th>Title/Name/Id</th>
-      <th>Id</th>
-        <th>Implementation Guide</th>
+  <div class="table-responsive">
+    <table class="table" *ngIf="results">
+      <thead>
+      <tr>
+        <th *ngIf="selectMultiple" class="actions-column-1"></th>
         <th *ngIf="!selectMultiple" class="actions-column-1">&nbsp;</th>
+        <th>Resource Id</th>
+        <th>Title/Name/Id</th>
+        <th>Id</th>
+        <th>Implementation Guide</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of results">
+          <td *ngIf="selectMultiple">
+            <input type="checkbox" [ngModel]="isSelected(c)" (ngModelChange)="setSelected(c, $event)" />
+          </td>
+          <td *ngIf="!selectMultiple">
+            <div class="pull-right">
+              <button type="button" class="btn btn-primary" (click)="select(c)">Select</button>
+            </div>
+          </td>
+          <td>{{c.resource.id}}</td>
+          <td>{{c.resource | fhirDisplay}}</td>
+          <td>{{c.id}}</td>
+          <td>{{getImplementationGuideDisplay(c.referencedBy)}}</td>
+        </tr>
+        <tr *ngIf="results && results.length < total">
+          <td colspan="3">
+            <!-- <a href="javascript:void(0)" (click)="criteriaChanged(true)">Load More</a> -->
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="pageSize" [collectionSize]="total"
+              [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="pageChanged.next()">
+            </ngb-pagination>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot *ngIf="total > 0">
+      <tr>
+        <th colspan="3">Showing {{results.length}} of {{total}} results</th>
       </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let c of results">
-        <td *ngIf="selectMultiple">
-          <input type="checkbox" [ngModel]="isSelected(c)" (ngModelChange)="setSelected(c, $event)" />
-        </td>
-        <td>{{c.resource.id}}</td>
-        <td>{{c.resource | fhirDisplay}}</td>
-        <td>{{c.id}}</td>
-        <td>{{getImplementationGuideDisplay(c.referencedBy)}}</td>
-        <td *ngIf="!selectMultiple">
-          <div class="pull-right">
-            <button type="button" class="btn btn-primary" (click)="select(c)">Select</button>
-          </div>
-        </td>
+      </tfoot>
+      <tfoot *ngIf="results.length === 0">
+      <tr>
+        <th colspan="3"><em>No resources were found with the specified criteria.</em></th>
       </tr>
-      <tr *ngIf="results && results.length < total">
-        <td colspan="3">
-          <!-- <a href="javascript:void(0)" (click)="criteriaChanged(true)">Load More</a> -->
-          <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="pageSize" [collectionSize]="total"
-            [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="pageChanged.next()">
-          </ngb-pagination>
-        </td>
-      </tr>
-    </tbody>
-    <tfoot *ngIf="total > 0">
-    <tr>
-      <th colspan="3">Showing {{results.length}} of {{total}} results</th>
-    </tr>
-    </tfoot>
-    <tfoot *ngIf="results.length === 0">
-    <tr>
-      <th colspan="3"><em>No resources were found with the specified criteria.</em></th>
-    </tr>
-    </tfoot>
-  </table>
+      </tfoot>
+    </table>
+  </div>
 </ng-template>
 
 
@@ -191,42 +193,44 @@
     <!-- VSAC Results -->
     <div class="alert alert-info" *ngIf="vsacMessage">{{vsacMessage}}</div>
     <p *ngIf="searching"><em>Searching...</em></p>
-    <table class="table" *ngIf="valueSetResults">
-      <thead>
-        <th>Resource Id</th>
-        <th>Name</th>
-        <th class="actions-column-1">&nbsp;</th>
-      </thead>
-      <tbody *ngIf="total < 1">
-        <tr>
-          <td colspan="3">No results for the provided criteria.</td>
-        </tr>
-      </tbody>
-      <tbody *ngIf="total > 0">
-        <tr *ngFor="let valueSet of valueSetResults">
-          <td>{{valueSet.id}}</td>
-          <td>{{valueSet.name}}</td>
-          <td>
-            <div class="pull-right">
-              <button type="button" class="btn btn-primary" (click)="selectVsac(valueSet)">Select</button>
-            </div>
-          </td>
-        </tr>
+    <div class="table-responsive">
+      <table class="table" *ngIf="valueSetResults">
+        <thead>
+          <th class="actions-column-1">&nbsp;</th>
+          <th>Resource Id</th>
+          <th>Name</th>
+        </thead>
+        <tbody *ngIf="total < 1">
+          <tr>
+            <td colspan="3">No results for the provided criteria.</td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="total > 0">
+          <tr *ngFor="let valueSet of valueSetResults">
+            <td>
+              <div class="pull-right">
+                <button type="button" class="btn btn-primary" (click)="selectVsac(valueSet)">Select</button>
+              </div>
+            </td>
+            <td>{{valueSet.id}}</td>
+            <td>{{valueSet.name}}</td>
+          </tr>
 
-        <tr *ngIf="valueSetResults && valueSetResults.length < total">
-          <td colspan="3">
-            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="pageSize" [collectionSize]="total"
-              [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="pageChanged.next()">
-            </ngb-pagination>
-          </td>
-        </tr>
+          <tr *ngIf="valueSetResults && valueSetResults.length < total">
+            <td colspan="3">
+              <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="pageSize" [collectionSize]="total"
+                [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="pageChanged.next()">
+              </ngb-pagination>
+            </td>
+          </tr>
 
-      </tbody>
-      <tfoot *ngIf="total > 0">
-        <tr>
-          <th colspan="2">Showing {{valueSetResults.length}} of {{total}} results</th>
-        </tr>
-      </tfoot>
-    </table>
+        </tbody>
+        <tfoot *ngIf="total > 0">
+          <tr>
+            <th colspan="2">Showing {{valueSetResults.length}} of {{total}} results</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   </div>
 </ng-template>
