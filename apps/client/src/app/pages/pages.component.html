@@ -29,6 +29,7 @@
         <thead>
         <tr>
             <th>Name</th>
+            <th>Parent Name</th>
             <th>Referenced in IG</th>
             <th class="actions-column-3">
                 <div class="pull-right">
@@ -42,7 +43,8 @@
         <tbody *ngIf="searchPagesResults">
           <tr *ngFor="let ip of searchPagesResults">
               <td>{{ip.name}}</td>
-              <td>{{isIgReferenced(ip.name)? 'Yes': 'No'}}</td>
+              <td>{{getParent(ip.name)}}</td>
+              <td>{{isIgReferenced(ip.name)? 'Yes': 'No - Please press Edit/Save to add it as reference in IG or just delete it.'}}</td>
               <td>
                   <div class="btn-group pull-right">
                       <a class="btn btn-primary" routerLink="{{configService.baseSessionUrl}}/page/{{ip.id}}"  title="Edit this resource">
@@ -95,7 +97,6 @@
       </table>
     </ng-template>
   </li>
-
 
 </ul>
 

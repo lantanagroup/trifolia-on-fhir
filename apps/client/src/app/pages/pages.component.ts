@@ -54,10 +54,19 @@ export class PagesComponent extends BaseComponent implements OnInit {
   }
 
   public isIgReferenced(pageName) : boolean {
-    if(this.igPages.indexOf(pageName) == -1) {
-      return false;
+    let igPage = this.igPages.find(pg => pg["pageName"] == pageName);
+    if(igPage) {
+      return true;
     }
-    return true;
+    return false;
+  }
+
+  public getParent(pageName) : string {
+     let igPage = this.igPages.find(pg => pg["pageName"] == pageName);
+     if(igPage) {
+       return igPage["parentName"];
+     }
+     return 'N/A';
   }
 
   public nameTextChanged(value: string) {
@@ -100,7 +109,6 @@ export class PagesComponent extends BaseComponent implements OnInit {
 
   public async setMissingPages() {
     this.missingPages = [];
-    let results = [];
     let implementationGuideId = this.route.snapshot.paramMap.get('implementationGuideId');
     if (implementationGuideId) {
       let conf = await firstValueFrom(this.igService.getImplementationGuide(implementationGuideId));
@@ -108,10 +116,10 @@ export class PagesComponent extends BaseComponent implements OnInit {
 
       for (const res of (this.igPages || [])) {
           let page = new Page();
-          page.name = res;
+          page.name = res["pageName"];
           let foundPage = await firstValueFrom(this.nonFhirResourceService.getByName(page, implementationGuideId));
           if(!foundPage.id) {
-            (this.missingPages || []).push(res);
+            (this.missingPages || []).push(res["pageName"]);
           }
       }
     }
@@ -124,11 +132,11 @@ export class PagesComponent extends BaseComponent implements OnInit {
     if (conf.fhirVersion.toLowerCase() == FhirVersions.R4.toLowerCase()) {
       const ig4 = <R4ImplementationGuide>implementationGuide;
       if (ig4.definition && ig4.definition.page) {
-        results = this.findIgPages(ig4.definition.page, [], conf.fhirVersion);
+        results = this.findIgPages(ig4.definition.page, undefined,[], conf.fhirVersion);
       }
     } else if (conf.fhirVersion.toLowerCase() == FhirVersions.STU3.toLowerCase()) {
       const stu3 = <STU3ImplementationGuide>implementationGuide;
-      results = this.findIgPages(stu3.page, [], conf.fhirVersion);
+      results = this.findIgPages(stu3.page, undefined, [], conf.fhirVersion);
     }
     return results;
   }
@@ -151,27 +159,35 @@ export class PagesComponent extends BaseComponent implements OnInit {
 
   }
 
-  private findIgPages(page: any, results, version: string) {
+  private findIgPages(page: any, parent, results, version: string) {
     if (!page) {
       return results;
     }
     let pageName;
+    let parentName;
+
     if (version.toLowerCase() === FhirVersions.R4.toLowerCase()){
       pageName = page.nameUrl ?? page.nameReference?.reference;
+      parentName = parent?.nameUrl ?? parent?.nameReference?.reference;
     }
     else  if (version.toLowerCase() === FhirVersions.STU3.toLowerCase()){
       pageName = page.source;
+      parentName = parent?.source;
     }
     if (pageName && pageName.indexOf('.') > -1) {
       pageName = pageName.substring(0, pageName.indexOf('.'));
     }
+    if (parentName && parentName.indexOf('.') > -1) {
+      parentName = parentName.substring(0, parentName.indexOf('.'));
+    }
+
     if(results.indexOf(pageName) == -1) {
-      results.push(pageName);
+      results.push({pageName, parentName});
     }
 
     if (page.page) {
       for (let i = 0; i < page.page.length; i++) {
-        this.findIgPages(page.page[i], results, version);
+        this.findIgPages(page.page[i], page, results, version);
       }
     }
     return results;
