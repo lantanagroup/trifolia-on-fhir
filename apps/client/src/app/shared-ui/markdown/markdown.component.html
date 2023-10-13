@@ -1,4 +1,4 @@
-<div [class.disable-markdown]="disabled">
+<div [class.disable-markdown]="disabled" #editor>
   <simplemde [(ngModel)]="bindValue" [options]="{ toolbar: toolbar }" #smde [class.is-invalid]="hasWhitespace && !disabled"></simplemde>
   <!-- This button is not shown to the user and is only used internally by the toolbar -->
   <button type="button" class="btn btn-primary" (click)="insertImage()" style="display: none" #buttonElement>&nbsp;</button>

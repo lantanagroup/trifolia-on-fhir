@@ -148,7 +148,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
 
   @Post()
   public async createNonFhirResource(@User() user: ITofUser, @Body() nonFhirResource: NonFhirResourceDocument, @Query('implementationguideid') implementationGuideId?: string): Promise<INonFhirResource> {
-    console.log('POST -- checking perms on IG:', implementationGuideId);
+    // console.log('POST -- checking perms on IG:', implementationGuideId);
     if (implementationGuideId) {
       if (!await this.authService.userCanWriteFhirResource(user, implementationGuideId)) {
         throw new UnauthorizedException();

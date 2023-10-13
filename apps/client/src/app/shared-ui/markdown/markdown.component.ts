@@ -22,6 +22,8 @@ export class MarkdownComponent implements AfterViewInit {
   @Input() imageListButtonTitle = 'Insert image from pre-defined list';
   @Input() mediaReferences?: MediaReference[];
 
+  @ViewChild('editor', { static: true })
+  private editor: ElementRef;
   @ViewChild('smde', { static: true })
   private simplemde: SimplemdeComponent;
   @ViewChild('buttonElement', { static: true })
@@ -160,13 +162,7 @@ export class MarkdownComponent implements AfterViewInit {
         default: true
       },
       this.createImageListToolbar(),
-      {
-        name: 'table',
-        action: simplemde.drawTable,
-        className: 'smdi smdi-table',
-        title: 'Table',
-        default: true
-      },
+      this.createTableToolbar(),
       {
         name: 'horizontal-rule',
         action: simplemde.drawHorizontalRule,
@@ -232,6 +228,23 @@ export class MarkdownComponent implements AfterViewInit {
     };
   }
 
+  createTableToolbar() {
+    return {
+      name: 'table',
+      // action: simplemde.drawTable,
+      className: 'smdi smdi-table',
+      title: 'Table',
+      default: true,
+      action: async () => {
+        const doc = this.simplemde.Instance.codemirror.getDoc();
+        const cursor = doc.getCursor();
+
+        const replaceText = `| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n{:.grid}\n`;
+        doc.replaceRange(replaceText, cursor);
+      }
+    }
+  }
+
   async insertImage() {
     const image = await this.modalService.getMediaSelection(this.mediaReferences);
 
@@ -244,10 +257,14 @@ export class MarkdownComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      if (this.simplemde.Instance) {
+
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting) && this.simplemde.Instance) {
         this.simplemde.Instance.codemirror.refresh();
+        observer.unobserve(this.editor.nativeElement);
       }
-    }, 300);
+    });
+
+    observer.observe(this.editor.nativeElement);
   }
 }
