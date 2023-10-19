@@ -1,12 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-  ImplementationGuideService,
-  PublishedGuideEditionsModel,
-  PublishedGuideModel,
-  PublishedGuideContainerModel
-} from '../../shared/implementation-guide.service';
-import { PublishedIgEditionSelectModalComponent } from './published-ig-edition-select-modal/published-ig-edition-select-modal.component';
+import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ImplementationGuideService, PublishedGuideContainerModel, PublishedGuideEditionsModel, PublishedGuideModel} from '../../shared/implementation-guide.service';
+import {PublishedIgEditionSelectModalComponent} from './published-ig-edition-select-modal/published-ig-edition-select-modal.component';
 
 @Component({
   selector: 'app-published-ig-select-modal',
@@ -23,12 +18,14 @@ export class PublishedIgSelectModalComponent implements OnInit {
     private igService: ImplementationGuideService) {
   }
 
-  selectPublishedEdition(guide: PublishedGuideContainerModel){
-    const modalRef = this.modal.open(PublishedIgEditionSelectModalComponent, {size: 'lg', backdrop: 'static'});
+  selectPublishedEdition(guide: PublishedGuideContainerModel) {
+    const modalRef = this.modal.open(PublishedIgEditionSelectModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.editions = guide.editions;
     modalRef.componentInstance.canonical = guide.canonical;
+    modalRef.componentInstance.name = guide.name;
+    modalRef.componentInstance.packageName = guide['npm-name'];
     modalRef.result.then((edition: PublishedGuideEditionsModel) => {
-      if(edition){
+      if (edition) {
         const publishedGuide: PublishedGuideModel =
           {
             name: guide.name,

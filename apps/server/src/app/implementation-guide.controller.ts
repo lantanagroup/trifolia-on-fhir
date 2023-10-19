@@ -1,14 +1,14 @@
-import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
-import { FhirInstance, FhirServerVersion, RequestHeaders, User } from './server.decorators';
-import { ConfigService } from './config.service';
-import { BundleExporter } from './export/bundle';
-import { copyPermissions } from './helper';
-import { ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent } from '@trifolia-fhir/stu3';
-import { ImplementationGuide as R4ImplementationGuide } from '@trifolia-fhir/r4';
-import type { IBundle, IgExampleModel, IImplementationGuide, IResourceReference, ITofUser } from '@trifolia-fhir/tof-lib';
+import {HttpService} from '@nestjs/axios';
+import {BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
+import {AuthGuard} from '@nestjs/passport';
+import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
+import {FhirInstance, FhirServerVersion, RequestHeaders, User} from './server.decorators';
+import {ConfigService} from './config.service';
+import {BundleExporter} from './export/bundle';
+import {copyPermissions} from './helper';
+import {ImplementationGuide as STU3ImplementationGuide, PackageResourceComponent} from '@trifolia-fhir/stu3';
+import {ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
+import type {IBundle, IgExampleModel, IImplementationGuide, IResourceReference, ITofUser} from '@trifolia-fhir/tof-lib';
 import {
   BulkUpdateRequest,
   getErrorString,
@@ -21,17 +21,18 @@ import {
   SearchImplementationGuideResponse,
   SearchImplementationGuideResponseContainer
 } from '@trifolia-fhir/tof-lib';
-import { spawn } from 'child_process';
+import {spawn} from 'child_process';
 import path from 'path';
 import os from 'os';
-import { existsSync } from 'fs';
-import { ProjectsService } from './projects/projects.service';
-import { AuthService } from './auth/auth.service';
-import { FhirResourcesService } from './fhir-resources/fhir-resources.service';
-import {INonFhirResource, IProjectResourceReference, IFhirResource, ImplementationGuideExampleTypes} from '@trifolia-fhir/models';
-import { FhirResourcesController } from './fhir-resources/fhir-resources.controller';
-import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
-import { ImplementationGuide as R5ImplementationGuide, StructureDefinition } from '@trifolia-fhir/r5';
+import {existsSync} from 'fs';
+import {ProjectsService} from './projects/projects.service';
+import {AuthService} from './auth/auth.service';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
+import {IFhirResource, ImplementationGuideExampleTypes, INonFhirResource, IProjectResourceReference} from '@trifolia-fhir/models';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
+import {NonFhirResourcesService} from './non-fhir-resources/non-fhir-resources.service';
+import {ImplementationGuide as R5ImplementationGuide, StructureDefinition} from '@trifolia-fhir/r5';
+import {firstValueFrom} from 'rxjs';
 
 
 class PatchRequest {
@@ -335,6 +336,33 @@ export class ImplementationGuideController extends FhirResourcesController { // 
         return guides;
       });
   }
+
+  @Get('published-editions')
+  public async getVersions(@Query('name') name: string): Promise<any> {
+    if (!this.configService.fhir.publishedGuides) {
+      throw new Error('Server is not configured with a publishedGuides property');
+    }
+
+    const results = await firstValueFrom(this.httpService.get(this.configService.fhir.publishedGuides));
+    let guideCanonical;
+    if (results.data && results.data.guides) {
+      guideCanonical = results.data.guides.find((guide) => guide.name === name)?.canonical;
+    }
+
+    const url = guideCanonical + '/package-list.json';
+
+    try {
+      const results = await firstValueFrom(this.httpService.get(url));
+      if (results.data && results.data.list) {
+        return results.data.list;
+      }
+
+    } catch (e) {
+      throw e;
+    }
+
+  }
+
 
   @Get()
   public async searchImplementationGuide(@User() user: ITofUser, @Query() query?: any, @RequestHeaders() headers?): Promise<SearchImplementationGuideResponseContainer> {
