@@ -96,7 +96,7 @@
     </select>
   </div>
   <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
-  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!hl7WorkGroup || !igTitle || !igName">Finish</button>
+  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!hl7WorkGroup || !igName">Finish</button>
 </div>
 <div *ngIf="showPrivateStep2">
   Step Private 2
