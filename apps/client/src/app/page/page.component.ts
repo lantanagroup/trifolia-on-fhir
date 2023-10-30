@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ImplementationGuide} from '@trifolia-fhir/r4';
+import {ImplementationGuide, StructureDefinitionContextComponent} from '@trifolia-fhir/r4';
 import {getErrorString} from '@trifolia-fhir/tof-lib';
 import { Observable, Subject} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
@@ -7,7 +7,8 @@ import {NonFhirResourceType, Page} from '@trifolia-fhir/models';
 import {NonFhirResourceService} from '../shared/non-fhir-resource.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ConfigService} from '../shared/config.service';
-
+import {BaseComponent} from '../base.component';
+import {AuthService} from '../shared/auth.service';
 
 enum PageType {
   Index = 0,
@@ -20,7 +21,7 @@ enum PageType {
   styleUrls: ['./page.component.css']
 })
 
-export class PageComponent implements OnInit {
+export class PageComponent extends BaseComponent implements OnInit {
   public allPages : Page[] = [];
   public page: Page;
   public content;
@@ -38,12 +39,17 @@ export class PageComponent implements OnInit {
   public isIdUnique = true;
   public alreadyInUseNameMessage = '';
   public defaultName = "";
+  public namePattern = '^[A-Za-z0-9_\\-]+$';
+  public messagePattern = "The file name must not include spaces or special characters such as \"&\" and \"/\".";
+  public contentRequired = false;
 
   constructor(public route: ActivatedRoute,
               private router: Router,
               public configService: ConfigService,
+              protected authService: AuthService,
               protected nonFhirResourceService: NonFhirResourceService) {
 
+    super(configService, authService);
 
     this.page = new Page();
 
@@ -87,6 +93,13 @@ export class PageComponent implements OnInit {
       this.page['content'] = "";
     }
   }
+
+  public isPageNameInvalid( ): boolean {
+    const regexp: RegExp =  /[^A-Za-z0-9_\-]/;
+    const matches = regexp.exec(this.page.name);
+    return matches && matches.length > 0;
+  }
+
 
   pageNavMenuSearch = (text$: Observable<string>) =>
     text$.pipe(
@@ -152,14 +165,19 @@ export class PageComponent implements OnInit {
     if (!confirm('Are you sure you want to revert your changes to the page?')) {
       return;
     }
-
     this.getPage();
+  }
+
+  public saveDisabled() {
+      return !this.isIdUnique ||
+      !this.page.name ||
+      (!this.page.content && this.contentRequired)||
+      this.isPageNameInvalid() ||
+      !this.canEdit(this.page)
   }
 
 
   save() {
-    // update in Db
-    if (this.page.content || this.page.reuseDescription) {
       //update/create resource
       this.nonFhirResourceService.save(this.page.id, this.page, this.implementationGuideId).subscribe({
         next: (page: Page) => {
@@ -180,11 +198,6 @@ export class PageComponent implements OnInit {
           this.message = 'An error occurred while saving the page: ' + getErrorString(err);
         }
       });
-
-    }
-    else{
-      this.message = "Content should be entered."
-    }
   }
 
   async ngOnInit() {

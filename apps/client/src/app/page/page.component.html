@@ -7,12 +7,15 @@
       <a ngbNavLink>General</a>
       <ng-template ngbNavContent>
           <div class="page">
-            <app-fhir-string [parentObject]="page" propertyName="name" [required]="true" title="Name"  [disabled] = "page.name === 'index' || page.id" (change)='idChangedEvent.next()'></app-fhir-string>
+            <app-fhir-string [parentObject]="page" propertyName="name" [required]="true" title="Name"
+                             [pattern]="namePattern"
+                             [patternMessage]="messagePattern"
+                             [disabled] = "page.name === 'index' || page.id" (change)='idChangedEvent.next()'></app-fhir-string>
             <div class="help-block">{{alreadyInUseNameMessage}}</div>
 
             <div class="mb-3" *ngIf="!reuseDescription">
               <label>Content</label>
-              <trifolia-fhir-markdown  [(value)]="page.content" ></trifolia-fhir-markdown>
+                <trifolia-fhir-markdown  [(value)]="page.content" [required]="contentRequired" ></trifolia-fhir-markdown>
             </div>
             <div class="mb-3" *ngIf="page.name === 'index'">
               <label>
@@ -42,7 +45,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="(!isIdUnique)">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="saveDisabled()">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

@@ -1,6 +1,7 @@
 <div [class.disable-markdown]="disabled" #editor>
-  <simplemde [(ngModel)]="bindValue" [options]="{ toolbar: toolbar }" #smde [class.is-invalid]="hasWhitespace && !disabled"></simplemde>
+  <simplemde [(ngModel)]="bindValue" [options]="{ toolbar: toolbar }" #smde [class.is-invalid]="!isValid && !disabled"></simplemde>
   <!-- This button is not shown to the user and is only used internally by the toolbar -->
   <button type="button" class="btn btn-primary" (click)="insertImage()" style="display: none" #buttonElement>&nbsp;</button>
   <div class="help-block error" *ngIf="hasWhitespace && !disabled">This field should not start or end with a white-space.</div>
+  <div class="help-block error" *ngIf="isRequired && !disabled">This field is required.</div>
 </div>

@@ -72,7 +72,7 @@ export class ResourceHistoryComponent implements OnInit, AfterContentChecked {
           this.domainResource = res.resource;
           resourceType = "FhirResource";
         }
-        else if(this.resource.hasOwnProperty("content")){
+        else {//if(this.resource.hasOwnProperty("content")){
           let res =  <INonFhirResource>this.resource;
           this.domainResource = res.content;
           resourceType = "NonFhirResource";

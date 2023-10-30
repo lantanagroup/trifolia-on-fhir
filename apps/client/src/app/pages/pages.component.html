@@ -18,7 +18,7 @@
     <a ngbNavLink>Pages <span class="badge bg-primary"></span></a>
     <ng-template ngbNavContent>
     <div  [attr.data-intro]="Globals.introText['browse.paging']">
-    <ngb-pagination *ngIf="searchPagesResults && pages.total > 0" class="d-flex justify-content-center"
+    <ngb-pagination *ngIf="searchPagesResults && pages && pages.total > 0" class="d-flex justify-content-center"
                     [maxSize]="5"
                     [collectionSize]="pages.total"
                     [(page)]="page"
@@ -58,10 +58,10 @@
           </tr>
         </tbody>
         <tfoot>
-          <tr *ngIf="searchPagesResults && pages.total === 0">
+          <tr *ngIf="searchPagesResults && pages && pages.total === 0">
               <td colspan="3">No pages! Create one by clicking <a routerLink="{{configService.baseSessionUrl}}/page/new?defaultName={{defaultName}}">here</a>...</td>
           </tr>
-          <tr *ngIf="searchPagesResults && pages.total > 0">
+          <tr *ngIf="searchPagesResults && pages && pages.total > 0">
               <td colspan="3">
                   <ngb-pagination class="d-flex justify-content-center" [maxSize]="5"
                                   [collectionSize]="pages.total" [(page)]="page" [boundaryLinks]="true"

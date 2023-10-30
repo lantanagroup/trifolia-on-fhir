@@ -19,6 +19,7 @@ export class MarkdownComponent implements AfterViewInit {
   @Input() value: string;
   @Output() valueChange = new EventEmitter();
   @Input() disabled = false;
+  @Input() required = false;
   @Input() imageListButtonTitle = 'Insert image from pre-defined list';
   @Input() mediaReferences?: MediaReference[];
 
@@ -44,6 +45,19 @@ export class MarkdownComponent implements AfterViewInit {
 
   get hasWhitespace() {
     return this.value && this.value !== this.value.trim();
+  }
+
+  get isRequired() {
+    return this.required && !this.value;
+  }
+
+  get isValid() {
+
+    if (this.required && !this.value) {
+      return false;
+    }
+
+    return !this.hasWhitespace;
   }
 
   constructor(private modalService: ModalService) {
