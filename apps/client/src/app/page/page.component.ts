@@ -41,7 +41,7 @@ export class PageComponent extends BaseComponent implements OnInit {
   public defaultName = "";
   public namePattern = '^[A-Za-z0-9_\\-]+$';
   public messagePattern = "The file name must not include spaces or special characters such as \"&\" and \"/\".";
-  public contentRequired = false;
+  public contentRequired = true;
 
   constructor(public route: ActivatedRoute,
               private router: Router,
