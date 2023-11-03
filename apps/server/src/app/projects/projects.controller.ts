@@ -11,6 +11,7 @@ import {Paginated} from '@trifolia-fhir/tof-lib';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {TofNotFoundException} from '../../not-found-exception';
 import { NonFhirResourcesService } from '../non-fhir-resources/non-fhir-resources.service';
+import { AuditEntity } from '../audit/audit.decorator';
 
 
 @Controller('api/projects')
@@ -56,6 +57,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
   }
 
   @Post()
+  @AuditEntity('create', 'Project')
   public async createProject(@User() userProfile, @Body() project: IProject) {
     let createdProject: IProject = null;
 
@@ -86,6 +88,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
   }
 
   @Put(':id')
+  @AuditEntity('update', 'Project')
   public async updateProject(@User() userProfile, @Body() updatedProject: IProject, @Param('id') id: string) {
     if (!userProfile) return null;
 
@@ -149,6 +152,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
   }
 
   @Delete('/:id/implementationGuide')
+  @AuditEntity('delete', 'Project')
   public async removeImplementationGuideFromProjects(@User() userProfile, @Param('id') id: string) {
 
     if (!userProfile) return null;

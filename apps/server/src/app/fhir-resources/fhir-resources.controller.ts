@@ -10,6 +10,7 @@ import {FhirResourceDocument } from './fhir-resource.schema';
 import { TofNotFoundException } from '../../not-found-exception';
 import { ObjectId } from 'mongodb';
 import { TofLogger } from '../tof-logger';
+import { AuditEntity } from '../audit/audit.decorator';
 
 @Controller('api/fhirResources')
 @UseGuards(AuthGuard('bearer'))
@@ -154,6 +155,7 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
     }
 
     @Post()
+    @AuditEntity('create', 'FhirResource')
     public async createFhirResource(@User() user: ITofUser, @Body() fhirResource: IFhirResource, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IFhirResource> {
         if (implementationGuideId) {
             await this.assertCanWriteById(user, implementationGuideId);
@@ -162,6 +164,7 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
     }
 
     @Put(':id')
+    @AuditEntity('update', 'FhirResource')
     public async updateFhirResource(@User() user: ITofUser, @Param('id') id: string, @Body() fhirResource: IFhirResource, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IFhirResource> {
         await this.assertIdMatch(id, fhirResource);
         await this.assertCanWriteById(user, id);
@@ -173,6 +176,7 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
     }
 
     @Delete(':id')
+    @AuditEntity('delete', 'FhirResource')
     public async deleteFhirResource(@User() user: ITofUser, @Param('id') id: string) {
         await this.assertCanWriteById(user, id);
         await this.fhirResourceService.deleteFhirResource(id);

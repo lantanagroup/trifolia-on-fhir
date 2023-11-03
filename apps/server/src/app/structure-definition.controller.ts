@@ -22,6 +22,7 @@ import {AuthService} from './auth/auth.service';
 import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
 import {IFhirResource} from '@trifolia-fhir/models';
+import { AuditEntity } from './audit/audit.decorator';
 
 
 @Controller('api/structureDefinitions')
@@ -184,6 +185,7 @@ export class StructureDefinitionController extends FhirResourcesController  {
   }
 
   @Post()
+  @AuditEntity('create', 'FhirResource')
   public async createStructureDefinition(@User() user, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
@@ -193,6 +195,7 @@ export class StructureDefinitionController extends FhirResourcesController  {
   }
 
   @Put(':id')
+  @AuditEntity('update', 'FhirResource')
   public async updateStructureDefinition(@User() user, @Param('id') id: string, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     await this.assertCanWriteById(user, id);
     if (implementationGuideId) {
@@ -203,6 +206,7 @@ export class StructureDefinitionController extends FhirResourcesController  {
   }
 
   @Delete(':id')
+  @AuditEntity('delete', 'FhirResource')
   public async deleteStructureDefinition(@User() user, @Param('id') id: string ) {
     await this.assertCanWriteById(user, id);
     return this.fhirResourcesService.deleteFhirResource(id);

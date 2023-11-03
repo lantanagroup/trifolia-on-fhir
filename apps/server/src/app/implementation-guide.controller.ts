@@ -1,5 +1,5 @@
 import {HttpService} from '@nestjs/axios';
-import {BadRequestException, Body, Controller, Delete, Get, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
+import {BadRequestException, Body, Controller, Delete, Get, Inject, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards, UseInterceptors} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirInstance, FhirServerVersion, RequestHeaders, User} from './server.decorators';
@@ -33,6 +33,8 @@ import {FhirResourcesController} from './fhir-resources/fhir-resources.controlle
 import {NonFhirResourcesService} from './non-fhir-resources/non-fhir-resources.service';
 import {ImplementationGuide as R5ImplementationGuide, StructureDefinition} from '@trifolia-fhir/r5';
 import {firstValueFrom} from 'rxjs';
+import { AuditEntity } from './audit/audit.decorator';
+import { AuditInterceptor } from './audit/audit-entity.interceptor';
 
 
 class PatchRequest {
@@ -442,6 +444,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
   }
 
   @Post()
+  @AuditEntity('create', 'FhirResource')
   public async createImplementationGuide(@User() user, @Body() body) {
     if (!body || !body.resource) {
       throw new BadRequestException();
@@ -452,17 +455,19 @@ export class ImplementationGuideController extends FhirResourcesController { // 
   }
 
   @Put(':id')
-  public async updateImplementationGuide(@Param('id') id: string, @Body() body, @User() user) {
+  @AuditEntity('update', 'FhirResource')
+  public async updateImplementationGuide(@Param('id') id: string, @Body() body, @User() user): Promise<IFhirResource> {
     if (!body || !body.resource) {
       throw new BadRequestException();
     }
     await this.assertCanWriteById(user, id);
     let fhirResource: IFhirResource = body;
     ImplementationGuideController.downloadDependencies(body.resource, fhirResource.fhirVersion, this.configService, this.logger);
-    return await this.fhirResourceService.updateFhirResource(id, fhirResource);
+    return this.fhirResourceService.updateFhirResource(id, fhirResource);
   }
 
   @Delete(':id')
+  @AuditEntity('delete', 'FhirResource')
   public async deleteImplementationGuide(@User() user, @Param('id') id: string) {
     await this.assertCanWriteById(user, id);
     return this.fhirResourceService.deleteFhirResource(id);

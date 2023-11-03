@@ -10,6 +10,7 @@ import { UserDocument } from './user.schema';
 import { UsersService } from './users.service';
 import { ObjectId } from 'mongodb';
 import { TofNotFoundException } from '../../not-found-exception';
+import { AuditEntity } from '../audit/audit.decorator';
 
 @Controller('api/users')
 @UseGuards(AuthGuard('bearer'))
@@ -104,6 +105,7 @@ export class UsersController extends BaseDataController<UserDocument> {
 
 
     @Post()
+    @AuditEntity('create', 'User')
     public async createUser(@User() user: ITofUser, @Body() newUser: IUser) : Promise<IUser> {
 
         if (!newUser || !newUser.authId || newUser.authId.length < 1 || !newUser.firstName || !newUser.lastName) {
@@ -126,6 +128,7 @@ export class UsersController extends BaseDataController<UserDocument> {
 
 
     @Put(':id')
+    @AuditEntity('update', 'User')
     public async updateUser(@Param('id') id: string, @User() user: ITofUser, @Body() updatedUser: IUser) : Promise<IUser> {
 
         super.assertIdMatch(id, updatedUser);
@@ -140,6 +143,7 @@ export class UsersController extends BaseDataController<UserDocument> {
 
     @HttpCode(204)
     @Delete()
+    @AuditEntity('delete', 'User')
     public async deleteUser(@Param('id') id: string, @User() user: ITofUser) {
         let me = await this.getMe(user);
         if (!(user.isAdmin || (me && me.id === id))) {
