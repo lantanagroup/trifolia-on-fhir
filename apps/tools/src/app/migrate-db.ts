@@ -307,7 +307,7 @@ export class MigrateDb extends BaseTools {
     for (const groupedResource of resources) {
       const auditEvent = groupedResource.head;
 
-      let audit: IAudit;
+      let audit; //: IAudit;
 
       if (this.options.fhirVersion === 'stu3') {
         const stu3AuditEvent = auditEvent as STU3AuditEvent;

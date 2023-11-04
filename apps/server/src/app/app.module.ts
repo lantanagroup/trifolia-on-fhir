@@ -29,6 +29,8 @@ import {FhirResourcesModule} from './fhir-resources/fhir-resources.module';
 import {NonFhirResourcesModule} from './non-fhir-resources/non-fhir-resources.module';
 import {HistoryModule} from './history/history.module';
 import {AuditModule} from './audit/audit.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AuditInterceptor } from './audit/audit-entity.interceptor';
 
 @Module({
   imports: [
@@ -64,6 +66,10 @@ import {AuditModule} from './audit/audit.module';
     SearchParameterController,
     FshController,
   ],
-  providers: [HttpStrategy, ExportService],
+  providers: [HttpStrategy, ExportService,
+  {
+    provide: APP_INTERCEPTOR,
+    useClass: AuditInterceptor
+  }],
 })
 export class AppModule {}

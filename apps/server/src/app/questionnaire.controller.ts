@@ -10,6 +10,7 @@ import {IFhirResource} from '@trifolia-fhir/models';
 import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {AuthService} from './auth/auth.service';
 import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
+import { AuditEntity } from './audit/audit.decorator';
 
 @Controller('api/questionnaires')
 @UseGuards(AuthGuard('bearer'))
@@ -36,6 +37,7 @@ export class QuestionnaireController extends FhirResourcesController {
   }
 
   @Post()
+  @AuditEntity('create', 'FhirResource')
   public async createQuestionnaire(@User() user, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
@@ -45,6 +47,7 @@ export class QuestionnaireController extends FhirResourcesController {
   }
 
   @Put(':id')
+  @AuditEntity('update', 'FhirResource')
   public async updateQuestionnaire(@User() user, @Param('id') id: string, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     await this.assertCanWriteById(user, id);
     if (implementationGuideId) {
@@ -55,6 +58,7 @@ export class QuestionnaireController extends FhirResourcesController {
   }
 
   @Delete(':id')
+  @AuditEntity('delete', 'FhirResource')
   public async deleteQuestionnaire(@User() user, @Param('id') id: string ) {
     await this.assertCanWriteById(user, id);
     return this.fhirResourcesService.deleteFhirResource(id);

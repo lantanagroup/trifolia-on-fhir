@@ -86,12 +86,23 @@ export interface IHistory extends IProjectResource {
   current:  IProjectResourceReference;
 }
 
+export interface IAuditPropertyDiff {
+  path: string;
+  oldValue: any;
+  newValue: any;
+}
+
+export type AuditAction = 'read'|'update'|'delete'|'create'|'exception'|'other';
+export type AuditEntityType = 'User'|'Group'|'Project'|'FhirResource'|'NonFhirResource';
+export type AuditEntityValue = IUser|IGroup|IProject|IFhirResource|INonFhirResource|string;
 
 export interface IAudit extends IBaseEntity {
-  action: 'read'|'update'|'delete'|'create',
+  action: AuditAction,
   timestamp: Date,
-  who: string;
-  what: string;
+  user?: IUser;
+  entityType?: AuditEntityType;
+  entityValue?: AuditEntityValue;
+  propertyDiffs?: IAuditPropertyDiff[];
   note?: string;
   networkAddr?: string;
 }
