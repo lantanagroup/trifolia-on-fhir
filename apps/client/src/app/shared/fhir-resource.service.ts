@@ -71,4 +71,9 @@ export class FhirResourceService {
         return this.http.get<IProjectResourceReferenceMap>(url);
     }
 
+    public getWithReferences(id: string): Observable<IFhirResource> {
+      const url = `/api/fhirResources/${encodeURIComponent(id)}/references`;
+      return this.http.get<IFhirResource>(url);
+    }
+
 }

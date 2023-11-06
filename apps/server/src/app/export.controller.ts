@@ -3,6 +3,8 @@ import {Controller, Get, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/
 import {BundleExporter} from './export/bundle';
 import type {ITofRequest} from './models/tof-request';
 import type {IBundle, IStructureDefinition, ITofUser} from '@trifolia-fhir/tof-lib';
+import {getPages} from "@trifolia-fhir/tof-lib";
+
 import {findReferences, joinUrl} from '@trifolia-fhir/tof-lib';
 import {emptydir, rmdir, zip} from './helper';
 import {ExportOptions} from './models/export-options';
@@ -24,12 +26,14 @@ import {FhirResourcesController} from './fhir-resources/fhir-resources.controlle
 import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {v4 as uuidv4} from 'uuid';
 import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
+import {IFhirResource} from '@trifolia-fhir/models';
+
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Export')
 @ApiOAuth2([])
-export class ExportController extends FhirResourcesController {//BaseController {
+export class ExportController extends FhirResourcesController {
   protected logger = new TofLogger(ExportController.name);
   public jsZipObj = new JSZip();
 
@@ -168,7 +172,8 @@ export class ExportController extends FhirResourcesController {//BaseController 
 
     const bundleExporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, req.fhir, implementationGuideId);
     const bundle = await bundleExporter.getBundle(false);
-    let pages  = await bundleExporter.getPages();
+    const conf = <IFhirResource> await this.fhirResourceService.getWithReferences(implementationGuideId);
+    let pages = getPages(conf);
     const msWordExporter = new MSWordExporter();
     const results = await msWordExporter.export(bundle, pages, bundleExporter.fhirVersion);
 

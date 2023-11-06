@@ -160,7 +160,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
           if(type === NonFhirResourceType.Page){
             await addPageToImplementationGuide(this.fhirResourceService, newNonFhirResource, implementationGuideId);
           }
-          else{
+          else if (type === NonFhirResourceType.CdaExample){
             await addToImplementationGuideNew(this.fhirResourceService, newNonFhirResource, implementationGuideId, true);
           }
         }
@@ -244,7 +244,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
           if(type === NonFhirResourceType.Page){
             await addPageToImplementationGuide(this.fhirResourceService, upNonFhirResource, implementationGuideId);
           }
-          else{
+          else if (type === NonFhirResourceType.CdaExample){
             await addToImplementationGuideNew(this.fhirResourceService, upNonFhirResource, implementationGuideId, true);
           }
       }

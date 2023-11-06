@@ -20,7 +20,7 @@ import { BundleExporter } from "./bundle";
 import { HttpService } from '@nestjs/axios';
 import { MethodNotAllowedException } from "@nestjs/common";
 import { Formats } from "../models/export-options";
-import { IgPageHelper, PageInfo } from "@trifolia-fhir/tof-lib";
+import {getPages, IgPageHelper, PageInfo} from '@trifolia-fhir/tof-lib';
 import {
   getCustomMenu,
   getDefaultImplementationGuideResourcePath,
@@ -124,7 +124,7 @@ export class HtmlExporter {
 
         const bundleExporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, this.fhir, this.implementationGuideId);
         this.bundle = await bundleExporter.getBundle();
-        this.pages  = await bundleExporter.getPages();
+        this.pages = getPages(this.igFhirResource);
         this.fhirVersion = bundleExporter.fhirVersion;
         let  pageInfos = this.pageInfos;
         const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide>this.bundle.entry
@@ -374,7 +374,7 @@ export class HtmlExporter {
     // createMenu() must be called before writeResourceContent() for the IG because createMenu() might make changes
     // to the ig that needs to get written.
     this.logger.log('Updating the IG publisher templates for the resources');
-    const customMenu = getCustomMenu(this.implementationGuide);
+    const customMenu = getCustomMenu(this.igFhirResource);
     this.createMenu(this.rootPath, this.bundle, customMenu);
 
     this.writeResourceContent(inputDir, igToWrite, isXml);

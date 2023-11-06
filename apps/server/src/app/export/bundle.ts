@@ -185,20 +185,8 @@ export class BundleExporter {
     if (cleanup) {
       (bundle.entry || []).forEach((entry) => BundleExporter.cleanupResource(entry.resource, false));
     }
-
-
     return bundle;
   }
-
-  public async getPages(cleanup = false, summary = false, type: BundleTypes = 'searchset'): Promise<Page[]> {
-
-    this.logger.log(`Getting pages for  implementation guide ${this.implementationGuideId}`);
-
-    const conf = await this.fhirResourceService.getWithReferences(this.implementationGuideId);
-    const pages: Page[] = await this.fhirResourceService.getPagesFromImplementationGuide(conf);
-    return pages;
-  }
-
 
   public export(format: FormatTypes = 'json', removeExtensions = false, type: BundleTypes = 'searchset') {
     return new Promise((resolve, reject) => {

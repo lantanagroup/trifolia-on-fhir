@@ -135,6 +135,21 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
     return res;
   }
 
+  @Get(':type')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'getByType', description: 'getByType' })
+  async getByType(@Param('type') type: string, @Query('implementationguideid') implementationGuideId?: string): Promise<NonFhirResource> {
+
+    let filter = {};
+    filter['type'] = type;
+    if (implementationGuideId) {
+      filter['referencedBy.value'] = new ObjectId(implementationGuideId);
+    }
+    const res = <NonFhirResource>await this.nonFhirResourcesService.findOne(filter);
+    // resource found
+    return res;
+  }
+
 
   @Get()
   public async searchNonFhirResource(@User() user: ITofUser, @Request() req): Promise<Paginated<INonFhirResource>> {
