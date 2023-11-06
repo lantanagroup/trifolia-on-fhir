@@ -5,6 +5,7 @@ import {customAlphabet} from 'nanoid';
 import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide, IResourceReference} from './fhirInterfaces';
 import {Globals} from './globals';
+import {CustomMenu, INonFhirResource, IProjectResourceReference, NonFhirResource, Page} from '@trifolia-fhir/models';
 
 export function findReferences(obj: any, resourceType?: string, id?: string) {
   const references = [];
@@ -433,8 +434,8 @@ export function setCustomMenu(implementationGuide: IImplementationGuide, value: 
   }
 }
 
-export function getCustomMenu(implementationGuide: IImplementationGuide): string {
-  const Global = Globals;
+export function getCustomMenu(fhirResource: any): string {
+ /* const Global = Globals;
   if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
 
   // Find the extension that references the contained DocumentReference
@@ -464,7 +465,28 @@ export function getCustomMenu(implementationGuide: IImplementationGuide): string
       // @ts-ignore
       return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
     }
+  }*/
+  let content = "";
+  const customMenuIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === CustomMenu.name)
+  if (customMenuIndex > -1) {
+    let cm = fhirResource.references[customMenuIndex].value as CustomMenu;
+    content = cm.content;
   }
+  return content;
+
+}
+
+export function getPages(fhirResource: any): Page[] {
+
+  let  pages: Page[] = [];
+
+  (fhirResource.references || []).forEach((r: IProjectResourceReference) => {
+    if( r.valueType == NonFhirResource.name && typeof r.value == typeof {}  && (<INonFhirResource>r.value).type === Page.name) {
+      let page = r.value as Page;
+      pages.push(page);
+    }
+  });
+  return pages;
 }
 
 export function setJiraSpecValue(implementationGuide: IImplementationGuide, value: string) {

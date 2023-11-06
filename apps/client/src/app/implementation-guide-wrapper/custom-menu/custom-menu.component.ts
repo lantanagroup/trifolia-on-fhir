@@ -1,13 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { IImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { debounceTime } from 'rxjs/operators';
-import { getCustomMenu, setCustomMenu } from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import { ConfigService } from '../../shared/config.service';
-import { ImplementationGuide as STU3ImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { IgPageHelper, PageInfo } from '../../../../../../libs/tof-lib/src/lib/ig-page-helper';
-import { ImplementationGuide as R4ImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
-import { ImplementationGuide as R5ImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/r5/fhir';
-import { Subject } from 'rxjs';
+/*import { IgPageHelper, PageInfo } from '../../../../../../libs/tof-lib/src/lib/ig-page-helper';*/
+import {firstValueFrom, Subject} from 'rxjs';
+import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, Page} from '@trifolia-fhir/models';
+import {FhirResourceService} from '../../shared/fhir-resource.service';
+import {IgPageHelper} from '@trifolia-fhir/tof-lib';
 
 @Component({
   selector: 'trifolia-fhir-custom-menu',
@@ -15,12 +13,15 @@ import { Subject } from 'rxjs';
   styleUrls: ['./custom-menu.component.css']
 })
 export class CustomMenuComponent implements OnInit, OnChanges {
-  @Input() implementationGuide: IImplementationGuide;
+  @Input() resource: any;
+  @Input() customMenu: any;
   @Output() change = new EventEmitter<string>();
   public valueChanged = new Subject();
   public value: string;
 
-  constructor(private configService: ConfigService) {
+
+  constructor(private configService: ConfigService, private fhirResourceService: FhirResourceService) {
+
     this.valueChanged
       .pipe(debounceTime(500))
       .subscribe(() => {
@@ -39,37 +40,30 @@ export class CustomMenuComponent implements OnInit, OnChanges {
   }
 
   public updateCustomMenu() {
-    setCustomMenu(this.implementationGuide, this.value);
+    this.customMenu["content"] = this.value;
   }
 
-  generate() {
-    let pageInfos: PageInfo[];
+  async generate() {
 
-    if (this.configService.isFhirSTU3) {
-      const stu3ImplementationGuide = <STU3ImplementationGuide> this.implementationGuide;
-      pageInfos = IgPageHelper.getSTU3PagesList([], null, stu3ImplementationGuide.page, stu3ImplementationGuide);
-    } else if (this.configService.isFhirR4) {
-      const r4ImplementationGuide = <R4ImplementationGuide> this.implementationGuide;
-      if (r4ImplementationGuide.definition) {
-        pageInfos = IgPageHelper.getR4andR5PagesList([], null, r4ImplementationGuide.definition.page, r4ImplementationGuide);
-      }
-    } else if (this.configService.isFhirR5) {
-      const r5ImplementationGuide = <R5ImplementationGuide> this.implementationGuide;
-      if (r5ImplementationGuide.definition) {
-        pageInfos = IgPageHelper.getR4andR5PagesList([], null,  r5ImplementationGuide.definition.page, r5ImplementationGuide);
-      }
-    } else {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
-    }
+    let fhirResource: IFhirResource  = await firstValueFrom(this.fhirResourceService.getWithReferences(this.resource.id));
 
-    this.customMenuValue = IgPageHelper.getMenuContent(null);
+    let pages = [];
+
+    fhirResource.references.forEach((ref: IProjectResourceReference) => {
+      if (ref.valueType == NonFhirResource.name && typeof  ref.value == typeof {} &&  (<INonFhirResource>ref.value).type === Page.name){
+        let page = ref.value as Page;
+        pages.push(page);
+      }
+    });
+
+    this.customMenuValue = IgPageHelper.getMenuContent(pages);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.value = getCustomMenu(this.implementationGuide);
+    this.value = this.customMenu["content"];
   }
 
   ngOnInit() {
-    this.value = getCustomMenu(this.implementationGuide);
+    this.value = this.customMenu["content"];
   }
 }

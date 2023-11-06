@@ -44,6 +44,8 @@ export class FhirResource extends BaseEntity implements IFhirResource {
     @Prop()
     isDeleted: boolean = false;
 
+
+
 }
 
 export const FhirResourceSchema = SchemaFactory.createForClass(FhirResource);

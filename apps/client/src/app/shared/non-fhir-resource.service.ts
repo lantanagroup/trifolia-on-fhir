@@ -79,7 +79,14 @@ export class NonFhirResourceService {
       return  this.http.get<INonFhirResource>(url);
     }
 
-    public deleteByName(resource: INonFhirResource, implementationGuideId?: string): Observable<any> {
+    public  getByType(resource: INonFhirResource, implementationGuideId?: string): Observable<INonFhirResource> {
+      let url = `/api/nonFhirResources/${resource.type}`;
+      url += `/${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
+      return  this.http.get<INonFhirResource>(url);
+    }
+
+
+  public deleteByName(resource: INonFhirResource, implementationGuideId?: string): Observable<any> {
       let url = `/api/nonFhirResources/${resource.type}`;
       url += `/${encodeURIComponent(resource.name)}${implementationGuideId ? '?implementationguideid=' + encodeURIComponent(implementationGuideId) : ''}`;
       return this.http.delete(url);

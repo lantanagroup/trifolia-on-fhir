@@ -30,7 +30,7 @@ import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
 import {ProjectService} from '../../shared/projects.service';
-import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap} from '@trifolia-fhir/models';
+import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap, CustomMenu} from '@trifolia-fhir/models';
 import {IDomainResource, getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 
 import {firstValueFrom, forkJoin} from 'rxjs';
@@ -51,6 +51,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public fhirResource: IFhirResource;
   public implementationGuide: ImplementationGuide;
   public message: string;
+  public customMenu: CustomMenu;
   public validation: any;
   public pages: PageDefinition[];
   public resourceTypeCodes: Coding[] = [];
@@ -908,7 +909,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
   }
 
-  public save() {
+  public async save() {
 
     // Add the new fhir version if they forgot to click the + button
     if (this.newFhirVersion && this.implementationGuide.fhirVersion) {
@@ -929,6 +930,15 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       this.saving = false;
       return;
     }
+
+    if (this.customMenu.id || this.customMenu.content) {
+      this.customMenu.content = this.customMenu.content ?? '';
+      this.customMenu = await firstValueFrom(this.nonFhirResourceService.save(this.customMenu.id, this.customMenu, this.implementationGuideId));
+      if (!this.fhirResource.references.some(r => r.value === this.customMenu.id && r.valueType === 'NonFhirResource')) {
+        this.fhirResource.references.push({ value: this.customMenu.id, valueType: 'NonFhirResource' });
+      }
+    }
+
 
     this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.fhirResource)
       .subscribe({
@@ -1185,12 +1195,24 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
   }
 
-  public loadIG(newVal: IDomainResource, isDirty?: boolean) {
+  public async loadIG(newVal: IDomainResource, isDirty?: boolean) {
     this.implementationGuide = new ImplementationGuide(newVal);
 
     if (this.fhirResource) {
       this.fhirResource.resource = this.implementationGuide;
     }
+    // intro resource
+    if (!this.customMenu) {
+      let customMenu = new CustomMenu();
+      let res =  await firstValueFrom(this.nonFhirResourceService.getByType(customMenu, this.fhirResource.id));
+      if(res.id){
+        this.customMenu = res;
+      }
+      else{
+        this.customMenu = customMenu;
+      }
+    }
+
     this.igChanging.emit(isDirty);
     this.initPagesAndGroups();
   }
