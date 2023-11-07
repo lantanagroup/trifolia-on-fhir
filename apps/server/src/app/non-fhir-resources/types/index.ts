@@ -1,4 +1,4 @@
-import {CdaExample, CustomMenu, OtherNonFhirResource, Page, StructureDefinitionIntro, StructureDefinitionNotes} from '@trifolia-fhir/models';
+import {CdaExample, CustomMenu, IgnoreWarnings, OtherNonFhirResource, Page, StructureDefinitionIntro, StructureDefinitionNotes} from '@trifolia-fhir/models';
 import { HydratedDocument, Schema } from 'mongoose';
 
 
@@ -15,6 +15,8 @@ export type OtherNonFhirResourceDocument = HydratedDocument<OtherNonFhirResource
 export const OtherNonFhirResourceSchema = new Schema<OtherNonFhirResource>();
 
 export const CustomMenuSchema = new Schema<CustomMenu>();
+
+export const IgnoreWarningsSchema = new Schema<IgnoreWarnings>();
 
 export const PageSchema = new Schema<Page>({
   navMenu: String,

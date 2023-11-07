@@ -5,7 +5,7 @@ import { NonFhirResourcesController } from './non-fhir-resources.controller';
 import { NonFhirResourcesService } from './non-fhir-resources.service';
 import { HistoryModule } from '../history/history.module';
 import { FhirResourcesModule } from '../fhir-resources/fhir-resources.module';
-import { CdaExampleSchema, OtherNonFhirResourceSchema , PageSchema, CustomMenuSchema, StructureDefinitionIntroSchema, StructureDefinitionNotesSchema} from './types';
+import { CdaExampleSchema, OtherNonFhirResourceSchema , PageSchema, CustomMenuSchema, StructureDefinitionIntroSchema, StructureDefinitionNotesSchema, IgnoreWarningsSchema} from './types';
 import { NonFhirResource, NonFhirResourceType } from '@trifolia-fhir/models';
 import { ProjectsModule } from '../projects/projects.module';
 
@@ -20,6 +20,7 @@ import { ProjectsModule } from '../projects/projects.module';
                     { name: NonFhirResourceType.StructureDefinitionIntro, schema: StructureDefinitionIntroSchema },
                     { name: NonFhirResourceType.StructureDefinitionNotes, schema: StructureDefinitionNotesSchema },
                     { name: NonFhirResourceType.CustomMenu, schema: CustomMenuSchema },
+                    { name: NonFhirResourceType.IgnoreWarnings, schema: IgnoreWarningsSchema},
                     { name: NonFhirResourceType.Page, schema: PageSchema },
                     { name: NonFhirResourceType.OtherNonFhirResource, schema: OtherNonFhirResourceSchema }
                 ]

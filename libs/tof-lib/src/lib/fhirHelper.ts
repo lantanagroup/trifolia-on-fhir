@@ -5,7 +5,7 @@ import {customAlphabet} from 'nanoid';
 import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide, IResourceReference} from './fhirInterfaces';
 import {Globals} from './globals';
-import {CustomMenu, INonFhirResource, IProjectResourceReference, NonFhirResource, Page} from '@trifolia-fhir/models';
+import {CustomMenu, INonFhirResource, IProjectResourceReference, IgnoreWarnings, NonFhirResource, Page} from '@trifolia-fhir/models';
 
 export function findReferences(obj: any, resourceType?: string, id?: string) {
   const references = [];
@@ -16,7 +16,7 @@ export function findReferences(obj: any, resourceType?: string, id?: string) {
     if (obj.hasOwnProperty('reference') && typeof obj['reference'] === 'string' && obj['reference'].split('/').length === 2) {
       if (resourceType && id && obj.reference === `${resourceType}/${id}`) {
         references.push(obj);
-      } else if (resourceType && !id && obj.reference.startsWit(resourceType + '/')) {
+      } else if (resourceType && !id && obj.reference.startsWith(resourceType + '/')) {
         references.push(obj);
       } else if (!resourceType && !id) {
         references.push(obj);
@@ -337,38 +337,45 @@ export function setIgnoreWarningsValue(implementationGuide: IImplementationGuide
   }
 }
 
-export function getIgnoreWarningsValue(implementationGuide: IImplementationGuide): string {
-  const Global = Globals;
-  if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
+export function getIgnoreWarningsValue(fhirResource: any): string {
+  // const Global = Globals;
+  // if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
 
-  // Find the extension that references the contained DocumentReference
-  const foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-ignore-warnings']);
-  if (!foundExtension) return;
-  const ignoreWarningsReference = foundExtension.valueReference ? foundExtension.valueReference.reference : '';
-  if (!ignoreWarningsReference.startsWith('#')) return;
+  // // Find the extension that references the contained DocumentReference
+  // const foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-ignore-warnings']);
+  // if (!foundExtension) return;
+  // const ignoreWarningsReference = foundExtension.valueReference ? foundExtension.valueReference.reference : '';
+  // if (!ignoreWarningsReference.startsWith('#')) return;
 
-  // Find the contained DocumentReference based on the extension reference
-  const foundContained = implementationGuide.contained.find(c => {
-    if (c.resourceType !== 'DocumentReference' || c.id !== ignoreWarningsReference.substring(1)) return false;
-    const docRef = <IDocumentReference>c;
-    return codeableConceptHasCode(docRef.type, 'ignore-warnings') &&
-      docRef.content &&
-      docRef.content.length === 1 &&
-      docRef.content[0].attachment &&
-      docRef.content[0].attachment.data;
-  });
+  // // Find the contained DocumentReference based on the extension reference
+  // const foundContained = implementationGuide.contained.find(c => {
+  //   if (c.resourceType !== 'DocumentReference' || c.id !== ignoreWarningsReference.substring(1)) return false;
+  //   const docRef = <IDocumentReference>c;
+  //   return codeableConceptHasCode(docRef.type, 'ignore-warnings') &&
+  //     docRef.content &&
+  //     docRef.content.length === 1 &&
+  //     docRef.content[0].attachment &&
+  //     docRef.content[0].attachment.data;
+  // });
 
-  if (foundContained) {
-    const documentReference = <IDocumentReference>foundContained;
+  // if (foundContained) {
+  //   const documentReference = <IDocumentReference>foundContained;
 
-    // Set the data after decoding it from base64
-    if (typeof atob === 'function') {
-      return decodeURIComponent(atob(documentReference.content[0].attachment.data));
-    } else {
-      // @ts-ignore
-      return decodeURIComponent(new Buffer(documentReference.content[0].attachment.data, 'base64').toString());
-    }
+  //   // Set the data after decoding it from base64
+  //   if (typeof atob === 'function') {
+  //     return decodeURIComponent(atob(documentReference.content[0].attachment.data));
+  //   } else {
+  //     // @ts-ignore
+  //     return decodeURIComponent(new Buffer(documentReference.content[0].attachment.data, 'base64').toString());
+  //   }
+  // }
+  let content = "";
+  const ignoreWarningsIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === IgnoreWarnings.name)
+  if (ignoreWarningsIndex > -1) {
+    let iw = fhirResource.references[ignoreWarningsIndex].value as IgnoreWarnings;
+    content = iw.content;
   }
+  return content;
 }
 
 export function setCustomMenu(implementationGuide: IImplementationGuide, value: string) {

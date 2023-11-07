@@ -13,6 +13,7 @@ export enum NonFhirResourceType {
   StructureDefinitionIntro = "StructureDefinitionIntro",
   StructureDefinitionNotes = "StructureDefinitionNotes",
 
+  IgnoreWarnings = "IgnoreWarnings",
   CustomMenu = "CustomMenu"
 }
 
@@ -60,6 +61,10 @@ export class StructureDefinitionNotes extends NonFhirResource {
 
 export class CustomMenu extends NonFhirResource {
   readonly type: NonFhirResourceType = NonFhirResourceType.CustomMenu;
+}
+
+export class IgnoreWarnings extends NonFhirResource {
+  readonly type: NonFhirResourceType = NonFhirResourceType.IgnoreWarnings;
 }
 
 export class OtherNonFhirResource extends NonFhirResource {

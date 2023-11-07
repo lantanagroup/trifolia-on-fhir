@@ -10,7 +10,8 @@ import { Subject } from 'rxjs';
   styleUrls: ['./ignore-warnings.component.css']
 })
 export class IgnoreWarningsComponent implements OnInit, OnChanges {
-  @Input() implementationGuide: IImplementationGuide;
+  @Input() resource: any;
+  @Input() ignoreWarnings: any;
   @Output() change = new EventEmitter<string>();
   public valueChanged = new Subject();
   public value: string;
@@ -34,14 +35,14 @@ export class IgnoreWarningsComponent implements OnInit, OnChanges {
   }
 
   public updateIgnoreWarningsValue() {
-    setIgnoreWarningsValue(this.implementationGuide, this.value);
+   this.ignoreWarnings["content"] = this.value;
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.value = getIgnoreWarningsValue(this.implementationGuide);
+   this.value = this.ignoreWarnings?.content;
   }
 
   ngOnInit() {
-    this.value = getIgnoreWarningsValue(this.implementationGuide);
+    this.value = this.ignoreWarnings?.content;
   }
 }

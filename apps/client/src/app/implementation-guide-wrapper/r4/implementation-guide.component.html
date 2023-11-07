@@ -588,7 +588,7 @@
           </div>
 
           <div class='col-md-12'>
-            <trifolia-fhir-ignore-warnings [implementationGuide]='implementationGuide' (change)='igChanging.emit(true)'></trifolia-fhir-ignore-warnings>
+            <trifolia-fhir-ignore-warnings [resource]='fhirResource' [ignoreWarnings]="ignoreWarnings" (change)='igChanging.emit(true)'></trifolia-fhir-ignore-warnings>
           </div>
 
           <div class='col-md-12'>

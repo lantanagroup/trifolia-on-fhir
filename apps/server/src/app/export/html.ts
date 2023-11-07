@@ -341,7 +341,7 @@ export class HtmlExporter {
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
     // Write the ignoreWarnings.txt file
-    let ignoreWarningsValue = getIgnoreWarningsValue(this.implementationGuide);
+    let ignoreWarningsValue = getIgnoreWarningsValue(this.igFhirResource);
 
     if (!ignoreWarningsValue) {
       ignoreWarningsValue = '== Suppressed Messages ==\r\n';
