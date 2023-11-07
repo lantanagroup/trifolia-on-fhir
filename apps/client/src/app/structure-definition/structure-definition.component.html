@@ -261,19 +261,26 @@
               <a *ngIf="e.constrainedElement" href="javascript:void(0)" (click)="toggleSelectedElement(e)">{{e.displayId}}</a>
               <span *ngIf="!e.constrainedElement">{{e.displayId}}</span>
 
-              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.type" title="An element which can have one of several different types">?</span>
-              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.isSummary" title="This element is an element that is part of the summary set">Σ</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.type"
+                    title="An element which can have one of several different types">?</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.isSummary"
+                    title="This element is an element that is part of the summary set">Σ</span>
               <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.isModifier" title="This element is a modifying element">?!</span>
-              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport" title="This element is an element that must be supported">S</span>
-              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint" title="This element defines or is affected by constraints">I</span>
-              <span class="action" *ngIf="!e.constrainedElement"><i class="fa fa-edit" title="Constrain this element" (click)="constraintManager.constrain(e); isDirty = true; nameChanged();"></i> </span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.mustSupport"
+                    title="This element is an element that must be supported">S</span>
+              <span class="property badge bg-info" *ngIf="e.constrainedElement && e.constrainedElement.constraint"
+                    title="This element defines or is affected by constraints">I</span>
+              <span *ngIf="!e.constrainedElement" class="action"><i (click)="constraintManager.constrain(e, false); isDirty = true; nameChanged();" class="fa fa-edit"
+                                                                    title="Constrain this element"></i></span>
+              <span *ngIf="!e.constrainedElement && !!e.baseElement.sliceName" class="action"><i (click)="constraintManager.constrain(e, true); isDirty = true; nameChanged();"
+                                                                                                 class="fa fa-cut" title="Slice this element"></i></span>
               <span class="action" *ngIf="e.constrainedElement && e.depth > 0 && cardinalityAllowsMultiple(e.baseElement.max) && e.constrainedElement.slicing">
                 <i class="fa fa-cut" title="Slice this element" (click)="constraintManager.slice(e); isDirty = true; nameChanged();"></i>
               </span>
               <span class="action" *ngIf="e.constrainedElement && e.depth > 0">
                 <i class="fas fa-trash-alt" title="Remove this element" (click)="constraintManager.removeConstraint(e); isDirty = true; nameChanged();"></i>
               </span>
-              <br/>
+              <br />
               <span title="Type">{{e.typeDisplay}} </span><span title="Cardinality">{{e.min}}..{{e.max}}</span>
             </div>
           </div>
@@ -403,10 +410,15 @@
 
       <div *ngIf="!selectedElement.constrainedElement">
         <p>This element has not been constrained.</p>
-        <button type="button" class="btn btn-primary" (click)="constraintManager.constrain(selectedElement); isDirty=true; nameChanged()" id="edConstraintBtn">
+        <button (click)="constraintManager.constrain(selectedElement, false); isDirty=true; nameChanged()" class="btn btn-primary me-2" id="edConstraintBtn" type="button">
           <i class="fa fa-edit"></i> Constrain this element
         </button>
+        <button (click)="constraintManager.constrain(selectedElement, true); isDirty=true; nameChanged()" *ngIf="selectedElement.baseElement.sliceName" class="btn btn-primary"
+                id="edConstraintBtn" type="button">
+          <i class="fa fa-cut"></i> Re-slice this element
+        </button>
       </div>
+
       <div class="element-definition-panel-resize">
         <i class="fas fa-arrows-alt-h"></i>
       </div>
