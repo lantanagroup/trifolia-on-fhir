@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { debounceTime } from 'rxjs/operators';
 import { ConfigService } from '../../shared/config.service';
-/*import { IgPageHelper, PageInfo } from '../../../../../../libs/tof-lib/src/lib/ig-page-helper';*/
 import {firstValueFrom, Subject} from 'rxjs';
 import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, Page} from '@trifolia-fhir/models';
 import {FhirResourceService} from '../../shared/fhir-resource.service';
@@ -60,10 +59,10 @@ export class CustomMenuComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.value = this.customMenu["content"];
+    this.value = this.customMenu?.content;
   }
 
   ngOnInit() {
-    this.value = this.customMenu["content"];
+    this.value = this.customMenu?.content;
   }
 }

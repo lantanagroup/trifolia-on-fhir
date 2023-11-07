@@ -30,7 +30,7 @@ import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
 import {ProjectService} from '../../shared/projects.service';
-import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap, CustomMenu} from '@trifolia-fhir/models';
+import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap, CustomMenu, IgnoreWarnings} from '@trifolia-fhir/models';
 import {IDomainResource, getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 
 import {firstValueFrom, forkJoin} from 'rxjs';
@@ -52,6 +52,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public implementationGuide: ImplementationGuide;
   public message: string;
   public customMenu: CustomMenu;
+  public ignoreWarnings: IgnoreWarnings;
   public validation: any;
   public pages: PageDefinition[];
   public resourceTypeCodes: Coding[] = [];
@@ -931,11 +932,21 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       return;
     }
 
+    // save Custom Menu
     if (this.customMenu.id || this.customMenu.content) {
       this.customMenu.content = this.customMenu.content ?? '';
       this.customMenu = await firstValueFrom(this.nonFhirResourceService.save(this.customMenu.id, this.customMenu, this.implementationGuideId));
       if (!this.fhirResource.references.some(r => r.value === this.customMenu.id && r.valueType === 'NonFhirResource')) {
         this.fhirResource.references.push({ value: this.customMenu.id, valueType: 'NonFhirResource' });
+      }
+    }
+
+    // save Ignore Warnings
+    if (this.ignoreWarnings.id || this.ignoreWarnings.content) {
+      this.ignoreWarnings.content = this.ignoreWarnings.content ?? '';
+      this.ignoreWarnings = await firstValueFrom(this.nonFhirResourceService.save(this.ignoreWarnings.id, this.ignoreWarnings, this.implementationGuideId));
+      if (!this.fhirResource.references.some(r => r.value === this.ignoreWarnings.id && r.valueType === 'NonFhirResource')) {
+        this.fhirResource.references.push({ value: this.ignoreWarnings.id, valueType: 'NonFhirResource' });
       }
     }
 
@@ -1201,7 +1212,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (this.fhirResource) {
       this.fhirResource.resource = this.implementationGuide;
     }
-    // intro resource
+    // custom menu
     if (!this.customMenu) {
       let customMenu = new CustomMenu();
       let res =  await firstValueFrom(this.nonFhirResourceService.getByType(customMenu, this.fhirResource.id));
@@ -1210,6 +1221,17 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       }
       else{
         this.customMenu = customMenu;
+      }
+    }
+    // ignore warnings
+    if (!this.ignoreWarnings) {
+      let ignoreWarnings = new IgnoreWarnings();
+      let res =  await firstValueFrom(this.nonFhirResourceService.getByType(ignoreWarnings, this.fhirResource.id));
+      if(res.id){
+        this.ignoreWarnings = res;
+      }
+      else{
+        this.ignoreWarnings = ignoreWarnings;
       }
     }
 
