@@ -98,6 +98,7 @@ import {R5ImplementationGuideComponent} from './implementation-guide-wrapper/r5/
 import {R5ResourceModalComponent} from './implementation-guide-wrapper/r5/resource-modal.component';
 import {PagesComponent} from './pages/pages.component';
 import {PageComponent} from './page/page.component';
+import { AuditComponent } from './manage/audit/audit.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -206,6 +207,7 @@ const appRoutes: Routes = [
 
   { path: 'users/me', component: UserComponent },
   { path: 'users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
+  { path: 'manage/audit', component: AuditComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
 ];
@@ -356,7 +358,8 @@ const authModuleConfig: OAuthModuleConfig = {
     ProjectsComponent,
     ProjectComponent,
     PagesComponent,
-    PageComponent
+    PageComponent,
+    AuditComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes, {

@@ -1,0 +1,155 @@
+<h1>Audit Log</h1>
+
+<ng-container *ngIf="audits">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Raw</th>
+        <th>Time</th>
+        <th>Action</th>
+        <th>Entity Type</th>
+        <th>User</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let audit of audits.results">
+        <td>
+          <button type="button" class="btn btn-primary btn-sm" title="View raw audit" (click)="openAuditModal(auditModal, audit)">
+            <i class="fa fa-search"></i>
+          </button>
+        </td>
+        <td>{{ audit.timestamp | date:'medium' }}</td>
+        <td>
+          {{ audit.action }}
+          <button *ngIf="audit.action === 'update'" type="button" class="btn btn-primary btn-sm" title="View changes" (click)="openDiffsModal(diffsModal, audit.propertyDiffs)">
+            <i class="fa fa-exchange-alt"></i>
+          </button>
+        </td>
+        <td>
+          {{ audit.entityType }}
+          <ng-container *ngIf="audit.entityType === 'FhirResource' && !!audit.entityValue?.resource?.resourceType">
+            ({{ audit.entityValue.resource.resourceType }})
+          </ng-container>
+          <button *ngIf="!!audit.entityValue" type="button" class="btn btn-primary btn-sm pull-right" title="View raw entity" (click)="openEntityModal(entityModal, audit.entityValue)">
+            <i class="fa fa-search"></i>
+          </button>
+        </td>
+        <td>
+          <ng-container *ngIf="audit.user">
+            {{ audit.user.name }}
+            <button type="button" class="btn btn-primary btn-sm pull-right" title="View raw user" (click)="openUserModal(userModal, audit.user)">
+              <i class="fa fa-user-circle"></i>
+            </button>
+          </ng-container>
+        </td>
+      </tr>
+  </table>
+  <ngb-pagination class="d-flex justify-content-center" [maxSize]="audits.itemsPerPage" [collectionSize]="audits.total"
+    [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()">
+  </ngb-pagination>
+</ng-container>
+
+
+<ng-template #auditModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">View Audit</h4>
+    <button type="button" class="btn" aria-label="Copy to clipboard" title="Copy to clipboard" (click)="copyToClipboard(currentAudit)">
+      <i class="fa fa-copy"></i>
+    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body" *ngIf="currentAudit">
+    <pre>{{ currentAudit | json }}</pre>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">Close</button>
+  </div>
+</ng-template>
+
+<ng-template #entityModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">View Resource</h4>
+    <button type="button" class="btn" aria-label="Copy to clipboard" title="Copy to clipboard" (click)="copyToClipboard(currentEntity)">
+      <i class="fa fa-copy"></i>
+    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body" *ngIf="currentEntity">
+    <pre>{{ currentEntity | json }}</pre>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">Close</button>
+  </div>
+</ng-template>
+
+
+<ng-template #userModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">View User</h4>
+    <button type="button" class="btn" aria-label="Copy to clipboard" title="Copy to clipboard" (click)="copyToClipboard(currentUser)">
+      <i class="fa fa-copy"></i>
+    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body" *ngIf="currentUser">
+    <pre>{{ currentUser | json }}</pre>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">Close</button>
+  </div>
+</ng-template>
+
+
+<ng-template #diffsModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">View Changes</h4>
+    <button type="button" class="btn" aria-label="Copy to clipboard" title="Copy to clipboard" (click)="copyToClipboard(currentPropertyDiffs)">
+      <i class="fa fa-copy"></i>
+    </button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body" *ngIf="currentPropertyDiffs">
+
+    <ul ngbNav #nav="ngbNav" class="nav-tabs">
+      <li ngbNavItem>
+        <a ngbNavLink>List</a>
+        <ng-template ngbNavContent>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Old Value</th>
+                <th>New Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let diff of currentPropertyDiffs">
+                <tr>
+                  <td colspan="2">{{ diff.path }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <pre>{{ diff.oldValue | json }}</pre>
+                  </td>
+                  <td>
+                    <pre>{{ diff.newValue | json }}</pre>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink>Raw</a>
+        <ng-template ngbNavContent>
+          <pre>{{ currentPropertyDiffs | json }}</pre>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav"></div>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">Close</button>
+  </div>
+</ng-template>

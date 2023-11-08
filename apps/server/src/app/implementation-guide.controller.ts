@@ -34,8 +34,6 @@ import {NonFhirResourcesService} from './non-fhir-resources/non-fhir-resources.s
 import {ImplementationGuide as R5ImplementationGuide, StructureDefinition} from '@trifolia-fhir/r5';
 import {firstValueFrom} from 'rxjs';
 import { AuditEntity } from './audit/audit.decorator';
-import { AuditInterceptor } from './audit/audit-entity.interceptor';
-
 
 class PatchRequest {
   op: string;

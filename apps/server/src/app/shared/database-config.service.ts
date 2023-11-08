@@ -16,7 +16,7 @@ export class DatabaseConfigService implements MongooseOptionsFactory {
       transform: (doc, ret) => {
 
         // remove the "_id" property from the returned JSON in favor of the virtual "id" property
-        if ('id' in doc && !('id' in ret) && '_id' in doc) {
+        if ('id' in doc && !('id' in ret) && '_id' in doc && !!doc._id) {
           ret.id = doc._id.toString();
         }
         delete ret['_id'];

@@ -28,6 +28,7 @@ import { FhirResourceService } from './fhir-resource.service';
 import {HistoryService} from './history.service';
 import {SearchParameterService} from './search-parameter.service';
 import { NonFhirResourceService } from './non-fhir-resource.service';
+import { AuditService } from './audit.service';
 
 @NgModule({
   declarations: [],
@@ -62,7 +63,8 @@ import { NonFhirResourceService } from './non-fhir-resource.service';
     FhirResourceService,
     NonFhirResourceService,
     SearchParameterService,
-    HistoryService
+    HistoryService,
+    AuditService
   ],
   exports: []
 })
