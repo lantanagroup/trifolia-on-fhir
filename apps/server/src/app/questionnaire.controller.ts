@@ -6,7 +6,7 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import { RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
-import {IFhirResource} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, IFhirResource} from '@trifolia-fhir/models';
 import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {AuthService} from './auth/auth.service';
 import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
@@ -37,7 +37,7 @@ export class QuestionnaireController extends FhirResourcesController {
   }
 
   @Post()
-  @AuditEntity('create', 'FhirResource')
+  @AuditEntity(AuditAction.Create, AuditEntityType.FhirResource)
   public async createQuestionnaire(@User() user, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
@@ -47,7 +47,7 @@ export class QuestionnaireController extends FhirResourcesController {
   }
 
   @Put(':id')
-  @AuditEntity('update', 'FhirResource')
+  @AuditEntity(AuditAction.Update, AuditEntityType.FhirResource)
   public async updateQuestionnaire(@User() user, @Param('id') id: string, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     await this.assertCanWriteById(user, id);
     if (implementationGuideId) {
@@ -58,7 +58,7 @@ export class QuestionnaireController extends FhirResourcesController {
   }
 
   @Delete(':id')
-  @AuditEntity('delete', 'FhirResource')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.FhirResource)
   public async deleteQuestionnaire(@User() user, @Param('id') id: string ) {
     await this.assertCanWriteById(user, id);
     return this.fhirResourcesService.deleteFhirResource(id);

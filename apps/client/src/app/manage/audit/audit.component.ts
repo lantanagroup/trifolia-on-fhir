@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuditService } from '../../shared/audit.service';
 import { Paginated } from '@trifolia-fhir/tof-lib';
-import { AuditEntityValue, IAudit, IAuditPropertyDiff, IUser } from '@trifolia-fhir/models';
+import { AuditAction, AuditEntityType, AuditEntityValue, IAudit, IAuditPropertyDiff, IUser } from '@trifolia-fhir/models';
 import { Subject, debounceTime } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -12,14 +12,28 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class AuditComponent implements OnInit {
 
-  public criteriaChangedEvent = new Subject<void>();
-  public audits: Paginated<IAudit>;
-  public currentPage: number = 1;
+  public AuditAction = AuditAction;
+  public AuditEntityType = AuditEntityType;
 
   public currentAudit: IAudit;
   public currentEntity: AuditEntityValue;
   public currentUser: IUser;
   public currentPropertyDiffs: IAuditPropertyDiff[]
+
+  public actions = Object.values(AuditAction).sort();
+  public entityTypes = Object.values(AuditEntityType).sort();
+
+  public criteriaChangedEvent = new Subject<void>();
+  public audits: Paginated<IAudit> = {
+    results: [],
+    itemsPerPage: 25,
+    total: 0
+  };
+  public currentPage: number = 1;
+  public criteria: {[key: string]: string} = {};
+  public sort: string = '-timestamp';
+  public itemsPerPage: number = 25;
+  public loadingResults: boolean = false;
 
 
   constructor(
@@ -40,12 +54,37 @@ export class AuditComponent implements OnInit {
 
 
   public async getAudits() {
-    this.auditService.search(this.currentPage).subscribe({
+    this.loadingResults = true;
+    this.audits.results = [];
+    this.audits.total = 0;
+    
+    this.auditService.search(this.currentPage, this.itemsPerPage, this.sort, this.criteria).subscribe({
       next: (results) => {
         this.audits = results;
       },
-      error: (err) => {console.log(err);}
+      error: (err) => {console.log(err);},
+      complete: () => {this.loadingResults = false;}
     });
+  }
+
+
+  public changeSort(column: string) {
+    const currentColumn = this.sort.startsWith('-') ? this.sort.substring(1) : this.sort;
+    if (currentColumn === column) {
+      this.sort = this.sort.startsWith('-') ? column : `-${column}`;
+    } else {
+      this.sort = column;
+    }
+    this.currentPage = 1;
+    this.getAudits();
+  }
+
+  public getSortIcon(column: string) {
+    const currentColumn = this.sort.startsWith('-') ? this.sort.substring(1) : this.sort;
+    if (currentColumn === column) {
+      return this.sort.startsWith('-') ? 'fa fa-sort-down' : 'fa fa-sort-up';
+    }
+    return 'fa fa-sort';
   }
 
 

@@ -8,6 +8,14 @@ export class PaginateOptions {
     public sortBy?: {[key: string]: 'asc'|'desc'};
     public populate?: string[] = [];
     public projection?: PipelineStage.Project['$project'];
+
+    /**
+     * Whether or not to hydrate the results based on the model's schema.
+     * For example: if using a custom aggregation pipeline that includes replacing a field in the model 
+     * (such as the result of a $lookup), this should be set to false.
+     * @default true
+     */
+    public hydrate?: boolean = true;
 }
 
 export class Paginated<T> {

@@ -11,7 +11,7 @@ import {FhirResourcesController} from './fhir-resources/fhir-resources.controlle
 import {AuthService} from './auth/auth.service';
 import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
-import {IFhirResource} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, IFhirResource} from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
 import { TofNotFoundException } from '../not-found-exception';
 import { BundleEntry } from '@trifolia-fhir/r5';
@@ -148,7 +148,7 @@ export class ValueSetController extends FhirResourcesController {
   }
 
   @Post()
-  @AuditEntity('create', 'FhirResource')
+  @AuditEntity(AuditAction.Create, AuditEntityType.FhirResource)
   public async createValueSet(@User() user, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
@@ -158,7 +158,7 @@ export class ValueSetController extends FhirResourcesController {
   }
 
   @Put(':id')
-  @AuditEntity('update', 'FhirResource')
+  @AuditEntity(AuditAction.Update, AuditEntityType.FhirResource)
   public async updateValueSet(@User() user, @Param('id') id: string, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId ) {
     await this.assertCanWriteById(user, id);
     if (implementationGuideId) {
@@ -169,7 +169,7 @@ export class ValueSetController extends FhirResourcesController {
   }
 
   @Delete(':id')
-  @AuditEntity('delete', 'FhirResource')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.FhirResource)
   public async deleteValueSet(@User() user, @Param('id') id: string) {
     await this.assertCanWriteById(user, id);
     return this.fhirResourceService.deleteFhirResource(id);

@@ -8,7 +8,7 @@ import {ConfigService} from './config.service';
 import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {AuthService} from './auth/auth.service';
 import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
-import {IFhirResource} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, IFhirResource} from '@trifolia-fhir/models';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import { AuditEntity } from './audit/audit.decorator';
 
@@ -38,7 +38,7 @@ export class SearchParameterController extends FhirResourcesController {
   }
 
   @Post()
-  @AuditEntity('create', 'FhirResource')
+  @AuditEntity(AuditAction.Create, AuditEntityType.FhirResource)
   public async createSearchParameter(@User() user, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
@@ -48,7 +48,7 @@ export class SearchParameterController extends FhirResourcesController {
   }
 
   @Put(':id')
-  @AuditEntity('update', 'FhirResource')
+  @AuditEntity(AuditAction.Update, AuditEntityType.FhirResource)
   public async updateSearchParameter(@User() user, @Param('id') id: string, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     await this.assertCanWriteById(user, id);
     if (implementationGuideId) {
@@ -59,7 +59,7 @@ export class SearchParameterController extends FhirResourcesController {
   }
 
   @Delete(':id')
-  @AuditEntity('delete', 'FhirResource')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.FhirResource)
   public async deleteSearchParameter(@User() user, @Param('id') id: string ) {
     await this.assertCanWriteById(user, id);
     return this.fhirResourcesService.deleteFhirResource(id);

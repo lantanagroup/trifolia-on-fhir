@@ -3,9 +3,8 @@ import {BaseDataService} from '../base/base-data.service';
 import {Model} from 'mongoose';
 import {Audit, AuditDocument} from './audit.schema';
 import {InjectModel} from '@nestjs/mongoose';
-import { AuditAction, AuditEntityType, IAuditPropertyDiff, IBaseEntity, IUser } from '@trifolia-fhir/models';
+import type { IAuditPropertyDiff, IBaseEntity } from '@trifolia-fhir/models';
 import { diff } from 'deep-diff';
-import { IBaseDataService } from '../base/interfaces';
 
 @Injectable()
 export class AuditService extends BaseDataService<AuditDocument> {

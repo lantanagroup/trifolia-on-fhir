@@ -1,7 +1,7 @@
 import { BadRequestException, Body, ConflictException, Controller, Delete, Get, HttpCode, Param, Post, Put, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
-import type { IUser } from '@trifolia-fhir/models';
+import { AuditAction, AuditEntityType, type IUser } from '@trifolia-fhir/models';
 import { type ITofUser, Paginated } from '@trifolia-fhir/tof-lib';
 import { BaseDataController } from '../base/base-data.controller';
 import { User } from '../server.decorators';
@@ -105,7 +105,7 @@ export class UsersController extends BaseDataController<UserDocument> {
 
 
     @Post()
-    @AuditEntity('create', 'User')
+    @AuditEntity(AuditAction.Create, AuditEntityType.User)
     public async createUser(@User() user: ITofUser, @Body() newUser: IUser) : Promise<IUser> {
 
         if (!newUser || !newUser.authId || newUser.authId.length < 1 || !newUser.firstName || !newUser.lastName) {
@@ -128,7 +128,7 @@ export class UsersController extends BaseDataController<UserDocument> {
 
 
     @Put(':id')
-    @AuditEntity('update', 'User')
+    @AuditEntity(AuditAction.Update, AuditEntityType.User)
     public async updateUser(@Param('id') id: string, @User() user: ITofUser, @Body() updatedUser: IUser) : Promise<IUser> {
 
         super.assertIdMatch(id, updatedUser);
@@ -143,7 +143,7 @@ export class UsersController extends BaseDataController<UserDocument> {
 
     @HttpCode(204)
     @Delete()
-    @AuditEntity('delete', 'User')
+    @AuditEntity(AuditAction.Delete, AuditEntityType.User)
     public async deleteUser(@Param('id') id: string, @User() user: ITofUser) {
         let me = await this.getMe(user);
         if (!(user.isAdmin || (me && me.id === id))) {

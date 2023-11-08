@@ -8,7 +8,7 @@ import {ConfigService} from './config.service';
 import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {AuthService} from './auth/auth.service';
-import {IFhirResource} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, IFhirResource} from '@trifolia-fhir/models';
 import { AuditEntity } from './audit/audit.decorator';
 
 @Controller('api/capabilityStatements')
@@ -29,7 +29,7 @@ export class CapabilityStatementController extends FhirResourcesController {
   }
 
   @Post()
-  @AuditEntity('create', 'FhirResource')
+  @AuditEntity(AuditAction.Create, AuditEntityType.FhirResource)
   public async createCapabilityStatement(@User() user, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
@@ -39,7 +39,7 @@ export class CapabilityStatementController extends FhirResourcesController {
   }
 
   @Put(':id')
-  @AuditEntity('update', 'FhirResource')
+  @AuditEntity(AuditAction.Update, AuditEntityType.FhirResource)
   public async updateCapabilityStatement(@User() user, @Param('id') id: string, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     await this.assertCanWriteById(user, id);
     if (implementationGuideId) {
@@ -50,7 +50,7 @@ export class CapabilityStatementController extends FhirResourcesController {
   }
 
   @Delete(':id')
-  @AuditEntity('delete', 'FhirResource')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.FhirResource)
   public async deleteCapabilityStatement(@User() user, @Param('id') id: string ) {
     await this.assertCanWriteById(user, id);
     return this.fhirResourcesService.deleteFhirResource(id);

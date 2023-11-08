@@ -8,8 +8,9 @@ import {GroupService} from './group.service';
 import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import { UserService } from './user.service';
-import type {IFhirResource, IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
+import {AuditAction, type IAudit, type IFhirResource, type IGroup, type IPermission, type IProject, type IUser} from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
+import { AuditService } from './audit.service';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +26,8 @@ export class AuthService {
     private configService: ConfigService,
     private userService: UserService,
     private groupService: GroupService,
-    private oauthService: OAuthService) {
+    private oauthService: OAuthService,
+    private auditService: AuditService) {
 
     this.authChanged = new EventEmitter();
   }
@@ -83,7 +85,17 @@ export class AuthService {
     //this.oauthService.events.subscribe(e => e instanceof OAuthErrorEvent ? console.error(e) : console.warn(e));
 
     this.oauthService.loadDiscoveryDocumentAndTryLogin({
-      onTokenReceived: () => this.router.navigateByUrl(decodeURIComponent(this.oauthService.state)),
+      onTokenReceived: () => {
+        
+        const newAudit: IAudit = {
+          action: AuditAction.Login,
+          timestamp: new Date(),
+          note: `Issuer: ${this.oauthService.issuer}, Client ID: ${this.oauthService.clientId}, Scope: ${this.oauthService.scope}`
+        }
+        this.auditService.save(newAudit).subscribe();
+
+        this.router.navigateByUrl(decodeURIComponent(this.oauthService.state));
+      }
     })
       .then(() => {
         // Set the user session and context
@@ -136,7 +148,6 @@ export class AuthService {
         userProfile: this.userProfile,
         user: this.user
       });
-
 
       window.location.hash = '';
       let path;
@@ -194,7 +205,7 @@ export class AuthService {
         userProfile.isAdmin = false;
       }
 
-      //userProfile.isAdmin = true;
+      // userProfile.isAdmin = true;
       return userProfile;
     }
   }

@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
-import type { IFhirResource, INonFhirResource, IProjectResourceReference, IProjectResourceReferenceMap } from '@trifolia-fhir/models';
+import { AuditAction, AuditEntityType, type IFhirResource, type INonFhirResource, type IProjectResourceReference, type IProjectResourceReferenceMap } from '@trifolia-fhir/models';
 import type { ITofUser, PaginateOptions, Paginated } from '@trifolia-fhir/tof-lib';
 import { RequestHeaders, User } from '../server.decorators';
 import { FhirResourcesService } from './fhir-resources.service';
@@ -155,7 +155,7 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
     }
 
     @Post()
-    @AuditEntity('create', 'FhirResource')
+    @AuditEntity(AuditAction.Create, AuditEntityType.FhirResource)
     public async createFhirResource(@User() user: ITofUser, @Body() fhirResource: IFhirResource, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IFhirResource> {
         if (implementationGuideId) {
             await this.assertCanWriteById(user, implementationGuideId);
@@ -164,7 +164,7 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
     }
 
     @Put(':id')
-    @AuditEntity('update', 'FhirResource')
+    @AuditEntity(AuditAction.Update, AuditEntityType.FhirResource)
     public async updateFhirResource(@User() user: ITofUser, @Param('id') id: string, @Body() fhirResource: IFhirResource, @Query('implementationguideid') implementationGuideId?: string, @Query('isexample') isExample?: boolean): Promise<IFhirResource> {
         await this.assertIdMatch(id, fhirResource);
         await this.assertCanWriteById(user, id);
@@ -176,7 +176,7 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
     }
 
     @Delete(':id')
-    @AuditEntity('delete', 'FhirResource')
+    @AuditEntity(AuditAction.Delete, AuditEntityType.FhirResource)
     public async deleteFhirResource(@User() user: ITofUser, @Param('id') id: string) {
         await this.assertCanWriteById(user, id);
         await this.fhirResourceService.deleteFhirResource(id);

@@ -10,7 +10,7 @@ import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {UsersService} from '../users/users.service';
 import {AuthGuard} from '@nestjs/passport';
 import {Body, Controller, Delete, Get, Param, Put, UnauthorizedException, UseGuards} from '@nestjs/common';
-import type {IGroup} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, type IGroup} from '@trifolia-fhir/models';
 import { ObjectId } from 'mongodb';
 import { AuditEntity } from '../audit/audit.decorator';
 
@@ -48,7 +48,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
 
 
   @Post('managing')
-  @AuditEntity('create', 'Group')
+  @AuditEntity(AuditAction.Create, AuditEntityType.Group)
   public async createManagingGroup(@User() userProfile: ITofUser, @Body() newGroup: IGroup) {
 
     // console.log(JSON.stringify(userProfile.user));
@@ -78,7 +78,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
 
 
   @Put('managing/:id')
-  @AuditEntity('update', 'Group')
+  @AuditEntity(AuditAction.Update, AuditEntityType.Group)
   public async updateManagingGroup(@User() userProfile: ITofUser, @Body() updatedGroup: IGroup, @Param('id') id: string) {
 
     if (!userProfile) return null;
@@ -159,7 +159,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     description: 'Deletes a group that the user is an admin/manager of'
   })
   @Delete('managing/:id')
-  @AuditEntity('delete', 'Group')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.Group)
   public async deleteManagingGroup(@User() userProfile: ITofUser, @Param('id') id: string) {
 
     // get group first
@@ -178,7 +178,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     description: 'Removes the current user as a member from the group'
   })
   @Delete('membership/:id')
-  @AuditEntity('delete', 'Group')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.Group)
   public async deleteMembershipGroup(@User() userProfile: ITofUser, @Param('id') id: string) {
 
     // get group first

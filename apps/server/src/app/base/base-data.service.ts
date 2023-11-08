@@ -24,17 +24,18 @@ export class BaseDataService<T extends IBaseEntity> implements IBaseDataService<
 
 
     public async search(options?: PaginateOptions): Promise<Paginated<T>> {
-        const page = (options && options.page) ? options.page : 1;
-        const limit = (options && options.itemsPerPage) ? options.itemsPerPage : 10;
+        const page = (options && options.page) ? options.page*1 : 1;
+        const limit = (options && options.itemsPerPage) ? options.itemsPerPage*1 : 10;
         const pipeline: PipelineStage[] = (options && options.pipeline) ? options.pipeline : [];
         const skip = (page-1) * limit;
         const sortBy = (options && options.sortBy)  ? options.sortBy : {};
         const populate = (options && options.populate)  ? options.populate : [];
         const projection = (options && options.projection) ? options.projection : {};
+        const hydrate = (options && options.hydrate !== undefined) ? !!options.hydrate : true;
 
         let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
         pipeline.push({$match: {$or: deleteClause}});
-        // console.log(`base search pipeline: ${JSON.stringify(pipeline)}`);
+        // console.log(`base search pipeline: ${JSON.stringify(pipeline)}`, skip, limit, sortBy, hydrate);
 
         
         let query = this.model.aggregate(pipeline);
@@ -48,7 +49,7 @@ export class BaseDataService<T extends IBaseEntity> implements IBaseDataService<
         }
         query = query.skip(skip).limit(limit);
         
-        let items = ((await query) || []).map(i => this.model.hydrate(i));
+        let items = ((await query) || []).map(i => hydrate ? this.model.hydrate(i) : i);
         if (populate.length > 0) {
             items = (await this.model.populate(items, populate.map(p => { return { path: p } })) || []);
         }

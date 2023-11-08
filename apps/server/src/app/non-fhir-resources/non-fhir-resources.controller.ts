@@ -10,7 +10,7 @@ import {FhirResourcesService} from '../fhir-resources/fhir-resources.service';
 import {type NonFhirResourceDocument} from './non-fhir-resource.schema';
 import {ObjectId} from 'mongodb';
 import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
-import { NonFhirResource} from '@trifolia-fhir/models';
+import { AuditAction, AuditEntityType, NonFhirResource} from '@trifolia-fhir/models';
 import { AuditEntity } from '../audit/audit.decorator';
 
 @Controller('api/nonFhirResources')
@@ -163,7 +163,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
   }
 
   @Post()
-  @AuditEntity('create', 'NonFhirResource')
+  @AuditEntity(AuditAction.Create, AuditEntityType.NonFhirResource)
   public async createNonFhirResource(@User() user: ITofUser, @Body() nonFhirResource: NonFhirResourceDocument, @Query('implementationguideid') implementationGuideId?: string): Promise<INonFhirResource> {
     // console.log('POST -- checking perms on IG:', implementationGuideId);
     if (implementationGuideId) {
@@ -176,7 +176,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
   }
 
   @Put(':id')
-  @AuditEntity('update', 'NonFhirResource')
+  @AuditEntity(AuditAction.Update, AuditEntityType.NonFhirResource)
   public async updateNonFhirResource(@User() user: ITofUser, @Param('id') id: string, @Body() nonFhirResource: NonFhirResourceDocument, @Query('implementationguideid') implementationGuideId?: string): Promise<INonFhirResource> {
     console.log('PUT -- checking perms on IG:', implementationGuideId);
     await this.assertIdMatch(id, nonFhirResource);
@@ -191,7 +191,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
   }
 
   @Delete(':id')
-  @AuditEntity('delete', 'NonFhirResource')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.NonFhirResource)
   public async deleteNonFhirResource(@User() user: ITofUser, @Param('id') id: string) {
     await this.nonFhirResourcesService.delete(id);
   }

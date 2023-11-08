@@ -28,7 +28,7 @@ import {existsSync} from 'fs';
 import {ProjectsService} from './projects/projects.service';
 import {AuthService} from './auth/auth.service';
 import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
-import {IFhirResource, ImplementationGuideExampleTypes, INonFhirResource, IProjectResourceReference} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, IFhirResource, ImplementationGuideExampleTypes, INonFhirResource, IProjectResourceReference} from '@trifolia-fhir/models';
 import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {NonFhirResourcesService} from './non-fhir-resources/non-fhir-resources.service';
 import {ImplementationGuide as R5ImplementationGuide, StructureDefinition} from '@trifolia-fhir/r5';
@@ -442,7 +442,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
   }
 
   @Post()
-  @AuditEntity('create', 'FhirResource')
+  @AuditEntity(AuditAction.Create, AuditEntityType.FhirResource)
   public async createImplementationGuide(@User() user, @Body() body) {
     if (!body || !body.resource) {
       throw new BadRequestException();
@@ -453,7 +453,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
   }
 
   @Put(':id')
-  @AuditEntity('update', 'FhirResource')
+  @AuditEntity(AuditAction.Update, AuditEntityType.FhirResource)
   public async updateImplementationGuide(@Param('id') id: string, @Body() body, @User() user): Promise<IFhirResource> {
     if (!body || !body.resource) {
       throw new BadRequestException();
@@ -465,7 +465,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
   }
 
   @Delete(':id')
-  @AuditEntity('delete', 'FhirResource')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.FhirResource)
   public async deleteImplementationGuide(@User() user, @Param('id') id: string) {
     await this.assertCanWriteById(user, id);
     return this.fhirResourceService.deleteFhirResource(id);

@@ -1,17 +1,36 @@
 <h1>Audit Log</h1>
 
 <ng-container *ngIf="audits">
-  <table class="table table-striped">
+  <table class="table table-striped table-bordered">
     <thead>
       <tr>
-        <th>Raw</th>
-        <th>Time</th>
-        <th>Action</th>
-        <th>Entity Type</th>
-        <th>User</th>
+        <th class="col-1">Raw</th>
+        <th class="col-4 clickable" (click)="changeSort('timestamp')">Time <i title="Sort by timestamp" [ngClass]="getSortIcon('timestamp')"></i></th>
+        <th class="col-1 clickable" (click)="changeSort('action')">Action <i title="Sort by action" [ngClass]="getSortIcon('action')"></i></th>
+        <th class="col-3 clickable" (click)="changeSort('entityType')">Entity Type <i title="Sort by entity type" [ngClass]="getSortIcon('entityType')"></i></th>
+        <th class="col-3 clickable" (click)="changeSort('user.lastName,user.firstName')">User <i title="Sort by user" [ngClass]="getSortIcon('user.lastName,user.firstName')"></i></th>
+      </tr>
+      <tr>
+        <th></th>
+        <th></th>
+        <th>
+          <select class="form-control" [(ngModel)]="criteria.action" (ngModelChange)="criteriaChangedEvent.next()">
+            <option value="">All</option>
+            <option *ngFor="let action of actions" [value]="action">{{ action }}</option>
+          </select>
+        </th>
+        <th>
+          <select class="form-control" [(ngModel)]="criteria.entityType" (ngModelChange)="criteriaChangedEvent.next()">
+            <option value="">All</option>
+            <option *ngFor="let entityType of entityTypes" [value]="entityType">{{ entityType }}</option>
+          </select>
+        </th>
+        <th>
+          <input type="text" class="form-control" [(ngModel)]="criteria.user" (ngModelChange)="criteriaChangedEvent.next()" />
+        </th>
       </tr>
     </thead>
-    <tbody>
+    <tbody *ngIf="audits.total > 0">
       <tr *ngFor="let audit of audits.results">
         <td>
           <button type="button" class="btn btn-primary btn-sm" title="View raw audit" (click)="openAuditModal(auditModal, audit)">
@@ -21,13 +40,13 @@
         <td>{{ audit.timestamp | date:'medium' }}</td>
         <td>
           {{ audit.action }}
-          <button *ngIf="audit.action === 'update'" type="button" class="btn btn-primary btn-sm" title="View changes" (click)="openDiffsModal(diffsModal, audit.propertyDiffs)">
+          <button *ngIf="audit.action === AuditAction.Update" type="button" class="btn btn-primary btn-sm pull-right" title="View changes" (click)="openDiffsModal(diffsModal, audit.propertyDiffs)">
             <i class="fa fa-exchange-alt"></i>
           </button>
         </td>
         <td>
           {{ audit.entityType }}
-          <ng-container *ngIf="audit.entityType === 'FhirResource' && !!audit.entityValue?.resource?.resourceType">
+          <ng-container *ngIf="audit.entityType === AuditEntityType.FhirResource && !!audit.entityValue?.resource?.resourceType">
             ({{ audit.entityValue.resource.resourceType }})
           </ng-container>
           <button *ngIf="!!audit.entityValue" type="button" class="btn btn-primary btn-sm pull-right" title="View raw entity" (click)="openEntityModal(entityModal, audit.entityValue)">
@@ -36,15 +55,26 @@
         </td>
         <td>
           <ng-container *ngIf="audit.user">
-            {{ audit.user.name }}
+            {{ audit.user.firstName }} {{ audit.user.lastName }}
             <button type="button" class="btn btn-primary btn-sm pull-right" title="View raw user" (click)="openUserModal(userModal, audit.user)">
               <i class="fa fa-user-circle"></i>
             </button>
           </ng-container>
         </td>
       </tr>
+    </tbody>
+    <tbody *ngIf="!loadingResults && audits.total === 0">
+      <tr>
+        <td colspan="5" class="text-center">No audits found matching the search criteria!</td>
+      </tr>
+    </tbody>
+    <tbody *ngIf="loadingResults">
+      <tr>
+        <td colspan="5" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading audit logs</td>
+      </tr>
+    </tbody>
   </table>
-  <ngb-pagination class="d-flex justify-content-center" [maxSize]="audits.itemsPerPage" [collectionSize]="audits.total"
+  <ngb-pagination *ngIf="audits.total > 0" class="d-flex justify-content-center" [maxSize]="audits.itemsPerPage" [collectionSize]="audits.total"
     [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()">
   </ngb-pagination>
 </ng-container>

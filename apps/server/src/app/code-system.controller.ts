@@ -7,7 +7,7 @@ import {RequestHeaders, User} from './server.decorators';
 import {ConfigService} from './config.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import {AuthService} from './auth/auth.service';
-import {IFhirResource} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, IFhirResource} from '@trifolia-fhir/models';
 import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import { AuditEntity } from './audit/audit.decorator';
@@ -36,7 +36,7 @@ export class CodeSystemController extends FhirResourcesController {
   }
 
   @Post()
-  @AuditEntity('create', 'FhirResource')
+  @AuditEntity(AuditAction.Create, AuditEntityType.FhirResource)
   public async createCodeSystem(@User() user, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
@@ -46,7 +46,7 @@ export class CodeSystemController extends FhirResourcesController {
   }
 
   @Put(':id')
-  @AuditEntity('update', 'FhirResource')
+  @AuditEntity(AuditAction.Update, AuditEntityType.FhirResource)
   public async updateCodeSystem(@User() user, @Param('id') id: string, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId ) {
     await this.assertCanWriteById(user, id);
     if (implementationGuideId) {
@@ -57,7 +57,7 @@ export class CodeSystemController extends FhirResourcesController {
   }
 
   @Delete(':id')
-  @AuditEntity('delete', 'FhirResource')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.FhirResource)
   public async deleteCodeSystem(@User() user, @Param('id') id: string) {
     await this.assertCanWriteById(user, id);
     return this.fhirResourceService.deleteFhirResource(id);

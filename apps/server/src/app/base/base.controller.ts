@@ -63,7 +63,7 @@ export class BaseController {
 
         const options: PaginateOptions = {
             page: (query && query.page) ? query.page : 1,
-            itemsPerPage: (query && query.itemsPerPage) ? query.itemsPerPage : 10,
+            itemsPerPage: (query && parseInt(query.itemsPerPage)) ? query.itemsPerPage : 10,
             sortBy: {},
             pipeline: [{$match: this.getFilterFromRequest(req)}]
         };

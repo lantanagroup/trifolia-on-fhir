@@ -55,6 +55,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         const sortBy = (options && options.sortBy) ? options.sortBy : {};
         const populate = (options && options.populate) ? options.populate : [];
         const projection = (options && options.projection) ? options.projection : {};
+        const hydrate = (options && options.hydrate !== undefined) ? !!options.hydrate : true;
 
         let deleteClause: any[] = [{ "isDeleted": { $exists: false } }, { isDeleted : false }];
         pipeline.push({$match: {$or: deleteClause}});
@@ -71,7 +72,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         }
         query = query.skip(skip).limit(limit);
 
-        let items = ((await query) || []).map(i => this.getModel().hydrate(i));
+        let items = ((await query) || []).map(i => hydrate ? this.getModel().hydrate(i) : i);
         if (populate.length > 0) {
             items = (await this.getModel().populate(items, populate.map(p => { return { path: p } })) || []);
         }

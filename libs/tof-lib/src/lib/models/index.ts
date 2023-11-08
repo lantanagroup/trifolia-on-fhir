@@ -92,8 +92,20 @@ export interface IAuditPropertyDiff {
   newValue: any;
 }
 
-export type AuditAction = 'read'|'update'|'delete'|'create'|'exception'|'other';
-export type AuditEntityType = 'User'|'Group'|'Project'|'FhirResource'|'NonFhirResource';
+export enum AuditAction {
+  Read = 'read',
+  Update = 'update',
+  Delete = 'delete',
+  Create = 'create',
+  Login = 'login'
+}
+export enum AuditEntityType {
+  User = 'User',
+  Group = 'Group',
+  Project = 'Project',
+  FhirResource = 'FhirResource',
+  NonFhirResource = 'NonFhirResource'
+}
 export type AuditEntityValue = IUser|IGroup|IProject|IFhirResource|INonFhirResource|string;
 
 export interface IAudit extends IBaseEntity {

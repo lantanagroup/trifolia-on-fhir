@@ -4,7 +4,7 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ProjectsService} from './projects.service';
 import {BaseDataController} from '../base/base-data.controller';
 import {ProjectDocument} from './project.schema';
-import type {IBaseEntity, IFhirResource, IProject} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, type IBaseEntity, type IFhirResource, type IProject} from '@trifolia-fhir/models';
 import {User} from '../server.decorators';
 import {FhirResourcesService} from '../fhir-resources/fhir-resources.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
@@ -57,7 +57,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
   }
 
   @Post()
-  @AuditEntity('create', 'Project')
+  @AuditEntity(AuditAction.Create, AuditEntityType.Project)
   public async createProject(@User() userProfile, @Body() project: IProject) {
     let createdProject: IProject = null;
 
@@ -88,7 +88,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
   }
 
   @Put(':id')
-  @AuditEntity('update', 'Project')
+  @AuditEntity(AuditAction.Update, AuditEntityType.Project)
   public async updateProject(@User() userProfile, @Body() updatedProject: IProject, @Param('id') id: string) {
     if (!userProfile) return null;
 
@@ -152,7 +152,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
   }
 
   @Delete('/:id/implementationGuide')
-  @AuditEntity('delete', 'Project')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.Project)
   public async removeImplementationGuideFromProjects(@User() userProfile, @Param('id') id: string) {
 
     if (!userProfile) return null;
