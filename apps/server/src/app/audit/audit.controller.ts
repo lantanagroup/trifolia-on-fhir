@@ -44,7 +44,22 @@ export class AuditController extends BaseDataController<AuditDocument> {
             $first: '$user'
           }
         }
-      }
+      },
+      {
+        $lookup: {
+          from: 'fhirResource',
+          localField: 'entityValue',
+          foreignField: '_id',
+          as: 'fhirResource'
+        }
+      },
+      {
+        $set: {
+          fhirResource: {
+            $first: '$fhirResource'
+          }
+        }
+      },
     );
 
 
@@ -58,7 +73,24 @@ export class AuditController extends BaseDataController<AuditDocument> {
       if (!!filters['entityType']) {
         filter['entityType'] = filters['entityType'];
       }
-
+      if (!!filters['timestampStart'] || !!filters['timestampEnd']) {      
+        if (!!filters['timestampStart'] && !!filters['timestampEnd']) {
+          filter['timestamp'] = {
+            $gte: new Date(filters['timestampStart']),
+            $lte: new Date(filters['timestampEnd'])
+          };
+        } else if (!!filters['timestampStart'] && !filters['timestampEnd']) {
+          let endDate = new Date(filters['timestampStart']);
+          endDate.setDate(endDate.getDate() + 1);
+          filter['timestamp'] = {
+            $gte: new Date(filters['timestampStart']),
+            $lte: endDate
+          };
+        }
+      }
+      if (!!filters['fhirResourceType']) {
+        filter['fhirResource.resource.resourceType'] = { $regex: this.escapeRegExp(filters['fhirResourceType']), $options: 'i' };
+      }
       if (!!filters['user']) {
         filter['$or'] = [
           {'user.firstName': { $regex: this.escapeRegExp(filters['user']), $options: 'i' }},
@@ -71,7 +103,7 @@ export class AuditController extends BaseDataController<AuditDocument> {
     options.pipeline.push({$match: filter});
     options.hydrate = false;
 
-    // console.log('options.pipeline', options.pipeline);
+    // console.log('options.pipeline', JSON.stringify(options.pipeline, null, 2));
     return this.dataService.search(options);
       
   }

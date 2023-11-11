@@ -5,14 +5,49 @@
     <thead>
       <tr>
         <th class="col-1">Raw</th>
-        <th class="col-4 clickable" (click)="changeSort('timestamp')">Time <i title="Sort by timestamp" [ngClass]="getSortIcon('timestamp')"></i></th>
+        <th class="col-3 clickable" (click)="changeSort('timestamp')">Time <i title="Sort by timestamp" [ngClass]="getSortIcon('timestamp')"></i></th>
         <th class="col-1 clickable" (click)="changeSort('action')">Action <i title="Sort by action" [ngClass]="getSortIcon('action')"></i></th>
-        <th class="col-3 clickable" (click)="changeSort('entityType')">Entity Type <i title="Sort by entity type" [ngClass]="getSortIcon('entityType')"></i></th>
+        <th class="col-2 clickable" (click)="changeSort('entityType')">Entity Type <i title="Sort by entity type" [ngClass]="getSortIcon('entityType')"></i></th>
+        <th class="col-2 clickable" (click)="changeSort('fhirResource.resource.resourceType')">FHIR Resource Type <i title="Sort by resource type" [ngClass]="getSortIcon('fhirResource.resource.resourceType')"></i></th>
         <th class="col-3 clickable" (click)="changeSort('user.lastName,user.firstName')">User <i title="Sort by user" [ngClass]="getSortIcon('user.lastName,user.firstName')"></i></th>
       </tr>
       <tr>
         <th></th>
-        <th></th>
+        <th>
+          <div class="row row-cols">
+            <div class="col-6">
+              <div class="dp-hidden position-absolute">
+                <div class="input-group">
+                  <input name="datepicker" class="form-control" ngbDatepicker #datepicker="ngbDatepicker" [autoClose]="'outside'"
+                    (dateSelect)="onDateSelection($event)" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden"
+                    [startDate]="fromDate!" />
+                  <ng-template #t let-date let-focused="focused">
+                    <span class="custom-day" [class.focused]="focused" [class.range]="isRange(date)"
+                      [class.faded]="isHovered(date) || isInside(date)" (mouseenter)="hoveredDate = date"
+                      (mouseleave)="hoveredDate = null">
+                      {{ date.day }}
+                    </span>
+                  </ng-template>
+                </div>
+              </div>
+              <div class="input-group">
+                <input #dpFromDate class="form-control" placeholder="yyyy-mm-dd" name="dpFromDate"
+                  [value]="formatter.format(fromDate)"
+                  (input)="fromDate = validateDateInput(fromDate, dpFromDate.value)" />
+                <button type="button" class="btn btn-primary fa fa-times" (click)="fromDate=null"></button>
+                <button class="btn btn-primary fa fa-calendar" (click)="datepicker.toggle()" type="button"></button>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group">
+                <input #dpToDate class="form-control" placeholder="yyyy-mm-dd" name="dpToDate" [value]="formatter.format(toDate)"
+                  (input)="toDate = validateDateInput(toDate, dpToDate.value)" />
+                <button type="button" class="btn btn-primary fa fa-times" (click)="toDate=null"></button>
+                <button class="btn btn-primary fa fa-calendar" (click)="datepicker.toggle()" type="button"></button>
+              </div>
+            </div>
+          </div>
+        </th>
         <th>
           <select class="form-control" [(ngModel)]="criteria.action" (ngModelChange)="criteriaChangedEvent.next()">
             <option value="">All</option>
@@ -24,6 +59,9 @@
             <option value="">All</option>
             <option *ngFor="let entityType of entityTypes" [value]="entityType">{{ entityType }}</option>
           </select>
+        </th>
+        <th>
+          <input type="text" class="form-control" [(ngModel)]="criteria.fhirResourceType" (ngModelChange)="criteriaChangedEvent.next()" />
         </th>
         <th>
           <input type="text" class="form-control" [(ngModel)]="criteria.user" (ngModelChange)="criteriaChangedEvent.next()" />
@@ -46,12 +84,14 @@
         </td>
         <td>
           {{ audit.entityType }}
-          <ng-container *ngIf="audit.entityType === AuditEntityType.FhirResource && !!audit.entityValue?.resource?.resourceType">
-            ({{ audit.entityValue.resource.resourceType }})
-          </ng-container>
           <button *ngIf="!!audit.entityValue" type="button" class="btn btn-primary btn-sm pull-right" title="View raw entity" (click)="openEntityModal(entityModal, audit.entityValue)">
             <i class="fa fa-search"></i>
           </button>
+        </td>
+        <td>
+          <ng-container *ngIf="audit.entityType === AuditEntityType.FhirResource && !!audit.entityValue?.resource?.resourceType">
+            {{ audit.entityValue.resource.resourceType }}
+          </ng-container>
         </td>
         <td>
           <ng-container *ngIf="audit.user">
@@ -65,7 +105,7 @@
     </tbody>
     <tbody *ngIf="!loadingResults && audits.total === 0">
       <tr>
-        <td colspan="5" class="text-center">No audits found matching the search criteria!</td>
+        <td colspan="6" class="text-center">No audits found matching the search criteria!</td>
       </tr>
     </tbody>
     <tbody *ngIf="loadingResults">
@@ -74,9 +114,25 @@
       </tr>
     </tbody>
   </table>
-  <ngb-pagination *ngIf="audits.total > 0" class="d-flex justify-content-center" [maxSize]="audits.itemsPerPage" [collectionSize]="audits.total"
-    [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()">
-  </ngb-pagination>
+  <div class="d-flex justify-content-between" *ngIf="audits.total > 0" >
+    
+    <div>
+      Total: {{ audits.total }}
+    </div>
+
+    <ngb-pagination class="d-flex justify-content-center" [maxSize]="audits.itemsPerPage" [collectionSize]="audits.total"
+      [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()">
+    </ngb-pagination>
+
+    <div>
+      <select id="itemsPerPage" class="form-select" [(ngModel)]="itemsPerPage" (ngModelChange)="criteriaChangedEvent.next()">
+        <option [value]="10">10</option>
+        <option [value]="25">25</option>
+        <option [value]="50">50</option>
+        <option [value]="100">100</option>
+      </select>
+    </div>
+  </div>
 </ng-container>
 
 
