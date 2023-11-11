@@ -1,6 +1,6 @@
-body {
+/* body {
   padding-top: 4.5rem;
-}
+} */
 
 trifolia-fhir-root > div.container > div.jumbotron {
   padding: 10px;
@@ -56,8 +56,9 @@ a.disabled > i.fas {
   cursor: pointer;
 }
 
-.fixed-top {
-  z-index: 2;
+nav.fixed-top {
+  position: sticky;
+  z-index: 3;
 }
 
 .clickable {
@@ -65,9 +66,9 @@ a.disabled > i.fas {
 }
 
 body > trifolia-fhir-root > div.container {
-  position: fixed;
+  /* position: fixed;
   top: 59px;
-  bottom: 37px;
+  bottom: 37px; */
   padding-right: 5px;
   padding-left: 5px;
 }
