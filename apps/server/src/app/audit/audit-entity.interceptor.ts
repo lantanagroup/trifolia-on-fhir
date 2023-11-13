@@ -33,13 +33,13 @@ export class AuditInterceptor implements NestInterceptor {
     let auditEntityType = this.reflector.get(AUDIT_ENTITY_TYPE, context.getHandler());
 
     let req = context.switchToHttp().getRequest();
-    let user = req.user?.user;
 
     let auditEvent: IAudit = {
       action: auditAction,
       entityType: auditEntityType,
       timestamp: new Date(),
-      user: user ? user : undefined
+      user: req.user?.user,
+      networkAddr: req.socket?.remoteAddress
     };
 
     return auditEvent;

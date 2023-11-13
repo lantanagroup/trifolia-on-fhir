@@ -97,7 +97,7 @@ export class AppComponent extends BaseComponent implements OnInit {
   }
 
   public startIntro() {
-    const intro = introJs.introJs();
+    const intro = introJs();
     intro.setOption('overlayOpacity', 0);
 
     intro.onexit(() => {
