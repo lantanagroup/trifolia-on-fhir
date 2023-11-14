@@ -8,7 +8,9 @@ import {ConfigService} from '../shared/config.service';
 import {Extension as STU3Extension, ImplementationGuide as STU3ImplementationGuide} from '@trifolia-fhir/stu3';
 import {Router} from '@angular/router';
 import {ProjectService} from '../shared/projects.service';
-import {IFhirResource, IProject} from '@trifolia-fhir/models';
+import {IFhirResource, IProject, PublicationRequest} from '@trifolia-fhir/models';
+import {firstValueFrom} from 'rxjs';
+import {NonFhirResourceService} from '../shared/non-fhir-resource.service';
 
 @Component({
   templateUrl: './new-project.component.html',
@@ -38,11 +40,12 @@ export class NewProjectComponent implements OnInit {
     private igService: ImplementationGuideService,
     private projectService: ProjectService,
     private fhirService: FhirService,
+    private nonFhirResourceService: NonFhirResourceService,
     private configService: ConfigService,
     private router: Router) {
   }
 
-  done() {
+  async done() {
 
     let ig: IImplementationGuide;
 
@@ -58,6 +61,9 @@ export class NewProjectComponent implements OnInit {
     publishingRequest.category = 'National Base';
     publishingRequest['ci-build'] = 'http://build.fhir.org/ig/';
     publishingRequest.introduction = 'New IG: ' + this.igTitle;
+
+    let publicationRequest = new PublicationRequest();
+    publicationRequest.content = publishingRequest;
 
     if (this.fhirVersion == 'r4') {
       ig = new R4ImplementationGuide();
@@ -119,12 +125,16 @@ export class NewProjectComponent implements OnInit {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
     let projectName = ig.name;
-    PublishingRequestModel.setPublishingRequest(ig, publishingRequest, identifyRelease(this.configService.fhirVersion));
 
-    let newRes: IFhirResource = <IFhirResource>{fhirVersion: this.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date() };
+
+    let newRes: IFhirResource = <IFhirResource>{fhirVersion: this.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date(), references: [] };
+
     this.igService.saveImplementationGuide(null, newRes)
       .subscribe({
         next: async (ig: IFhirResource) => {
+
+          publicationRequest = await firstValueFrom(this.nonFhirResourceService.save(publicationRequest.id, publicationRequest, ig.id));
+
           let project: IProject = <IProject>{ author: "", fhirVersion: this.fhirVersion, name: projectName };
           project.references = project.references || [];
           project.references.push({'value' : ig, valueType: 'FhirResource'});

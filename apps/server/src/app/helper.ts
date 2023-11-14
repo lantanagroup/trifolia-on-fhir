@@ -24,7 +24,7 @@ import {ConfigService} from './config.service';
 import {Globals} from '@trifolia-fhir/tof-lib';
 import type {IAuditEvent, IDomainResource, IImplementationGuide} from '@trifolia-fhir/tof-lib';
 import {TofLogger} from './tof-logger';
-import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, Page} from '@trifolia-fhir/models';
+import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, NonFhirResourceType, Page} from '@trifolia-fhir/models';
 import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {FhirResource} from './fhir-resources/fhir-resource.schema';
 
@@ -562,9 +562,7 @@ export async function addToImplementationGuide(httpService: HttpService, configS
 }
 
 
-
-
-export async function addPageToImplementationGuide(service: FhirResourcesService, pageToAdd: Page, implementationGuideId: string): Promise<void> {
+function addPage(conf, implementationGuide: IImplementationGuide, pageToAdd: Page) {
 
   function searchPage(page: any, name: string, version: string) {
     let result;
@@ -572,10 +570,9 @@ export async function addPageToImplementationGuide(service: FhirResourcesService
     if (!page) {
       return false;
     }
-    if (version.toLowerCase() === FhirVersions.R4.toLowerCase()){
+    if (version.toLowerCase() === FhirVersions.R4.toLowerCase()) {
       pageName = page.nameUrl ?? page.nameReference?.reference;
-    }
-    else  if (version.toLowerCase() === FhirVersions.STU3.toLowerCase()){
+    } else if (version.toLowerCase() === FhirVersions.STU3.toLowerCase()) {
       pageName = page.source;
     }
     if (pageName === name) return page;
@@ -592,17 +589,14 @@ export async function addPageToImplementationGuide(service: FhirResourcesService
     }
   }
 
-  let conf = await service.findById(implementationGuideId);
-  let implementationGuide = <IImplementationGuide>conf.resource;
-
   if (conf.fhirVersion.toLowerCase() === FhirVersions.R4.toLowerCase()) {
     const r4 = <R4ImplementationGuide>implementationGuide;
     if (!r4.definition) {
-      r4.definition = <ImplementationGuideDefinitionComponent> {};
+      r4.definition = <ImplementationGuideDefinitionComponent>{};
     }
     if (!r4.definition.page) {
       // index page
-      const newPage = <ImplementationGuidePageComponent> {};
+      const newPage = <ImplementationGuidePageComponent>{};
       newPage.generation = 'markdown';
       newPage.nameUrl = pageToAdd.name + '.html';
       newPage.title = pageToAdd.name;
@@ -613,7 +607,7 @@ export async function addPageToImplementationGuide(service: FhirResourcesService
       let foundResource = searchPage(<ImplementationGuidePageComponent>r4.definition.page, pageToAdd.name + '.html', conf.fhirVersion);
       // check all levels
       if (!foundResource) {
-        const newPage = <ImplementationGuidePageComponent> {};
+        const newPage = <ImplementationGuidePageComponent>{};
         newPage.generation = 'markdown';
         newPage.nameUrl = pageToAdd.name + '.html';
         newPage.title = pageToAdd.name;
@@ -647,16 +641,28 @@ export async function addPageToImplementationGuide(service: FhirResourcesService
       }
     }
   }
+}
+
+export async function addNonFhirResourceToImplementationGuide(service: FhirResourcesService, nonFhirResource: NonFhirResource, implementationGuideId: string): Promise<void> {
+
+  let conf = await service.findById(implementationGuideId);
+
+  if (nonFhirResource.type === NonFhirResourceType.Page) {
+    let pageToAdd = <Page>nonFhirResource;
+    let implementationGuide = <IImplementationGuide>conf.resource;
+    addPage(conf, implementationGuide, pageToAdd);
+  }
+  // add Reference
   conf.references = conf.references || [];
   // add to references if not already in the reference list
   if (!conf.references.find((r: IProjectResourceReference) => {
     if (r.valueType !== 'NonFhirResource') return false;
-    if (r.value && r.value.toString() === pageToAdd.id) return true;
+    if (r.value && r.value.toString() === nonFhirResource.id) return true;
   })) {
-    conf.references.push({ value: pageToAdd, valueType: 'NonFhirResource' });
+    conf.references.push({ value: nonFhirResource, valueType: 'NonFhirResource' });
   }
   if (conf.id) {
-    let foundConf= await service.findById(conf.id);
+    let foundConf = await service.findById(conf.id);
     if (foundConf) {
       let conf1 = await service.updateOne(conf.id, conf);
     } else {
@@ -956,23 +962,22 @@ function getName(name: any) {
 }
 
 
-export async function removePageFromImplementationGuide(service: FhirResourcesService, pageToRemove: INonFhirResource): Promise<void> {
+export async function removeNonFhirResourceFromImplementationGuide(service: FhirResourcesService, resource: INonFhirResource): Promise<void> {
 
   let confRes = [];
 
 
   function findPage(page: any, parent, searchPageName: string, version) {
-    let pageName = "";
-    if(version.toLowerCase() === FhirVersions.STU3.toLowerCase()) {
-      pageName =  page.source.substring(0, page.source.indexOf('.'));
-    }
-    else if(version.toLowerCase() === FhirVersions.R4.toLowerCase()) {
+    let pageName = '';
+    if (version.toLowerCase() === FhirVersions.STU3.toLowerCase()) {
+      pageName = page.source.substring(0, page.source.indexOf('.'));
+    } else if (version.toLowerCase() === FhirVersions.R4.toLowerCase()) {
       pageName = page.nameUrl.substring(0, page.nameUrl.indexOf('.'));
     }
     if (pageName === searchPageName) {
       return { page, parent };
     } else {
-      if (page.page){
+      if (page.page) {
         for (let i = 0; i < page.page.length; i++) {
           let result = findPage(page.page[i], page, searchPageName, version);
           if (result !== false) {
@@ -999,12 +1004,11 @@ export async function removePageFromImplementationGuide(service: FhirResourcesSe
       let firstPage;
       let children;
 
-      if(version.toLowerCase() === FhirVersions.STU3.toLowerCase()){
+      if (version.toLowerCase() === FhirVersions.STU3.toLowerCase()) {
         firstPage = ig.page;
         children = firstPage.page;
         delete ig.page;
-      }
-      else if(version.toLowerCase() === FhirVersions.R4.toLowerCase()){
+      } else if (version.toLowerCase() === FhirVersions.R4.toLowerCase()) {
         firstPage = ig.definition.page;
         children = firstPage.page;
         delete ig.definition.page;
@@ -1022,50 +1026,55 @@ export async function removePageFromImplementationGuide(service: FhirResourcesSe
     }
   }
 
-  async function updateReference(conf: IFhirResource) {
+  async function removeReference(conf: IFhirResource) {
+    console.log('Gets here');
     let fhirResource: FhirResource = await service.getModel().findById(conf.id).populate('references.value');
+    console.log('Id is' + fhirResource.id);
     (fhirResource.references || []).forEach((r: IProjectResourceReference, index) => {
       if (!r.value || typeof r.value === typeof '') return;
       if (r.valueType === 'NonFhirResource') {
         const val: NonFhirResource = <NonFhirResource>r.value;
-        if (val.id === pageToRemove.id) {
+        if (val.id === resource.id) {
           conf.references.splice(index, 1);
         }
       }
     });
   }
 
-  for (const refBy of (pageToRemove.referencedBy || [])) {
+
+  for (const refBy of (resource.referencedBy || [])) {
     confRes.push(<IFhirResource>await service.findById(refBy.value.toString()));
   }
 
   for (const conf of (confRes || [])) {
     if (conf.resource.resourceType == 'ImplementationGuide') {
-      if (conf.fhirVersion.toLowerCase() === FhirVersions.R4.toLowerCase()) {
-        let ig = <R4ImplementationGuide>conf.resource;
-        // remove page
-        if (ig.definition && ig.definition.page) {
-          let result = findPage(ig.definition.page, undefined, pageToRemove.name, conf.fhirVersion);
-          if (result) {
-            removePage(result, ig, conf.fhirVersion);
+      if (resource.type == 'Page') {
+        if (conf.fhirVersion.toLowerCase() === FhirVersions.R4.toLowerCase()) {
+          let ig = <R4ImplementationGuide>conf.resource;
+          // remove page
+          if (ig.definition && ig.definition.page) {
+            let result = findPage(ig.definition.page, undefined, resource.name, conf.fhirVersion);
+            if (result) {
+              removePage(result, ig, conf.fhirVersion);
+            }
+          }
+        } else if (conf.fhirVersion.toLowerCase() === FhirVersions.STU3.toLowerCase()) {
+          let ig = <STU3ImplementationGuide>conf.resource;
+          // remove page
+          if (ig.page) {
+            let result = findPage(ig.page, undefined, resource.name, conf.fhirVersion);
+            if (result) {
+              removePage(result, ig, conf.fhirVersion);
+            }
           }
         }
-      } else if (conf.fhirVersion.toLowerCase() === FhirVersions.STU3.toLowerCase()) {
-        let ig = <STU3ImplementationGuide>conf.resource;
-        // remove page
-        if (ig.page) {
-          let result = findPage(ig.page, undefined, pageToRemove.name, conf.fhirVersion);
-          if (result) {
-            removePage(result, ig, conf.fhirVersion);
-          }
       }
-    }
-    // remove reference
-    await updateReference(conf);
+      // remove reference
+      await removeReference(conf);
+      await service.updateOne(conf.id, conf);
 
-    await service.updateOne(conf.id, conf);
+    }
   }
-}
 }
 
 

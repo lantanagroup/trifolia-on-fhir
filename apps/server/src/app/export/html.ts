@@ -354,7 +354,7 @@ export class HtmlExporter {
     this.removeNonExampleMedia();
     this.populatePageInfos();
 
-    const publishingRequest = PublishingRequestModel.getPublishingRequest(this.implementationGuide);
+    const publishingRequest = PublishingRequestModel.getPublishingRequest(this.igFhirResource);
 
     if (publishingRequest) {
       this.logger.log("Implementation guide has a publishing-request.json file defined. Including it in export.");
@@ -362,7 +362,7 @@ export class HtmlExporter {
       const publishingRequestPath = path.join(this.rootPath, "publication-request.json");
 
       fs.writeFileSync(publishingRequestPath, JSON.stringify(publishingRequest, null, "\t"));
-      PublishingRequestModel.removePublishingRequest(this.implementationGuide);
+      //PublishingRequestModel.removePublishingRequest(this.implementationGuide);
     }
 
     const igToWrite: IImplementationGuide = this.prepareImplementationGuide();

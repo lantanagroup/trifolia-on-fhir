@@ -580,7 +580,8 @@
         <div class='row'>
           <div class='col-md-12'>
             <trifolia-fhir-publishing-request
-              [implementationGuide]='implementationGuide'
+              [resource]='fhirResource'
+              [publicationRequest]="publicationRequest"
               [defaultPackageId]='packageId'
               [defaultTitle]='this.implementationGuide.title'
               [defaultName]='this.implementationGuide.name' (change)='igChanging.emit(true)'>

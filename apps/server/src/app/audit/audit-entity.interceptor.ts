@@ -23,7 +23,7 @@ export class AuditInterceptor implements NestInterceptor {
     private readonly nonFhirResourcesService: NonFhirResourcesService,
     private readonly projectsService: ProjectsService,
     private readonly usersService: UsersService,
-    ) {  
+    ) {
   }
 
 
@@ -63,7 +63,7 @@ export class AuditInterceptor implements NestInterceptor {
 
 
   async intercept(context: ExecutionContext, next: CallHandler<any>): Promise<any> {
-    
+
     // require an audit action and entity type to be set to trigger this interceptor
     if (!(
       this.reflector.get(AUDIT_ACTION, context.getHandler()) &&
@@ -79,17 +79,19 @@ export class AuditInterceptor implements NestInterceptor {
 
     // if the audit action is an update, get the original entity to later compare with the updated entity
     let original: IBaseEntity;
-    if (audit.action === 'update') {
+    if (audit.action === 'update' || audit.action === 'delete') {
       original = await service.findById(req.params[auditEntityParamId]);
     }
 
     return next.handle().pipe(
-      tap((res: IBaseEntity) => {      
+      tap((res: IBaseEntity) => {
         if (!res) {
+          audit.entityValue = original;
+          this.auditService.create(audit);
           return;
         }
 
-        // result and any original entity is most likely actually mongoose document, 
+        // result and any original entity is most likely actually mongoose document,
         // so convert to a plain object to avoid doing diffs on all the mongoose document properties
         res = service.getModel().hydrate(res).toObject();
 
@@ -97,7 +99,7 @@ export class AuditInterceptor implements NestInterceptor {
           original = service.getModel().hydrate(original).toObject();
           audit.propertyDiffs = this.auditService.getAuditPropertyDiffs(original, res);
         }
-        
+
 
         audit.entityValue = res;
         this.auditService.create(audit);

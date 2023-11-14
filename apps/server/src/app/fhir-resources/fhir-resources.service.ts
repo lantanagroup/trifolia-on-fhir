@@ -229,7 +229,7 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
             if (fhirResIdsAdded && fhirResIdsAdded.length > 0) {
                 await this.fhirResourceModel.updateMany(
                     { '_id': { $in: fhirResIdsAdded } },
-                    { $pull: { referencedBy: {value: existing.id, valueType: 'FhirResource' } } }
+                    { $push: { referencedBy: {value: existing.id, valueType: 'FhirResource' } } }
                 );
             }
             if (nonFhirIdsAdded && nonFhirIdsAdded.length > 0) {

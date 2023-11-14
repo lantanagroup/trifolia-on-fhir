@@ -2,16 +2,21 @@ import {BadRequestException, Injectable} from '@nestjs/common';
 import {TofLogger} from '../tof-logger';
 import {NonFhirResourceDocument} from './non-fhir-resource.schema';
 import {InjectConnection} from '@nestjs/mongoose';
-import {Connection, Model, PipelineStage} from 'mongoose';
-import {IHistory, INonFhirResource, NonFhirResource, NonFhirResourceType} from '@trifolia-fhir/models';
-import {addPageToImplementationGuide, addToImplementationGuideNew, removeFromImplementationGuideNew, removePageFromImplementationGuide} from '../helper';
+import {Connection, Model, PipelineStage, Types} from 'mongoose';
+import {IHistory, INonFhirResource, IProjectResourceReference, NonFhirResource, NonFhirResourceType} from '@trifolia-fhir/models';
+import {
+  addNonFhirResourceToImplementationGuide,
+  addToImplementationGuideNew,
+  removeFromImplementationGuideNew,
+  removeNonFhirResourceFromImplementationGuide
+} from '../helper';
 import {HistoryService} from '../history/history.service';
 import {FhirResourcesService} from '../fhir-resources/fhir-resources.service';
 import {TofNotFoundException} from '../../not-found-exception';
 import {IBaseDataService} from '../base/interfaces';
-import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
-import { ObjectId } from 'mongodb';
+import { Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
 import { ProjectsService } from '../projects/projects.service';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class NonFhirResourcesService implements IBaseDataService<NonFhirResourceDocument> {
@@ -131,7 +136,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
 
         if (implementationGuideId) {
             newNonFhirResource.referencedBy = newNonFhirResource.referencedBy || [];
-            if (!newNonFhirResource.referencedBy.some(o => o.value === implementationGuideId)) {
+            if (!newNonFhirResource.referencedBy.some(o => o.value.toString() === implementationGuideId)) {
                 newNonFhirResource.referencedBy.push({ value: implementationGuideId, valueType: 'FhirResource' });
             }
         }
@@ -158,11 +163,11 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
 
         //Add it to the implementation Guide
         if (implementationGuideId) {
-          if(type === NonFhirResourceType.Page){
-            await addPageToImplementationGuide(this.fhirResourceService, newNonFhirResource, implementationGuideId);
-          }
-          else if (type === NonFhirResourceType.CdaExample){
+          if (type === NonFhirResourceType.CdaExample){
             await addToImplementationGuideNew(this.fhirResourceService, newNonFhirResource, implementationGuideId, true);
+          }
+          else{
+            await addNonFhirResourceToImplementationGuide(this.fhirResourceService, newNonFhirResource, implementationGuideId);
           }
         }
 
@@ -207,6 +212,7 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
         // update every property supplied from updated object
         for (let key in upNonFhirResource) {
             existing[key] = upNonFhirResource[key];
+
         }
 
         // ensure project references are set
@@ -242,11 +248,11 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
 
         //Add it to the implementation Guide
         if (implementationGuideId) {
-          if(type === NonFhirResourceType.Page){
-            await addPageToImplementationGuide(this.fhirResourceService, upNonFhirResource, implementationGuideId);
-          }
-          else if (type === NonFhirResourceType.CdaExample){
+          if (type === NonFhirResourceType.CdaExample){
             await addToImplementationGuideNew(this.fhirResourceService, upNonFhirResource, implementationGuideId, true);
+          }
+          else{
+            await addNonFhirResourceToImplementationGuide(this.fhirResourceService, upNonFhirResource, implementationGuideId);
           }
       }
 
@@ -260,13 +266,15 @@ export class NonFhirResourcesService implements IBaseDataService<NonFhirResource
       let resource : NonFhirResourceDocument = await this.getModel().findById(id);
       let type = resource.type;
 
-      if(type === NonFhirResourceType.Page){
-        await removePageFromImplementationGuide(this.fhirResourceService, resource);
-      }
-      else {
+
+      if (type === NonFhirResourceType.CdaExample) {
         await removeFromImplementationGuideNew(this.fhirResourceService, resource);
+
+      } else {
+        await removeNonFhirResourceFromImplementationGuide(this.fhirResourceService, resource);
       }
-      resource.isDeleted= true;
+
+      resource.isDeleted = true;
 
       return this.castToModel(await this.getModel(resource).findByIdAndUpdate(id, { $set: { isDeleted: true } }));
     }

@@ -1,9 +1,4 @@
-import { DocumentReference as R4DocumentReference } from './r4/fhir';
-import { DocumentReference as STU3DocumentReference } from './stu3/fhir';
-import { DocumentReference as R5DocumentReference } from '@trifolia-fhir/r5';
-import {IDocumentReference, IImplementationGuide} from './fhirInterfaces';
-import { Globals } from './globals';
-import { Versions } from 'fhir/fhir';
+import {INonFhirResource, IProjectResourceReference, NonFhirResource, PublicationRequest} from '@trifolia-fhir/models';
 
 export class PublishingRequestModel {
   'package-id': string;
@@ -20,7 +15,7 @@ export class PublishingRequestModel {
   introduction?: string;
   category?: string;
 
-  public static findContainedDocumentReference(implementationGuide: IImplementationGuide) {
+  /*public static findContainedDocumentReference(implementationGuide: IImplementationGuide) {
     const found = <R4DocumentReference>implementationGuide.contained
       .find((c) => {
         if (c.resourceType === 'DocumentReference') {
@@ -32,9 +27,9 @@ export class PublishingRequestModel {
       });
 
     return found;
-  }
+  }*/
 
-  public static removePublishingRequest(implementationGuide: IImplementationGuide) {
+  /*public static removePublishingRequest(implementationGuide: IImplementationGuide) {
     const found = PublishingRequestModel.findContainedDocumentReference(implementationGuide);
 
     if (found) {
@@ -56,10 +51,10 @@ export class PublishingRequestModel {
         delete implementationGuide.extension;
       }
     }
-  }
+  }*/
 
-  public static getPublishingRequest(implementationGuide: IImplementationGuide) {
-    if (!implementationGuide || !implementationGuide.contained) {
+  public static getPublishingRequest(fhirResource: any) {
+   /* if (!implementationGuide || !implementationGuide.contained) {
       return;
     }
 
@@ -74,11 +69,18 @@ export class PublishingRequestModel {
         return publishingRequest;
       } catch (ex) {
       }
+    }*/
+    let content = "";
+    const publishingRequestIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === PublicationRequest.name)
+    if (publishingRequestIndex > -1) {
+      let pr = fhirResource.references[publishingRequestIndex].value as PublicationRequest;
+      content = pr.content;
     }
+    return JSON.parse(content);
   }
 
   // FINISH THIS, CHECK TOF TO SEE HOW USED
-  public static setPublishingRequest(implementationGuide: IImplementationGuide, publishingRequest: PublishingRequestModel, fhirVersion: Versions) {
+ /* public static setPublishingRequest(implementationGuide: IImplementationGuide, publishingRequest: PublishingRequestModel, fhirVersion: Versions) {
     if (!implementationGuide) return;
 
     implementationGuide.contained = implementationGuide.contained || [];
@@ -142,7 +144,7 @@ export class PublishingRequestModel {
       };
       implementationGuide.extension.push(ext);
     }
-  }
+  }*/
 
 
 }

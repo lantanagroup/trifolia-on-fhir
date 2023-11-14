@@ -363,7 +363,8 @@
         <div class="row">
           <div class="col-md-12">
             <trifolia-fhir-package-list
-              [implementationGuide]="implementationGuide"
+              [resource]='fhirResource'
+              [publicationRequest]="publicationRequest"
               [defaultName]="implementationGuide.name"
               [defaultPackageId]="packageId"
               (change)="igChanging.emit(true);">
@@ -371,7 +372,7 @@
           </div>
 
           <div class="col-md-12">
-            <trifolia-fhir-ignore-warnings [implementationGuide]="implementationGuide" (change)="igChanging.emit(true);;"></trifolia-fhir-ignore-warnings>
+            <trifolia-fhir-ignore-warnings [resource]='fhirResource' [ignoreWarnings]="ignoreWarnings" (change)="igChanging.emit(true);;"></trifolia-fhir-ignore-warnings>
           </div>
 
           <div class="col-md-12">

@@ -26,7 +26,7 @@ import { ChangeResourceIdModalComponent } from '../../modals/change-resource-id-
 import { BaseImplementationGuideComponent } from '../base-implementation-guide-component';
 import { CanComponentDeactivate } from '../../guards/resource.guard';
 import { ProjectService } from '../../shared/projects.service';
-import {IFhirResource, IProjectResourceReference, IProjectResourceReferenceMap, Page} from '@trifolia-fhir/models';
+import {IFhirResource, IgnoreWarnings, IProjectResourceReference, IProjectResourceReferenceMap, Page, PublicationRequest} from '@trifolia-fhir/models';
 import {firstValueFrom, forkJoin} from 'rxjs';
 import { IDomainResource, getImplementationGuideContext } from '@trifolia-fhir/tof-lib';
 import {NonFhirResourceService} from '../../shared/non-fhir-resource.service';
@@ -102,7 +102,7 @@ class ImplementationGuideResource {
   styleUrls: ['./implementation-guide.component.css']
 })
 export class STU3ImplementationGuideComponent extends BaseImplementationGuideComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
-  public fhirResource;
+  public fhirResource: IFhirResource;
   public implementationGuide;
   public message: string;
   public currentResource: any;
@@ -120,7 +120,8 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
   public resourceMap: IProjectResourceReferenceMap = {};
   public saving = false;
   public historyLoaded = false;
-
+  public ignoreWarnings: IgnoreWarnings;
+  public publicationRequest: PublicationRequest;
 
   constructor(
     private modalService: NgbModal,
@@ -707,7 +708,7 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     this.initPages();
   }
 
-  public save() {
+  public async save() {
     if (!this.validation.valid && !confirm('This implementation guide is not valid, are you sure you want to save?')) {
       return;
     }
@@ -719,6 +720,15 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
       this.igChanging.emit(false);
       this.saving = false;
       return;
+    }
+
+    // save Ignore Warnings
+    if (this.ignoreWarnings.id || this.ignoreWarnings.content) {
+      this.ignoreWarnings.content = this.ignoreWarnings.content ?? '';
+      this.ignoreWarnings = await firstValueFrom(this.nonFhirResourceService.save(this.ignoreWarnings.id, this.ignoreWarnings, this.implementationGuideId));
+      if (!this.fhirResource.references.some(r => r.value === this.ignoreWarnings.id && r.valueType === 'NonFhirResource')) {
+        this.fhirResource.references.push({ value: this.ignoreWarnings.id, valueType: 'NonFhirResource' });
+      }
     }
 
     this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.fhirResource)
@@ -863,12 +873,25 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     this.initPage(this.implementationGuide.page);
   }
 
-  public loadIG(newVal: IDomainResource, isDirty?: boolean) {
+  public async loadIG(newVal: IDomainResource, isDirty?: boolean) {
     this.implementationGuide = new ImplementationGuide(newVal);
 
     if (this.fhirResource) {
       this.fhirResource.resource = this.implementationGuide;
     }
+
+    // ignore warnings
+    if (!this.ignoreWarnings) {
+      let ignoreWarnings = new IgnoreWarnings();
+      let res =  await firstValueFrom(this.nonFhirResourceService.getByType(ignoreWarnings, this.fhirResource.id));
+      if(res.id){
+        this.ignoreWarnings = res;
+      }
+      else{
+        this.ignoreWarnings = ignoreWarnings;
+      }
+    }
+
     this.igChanging.emit(isDirty);
     this.initPages();
     this.initParameters();

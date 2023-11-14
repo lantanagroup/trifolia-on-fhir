@@ -30,7 +30,7 @@ import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
 import {ProjectService} from '../../shared/projects.service';
-import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap, CustomMenu, IgnoreWarnings} from '@trifolia-fhir/models';
+import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap, CustomMenu, IgnoreWarnings, PublicationRequest} from '@trifolia-fhir/models';
 import {IDomainResource, getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 
 import {firstValueFrom, forkJoin} from 'rxjs';
@@ -53,6 +53,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public message: string;
   public customMenu: CustomMenu;
   public ignoreWarnings: IgnoreWarnings;
+  public publicationRequest: PublicationRequest;
   public validation: any;
   public pages: PageDefinition[];
   public resourceTypeCodes: Coding[] = [];
@@ -625,8 +626,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     componentInstance.implementationGuideId = this.implementationGuideId;
 
     if (this.implementationGuide.definition.page === pageDef.page) {
-      if(pageDef.resource.reuseDescription === undefined) {
-        pageDef.resource["reuseDescription"] = true; // initialize it
+      if (pageDef.resource.reuseDescription === undefined) {
+        pageDef.resource['reuseDescription'] = true; // initialize it
       }
     }
 
@@ -634,10 +635,10 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     componentInstance.setResource(pageDef.resource);
 
     modalRef.result.then((result: { page: ImplementationGuidePageComponent, res: Page }) => {
-         Object.assign(pageDef.page, result.page);
-         Object.assign(pageDef.resource, result.res);
-         this.initPagesAndGroups();
-         this.igChanging.emit(true);
+        Object.assign(pageDef.page, result.page);
+        Object.assign(pageDef.resource, result.res);
+        this.initPagesAndGroups();
+        this.igChanging.emit(true);
       }
     ).catch((err) => {
       console.log(err);
@@ -679,18 +680,18 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     const newPage = new ImplementationGuidePageComponent();
     newPage.generation = 'markdown';
 
-    let resource = new Page
+    let resource = new Page;
 
     if (template === 'downloads') {
       newPage.title = 'Downloads';
-      resource["navMenu"]= 'Downloads';
+      resource['navMenu'] = 'Downloads';
       newPage.nameUrl = 'downloads.html';
-      resource["content"]=  '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
+      resource['content'] = '**Full Implementation Guide**\n\nThe entire implementation guide (including the HTML files, definitions, validation information, etc.) may be downloaded [here](full-ig.zip).\n\nIn addition there are format specific definitions files.\n\n* [XML](definitions.xml.zip)\n* [JSON](definitions.json.zip)\n* [TTL](definitions.ttl.zip)\n\n**Examples:** all the examples that are used in this Implementation Guide available for download:\n\n* [XML](examples.xml.zip)\n* [JSON](examples.json.zip)\n* [TTl](examples.ttl.zip)';
     } else {
       newPage.title = this.getNewPageTitle();
       newPage.nameUrl = Globals.getCleanFileName(newPage.title).toLowerCase() + '.html';
     }
-    resource["name"]  = newPage.nameUrl.slice(0, newPage.nameUrl.indexOf("."));
+    resource['name'] = newPage.nameUrl.slice(0, newPage.nameUrl.indexOf('.'));
     pageDef.page.page.push(newPage);
 
     this.initPagesAndGroups();
@@ -950,6 +951,21 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       }
     }
 
+    // save Publication Request
+    if (this.publicationRequest.id || this.publicationRequest.content) {
+      if (this.publicationRequest && this.publicationRequest.content) {
+        this.publicationRequest = await firstValueFrom(this.nonFhirResourceService.save(this.publicationRequest.id, this.publicationRequest, this.implementationGuideId));
+        if (!this.fhirResource.references.some(r => r.value === this.publicationRequest.id && r.valueType === 'NonFhirResource')) {
+          this.fhirResource.references.push({ value: this.publicationRequest.id, valueType: 'NonFhirResource' });
+        }
+      } else if (this.publicationRequest && this.publicationRequest.id && !this.publicationRequest.content) {
+        await firstValueFrom(this.nonFhirResourceService.delete(this.publicationRequest.id));
+        const removeIndex = this.fhirResource.references.findIndex(r => r.value === this.publicationRequest.id && r.valueType === 'NonFhirResource');
+        this.fhirResource.references.splice(removeIndex, 1);
+        this.publicationRequest.id = undefined;
+      }
+    }
+
 
     this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.fhirResource)
       .subscribe({
@@ -989,8 +1005,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
 
 
     resource.name = name;
-    if (name.indexOf(".") > -1) {
-      resource.name = name.slice(0, name.indexOf("."));
+    if (name.indexOf('.') > -1) {
+      resource.name = name.slice(0, name.indexOf('.'));
     }
 
     this.pages.push({
@@ -1212,26 +1228,34 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     if (this.fhirResource) {
       this.fhirResource.resource = this.implementationGuide;
     }
-    // custom menu
-    if (!this.customMenu) {
+
+    if(!this.customMenu) {
       let customMenu = new CustomMenu();
-      let res =  await firstValueFrom(this.nonFhirResourceService.getByType(customMenu, this.fhirResource.id));
-      if(res.id){
+      let res = await firstValueFrom(this.nonFhirResourceService.getByType(customMenu, this.fhirResource.id));
+      if (res.id) {
         this.customMenu = res;
-      }
-      else{
+      } else {
         this.customMenu = customMenu;
       }
     }
-    // ignore warnings
-    if (!this.ignoreWarnings) {
+
+    if(!this.ignoreWarnings) {
       let ignoreWarnings = new IgnoreWarnings();
-      let res =  await firstValueFrom(this.nonFhirResourceService.getByType(ignoreWarnings, this.fhirResource.id));
-      if(res.id){
+      let res = await firstValueFrom(this.nonFhirResourceService.getByType(ignoreWarnings, this.fhirResource.id));
+      if (res.id) {
         this.ignoreWarnings = res;
-      }
-      else{
+      } else {
         this.ignoreWarnings = ignoreWarnings;
+      }
+    }
+
+    if(!this.publicationRequest) {
+      let publicationRequest = new PublicationRequest();
+      let res = await firstValueFrom(this.nonFhirResourceService.getByType(publicationRequest, this.fhirResource.id));
+      if (res.id) {
+        this.publicationRequest = res;
+      } else {
+        this.publicationRequest = publicationRequest;
       }
     }
 

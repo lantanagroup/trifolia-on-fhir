@@ -14,7 +14,8 @@ export enum NonFhirResourceType {
   StructureDefinitionNotes = "StructureDefinitionNotes",
 
   IgnoreWarnings = "IgnoreWarnings",
-  CustomMenu = "CustomMenu"
+  CustomMenu = "CustomMenu",
+  PublicationRequest = "PublicationRequest"
 }
 
 export const ImplementationGuideExampleTypes: NonFhirResourceType[] = [
@@ -23,6 +24,7 @@ export const ImplementationGuideExampleTypes: NonFhirResourceType[] = [
 
 
 export abstract class NonFhirResource implements INonFhirResource {
+
 
   constructor(initialValues?: object) {
     for (const key in initialValues) {
@@ -66,6 +68,11 @@ export class CustomMenu extends NonFhirResource {
 export class IgnoreWarnings extends NonFhirResource {
   readonly type: NonFhirResourceType = NonFhirResourceType.IgnoreWarnings;
 }
+
+export class PublicationRequest extends NonFhirResource {
+  readonly type: NonFhirResourceType = NonFhirResourceType.PublicationRequest;
+}
+
 
 export class OtherNonFhirResource extends NonFhirResource {
   readonly type: NonFhirResourceType = NonFhirResourceType.OtherNonFhirResource;
