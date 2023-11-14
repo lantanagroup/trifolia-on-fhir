@@ -36,6 +36,10 @@ module.exports = {
           const contentContained = existingContained.content;
           if(!contentContained || contentContained.length < 1 || !contentContained[0].attachment || !contentContained[0].attachment.data)  continue;
           let value = atob(existingContained.content[0].attachment.data);
+          let projects = [];
+          if (igRes.projects){
+            projects = [...igRes.projects];
+          }
           let newRes = {
             versionId: 1,
             lastUpdated: new Date(),
@@ -43,7 +47,7 @@ module.exports = {
             type: type,
             referencedBy: [{ _id: new ObjectId(), value: igRes._id, valueType: 'FhirResource' }],
             references: [],
-            projects: [...igRes.projects]
+            projects: projects
           };
           const updateResult = await db.collection('nonFhirResource').findOneAndUpdate(
             { type: type, 'referencedBy.value': igRes._id, 'referencedBy.valueType': 'FhirResource' },
