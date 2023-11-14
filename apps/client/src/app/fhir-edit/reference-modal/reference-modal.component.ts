@@ -9,7 +9,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfigService } from '../../shared/config.service';
 import { FhirResourceService } from '../../shared/fhir-resource.service';
 import { IFhirResource, IProjectResourceReference } from '@trifolia-fhir/models';
-import { IValueSet, Paginated } from '@trifolia-fhir/tof-lib';
+import { IBundle, IDomainResource, IValueSet, Paginated } from '@trifolia-fhir/tof-lib';
 import {ValueSetService} from '../../shared/value-set.service';
 import { CookieService } from 'ngx-cookie-service';
 
@@ -43,7 +43,8 @@ export class FhirReferenceModalComponent implements OnInit {
   public nameSearch?: string;
   public titleSearch?: string;
   public selected: ResourceSelection[] = [];
-  public results?: IFhirResource[];
+  public serverResults?: IFhirResource[];
+  public fhirResults?: IBundle;
   public valueSetResults?: IValueSet[];
   public total: number;
   public currentPage: number = 1;
@@ -109,25 +110,25 @@ export class FhirReferenceModalComponent implements OnInit {
     return !!this.selected.find((selected) => selected.projectResourceId === con.resource.id);
   }
 
-  public setSelected(conf: IFhirResource, isSelected) {
-    const found = this.selected.find((selected) => selected.projectResourceId === conf.id);
+  public setSelected(res: IFhirResource|IDomainResource, type: 'server'|'fhir', isSelected: boolean) {
+    const found = this.selected.find((selected) => selected.projectResourceId === res.id);
 
     if (found && !isSelected) {
       const index = this.selected.indexOf(found);
       this.selected.splice(index, 1);
     } else if (!found && isSelected) {
       this.selected.push({
-        projectResourceId: conf.id,
-        resourceType: conf.resource.resourceType,
-        id: conf.resource.id,
-        display: new FhirDisplayPipe().transform(conf.resource),
-        fullUrl: conf.resource['url'],
-        resource: conf.resource
+        projectResourceId: res.id,
+        resourceType: type === 'server' ? (<IFhirResource>res).resource.resourceType : (<IDomainResource>res).resourceType,
+        id: type === 'server' ? (<IFhirResource>res).resource.id : (<IDomainResource>res).id,
+        display: new FhirDisplayPipe().transform(type === 'server' ? (<IFhirResource>res).resource : res),
+        fullUrl: type === 'server' ? (<IFhirResource>res).resource['url'] : res['url'],
+        resource: type === 'server' ? (<IFhirResource>res).resource : res
       });
     }
   }
 
-  public select(conf?: IFhirResource) {
+  public selectServer(conf?: IFhirResource) {
     if (conf) {
       this.activeModal.close(<ResourceSelection>{
         projectResourceId: conf.id,
@@ -136,6 +137,20 @@ export class FhirReferenceModalComponent implements OnInit {
         display: new FhirDisplayPipe().transform(conf.resource),
         fullUrl: conf.resource['url'],
         resource: conf.resource
+      });
+    } else if (this.selectMultiple) {
+      this.activeModal.close(this.selected);
+    }
+  }
+
+  public selectFhir(res?: IDomainResource) {
+    if (res) {
+      this.activeModal.close(<ResourceSelection>{
+        resourceType: res.resourceType,
+        id: res.id,
+        display: new FhirDisplayPipe().transform(res),
+        fullUrl: res['url'],
+        resource: res
       });
     } else if (this.selectMultiple) {
       this.activeModal.close(this.selected);
@@ -181,7 +196,7 @@ export class FhirReferenceModalComponent implements OnInit {
     ).subscribe({
       next: (res: Paginated<IFhirResource>) => {
 
-        this.results = res.results;
+        this.serverResults = res.results;
         this.total = res.total;
         this.pageSize = res.itemsPerPage;
         this.searching = false;
@@ -201,7 +216,8 @@ export class FhirReferenceModalComponent implements OnInit {
 
   getPage() {
 
-    this.results = null;
+    this.serverResults = null;
+    this.fhirResults = null;
     this.valueSetResults = null;
 
     if (!this.resourceType) {
@@ -228,94 +244,89 @@ export class FhirReferenceModalComponent implements OnInit {
     const nonContentResourceTypes = this.nameSearchTypes.concat(this.titleSearchTypes);
     let url = '/api/fhir/dependency?';
 
-    // if (this.resourceType) {
-    //   url += `resourceType=${this.resourceType}&`;
-    // }
+    if (this.resourceType) {
+      url += `resourceType=${this.resourceType}&`;
+    }
 
     // if (this.results && this.results.entry) {
     //   url += '_getpagesoffset=' + this.results.entry.length + '&';
     // }
 
-    // if (this.contentSearch && nonContentResourceTypes.indexOf(this.resourceType) < 0) {
-    //   url += '_content=' + encodeURIComponent(this.contentSearch) + '&';
-    // }
+    if (this.contentSearch && nonContentResourceTypes.indexOf(this.resourceType) < 0) {
+      url += '_content=' + encodeURIComponent(this.contentSearch) + '&';
+    }
 
-    // if (this.nameSearch && this.nameSearchTypes.indexOf(this.resourceType) >= 0) {
-    //   url += 'name=' + encodeURIComponent(this.nameSearch) + '&';
-    // }
+    if (this.nameSearch) {
+      url += 'name=' + encodeURIComponent(this.nameSearch) + '&';
+    }
 
-    // if (this.titleSearch && this.titleSearchTypes.indexOf(this.resourceType) >= 0) {
-    //   url += 'title=' + encodeURIComponent(this.titleSearch) + '&';
-    // }
+    if (this.titleSearch) {
+      url += 'title=' + encodeURIComponent(this.titleSearch) + '&';
+    }
 
-    // if (this.resourceType === 'StructureDefinition' && this.structureDefinitionType) {
-    //   url += 'type=' + encodeURIComponent(this.structureDefinitionType) + '&';
-    // }
+    if (this.resourceType === 'StructureDefinition' && this.structureDefinitionType) {
+      url += 'type=' + encodeURIComponent(this.structureDefinitionType) + '&';
+    }
 
-    // if (this.idSearch) {
-    //   url += '_id=' + encodeURIComponent(this.idSearch) + '&';
-    // }
+    if (this.idSearch) {
+      url += '_id=' + encodeURIComponent(this.idSearch) + '&';
+    }
 
-    // this.searching = true;
+    this.searching = true;
 
-    // this.http.get<IBundle>(url)
-    //   .subscribe((results: IBundle) => {
-    //     // If we are loading more results from the server, then concatenate the entries
-    //     if (loadMore && this.results && this.results.entry) {
-    //       this.results.entry = this.results.entry.concat(results.entry);
-    //     } else {
-    //       this.results = results;
-    //     }
-
-    //     this.searching = false;
-    //   }, (err) => {
-    //     this.message = getErrorString(err);
-    //     this.searching = false;
-    //   }, () => this.searching = false);
+    this.http.get<IBundle>(url).subscribe({
+      next: (results: IBundle) => {
+        this.fhirResults = results;
+        this.searching = false;
+      },
+      error: (err) => {
+        this.message = err.message;
+        this.searching = false;
+      },
+      complete: () => (this.searching = false)
+    });
 
   }
 
   private searchBase() {
 
-    // if (!this.results) {
-    //   this.results = {
-    //     resourceType: 'Bundle',
-    //     entry: []
-    //   };
-    //   this.baseResourceLength = 10;
-    // }
+    if (!this.fhirResults) {
+      this.fhirResults = {
+        resourceType: 'Bundle',
+        entry: []
+      };
+      this.baseResourceLength = 10;
+    }
 
-    // let additionalEntries: EntryComponent[] = this.fhirService.fhir.parser.structureDefinitions
-    //   .map((sd: StructureDefinition) => {
-    //     return {
-    //       resource: sd
-    //     };
-    //   });
+    let entries: EntryComponent[] = this.fhirService.fhir.parser.structureDefinitions
+      .map((sd: StructureDefinition) => {
+        return {
+          resource: sd
+        };
+      });
 
-    // if (this.nameSearch) {
-    //   additionalEntries = additionalEntries
-    //     .filter(object => (<StructureDefinition> object.resource).name.toLowerCase().indexOf(this.nameSearch.toLowerCase()) >= 0);
-    // }
+    if (this.nameSearch) {
+      entries = entries
+        .filter(object => (<StructureDefinition> object.resource).name?.toLowerCase().indexOf(this.nameSearch.toLowerCase()) >= 0);
+    }
 
-    // if (this.titleSearch) {
-    //   additionalEntries = additionalEntries
-    //     .filter(object => (<StructureDefinition> object.resource).title.toLowerCase().indexOf(this.titleSearch.toLowerCase()) >= 0);
-    // }
+    if (this.titleSearch) {
+      entries = entries
+        .filter(object => (<StructureDefinition> object.resource).title?.toLowerCase().indexOf(this.titleSearch.toLowerCase()) >= 0);
+    }
 
-    // if (this.idSearch) {
-    //   additionalEntries = additionalEntries
-    //     .filter(object => (<StructureDefinition> object.resource).identifier.filter(value => (<String> value).toLowerCase().indexOf(this.idSearch.toLowerCase()) >= 0));
-    // }
+    if (this.idSearch) {
+      entries = entries
+        .filter(object => (<StructureDefinition> object.resource).identifier?.filter(value => (<String> value).toLowerCase().indexOf(this.idSearch.toLowerCase()) >= 0));
+    }
 
-    // if (this.structureDefinitionType) {
-    //   additionalEntries = additionalEntries
-    //     .filter(e => e.resource.resourceType !== 'StructureDefinition' || (<StructureDefinition> e.resource).type.toLowerCase() === this.structureDefinitionType.toLowerCase());
-    // }
+    if (this.structureDefinitionType) {
+      entries = entries
+        .filter(e => e.resource.resourceType !== 'StructureDefinition' || (<StructureDefinition> e.resource).type.toLowerCase() === this.structureDefinitionType.toLowerCase());
+    }
 
-    // this.results.entry = additionalEntries;
-    // this.results.total = this.results.entry.length;
-    // this.baseResourceLength = loadMore ? (this.baseResourceLength + 10 < this.results.total ? this.baseResourceLength + 10 : this.results.total) : this.baseResourceLength;
-    // this.results.entry = this.results.entry.slice(0, this.baseResourceLength);
+    this.fhirResults.entry = entries;
+    this.fhirResults.total = this.fhirResults.entry?.length || 0;
 
   }
 

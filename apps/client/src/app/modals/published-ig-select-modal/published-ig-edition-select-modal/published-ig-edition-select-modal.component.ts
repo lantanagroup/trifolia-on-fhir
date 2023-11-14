@@ -17,8 +17,6 @@ export class PublishedIgEditionSelectModalComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     private igService: ImplementationGuideService) {
-    console.log('ctor');
-
   }
 
   public selectEdition(e: string) {
@@ -31,7 +29,6 @@ export class PublishedIgEditionSelectModalComponent implements OnInit {
 
 
   ngOnInit() {
-    console.log('init');
 
     this.igService.getEditions(this.name).subscribe((results) => {
       this.versions = results.map((e) => e.version);

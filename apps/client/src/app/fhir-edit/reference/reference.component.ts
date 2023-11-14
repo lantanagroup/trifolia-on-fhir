@@ -95,6 +95,8 @@ export class FhirReferenceComponent implements OnInit {
     modalRef.componentInstance.structureDefinitionType = this.structureDefinitionType;
 
     modalRef.result.then((results: ResourceSelection) => {
+      if (!results) return;
+      
       if (!this.isCanonical) {
         this.reference = `${results.resourceType}/${results.id}`;
         this.display = results.display;

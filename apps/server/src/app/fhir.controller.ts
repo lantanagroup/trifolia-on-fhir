@@ -696,7 +696,7 @@ export class FhirController extends FhirResourcesController {
         if (resourceType && resource.resourceType !== resourceType) continue;
 
         // id
-        if (resourceId && resource.id !== resourceId) continue;
+        if (resourceId && resource.id && resource.id.toLowerCase().indexOf(resourceId.toLowerCase()) < 0) continue;
 
         // title
         if (title) {
