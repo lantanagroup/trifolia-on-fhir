@@ -76,7 +76,7 @@ export class PublishingRequestModel {
       let pr = fhirResource.references[publishingRequestIndex].value as PublicationRequest;
       content = pr.content;
     }
-    return JSON.parse(content);
+    return content;
   }
 
   // FINISH THIS, CHECK TOF TO SEE HOW USED
