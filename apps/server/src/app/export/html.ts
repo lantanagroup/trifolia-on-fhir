@@ -643,12 +643,12 @@ export class HtmlExporter {
 
       // find any intro or notes referenced by this structure definition and write them to corresponding files
       const intro = (dbRes.references || []).find((r: IProjectResourceReference) =>
-        r.valueType == NonFhirResource.name && typeof r.value == typeof {}
+        r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {}
         && (<INonFhirResource>r.value).type === StructureDefinitionIntro.name
       );
 
       const notes = (dbRes.references || []).find((r: IProjectResourceReference) =>
-        r.valueType == NonFhirResource.name && typeof r.value == typeof {}
+        r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {}
         && (<INonFhirResource>r.value).type === StructureDefinitionNotes.name
       );
 

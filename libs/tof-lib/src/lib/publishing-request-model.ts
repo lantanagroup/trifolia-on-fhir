@@ -71,7 +71,7 @@ export class PublishingRequestModel {
       }
     }*/
     let content = "";
-    const publishingRequestIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === PublicationRequest.name)
+    const publishingRequestIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === PublicationRequest.name)
     if (publishingRequestIndex > -1) {
       let pr = fhirResource.references[publishingRequestIndex].value as PublicationRequest;
       content = pr.content;
