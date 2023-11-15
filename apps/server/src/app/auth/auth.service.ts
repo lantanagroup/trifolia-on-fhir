@@ -84,20 +84,20 @@ export class AuthService {
 
 
         let filter: any = {
-            $or: orClauses
+            $and: [{
+                $or: 
+                isProject ? 
+                    [{ "isDeleted": { $exists: false } }, { "isDeleted" : false }] :
+                    [{ "projects.isDeleted": { $exists: false } }, { "projects.isDeleted" : false }]
+                },
+                {$or: orClauses}
+            ]
         }
 
 
         // Filter by any provided id
         if (targetId) {
-            filter = {
-                $and: [
-                    {
-                        _id: new ObjectId(targetId)
-                    },
-                    {$or: orClauses}
-                ]
-            };
+            filter['$and'].unshift({_id: new ObjectId(targetId)})
         }
 
         let pipeline = [];
