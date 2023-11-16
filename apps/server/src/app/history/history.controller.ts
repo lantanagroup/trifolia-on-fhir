@@ -1,4 +1,4 @@
-import {Controller, Get, Param, Query, UseGuards} from '@nestjs/common';
+import {Controller, Get, Param, Query, UnauthorizedException, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {PaginateOptions} from '@trifolia-fhir/tof-lib';
@@ -23,6 +23,11 @@ export class HistoryController extends BaseDataController<HistoryDocument> {
 
   @Get(':type/:id')
   public async searchHistory(@User() user, @Param('type') type: string, @Param('id') id: string, @Query() query?: any ) {
+    
+    if (!await this.authService.userCanByType(user, id, type === 'NonFhirResource' ? 'nonFhirResource' : 'fhirResource', 'read')) {
+      throw new UnauthorizedException();
+    }
+
     const searchFilters = {};
 
     searchFilters['current.valueType'] = { $regex: `^${type}$`,  $options: 'i' };

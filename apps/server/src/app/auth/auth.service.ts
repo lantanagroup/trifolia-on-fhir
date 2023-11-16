@@ -96,11 +96,21 @@ export class AuthService {
         // if this is not a project being checked, also need to check that at least one associated project is not deleted
         if (!isProject) {
           filter['$and'].splice(1, 0, {
-            projects: {
-              $elemMatch: {
-                $or: [{ isDeleted: { $exists: false } }, { isDeleted: false }],
+            $or: [
+              {
+                'projects.0': { $exists: false },
               },
-            },
+              {
+                projects: {
+                  $elemMatch: {
+                    $or: [
+                      { isDeleted: { $exists: false } },
+                      { isDeleted: false },
+                    ],
+                  },
+                },
+              },
+            ],
           });
         }
 
