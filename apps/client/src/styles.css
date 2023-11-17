@@ -1,9 +1,6 @@
-/* body {
-  padding-top: 4.5rem;
-} */
 
-trifolia-fhir-root > div.container > div.jumbotron {
-  padding: 10px;
+html, body {
+  height: 100%;
 }
 
 footer.footer {
@@ -63,19 +60,6 @@ nav.fixed-top {
 
 .clickable {
   cursor: pointer;
-}
-
-body > trifolia-fhir-root > div.container {
-  /* position: fixed;
-  top: 59px;
-  bottom: 37px; */
-  padding-right: 5px;
-  padding-left: 5px;
-}
-
-body > trifolia-fhir-root > div.container > div.jumbotron {
-  height: 100%;
-  overflow-y: auto;
 }
 
 body.structure-definition div.sd-main {
@@ -750,34 +734,13 @@ tr.introjs-showElement > th {
 
 /*** END INTRO.JS STYLES ***/
 
-/** Global styles to make other-resources screens work with max height **/
+
 .jumbotron {
-  padding:2rem 1rem;
-  margin-bottom:2rem;
-  background-color:#e9ecef;
-  border-radius:.3rem
-}
-
-div.container > div.jumbotron > ng-component {
-  height: 93%;
-  display: block;
-}
-
-div.container > div.jumbotron > ng-component > div:first-child {
-  height: 100%;
-}
-
-div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset {
-  height: 92%;
-  display: block;
-}
-
-div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset > div:nth-child(2) {
-  height: 94%;
-}
-
-div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset > div:nth-child(2) > div[id="json/xml-panel"] {
-  height: 100%;
+  position: relative;
+  padding: 0.5rem 1rem;
+  margin-bottom: 50px;
+  background-color: #e9ecef;
+  border-radius: .5rem
 }
 
 simplemde .editor-statusbar {

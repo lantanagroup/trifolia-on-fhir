@@ -114,7 +114,7 @@ export class AuditController extends BaseDataController<AuditDocument> {
 
     audit.user = user.user;
     audit.timestamp = new Date();
-    audit.networkAddr = req.socket.remoteAddress;
+    audit.networkAddr = req.headers['x-forwarded-for']?.toString() || req.socket?.remoteAddress;
 
     return this.dataService.create(audit);
       
