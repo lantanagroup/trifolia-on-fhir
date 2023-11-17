@@ -49,6 +49,7 @@ export class AuditComponent implements OnInit {
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {
+        this.currentPage = 1;
         this.getAudits();
       });
 
@@ -98,7 +99,6 @@ export class AuditComponent implements OnInit {
       complete: () => {this.loadingResults = false;}
     });
   }
-
 
   public changeSort(column: string) {
     const currentColumn = this.sort.startsWith('-') ? this.sort.substring(1) : this.sort;

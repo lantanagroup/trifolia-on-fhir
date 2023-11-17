@@ -120,8 +120,8 @@
       Total: {{ audits.total }}
     </div>
 
-    <ngb-pagination class="d-flex justify-content-center" [maxSize]="audits.itemsPerPage" [collectionSize]="audits.total"
-      [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()">
+    <ngb-pagination class="d-flex justify-content-center" [pageSize]="audits.itemsPerPage" [collectionSize]="audits.total"
+      [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="getAudits()">
     </ngb-pagination>
 
     <div>
