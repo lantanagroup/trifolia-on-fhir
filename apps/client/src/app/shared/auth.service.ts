@@ -8,14 +8,17 @@ import {GroupService} from './group.service';
 import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import { UserService } from './user.service';
-import {AuditAction, type IAudit, type IFhirResource, type IGroup, type IPermission, type IProject, type IUser} from '@trifolia-fhir/models';
+import {AuditAction, type IAudit, type IGroup, type IPermission, type IProject, type IUser} from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
 import { AuditService } from './audit.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class AuthService {
   public userProfile: ITofUser;
   public user: IUser;
+  public authResponseReceived: boolean = false;
+  public serverError: boolean = false;
   public groups: IGroup[] = [];
   public authChanged: EventEmitter<any>;
   public loggingIn = false;
@@ -210,9 +213,11 @@ export class AuthService {
     }
   }
 
-  public async getProfile(): Promise<{ userProfile: any, user: IUser }> {
+  public async getProfile(): Promise<{ userProfile: any, user: IUser, serverError: boolean }> {
+    this.authResponseReceived = false;
+    this.serverError = false;
     if (!this.isAuthenticated()) {
-      return Promise.resolve({ userProfile: null, user: null });
+      return Promise.resolve({ userProfile: null, user: null, serverError: false });
     }
 
     this.userProfile = this.getAuthUserInfo();
@@ -223,15 +228,21 @@ export class AuthService {
       this.groups = await firstValueFrom(this.groupService.getMembership());
     } catch (ex) {
       console.error(ex);
+      if (ex instanceof HttpErrorResponse && ex.status === 500) {
+        this.serverError = true;
+      }      
       this.user = null;
     }
+
+    this.authResponseReceived = true;
 
     // This also triggers a notification to the socket
     this.authChanged.emit();
 
     return {
       userProfile: this.userProfile,
-      user: this.user
+      user: this.user,
+      serverError: this.serverError
     };
   }
 

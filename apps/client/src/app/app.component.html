@@ -165,6 +165,15 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
+    <div class="alert alert-danger" *ngIf="showServerError">
+      There has been an error communicating with the server. Please try again later.
+      If this problem persists, please <a href="javascript:void(0)" (click)="supportButtonClicked()">file a support request</a>.
+    </div>
+
+    <div class="alert alert-warning" *ngIf="showAwaitingAuth">
+      Awaiting authentication response...
+    </div>
+
     <app-home *ngIf="showHome"></app-home>
 
     <trifolia-fhir-new-user-modal *ngIf="showNewUser"></trifolia-fhir-new-user-modal>
