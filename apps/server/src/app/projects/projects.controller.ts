@@ -12,6 +12,7 @@ import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {TofNotFoundException} from '../../not-found-exception';
 import { NonFhirResourcesService } from '../non-fhir-resources/non-fhir-resources.service';
 import { AuditEntity } from '../audit/audit.decorator';
+import {removeFromImplementationGuideNew} from '../helper';
 
 
 @Controller('api/projects')
@@ -49,7 +50,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
     const filter = await this.authService.getPermissionFilterBase(user, 'read', null, true);
 
     filter.push({$match: this.getFilterFromRequest(req)});
-    
+
     options.pipeline = filter;
 
     const res = await this.projectService.search(options);
@@ -108,12 +109,12 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
       const refRes = await service.findById(typeof upRef.value === 'string' ? upRef.value : upRef.value.id);
       let refResUpdated = false;
       project.references.push({ 'value': refRes, 'valueType': upRef.valueType });
-      
+
       // ensure referenced resources have a reference to this project
       if (!refRes.projects) {
         refRes.projects = [];
       }
-      if (!refRes.projects.some(r => 
+      if (!refRes.projects.some(r =>
         (typeof r === typeof {} && 'id' in r && r.id === project.id) || (r.toString() === project.id)
         )) {
           refRes.projects.push(project);
@@ -124,7 +125,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
       if (!refRes.referencedBy) {
         refRes.referencedBy = [];
       }
-      if (!refRes.referencedBy.filter(r => r.valueType === 'Project').some(r => 
+      if (!refRes.referencedBy.filter(r => r.valueType === 'Project').some(r =>
         (typeof r.value === typeof {} && 'id' in <IBaseEntity>r.value && (<IBaseEntity>r.value).id === project.id) || (r.value.toString() === project.id)
         )) {
           refRes.referencedBy.push({value: project.id, valueType: 'Project'});
@@ -136,9 +137,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
       }
     }
     return await super.update(id, project);
-
   }
-
 
   @Get(':id')
   public async getProject(@User() userProfile, @Param('id') id: string) {
@@ -152,7 +151,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
   }
 
   @Delete('/:id/implementationGuide')
-  @AuditEntity(AuditAction.Delete, AuditEntityType.Project)
+  @AuditEntity(AuditAction.Delete, AuditEntityType.FhirResource)
   public async removeImplementationGuideFromProjects(@User() userProfile, @Param('id') id: string) {
 
     if (!userProfile) return null;
@@ -168,9 +167,27 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
       if (project.references.length != 0) {
         await this.projectService.updateOne(project.id, project);
       } else {
-        await this.projectService.delete(project.id);
+        await this.projectService.deleteProject(project.id);
       }
     }
+  }
+
+
+  @Delete('/:id')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.Project)
+  public async deleteProject(@User() userProfile, @Param('id') id: string) {
+
+    if (!userProfile) return null;
+
+    await this.assertCanWriteById(userProfile, id);
+
+    let proj = await this.projectService.getProject(id);
+    if (!proj) {
+      throw new TofNotFoundException();
+    }
+
+    await this.projectService.deleteProject(proj.id);
+
   }
 
 }

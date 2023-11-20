@@ -57,7 +57,7 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
 
   public async getProjects() {
     this.configService.setStatusMessage('Loading projects');
-    await this.projectService.getProjects(this.page, this.name, this.author,  this.id).toPromise().then((results) => {
+    await this.projectService.getProjects(this.page, this.name, this.author, this.id).toPromise().then((results) => {
       this.projects = results;
       this.total = this.projects.total;
       this.configService.setStatusMessage('');
@@ -72,9 +72,21 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
   }
 
   public get selectCookie() {
-    return "projectsSelected";
+    return 'projectsSelected';
   }
 
+  public deleteProject(prToDelete) {
+    this.projectService.deleteProject(prToDelete.id).toPromise().then((results) => {
+      // find project in recent projects and remove it
+      const currentProjectsIndex = this.searchProjectResults.findIndex(pr => pr.id === prToDelete.id);
+      this.projects.results.splice(currentProjectsIndex, 1);
+      const currentRecentIndex = this.recentProjects.findIndex(pr => pr.id === prToDelete.id);
+      this.recentProjects.splice(currentRecentIndex, 1);
+
+      this.total = this.total--;
+
+    }).catch((err) => this.message = getErrorString(err));
+  }
 
   public projectSelected(project: IProject) {
     const foundRecent = this.recentProjects.find(pr => pr.id === project.id);

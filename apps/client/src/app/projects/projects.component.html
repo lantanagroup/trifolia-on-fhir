@@ -60,6 +60,14 @@
         </tr>
       </table>
     </td>
+    <td>
+      <div class="pull-right">
+        <button type="button" class="btn btn-default btn-sm" title="Delete project"
+                (click)="deleteProject(pr)">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    </td>
     <td class="actions-column-1">
       <div class="btn-group pull-right">
         <a  (click)="projectSelected(pr)"  class="btn btn-primary" role="button" routerLink="/projects/{{pr.id}}"
