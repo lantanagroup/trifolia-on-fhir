@@ -119,7 +119,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
     return true;
   }
 
-  @Get(':type/:name')
+  @Get('name/:type/:name')
   @HttpCode(200)
   @ApiOperation({ summary: 'getByName', description: 'getByName' })
   async getByName(@Param('type') type: string, @Param('name') name: string, @Query('implementationguideid') implementationGuideId?: string): Promise<NonFhirResource> {
@@ -135,7 +135,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
     return res;
   }
 
-  @Get(':type')
+  @Get('type/:type')
   @HttpCode(200)
   @ApiOperation({ summary: 'getByType', description: 'getByType' })
   async getByType(@Param('type') type: string, @Query('implementationguideid') implementationGuideId?: string): Promise<NonFhirResource> {
@@ -178,7 +178,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
   @Put(':id')
   @AuditEntity(AuditAction.Update, AuditEntityType.NonFhirResource)
   public async updateNonFhirResource(@User() user: ITofUser, @Param('id') id: string, @Body() nonFhirResource: NonFhirResourceDocument, @Query('implementationguideid') implementationGuideId?: string): Promise<INonFhirResource> {
-    console.log('PUT -- checking perms on IG:', implementationGuideId);
+    // console.log('PUT -- checking perms on IG:', implementationGuideId);
     await this.assertIdMatch(id, nonFhirResource);
     await this.assertCanWriteById(user, id);
     if (implementationGuideId) {
@@ -196,7 +196,7 @@ export class NonFhirResourcesController extends BaseDataController<NonFhirResour
     await this.nonFhirResourcesService.delete(id);
   }
 
-  @Delete(':type/:name')
+  @Delete('name/:type/:name')
   async deleteByName(@Param('type') type: string, @Param('name') name: string, @Query('implementationguideid') implementationGuideId?: string):  Promise<INonFhirResource> {
     let filter = { 'type': type, 'name': name};
     if (implementationGuideId) {

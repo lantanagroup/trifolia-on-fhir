@@ -1,4 +1,4 @@
-textarea {
+/* textarea {
   height: 100%;
 }
 
@@ -13,4 +13,8 @@ select {
 
 :host ::ng-deep .tab-pane, .input-group {
   height: 100%;
+} */
+
+textarea {
+  height: 50vh;
 }

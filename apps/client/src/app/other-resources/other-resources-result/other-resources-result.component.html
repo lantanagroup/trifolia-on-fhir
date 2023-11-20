@@ -31,7 +31,7 @@
       </select>
     </div>
   </div>
-  <ul ngbNav #nav="ngbNav" class="nav-tabs" (navChange)="changeSubTab($event)">
+  <ul ngbNav #nav="ngbNav" class="nav-tabs mt-2" (navChange)="changeSubTab($event)">
     <li ngbNavItem="json/xml">
       <a ngbNavLink>JSON/XML</a>
       <ng-template ngbNavContent>
@@ -59,7 +59,7 @@
       </ng-template>
     </li>
   </ul>
-  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  <div [ngbNavOutlet]="nav"></div>
 
 
 </div>

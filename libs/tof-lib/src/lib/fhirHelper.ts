@@ -370,7 +370,7 @@ export function getIgnoreWarningsValue(fhirResource: any): string {
   //   }
   // }
   let content = "";
-  const ignoreWarningsIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === IgnoreWarnings.name)
+  const ignoreWarningsIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === IgnoreWarnings.name)
   if (ignoreWarningsIndex > -1) {
     let iw = fhirResource.references[ignoreWarningsIndex].value as IgnoreWarnings;
     content = iw.content;
@@ -474,7 +474,7 @@ export function getCustomMenu(fhirResource: any): string {
     }
   }*/
   let content = "";
-  const customMenuIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === CustomMenu.name)
+  const customMenuIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === CustomMenu.name)
   if (customMenuIndex > -1) {
     let cm = fhirResource.references[customMenuIndex].value as CustomMenu;
     content = cm.content;
@@ -488,7 +488,7 @@ export function getPages(fhirResource: any): Page[] {
   let  pages: Page[] = [];
 
   (fhirResource.references || []).forEach((r: IProjectResourceReference) => {
-    if( r.valueType == NonFhirResource.name && typeof r.value == typeof {}  && (<INonFhirResource>r.value).type === Page.name) {
+    if( r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {}  && (<INonFhirResource>r.value).type === Page.name) {
       let page = r.value as Page;
       pages.push(page);
     }

@@ -83,21 +83,41 @@ export class AuthService {
         }
 
 
+        // base filter checks for deleted flag and the above calculated "or" clauses
         let filter: any = {
-            $or: orClauses
+            $and: [
+                {
+                    $or: [{ "isDeleted": { $exists: false } }, { "isDeleted" : false }]
+                },
+                {$or: orClauses}
+            ]
+        }
+
+        // if this is not a project being checked, also need to check that at least one associated project is not deleted
+        if (!isProject) {
+          filter['$and'].splice(1, 0, {
+            $or: [
+              {
+                'projects.0': { $exists: false },
+              },
+              {
+                projects: {
+                  $elemMatch: {
+                    $or: [
+                      { isDeleted: { $exists: false } },
+                      { isDeleted: false },
+                    ],
+                  },
+                },
+              },
+            ],
+          });
         }
 
 
         // Filter by any provided id
         if (targetId) {
-            filter = {
-                $and: [
-                    {
-                        _id: new ObjectId(targetId)
-                    },
-                    {$or: orClauses}
-                ]
-            };
+            filter['$and'].unshift({_id: new ObjectId(targetId)})
         }
 
         let pipeline = [];

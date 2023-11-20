@@ -29,7 +29,6 @@ declare let gtag: Function;
   styleUrls: ['./app.component.css']
 })
 export class AppComponent extends BaseComponent implements OnInit {
-  public person: Practitioner;
   public initialized = false;
   public statusMessage: string;
 
@@ -88,8 +87,16 @@ export class AppComponent extends BaseComponent implements OnInit {
     return !this.authService.isAuthenticated();
   }
 
+  get showAwaitingAuth() {
+    return this.authService.isAuthenticated() && !this.authService.authResponseReceived;
+  }
+
+  get showServerError() {
+    return this.authService.serverError;
+  }
+
   get showNewUser() {
-    return this.authService.isAuthenticated() && !this.authService.user;
+    return this.authService.isAuthenticated() && !this.authService.user && !this.authService.serverError && this.authService.authResponseReceived;
   }
 
   get showRouterOutlet() {

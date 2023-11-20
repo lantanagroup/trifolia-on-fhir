@@ -110,7 +110,7 @@
     </tbody>
     <tbody *ngIf="loadingResults">
       <tr>
-        <td colspan="5" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading audit logs</td>
+        <td colspan="6" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading audit logs</td>
       </tr>
     </tbody>
   </table>
@@ -120,8 +120,8 @@
       Total: {{ audits.total }}
     </div>
 
-    <ngb-pagination class="d-flex justify-content-center" [maxSize]="audits.itemsPerPage" [collectionSize]="audits.total"
-      [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="criteriaChangedEvent.next()">
+    <ngb-pagination class="d-flex justify-content-center" [pageSize]="audits.itemsPerPage" [collectionSize]="audits.total"
+      [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="getAudits()">
     </ngb-pagination>
 
     <div>

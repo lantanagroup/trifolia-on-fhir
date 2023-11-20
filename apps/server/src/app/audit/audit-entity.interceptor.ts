@@ -39,7 +39,7 @@ export class AuditInterceptor implements NestInterceptor {
       entityType: auditEntityType,
       timestamp: new Date(),
       user: req.user?.user,
-      networkAddr: req.socket?.remoteAddress
+      networkAddr: req.headers['x-forwarded-for']?.toString() || req.socket?.remoteAddress
     };
 
     return auditEvent;
