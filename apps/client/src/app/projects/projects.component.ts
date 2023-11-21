@@ -76,6 +76,9 @@ export class ProjectsComponent extends BaseComponent implements OnInit {
   }
 
   public deleteProject(prToDelete) {
+    if (!prToDelete || !confirm('Are you sure you want to delete this project?')) {
+      return;
+    }
     this.projectService.deleteProject(prToDelete.id).toPromise().then((results) => {
       // find project in recent projects and remove it
       const currentProjectsIndex = this.searchProjectResults.findIndex(pr => pr.id === prToDelete.id);
