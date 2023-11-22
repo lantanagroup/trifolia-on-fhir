@@ -35,8 +35,8 @@
 </div>
 <div class="modal-footer">
   <div class="pull-left footer-criteria">
-    <p *ngIf="configService.igContext && searchLocation === 'server'">
-      <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from
+    <p *ngIf="configService.igContext && (searchLocation === 'server' || searchLocation === 'dependency')">
+      <input *ngIf = "searchLocation === 'server'" type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from
       the <span class="badge bg-info">{{configService.igContext.name}}</span> implementation guide.
     </p>
     <p *ngIf="resourceType === 'StructureDefinition' && structureDefinitionType">Showing profiles of type <span
@@ -197,7 +197,7 @@
 
 <!-- VSAC Search Content -->
 <ng-template #vsacContent>
-    
+
   <div class="row">
     <div class="col-md-12">
       <div class="mb-3">
