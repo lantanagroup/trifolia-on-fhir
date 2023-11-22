@@ -1,14 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type { IProject, IProjectContributor, IPermission } from '@trifolia-fhir/models';
+import type {IProject, IProjectContributor, IPermission, IUser} from '@trifolia-fhir/models';
 import mongoose, { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { BaseEntity } from '../base/base.entity';
 import type { IProjectResourceReference } from '@trifolia-fhir/models';
+import {User} from '../server.decorators';
 
 export type ProjectDocument = HydratedDocument<Project>;
 
 const PermissionSchema = new MongooseSchema<IPermission>({
-    target: { 
-        type: mongoose.Schema.Types.ObjectId, 
+    target: {
+        type: mongoose.Schema.Types.ObjectId,
         ref: (doc) => { return ['User','Group'].indexOf(doc.type) > -1 ? doc.type : null; }
     },
     type: { type: String, enum: ['User','Group','everyone'] },
@@ -22,19 +23,17 @@ export class Project extends BaseEntity implements IProject {
     @Prop()
     name: string;
 
-    @Prop()
-    author: string;
+    @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: User.name }])
+    author: IUser[];
 
     @Prop()
     contributors?: IProjectContributor[];
 
     @Prop()
     fhirVersion: 'stu3'|'r4'|'r5';
-    
+
     @Prop([PermissionSchema])
     permissions?: IPermission[];
-
-
 
     @Prop([{value: {type: mongoose.Schema.Types.ObjectId, refPath: 'referencedBy.valueType'}, valueType: {type:String, enum:['Project']}}])
     referencedBy: IProjectResourceReference[];

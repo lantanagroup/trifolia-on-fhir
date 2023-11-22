@@ -51,7 +51,8 @@
   <tr *ngFor="let pr of searchProjectResults">
     <td>{{pr.id}}</td>
     <td>{{pr.name}}</td>
-    <td>{{pr.author}}</td>
+    <td *ngIf = "pr.author?.length > 0">{{ pr.author[0].name}}</td>
+    <td *ngIf = "pr.author?.length == 0"></td>
     <td>{{pr.fhirVersion}}</td>
     <td>
       <table>

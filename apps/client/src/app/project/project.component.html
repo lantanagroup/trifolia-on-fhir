@@ -22,8 +22,10 @@
           </div>
           <div class="mb-3">
             <h6>Author</h6>
-            <div>
-              {{project.author}}
+            <div *ngIf = "project.author?.length > 0">
+              {{project.author[0].name}}
+            </div>
+            <div *ngIf = "project.author?.length == 0">
             </div>
           </div>
           <div class="mb-3">

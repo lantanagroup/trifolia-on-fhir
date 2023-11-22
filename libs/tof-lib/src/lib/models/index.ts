@@ -26,7 +26,7 @@ export interface IBaseEntityReferences extends IBaseEntity {
 export interface IProject extends IBaseEntityReferences {
   migratedFrom?: string;
   name: string;
-  author: string;
+  author: IUser[];
   contributors?: IProjectContributor[];
   fhirVersion: 'stu3'|'r4'|'r5';
   permissions?: IPermission[];

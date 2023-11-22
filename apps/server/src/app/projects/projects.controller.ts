@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UnauthorizedException, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ProjectsService} from './projects.service';
@@ -10,9 +10,9 @@ import {FhirResourcesService} from '../fhir-resources/fhir-resources.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {TofNotFoundException} from '../../not-found-exception';
-import { NonFhirResourcesService } from '../non-fhir-resources/non-fhir-resources.service';
-import { AuditEntity } from '../audit/audit.decorator';
-import {removeFromImplementationGuideNew} from '../helper';
+import {NonFhirResourcesService} from '../non-fhir-resources/non-fhir-resources.service';
+import {AuditEntity} from '../audit/audit.decorator';
+import {IProjectContributor} from '@trifolia-fhir/models';
 
 
 @Controller('api/projects')
@@ -37,7 +37,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
       filter['name'] = { $regex: query['name'], $options: 'i' };
     }
     if ('author' in query) {
-      filter['author'] = { $regex: query['author'], $options: 'i' };
+     filter['author'] = { $regex: query['author'], $options: 'i' };
     }
     return filter;
   }
@@ -49,12 +49,42 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
     let options = this.getPaginateOptionsFromRequest(req);
     const filter = await this.authService.getPermissionFilterBase(user, 'read', null, true);
 
-    filter.push({$match: this.getFilterFromRequest(req)});
+    //filter.push({ $match: this.getFilterFromRequest(req) });
 
     options.pipeline = filter;
 
-    const res = await this.projectService.search(options);
+    options.populate = ['author'];
+
+    options.pipeline.push(
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author'
+        }
+      }
+    );
+
+    let queryFilter = {};
+
+    if ('name' in query) {
+      queryFilter['name'] = { $regex: this.escapeRegExp(query['name']), $options: 'i' } ;
+    }
+
+    if ('author' in query) {
+      queryFilter['$or'] = [
+        { 'author.firstName': { $regex: this.escapeRegExp(query['author']), $options: 'i' } },
+        { 'author.lastName': { $regex: this.escapeRegExp(query['author']), $options: 'i' } }
+      ];
+    }
+
+    options.pipeline.push({ $match: queryFilter });
+
+    let res = this.projectService.search(options);
+
     return res;
+
   }
 
   @Post()
@@ -63,10 +93,10 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
     let createdProject: IProject = null;
 
     if (!userProfile) return null;
-
-    project.author = userProfile.user.name;
+    project.author = [];
+    project.author.push(userProfile.user);
     project.contributors = project.contributors || [];
-    let contributor = { user: userProfile.user.name };
+    let contributor: IProjectContributor = { user: userProfile.user.name };
     project.contributors.push(contributor);
 
     const igResource = await this.fhirResourceService.getModel().findById(project.references[0].value['id']);
@@ -81,7 +111,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
         if (!refRes.referencedBy) {
           refRes.referencedBy = [];
         }
-        refRes.referencedBy.push({value: createdProject.id, valueType: 'Project'});
+        refRes.referencedBy.push({ value: createdProject.id, valueType: 'Project' });
         await this.fhirResourceService.updateOne(ref.value.toString(), refRes);
       }
     }
@@ -116,9 +146,9 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
       }
       if (!refRes.projects.some(r =>
         (typeof r === typeof {} && 'id' in r && r.id === project.id) || (r.toString() === project.id)
-        )) {
-          refRes.projects.push(project);
-          refResUpdated = true;
+      )) {
+        refRes.projects.push(project);
+        refResUpdated = true;
       }
 
       // ensure referencedBy set for direct children
@@ -127,13 +157,13 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
       }
       if (!refRes.referencedBy.filter(r => r.valueType === 'Project').some(r =>
         (typeof r.value === typeof {} && 'id' in <IBaseEntity>r.value && (<IBaseEntity>r.value).id === project.id) || (r.value.toString() === project.id)
-        )) {
-          refRes.referencedBy.push({value: project.id, valueType: 'Project'});
-          refResUpdated = true;
+      )) {
+        refRes.referencedBy.push({ value: project.id, valueType: 'Project' });
+        refResUpdated = true;
       }
 
       if (refResUpdated) {
-        await service.getModel().updateOne({_id: refRes.id}, refRes);
+        await service.getModel().updateOne({ _id: refRes.id }, refRes);
       }
     }
     return await super.update(id, project);
@@ -179,15 +209,15 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
 
     if (!userProfile) return null;
 
-    await this.assertCanWriteById(userProfile, id);
-
     let proj = await this.projectService.getProject(id);
     if (!proj) {
       throw new TofNotFoundException();
     }
 
+    // can delete its owm project or be admin
+    if (!(userProfile.isAdmin || (proj.author && proj.author.findIndex(val => val.id == userProfile.user.id) > -1))) {
+      throw new UnauthorizedException();
+    }
     await this.projectService.deleteProject(proj.id);
-
   }
-
 }

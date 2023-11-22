@@ -135,7 +135,7 @@ export class NewProjectComponent implements OnInit {
 
           publicationRequest = await firstValueFrom(this.nonFhirResourceService.save(publicationRequest.id, publicationRequest, ig.id));
 
-          let project: IProject = <IProject>{ author: "", fhirVersion: this.fhirVersion, name: projectName };
+          let project: IProject = <IProject>{ fhirVersion: this.fhirVersion, name: projectName };
           project.references = project.references || [];
           project.references.push({'value' : ig, valueType: 'FhirResource'});
           await this.projectService.save(project).toPromise().then((project) => {

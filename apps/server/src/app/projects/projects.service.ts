@@ -24,7 +24,7 @@ export class ProjectsService extends BaseDataService<ProjectDocument> {
 
     let allFilters = { $and: [{'_id' : projectId}, {$or: deleteClause}] };
 
-    return this.projectModel.findOne(allFilters).populate(['references.value']).exec();
+    return this.projectModel.findOne(allFilters).populate(['references.value', 'author']).exec();
   }
 
   public async deleteProject(id: string): Promise<IProject> {
