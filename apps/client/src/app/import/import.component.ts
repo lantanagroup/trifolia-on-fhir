@@ -7,7 +7,7 @@ import { FhirService } from '../shared/fhir.service';
 import { CookieService } from 'ngx-cookie-service';
 import { ContentModel, GithubService } from '../shared/github.service';
 import { ImportGithubPanelComponent } from './import-github-panel/import-github-panel.component';
-import { Observable, concat, using } from 'rxjs';
+import { Observable, Subject, concat, debounceTime, using } from 'rxjs';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
 import { getErrorString, Globals } from '@trifolia-fhir/tof-lib'; //'../../../../../libs/tof-lib/src/lib/helper';
@@ -19,6 +19,7 @@ import { FhirResourceService } from '../shared/fhir-resource.service';
 import { CdaExample, type IFhirResource, type INonFhirResource, type IProjectResource } from '@trifolia-fhir/models';
 import { NonFhirResourceService } from '../shared/non-fhir-resource.service';
 import { FhirResource } from 'apps/server/src/app/fhir-resources/fhir-resource.schema';
+import { ValidatorResponse } from 'fhir/validator';
 
 const validExtensions = ['.xml', '.json', '.xlsx', '.jpg', '.gif', '.png', '.bmp', '.svg'];
 
@@ -45,6 +46,7 @@ class ImportFileModel {
   public multipleIgMessage: "";
   public cdaContent?: string;
   public isCDAExample: boolean = false;
+  public validation?: ValidatorResponse;
 }
 
 class GitHubImportContent {
@@ -60,7 +62,10 @@ class GitHubImportContent {
 export class ImportComponent implements OnInit {
   public textContentType = ContentTypes.Json;
   public textContent: string;
-  public textContentIsExample: boolean = false;
+  public textContentIsCDA: boolean = false;
+  public textContentChanged = new Subject();
+  public textContentError: string;
+  public textContentValidation: ValidatorResponse;
   public files: ImportFileModel[] = [];
   public isUploading: boolean = false;
   public outcome: OperationOutcome;
@@ -74,6 +79,7 @@ export class ImportComponent implements OnInit {
   public applyContextPermissions = true;
   public Globals = Globals;
   public implementationGuideId: string;
+  public currentValidation: ValidatorResponse;
 
   private readonly vsacPasswordCookieKey = 'vsac_password';
 
@@ -98,6 +104,14 @@ export class ImportComponent implements OnInit {
       this.vsacCriteria.password = atob(vsacPassword);
       this.rememberVsacCredentials = true;
     }
+
+    this.textContentChanged
+      .pipe(debounceTime(750))
+      .subscribe((val) => {
+        const validation = this.validateTextContent();
+        this.textContentError = validation.exception ? getErrorString(validation.exception) : '';
+        this.textContentValidation = validation.validation;
+      });
   }
 
   viewUpdateDiff(fileModel: ImportFileModel) {
@@ -110,6 +124,13 @@ export class ImportComponent implements OnInit {
       modalRef.componentInstance.importResource = fileModel.content;
       modalRef.componentInstance.existingResource = (<INonFhirResource>fileModel.existingResource).content;
     }
+  }
+
+  viewValidation(modal: any, validation: ValidatorResponse) {
+    this.currentValidation = validation;
+    this.modalService.open(modal, {size: 'xl', scrollable: true}).closed.subscribe(() => {
+      this.currentValidation = null;
+    });
   }
 
   private createMedia(name: string, contentType: string, buffer: ArrayBuffer) {
@@ -163,6 +184,8 @@ export class ImportComponent implements OnInit {
           importFile.contentType === ContentTypes.Image;
       })
       .forEach((importFile: ImportFileModel) => {
+        if (this.fileIsInvalid(importFile)) return;
+
         if (importFile.resource.resourceType === 'Bundle' && importFile.bundleOperation === 'split') {
           const transactionBundle = <Bundle>importFile.resource;
 
@@ -373,22 +396,37 @@ export class ImportComponent implements OnInit {
     }
   }
 
-  private importText(tabSet: NgbNav) {
-    let resource;
 
+  private validateTextContent() : { resource: any, exception: any, validation: ValidatorResponse } {
+    let resource: any;
     try {
-        resource = this.textContentType === ContentTypes.Xml ?
-        this.fhirService.fhir.xmlToObj(this.textContent) :
-        JSON.parse(this.textContent);
+      resource = this.textContentType === ContentTypes.Xml ?
+      this.fhirService.fhir.xmlToObj(this.textContent) :
+      JSON.parse(this.textContent);
     } catch (ex) {
       if (this.configService.isCDA && this.textContentType === ContentTypes.Xml) {
         resource = this.textContent;
-        this.textContentIsExample = true;
+        this.textContentIsCDA = true;
+        return { resource: resource, exception: null, validation: null };
       }
       else {
-        this.message = 'Error: ' + getErrorString(ex);
-        return;
+        return { resource: null, exception: ex, validation: null };
       }
+    }
+
+    return { resource: resource, exception: null, validation: this.fhirService.validate(resource) };
+  }
+
+  private importText(tabSet: NgbNav) {
+    let resource;    
+
+    const validation = this.validateTextContent();
+    if (validation && validation.resource) {
+      resource = validation.resource;
+    }
+    else {
+      this.message = 'Error: ' + getErrorString(validation.exception);
+      return;
     }
 
     let newResource: IFhirResource | INonFhirResource = <IFhirResource | INonFhirResource>{};
@@ -399,7 +437,7 @@ export class ImportComponent implements OnInit {
 
     let req: Observable<IFhirResource | INonFhirResource>;
 
-    if (this.textContentIsExample) {
+    if (this.textContentIsCDA) {
       // CDA examples are the only non-FHIR resources currently supported for importing
       newResource = new CdaExample();
       newResource.content = resource;
@@ -653,7 +691,7 @@ export class ImportComponent implements OnInit {
         const invalidFiles = this.files.filter(f => this.fileIsInvalid(f));
         return !this.files || this.files.length === 0 || unauthorizedResources.length > 0 || invalidFiles.length > 0 || this.isUploading;
       } else if (this.activeTab === 'text') {
-        return !this.textContent;
+        return !this.textContent || (!!this.textContent && !!this.textContentError);
       } else if (this.activeTab === 'vsac') {
         return !this.vsacCriteria.id || !this.vsacCriteria.password;
       } /*else if (this.importGithubPanel && this.activeTab === 'github') {
@@ -665,6 +703,13 @@ export class ImportComponent implements OnInit {
 
   public fileIsInvalid(file: ImportFileModel) {
     return (file.contentType === 0 || file.contentType === 1) && !file.resource;
+  }
+
+  public validationCount(validation: ValidatorResponse, severity: 'error'|'warning') {
+    if (validation && validation.messages) {
+      return (validation.messages || []).filter(m => m.severity === severity).length;
+    }
+    return 0;
   }
 
 
@@ -845,6 +890,12 @@ export class ImportComponent implements OnInit {
     if (foundImportFile) {
       const index = this.files.indexOf(foundImportFile);
       this.files.splice(index, 1);
+    }
+
+    // If this is a valid FHIR resource, we can also validate it
+    if (!!importFileModel.resource) {
+      importFileModel.validation = this.fhirService.validate(importFileModel.resource);
+      console.log('validation:', importFileModel.validation);
     }
 
 
