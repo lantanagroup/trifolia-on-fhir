@@ -240,7 +240,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     this.searchParameter = new SearchParameter(newVal);
 
     if (this.fhirResource) {
-      this.fhirResource.resource = newVal;
+      this.fhirResource.resource = this.searchParameter;
     }
 
     this.nameChanged();
