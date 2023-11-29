@@ -202,6 +202,32 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
   }
 
+  public addVsac() {
+
+    let found;
+
+    if (!this.implementationGuide.dependsOn) {
+      this.implementationGuide.dependsOn = [{
+        uri: 'http://fhir.org/packages/us.nlm.vsac/ImplementationGuide/us.nlm.vsac',
+        id: 'usnlmvsac',
+        packageId: 'us.nlm.vsac',
+        version: '0.4.0'
+      }];
+    } else {
+      if(this.implementationGuide.dependsOn) {
+        found = this.implementationGuide.dependsOn.find(d => d.id == 'usnlmvsac');
+      }
+      if(!found) {
+        this.implementationGuide.dependsOn.push({
+          uri: 'http://fhir.org/packages/us.nlm.vsac/ImplementationGuide/us.nlm.vsac',
+          id: 'usnlmvsac',
+          packageId: 'us.nlm.vsac',
+          version: '0.4.0'
+        });
+      }
+    }
+  }
+
   public packageIdChanged() {
     if (this.packageId) {
       const packageIdParts = this.packageId.toLowerCase().split('.');
@@ -1229,7 +1255,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       this.fhirResource.resource = this.implementationGuide;
     }
 
-    if(!this.customMenu) {
+    if (!this.customMenu) {
       let customMenu = new CustomMenu();
       let res = await firstValueFrom(this.nonFhirResourceService.getByType(customMenu, this.fhirResource.id));
       if (res.id) {
@@ -1239,7 +1265,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       }
     }
 
-    if(!this.ignoreWarnings) {
+    if (!this.ignoreWarnings) {
       let ignoreWarnings = new IgnoreWarnings();
       let res = await firstValueFrom(this.nonFhirResourceService.getByType(ignoreWarnings, this.fhirResource.id));
       if (res.id) {
@@ -1249,7 +1275,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       }
     }
 
-    if(!this.publicationRequest) {
+    if (!this.publicationRequest) {
       let publicationRequest = new PublicationRequest();
       let res = await firstValueFrom(this.nonFhirResourceService.getByType(publicationRequest, this.fhirResource.id));
       if (res.id) {
