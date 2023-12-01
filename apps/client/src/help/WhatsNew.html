@@ -186,162 +186,500 @@
             <div class="main-content">
                 
 <p class="rvps2"><span class="rvts19">Release 3.2.0</span></p>
-<p class="rvps2"><span class="rvts20">Released on 7/25/2023</span></p>
-<h2 class="rvps4"><span class="rvts0"><span class="rvts12">Development Log</span></span></h2>
+<p class="rvps2"><span class="rvts20">Released on 12/6/2023</span></p>
+<p class="rvps7"><span class="rvts21">ValueSet Binding to VSAC For Dependent IGs</span></p>
+<p class="rvps7"><span class="rvts22">If an Implementation Guide (IG) is dependent on the Value Set Authority Center (VSAC), a user can bind an element to a ValueSet by selecting Constraint Manager&gt;Binding&gt;Value Set. A new VSAC tab is available that allows the user to search for an existing Value Set by name or by object identifier (whichever the VSAC API or package supports). Users are no longer required to use an external source to find the URL, copy it, and paste in into the ToF tool.</span></p>
+<p class="rvps7"><span class="rvts21">Support for Modifications to the Base Profile Slice</span></p>
+<p class="rvps7"><span class="rvts22">There are two updates to the Constraint Manager functionality:</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 40px; list-style-position: outside; list-style-type: disc;">
+ <li class="rvps7"><span class="rvts22">When the user selects an element that has not been constrained, if the element already represents a slice, the user is presented with a new “Re-slice this Element” button</span></li>
+ <li class="rvps7"><span class="rvts22">If the user selects the “Constrain this Element”, the tool now creates an element with a matchid/path when the base element is selected to allow the user to specify changes to the base element (i.e.. changing the minimum and maximum cardinalities).</span></li>
+</ul>
+<p class="rvps7"><span class="rvts21">Development Log</span></p>
 <div class="rvps2">
-<table width="100%" border="1" cellpadding="1" cellspacing="2" style="border-color: #000000; border-style: solid; border-spacing: 2px;">
+<table border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
  <tr valign="top">
-  <td width="138" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts21">Issue</span></p>
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts21">Issue</span></p>
   </td>
-  <td width="131" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts21">Type</span></p>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts21">Type</span></p>
   </td>
-  <td width="1214" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts21">Description</span></p>
-  </td>
-  <td width="113" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts21">Version</span></p>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts21">Description</span></p>
   </td>
  </tr>
  <tr valign="top">
-  <td width="138" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">TOFDEV-540</span></p>
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-564">TOFDEV-564</a></p>
   </td>
-  <td width="131" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">New Feature</span></p>
   </td>
-  <td width="1214" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Removing slicing definition on extension should not delete defined extension slices</span></p>
-  </td>
-  <td width="113" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">3.2.0</span></p>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Support modifications to base profile's slice</span></p>
   </td>
  </tr>
  <tr valign="top">
-  <td width="138" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">TOFDEV-697</span></p>
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-807">TOFDEV-807</a></p>
   </td>
-  <td width="131" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">New Feature</span></p>
   </td>
-  <td width="1214" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Imported images in ToF do not render in published IG</span></p>
-  </td>
-  <td width="113" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">3.2.0</span></p>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">ValueSet binding to VSAC</span></p>
   </td>
  </tr>
  <tr valign="top">
-  <td width="138" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">TOFDEV-706</span></p>
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-742">TOFDEV-742</a></p>
   </td>
-  <td width="131" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Story</span></p>
   </td>
-  <td width="1214" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Redefined slices appearing twice</span></p>
-  </td>
-  <td width="113" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">3.2.0</span></p>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Separate IG menu into its own persistence collection</span></p>
   </td>
  </tr>
  <tr valign="top">
-  <td width="138" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">TOFDEV-772</span></p>
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-743">TOFDEV-743</a></p>
   </td>
-  <td width="131" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Story</span></p>
   </td>
-  <td width="1214" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Unchecked Element Must Support sets it to false rather than removing it</span></p>
-  </td>
-  <td width="113" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">3.2.0</span></p>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Separate ignoreWarnings.txt content into its own persistence collection</span></p>
   </td>
  </tr>
  <tr valign="top">
-  <td width="138" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">TOFDEV-782</span></p>
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-747">TOFDEV-747</a></p>
   </td>
-  <td width="131" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Story</span></p>
   </td>
-  <td width="1214" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Rendering issue in markdown editor</span></p>
-  </td>
-  <td width="113" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">3.2.0</span></p>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Ability to edit project and project permissions</span></p>
   </td>
  </tr>
  <tr valign="top">
-  <td width="138" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">TOFDEV-801</span></p>
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-752">TOFDEV-752</a></p>
   </td>
-  <td width="131" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Story</span></p>
   </td>
-  <td width="1214" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Constraint manager defaulting to empty</span></p>
-  </td>
-  <td width="113" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">3.2.0</span></p>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Separate publication-request.json content into its own persistence collection</span></p>
   </td>
  </tr>
  <tr valign="top">
-  <td width="138" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">TOFDEV-803</span></p>
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-786">TOFDEV-786</a></p>
   </td>
-  <td width="131" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Story</span></p>
   </td>
-  <td width="1214" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Tabs under Element Definition are gone&nbsp;</span></p>
-  </td>
-  <td width="113" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">3.2.0</span></p>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Always show the "Changed" message on the screen regardless of scroll position</span></p>
   </td>
  </tr>
  <tr valign="top">
-  <td width="138" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">TOFDEV-809</span></p>
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-826">TOFDEV-826</a></p>
   </td>
-  <td width="131" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Story</span></p>
   </td>
-  <td width="1214" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Can't set patternIdentifier System value</span></p>
-  </td>
-  <td width="113" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">3.2.0</span></p>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Create new screen for IG pages</span></p>
   </td>
  </tr>
  <tr valign="top">
-  <td width="138" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">TOFDEV-813</span></p>
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-850">TOFDEV-850</a></p>
   </td>
-  <td width="131" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Story</span></p>
   </td>
-  <td width="1214" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">ImplementationGuide.id doesn't allow "."</span></p>
-  </td>
-  <td width="113" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">3.2.0</span></p>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Import changes related to pages</span></p>
   </td>
  </tr>
  <tr valign="top">
-  <td width="138" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">TOFDEV-816</span></p>
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-857">TOFDEV-857</a></p>
   </td>
-  <td width="131" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Defect</span></p>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Story</span></p>
   </td>
-  <td width="1214" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">Using the Bulk Edit functionality and then saving a change on that page deletes ImplementationGuide.description</span></p>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Page Review enhancements</span></p>
   </td>
-  <td width="113" style="border-color: #000000; border-style: solid; padding: 1px;">
-   <p class="rvps2"><span class="rvts6">3.2.0</span></p>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-860">TOFDEV-860</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Story</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Implement Auditing Support</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-416">TOFDEV-416</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Adding text to StructureDefinition "Resource Text" inappropriately saving/displaying text</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-540">TOFDEV-540</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Removing slicing definition on extension should not delete defined extension slices</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-561">TOFDEV-561</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">'Open IG' when not logged in should re-direct users directly to the Login Auth0 page \(not the Home page\)</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-602">TOFDEV-602</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Deleting Binary example error</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-697">TOFDEV-697</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Imported images in ToF do not render in published IG</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-698">TOFDEV-698</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Insertion of a md table should include \{:.grid\}</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-705">TOFDEV-705</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Artifact Index vs. Artifacts Summary</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-706">TOFDEV-706</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Redefined slices appearing twice</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-730">TOFDEV-730</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">For new StructureDefinitions, the URL is not pre-populating with the base</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-749">TOFDEV-749</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Package ID should be prepopulated for non Hl7 IG</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-770">TOFDEV-770</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Can't select older versions of IG Dependency</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-772">TOFDEV-77</a><span class="rvts22">2</span></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">StructureDefinition: Uncheck Element Must Support sets it to false rather than removing it.</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-782">TOFDEV-782</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Narrative fields are suddenly blank</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-784">TOFDEV-784</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">IG Title should mark as required field for HL7 IG creation page</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-792">TOFDEV-792</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Text goes off the text box in Search Value Set</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-797">TOFDEV-797</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Export &gt; Bundle &gt; XML &gt; Remove ToF Extensions &gt; Transaction - formats lastUpdated dates wrong</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-801">TOFDEV-801</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Constraint manager defaulting to empty</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-803">TOFDEV-803</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Tabs under Element Definition are gone</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-809">TOFDEV-809</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Can't set patternIdentifier System value</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-811">TOFDEV-811</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Periods \(.\) in /id should be allowed</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-813">TOFDEV-813</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="http://ImplementationGuide.id">ImplementationGuide.id</a><span class="rvts22"> doesn't allow "."</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-814">TOFDEV-814</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Base Definition Dependency and Base tabs blanks</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-816">TOFDEV-816</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Using the Bulk Edit functionality and then saving a change on that page deletes ImplementationGuide.description</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-818">TOFDEV-818</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Unable to import an XML bundle with Split Action</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-853">TOFDEV-853</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Unauthorized user with read-only access can publish IG</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-854">TOFDEV-854</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">IG with user permission becomes invisible to that user</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-858">TOFDEV-858</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Page name shouldn't be changed from Edit Pages Screen</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-859">TOFDEV-859</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Warning wording should be user user friendly \(Creating page from Pages\)</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-861">TOFDEV-861</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Error with a page file name</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-864">TOFDEV-864</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Pagination doesn’t work correctly in Audit Log</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-866">TOFDEV-866</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Search by Author doesn't return any results</span></p>
+  </td>
+ </tr>
+ <tr valign="top">
+  <td width="131" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><a class="rvts23" href="https://lantana.atlassian.net/browse/TOFDEV-867">TOFDEV-867</a></p>
+  </td>
+  <td width="118" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Defect</span></p>
+  </td>
+  <td width="2881" valign="middle" style="padding: 1px;">
+   <p class="rvps7"><span class="rvts22">Changes can not be saved in Search Parameter</span></p>
   </td>
  </tr>
 </table>
