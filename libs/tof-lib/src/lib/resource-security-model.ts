@@ -1,5 +1,5 @@
 export interface ResourceSecurityModel {
-  type: 'everyone'|'group'|'user';
+  type: 'everyone'|'Group'|'User';
   id?: string;
   permission: 'read'|'write';
   inactive: boolean;

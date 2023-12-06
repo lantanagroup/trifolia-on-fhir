@@ -16,7 +16,7 @@
 
   <div class="mb-3">
     <label>Family</label>
-    <select class="form-select family" [(ngModel)]="isFHIR" (change)="packageIdCriteriaChanged()">
+    <select (change)="hl7packageIdCriteriaChanged()" [(ngModel)]="isFHIR" class="form-select family">
       <option [ngValue]="false">CDA</option>
       <option [ngValue]="true">FHIR</option>
     </select>
@@ -24,7 +24,7 @@
 
   <div class="mb-3">
     <label>Realm</label>
-    <select class="form-select realm" [(ngModel)]="selectedJurisdiction" (change)="packageIdCriteriaChanged()" [class.is-invalid]="!selectedJurisdiction">
+    <select (change)="hl7packageIdCriteriaChanged()" [(ngModel)]="selectedJurisdiction" [class.is-invalid]="!selectedJurisdiction" class="form-select realm">
       <option *ngFor="let jc of jurisdictionCodes" [ngValue]="jc">{{jc.display}} ({{jc.code}})</option>
     </select>
     <div class="help-block" *ngIf="!selectedJurisdiction">Realm is required</div>
@@ -59,12 +59,15 @@
   <div class="mb-3">
     <label>FHIR Version: </label>
     <select class="form-select family"  [(ngModel)]="fhirVersion" [class.is-invalid]="!fhirVersion" >
-      <option value ="r4">R4</option>
-      <option value ="stu3">STU3</option>
-      <option value ="r5">R5</option>
+      <option value="r4">R4</option>
+      <option value="stu3">STU3</option>
+      <option value="r5">R5</option>
     </select>
    <!-- <input type="text" class="form-control standard" [(ngModel)]="fhirVersion" />-->
   </div>
+
+  <div class="alert alert-warning" *ngIf="fhirVersion === 'r5'">Support for R5 is <strong>under development</strong> and not yet fully tested.</div>
+
   <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
   <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!selectedJurisdiction || !projectCode || !fhirVersion">Next</button>
 </div>
@@ -93,7 +96,7 @@
     </select>
   </div>
   <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
-  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!hl7WorkGroup || !igTitle || !igName">Finish</button>
+  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!hl7WorkGroup || !igName">Finish</button>
 </div>
 <div *ngIf="showPrivateStep2">
   Step Private 2
@@ -110,6 +113,13 @@
     <input type="text" class="form-control standard" [ngModel]="projectCode" (ngModelChange)="setIgId($event)" [class.is-invalid]="!projectCode" />
     <div class="help-block" *ngIf="!projectCode">ID is required</div>
     <div class="help-block" *ngIf="projectCode && !isValidId(projectCode)">ID is not formatted correctly. It may only container characters, numbers, dashes and periods.</div>
+  </div>
+
+  <div class="mb-3">
+    <label>Package ID</label>
+    <input [(ngModel)]="packageId" [class.is-invalid]="!packageId || !isValidPrivatePackageId(packageId)" class="form-control standard" type="text" />
+    <div *ngIf="!packageId" class="help-block">Package ID is required</div>
+    <div *ngIf="packageId && !isValidPrivatePackageId(packageId)" class="help-block">Package ID is not formatted correctly</div>
   </div>
 
   <div class="mb-3">
@@ -132,15 +142,17 @@
 
   <div class="mb-3">
     <label>FHIR Version: </label>
-    <select  class="form-select family" [(ngModel)]="fhirVersion"  [class.is-invalid]="!fhirVersion">
-      <option value ="r4">R4</option>
-      <option value ="stu3">STU3</option>
-      <option value ="r5">R5</option>
+    <select class="form-select family" [(ngModel)]="fhirVersion" [class.is-invalid]="!fhirVersion">
+      <option value="r4">R4</option>
+      <option value="stu3">STU3</option>
     </select>
     <!-- <input type="text" class="form-control standard" [(ngModel)]="fhirVersion" />-->
   </div>
 
 
   <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
-  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!canonicalURL || !projectCode || !igUrl || !igName || !isValidId(projectCode) || !isValidUrl(canonicalURL) || !isValidUrl(igUrl) || !fhirVersion">Finish</button>
+  <button (click)="nextStep()"
+          [disabled]="!canonicalURL || !projectCode || !igUrl || !igName || !packageId || !isValidId(projectCode) || !isValidUrl(canonicalURL) || !isValidUrl(igUrl) || !fhirVersion || !isValidPrivatePackageId(packageId)"
+          class="btn btn-primary" type="button">Finish
+  </button>
 </div>

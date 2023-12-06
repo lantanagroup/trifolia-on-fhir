@@ -5,8 +5,8 @@ import {Router} from '@angular/router';
 import {SearchImplementationGuideResponseContainer} from '../../../../../libs/tof-lib/src/lib/searchIGResponse-model';
 import {BulkUpdateRequest} from '../../../../../libs/tof-lib/src/lib/bulk-update-request';
 import {ConfigService} from './config.service';
-import { IConformance, IExample } from '@trifolia-fhir/models';
-import { ConformanceService } from './conformance.service';
+import {IFhirResource, INonFhirResource} from '@trifolia-fhir/models';
+import {FhirResourceService} from './fhir-resource.service';
 
 export class PublishedGuideModel {
   public name: string;
@@ -30,7 +30,7 @@ export class PublishedGuideEditionsModel {
 }
 
 @Injectable()
-export class ImplementationGuideService extends ConformanceService {
+export class ImplementationGuideService extends FhirResourceService {
 
   constructor(protected http: HttpClient,
               public configService: ConfigService,
@@ -52,28 +52,32 @@ export class ImplementationGuideService extends ConformanceService {
   */
 
   public bulkUpdate(implementationGuideId: string, bulkUpdateRequest: BulkUpdateRequest) {
-    const url = `/api/implementationGuide/${implementationGuideId}/bulk-update`;
+    const url = `/api/implementationGuides/${implementationGuideId}/bulk-update`;
     return this.http.post(url, bulkUpdateRequest);
   }
 
   public getProfiles(implementationGuideId: string) {
-    return this.http.get<any[]>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/profile`);
+    return this.http.get<any[]>(`/api/implementationGuides/${encodeURIComponent(implementationGuideId)}/profile`);
   }
 
-  public getExamples(implementationGuideId: string): Observable<IConformance[]|IExample[]> {
-    return this.http.get<any>(`/api/implementationGuide/${encodeURIComponent(implementationGuideId)}/example`);
+  public getExamples(implementationGuideId: string): Observable<IFhirResource[]|INonFhirResource[]> {
+    return this.http.get<any>(`/api/implementationGuides/${encodeURIComponent(implementationGuideId)}/example`);
   }
 
   public getPublished(): Observable<PublishedGuideContainerModel[]> {
-    return this.http.get<PublishedGuideContainerModel[]>('/api/implementationGuide/published');
+    return this.http.get<PublishedGuideContainerModel[]>('/api/implementationGuides/published');
   }
 
   public getPublishedEditions(name: string): Observable<any[]> {
-    return this.http.get<any[]>('/api/implementationGuide/published?name=' + name);
+    return this.http.get<any[]>('/api/implementationGuides/published?name=' + name);
+  }
+
+  public getEditions(name: string): Observable<any> {
+    return this.http.get<any[]>(`/api/implementationGuides/published-editions?name=${encodeURIComponent(name)}`);
   }
 
   public getImplementationGuides(page = 1, name?: string, title?: string, id?: string) {
-    let url = '/api/implementationGuide?page=' + page + '&';
+    let url = '/api/implementationGuides?page=' + page + '&';
 
     if (name) {
       url += 'name=' + encodeURIComponent(name) + '&';
@@ -91,23 +95,29 @@ export class ImplementationGuideService extends ConformanceService {
     return this.http.get<SearchImplementationGuideResponseContainer>(url);
   }
 
-  public getImplementationGuide(id: string): Observable<IConformance> {
-    const url = '/api/implementationGuide/' + encodeURIComponent(id);
-    return this.http.get<IConformance>(url);
+  public getImplementationGuide(id: string): Observable<IFhirResource> {
+    const url = '/api/implementationGuides/' + encodeURIComponent(id);
+    return this.http.get<IFhirResource>(url);
   }
 
-  public getImplementationGuideWithReferences(id: string): Observable<IConformance> {
-    const url = '/api/implementationGuide/' + encodeURIComponent(id) + "/references";
-    return this.http.get<IConformance>(url);
+  public getImplementationGuideWithReferences(id: string): Observable<IFhirResource> {
+    const url = '/api/implementationGuides/' + encodeURIComponent(id) + "/references";
+    return this.http.get<IFhirResource>(url);
   }
 
-  public saveImplementationGuide(implementationGuide: IConformance): Observable<IConformance> {
-    return this.http.post<IConformance>('/api/implementationGuide', implementationGuide);
+  public saveImplementationGuide(implementationGuideId: string, implementationGuide: IFhirResource): Observable<IFhirResource> {
+    let url = '/api/implementationGuides';
+    if (implementationGuideId) {
+      url += '/' + encodeURIComponent(implementationGuideId);
+      return this.http.put<IFhirResource>(url, implementationGuide);
+    } else {
+      return this.http.post<IFhirResource>(url, implementationGuide);
+    }
   }
 
-  public updateImplementationGuide(id: string, implementationGuide: IConformance): Observable<IConformance> {
+  public updateImplementationGuide(id: string, implementationGuide: IFhirResource): Observable<IFhirResource> {
     if (id) {
-      return this.http.put<IConformance>(`/api/implementationGuide/${id}`, implementationGuide);
+      return this.http.put<IFhirResource>(`/api/implementationGuides/${id}`, implementationGuide);
     } else {
      return null;
     }
@@ -115,11 +125,11 @@ export class ImplementationGuideService extends ConformanceService {
 
 
   public removeImplementationGuide(id: string) {
-    return this.http.delete(`/api/implementationGuide/${id}`);
+    return this.http.delete(`/api/implementationGuides/${id}`);
   }
 
   public copyPermissions(id: string) {
-    return this.http.post<number>(`/api/implementationGuide/${id}/copy-permissions`, null);
+    return this.http.post<number>(`/api/implementationGuides/${id}/copy-permissions`, null);
   }
 
 }

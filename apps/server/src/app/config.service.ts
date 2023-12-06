@@ -23,14 +23,7 @@ export class ConfigService {
   };
   public fhir: IFhirConfig = {
     nonEditableResources: {},
-    publishedGuides: '',
-    servers: [{
-      id: 'test',
-      name: 'test',
-      uri: 'http://test.com',
-      version: 'stu3',
-      supportedLogicalTypes: []
-    }]
+    publishedGuides: ''
   };
   public auth: IAuthConfig = {
     clientId: 'test',
@@ -50,7 +43,8 @@ export class ConfigService {
     timeOut: 5000
   };
   public database: IDatabaseConfig = {
-    uri: 'mongodb://localhost:27017/tofDb'
+    uri: 'mongodb://localhost:27017/tofDb',
+    migrateAtStart: true
   };
   public privacyPolicy: string;
   public termsOfUse: string;
@@ -184,6 +178,8 @@ export class ConfigService {
 
         ensureDirSync(path.dirname(filePath));
         await this.downloadJarFile(filePath, downloadUrl);
+
+        this.logger.log(`Done downloading IG Publisher`);
 
         return filePath;
       } catch (ex) {

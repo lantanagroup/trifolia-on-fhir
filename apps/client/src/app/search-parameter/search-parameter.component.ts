@@ -1,20 +1,19 @@
 import { Component, DoCheck, EventEmitter, Input, OnInit } from '@angular/core';
 import { ConfigService } from '../shared/config.service';
-import { Coding, ImplementationGuide, SearchParameter } from '../../../../../libs/tof-lib/src/lib/r4/fhir';
+import { Coding, ImplementationGuide, SearchParameter } from '@trifolia-fhir/r4';
 import { FhirService } from '../shared/fhir.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { BaseComponent } from '../base.component';
 import { AuthService } from '../shared/auth.service';
-import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
+import { getErrorString, Globals } from '@trifolia-fhir/tof-lib';
 import { FileService } from '../shared/file.service';
 import { SearchParameterService } from '../shared/search-parameter.service';
 import { RecentItemService } from '../shared/recent-item.service';
-import { getErrorString } from '../../../../../libs/tof-lib/src/lib/helper';
 import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChangeResourceIdModalComponent } from '../modals/change-resource-id-modal/change-resource-id-modal.component';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
 
@@ -26,7 +25,7 @@ import { IDomainResource } from '@trifolia-fhir/tof-lib';
 export class SearchParameterComponent extends BaseComponent implements OnInit, DoCheck {
   @Input() public implementationGuide: ImplementationGuide;
   @Input() public searchParameter;
-  public conformance;
+  public fhirResource;
   public idChangedEvent = new Subject();
   public isIdUnique = true;
   public alreadyInUseIDMessage = '';
@@ -61,7 +60,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     super(configService, authService);
 
     this.searchParameter = new SearchParameter({ meta: this.authService.getDefaultMeta() });
-    this.conformance = { resource: this.searchParameter, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
+    this.fhirResource = { resource: this.searchParameter, fhirVersion: <'stu3' | 'r4' | 'r5'>configService.fhirVersion, permissions: this.authService.getDefaultPermissions() };
 
     this.idChangedEvent.pipe(debounceTime(500))
       .subscribe(async () => {
@@ -129,13 +128,13 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
       this.searchParameter = null;
       this.spService.get(this.searchParameterId)
         .subscribe({
-          next: (conf: IConformance) => {
+          next: (conf: IFhirResource) => {
             if (!conf || !conf.resource || conf.resource.resourceType !== 'SearchParameter') {
               this.message = 'The specified code system either does not exist or was deleted';
               return;
             }
 
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadSP(conf.resource);
           },
           error: (err) => {
@@ -190,15 +189,15 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
       return;
     }
 
-    this.spService.save(this.searchParameterId, this.conformance)
+    this.spService.save(this.searchParameterId, this.fhirResource)
       .subscribe({
-        next: (conf: IConformance) => {
+        next: (conf: IFhirResource) => {
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.searchParameterId = conf.id;
             this.router.navigate([`${this.configService.baseSessionUrl}/search-parameter/${conf.id}`]);
           } else {
-            this.conformance = conf;
+            this.fhirResource = conf;
             this.loadSP(conf.resource);
             setTimeout(() => {
               this.message = '';
@@ -240,10 +239,10 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
 
     this.searchParameter = new SearchParameter(newVal);
 
-    if (this.conformance) {
-      this.conformance.resource = newVal;
+    if (this.fhirResource) {
+      this.fhirResource.resource = this.searchParameter;
     }
-    
+
     this.nameChanged();
     this.afterSearchParameterInit();
     this.recentItemService.ensureRecentItem(

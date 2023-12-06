@@ -1,18 +1,19 @@
 import { Fhir } from 'fhir/fhir';
 import { DomainResource } from '@trifolia-fhir/stu3';
 import { ImplementationGuidePageComponent } from '@trifolia-fhir/r4';
-import { Globals } from '@trifolia-fhir/tof-lib';
+import {Globals} from '@trifolia-fhir/tof-lib';
 import { HttpService } from '@nestjs/axios';
 import { LoggerService } from '@nestjs/common';
 import type { IBundle, IExtension, IStructureDefinition } from '@trifolia-fhir/tof-lib';
-import { ConformanceService } from '../conformance/conformance.service';
+import { FhirResourcesService } from '../fhir-resources/fhir-resources.service';
+import {Page} from '@trifolia-fhir/models';
 
 export type FormatTypes = 'json' | 'xml' | 'application/json' | 'application/fhir+json' | 'application/xml' | 'application/fhir+xml';
 export type BundleTypes = 'searchset' | 'transaction';
 
 export class BundleExporter {
   readonly httpService: HttpService;
-  readonly conformanceService: ConformanceService;
+  readonly fhirResourceService: FhirResourcesService;
   readonly logger: LoggerService;
   readonly fhir: Fhir;
   readonly implementationGuideId: string;
@@ -20,13 +21,13 @@ export class BundleExporter {
   public fhirVersion: 'stu3'|'r4'|'r5';
 
   constructor(
-    conformanceService: ConformanceService,
+    fhirResourceService: FhirResourcesService,
     httpService: HttpService,
     logger: LoggerService,
     fhir: Fhir,
     implementationGuideId: string) {
 
-    this.conformanceService = conformanceService;
+    this.fhirResourceService = fhirResourceService;
     this.httpService = httpService;
     this.logger = logger;
     this.fhir = fhir;
@@ -156,13 +157,13 @@ export class BundleExporter {
 
     this.logger.log(`Getting bundle of resources for implementation guide ${this.implementationGuideId}`);
 
-    const conf = await this.conformanceService.getWithReferences(this.implementationGuideId);
-    const bundle: IBundle = await this.conformanceService.getBundleFromImplementationGuide(conf);
+    const conf = await this.fhirResourceService.getWithReferences(this.implementationGuideId);
+    const bundle: IBundle = await this.fhirResourceService.getBundleFromImplementationGuide(conf);
     this.fhirVersion = conf.fhirVersion;
 
     bundle.total = (bundle.entry || []).length;
     bundle.type = type;
-    
+
     if (bundle.entry) {
       bundle.entry.forEach(entry => {
         if (entry.resource.resourceType && entry.resource.resourceType === "StructureDefinition") {
@@ -184,8 +185,6 @@ export class BundleExporter {
     if (cleanup) {
       (bundle.entry || []).forEach((entry) => BundleExporter.cleanupResource(entry.resource, false));
     }
-
-
     return bundle;
   }
 

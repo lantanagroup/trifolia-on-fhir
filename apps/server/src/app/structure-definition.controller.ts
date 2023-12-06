@@ -1,11 +1,9 @@
-import {BaseFhirController} from './base-fhir.controller';
 import {HttpService} from '@nestjs/axios';
-import {Body, Controller, Delete, Headers, Get, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards} from '@nestjs/common';
 import {FhirController} from './fhir.controller';
 import type {ITofRequest} from './models/tof-request';
 import {StructureDefinition} from '../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {AuthGuard} from '@nestjs/passport';
-import {buildUrl} from '../../../../libs/tof-lib/src/lib/fhirHelper';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {StructureDefinition as PCStructureDefinition} from 'fhir/model/structure-definition';
 import {SnapshotGenerator} from 'fhir/snapshotGenerator';
@@ -19,25 +17,26 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {ILogicalTypeDefinition} from '../../../../libs/tof-lib/src/lib/logical-type-definition';
 import {ITypeConfig} from '../../../../libs/tof-lib/src/lib/type-config';
-import {ConformanceController} from './conformance/conformance.controller';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
 import {AuthService} from './auth/auth.service';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {Paginated, PaginateOptions} from '@trifolia-fhir/tof-lib';
-import {IConformance} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, IFhirResource} from '@trifolia-fhir/models';
+import { AuditEntity } from './audit/audit.decorator';
 
 
-@Controller('api/structureDefinition')
+@Controller('api/structureDefinitions')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Structure Definition')
 @ApiOAuth2([])
-export class StructureDefinitionController extends ConformanceController  {
+export class StructureDefinitionController extends FhirResourcesController  {
   resourceType = 'StructureDefinition';
 
   private fhirController;
-  constructor(protected authService: AuthService,  protected httpService: HttpService, protected conformanceService: ConformanceService, protected configService: ConfigService) {
+  constructor(protected authService: AuthService, protected httpService: HttpService, protected fhirResourcesService: FhirResourcesService, protected configService: ConfigService) {
 
-    super(conformanceService);
-    this.fhirController = new FhirController(authService, this.httpService, this.conformanceService, this.configService);
+    super(fhirResourcesService);
+    this.fhirController = new FhirController(authService, this.httpService, this.fhirResourcesService, this.configService);
   }
 
 
@@ -49,7 +48,7 @@ export class StructureDefinitionController extends ConformanceController  {
   @Get('base/:type')
   public async getBaseStructureDefinitions(@User() user,  @Req() request: ITofRequest, @Param('type') type: string): Promise<string[]> {
 
-    const results = await super.searchConformance(user, request);
+    const results = await super.searchFhirResource(user, request);
     const ret = (results.results  || []).map((entry) => {
       const structureDefinition = <StructureDefinition> entry.resource;
       return structureDefinition.url;
@@ -63,7 +62,7 @@ export class StructureDefinitionController extends ConformanceController  {
 
   private async getBaseStructureDefinitionResource(@User() user, @Req() request: ITofRequest, url: string) {
     try {
-      const results = await super.searchConformance(user, request);
+      const results = await super.searchFhirResource(user, request);
 
       if (results && results.total === 1) {
         return <IStructureDefinition> results[0].resource;
@@ -83,11 +82,14 @@ export class StructureDefinitionController extends ConformanceController  {
 
     let supportedLogicalTypes = [];
 
-   if(fhirServerVersion === 'r4') {
-     supportedLogicalTypes = ["FHIR-R4", "CDA-R2.1"];
-   }else if(fhirServerVersion === 'stu3') {
-     supportedLogicalTypes = ["FHIR-STU3"];
-   }
+    if (fhirServerVersion === 'r5') {
+      supportedLogicalTypes = ["FHIR-R5", "CDA-R2.1"];
+    } else if (fhirServerVersion === 'r4') {
+      supportedLogicalTypes = ["FHIR-R4", "CDA-R2.1"];
+    } else if (fhirServerVersion === 'stu3') {
+      supportedLogicalTypes = ["FHIR-STU3"];
+    }
+
     const allTypes = supportedLogicalTypes
       .map(slt => typesConfig.find(tc => tc.id.toLowerCase() === slt.toLowerCase()))
       .reduce<ILogicalTypeDefinition[]>((previous, current) => {
@@ -112,7 +114,7 @@ export class StructureDefinitionController extends ConformanceController  {
    */
   @Get('base')
   public async getBaseStructureDefinition(@User() user, @Req() request: ITofRequest, @Query('url') url: string, @Query('type') type: string, @RequestHeaders("implementationGuideId") implementationGuideId: string,
-                                          @FhirServerVersion() fhirServerVersion: 'stu3'|'r4'): Promise<BaseDefinitionResponseModel> {
+                                          @FhirServerVersion() fhirServerVersion: 'stu3'|'r4'|'r5'): Promise<BaseDefinitionResponseModel> {
     const ret = new BaseDefinitionResponseModel();
 
     if (!url.startsWith('http://hl7.org/fhir/StructureDefinition/')) {
@@ -125,12 +127,18 @@ export class StructureDefinitionController extends ConformanceController  {
           ret.base = dependencies.entry[0].resource['resource'];
           return ret;
         }
+
         let profileWithSnapshot: IStructureDefinition = await this.getBaseStructureDefinitionResource(user, request, url);
+
+        if (!profileWithSnapshot) {
+          ret.message = `Could not find a profile defined for base definition ${url}`;
+          ret.success = false;
+          return ret;
+        }
 
         // The snapshot is not already generated for the profile, so we need to generate it now.
         if (!profileWithSnapshot.snapshot) {
             profileWithSnapshot = await this.generateInternalSnapshot( user, request, request.fhir, url);
-
         }
 
         if (profileWithSnapshot && profileWithSnapshot.resourceType === 'StructureDefinition' && profileWithSnapshot.snapshot) {
@@ -166,39 +174,42 @@ export class StructureDefinitionController extends ConformanceController  {
   }
 
   @Get()
-  public async searchStructureDefinition(@User() user, @Req() req?: any): Promise<Paginated<IConformance>> {
-    return super.searchConformance(user, req);
+  public async searchStructureDefinition(@User() user, @Req() req?: any): Promise<Paginated<IFhirResource>> {
+    return super.searchFhirResource(user, req);
 
   }
 
   @Get(':id')
-  public async getStructureDefinition(@User() user, @Param('id') id: string): Promise<IConformance> {
-    return super.getById(user, id);
+  public async getStructureDefinition(@User() user, @Param('id') id: string): Promise<IFhirResource> {
+    return super.getReferences(user, id);
   }
 
   @Post()
+  @AuditEntity(AuditAction.Create, AuditEntityType.FhirResource)
   public async createStructureDefinition(@User() user, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
-    return await this.conformanceService.createConformance(conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return await this.fhirResourcesService.createFhirResource(fhirResource, implementationGuideId);
   }
 
   @Put(':id')
+  @AuditEntity(AuditAction.Update, AuditEntityType.FhirResource)
   public async updateStructureDefinition(@User() user, @Param('id') id: string, @Body() body, @RequestHeaders('implementationGuideId') implementationGuideId) {
     await this.assertCanWriteById(user, id);
     if (implementationGuideId) {
       await this.assertCanWriteById(user, implementationGuideId);
     }
-    let conformance: IConformance = body;
-    return this.conformanceService.updateConformance(id, conformance, implementationGuideId);
+    let fhirResource: IFhirResource = body;
+    return this.fhirResourcesService.updateFhirResource(id, fhirResource, implementationGuideId);
   }
 
   @Delete(':id')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.FhirResource)
   public async deleteStructureDefinition(@User() user, @Param('id') id: string ) {
     await this.assertCanWriteById(user, id);
-    return this.conformanceService.deleteConformance(id);
+    return this.fhirResourcesService.deleteFhirResource(id);
   }
 
   /**
@@ -218,17 +229,15 @@ export class StructureDefinitionController extends ConformanceController  {
         const searchFilters = {};
         searchFilters['resource.resourceType'] = { $regex: 'StructureDefinition', $options: 'i' };
         searchFilters['url'] = { $regex: url, $options: 'i' };
-        const baseFilter =  this.authService.getPermissionFilterBase(user, 'read');
-        const filter = {
-          $and: [ baseFilter, searchFilters]
-        };
+        const filter = await this.authService.getPermissionFilterBase(user, 'read');
+        filter.push({$match: searchFilters});
 
         const options: PaginateOptions = {
           page: 1,
           itemsPerPage: 10,
-          filter: filter
+          pipeline: filter
         };
-        const results =  await this.conformanceService.search(options);
+        const results =  await this.fhirResourcesService.search(options);
 
         const base = <StructureDefinition>results.results[0].resource;
 
@@ -256,42 +265,5 @@ export class StructureDefinitionController extends ConformanceController  {
     }
 
     return found;
-  }
-
-  /**
-   * Generates a snapshot for the specified profile if the FHIR server is configured to support snapshot
-   * @param fhirServerId
-   * @param body
-   * @deprecated This is no longer used, but may be used in future, so it is preserved.
-   */
-  private async generateProfileSnapshot(fhirServerId: string, body: any) {
-    const fhirServer = this.configService.fhir.servers.find(s => s.id === fhirServerId);
-    const fhirServerBase = fhirServer.uri;
-    if (!fhirServer.supportsSnapshot) {
-      // TODO: add internal snapshot generation logic
-      delete body.snapshot;
-      return body;
-    }
-
-    try {
-      const snapshotUrl = buildUrl(fhirServerBase, 'StructureDefinition', null, '$snapshot');
-      const results = await this.httpService.post(snapshotUrl, body).toPromise();
-
-      if (results.data && results.data.resourceType === 'StructureDefinition' && results.data.snapshot) {
-        body.snapshot = results.data.snapshot;
-        return body;
-      }
-    } catch (ex) {
-      let msg = ex.message;
-      if (ex.response && ex.response.data && ex.response.data.resourceType === 'OperationOutcome') {
-        msg = getErrorString(null, ex.response.data);
-      }
-
-      this.logger.warn(`Could not generate snapshot during update to StructureDefinition ${body.id || 'new'}: ${msg}`);
-    }
-
-    // If snapshot failed to generate, make sure the current profile is not saved with an out-dated snapshot.
-    delete body.snapshot;
-    return body;
   }
 }

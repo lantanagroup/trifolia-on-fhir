@@ -1,25 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Bundle, OperationDefinition, OperationOutcome } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { OperationDefinition } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { HttpClient } from '@angular/common/http';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 
 @Injectable()
 export class OperationDefinitionService {
   constructor(private http: HttpClient) {
   }
 
-  public save(operationDefinitionId:string, operationDefinition: OperationDefinition): Observable<IConformance>  {
+  public save(operationDefinitionId:string, operationDefinition: OperationDefinition): Observable<IFhirResource>  {
     if (operationDefinitionId) {
-      const url = '/api/operationDefinition/' + encodeURIComponent(operationDefinitionId);
-      return this.http.put<IConformance>(url, operationDefinition);
+      const url = '/api/operationDefinitions/' + encodeURIComponent(operationDefinitionId);
+      return this.http.put<IFhirResource>(url, operationDefinition);
     } else {
-      return this.http.post<IConformance>('/api/operationDefinition', operationDefinition);
+      return this.http.post<IFhirResource>('/api/operationDefinitions', operationDefinition);
     }
   }
 
   public search(page = 1, name?: string, implementationGuideId?: string) {
-    let url = '/api/operationDefinition?resourcetype=OperationDefinition&page=' + page + '&';
+    let url = '/api/operationDefinitions?resourcetype=OperationDefinition&page=' + page + '&';
 
     if (name) {
       url += 'name=' + encodeURIComponent(name) + '&';
@@ -31,16 +31,16 @@ export class OperationDefinitionService {
 
     url += '_sort=name';
 
-    return this.http.get<IConformance>(url);
+    return this.http.get<IFhirResource>(url);
   }
 
   public get(id: string) {
-    let url = '/api/operationDefinition/' + encodeURIComponent(id);
-    return this.http.get<IConformance>(url);
+    let url = '/api/operationDefinitions/' + encodeURIComponent(id);
+    return this.http.get<IFhirResource>(url);
   }
 
   public delete(id: string) {
-    const url = '/api/operationDefinition/' + encodeURIComponent(id);
+    const url = '/api/operationDefinitions/' + encodeURIComponent(id);
     return this.http.delete(url);
   }
 }

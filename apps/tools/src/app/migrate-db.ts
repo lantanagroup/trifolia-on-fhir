@@ -1,5 +1,5 @@
 import { BaseTools } from './baseTools';
-import { IAudit, IConformance, IGroup, IHistory, IProject, IPermission, IProjectResource, IUser, IProjectResourceReference } from '@trifolia-fhir/models';
+import { IAudit, IFhirResource, IGroup, IHistory, IProject, IPermission, IProjectResource, IUser, IProjectResourceReference } from '@trifolia-fhir/models';
 import { Globals, IAuditEvent, IContactPoint, IDomainResource, IImplementationGuide, IPractitioner } from '@trifolia-fhir/tof-lib';
 import { Db, MongoClient, ObjectId, ReturnDocument } from 'mongodb';
 import { getHumanNamesDisplay } from '@trifolia-fhir/tof-lib';
@@ -8,6 +8,7 @@ import { AuditEvent as STU3AuditEvent, Group as STU3Group, ImplementationGuide a
 import * as fs from 'fs';
 import { Connection, createConnection } from 'mysql';
 import { ungzip } from 'node-gzip';
+import * as Yargs from 'yargs';
 
 interface MigrateDbOptions {
   mysqlHost: string;
@@ -21,7 +22,7 @@ interface MigrateDbOptions {
   out?: string;
 }
 
-const conformanceResourceTypes = [
+const fhirResourceResourceTypes = [
   'CapabilityStatement',
   'StructureDefinition',
   'ImplementationGuide',
@@ -53,10 +54,38 @@ export class MigrateDb extends BaseTools {
   private users: IUser[];
   private groups: IGroup[];
   private projects: IProject[];
-  private implementationGuides: IConformance[];
+  private implementationGuides: IFhirResource[];
   private userMap: { [key: string]: IUser; } = {};
   private groupMap: { [key: string]: IGroup; } = {};
-  private resourceMap: { [key: string]: IConformance; } = {};
+  private resourceMap: { [key: string]: IFhirResource; } = {};
+
+  public static commandFormat = 'migrate-db [mysqlHost] [mysqlDb] [mysqlUser] [mysqlPass] [fhirVersion] [dbServer] [dbName] [migratedFromLabel]';
+  public static commandDescription = 'Migrate the specific FHIR server to mongo database';
+
+  public static commandBuilder(yargs: Yargs.Argv) {
+    return yargs
+      .positional('mysqlHost', {})
+      .positional('mysqlDb', {})
+      .positional('mysqlUser', {})
+      .positional('mysqlPass', {})
+      .positional('fhirVersion', {})
+      .positional('dbServer', {})
+      .positional('dbName', {})
+      .positional('migratedFromLabel', {})
+      .option('out', {
+        description: 'The file to store log output to'
+      });
+  }
+
+  public static async commandHandler(args: any) {
+    try {
+      const migrator = new MigrateDb(args);
+      await migrator.migrate();
+    } catch (ex) {
+      console.error(ex.message);
+      throw ex;
+    }
+  }
 
   constructor(options: MigrateDbOptions) {
     super();
@@ -242,9 +271,9 @@ export class MigrateDb extends BaseTools {
 
       if (groupedResource.projectResource) continue;
       if (['Practitioner', 'Group', 'AuditEvent'].find(r => r === resource.resourceType)) continue;
-      if (resource.resourceType === 'ImplementationGuide' && this.projects.find(p => p.igs[0]?.id === resource.id)) continue;
+      if (resource.resourceType === 'ImplementationGuide' && this.projects.find(p => p.references[0]?.value === resource.id)) continue;
 
-      await this.migrateConformance(groupedResource);
+      await this.migratefhirResource(groupedResource);
 
     }
   }
@@ -265,7 +294,7 @@ export class MigrateDb extends BaseTools {
         continue;
       }
 
-      await this.migrateConformance(gr);
+      await this.migratefhirResource(gr);
 
     }
 
@@ -278,7 +307,7 @@ export class MigrateDb extends BaseTools {
     for (const groupedResource of resources) {
       const auditEvent = groupedResource.head;
 
-      let audit: IAudit;
+      let audit; //: IAudit;
 
       if (this.options.fhirVersion === 'stu3') {
         const stu3AuditEvent = auditEvent as STU3AuditEvent;
@@ -330,9 +359,9 @@ export class MigrateDb extends BaseTools {
    * @param resourceReference
    * @private
    */
-  private async findImplementationGuides(resourceReference: string): Promise<IConformance[]> {
+  private async findImplementationGuides(resourceReference: string): Promise<IFhirResource[]> {
 
-    let igs: IConformance[] = [];
+    let igs: IFhirResource[] = [];
 
     let igKeys = Object.keys(this.resourceMap).filter(k => this.resourceMap[k].resource.resourceType === 'ImplementationGuide');
 
@@ -409,12 +438,12 @@ export class MigrateDb extends BaseTools {
       }
 
       const permission: IPermission = {
-        targetId: targetId,
+        target: targetId,
         type: type,
         grant: 'read'
       };
 
-      let found = permissions.find(p => p.type === permission.type && p.targetId === permission.targetId);
+      let found = permissions.find(p => p.type === permission.type && p.target === permission.target);
 
       if (!found) {
         found = permission;
@@ -432,12 +461,12 @@ export class MigrateDb extends BaseTools {
     return permissions;
   }
 
-  private getExamples(projects: IProject[], resourceReference: string) {
+  /*private getExamples(projects: IProject[], resourceReference: string) {
     const examples = [];
 
     projects.forEach(p => {
       if (this.options.fhirVersion === 'r4') {
-        const r4ImplementationGuide = p.igs[0].resource as R4ImplementationGuide;
+        const r4ImplementationGuide = p.references[0].value as R4ImplementationGuide;
 
         if (r4ImplementationGuide.definition && r4ImplementationGuide.definition.resource) {
           const foundRes = r4ImplementationGuide.definition.resource
@@ -472,7 +501,7 @@ export class MigrateDb extends BaseTools {
     });
 
     return examples;
-  }
+  }*/
 
   private convertAuditAction(action: string) {
     switch (action) {
@@ -499,7 +528,7 @@ export class MigrateDb extends BaseTools {
     console.log(msg);
   }
 
-  private async migrateConformance(groupedResource: GroupedResource) {
+  private async migratefhirResource(groupedResource: GroupedResource) {
     const resource = groupedResource.head;
     const resourceReference = `${resource.resourceType}/${resource.id}`;
     const igs = await this.findImplementationGuides(resourceReference);
@@ -527,29 +556,28 @@ export class MigrateDb extends BaseTools {
       }
     }
 
-    const conformance: IConformance = {
+    const fhirResource: IFhirResource = {
       migratedFrom: this.options.migratedFromLabel,
       versionId: resource.meta?.versionId,
       lastUpdated: resource.meta?.lastUpdated,
       fhirVersion: this.options.fhirVersion,
       resource: resource,
-      permissions: permissions,
-      igIds: igs.map(ig => { return ig['_id']; })
+      //igIds: igs.map(ig => { return ig['_id']; })
     };
 
     this.log(`Inserting/updating resource ${resource.resourceType}/${resource.id}`);
-    const results = await this.db.collection('conformance').findOneAndUpdate(
-      { migratedFrom: conformance.migratedFrom, 'resource.resourceType': conformance.resource.resourceType, 'resource.id': conformance.resource.id },
-      { $set: conformance }, { upsert: true, returnDocument: ReturnDocument.AFTER }
+    const results = await this.db.collection('fhirResources').findOneAndUpdate(
+      { migratedFrom: fhirResource.migratedFrom, 'resource.resourceType': fhirResource.resource.resourceType, 'resource.id': fhirResource.resource.id },
+      { $set: fhirResource }, { upsert: true, returnDocument: ReturnDocument.AFTER }
     );
-    groupedResource.projectResource = <IConformance><unknown>{ ...results.value };
+    groupedResource.projectResource = <IFhirResource><unknown>{ ...results.value };
     const newId = groupedResource.projectResource['_id'].toString();
-    this.resourceMap[resourceReference] = <IConformance>groupedResource.projectResource;
+    this.resourceMap[resourceReference] = <IFhirResource>groupedResource.projectResource;
 
     // update IG-related db references for this resource
     for (const ig of (igs || [])) {
-      let ref: IProjectResourceReference = { value: groupedResource.projectResource['_id'], valueType: 'Conformance' };
-      await this.db.collection('conformance').updateOne({ _id: ig['_id'] }, { $addToSet: { 'references': ref } });
+      let ref: IProjectResourceReference = { value: groupedResource.projectResource['_id'], valueType: 'FhirResource' };
+      await this.db.collection('fhirResources').updateOne({ _id: ig['_id'] }, { $addToSet: { 'references': ref } });
     };
 
     this.reportResults(results);
@@ -562,11 +590,9 @@ export class MigrateDb extends BaseTools {
       delete resourceHistory.meta;
 
       const history: IHistory = {
+        current: {'value':newId, 'valueType' : 'FhirResource' },
         content: resourceHistory,
-        fhirVersion: this.options.fhirVersion,
-        targetId: newId,
         lastUpdated: new Date(meta.lastUpdated),
-        type: 'conformance',
         versionId: parseInt(meta.versionId)
       };
 
@@ -721,7 +747,7 @@ export class MigrateDb extends BaseTools {
   }
 
   /**
-   * Inserts projects and implementation guide conformance objects for existing implementation guides
+   * Inserts projects and implementation guide fhirResources objects for existing implementation guides
    */
   private async migrateProjects() {
     const resources = this.getGroupedResources('ImplementationGuide');
@@ -752,12 +778,11 @@ export class MigrateDb extends BaseTools {
         }
       }
 
-      let newIgConf: IConformance = {
+      let newIgConf: IFhirResource = {
         versionId: versionId,
         lastUpdated: lastUpdated,
         migratedFrom: this.options.migratedFromLabel,
         fhirVersion: this.options.fhirVersion,
-        permissions: permissions,
         resource: ig
       };
 
@@ -786,13 +811,13 @@ export class MigrateDb extends BaseTools {
       let newIg = this.implementationGuides[i];
       let newProject = this.projects[i];
 
-      // Add/update IG conformance
-      let igResult = await this.db.collection('conformance').findOneAndUpdate(
+      // Add/update IG fhirResources
+      let igResult = await this.db.collection('fhirResources').findOneAndUpdate(
         { migratedFrom: newIg.migratedFrom, 'resource.resourceType': 'ImplementationGuide', 'resource.id': newIg.resource.id },
         { $set: newIg }, { upsert: true, returnDocument: ReturnDocument.AFTER }
       );
 
-      newIg = <IConformance><unknown>{ ...igResult.value };
+      newIg = <IFhirResource><unknown>{ ...igResult.value };
       let newIgId = igResult.value._id?.toString() || newIg['_id'];
       let igPath = `ImplementationGuide/${newIg.resource.id}`;
 
@@ -800,17 +825,17 @@ export class MigrateDb extends BaseTools {
 
 
       // Add/update project
-      newProject.igs = [newIgId];
+      newProject.references = [newIgId];
       let projResult = await this.db.collection('project').findOneAndUpdate(
-        { migratedFrom: newIg.migratedFrom, 'igs': newIgId },
+        { migratedFrom: newIg.migratedFrom, 'references': newIgId },
         { $set: newProject }, { upsert: true, returnDocument: ReturnDocument.AFTER }
       );
 
       newProject = <IProject><unknown>{ ...projResult.value };
       let newProjectId = projResult.value._id.toString();
 
-      // Update IG conformance resource to include new project ID
-      let results = await this.db.collection('conformance').findOneAndUpdate({ _id: new ObjectId(newIgId) }, { $set: { 'projects': [newProjectId] } });
+      // Update IG fhirResources resource to include new project ID
+      let results = await this.db.collection('fhirResources').findOneAndUpdate({ _id: new ObjectId(newIgId) }, { $set: { 'projects': [newProjectId] } });
       this.reportResults(results);
 
 
@@ -822,11 +847,9 @@ export class MigrateDb extends BaseTools {
         delete resourceHistory.meta;
 
         const history: IHistory = {
+          current: {'value':newIgId, 'valueType' : 'FhirResource' },
           content: resourceHistory,
-          fhirVersion: this.options.fhirVersion,
-          targetId: newIgId,
           lastUpdated: new Date(meta.lastUpdated),
-          type: 'conformance',
           versionId: parseInt(meta.versionId)
         };
 
@@ -853,8 +876,8 @@ export class MigrateDb extends BaseTools {
     } else {
       filter = {'migratedFrom': this.options.migratedFromLabel};
     }
-    
-    const igConfs = this.db.collection('conformance').find<IConformance>(filter);
+
+    const igConfs = this.db.collection('fhirResource').find<IFhirResource>(filter);
     for await (const ig of igConfs) {
       const key = ig.resource.resourceType + '/' + ig.resource.id;
       this.resourceMap[key] = ig;

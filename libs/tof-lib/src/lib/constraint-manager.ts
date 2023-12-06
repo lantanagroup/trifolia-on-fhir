@@ -1,6 +1,6 @@
-import { IElementDefinition, IStructureDefinition } from './fhirInterfaces';
-import { ParseConformance } from 'fhir/parseConformance';
-import { ElementTreeModel } from './element-tree-model';
+import {IElementDefinition, IStructureDefinition} from './fhirInterfaces';
+import {ParseConformance} from 'fhir/parseConformance';
+import {ElementTreeModel} from './element-tree-model';
 
 export class ConstraintManager {
   static readonly primitiveTypes = ['instant', 'time', 'date', 'dateTime', 'decimal', 'boolean', 'integer', 'string', 'uri', 'base64Binary', 'code', 'id', 'oid', 'unsignedInt', 'positiveInt'];
@@ -278,7 +278,7 @@ export class ConstraintManager {
    * in the differential in the appropriate location.
    * @param elementTreeModel The element tree model that should have a new constraint
    */
-  constrain(elementTreeModel: ElementTreeModel) {
+  constrain(elementTreeModel: ElementTreeModel, reslice: boolean) {
     if (elementTreeModel.constrainedElement) return;
 
     // Create a new instance of the ELementDefinition
@@ -297,7 +297,7 @@ export class ConstraintManager {
     // If we're constraining a base element that represents a slice from another profile, then
     // we need to make sure this constraint has a slice name with "<baseSliceName>/<newSliceName>
     // See re-slicing http://www.hl7.org/fhir/profiling.html#reslicing
-    if (elementTreeModel.baseElement.sliceName) {
+    if (elementTreeModel.baseElement.sliceName && reslice) {
       const sliceName = 'slice' + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString();
       elementTreeModel.constrainedElement.sliceName = `${elementTreeModel.baseElement.sliceName}/${sliceName}`;
       elementTreeModel.constrainedElement.id += `/${sliceName}`;

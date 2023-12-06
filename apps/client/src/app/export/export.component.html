@@ -2,7 +2,7 @@
 
 <div class="alert alert-info" *ngIf="message">{{message}}</div>
 
-<div class="mb-3" [attr.data-intro]="Globals.introText['export.implementationGuide']" *ngIf="!configService.project">
+<div class="mb-3" [attr.data-intro]="Globals.introText['export.implementationGuide']" *ngIf="!configService.igContext">
   <label>Implementation Guide</label>
   <div class="input-group">
     <input type="text" class="form-control"

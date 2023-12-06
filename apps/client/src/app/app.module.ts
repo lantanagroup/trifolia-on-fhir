@@ -28,6 +28,7 @@ import { STU3TypeModalComponent } from './structure-definition/element-definitio
 import { R4TypeModalComponent } from './structure-definition/element-definition-panel/r4-type-modal/type-modal.component';
 import { PageComponentModalComponent as STU3PageComponentModalComponent } from './implementation-guide-wrapper/stu3/page-component-modal.component';
 import { PageComponentModalComponent as R4PageComponentModalComponent } from './implementation-guide-wrapper/r4/page-component-modal.component';
+import { PageComponentModalComponent as R5PageComponentModalComponent } from './implementation-guide-wrapper/r5/page-component-modal.component';
 import { CapabilityStatementsComponent } from './capability-statements/capability-statements.component';
 import { OperationDefinitionsComponent } from './operation-definitions/operation-definitions.component';
 import { OperationDefinitionComponent } from './operation-definition/operation-definition.component';
@@ -36,6 +37,7 @@ import { ValuesetExpandComponent } from './valueset-expand/valueset-expand.compo
 import { CapabilityStatementWrapperComponent } from './capability-statement-wrapper/capability-statement-wrapper.component';
 import { STU3CapabilityStatementComponent } from './capability-statement-wrapper/stu3/capability-statement.component';
 import { R4CapabilityStatementComponent } from './capability-statement-wrapper/r4/capability-statement.component';
+import { R5CapabilityStatementComponent } from './capability-statement-wrapper/r5/capability-statement.component';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { ConfigService } from './shared/config.service';
 import { ConceptCardComponent } from './valueset/concept-card/concept-card.component';
@@ -73,7 +75,7 @@ import { PackageListComponent } from './implementation-guide-wrapper/package-lis
 import { ResourceGuard } from './guards/resource.guard';
 import { ElementDefinitionConstraintComponent } from './modals/element-definition-constraint/element-definition-constraint.component';
 import { UpdateDiffComponent } from './import/update-diff/update-diff.component';
-import { NgxDiffModule } from 'ngx-diff';
+import { InlineDiffComponent } from 'ngx-diff';
 import { QueueComponent } from './manage/queue/queue.component';
 import { ExamplesComponent } from './examples/examples.component';
 import { BulkEditComponent } from './bulk-edit/bulk-edit.component';
@@ -92,6 +94,11 @@ import { SearchParametersComponent } from './search-parameters/search-parameters
 import { PublishingRequestComponent } from './implementation-guide-wrapper/publishing-request/publishing-request.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { ProjectComponent } from './project/project.component';
+import {R5ImplementationGuideComponent} from './implementation-guide-wrapper/r5/implementation-guide.component';
+import {R5ResourceModalComponent} from './implementation-guide-wrapper/r5/resource-modal.component';
+import {PagesComponent} from './pages/pages.component';
+import {PageComponent} from './page/page.component';
+import { AuditComponent } from './manage/audit/audit.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -125,12 +132,12 @@ export class AddHeaderInterceptor implements HttpInterceptor {
       // Pass the implementation guide (project) to the request so that it knows this request
       // is within the context of the project
       if (
-        this.configService.project &&
-        this.configService.project.implementationGuideId
+        this.configService.igContext &&
+        this.configService.igContext.implementationGuideId
       ) {
         headers = headers.set(
           'implementationGuideId',
-          this.configService.project.implementationGuideId
+          this.configService.igContext.implementationGuideId
         );
         headers = headers.set(
           'fhirversion',
@@ -160,13 +167,16 @@ const appRoutes: Routes = [
   { path: 'projects', component: ProjectsComponent },
   { path: 'projects/new', component: NewProjectComponent },
   { path: 'projects/home', component: HomeComponent },
-  { path: 'projects/:id', component: ProjectComponent },
+  { path: 'projects/:projectId', component: ProjectComponent },
   { path: 'projects/:implementationGuideId/implementation-guide', component: ImplementationGuideWrapperComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard] },
   { path: 'projects/:implementationGuideId/home', component: HomeComponent },
   { path: 'projects/implementation-guide/open', component: ImplementationGuidesComponent },
   { path: 'projects/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always' },
   { path: 'projects/:implementationGuideId/code-system', component: CodesystemsComponent },
   { path: 'projects/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/page', component: PagesComponent },
+  { path: 'projects/:implementationGuideId/page/:id', component: PageComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/page/new', component: PageComponent},
   { path: 'projects/:implementationGuideId/search-parameter', component: SearchParametersComponent },
   { path: 'projects/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
   { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },
@@ -197,9 +207,28 @@ const appRoutes: Routes = [
 
   { path: 'users/me', component: UserComponent },
   { path: 'users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
+  { path: 'manage/audit', component: AuditComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
 ];
+
+export function createGtag(googleAnalyticsCode: string) {
+  if (!googleAnalyticsCode) {
+    return;
+  }
+
+  const lElement = document.createElement(`script`);
+  lElement.async = true
+  lElement.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsCode}`;
+
+  const gaElementContent= `window.dataLayer = window.dataLayer || [];\n` + `function gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', '${googleAnalyticsCode}');\n`;
+  const gaElement = document.createElement('script');
+  gaElement.setAttribute('type', 'text/javascript');
+  gaElement.innerHTML = gaElementContent;
+
+  document.getElementsByTagName('head')[0].appendChild(lElement);
+  document.getElementsByTagName('head')[0].appendChild(gaElement);
+}
 
 /**
  * Initialization logic.
@@ -219,6 +248,8 @@ export function init(
       configService
         .getConfig(true)
         .then(() => {
+          createGtag(configService.config.googleAnalyticsCode);
+
           // Now that the config has been loaded, init the auth module
           authService.init();
           authService.handleAuthentication();
@@ -255,6 +286,7 @@ const authModuleConfig: OAuthModuleConfig = {
     HomeComponent,
     STU3ImplementationGuideComponent,
     R4ImplementationGuideComponent,
+    R5ImplementationGuideComponent,
     ExportComponent,
     ImportComponent,
     StructureDefinitionComponent,
@@ -272,10 +304,12 @@ const authModuleConfig: OAuthModuleConfig = {
     R4TypeModalComponent,
     STU3PageComponentModalComponent,
     R4PageComponentModalComponent,
+    R5PageComponentModalComponent,
     CapabilityStatementsComponent,
     CapabilityStatementWrapperComponent,
     STU3CapabilityStatementComponent,
     R4CapabilityStatementComponent,
+    R5CapabilityStatementComponent,
     OperationDefinitionsComponent,
     OperationDefinitionComponent,
     ParameterModalComponent,
@@ -297,6 +331,7 @@ const authModuleConfig: OAuthModuleConfig = {
     PublishComponent,
     IncludePanelComponent,
     BindingPanelComponent,
+    R5ResourceModalComponent,
     R4ResourceModalComponent,
     STU3ResourceModalComponent,
     GroupModalComponent,
@@ -322,6 +357,9 @@ const authModuleConfig: OAuthModuleConfig = {
     PublishingRequestComponent,
     ProjectsComponent,
     ProjectComponent,
+    PagesComponent,
+    PageComponent,
+    AuditComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes, {
@@ -339,7 +377,7 @@ const authModuleConfig: OAuthModuleConfig = {
     SharedUiModule,
     FhirEditModule,
     ModalsModule,
-    NgxDiffModule,
+    InlineDiffComponent
   ],
   providers: [
     CookieService,

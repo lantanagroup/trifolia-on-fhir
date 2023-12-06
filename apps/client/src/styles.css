@@ -1,9 +1,6 @@
-body {
-  padding-top: 4.5rem;
-}
 
-trifolia-fhir-root > div.container > div.jumbotron {
-  padding: 10px;
+html, body {
+  height: 100%;
 }
 
 footer.footer {
@@ -56,25 +53,13 @@ a.disabled > i.fas {
   cursor: pointer;
 }
 
-.fixed-top {
-  z-index: 2;
+nav.fixed-top {
+  position: sticky;
+  z-index: 3;
 }
 
 .clickable {
   cursor: pointer;
-}
-
-body > trifolia-fhir-root > div.container {
-  position: fixed;
-  top: 59px;
-  bottom: 37px;
-  padding-right: 5px;
-  padding-left: 5px;
-}
-
-body > trifolia-fhir-root > div.container > div.jumbotron {
-  height: 100%;
-  overflow-y: auto;
 }
 
 body.structure-definition div.sd-main {
@@ -105,10 +90,6 @@ body.structure-definition div.sd-main .tab-content > div.tab-pane {
   background-color: #e9ecef;
   min-height: 30px;
   height: 30px;
-}
-
-.disable-markdown .CodeMirror-line {
-  display: none;
 }
 
 .disable-markdown .editor-toolbar {
@@ -176,12 +157,8 @@ button.angular-editor-button[title='Insert Image'] {
   display: none;
 }
 
-#editor {
-  background-color: white;
-}
-
-#editor[contenteditable=false] {
-  background-color: transparent;
+.angular-editor-textarea[contenteditable=true] {
+  background-color: white !important;
 }
 
 /*** PROFILE EDITOR ***/
@@ -757,34 +734,13 @@ tr.introjs-showElement > th {
 
 /*** END INTRO.JS STYLES ***/
 
-/** Global styles to make other-resources screens work with max height **/
+
 .jumbotron {
-  padding:2rem 1rem;
-  margin-bottom:2rem;
-  background-color:#e9ecef;
-  border-radius:.3rem
-}
-
-div.container > div.jumbotron > ng-component {
-  height: 93%;
-  display: block;
-}
-
-div.container > div.jumbotron > ng-component > div:first-child {
-  height: 100%;
-}
-
-div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset {
-  height: 92%;
-  display: block;
-}
-
-div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset > div:nth-child(2) {
-  height: 94%;
-}
-
-div.container > div.jumbotron > ng-component > div:first-child > ngb-tabset > div:nth-child(2) > div[id="json/xml-panel"] {
-  height: 100%;
+  position: relative;
+  padding: 0.5rem 1rem;
+  margin-bottom: 50px;
+  background-color: #e9ecef;
+  border-radius: .5rem
 }
 
 simplemde .editor-statusbar {
@@ -797,6 +753,8 @@ simplemde .editor-statusbar {
   min-height: 100px !important;
 }
 
+
+
 simplemde.is-invalid > .editor-toolbar {
   border: 1px solid red;
   border-bottom: inherit;
@@ -805,6 +763,12 @@ simplemde.is-invalid > .editor-toolbar {
 simplemde.is-invalid > .CodeMirror-wrap {
   border: 1px solid red;
   border-top: 1px solid #ddd;
+}
+
+.page .CodeMirror,
+.page .CodeMirror-scroll {
+  max-height: 1000px;
+  min-height: 400px !important;
 }
 
 .bulk-edit .CodeMirror,

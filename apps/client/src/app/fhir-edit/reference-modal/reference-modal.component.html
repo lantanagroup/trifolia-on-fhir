@@ -3,7 +3,7 @@
   <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 <div class="modal-body">
-  <div class="d-flex">
+  <div class="d-flex align-items-start">
     <ul ngbNav #nav="ngbNav" class="nav-pills" orientation="vertical" (navChange)="tabChanged($event)">
       <li ngbNavItem="server">
         <a ngbNavLink>Server</a>
@@ -23,15 +23,21 @@
           <ng-container *ngTemplateOutlet="tabContent"></ng-container>
         </ng-template>
       </li>
+      <li ngbNavItem="vsac" *ngIf="resourceType === 'ValueSet'">
+        <a ngbNavLink>VSAC</a>
+        <ng-template ngbNavContent>
+          <ng-container *ngTemplateOutlet="vsacContent"></ng-container>
+        </ng-template>
+      </li>
     </ul>
-    <div [ngbNavOutlet]="nav" class="ms-4"></div>
+    <div [ngbNavOutlet]="nav" class="ms-4 overflow-hidden"></div>
   </div>
 </div>
 <div class="modal-footer">
   <div class="pull-left footer-criteria">
-    <p *ngIf="configService.project && searchLocation === 'server'">
+    <p *ngIf="configService.igContext && searchLocation === 'server'">
       <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from
-      the <span class="badge bg-info">{{configService.project.name}}</span> implementation guide.
+      the <span class="badge bg-info">{{configService.igContext.name}}</span> implementation guide.
     </p>
     <p *ngIf="resourceType === 'StructureDefinition' && structureDefinitionType">Showing profiles of type <span
         class="badge bg-info">{{structureDefinitionType}}</span>.</p>
@@ -40,12 +46,17 @@
     Selected {{selected.length}}: <span *ngFor="let s of selected">{{s.resourceType}}/{{s.id}} </span>
     [ <a href="javascript:void(0)" (click)="selected.splice(0, selected.length)">clear</a> ]
   </div>
-  <button type="button" class="btn btn-primary" (click)="select()" *ngIf="selectMultiple"
+  <button type="button" class="btn btn-primary" (click)="selectServer()" *ngIf="selectMultiple && searchLocation === 'server'"
+    [disabled]="selected.length === 0">OK
+  </button>
+  <button type="button" class="btn btn-primary" (click)="selectFhir()" *ngIf="selectMultiple && (searchLocation === 'dependency' || searchLocation === 'base')"
     [disabled]="selected.length === 0">OK
   </button>
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.close()">Close</button>
 </div>
 
+
+<!-- Server and FHIR Search Content -->
 <ng-template #tabContent>
   <div class="row">
     <!-- Type -->
@@ -79,61 +90,193 @@
       </div>
     </div>
 
-    <div class="col-md-6" *ngIf="!!resourceType">
+    <div *ngIf="!!resourceType" class="col-md-6">
       <div class="input-group">
         <div class="input-group-text">ID</div>
-        <input type="text" class="form-control" [(ngModel)]="idSearch"
-          (ngModelChange)="criteriaChangedEvent.next($event)" />
+        <input (ngModelChange)="criteriaChangedEvent.next($event)" [(ngModel)]="idSearch" class="form-control"
+               type="text" />
       </div>
     </div>
   </div>
 
   <div class="alert alert-info" *ngIf="message">{{message}}</div>
   <p *ngIf="searching"><em>Searching...</em></p>
-  <table class="table" *ngIf="results">
-    <thead>
+  <div class="table-responsive">
+
+    <!-- Server Results -->
+    <table class="table" *ngIf="searchLocation === 'server' && serverResults">
+      <thead>
       <tr>
         <th *ngIf="selectMultiple" class="actions-column-1"></th>
+        <th *ngIf="!selectMultiple" class="actions-column-1">&nbsp;</th>
         <th>Resource Id</th>
         <th>Title/Name/Id</th>
         <th>Id</th>
         <th>Implementation Guide</th>
-        <th *ngIf="!selectMultiple" class="actions-column-1">&nbsp;</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let c of results">
-        <td *ngIf="selectMultiple">
-          <input type="checkbox" [ngModel]="isSelected(c)" (ngModelChange)="setSelected(c, $event)" />
-        </td>
-        <td>{{c.resource.id}}</td>
-        <td>{{c.resource | fhirDisplay}}</td>
-        <td>{{c.id}}</td>
-        <td>{{c.igIds}}</td>
-        <td *ngIf="!selectMultiple">
-          <div class="pull-right">
-            <button type="button" class="btn btn-primary" (click)="select(c)">Select</button>
-          </div>
-        </td>
-      </tr>
-      <tr *ngIf="results && results.length < total">
-        <td colspan="3">
-          <!-- <a href="javascript:void(0)" (click)="criteriaChanged(true)">Load More</a> -->
-          <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [collectionSize]="total"
-            [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="pageChanged.next()">
-          </ngb-pagination>
-        </td>
-      </tr>
-    </tbody>
-    <tfoot *ngIf="total > 0">
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of serverResults">
+          <td *ngIf="selectMultiple">
+            <input type="checkbox" [ngModel]="isSelected(c)" (ngModelChange)="setSelected(c, $event)" />
+          </td>
+          <td *ngIf="!selectMultiple">
+            <div class="pull-right">
+              <button type="button" class="btn btn-primary" (click)="selectServer(c)">Select</button>
+            </div>
+          </td>
+          <td>{{c.resource.id}}</td>
+          <td>{{c.resource | fhirDisplay}}</td>
+          <td>{{c.id}}</td>
+          <td>{{getImplementationGuideDisplay(c.referencedBy)}}</td>
+        </tr>
+        <tr *ngIf="serverResults && serverResults.length < total">
+          <td colspan="3">
+            <!-- <a href="javascript:void(0)" (click)="criteriaChanged(true)">Load More</a> -->
+            <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="pageSize" [collectionSize]="total"
+              [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="pageChanged.next()">
+            </ngb-pagination>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot *ngIf="total > 0">
       <tr>
-        <th colspan="3">Showing {{results.length}} of {{total}} results</th>
+        <th colspan="3">Showing {{serverResults.length}} of {{total}} result{{total > 1 ? 's' : ''}}</th>
       </tr>
-    </tfoot>
-    <tfoot *ngIf="results.length === 0">
+      </tfoot>
+      <tfoot *ngIf="serverResults.length === 0">
       <tr>
         <th colspan="3"><em>No resources were found with the specified criteria.</em></th>
       </tr>
-    </tfoot>
-  </table>
+      </tfoot>
+    </table>
+
+
+
+    <!-- FHIR Search Results -->
+    <table class="table" *ngIf="(searchLocation === 'dependency' || searchLocation === 'base') && fhirResults?.entry?.length > 0">
+      <thead>
+        <tr>
+          <th *ngIf="selectMultiple" class="actions-column-1"></th>
+          <th *ngIf="!selectMultiple" class="actions-column-1">&nbsp;</th>
+          <th>Resource Id</th>
+          <th>Title/Name/Id</th>
+          <th>URL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of fhirResults.entry">
+          <td *ngIf="selectMultiple">
+            <input type="checkbox" [ngModel]="isSelected(r)" (ngModelChange)="setSelected(r.resource, $event)" />
+          </td>
+          <td *ngIf="!selectMultiple">
+            <div class="pull-right">
+              <button type="button" class="btn btn-primary" (click)="selectFhir(r.resource)">Select</button>
+            </div>
+          </td>
+          <td>{{r.resource.id}}</td>
+          <td>{{r.resource | fhirDisplay}}</td>
+          <td>{{r.resource.url}}</td>
+        </tr>
+      </tbody>
+      <tfoot *ngIf="fhirResults?.entry?.length > 0">
+        <tr>
+          <th colspan="3">Showing {{fhirResults.entry.length}} result{{fhirResults.entry.length > 1 ? 's' : ''}}</th>
+        </tr>
+      </tfoot>
+      <tfoot *ngIf="!fhirResults || !fhirResults?.entry?.length">
+        <tr>
+          <th colspan="3"><em>No resources were found with the specified criteria.</em></th>
+        </tr>
+      </tfoot>
+    </table>
+
+  </div>
+</ng-template>
+
+
+<!-- VSAC Search Content -->
+<ng-template #vsacContent>
+    
+  <div class="row">
+    <div class="col-md-12">
+      <div class="mb-3">
+        <label>
+          API Key <app-tooltip-icon tooltipKey="vsac.apikey"></app-tooltip-icon>
+        </label>
+        <input type="password" class="form-control" [(ngModel)]="apiKey"/>
+      </div>
+      <p>
+        <input type="checkbox" [(ngModel)]="rememberVsacCredentials"/> Remember VSAC credentials in the future <app-tooltip-icon tooltipKey="vsac.remember"></app-tooltip-icon>
+      </p>
+    </div>
+
+    <div class="col-md-12" (keyup.enter)="searchVSAC()">
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="input-group">
+            <div class="input-group-text">ID</div>
+            <input [(ngModel)]="idSearch" class="form-control" type="text" />
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group">
+            <div class="input-group-text">Name</div>
+            <input type="text" class="form-control" [(ngModel)]="nameSearch" />
+          </div>
+        </div>
+      </div>
+
+      <div class="my-2">
+        <button (click)="searchVSAC()" [disabled]="vsacSearchDisabled" class="btn btn-primary">Search VSAC</button>
+      </div>
+
+    </div>
+
+
+    <!-- VSAC Results -->
+    <div class="alert alert-info" *ngIf="vsacMessage">{{vsacMessage}}</div>
+    <p *ngIf="searching"><em>Searching...</em></p>
+    <div class="table-responsive">
+      <table class="table" *ngIf="valueSetResults">
+        <thead>
+          <th class="actions-column-1">&nbsp;</th>
+          <th>Resource Id</th>
+          <th>Name</th>
+        </thead>
+        <tbody *ngIf="total < 1">
+          <tr>
+            <td colspan="3">No results for the provided criteria.</td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="total > 0">
+          <tr *ngFor="let valueSet of valueSetResults">
+            <td>
+              <div class="pull-right">
+                <button type="button" class="btn btn-primary" (click)="selectVsac(valueSet)">Select</button>
+              </div>
+            </td>
+            <td>{{valueSet.id}}</td>
+            <td>{{valueSet.name}}</td>
+          </tr>
+
+          <tr *ngIf="valueSetResults && valueSetResults.length < total">
+            <td colspan="3">
+              <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="pageSize" [collectionSize]="total"
+                [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="pageChanged.next()">
+              </ngb-pagination>
+            </td>
+          </tr>
+
+        </tbody>
+        <tfoot *ngIf="total > 0">
+          <tr>
+            <th colspan="2">Showing {{valueSetResults.length}} of {{total}} results</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
 </ng-template>

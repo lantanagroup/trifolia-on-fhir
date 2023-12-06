@@ -4,7 +4,7 @@
     <li ngbNavItem>
       <a ngbNavLink>
         Publishing Request Editor
-      </a>
+      </a>init
       <ng-template ngbNavContent>
         <div class='card'>
           <div *ngIf='!publishingRequest' class='card-body'>
@@ -65,16 +65,16 @@
             <label>Changes</label>
             <input (change)="change.next()" [(ngModel)]="publishingRequest.changes" class="form-control" type="text" />
 
-            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="implementationGuide.version.startsWith('0')" propertyName="title"
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="resource.resource.version.startsWith('0')" propertyName="title"
                              title="Title"></app-fhir-string>
 
-            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="implementationGuide.version.startsWith('0')" propertyName="ci-build"
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="resource.resource.version.startsWith('0')" propertyName="ci-build"
                              title="CI-Build"></app-fhir-string>
 
-            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="implementationGuide.version.startsWith('0')" propertyName="category"
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="resource.resource.version.startsWith('0')" propertyName="category"
                              title="Category"></app-fhir-string>
 
-            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="implementationGuide.version.startsWith('0')" propertyName="introduction"
+            <app-fhir-string (change)="change.next()" [parentObject]="publishingRequest" [required]="resource.resource.version.startsWith('0')" propertyName="introduction"
                              title="Introduction"></app-fhir-string>
 
           </div>

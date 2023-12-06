@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, CanDeactivate } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 export interface CanComponentDeactivate{
   canDeactivate: () => boolean;
@@ -13,7 +13,7 @@ export interface CanComponentDeactivate{
 @Injectable({
   providedIn: 'root'
 })
-export class ResourceGuard implements CanDeactivate<CanComponentDeactivate> {
+export class ResourceGuard  {
   canDeactivate(
     component: CanComponentDeactivate,
     currentRoute: ActivatedRouteSnapshot,

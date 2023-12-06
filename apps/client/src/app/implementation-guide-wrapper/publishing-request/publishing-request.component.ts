@@ -1,10 +1,8 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
-import { IImplementationGuide } from '../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import {Component, Input, OnInit, Output, SimpleChanges} from '@angular/core';
 import { Subject } from 'rxjs';
 import { PublishingRequestModel } from '../../../../../../libs/tof-lib/src/lib/publishing-request-model';
 import { ConfigService } from '../../shared/config.service';
 import { debounceTime } from 'rxjs/operators';
-import { identifyRelease } from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 
 @Component({
   selector: 'trifolia-fhir-publishing-request',
@@ -12,7 +10,8 @@ import { identifyRelease } from '../../../../../../libs/tof-lib/src/lib/fhirHelp
   styleUrls: ['./publishing-request.component.css']
 })
 export class PublishingRequestComponent implements OnInit {
-  @Input() implementationGuide: IImplementationGuide;
+  @Input() resource: any;
+  @Input() publicationRequest: any;
   @Input() defaultPackageId: string;
   @Input() defaultName: string;
   @Input() defaultTitle: string;
@@ -25,14 +24,16 @@ export class PublishingRequestComponent implements OnInit {
     this.change
       .pipe(debounceTime(1000))
       .subscribe(() => {
-        PublishingRequestModel.setPublishingRequest(this.implementationGuide, this.publishingRequest, identifyRelease(this.configService.fhirVersion));
+
         this.publishingRequestJSON = JSON.stringify(this.publishingRequest, null, '\t');
+        this.publicationRequest["content"] =  this.publishingRequest || {};
       });
 
     this.valueChange
       .pipe(debounceTime(1000))
       .subscribe(() => {
         this.publishingRequest = JSON.parse(this.publishingRequestJSON);
+        this.publicationRequest["content"] =  this.publishingRequest || {};
       });
   }
 
@@ -40,12 +41,14 @@ export class PublishingRequestComponent implements OnInit {
     this.publishingRequest = new PublishingRequestModel();
     this.publishingRequest['package-id'] = this.defaultPackageId;
     this.publishingRequest.title = this.defaultTitle || this.defaultName;
-    PublishingRequestModel.setPublishingRequest(this.implementationGuide, this.publishingRequest, identifyRelease(this.configService.fhirVersion));
+
+    this.publishingRequestJSON = JSON.stringify(this.publishingRequest, null, '\t');
+    this.publicationRequest["content"] = this.publishingRequest;
   }
 
   remove() {
-    PublishingRequestModel.removePublishingRequest(this.implementationGuide);
-    this.publishingRequest = null;
+    this.publicationRequest["content"] = null ;
+    this.publishingRequest = null ;
   }
 
   import(file: File) {
@@ -73,13 +76,15 @@ export class PublishingRequestComponent implements OnInit {
   }
 
 
-  ngOnInit() {
-    this.publishingRequest = PublishingRequestModel.getPublishingRequest(this.implementationGuide);
+  ngOnChanges(changes: SimpleChanges) {
+    this.publishingRequest = this.publicationRequest?.content;
     this.publishingRequestJSON = JSON.stringify(this.publishingRequest, null, '\t');
+  }
 
-    /*if(this.publishingRequest.sequence.length === 0) {
-      this.publishingRequest.sequence = "Releases";
-    }*/
+
+  ngOnInit() {
+    this.publishingRequest = this.publicationRequest?.content;
+    this.publishingRequestJSON = JSON.stringify(this.publishingRequest, null, '\t');
   }
 
 }

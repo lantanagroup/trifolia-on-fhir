@@ -12,11 +12,11 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let e of editions">
-      <td>{{canonical + '/ImplementationGuide/' + e['package']}}</td>
-      <td>{{e['ig-version']}}</td>
+    <tr *ngFor="let version of versions">
+      <td>{{canonical + '/ImplementationGuide/' + packageName + '#' + version}}</td>
+      <td>{{version}}</td>
       <td>
-        <button type="button" class="btn btn-primary" title="Select this implementation guide" (click)="selectEdition(e)">
+        <button (click)="selectEdition(version)" class="btn btn-primary" title="Select this implementation guide" type="button">
           <i class="fas fa-hand-pointer"></i>
         </button>
       </td>

@@ -1,4 +1,4 @@
-import {Post} from '@nestjs/common';
+import {Post, Request} from '@nestjs/common';
 import {InjectConnection} from '@nestjs/mongoose';
 import {ApiTags, ApiOAuth2, ApiOperation} from '@nestjs/swagger';
 import {Connection} from 'mongoose';
@@ -10,11 +10,12 @@ import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import {UsersService} from '../users/users.service';
 import {AuthGuard} from '@nestjs/passport';
 import {Body, Controller, Delete, Get, Param, Put, UnauthorizedException, UseGuards} from '@nestjs/common';
-import type {IGroup} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, type IGroup} from '@trifolia-fhir/models';
 import { ObjectId } from 'mongodb';
+import { AuditEntity } from '../audit/audit.decorator';
 
 
-@Controller('api/group')
+@Controller('api/groups')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Group')
 @ApiOAuth2([])
@@ -34,10 +35,10 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     const query = req.query;
 
     if ('name' in query) {
-      filter['name'] = { $regex: query['name'], $options: 'i' };
+      filter['name'] = { $regex: this.escapeRegExp(query['name']), $options: 'i' };
     }
     if ('description' in query) {
-      filter['description'] = { $regex: query['description'], $options: 'i' };
+      filter['description'] = { $regex: this.escapeRegExp(query['description']), $options: 'i' };
     }
     if ('_id' in query) {
       filter['$or'] = query['_id'].split(',').map(id => { return {'_id': new ObjectId(id)} });
@@ -47,9 +48,10 @@ export class GroupsController extends BaseDataController<GroupDocument> {
 
 
   @Post('managing')
+  @AuditEntity(AuditAction.Create, AuditEntityType.Group)
   public async createManagingGroup(@User() userProfile: ITofUser, @Body() newGroup: IGroup) {
 
-    console.log(JSON.stringify(userProfile.user));
+    // console.log(JSON.stringify(userProfile.user));
 
     // move data from dto to entity
     const persistedGroup = new Group();
@@ -76,6 +78,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
 
 
   @Put('managing/:id')
+  @AuditEntity(AuditAction.Update, AuditEntityType.Group)
   public async updateManagingGroup(@User() userProfile: ITofUser, @Body() updatedGroup: IGroup, @Param('id') id: string) {
 
     if (!userProfile) return null;
@@ -107,11 +110,36 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     return super.update(id, persistedGroup);
   }
 
+  @Get('info')
+  public async getGroupInfo(@User() user, @Request() req?: any): Promise<IGroup[]> {
+    if (!req) {
+      return null;
+    }
+    const query = req.query;
+
+    if (query && '_id' in query) {
+      const ids = (query['_id'] || '').split(',').map(id => { return { _id: new ObjectId(id) } });
+      const idFilter = { $or: ids };
+      let projection = {};
+      if (!user.isAdmin) {
+        projection = {
+          managingUser: 0,
+          members: 0
+        };
+      }
+
+      return this.groupsService.findAll(idFilter, null, projection);
+    }
+    return null;
+  }
+
 
   @Get('membership')
-  public async getMembership(@User() userProfile) {
+  public async getMembership(@User() userProfile, @Request() req?: any): Promise<IGroup[]> {
     if (!userProfile || !userProfile.user) return null;
-    return await this.groupsService.findAll({ 'members': userProfile.user.id }, ["managingUser", "members"]);;
+    const filter = this.getFilterFromRequest(req);
+    filter['members'] = userProfile.user.id;
+    return await this.groupsService.findAll(filter, ["managingUser", "members"]);;
   }
 
   @ApiOperation({
@@ -119,16 +147,10 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     description: 'Gets the groups that the currently logged-in user is an admin/manager of'
   })
   @Get('managing')
-  public async getManaging(@User() userProfile) {
+  public async getManaging(@User() userProfile): Promise<IGroup[]> {
     if (!userProfile) return null;
 
-    const results = await this.groupsService.findAll({ 'managingUser': userProfile.user.id }, ["managingUser", "members"]);
-    if (results) {
-      results.forEach(result => console.log(result));
-    }
-
-    return results;
-
+    return this.groupsService.findAll({ 'managingUser': userProfile.user.id }, ["managingUser", "members"]);
   }
 
 
@@ -137,14 +159,13 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     description: 'Deletes a group that the user is an admin/manager of'
   })
   @Delete('managing/:id')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.Group)
   public async deleteManagingGroup(@User() userProfile: ITofUser, @Param('id') id: string) {
 
-    console.log(JSON.stringify(userProfile));
     // get group first
     const group = await this.groupsService.findById(id);
-    console.log(JSON.stringify(group));
 
-    if (group.managingUser.toString() !== userProfile.user.id) {
+    if (!userProfile.isAdmin && group.managingUser.toString() !== userProfile.user.id) {
       throw new UnauthorizedException();
     }
 
@@ -157,6 +178,7 @@ export class GroupsController extends BaseDataController<GroupDocument> {
     description: 'Removes the current user as a member from the group'
   })
   @Delete('membership/:id')
+  @AuditEntity(AuditAction.Delete, AuditEntityType.Group)
   public async deleteMembershipGroup(@User() userProfile: ITofUser, @Param('id') id: string) {
 
     // get group first

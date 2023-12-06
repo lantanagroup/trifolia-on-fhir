@@ -2,18 +2,21 @@ import {Injectable, Injector} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ConfigModel} from '../../../../../libs/tof-lib/src/lib/config-model';
 import {Title} from '@angular/platform-browser';
-import {Coding} from '../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {Versions} from 'fhir/fhir';
 import {map} from 'rxjs/operators';
-import { ImplementationGuideContext } from '@trifolia-fhir/tof-lib';
+import {ImplementationGuideContext} from '@trifolia-fhir/tof-lib';
+import {Subject} from 'rxjs';
+import { IProject } from '@trifolia-fhir/models';
 
 @Injectable()
 export class ConfigService {
   public config: ConfigModel;
-  public fhirVersion: 'stu3'|'r4'|'r5' = 'r4';
-  public project?: ImplementationGuideContext;
-  public statusMessage: string;
+  public fhirVersion: 'stu3' | 'r4' | 'r5' = 'r4';
+  public igContext?: ImplementationGuideContext;
+  public currentProject?: IProject;
+  public statusMessage = new Subject<string>();
   public showingIntroduction = false;
+  public isChanged: boolean;
 
 
   constructor(private injector: Injector) {
@@ -34,6 +37,11 @@ export class ConfigService {
     }
 
   }*/
+  
+
+  public updateIsChanged(isDirty: boolean) {
+    this.isChanged = isDirty;
+  }
 
   public async getTemplateVersions(template: string): Promise<string[]> {
     let url = '';
@@ -69,8 +77,8 @@ export class ConfigService {
   }
 
   public get baseSessionUrl(): string {
-    if (this.project && this.project.implementationGuideId) {
-      return `/projects/${this.project.implementationGuideId}`;
+    if (this.igContext && this.igContext.implementationGuideId) {
+      return `/projects/${this.igContext.implementationGuideId}`;
     } else {
       return `/projects`;
     }
@@ -90,11 +98,11 @@ export class ConfigService {
   }
 
   public get isCDA(): boolean {
-    if (!this.project || !this.project.dependencies) {
+    if (!this.igContext || !this.igContext.dependencies) {
       return false;
     }
 
-    return (this.project.dependencies || []).findIndex((d: string) => {
+    return (this.igContext.dependencies || []).findIndex((d: string) => {
       return [
         'hl7.fhir.cda', 'hl7.cda.uv.core'
       ].includes((d || '').split('#')[0])
@@ -134,11 +142,11 @@ export class ConfigService {
 
 
   public setStatusMessage(message: string, timeout?: number) {
-    this.statusMessage = message;
+    this.statusMessage.next(message);
 
     if (timeout) {
       setTimeout(() => {
-        this.statusMessage = '';
+        this.statusMessage.next('');
       }, timeout);
     }
   }

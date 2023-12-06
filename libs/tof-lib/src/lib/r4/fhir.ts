@@ -106,60 +106,161 @@ export class Extension implements IExtension {
         this.url = obj.url;
       }
 
-      if (obj.valueBase64Binary) { this.valueBase64Binary = obj.valueBase64Binary; }
-      if (obj.valueBoolean) { this.valueBoolean = obj.valueBoolean; }
-      if (obj.valueCanonical) { this.valueCanonical = obj.valueCanonical; }
-      if (obj.valueCode) { this.valueCode = obj.valueCode; }
-      if (obj.valueDate) { this.valueDate = obj.valueDate; }
-      if (obj.valueDateTime) { this.valueDateTime = obj.valueDateTime; }
-      if (obj.valueDecimal) { this.valueDecimal = obj.valueDecimal; }
-      if (obj.valueId) { this.valueId = obj.valueId; }
-      if (obj.valueInstant) { this.valueInstant = obj.valueInstant; }
-      if (obj.valueInteger) { this.valueInteger = obj.valueInteger; }
-      if (obj.valueMarkdown) { this.valueMarkdown = obj.valueMarkdown; }
-      if (obj.valueOid) { this.valueOid = obj.valueOid; }
-      if (obj.valuePositiveInt) { this.valuePositiveInt = obj.valuePositiveInt; }
-      if (obj.valueString) { this.valueString = obj.valueString; }
-      if (obj.valueTime) { this.valueTime = obj.valueTime; }
-      if (obj.valueUnsignedInt) { this.valueUnsignedInt = obj.valueUnsignedInt; }
-      if (obj.valueUri) { this.valueUri = obj.valueUri; }
-      if (obj.valueUrl) { this.valueUrl = obj.valueUrl; }
-      if (obj.valueUuid) { this.valueUuid = obj.valueUuid; }
-      if (obj.valueAddress) { this.valueAddress = new Address(obj.valueAddress); }
-      if (obj.valueAge) { this.valueAge = new Age(obj.valueAge); }
-      if (obj.valueAnnotation) { this.valueAnnotation = new Annotation(obj.valueAnnotation); }
-      if (obj.valueAttachment) { this.valueAttachment = new Attachment(obj.valueAttachment); }
-      if (obj.valueCodeableConcept) { this.valueCodeableConcept = new CodeableConcept(obj.valueCodeableConcept); }
-      if (obj.valueCoding) { this.valueCoding = new Coding(obj.valueCoding); }
-      if (obj.valueContactPoint) { this.valueContactPoint = new ContactPoint(obj.valueContactPoint); }
-      if (obj.valueCount) { this.valueCount = new Count(obj.valueCount); }
-      if (obj.valueDistance) { this.valueDistance = new Distance(obj.valueDistance); }
-      if (obj.valueDuration) { this.valueDuration = new Duration(obj.valueDuration); }
-      if (obj.valueHumanName) { this.valueHumanName = new HumanName(obj.valueHumanName); }
-      if (obj.valueIdentifier) { this.valueIdentifier = new Identifier(obj.valueIdentifier); }
-      if (obj.valueMoney) { this.valueMoney = new Money(obj.valueMoney); }
-      if (obj.valuePeriod) { this.valuePeriod = new Period(obj.valuePeriod); }
-      if (obj.valueQuantity) { this.valueQuantity = new Quantity(obj.valueQuantity); }
-      if (obj.valueRange) { this.valueRange = new Range(obj.valueRange); }
-      if (obj.valueRatio) { this.valueRatio = new Ratio(obj.valueRatio); }
-      if (obj.valueReference) { this.valueReference = new Reference(obj.valueReference); }
-      if (obj.valueSampledData) { this.valueSampledData = new SampledData(obj.valueSampledData); }
-      if (obj.valueSignature) { this.valueSignature = new Signature(obj.valueSignature); }
-      if (obj.valueTiming) { this.valueTiming = new Timing(obj.valueTiming); }
-      if (obj.valueContactDetail) { this.valueContactDetail = new ContactDetail(obj.valueContactDetail); }
-      if (obj.valueContributor) { this.valueContributor = new Contributor(obj.valueContributor); }
-      if (obj.valueDataRequirement) { this.valueDataRequirement = new DataRequirement(obj.valueDataRequirement); }
-      if (obj.valueExpression) { this.valueExpression = new Expression(obj.valueExpression); }
-      if (obj.valueParameterDefinition) { this.valueParameterDefinition = new ParameterDefinition(obj.valueParameterDefinition); }
-      if (obj.valueRelatedArtifact) { this.valueRelatedArtifact = new RelatedArtifact(obj.valueRelatedArtifact); }
-      if (obj.valueTriggerDefinition) { this.valueTriggerDefinition = new TriggerDefinition(obj.valueTriggerDefinition); }
-      if (obj.valueUsageContext) { this.valueUsageContext = new UsageContext(obj.valueUsageContext); }
-      if (obj.valueDosage) { this.valueDosage = new Dosage(obj.valueDosage); }
-      if (obj.valueMeta) { this.valueMeta = new Meta(obj.valueMeta); }
+      if (obj.valueBase64Binary) {
+        this.valueBase64Binary = obj.valueBase64Binary;
+      }
+      if (obj.valueBoolean) {
+        this.valueBoolean = obj.valueBoolean;
+      }
+      if (obj.valueCanonical) {
+        this.valueCanonical = obj.valueCanonical;
+      }
+      if (obj.valueCode) {
+        this.valueCode = obj.valueCode;
+      }
+      if (obj.valueDate) {
+        this.valueDate = obj.valueDate;
+      }
+      if (obj.valueDateTime) {
+        this.valueDateTime = obj.valueDateTime;
+      }
+      if (obj.valueDecimal) {
+        this.valueDecimal = obj.valueDecimal;
+      }
+      if (obj.valueId) {
+        this.valueId = obj.valueId;
+      }
+      if (obj.valueInstant) {
+        this.valueInstant = obj.valueInstant;
+      }
+      if (obj.valueInteger) {
+        this.valueInteger = obj.valueInteger;
+      }
+      if (obj.valueMarkdown) {
+        this.valueMarkdown = obj.valueMarkdown;
+      }
+      if (obj.valueOid) {
+        this.valueOid = obj.valueOid;
+      }
+      if (obj.valuePositiveInt) {
+        this.valuePositiveInt = obj.valuePositiveInt;
+      }
+      if (obj.valueString) {
+        this.valueString = obj.valueString;
+      }
+      if (obj.valueTime) {
+        this.valueTime = obj.valueTime;
+      }
+      if (obj.valueUnsignedInt) {
+        this.valueUnsignedInt = obj.valueUnsignedInt;
+      }
+      if (obj.valueUri) {
+        this.valueUri = obj.valueUri;
+      }
+      if (obj.valueUrl) {
+        this.valueUrl = obj.valueUrl;
+      }
+      if (obj.valueUuid) {
+        this.valueUuid = obj.valueUuid;
+      }
+      if (obj.valueAddress) {
+        this.valueAddress = new Address(obj.valueAddress);
+      }
+      if (obj.valueAge) {
+        this.valueAge = new Age(obj.valueAge);
+      }
+      if (obj.valueAnnotation) {
+        this.valueAnnotation = new Annotation(obj.valueAnnotation);
+      }
+      if (obj.valueAttachment) {
+        this.valueAttachment = new Attachment(obj.valueAttachment);
+      }
+      if (obj.valueCodeableConcept) {
+        this.valueCodeableConcept = new CodeableConcept(obj.valueCodeableConcept);
+      }
+      if (obj.valueCoding) {
+        this.valueCoding = new Coding(obj.valueCoding);
+      }
+      if (obj.valueContactPoint) {
+        this.valueContactPoint = new ContactPoint(obj.valueContactPoint);
+      }
+      if (obj.valueCount) {
+        this.valueCount = new Count(obj.valueCount);
+      }
+      if (obj.valueDistance) {
+        this.valueDistance = new Distance(obj.valueDistance);
+      }
+      if (obj.valueDuration) {
+        this.valueDuration = new Duration(obj.valueDuration);
+      }
+      if (obj.valueHumanName) {
+        this.valueHumanName = new HumanName(obj.valueHumanName);
+      }
+      if (obj.valueIdentifier) {
+        this.valueIdentifier = new Identifier(obj.valueIdentifier);
+      }
+      if (obj.valueMoney) {
+        this.valueMoney = new Money(obj.valueMoney);
+      }
+      if (obj.valuePeriod) {
+        this.valuePeriod = new Period(obj.valuePeriod);
+      }
+      if (obj.valueQuantity) {
+        this.valueQuantity = new Quantity(obj.valueQuantity);
+      }
+      if (obj.valueRange) {
+        this.valueRange = new Range(obj.valueRange);
+      }
+      if (obj.valueRatio) {
+        this.valueRatio = new Ratio(obj.valueRatio);
+      }
+      if (obj.valueReference) {
+        this.valueReference = new Reference(obj.valueReference);
+      }
+      if (obj.valueSampledData) {
+        this.valueSampledData = new SampledData(obj.valueSampledData);
+      }
+      if (obj.valueSignature) {
+        this.valueSignature = new Signature(obj.valueSignature);
+      }
+      if (obj.valueTiming) {
+        this.valueTiming = new Timing(obj.valueTiming);
+      }
+      if (obj.valueContactDetail) {
+        this.valueContactDetail = new ContactDetail(obj.valueContactDetail);
+      }
+      if (obj.valueContributor) {
+        this.valueContributor = new Contributor(obj.valueContributor);
+      }
+      if (obj.valueDataRequirement) {
+        this.valueDataRequirement = new DataRequirement(obj.valueDataRequirement);
+      }
+      if (obj.valueExpression) {
+        this.valueExpression = new Expression(obj.valueExpression);
+      }
+      if (obj.valueParameterDefinition) {
+        this.valueParameterDefinition = new ParameterDefinition(obj.valueParameterDefinition);
+      }
+      if (obj.valueRelatedArtifact) {
+        this.valueRelatedArtifact = new RelatedArtifact(obj.valueRelatedArtifact);
+      }
+      if (obj.valueTriggerDefinition) {
+        this.valueTriggerDefinition = new TriggerDefinition(obj.valueTriggerDefinition);
+      }
+      if (obj.valueUsageContext) {
+        this.valueUsageContext = new UsageContext(obj.valueUsageContext);
+      }
+      if (obj.valueDosage) {
+        this.valueDosage = new Dosage(obj.valueDosage);
+      }
+      if (obj.valueMeta) {
+        this.valueMeta = new Meta(obj.valueMeta);
+      }
     }
   }
 
 }
+
 
 export class Element extends Base {
   public id?: string;
@@ -181,6 +282,7 @@ export class Element extends Base {
   }
 
 }
+
 
 export class Coding extends Element {
   public system?: string;
@@ -439,7 +541,7 @@ export class DomainResource extends Resource implements IDomainResource {
         for (const o of obj.contained || []) {
           if (o.resourceType && classMapping[o.resourceType]) {
             const contained = new classMapping[o.resourceType](o);
-            this.contained.push(<DomainResource> contained);
+            this.contained.push(<DomainResource>contained);
           }
         }
       }
@@ -460,9 +562,9 @@ export class DomainResource extends Resource implements IDomainResource {
 }
 
 export class ContactPoint extends Element implements IContactPoint {
-  public system?: 'phone'|'fax'|'email'|'pager'|'url'|'sms'|'other';
+  public system?: 'phone' | 'fax' | 'email' | 'pager' | 'url' | 'sms' | 'other';
   public value?: string;
-  public use?: 'home'|'work'|'temp'|'old'|'mobile';
+  public use?: 'home' | 'work' | 'temp' | 'old' | 'mobile';
   public rank?: number;
   public period?: Period;
 
@@ -609,7 +711,7 @@ export class ElementDefinitionSlicingComponent extends Element implements IEleme
   public discriminator?: ElementDefinitionDiscriminatorComponent[];
   public description?: string;
   public ordered?: boolean;
-  public rules: 'closed'|'open'|'openAtEnd';
+  public rules: 'closed' | 'open' | 'openAtEnd';
 
   constructor(obj?: any) {
     super(obj);
@@ -659,7 +761,7 @@ export class ElementDefinitionBaseComponent extends Element {
 export class ElementDefinitionTypeRefComponent extends Element implements IElementDefinitionType {
   public code: string;
   public profile?: string[];
-  public _profile?: Element|Element[];
+  public _profile?: Element | Element[];
   public targetProfile?: string[];
   public aggregation?: string[];
   public versioning?: string;
@@ -1250,7 +1352,7 @@ export class StructureDefinition extends DomainResource implements IStructureDef
   public keyword?: Coding[];
   public fhirVersion?: string;
   public mapping?: StructureDefinitionMappingComponent[];
-  public kind: 'primitive-type'|'complex-type'|'resource'|'logical' = 'resource';
+  public kind: 'primitive-type' | 'complex-type' | 'resource' | 'logical' = 'resource';
   public abstract: boolean;
   public context?: StructureDefinitionContextComponent[];
   public contextInvariant?: string[];
@@ -1394,31 +1496,6 @@ export class StructureDefinition extends DomainResource implements IStructureDef
     }
   }
 
-  get intro() {
-    if (!this.extension) return '';
-    const extensions: IExtension[] = this.extension;
-    const intro = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
-    return intro ? intro.valueMarkdown || '' : '';
-  }
-
-  set intro(value: string) {
-    this.extension = this.extension || [];
-    const extensions: IExtension[] = this.extension;
-    let intro = extensions.find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
-
-    if (!intro && value) {
-      intro = {
-        url: Globals.extensionUrls['extension-sd-intro'],
-        valueMarkdown: value
-      };
-      extensions.push(intro);
-    } else if (intro && !value) {
-      const index = extensions.indexOf(intro);
-      extensions.splice(index, index >= 0 ? 1 : 0);
-    } else if (intro && value) {
-      intro.valueMarkdown = value;
-    }
-  }
 }
 
 export class ParametersParameterComponent extends BackboneElement {
@@ -1988,7 +2065,7 @@ export class Signature extends Element {
 
 }
 
-export type BundleTypes = 'document'|'message'|'transaction'|'transaction-response'|'batch'|'batch-response'|'history'|'searchset'|'collection';
+export type BundleTypes = 'document' | 'message' | 'transaction' | 'transaction-response' | 'batch' | 'batch-response' | 'history' | 'searchset' | 'collection';
 
 export class Bundle extends Resource implements IBundle {
   public resourceType = 'Bundle';
@@ -4475,7 +4552,7 @@ export class CapabilityStatementResourceInteractionComponent extends BackboneEle
 export class CapabilityStatementSearchParamComponent extends BackboneElement {
   public name: string;
   public definition?: string;
-  public type: 'number'|'date'|'string'|'token'|'reference'|'composite'|'quantity'|'uri'|'special';
+  public type: 'number' | 'date' | 'string' | 'token' | 'reference' | 'composite' | 'quantity' | 'uri' | 'special';
   public documentation?: string;
 
   constructor(obj?: any) {
@@ -4608,7 +4685,7 @@ export class CapabilityStatementResourceComponent extends BackboneElement {
 }
 
 export class CapabilityStatementSystemInteractionComponent extends BackboneElement {
-  public code: 'read'|'vread'|'update'|'patch'|'delete'|'history-instance'|'history-type'|'create'|'search-type';
+  public code: 'read' | 'vread' | 'update' | 'patch' | 'delete' | 'history-instance' | 'history-type' | 'create' | 'search-type';
   public documentation?: string;
 
   constructor(obj?: any) {
@@ -14853,122 +14930,27 @@ export class ImplementationGuidePageComponent extends BackboneElement {
 
   public setTitle(value: string, isRoot = false) {
     this.title = value;
-
-    if (!isRoot && value) {
-      this.fileName = value.toLowerCase().replace(/\s/g, '_').replace(/[():]/g, '') + this.getExtension();
-    } else if (isRoot) {
-      this.fileName = 'index' + this.getExtension();
-    }
-  }
-
-  public get navMenu() {
-    const navMenuExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-    if (navMenuExt) return navMenuExt.valueString;
-  }
-
-  public set navMenu(value: string) {
-    this.extension = this.extension || [];
-    let navMenuExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-
-    if (!navMenuExt && value) {
-      navMenuExt = {
-        url: Globals.extensionUrls['extension-ig-page-nav-menu'],
-        valueString: value
-      };
-      this.extension.push(navMenuExt);
-    } else if (navMenuExt && !value) {
-      const index = this.extension.indexOf(navMenuExt);
-      this.extension.splice(index, 1);
-    } else if (navMenuExt && value) {
-      navMenuExt.valueString = value
-    }
   }
 
   public get fileName() {
-    const fileNameExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-filename']);
-    if (fileNameExt) return fileNameExt.valueUri;
-  }
 
-  public set fileName(value: string) {
-    this.extension = this.extension || [];
-    let fileNameExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-filename']);
-
-    if (!fileNameExt && value) {
-      fileNameExt = {
-        url: Globals.extensionUrls['extension-ig-page-filename'],
-        valueUri: value.replace(/\s/g, '_')
-      };
-      this.extension.push(fileNameExt);
-    } else if (fileNameExt && !value) {
-      const index = this.extension.indexOf(fileNameExt);
-      this.extension.splice(index, 1);
-    } else if (fileNameExt && value) {
-      fileNameExt.valueUri = value.replace(/\s/g, '_');
+    let fileName = "";
+    let name = "";
+    if(this.nameUrl){
+      name = this.nameUrl;
     }
-
-    if (this.hasOwnProperty('nameUrl') || !this.nameReference) {
-      if (value) {
-        let generatedNameUrl = value;
-
-        if (!generatedNameUrl.endsWith('.html')) {
-          generatedNameUrl = generatedNameUrl.substring(0, generatedNameUrl.lastIndexOf('.')) + '.html';
-        }
-
-        this.nameUrl = generatedNameUrl;
-      } else {
-        delete this.nameUrl;
-      }
+    else if(this.nameReference && this.title){
+      name = this.title.replace(/\s/g, '').replace(/[():]/g, '');
     }
-  }
-
-  public get reuseDescription() {
-    const reuseDescriptionExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-reuse-description']);
-    if (reuseDescriptionExt) return reuseDescriptionExt.valueBoolean;
-    return false;
-  }
-
-  public set reuseDescription(value: boolean) {
-    this.extension = this.extension || [];
-    let reuseDescriptionExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-reuse-description']);
-
-    if (!reuseDescriptionExt) {
-      reuseDescriptionExt = {
-        url: Globals.extensionUrls['extension-ig-page-reuse-description'],
-        valueBoolean: value
-      };
-      this.extension.push(reuseDescriptionExt);
-    } else if (reuseDescriptionExt) {
-      reuseDescriptionExt.valueBoolean = value;
+    let index = name.indexOf('.');
+    if (index > -1) {
+       fileName = name.slice(0, index) +  this.getExtension();
     }
-
-    if (value) {
-      this.contentMarkdown = null;
+    else{
+      fileName = name +  this.getExtension();
     }
+    return fileName;
   }
-
-  public get contentMarkdown() {
-    const contentExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);
-    if (contentExt) return contentExt.valueMarkdown;
-  }
-
-  public set contentMarkdown(value: string) {
-    this.extension = this.extension || [];
-    let contentExt = (this.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-page-content']);
-
-    if (!contentExt && value) {
-      contentExt = {
-        url: Globals.extensionUrls['extension-ig-page-content'],
-        valueMarkdown: value
-      };
-      this.extension.push(contentExt);
-    } else if (contentExt && !value) {
-      const index = this.extension.indexOf(contentExt);
-      this.extension.splice(index, 1);
-    } else if (contentExt && value) {
-      contentExt.valueMarkdown = value;
-    }
-  }
-
 }
 
 export class ImplementationGuideParameterComponent extends BackboneElement {
@@ -16839,7 +16821,7 @@ export class Media extends DomainResource {
   public identifier?: Identifier[];
   public basedOn?: ResourceReference[];
   public partOf?: ResourceReference[];
-  public status: 'preparation'|'in-progress'|'not-done'|'suspended'|'aborted'|'completed'|'entered-in-error'|'unknown';
+  public status: 'preparation' | 'in-progress' | 'not-done' | 'suspended' | 'aborted' | 'completed' | 'entered-in-error' | 'unknown';
   public type?: CodeableConcept;
   public modality?: CodeableConcept;
   public view?: CodeableConcept;
@@ -29360,5 +29342,5 @@ export const classMapping = {
   'TestScript': TestScript,
   'ValueSet': ValueSet,
   'VerificationResult': VerificationResult,
-  'VisionPrescription': VisionPrescription,
+  'VisionPrescription': VisionPrescription
 };

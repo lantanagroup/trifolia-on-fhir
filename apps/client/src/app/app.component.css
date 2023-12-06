@@ -3,8 +3,8 @@
     height: 21px;
 }
 
-.container.container-large {
-    max-width: 100% !important;
+.d-flex {
+    min-height: 100%;
 }
 
 .nav-icons {

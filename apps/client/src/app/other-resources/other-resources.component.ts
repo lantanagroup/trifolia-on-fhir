@@ -9,9 +9,9 @@ import { Globals } from '../../../../../libs/tof-lib/src/lib/globals';
 import { debounceTime } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
-import { ConformanceService } from '../shared/conformance.service';
+import { FhirResourceService } from '../shared/fhir-resource.service';
 import { Paginated } from '@trifolia-fhir/tof-lib';
-import { IConformance } from '@trifolia-fhir/models';
+import { IFhirResource } from '@trifolia-fhir/models';
 
 @Component({
   templateUrl: './other-resources.component.html',
@@ -24,7 +24,7 @@ export class OtherResourcesComponent implements OnInit {
   public searchContent: string;
   public searchUrl: string;
   public message: string;
-  public results: Paginated<IConformance>;
+  public results: Paginated<IFhirResource>;
   public Globals = Globals;
   public page = 1;
   public ignoreContext = false;
@@ -36,7 +36,7 @@ export class OtherResourcesComponent implements OnInit {
 
   constructor(
     public configService: ConfigService,
-    private conformanceService: ConformanceService,
+    private fhirResourceService: FhirResourceService,
     private fhirService: FhirService,
     public route: ActivatedRoute
     ) {
@@ -56,8 +56,8 @@ export class OtherResourcesComponent implements OnInit {
 
     this.message = 'Searching...';
 
-    this.conformanceService.search(this.page, 'name', this.configService.fhirVersion,
-      this.ignoreContext ? null : this.configService.project.implementationGuideId,
+    this.fhirResourceService.search(this.page, 'name', this.configService.fhirVersion,
+      this.ignoreContext ? null : this.configService.igContext.implementationGuideId,
       this.searchResourceType
     ).subscribe({
       next: (res) => {

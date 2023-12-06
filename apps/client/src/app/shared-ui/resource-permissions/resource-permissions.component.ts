@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {Bundle, DomainResource} from '@trifolia-fhir/stu3';
+import {DomainResource} from '@trifolia-fhir/stu3';
 import {getAuthIdIdentifier, getAuthIdSource, Globals, Paginated} from '@trifolia-fhir/tof-lib';
 import {FhirService} from '../../shared/fhir.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -14,16 +14,18 @@ import {
   removePermission
 } from '@trifolia-fhir/tof-lib';
 import {firstValueFrom, mergeMap, Observable} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, switchMap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {GroupService} from '../../shared/group.service';
 import {ConfigService} from '../../shared/config.service';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 import type {IPractitioner} from '@trifolia-fhir/tof-lib';
-import type {IConformance, IGroup, IPermission, IProject, IProjectResource, IUser} from '@trifolia-fhir/models';
+import type {IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
 import { UserService } from '../../shared/user.service';
+import { BaseComponent } from '../../base.component';
+import { AuthService } from '../../shared/auth.service';
 
 class ResourceSecurity {
-  type: 'everyone'|'user'|'group';
+  type: 'everyone'|'User'|'Group';
   id?: string;
   display?: string;
   canRead: boolean;
@@ -51,8 +53,8 @@ class ResourceSecurity {
   templateUrl: './resource-permissions.component.html',
   styleUrls: ['./resource-permissions.component.css']
 })
-export class ResourcePermissionsComponent implements OnInit {
-  @Input() resource: IProject|IProjectResource;
+export class ResourcePermissionsComponent extends BaseComponent implements OnInit {
+  @Input() resource: IProject;
 
   @Output() change: EventEmitter<void> = new EventEmitter<void>();
 
@@ -78,13 +80,14 @@ export class ResourcePermissionsComponent implements OnInit {
   public getUserEmail = getUserEmail;
 
   constructor(
+    public authService: AuthService,
     public configService: ConfigService,
     private fhirService: FhirService,
     private groupService: GroupService,
     private userService: UserService,
     private implementationGuideService: ImplementationGuideService,
     private modal: NgbModal) {
-
+      super(configService, authService);
   }
 
   // get meta(): Meta {
@@ -143,23 +146,23 @@ export class ResourcePermissionsComponent implements OnInit {
     }
 
     const perms = this.resource.permissions || [];
-    const grouped = groupBy(perms, (next) => next.type + next.targetId);
+    const grouped = groupBy(perms, (next) => next.type + next.target);
     const groupedKeys = Object.keys(grouped);
 
     return groupedKeys.map((groupedKey) => {
       const group: IPermission[] = grouped[groupedKey];
       const next = new ResourceSecurity();
       next.type = group[0].type;
-      next.id = group[0].targetId;
+      next.id = group[0].target?.toString();
 
-      if (next.type === 'group' && this.groupsArray) {
+      if (next.type === 'Group' && this.groupsArray) {
         const found = (this.groupsArray || []).find((g: IGroup) => g.id === next.id);
         if (found) {
           next.display = found.name;
         }
       }
 
-      if (next.type === 'user' && this.usersArray) {
+      if (next.type === 'User' && this.usersArray) {
         const found = (this.usersArray || []).find((u: IUser) => u.id === next.id);
         if (found) {
           next.display = found.name;
@@ -191,15 +194,16 @@ export class ResourcePermissionsComponent implements OnInit {
 
   public searchGroups() {
     this.isSearchingGroups = true;
-    this.groupService.getMembership(this.searchGroupsCriteria).toPromise()
-      .then((results: IGroup[]) => {
+    this.groupService.getMembership(this.searchGroupsCriteria).subscribe({
+      next: (results: IGroup[]) => {
         this.foundGroupsArray = results;
         this.isSearchingGroups = false;
-      })
-      .catch((err) => {
+      },
+      error: (err) => {
         this.message = getErrorString(err);
         this.isSearchingGroups = false;
-      });
+      }
+    });
   }
 
   public searchUsers() {
@@ -208,13 +212,13 @@ export class ResourcePermissionsComponent implements OnInit {
       .catch((err) => this.message = getErrorString(err));
   }
 
-  public addPermission(type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
+  public addPermission(type: 'User'|'Group'|'everyone', permission: 'read'|'write', id?: string) {
     if (addPermission(this.resource, type, permission, id)) {
       this.getPermittedResources();
     }
   }
 
-  public removePermission(type: 'user'|'group'|'everyone', permission: 'read'|'write', id?: string) {
+  public removePermission(type: 'User'|'Group'|'everyone', permission: 'read'|'write', id?: string) {
     removePermission(this.resource, type, permission, id);
   }
 
@@ -228,15 +232,15 @@ export class ResourcePermissionsComponent implements OnInit {
    */
   private getPermittedResources() {
     const permissions: IPermission[] = this.resource?.permissions ?? [];
-    const groupIds = permissions
-      .filter((p) => p.type === 'group')
-      .map((p) => p.targetId);
-    const userIds = permissions
-      .filter((p) => p.type === 'user')
-      .map((p) => p.targetId);
+    const groupIds = [... new Set(permissions
+      .filter((p) => p.type === 'Group')
+      .map((p) => p.target?.toString()))];
+    const userIds = [... new Set(permissions
+      .filter((p) => p.type === 'User')
+      .map((p) => p.target?.toString()))];
 
     if (groupIds.length > 0) {
-      this.groupService.getMembership(null, groupIds.join(',')).toPromise()
+      firstValueFrom(this.groupService.getGroupInfo(groupIds))
         .then((results: IGroup[]) => this.groupsArray = results)
         .catch((err) => this.message = getErrorString(err));
     }
@@ -259,9 +263,9 @@ export class ResourcePermissionsComponent implements OnInit {
         return false;
       }
 
-      if (perm.type === 'user' && perm.targetId === this.currentUser.id) {
+      if (perm.type === 'User' && perm.target === this.currentUser.id) {
         return true;
-      } else if (perm.type === 'group' && this.groupsArray) {
+      } else if (perm.type === 'Group' && this.groupsArray) {
         return !!(this.groupsArray || []).find((group: IGroup) => {
 
           return !!(group.members || []).find((member: IUser|string) => {
@@ -299,10 +303,10 @@ export class ResourcePermissionsComponent implements OnInit {
       const meCanWrite = this.findCurrentUserPermission('write');
 
       if (!meCanRead) {
-        this.addPermission('user', 'read', this.currentUser.id);
+        this.addPermission('User', 'read', this.currentUser.id);
       }
       if (!meCanWrite) {
-        this.addPermission('user', 'write', this.currentUser.id);
+        this.addPermission('User', 'write', this.currentUser.id);
       }
 
       this.getPermittedResources();

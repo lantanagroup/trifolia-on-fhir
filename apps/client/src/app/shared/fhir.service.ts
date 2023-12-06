@@ -12,19 +12,19 @@ import {
   Resource,
   StructureDefinition,
   ValueSet
-} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
+} from '@trifolia-fhir/stu3';
 import {forkJoin, Observable} from 'rxjs';
 import {Fhir, Versions} from 'fhir/fhir';
 import {ParseConformance} from 'fhir/parseConformance';
 import {ConfigService} from './config.service';
 import {Severities, ValidatorMessage, ValidatorResponse} from 'fhir/validator';
-import {Globals} from '../../../../../libs/tof-lib/src/lib/globals';
+import {Globals, ICoding} from '@trifolia-fhir/tof-lib';
 import {CustomValidator} from './validation/custom-validator';
 import {CustomSTU3Validator} from './validation/custom-STU3-validator';
 import * as vkbeautify from 'vkbeautify';
 import {publishReplay, refCount} from 'rxjs/operators';
-import {IBundle} from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IConformance} from '@trifolia-fhir/models';
+import {IBundle} from '@trifolia-fhir/tof-lib';
+import {IFhirResource} from '@trifolia-fhir/models';
 import {Paginated} from '@trifolia-fhir/tof-lib';
 
 export interface IResourceGithubDetails {
@@ -39,10 +39,6 @@ export class ResourceGithubDetails implements IResourceGithubDetails {
   repository: string;
   branch: string;
   path: string;
-
-  public hasAllDetails(): boolean {
-    return !!(this.owner && this.repository && this.branch && this.path);
-  }
 }
 
 @Injectable()
@@ -53,7 +49,6 @@ export class FhirService {
   public profiles: StructureDefinition[] = [];
   public valueSets: (ValueSet | CodeSystem)[] = [];
   private customValidator: CustomValidator;
-  private validCodes: string[] = ['ignore-warnings', 'custom-menu', 'jira-spec', 'package-list'];
 
   constructor(
     private injector: Injector,
@@ -246,7 +241,7 @@ export class FhirService {
     pathExtension.valueString = details.owner + '/' + details.repository + '/' + (details.path.startsWith('/') ? details.path.substring(1) : details.path);
   }
 
-  public getValueSetCodes(valueSetUrl: string): Coding[] {
+  public getValueSetCodes(valueSetUrl: string): ICoding[] {
     let codes: Coding[] = [];
     const foundValueSet = <ValueSet>this.valueSets
       .filter((item) => item.resourceType === 'ValueSet')
@@ -299,7 +294,7 @@ export class FhirService {
    * @param ignoreContext Does *not* send the context implementation guide in the headers to limit the search results
    */
   public search(resourceType: string, searchContent?: string, summary?: boolean, searchUrl?: string, id?: string, implementationGuideId?: string, additionalQuery?: { [id: string]: string | string[] }, separateArrayQuery = false, sortID = false, page?: number) {
-    let url = '/api/conformance?resourcetype=' + resourceType + '&page=' + page + '&'; //+ `_count=${count}&`;
+    let url = '/api/fhirResources?resourcetype=' + resourceType + '&page=' + page + '&'; //+ `_count=${count}&`;
 
     if (searchContent) {
       url += `_content=${encodeURIComponent(searchContent)}&`;
@@ -338,7 +333,7 @@ export class FhirService {
 
     if (sortID) url += '_sort=resourceid&';
 
-    return this.http.get<Paginated<IConformance>>(url);
+    return this.http.get<Paginated<IFhirResource>>(url);
   }
 
 
@@ -349,10 +344,10 @@ export class FhirService {
    */
   public readById(resourceType: string, id: string) {
     let url = '';
-    if (resourceType == 'conformance') {
-      url = '/api/conformance/' + encodeURIComponent(id);
-    } else if (resourceType == 'example') {
-      url = '/api/example/' + encodeURIComponent(id);
+    if (resourceType == 'fhirResource') {
+      url = '/api/fhirResources/' + encodeURIComponent(id);
+    } else if (resourceType == 'nonFhirResource') {
+      url = '/api/nonFhirResources/' + encodeURIComponent(id);
     }
     return this.http.get(url);
   }
@@ -363,7 +358,7 @@ export class FhirService {
    * @param {string} id
    */
   public delete(id: string) {
-    const url = `/api/conformance/${id}`;
+    const url = `/api/fhirResources/${id}`;
     return this.http.delete(url);
   }
 
@@ -373,12 +368,12 @@ export class FhirService {
    * @param {string} id
    * @param {Resource} resource
    */
-  public update(id: string, conformance: IConformance): Observable<IConformance> {
+  public update(id: string, fhirResource: IFhirResource): Observable<IFhirResource> {
     if (id) {
-      const url = '/api/conformance/' + encodeURIComponent(id);
-      return this.http.put<IConformance>(url, conformance);
+      const url = '/api/fhirResources/' + encodeURIComponent(id);
+      return this.http.put<IFhirResource>(url, fhirResource);
     } else {
-      return this.http.post<IConformance>('/api/codeSystem', conformance);
+      return this.http.post<IFhirResource>('/api/codeSystem', fhirResource);
     }
   }
 
@@ -533,7 +528,7 @@ export class FhirService {
   }
 
   /* public findResourceTypesWithSearchParam(searchParamName: string): string[] {
-     const cs = <CapabilityStatement>this.configService.fhirConformance;
+     const cs = <CapabilityStatement>this.configService.fhirResource;
      const resourceTypes: string[] = [];
 
      if (!cs) {

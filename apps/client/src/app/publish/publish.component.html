@@ -5,7 +5,7 @@
     href="https://chat.fhir.org/#narrow/stream/179252-IG-creation" target="_blank">chat.fhir.org</a>.
 </div>
 
-<div class="mb-3" [attr.data-intro]="Globals.introText['publish.implementation-guide']" *ngIf="!configService.project">
+<div class="mb-3" [attr.data-intro]="Globals.introText['publish.implementation-guide']" *ngIf="!configService.igContext">
   <label>Implementation Guide</label>
   <div class="input-group">
     <input type="text" class="form-control"

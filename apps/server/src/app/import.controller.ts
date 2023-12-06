@@ -5,7 +5,8 @@ import {
   Controller,
   Get,
   Headers,
-  Param, Post, Query,
+  Param,
+  Post, Query,
   UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
@@ -13,23 +14,17 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiOAuth2, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from './config.service';
 import { TofLogger } from './tof-logger';
-import { FhirController } from './fhir.controller';
-import { FhirServerVersion, RequestHeaders, User } from './server.decorators';
-import { buildUrl } from '../../../../libs/tof-lib/src/lib/fhirHelper';
-import { TofNotFoundException } from '../not-found-exception';
-import { AxiosRequestConfig } from 'axios';
-import type { ITofUser } from '../../../../libs/tof-lib/src/lib/tof-user';
-import {
-  ValueSet, ValueSetComposeComponent,
-  ValueSetConceptReferenceComponent,
-  ValueSetConceptSetComponent
-} from '../../../../libs/tof-lib/src/lib/r4/fhir';
-import { addToImplementationGuide } from './helper';
-import { IBundle } from '../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import { ConformanceService } from './conformance/conformance.service';
-import { ExamplesService } from './examples/examples.service';
+import { RequestHeaders, User } from './server.decorators';
+import type { ITofUser } from '@trifolia-fhir/tof-lib';
+import { FhirResourcesService } from './fhir-resources/fhir-resources.service';
+import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
 import { ObjectId } from 'mongodb';
 import { IProjectResource } from '@trifolia-fhir/models';
+import { firstValueFrom } from 'rxjs';
+import { AxiosRequestConfig } from 'axios';
+import { buildUrl } from '@trifolia-fhir/tof-lib';
+import { FhirResource } from './fhir-resources/fhir-resource.schema';
+import { TofNotFoundException } from '../not-found-exception';
 
 @Controller('api/import')
 @UseGuards(AuthGuard('bearer'))
@@ -42,8 +37,8 @@ export class ImportController extends BaseController {
   constructor(
     protected httpService: HttpService,
     protected configService: ConfigService,
-    protected conformanceService: ConformanceService,
-    protected exampleService: ExamplesService) {
+    protected fhirResourceService: FhirResourcesService,
+    protected nonFhirResourcesService: NonFhirResourcesService) {
     super(configService, httpService);
   }
 
@@ -73,7 +68,7 @@ export class ImportController extends BaseController {
 
       let filter = {};
       if (implementationGuideId && "ImplementationGuide" !== e.resourceType) {
-        filter['igIds'] = new ObjectId(implementationGuideId);
+        filter['referencedBy.value'] = new ObjectId(implementationGuideId);
       }
 
       if (e.isExample) {
@@ -82,16 +77,16 @@ export class ImportController extends BaseController {
           {'name': e.id, 'content': {$type: 'string'}}
         ];
 
-        res = await this.exampleService.findOne(filter);
+        res = await this.nonFhirResourcesService.findOne(filter);
       } else {
         filter['resource.resourceType'] = e.resourceType;
         filter['resource.id'] = e.id;
 
-        res = await this.conformanceService.findOne(filter);
+        res = await this.fhirResourceService.findOne(filter);
       }
 
       // resource found
-      if (res) {
+      if (res && !!res.id) {
         response[path] = { resource: res, action: 'update' };
       } else {
         response[path] = { resource: null, action: 'add' };
@@ -169,18 +164,13 @@ export class ImportController extends BaseController {
      return results.data;
    }*/
 
-  /*@Get('vsac/:id')
+  @Get('vsac/:id')
   public async importVsacValueSet(
-    @FhirServerBase() fhirServerBase: string,
-    @FhirServerVersion() fhirServerVersion,
     @User() user: ITofUser,
     @Headers('vsacauthorization') vsacAuthorization: string,
     @Param('id') id: string,
     @Param('applyContextPermissions') applyContextPermissions = true,
     @RequestHeaders('implementationGuideId') contextImplementationGuideId) {
-
-    const contextImplementationGuide = await this.getImplementationGuide(fhirServerBase, contextImplementationGuideId);
-    const userSecurityInfo = await this.getUserSecurityInfo(user, fhirServerBase);
 
     if (!vsacAuthorization) {
       throw new BadRequestException('Expected vsacauthorization header to be provided');
@@ -198,12 +188,12 @@ export class ImportController extends BaseController {
     let vsacResults;
 
     try {
-      vsacResults = await this.httpService.request(options).toPromise();
+      vsacResults = await firstValueFrom(this.httpService.request(options));
     } catch (ex) {
       if (ex.response && ex.response.status === 404) {
         throw new TofNotFoundException(`The value set ${id} was not found in VSAC`);
       } else if (ex.response && ex.response.status === 401) {
-        throw new UnauthorizedException(`The username/password provided were not accepted by VSAC`);
+        throw new UnauthorizedException('The API key provided was not accepted by VSAC');
       }
 
       this.logger.error(`An error occurred while retrieving value set ${id} from VSAC: ${ex.message}`, ex.stack);
@@ -215,16 +205,12 @@ export class ImportController extends BaseController {
     }
 
     try {
-      const proxyUrl = `/${vsacResults.data.resourceType}/${vsacResults.data.id}`;
-      const fhirProxy = new FhirController(this.httpService, this.configService);
-      const proxyResults = await fhirProxy.proxy(proxyUrl, null, 'PUT', fhirServerBase, fhirServerVersion, user, vsacResults.data, applyContextPermissions);
-      if (contextImplementationGuide) {
-        await addToImplementationGuide(this.httpService, this.configService, fhirServerBase, fhirServerVersion, proxyResults.data, userSecurityInfo, contextImplementationGuide, true);
-      }
-      return proxyResults.data;
+      const newRes = new FhirResource();
+      newRes.resource = vsacResults.data;
+      return await this.fhirResourceService.createFhirResource(newRes, contextImplementationGuideId);
     } catch (ex) {
       this.logger.error(`An error occurred while importing value set ${id} from VSAC: ${ex.message}`, ex.stack);
       throw ex;
     }
-  }*/
+  }
 }

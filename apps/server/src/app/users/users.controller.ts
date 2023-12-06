@@ -1,8 +1,8 @@
-import { BadRequestException, Body, ConflictException, Controller, Get, Param, Post, Put, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, ConflictException, Controller, Delete, Get, HttpCode, Param, Post, Put, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOAuth2 } from '@nestjs/swagger';
-import type { IUser } from '@trifolia-fhir/models';
-import type { ITofUser } from '@trifolia-fhir/tof-lib';
+import { AuditAction, AuditEntityType, type IUser } from '@trifolia-fhir/models';
+import { type ITofUser, Paginated } from '@trifolia-fhir/tof-lib';
 import { BaseDataController } from '../base/base-data.controller';
 import { User } from '../server.decorators';
 import { TofLogger } from '../tof-logger';
@@ -10,6 +10,7 @@ import { UserDocument } from './user.schema';
 import { UsersService } from './users.service';
 import { ObjectId } from 'mongodb';
 import { TofNotFoundException } from '../../not-found-exception';
+import { AuditEntity } from '../audit/audit.decorator';
 
 @Controller('api/users')
 @UseGuards(AuthGuard('bearer'))
@@ -50,6 +51,23 @@ export class UsersController extends BaseDataController<UserDocument> {
     }
 
 
+    @Get()
+    public async search(@User() user: ITofUser, @Request() req?: any) : Promise<Paginated<UserDocument>> {
+
+        let options = this.getPaginateOptionsFromRequest(req);
+
+        if (!user.isAdmin) {
+            options.projection = {
+                authId: 0,
+                email: 0,
+                phone: 0
+            }
+        }
+
+        return this.usersService.search(options);
+    }
+
+
     @Get('me')
     public async getMe(@User() user: ITofUser) : Promise<IUser> {
         
@@ -74,8 +92,20 @@ export class UsersController extends BaseDataController<UserDocument> {
         return res;
     }
 
+    @Get(':id')
+    public async getUser(@Param('id') id: string, @User() user: ITofUser) : Promise<UserDocument> {
+        let res = await this.dataService.findById(id);
+
+        if (!res) {
+            throw new TofNotFoundException();
+        }
+
+        return res;
+    }
+
 
     @Post()
+    @AuditEntity(AuditAction.Create, AuditEntityType.User)
     public async createUser(@User() user: ITofUser, @Body() newUser: IUser) : Promise<IUser> {
 
         if (!newUser || !newUser.authId || newUser.authId.length < 1 || !newUser.firstName || !newUser.lastName) {
@@ -98,6 +128,7 @@ export class UsersController extends BaseDataController<UserDocument> {
 
 
     @Put(':id')
+    @AuditEntity(AuditAction.Update, AuditEntityType.User)
     public async updateUser(@Param('id') id: string, @User() user: ITofUser, @Body() updatedUser: IUser) : Promise<IUser> {
 
         super.assertIdMatch(id, updatedUser);
@@ -108,6 +139,18 @@ export class UsersController extends BaseDataController<UserDocument> {
         }
 
         return super.update(id, updatedUser);
+    }
+
+    @HttpCode(204)
+    @Delete()
+    @AuditEntity(AuditAction.Delete, AuditEntityType.User)
+    public async deleteUser(@Param('id') id: string, @User() user: ITofUser) {
+        let me = await this.getMe(user);
+        if (!(user.isAdmin || (me && me.id === id))) {
+            throw new UnauthorizedException();
+        }
+
+        this.usersService.delete(id);
     }
 
 }

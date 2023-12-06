@@ -279,8 +279,6 @@ export interface IStructureDefinition extends IDomainResource {
   differential?: {
     element: IElementDefinition[];
   };
-  intro: string;
-  notes: string;
 }
 
 export interface IAuditEvent extends IDomainResource {

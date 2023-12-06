@@ -1,30 +1,29 @@
 import {Injectable} from '@angular/core';
-import {Bundle, CodeSystem, OperationOutcome} from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import { ICodeSystem } from '../../../../../libs/tof-lib/src/lib/fhirInterfaces';
-import {IConformance, IProject} from '@trifolia-fhir/models';
-import { ConformanceService } from './conformance.service';
+import {IFhirResource} from '@trifolia-fhir/models';
+import { FhirResourceService } from './fhir-resource.service';
+import { Paginated } from '@trifolia-fhir/tof-lib';
 
 @Injectable()
-export class CodeSystemService extends ConformanceService {
+export class CodeSystemService extends FhirResourceService {
 
   constructor(
       protected http: HttpClient) {
       super(http);
   }
 
-    public save(codeSystemId:string, codeSystem: IConformance): Observable<IConformance> {
+    public save(codeSystemId:string, codeSystem: IFhirResource): Observable<IFhirResource> {
         if (codeSystemId) {
-            const url = '/api/codeSystem/' + encodeURIComponent(codeSystemId);
-            return this.http.put<IConformance>(url, codeSystem);
+            const url = '/api/codeSystems/' + encodeURIComponent(codeSystemId);
+            return this.http.put<IFhirResource>(url, codeSystem);
         } else {
-            return this.http.post<IConformance>('/api/codeSystem', codeSystem);
+            return this.http.post<IFhirResource>('/api/codeSystems', codeSystem);
         }
     }
 
-    public searchCodeSystem(page = 1, name?: string, implementationGuideId?: string) :  Observable<IConformance[]> {
-        let url = '/api/codeSystem?resourcetype=CodeSystem&page=' + page + '&';
+    public searchCodeSystem(page = 1, name?: string, implementationGuideId?: string) :  Observable<Paginated<IFhirResource>> {
+        let url = '/api/codeSystems?resourcetype=CodeSystem&page=' + page + '&';
 
         if (name) {
             url += `name=${encodeURIComponent(name)}&`;
@@ -36,16 +35,16 @@ export class CodeSystemService extends ConformanceService {
 
         url += '_sort=name';
 
-        return this.http.get<IConformance[]>(url);
+        return this.http.get<Paginated<IFhirResource>>(url);
     }
 
-    public getCodeSystem(id: string): Observable<IConformance> {
-        const url = '/api/codeSystem/' + encodeURIComponent(id);
-        return this.http.get<IConformance>(url);
+    public getCodeSystem(id: string): Observable<IFhirResource> {
+        const url = '/api/codeSystems/' + encodeURIComponent(id);
+        return this.http.get<IFhirResource>(url);
     }
 
     public delete(id: string) {
-        const url = '/api/codeSystem/' + encodeURIComponent(id);
+        const url = '/api/codeSystems/' + encodeURIComponent(id);
         return this.http.delete(url);
     }
 }

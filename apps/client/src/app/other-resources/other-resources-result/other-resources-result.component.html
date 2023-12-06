@@ -1,6 +1,6 @@
 <div *ngIf="resource">
   <h1 *ngIf="isFhir">{{ resource.resource.resourceType || 'Unknown' }} - {{ resource.resource.id || resource.id}}</h1>
-  <h1 *ngIf="!isFhir">{{ resource.content.resourceType || 'Unknown' }} - {{ resource.content.id || resource.name || resource.id}}</h1>
+  <h1 *ngIf="!isFhir">{{ resource.content?.resourceType || 'Unknown' }} - {{ resource.content?.id || resource.name || resource.id}}</h1>
   <input type="file" style="display: none;" #fileUpload accept="application/json, application/xml" (change)="uploadFile($event)"/>
   <div class="btn-toolbar">
     <div class="btn-group me-2" role="group" aria-label="Generic actions for the resource">
@@ -31,21 +31,13 @@
       </select>
     </div>
   </div>
-  <ul ngbNav #nav="ngbNav" class="nav-tabs" (navChange)="changeSubTab($event)">
+  <ul ngbNav #nav="ngbNav" class="nav-tabs mt-2" (navChange)="changeSubTab($event)">
     <li ngbNavItem="json/xml">
       <a ngbNavLink>JSON/XML</a>
       <ng-template ngbNavContent>
         <div class="input-group">
           <textarea class="form-control other" [ngModel]="content" (keyup)="contentHasChanged($event.target.value)" #jsonXmlTextField></textarea>
         </div>
-      </ng-template>
-    </li>
-    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
-      <a ngbNavLink>
-        Permissions <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(resource)" title="No write permissions for current user specified!"></i>
-      </a>
-      <ng-template ngbNavContent>
-        <trifolia-fhir-resource-permissions [resource]="resource"></trifolia-fhir-resource-permissions>
       </ng-template>
     </li>
     <li ngbNavItem="validation" *ngIf="isFhir">
@@ -67,7 +59,7 @@
       </ng-template>
     </li>
   </ul>
-  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  <div [ngbNavOutlet]="nav"></div>
 
 
 </div>

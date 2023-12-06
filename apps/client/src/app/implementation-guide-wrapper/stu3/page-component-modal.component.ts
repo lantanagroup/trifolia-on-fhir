@@ -5,6 +5,8 @@ import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
 import {getImplementationGuideMediaReferences, MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import {Observable} from 'rxjs';
 import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
+import {Page} from '@trifolia-fhir/models';
+import {ImplementationGuidePageComponent} from '@trifolia-fhir/r4';
 
 @Component({
   templateUrl: './page-component-modal.component.html',
@@ -16,6 +18,7 @@ export class PageComponentModalComponent implements OnInit {
   public implementationGuide: ImplementationGuide;
   public Globals = Globals;
   public pageNavMenus: string[];
+  public resource:  Page;
 
   constructor(public activeModal: NgbActiveModal) {
 
@@ -41,16 +44,25 @@ export class PageComponentModalComponent implements OnInit {
     this.page = new PageComponent(this.inputPage);
   }
 
-  public importFile(file: File) {
-    const reader = new FileReader();
 
-    reader.onload = (e: any) => {
-      const result = e.target.result;
-      this.page.contentMarkdown = result.substring(5 + file.type.length + 8);
-    };
 
-    reader.readAsDataURL(file);
+  public setResource(value: Page) {
+    this.resource = value;
   }
+
+  public get contentMarkdown() {
+    return this.resource["content"];
+  }
+
+
+  public get navMenu() {
+    return this.resource["navMenu"];
+  }
+
+  public get reuseDescription() {
+    return this.resource["reuseDescription"];
+  }
+
 
   ok() {
     this.activeModal.close(this.page);
@@ -67,13 +79,14 @@ export class PageComponentModalComponent implements OnInit {
       getPages(this.implementationGuide.page);
     }
 
-    this.pageNavMenus = allPages
-      .filter(p => !!p.navMenu)
-      .map(p => p.navMenu)
+   /* this.pageNavMenus = allPages
+      .filter(p => !!this.navMenu)
+      .map(p => this.navMenu)
       .reduce<string[]>((prev, curr) => {
         if (prev.indexOf(curr) < 0) prev.push(curr);
         return prev;
       }, [])
       .sort((a, b) => (a > b ? -1 : 1));
+      */
   }
 }

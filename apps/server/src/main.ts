@@ -2,7 +2,7 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app/app.module';
 import {Response} from 'express';
 import type {ITofRequest} from './app/models/tof-request';
-import socketIo from 'socket.io';
+import { Server } from 'socket.io';
 import {ISocketConnection} from './app/models/socket-connection';
 import {NotFoundExceptionFilter} from './not-found-exception-filter';
 import {TofLogger} from './app/tof-logger';
@@ -16,6 +16,9 @@ import {ConfigService} from './app/config.service';
 import {NestExpressApplication} from '@nestjs/platform-express';
 import hpropagate from 'hpropagate';
 import {FhirInstances} from './app/helper';
+
+import * as migrate from 'migrate-mongo';
+import { MigrateMongoConfigService } from './db-migrations/migrate-mongo-config';
 
 const config = ConfigService.create();
 
@@ -82,31 +85,31 @@ const parseFhirBody = (req: ITofRequest, res: Response, next) => {
 };
 
 const initSocket = (app) => {
-  io = socketIo(app.getHttpServer());
+  io = new Server(app.getHttpServer());
 
   io.on('connection', (socket) => {
-    logger.log(`Client (id: ${socket.client.id}) connected to socket`);
+    logger.trace(`Client (id: ${socket.client.id}) connected to socket`);
 
     connections.push({
       id: socket.client.id
     });
 
     socket.on('disconnect', () => {
-      logger.log(`Client (id: ${socket.client.id}) disconnected from socket`);
+      logger.trace(`Client (id: ${socket.client.id}) disconnected from socket`);
 
       const foundConnection = connections.find((connection) => connection.id === socket.client.id);
 
       if (foundConnection) {
         const index = connections.indexOf(foundConnection);
         connections.splice(index, 1);
-        logger.log(`Removed connection with id ${socket.client.id} from connections list`);
+        logger.trace(`Removed connection with id ${socket.client.id} from connections list`);
       } else {
         logger.error(`Socket disconnected, but no connection found for id ${socket.client.id}.`);
       }
     });
 
     socket.on('authenticated', (data) => {
-      logger.log(`Client socket (id: ${socket.client.id}) sent authentication information`);
+      logger.trace(`Client socket (id: ${socket.client.id}) sent authentication information`);
 
       const foundConnection = connections.find((connection) => connection.id === socket.client.id);
 
@@ -119,7 +122,7 @@ const initSocket = (app) => {
     });
 
     socket.on('exporting', (packageId) => {
-      logger.log(`Updating socket id to ${socket.client.id} for html exporters with package id ${packageId}`);
+      logger.trace(`Updating socket id to ${socket.client.id} for html exporters with package id ${packageId}`);
 
       /* TODO: Re-enable
       const exporters = _.filter(ExportController.htmlExports, (exporter) => exporter._packageId === packageId);
@@ -166,14 +169,32 @@ async function bootstrap() {
   let app: NestExpressApplication;
 
   try {
-    console.log('creating application');
+    logger.log('Creating app');
     app = await NestFactory.create<NestExpressApplication>(AppModule, {
       httpsOptions,
       //logger: false
     });
   } catch (ex) {
-    console.log(ex);
     logger.error(ex);
+  }
+
+  
+  // run db migration automatically if configured to do so
+  const migrateConfig = new MigrateMongoConfigService(config).getConfig();
+  migrate.config.set(migrateConfig);
+  const { db, client } = await migrate.database.connect();
+  if (config.database.migrateAtStart) {
+    logger.log('Running migrate-mongo up');
+    await migrate.up(db, client);
+  } 
+  // otherwise check that there aren't any pending migrations
+  else {
+    const migrationStatus: Array<{ fileName, appliedAt }> = await migrate.status(db);
+    if ((migrationStatus || []).some(s => s.appliedAt === 'PENDING')) {
+      logger.error('Database migrations are pending.  Please run \'npm run migrate:up\' or enable migrateAtStart in the config.');
+      await app.close();
+      process.exit(0);
+    }
   }
 
   app.useGlobalFilters(new NotFoundExceptionFilter());

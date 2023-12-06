@@ -2,9 +2,9 @@
 
 <div class="alert alert-danger" *ngIf="igNotFound">Implementation Guide with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
-<div class="ig-main" *ngIf="conformance && implementationGuide">
+<div class="ig-main" *ngIf="fhirResource && implementationGuide">
   <h2>
-    {{implementationGuide.name || 'no-name'}} <span class="badge bg-warning" *ngIf="!canEdit(conformance)">View-only</span><span class="badge bg-danger" *ngIf="isDirty">Changed!</span>
+    {{implementationGuide.name || 'no-name'}} <span class="badge bg-warning" *ngIf="!canEdit(fhirResource)">View-only</span>
   </h2>
   <ul ngbNav #igTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
     <li ngbNavItem="general">
@@ -72,7 +72,7 @@
             <div class="mb-3">
               <label>
                 <input type="checkbox" [ngModel]="implementationGuide.hasOwnProperty('fhirVersion')" (ngModelChange)="Globals.toggleProperty(implementationGuide, 'fhirVersion', [])"
-                (change)="igChanging.emit(true)"/>
+                       (change)="igChanging.emit(true)"/>
                 FHIR Version
               </label>
               <div class="input-group" *ngFor="let fhirVersion of implementationGuide.fhirVersion; let fvi = index; trackBy: Globals.trackByFn">
@@ -180,7 +180,7 @@
                 <app-tooltip-icon tooltipPath="ImplementationGuide.definition.page.title"></app-tooltip-icon>
               </th>
               <th>
-                File Name
+                Page Name
               </th>
               <th class="actions-column-5">
                 <i class="fas fa-keyboard" [ngbTooltip]="pageKeyboardShortcuts" triggers="click"></i>
@@ -193,7 +193,7 @@
                 <input type="text" class="form-control" [ngModel]="p.page.title" (ngModelChange)="p.page.setTitle($event, this.implementationGuide.definition.page === p.page)" [class.is-invalid]="!p.page.title" (change)="igChanging.emit(true)"/>
               </td>
               <td>
-                <input type="text" class="form-control" [(ngModel)]="p.page.fileName" [class.is-invalid]="!p.page.fileName || isFileNameInvalid(p)" (change)="igChanging.emit(true)"/>
+                <input type="text" class="form-control" [(ngModel)]="p.page.fileName" [disabled] = true [class.is-invalid]="!p.page.fileName || isFileNameInvalid(p)" (change)="igChanging.emit(true)"/>
                 <span *ngIf="isFileNameInvalid(p)" style="color:red">The file name must not include special characters such as "&" and "/"</span>
               </td>
               <td>
@@ -201,15 +201,6 @@
                   <button type="button" class="btn btn-primary" (click)="editPage(p)" title="Edit this page">
                     <i class="fa fa-edit"></i>
                   </button>
-                  <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" title="Add a page as a child of this page" id="addPageMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i class="fa fa-plus"></i>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="addPageMenu">
-                      <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p); igChanging.emit(true)">New Generic Page</a>
-                      <a class="dropdown-item" href="javascript:void(0)" (click)="addChildPage(p, 'downloads'); igChanging.emit(true)">New "Downloads" Page</a>
-                    </div>
-                  </div>
                   <div class="btn-group" role="group">
                     <button type="button" class="btn btn-primary dropdown-toggle" title="Re-arrange the pages" id="rearrangePages" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="fas fa-arrows-alt"></i>
@@ -240,9 +231,9 @@
             <tr>
               <th colspan="3">
                 <p>No pages have been defined for this implementation guide.</p>
-                <button type="button" class="btn btn-primary" (click)="toggleRootPage(true); igChanging.emit(true)">
+                <!--<button type="button" class="btn btn-primary" (click)="toggleRootPage(true); igChanging.emit(true)">
                   Add a narrative page
-                </button>
+                </button>-->
               </th>
             </tr>
             </tfoot>
@@ -589,7 +580,8 @@
         <div class='row'>
           <div class='col-md-12'>
             <trifolia-fhir-publishing-request
-              [implementationGuide]='implementationGuide'
+              [resource]='fhirResource'
+              [publicationRequest]="publicationRequest"
               [defaultPackageId]='packageId'
               [defaultTitle]='this.implementationGuide.title'
               [defaultName]='this.implementationGuide.name' (change)='igChanging.emit(true)'>
@@ -597,28 +589,17 @@
           </div>
 
           <div class='col-md-12'>
-            <trifolia-fhir-ignore-warnings [implementationGuide]='implementationGuide' (change)='igChanging.emit(true)'></trifolia-fhir-ignore-warnings>
+            <trifolia-fhir-ignore-warnings [resource]='fhirResource' [ignoreWarnings]="ignoreWarnings" (change)='igChanging.emit(true)'></trifolia-fhir-ignore-warnings>
           </div>
 
           <div class='col-md-12'>
-            <trifolia-fhir-custom-menu [implementationGuide]='implementationGuide' (change)='igChanging.emit(true)'></trifolia-fhir-custom-menu>
+            <trifolia-fhir-custom-menu [resource]='fhirResource' [customMenu]='customMenu'  (change)='igChanging.emit(true)'></trifolia-fhir-custom-menu>
           </div>
 
           <div class='col-md-12'>
             <trifolia-fhir-jira-spec [implementationGuide]='implementationGuide' (change)='igChanging.emit(true)'></trifolia-fhir-jira-spec>
           </div>
         </div>
-      </ng-template>
-    </li>
-
-    <!-- Permissions -->
-    <li ngbNavItem="permissions" *ngIf="configService.config.enableSecurity">
-      <a ngbNavLink>
-        <span [attr.data-intro]="Globals.introText['resource.permissions-tab']">Permissions
-          <i class="fas fa-exclamation" style="color: red" *ngIf="!canEdit(conformance)" title="No write permissions for current user specified!"></i></span>
-      </a>
-      <ng-template ngbNavContent>
-        <trifolia-fhir-resource-permissions [resource]="conformance" (change)="igChanging.emit(true)"></trifolia-fhir-resource-permissions>
       </ng-template>
     </li>
 
@@ -648,7 +629,7 @@
         <span [attr.data-intro]="Globals.introText['resource.history-tab']">History</span>
       </a>
       <ng-template ngbNavContent>
-        <app-resource-history *ngIf="historyLoaded" [resource]="conformance" (resourceChange) = "implementationGuide= $event; conformance.resource = $event;"></app-resource-history>
+        <app-resource-history *ngIf="historyLoaded" [resource]="fhirResource" (resourceChange) = "implementationGuide= $event; fhirResource.resource = $event;"></app-resource-history>
       </ng-template>
     </li>
   </ul>
@@ -735,9 +716,9 @@
       </tr>
       </tbody>
       <tfoot *ngIf="!implementationGuide.dependsOn">
-        <tr>
-          <th colspan="4">No dependencies have been added to this implementation guide, yet. Click <a href="javascript:void(0)" (click)="addDependencies(); igChanging.emit(true)">here</a> to add one.</th>
-        </tr>
+      <tr>
+        <th colspan="4">No dependencies have been added to this implementation guide, yet. Click <a href="javascript:void(0)" (click)="addDependencies(); igChanging.emit(true)">here</a> to add one.</th>
+      </tr>
       </tfoot>
     </table>
   </div>
@@ -745,7 +726,7 @@
 
 <footer class="footer">
   <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(conformance) || saving || duplicate" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="!canEdit(fhirResource) || saving || duplicate" [attr.data-intro]="Globals.introText['resource.save-btn']">Save</button>
     <button type="button" class="btn btn-secondary" (click)="revert()" [disabled]="saving"  *ngIf="!isNew">Revert</button>
   </div>
   <span class="message">{{message}}</span>

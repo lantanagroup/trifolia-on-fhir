@@ -8,8 +8,9 @@ import {GroupService} from './group.service';
 import {AuthConfig, OAuthService} from 'angular-oauth2-oidc';
 import type {ITofUser} from '@trifolia-fhir/tof-lib';
 import { UserService } from './user.service';
-import type {IConformance, IGroup, IPermission, IProject, IUser} from '@trifolia-fhir/models';
+import {AuditAction, type IAudit, type IFhirResource, type IGroup, type IPermission, type IProject, type IUser} from '@trifolia-fhir/models';
 import { firstValueFrom } from 'rxjs';
+import { AuditService } from './audit.service';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +26,8 @@ export class AuthService {
     private configService: ConfigService,
     private userService: UserService,
     private groupService: GroupService,
-    private oauthService: OAuthService) {
+    private oauthService: OAuthService,
+    private auditService: AuditService) {
 
     this.authChanged = new EventEmitter();
   }
@@ -83,7 +85,17 @@ export class AuthService {
     //this.oauthService.events.subscribe(e => e instanceof OAuthErrorEvent ? console.error(e) : console.warn(e));
 
     this.oauthService.loadDiscoveryDocumentAndTryLogin({
-      onTokenReceived: () => this.router.navigateByUrl(decodeURIComponent(this.oauthService.state)),
+      onTokenReceived: () => {
+        
+        const newAudit: IAudit = {
+          action: AuditAction.Login,
+          timestamp: new Date(),
+          note: `Issuer: ${this.oauthService.issuer}, Client ID: ${this.oauthService.clientId}, Scope: ${this.oauthService.scope}`
+        }
+        this.auditService.save(newAudit).subscribe();
+
+        this.router.navigateByUrl(decodeURIComponent(this.oauthService.state));
+      }
     })
       .then(() => {
         // Set the user session and context
@@ -137,7 +149,6 @@ export class AuthService {
         user: this.user
       });
 
-
       window.location.hash = '';
       let path;
       if (!this.oauthService.state || this.oauthService.state !== 'undefined'){
@@ -151,7 +162,7 @@ export class AuthService {
         //path = '/';
         path = this.activatedRoute.snapshot.queryParams.pathname || `/projects`;
       }
-      
+
       let navigateTo: string;
 
       if (path && path !== '/' && path !== '/logout' && path !== '/login' && !path.endsWith('/home')) {
@@ -194,7 +205,7 @@ export class AuthService {
         userProfile.isAdmin = false;
       }
 
-      //userProfile.isAdmin = true;
+      // userProfile.isAdmin = true;
       return userProfile;
     }
   }
@@ -226,27 +237,16 @@ export class AuthService {
 
   /**
    * Creates a default "meta" object that can be assigned to new resources.
-   * Currently defaults the security tags to include "everyone" with both "read" and "write" access.
-   * That *could* be changed to be specific to the currently logged-in user, which is why this method
-   * exists on the AuthService.
+   * This previously contained creating default security tags, but that is no longer needed with permissions moving to the project level.
+   * This is kept here for any potential future use.
    */
   public getDefaultMeta(): Meta {
-    const meta = new Meta();
-
-    if (this.configService.project) {
-      meta.security = this.configService.project.securityTags;
-    }
-
-    if (!meta.security || meta.security.length === 0) {
-      //addPermission(meta, 'everyone', 'write');
-    }
-
-    return meta;
+    return new Meta();
   }
 
 
   public getDefaultPermissions(): IPermission[] {
-    let conf: IConformance|IProject = <IConformance|IProject>{}
+    let conf: IProject = <IProject>{};
     addPermission(conf, 'everyone', 'write');
     return conf.permissions;
   }

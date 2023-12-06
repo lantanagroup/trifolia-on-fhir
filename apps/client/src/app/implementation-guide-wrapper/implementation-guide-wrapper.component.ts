@@ -7,9 +7,10 @@ import {R4ImplementationGuideComponent} from './r4/implementation-guide.componen
 import {Versions} from 'fhir/fhir';
 import { CanComponentDeactivate } from '../guards/resource.guard';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
 import {getErrorString} from '@trifolia-fhir/tof-lib';
 import {FhirService} from '../shared/fhir.service';
+import {R5ImplementationGuideComponent} from './r5/implementation-guide.component';
 
 /**
  * This class is responsible for determining which implementation-guide component to render
@@ -48,14 +49,20 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
 
     this.implementationGuideService.getImplementationGuide(id)
     .subscribe({
-      next: (conf: IConformance) => {
+      next: (conf: IFhirResource) => {
         this.configService.fhirVersion = conf.fhirVersion;
         this.fhirService.setFhirVersion(conf.fhirVersion).then( () => {
-            if (conf.fhirVersion === Versions.R4.toLowerCase()) {
+            if (conf.fhirVersion === Versions.R5.toLowerCase()) {
+              componentFactory = this.componentFactoryResolver.resolveComponentFactory(R5ImplementationGuideComponent);
+            } else if (conf.fhirVersion === Versions.R4.toLowerCase()) {
               componentFactory = this.componentFactoryResolver.resolveComponentFactory(R4ImplementationGuideComponent);
-            } else {
+            } else  if (conf.fhirVersion === Versions.STU3.toLowerCase())  {
               componentFactory = this.componentFactoryResolver.resolveComponentFactory(STU3ImplementationGuideComponent);
             }
+            else {
+              throw new Error(`Unexpected FHIR version: ${conf.fhirVersion}`);
+            }
+
             this.viewContainerRef.clear();
             this.igComponent = this.viewContainerRef.createComponent(componentFactory);
           }

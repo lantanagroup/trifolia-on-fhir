@@ -43,7 +43,7 @@ export class SettingsModalComponent implements OnInit {
 
   public ok() {
     if (this.fhirServerId !== this.configService.fhirVersion) {
-      this.configService.project = null;
+      this.configService.igContext = null;
       this.authService.user = null;
       // noinspection JSIgnoredPromiseFromCall
       this.router.navigate([`/${this.fhirServerId}/implementation-guide/open`]);

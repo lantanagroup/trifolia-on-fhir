@@ -11,13 +11,27 @@ export class DatabaseConfigService implements MongooseOptionsFactory {
 
   createMongooseOptions(): MongooseModuleOptions {
 
-    // remove the "_id" property from the returned JSON in favor of the virtual "id" property
+
     mongoose.set('toJSON', { 
       transform: (doc, ret) => {
-        if ('id' in doc && !('id' in ret) && '_id' in doc) {
+
+        // remove the "_id" property from the returned JSON in favor of the virtual "id" property
+        if ('id' in doc && !('id' in ret) && '_id' in doc && !!doc._id) {
           ret.id = doc._id.toString();
         }
         delete ret['_id'];
+
+        // remove migratedFrom property from returned JSON
+        if ('migratedFrom' in ret) {
+          delete ret['migratedFrom'];
+        }
+
+        // remove any property starting with "__" from returned JSON
+        Object.keys(ret).forEach(key => {
+          if (key.startsWith('__')) {
+            delete ret[key];
+          }
+        });
       }
     });
 

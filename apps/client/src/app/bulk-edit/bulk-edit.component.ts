@@ -32,8 +32,6 @@ export class BulkEditComponent implements OnInit {
   public searchProfileText: string;
   public enabledFields = {
     profileDescription: true,
-    profileIntro: true,
-    profileNotes: true,
     elementShort: true,
     elementDefinition: true,
     elementRequirements: true
@@ -53,9 +51,7 @@ export class BulkEditComponent implements OnInit {
       const profileTitle = p.title || '';
       const profileName = p.name || '';
       const profileDescription = p.description || '';
-      const profileIntro = p.intro || '';
-      const profileNotes = p.notes || '';
-      return (profileTitle + profileName + profileDescription + profileIntro + profileNotes).toLowerCase().indexOf(this.searchProfileText.toLowerCase()) >= 0;
+      return (profileTitle + profileName + profileDescription).toLowerCase().indexOf(this.searchProfileText.toLowerCase()) >= 0;
     })
   }
 
@@ -149,8 +145,6 @@ export class BulkEditComponent implements OnInit {
     if (tabId === 'profiles') {
       for (const profile of this.profiles) {
         await this.editFieldWithWait(profile.id, 'description');
-        await this.editFieldWithWait(profile.id, 'intro');
-        await this.editFieldWithWait(profile.id, 'notes');
       }
     }
   }
@@ -171,16 +165,19 @@ export class BulkEditComponent implements OnInit {
         const originalIg = <R5ImplementationGuide> this.originalImplementationGuide;
         const ig = <R5ImplementationGuide> this.implementationGuide;
         bulkUpdateRequest.page = ig.definition.page;
+        bulkUpdateRequest.description =  ig.description;
         bulkUpdateRequest.pageOp = getOp(originalIg.definition ? originalIg.definition.page : undefined, ig.definition ? ig.definition.page : undefined);
       } else if (this.configService.isFhirR4) {
         const originalIg = <R4ImplementationGuide> this.originalImplementationGuide;
         const ig = <R4ImplementationGuide> this.implementationGuide;
         bulkUpdateRequest.page = ig.definition.page;
+        bulkUpdateRequest.description =  ig.description;
         bulkUpdateRequest.pageOp = getOp(originalIg.definition ? originalIg.definition.page : undefined, ig.definition ? ig.definition.page : undefined);
       } else if (this.configService.isFhirSTU3) {
         const originalIg = <STU3ImplementationGuide> this.originalImplementationGuide;
         const ig = <STU3ImplementationGuide> this.implementationGuide;
         bulkUpdateRequest.page = ig.page;
+        bulkUpdateRequest.description =  ig.description;
         bulkUpdateRequest.pageOp = getOp(originalIg.page, ig.page);
       } else {
         throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);

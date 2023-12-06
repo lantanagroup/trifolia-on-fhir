@@ -1,6 +1,7 @@
 import { Fhir as FhirModule } from "fhir/fhir";
 import { Server } from "socket.io";
 import { ChildProcess, spawn } from "child_process";
+import {ImplementationGuide as R5ImplementationGuide} from '@trifolia-fhir/r5';
 import {
   DomainResource,
   ImplementationGuide as STU3ImplementationGuide,
@@ -19,7 +20,7 @@ import { BundleExporter } from "./bundle";
 import { HttpService } from '@nestjs/axios';
 import { MethodNotAllowedException } from "@nestjs/common";
 import { Formats } from "../models/export-options";
-import { IgPageHelper, PageInfo } from "@trifolia-fhir/tof-lib";
+import {getPages, IgPageHelper, PageInfo} from '@trifolia-fhir/tof-lib';
 import {
   getCustomMenu,
   getDefaultImplementationGuideResourcePath,
@@ -27,7 +28,7 @@ import {
   setIgnoreWarningsValue,
   setJiraSpecValue
 } from "@trifolia-fhir/tof-lib";
-import { getErrorString, Globals, PublishingRequestModel } from "@trifolia-fhir/tof-lib";
+import { getErrorString, PublishingRequestModel } from "@trifolia-fhir/tof-lib";
 import type { IBundle, IBundleEntry, IImplementationGuide, ITofUser } from "@trifolia-fhir/tof-lib";
 import { FhirInstances, unzip } from "../helper";
 import * as path from "path";
@@ -36,8 +37,11 @@ import * as tmp from "tmp";
 import * as vkbeautify from "vkbeautify";
 import { ConfigService } from "../config.service";
 import JSZip from "jszip";
-import { ConformanceService } from "../conformance/conformance.service";
+import { FhirResourcesService } from "../fhir-resources/fhir-resources.service";
 import { TofLogger } from "../tof-logger";
+import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, Page, StructureDefinitionIntro, StructureDefinitionNotes} from '@trifolia-fhir/models';
+import { NonFhirResourcesService } from "../non-fhir-resources/non-fhir-resources.service";
+import { FhirResource } from "../fhir-resources/fhir-resource.schema";
 
 export class HtmlExporter {
   public queuedAt: Date;
@@ -47,7 +51,7 @@ export class HtmlExporter {
   private initPromise: Promise<void>;
 
   readonly homedir: string;
-  public implementationGuide: STU3ImplementationGuide | R4ImplementationGuide;
+  public implementationGuide: IImplementationGuide;
   public bundle: IBundle;
   public fhirVersion: 'stu3' | 'r4' | 'r5';
   public packageId: string;
@@ -57,7 +61,9 @@ export class HtmlExporter {
   public publishing: Promise<void>;
   public logs: string;
   protected igPublisherLocation: string;
+  protected igFhirResource: IFhirResource;
   protected pageInfos: PageInfo[];
+  protected pages: Page[];
 
   protected static getExtensionFromFormat(format: Formats) {
     switch (format) {
@@ -86,7 +92,8 @@ export class HtmlExporter {
 
   // TODO: Refactor so that there aren't so many constructor params
   constructor(
-    protected conformanceService: ConformanceService,
+    protected fhirResourceService: FhirResourcesService,
+    protected nonFhirResourceService: NonFhirResourcesService,
     protected configService: ConfigService,
     protected httpService: HttpService,
     protected logger: TofLogger,
@@ -110,10 +117,16 @@ export class HtmlExporter {
 
         this.logger.log(`Starting export of HTML package. Home directory is ${this.homedir}. Retrieving resources for export.`);
 
-        const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, this.fhir, this.implementationGuideId);
-        this.bundle = await bundleExporter.getBundle();
-        this.fhirVersion = bundleExporter.fhirVersion;
+        this.igFhirResource = await this.fhirResourceService.getWithReferences(this.implementationGuideId);
+        if (!this.igFhirResource || this.igFhirResource.resource.resourceType != 'ImplementationGuide') {
+          throw new Error(`No ImplementationGuide found for ${this.implementationGuideId}`);
+        }
 
+        const bundleExporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, this.fhir, this.implementationGuideId);
+        this.bundle = await bundleExporter.getBundle();
+        this.pages = getPages(this.igFhirResource);
+        this.fhirVersion = bundleExporter.fhirVersion;
+        let  pageInfos = this.pageInfos;
         const implementationGuide = <STU3ImplementationGuide | R4ImplementationGuide>this.bundle.entry
           .find((e: IBundleEntry) => e.resource.resourceType === 'ImplementationGuide')// && e.resource.id === this.implementationGuideId)
           .resource;
@@ -122,7 +135,9 @@ export class HtmlExporter {
           throw new Error('Bundle export did not include the ImplementationGuide!');
         }
 
-        if (this.fhirVersion === 'r4') {
+        if (this.fhirVersion === 'r5') {
+          this.implementationGuide = new R5ImplementationGuide(implementationGuide);
+        } else if (this.fhirVersion === 'r4') {
           this.implementationGuide = new R4ImplementationGuide(implementationGuide);
         } else if (this.fhirVersion === 'stu3') {
           this.implementationGuide = new STU3ImplementationGuide(implementationGuide);
@@ -316,9 +331,6 @@ export class HtmlExporter {
   public async export(format: Formats, includeIgPublisherJar: boolean,
     version: string, templateType = 'official', template = 'hl7.fhir.template',
     templateVersion = 'current', zipper: JSZip, useTerminologyServer?: boolean): Promise<void> {
-    if (!this.configService.fhir.servers) {
-      throw new Error('This server is not configured with FHIR servers');
-    }
 
     const isXml = format === 'xml' || format === 'application/xml' || format === 'application/fhir+xml';
     let control;
@@ -329,7 +341,7 @@ export class HtmlExporter {
     this.logger.log('Resources retrieved. Writing resources to file system.');
 
     // Write the ignoreWarnings.txt file
-    let ignoreWarningsValue = getIgnoreWarningsValue(this.implementationGuide);
+    let ignoreWarningsValue = getIgnoreWarningsValue(this.igFhirResource);
 
     if (!ignoreWarningsValue) {
       ignoreWarningsValue = '== Suppressed Messages ==\r\n';
@@ -342,7 +354,7 @@ export class HtmlExporter {
     this.removeNonExampleMedia();
     this.populatePageInfos();
 
-    const publishingRequest = PublishingRequestModel.getPublishingRequest(this.implementationGuide);
+    const publishingRequest = PublishingRequestModel.getPublishingRequest(this.igFhirResource);
 
     if (publishingRequest) {
       this.logger.log("Implementation guide has a publishing-request.json file defined. Including it in export.");
@@ -350,7 +362,7 @@ export class HtmlExporter {
       const publishingRequestPath = path.join(this.rootPath, "publication-request.json");
 
       fs.writeFileSync(publishingRequestPath, JSON.stringify(publishingRequest, null, "\t"));
-      PublishingRequestModel.removePublishingRequest(this.implementationGuide);
+      //PublishingRequestModel.removePublishingRequest(this.implementationGuide);
     }
 
     const igToWrite: IImplementationGuide = this.prepareImplementationGuide();
@@ -362,7 +374,7 @@ export class HtmlExporter {
     // createMenu() must be called before writeResourceContent() for the IG because createMenu() might make changes
     // to the ig that needs to get written.
     this.logger.log('Updating the IG publisher templates for the resources');
-    const customMenu = getCustomMenu(this.implementationGuide);
+    const customMenu = getCustomMenu(this.igFhirResource);
     this.createMenu(this.rootPath, this.bundle, customMenu);
 
     this.writeResourceContent(inputDir, igToWrite, isXml);
@@ -373,7 +385,7 @@ export class HtmlExporter {
       .filter((e) => e.resource.resourceType !== 'ImplementationGuide') // || e.resource.id !== this.implementationGuideId)
       .forEach((entry) => {
 
-        // CDA example 
+        // CDA example
         if ((entry['link'] || []).find((l: LinkComponent) => { return l.relation === 'example-cda' })) {
           this.writeResourceContent(inputDir, entry.resource, isXml, `${entry.resource.id}.xml`, entry.resource['data'] || entry.resource['content']);
         } else {
@@ -429,7 +441,9 @@ export class HtmlExporter {
     fs.ensureDirSync(path.join(inputDir, 'pagecontent'));
 
     // Write the intro, summary and search MD files for each resource
-    (this.bundle.entry || []).forEach((entry) => this.writeFilesForResources(this.rootPath, entry.resource));
+    for (const entry of (this.bundle.entry || [])) {
+      await this.writeFilesForResources(this.rootPath, entry.resource);
+    }
 
     this.logger.log('Writing pages for the implementation guide to the temp directory');
 
@@ -484,6 +498,8 @@ export class HtmlExporter {
         return '3.0.2';
       case 'r4':
         return '4.0.1';
+      case 'r5':
+        return '5.0.0';
       default:
         throw new Error(`Unknown FHIR version ${this.fhirVersion}`);
     }
@@ -568,7 +584,7 @@ export class HtmlExporter {
       return;
     }
 
-    const menuContent = IgPageHelper.getMenuContent(this.pageInfos);
+    const menuContent = IgPageHelper.getMenuContent(this.pages);
     fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), menuContent);
   }
 
@@ -580,7 +596,7 @@ export class HtmlExporter {
    * @param rootPath
    * @param resource
    */
-  private writeFilesForResources(rootPath: string, resource: DomainResource) {
+  private async writeFilesForResources(rootPath: string, resource: DomainResource) {
     if (!resource || !resource.resourceType || resource.resourceType === 'ImplementationGuide') {
       return;
     }
@@ -605,18 +621,47 @@ export class HtmlExporter {
     }
 
     if (resource.resourceType === 'StructureDefinition') {
-      const intro = (resource.extension || []).find(e => e.url === Globals.extensionUrls['extension-sd-intro']);
-      const notes = (resource.extension || []).find(e => e.url === Globals.extensionUrls['extension-sd-notes']);
 
-      if (intro && intro.valueMarkdown) {
+      // find this structure definition in the list of DB references from the containing IG
+      const sdRef = (this.igFhirResource.references || []).find((r: IProjectResourceReference) =>
+        r.valueType == FhirResource.name && typeof r.value == typeof {}
+        && (<IFhirResource>r.value).resource.resourceType === 'StructureDefinition'
+        && (<IFhirResource>r.value).resource.id === resource.id
+      );
+
+      if (!sdRef) {
+        return;
+      }
+
+      // get this structure definition and its references from the database
+      const dbRes = await this.fhirResourceService.getWithReferences((<IFhirResource>sdRef.value).id);
+
+      if (!dbRes) {
+        return;
+      }
+
+
+      // find any intro or notes referenced by this structure definition and write them to corresponding files
+      const intro = (dbRes.references || []).find((r: IProjectResourceReference) =>
+        r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {}
+        && (<INonFhirResource>r.value).type === StructureDefinitionIntro.name
+      );
+
+      const notes = (dbRes.references || []).find((r: IProjectResourceReference) =>
+        r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {}
+        && (<INonFhirResource>r.value).type === StructureDefinitionNotes.name
+      );
+
+      if (intro && (<INonFhirResource>intro.value).content) {
         const introPath = path.join(rootPath, `input/pagecontent/StructureDefinition-${resource.id}-intro.md`);
-        fs.writeFileSync(introPath, intro.valueMarkdown);
+        fs.writeFileSync(introPath, (<INonFhirResource>intro.value).content);
       }
 
-      if (notes && notes.valueMarkdown) {
+      if (notes && (<INonFhirResource>notes.value).content) {
         const notesPath = path.join(rootPath, `input/pagecontent/StructureDefinition-${resource.id}-notes.md`);
-        fs.writeFileSync(notesPath, notes.valueMarkdown);
+        fs.writeFileSync(notesPath, (<INonFhirResource>notes.value).content);
       }
+
     }
   }
 
@@ -718,7 +763,7 @@ export class HtmlExporter {
     return fullResourcePath;
   }
 
-  
+
   private writeResourceContent(inputDir: string, resource: DomainResource, isXml: boolean, exampleFileName?: string, exampleContent?: string) {
     const cleanResource = BundleExporter.cleanupResource(resource);
     const resourcePath = this.getResourceFilePath(inputDir, resource, isXml, exampleFileName);

@@ -1,15 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent, ValueSet } from '../../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { ElementDefinition as STU3ElementDefinition, ElementDefinitionBindingComponent } from '../../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import { ElementDefinition as R4ElementDefinition, ElementDefinitionElementDefinitionBindingComponent as R4ElementDefinitionElementDefinitionBindingComponent } from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { ElementDefinition as R5ElementDefinition, ElementDefinitionElementDefinitionBindingComponent as R5ElementDefinitionElementDefinitionBindingComponent } from '../../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import { Globals } from '../../../../../../../libs/tof-lib/src/lib/globals';
 import { ConfigService } from '../../../shared/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FhirReferenceModalComponent } from '../../../fhir-edit/reference-modal/reference-modal.component';
-import { IBundle, IElementDefinition, IValueSet } from '../../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
+import { IElementDefinition, IValueSet } from '../../../../../../../libs/tof-lib/src/lib/fhirInterfaces';
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { ValueSetService } from '../../../shared/value-set.service';
+import { IFhirResource } from '@trifolia-fhir/models';
+import { Paginated } from '@trifolia-fhir/tof-lib';
 
 @Component({
   selector: 'app-element-definition-binding',
@@ -97,8 +99,10 @@ export class BindingPanelComponent implements OnInit {
     modalRef.componentInstance.resourceType = 'ValueSet';
     modalRef.componentInstance.hideResourceType = true;
     modalRef.result.then((result) => {
-      const valueSet: IValueSet = result.resource;
-      this.selectValueSet(valueSet);
+      if (result) {
+        const valueSet: IValueSet = result.resource;
+        this.selectValueSet(valueSet);
+      }
     });
   }
 
@@ -133,7 +137,7 @@ export class BindingPanelComponent implements OnInit {
       switchMap((term: string) => {
         if (term.length <= 2) return [];
         return this.valueSetService.searchValueSet(1, term).pipe(
-          map((bundle: IBundle) => (bundle.entry || []).map(entry => <IValueSet>entry.resource))
+          map((response: Paginated<IFhirResource>) => (response.results || []).map(results => <IValueSet>results.resource))
         );
       })
     );

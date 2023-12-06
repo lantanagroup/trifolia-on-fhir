@@ -3,6 +3,8 @@ import {Controller, Get, Param, Post, Query, Req, Res, UseGuards} from '@nestjs/
 import {BundleExporter} from './export/bundle';
 import type {ITofRequest} from './models/tof-request';
 import type {IBundle, IStructureDefinition, ITofUser} from '@trifolia-fhir/tof-lib';
+import {getPages} from "@trifolia-fhir/tof-lib";
+
 import {findReferences, joinUrl} from '@trifolia-fhir/tof-lib';
 import {emptydir, rmdir, zip} from './helper';
 import {ExportOptions} from './models/export-options';
@@ -20,24 +22,28 @@ import {User} from './server.decorators';
 import {HtmlExporter} from './export/html';
 import nodemailer from 'nodemailer';
 import JSZip from 'jszip';
-import {ConformanceController} from './conformance/conformance.controller';
-import {ConformanceService} from './conformance/conformance.service';
+import {FhirResourcesController} from './fhir-resources/fhir-resources.controller';
+import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {v4 as uuidv4} from 'uuid';
+import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
+import {IFhirResource} from '@trifolia-fhir/models';
+
 
 @Controller('api/export')
 @UseGuards(AuthGuard('bearer'))
 @ApiTags('Export')
 @ApiOAuth2([])
-export class ExportController extends ConformanceController {//BaseController {
+export class ExportController extends FhirResourcesController {
   protected logger = new TofLogger(ExportController.name);
   public jsZipObj = new JSZip();
 
   constructor(
     protected httpService: HttpService,
     protected configService: ConfigService,
-    protected conformanceService: ConformanceService,
+    protected fhirResourceService: FhirResourcesService,
+    protected nonFhirResourceService: NonFhirResourcesService,
     private exportService: ExportService) {
-    super(conformanceService);
+    super(fhirResourceService);
   }
 
 
@@ -54,7 +60,7 @@ export class ExportController extends ConformanceController {//BaseController {
 
     const options = new ExportOptions(request.query);
     const exporter = new BundleExporter(
-      this.conformanceService,
+      this.fhirResourceService,
       this.httpService,
       this.logger,
       request.fhir,
@@ -77,7 +83,7 @@ export class ExportController extends ConformanceController {//BaseController {
   public async exportCompositionDocument(@User() user: ITofUser, @Req() req: ITofRequest, @Res() res, @Param('implementationGuideId') implementationGuideId: string, @Param('compositionId') compositionId: string) {
     await this.assertCanReadById(user, implementationGuideId);
 
-    const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, req.fhir, implementationGuideId);
+    const bundleExporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, req.fhir, implementationGuideId);
     const bundle = await bundleExporter.getBundle(false);
 
     if (!bundle || !bundle.entry) {
@@ -164,11 +170,12 @@ export class ExportController extends ConformanceController {//BaseController {
 
     await this.assertCanReadById(user, implementationGuideId);
 
-    const bundleExporter = new BundleExporter(this.conformanceService, this.httpService, this.logger, req.fhir, implementationGuideId);
+    const bundleExporter = new BundleExporter(this.fhirResourceService, this.httpService, this.logger, req.fhir, implementationGuideId);
     const bundle = await bundleExporter.getBundle(false);
-
+    const conf = <IFhirResource> await this.fhirResourceService.getWithReferences(implementationGuideId);
+    let pages = getPages(conf);
     const msWordExporter = new MSWordExporter();
-    const results = await msWordExporter.export(bundle, bundleExporter.fhirVersion);
+    const results = await msWordExporter.export(bundle, pages, bundleExporter.fhirVersion);
 
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Content-Disposition', 'attachment; filename=ig.docx');
@@ -186,7 +193,8 @@ export class ExportController extends ConformanceController {//BaseController {
 
     const options = new ExportOptions(request.query);
     const exporter = await createHtmlExporter(
-      this.conformanceService,
+      this.fhirResourceService,
+      this.nonFhirResourceService,
       this.configService,
       this.httpService,
       this.logger,
@@ -240,8 +248,11 @@ export class ExportController extends ConformanceController {//BaseController {
     let bundle: IBundle;
     let fhirVersion: 'stu3' | 'r4' | 'r5';
 
+    await this.assertCanWriteById(user, implementationGuideId);
+
     const exporter: HtmlExporter = await createHtmlExporter(
-      this.conformanceService,
+      this.fhirResourceService,
+      this.nonFhirResourceService,
       this.configService,
       this.httpService,
       this.logger,

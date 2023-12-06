@@ -1,9 +1,10 @@
 import {ImplementationGuide as R5ImplementationGuide, ImplementationGuideDefinitionPage} from './r5/fhir';
 import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent} from './r4/fhir';
-import {ImplementationGuide as STU3ImplementationGuide, ContactDetail, PageComponent} from './stu3/fhir';
+import {ContactDetail, ImplementationGuide as STU3ImplementationGuide, PageComponent} from './stu3/fhir';
 import {IExtension, IImplementationGuide} from './fhirInterfaces';
 import {createTableFromArray, escapeForXml} from './helper';
 import {Globals} from './globals';
+import {Page} from '@trifolia-fhir/models';
 
 export class PageInfo {
   page: PageComponent | ImplementationGuidePageComponent | ImplementationGuideDefinitionPage;
@@ -38,7 +39,7 @@ export class IgPageHelper {
     }
 
     if (implementationGuide.contact) {
-      const authorsData = (<any> implementationGuide.contact || []).map((contact: ContactDetail) => {
+      const authorsData = (<any>implementationGuide.contact || []).map((contact: ContactDetail) => {
         const foundEmail = (contact.telecom || []).find(t => t.system === 'email');
         const foundURL = (contact.telecom || []).find(t => t.system === 'url');
 
@@ -59,10 +60,11 @@ export class IgPageHelper {
     return content;
   }
 
-  public static getSTU3PagesList(theList: PageInfo[], page: PageComponent, implementationGuide: STU3ImplementationGuide) {
+  public static getSTU3PagesList(theList: PageInfo[], pages: Page[], page: PageComponent, implementationGuide: STU3ImplementationGuide) {
     if (!page) {
       return theList;
     }
+
 
     if (page.source && !page.source.startsWith('http://') && !page.source.startsWith('https://')) {
       const contentExtension = (page.extension || []).find((ext) => ext.url === Globals.extensionUrls['extension-ig-page-content']);
@@ -78,75 +80,83 @@ export class IgPageHelper {
         }
       }
 
-      if (page.reuseDescription) {
+      // get the resource page
+      let pageFound = (pages || []).find(pageElem => pageElem.name == ((page.source.lastIndexOf('.') > 0) ? page.source.slice(0, page.source.indexOf('.')) : page.source));
+
+      if (pageFound && pageFound['reuseDescription']) {
         pageInfo.content = this.getIndexContent(implementationGuide);
       } else {
-        pageInfo.content = page.contentMarkdown || 'No content has been defined for this page, yet.';
+        pageInfo.content = pageFound?.content || 'No content has been defined for this page, yet.';
       }
 
       theList.push(pageInfo);
     }
 
-    (page.page || []).forEach((next) => IgPageHelper.getSTU3PagesList(theList, next, implementationGuide));
+    (page.page || []).forEach((next) => IgPageHelper.getSTU3PagesList(theList, pages, next, implementationGuide));
 
     return theList;
   }
 
-  public static getR4andR5PagesList(theList: PageInfo[], page: ImplementationGuidePageComponent | ImplementationGuideDefinitionPage, implementationGuide: R4ImplementationGuide | R5ImplementationGuide) {
+  public static getR4andR5PagesList(theList: PageInfo[], pages: Page[], page: ImplementationGuidePageComponent | ImplementationGuideDefinitionPage, implementationGuide: R4ImplementationGuide | R5ImplementationGuide) {
     if (!page) {
       return theList;
     }
 
     const pageInfo = new PageInfo();
     pageInfo.page = page;
-    pageInfo.fileName = page.fileName || page.nameUrl;
+    pageInfo.fileName = page.fileName;
 
-    if (page.reuseDescription) {
+    let pageName = "";
+    let name = page.nameUrl ?? page.nameReference?.reference;
+    if(name){
+      pageName = name;
+      let index = name.indexOf('.');
+      if (index > -1) {
+        pageName = pageName.slice(0, index);
+      }
+    }
+    // get the resource page
+    let pageFound = (pages || []).find(pageElem => pageElem.name == pageName);
+
+    if (pageFound && pageFound['reuseDescription']) {
       pageInfo.content = this.getIndexContent(implementationGuide);
     } else {
-      pageInfo.content = page.contentMarkdown || 'No content has been defined for this page, yet.';
+      pageInfo.content = pageFound?.content || 'No content has been defined for this page, yet.';
     }
 
     theList.push(pageInfo);
 
-    (page.page || []).forEach((next) => this.getR4andR5PagesList(theList, next, implementationGuide));
+    (page.page || []).forEach((next) => this.getR4andR5PagesList(theList, pages, next, implementationGuide));
 
     return theList;
   }
 
-  public static getMenuContent(pageInfos: PageInfo[]) {
-    const allPageMenuNames = pageInfos
-      .filter(pi => {
-        const extensions = <IExtension[]>(pi.page.extension || []);
-        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-        return !!extension && extension.valueString;
-      })
-      .map(pi => {
-        const extensions = <IExtension[]>(pi.page.extension || []);
-        const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-        return escapeForXml(extension.valueString);
-      });
+  public static getMenuContent(pages: Page[]) {
+
+    const allPageMenuNames = pages
+      .filter(pg => !!pg.navMenu)
+      .map(pg => escapeForXml(pg.navMenu));
+
     const distinctPageMenuNames = allPageMenuNames.reduce((init, next) => {
       if (init.indexOf(next) < 0) init.push(next);
       return init;
     }, []);
+
     const pageMenuContent = distinctPageMenuNames.map(pmn => {
-      const menuPages = pageInfos
+      const menuPages = pages
         .filter(pi => {
-          const extensions = <IExtension[]>(pi.page.extension || []);
-          const extension = extensions.find(e => e.url === Globals.extensionUrls['extension-ig-page-nav-menu']);
-          return extension && extension.valueString === pmn && pi.fileName;
+          return pi.navMenu && pi.navMenu === pmn;
         });
 
       if (menuPages.length === 1) {
-        const title = escapeForXml(menuPages[0].title);
-        const fileName = menuPages[0].fileName.substring(0, menuPages[0].fileName.lastIndexOf('.')) + '.html';
+        const title = escapeForXml(menuPages[0].name);
+        const fileName = menuPages[0].name + '.html';
         return `  <li><a href="${fileName}">${title}</a></li>\n`;
       } else {
         const pageMenuItems = menuPages
           .map(pi => {
-            const title = escapeForXml(pi.title);
-            const fileName = pi.fileName.substring(0, pi.fileName.lastIndexOf('.')) + '.html';
+            const title = escapeForXml(pi.name);
+            const fileName = pi.name + '.html';
             return `      <li><a href="${fileName}">${title}</a></li>`;   // TODO: Should not show fileName
           });
 
@@ -163,7 +173,7 @@ export class IgPageHelper {
     return '<ul xmlns="http://www.w3.org/1999/xhtml" class="nav navbar-nav">\n' +
       '  <li><a href="index.html">IG Home</a></li>\n' +
       '  <li><a href="toc.html">Table of Contents</a></li>\n' + pageMenuContent.join('\n') +
-      '  <li><a href="artifacts.html">Artifact Index</a></li>\n' +
+      '  <li><a href="artifacts.html">Artifacts</a></li>\n' +
       '</ul>\n';
   }
 }

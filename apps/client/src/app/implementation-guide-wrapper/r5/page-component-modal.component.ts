@@ -1,0 +1,103 @@
+import {Component, OnInit} from '@angular/core';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {ImplementationGuide, ImplementationGuideDefinitionPage} from '@trifolia-fhir/r5';
+import {getImplementationGuideMediaReferences, MediaReference} from '@trifolia-fhir/tof-lib';
+import {Observable} from 'rxjs';
+import {debounceTime, distinct, distinctUntilChanged, map} from 'rxjs/operators';
+
+@Component({
+  templateUrl: './page-component-modal.component.html',
+  styleUrls: ['./page-component-modal.component.css']
+})
+export class PageComponentModalComponent implements OnInit {
+  public inputPage: ImplementationGuideDefinitionPage;
+  public page: ImplementationGuideDefinitionPage;
+  public implementationGuide: ImplementationGuide;
+  public level: number;
+  public rootPage: boolean;
+  public pageNavMenus: string[];
+
+  constructor(public activeModal: NgbActiveModal) {
+
+  }
+
+  public get isRootPageValid() {
+    if (!this.rootPage) return true;
+    return this.page.fileName === 'index' + this.page.getExtension();
+  }
+
+  public getMediaReferences(): MediaReference[] {
+    return getImplementationGuideMediaReferences('r4', this.implementationGuide);
+  }
+
+  public setPage(value: ImplementationGuideDefinitionPage) {
+    this.inputPage = value;
+    this.page = new ImplementationGuideDefinitionPage(this.inputPage);
+  }
+
+  public get nameType(): 'Url'|'Reference' {
+    if (this.page.hasOwnProperty('nameReference')) {
+      return 'Reference';
+    } else if (this.page.hasOwnProperty('nameUrl')) {
+      return 'Url';
+    }
+  }
+
+  public set nameType(value: 'Url'|'Reference') {
+    if (this.nameType === value) {
+      return;
+    }
+
+    if (this.nameType === 'Reference' && value === 'Url') {
+      delete this.page.nameReference;
+      this.page.nameUrl = '';
+    } else if (this.nameType === 'Url' && value === 'Reference') {
+      delete this.page.nameUrl;
+      this.page.nameReference = { reference: '', display: '' };
+    }
+  }
+
+  pageNavMenuSearch = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map((term: string) => term.length < 2 ? [] : this.pageNavMenus.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10)),
+      distinct()
+    )
+
+  public importFile(file: File) {
+    const reader = new FileReader();
+
+    reader.onload = (e: any) => {
+      const result = e.target.result;
+      this.page.contentMarkdown = result.substring(5 + file.type.length + 8);
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  ok() {
+    this.activeModal.close(this.page);
+  }
+
+  ngOnInit() {
+    const allPages: ImplementationGuideDefinitionPage[] = [];
+    const getPages = (parent: ImplementationGuideDefinitionPage) => {
+      allPages.push(parent);
+      (parent.page || []).forEach(p => getPages(p));
+    };
+
+    if (this.implementationGuide.definition && this.implementationGuide.definition.page) {
+      getPages(this.implementationGuide.definition.page);
+    }
+
+    this.pageNavMenus = allPages
+      .filter(p => !!p.navMenu)
+      .map(p => p.navMenu)
+      .reduce<string[]>((prev, curr) => {
+        if (prev.indexOf(curr) < 0) prev.push(curr);
+        return prev;
+      }, [])
+      .sort((a, b) => (a > b ? 1 : -1));
+  }
+}

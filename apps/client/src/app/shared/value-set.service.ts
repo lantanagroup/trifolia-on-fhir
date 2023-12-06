@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { OperationOutcome, ValueSet } from '../../../../../libs/tof-lib/src/lib/stu3/fhir';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import type { ExpandOptions } from '../../../../../libs/tof-lib/src/lib/stu3/expandOptions';
-import {IConformance} from '@trifolia-fhir/models';
+import {IFhirResource} from '@trifolia-fhir/models';
+import { IValueSet, Paginated } from '@trifolia-fhir/tof-lib';
 
 @Injectable()
 export class ValueSetService {
@@ -13,17 +12,17 @@ export class ValueSetService {
 
   }
 
-  public save(valueSetId:string, valueSet: IConformance): Observable<IConformance> {
+  public save(valueSetId:string, valueSet: IFhirResource): Observable<IFhirResource> {
     if (valueSetId) {
-      const url = '/api/valueSet/' + encodeURIComponent(valueSetId);
-      return this.http.put<IConformance>(url, valueSet);
+      const url = '/api/valueSets/' + encodeURIComponent(valueSetId);
+      return this.http.put<IFhirResource>(url, valueSet);
     } else {
-      return this.http.post<IConformance>('/api/valueSet', valueSet);
+      return this.http.post<IFhirResource>('/api/valueSets', valueSet);
     }
   }
 
   public searchValueSet(page = 1, name?: string, searchUrl?: string, id?: string, implementationGuideId?: string) {
-    let url = '/api/valueSet?resourcetype=ValueSet&page=' + encodeURIComponent(page) + '&';
+    let url = '/api/valueSets?resourcetype=ValueSet&page=' + encodeURIComponent(page) + '&';
 
     if (name) {
       url += `name=${encodeURIComponent(name)}&`;
@@ -46,17 +45,39 @@ export class ValueSetService {
     return this.http.get(url);
   }
 
+
+  public searchVsacApi(page = 1, apiKey: string, id?: string, name?: string): Observable<Paginated<IValueSet>> {
+
+    let url = `/api/valueSets/vsac?page=${page}&count=5`;
+
+    if (id) {
+      url += `&id=${encodeURIComponent(id)}`;
+    } else if (name) {
+      url += `&name=${encodeURIComponent(name)}`;
+    } else {
+      return throwError(() => new Error('Either ID or name must be provided.'));
+    }
+
+    let options = {
+      headers: {
+        'vsacauthorization': `Basic ${btoa('apikey:'+apiKey)}`
+      }
+    }
+    
+    return this.http.get<Paginated<IValueSet>>(url, options);
+  }
+
   public getValueSet(id: string) {
-    const url = '/api/valueSet/' + encodeURIComponent(id);
-    return this.http.get<IConformance>(url);
+    const url = '/api/valueSets/' + encodeURIComponent(id);
+    return this.http.get<IFhirResource>(url);
   }
 
  /* public expand(id: string, options: ExpandOptions, terminologyServer?: string): Observable<ValueSet> {
     if (!terminologyServer) {
-      const url = '/api/valueSet/' + encodeURIComponent(id) + '/expand';
+      const url = '/api/valueSets/' + encodeURIComponent(id) + '/expand';
       return this.http.post<ValueSet>(url, options);
     } else {
-      const thisUrl = '/api/valueSet/' + encodeURIComponent(id);
+      const thisUrl = '/api/valueSets/' + encodeURIComponent(id);
       let url = terminologyServer + (terminologyServer.endsWith('/') ? '' : '/') + 'ValueSet/$expand?';
 
       for (let key of Object.keys(options)) {
@@ -87,7 +108,7 @@ export class ValueSetService {
   }*/
 
   public delete(id: string) {
-    const url = '/api/valueSet/' + encodeURIComponent(id);
+    const url = '/api/valueSets/' + encodeURIComponent(id);
     return this.http.delete(url);
   }
 }

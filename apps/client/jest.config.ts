@@ -7,16 +7,14 @@ export default {
   setupFilesAfterEnv: [
     '<rootDir>/src/test-setup.ts',
   ],
-  globals: {
-    'ts-jest': {
-      stringifyContentPathRegex: '\\.(html|svg)$',
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-    },
-  },
+  globals: {  },
   displayName: 'client',
   snapshotSerializers,
   transform: {
-    '^.+.(ts|mjs|js|html)$': 'jest-preset-angular',
+    '^.+.(ts|mjs|js|html)$': ['jest-preset-angular', {
+      stringifyContentPathRegex: '\\.(html|svg)$',
+      tsconfig: '<rootDir>/tsconfig.spec.json',
+    }],
   },
   transformIgnorePatterns: ['node_modules/(?!.*.mjs$)'],
 };

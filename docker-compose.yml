@@ -11,6 +11,7 @@ services:
       - mongodb
     environment:
       - DATABASE_URI=mongodb://root:password@mongodb:27017/tof?authSource=admin
+      - DATABASE_MIGRATEATSTART=true
       - SERVER_ENABLESECURITY=${SERVER_ENABLESECURITY}
       - AUTH_CLIENTID=${AUTH_CLIENTID}
       - AUTH_SCOPE=${AUTH_SCOPE}

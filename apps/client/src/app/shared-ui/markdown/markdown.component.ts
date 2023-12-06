@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {MediaReference} from '../../../../../../libs/tof-lib/src/lib/fhirHelper';
 import * as simplemde from 'simplemde-antd/dist/simplemde.min';
 import {SimplemdeComponent} from 'ngx-simplemde';
@@ -15,13 +15,16 @@ import {ModalService} from '../../shared/modal.service';
   templateUrl: './markdown.component.html',
   styleUrls: ['./markdown.component.css']
 })
-export class MarkdownComponent implements OnInit {
+export class MarkdownComponent implements AfterViewInit {
   @Input() value: string;
   @Output() valueChange = new EventEmitter();
   @Input() disabled = false;
+  @Input() required = false;
   @Input() imageListButtonTitle = 'Insert image from pre-defined list';
   @Input() mediaReferences?: MediaReference[];
 
+  @ViewChild('editor', { static: true })
+  private editor: ElementRef;
   @ViewChild('smde', { static: true })
   private simplemde: SimplemdeComponent;
   @ViewChild('buttonElement', { static: true })
@@ -42,6 +45,19 @@ export class MarkdownComponent implements OnInit {
 
   get hasWhitespace() {
     return this.value && this.value !== this.value.trim();
+  }
+
+  get isRequired() {
+    return this.required && !this.value;
+  }
+
+  get isValid() {
+
+    if (this.required && !this.value) {
+      return false;
+    }
+
+    return !this.hasWhitespace;
   }
 
   constructor(private modalService: ModalService) {
@@ -160,13 +176,7 @@ export class MarkdownComponent implements OnInit {
         default: true
       },
       this.createImageListToolbar(),
-      {
-        name: 'table',
-        action: simplemde.drawTable,
-        className: 'smdi smdi-table',
-        title: 'Table',
-        default: true
-      },
+      this.createTableToolbar(),
       {
         name: 'horizontal-rule',
         action: simplemde.drawHorizontalRule,
@@ -232,6 +242,23 @@ export class MarkdownComponent implements OnInit {
     };
   }
 
+  createTableToolbar() {
+    return {
+      name: 'table',
+      // action: simplemde.drawTable,
+      className: 'smdi smdi-table',
+      title: 'Table',
+      default: true,
+      action: async () => {
+        const doc = this.simplemde.Instance.codemirror.getDoc();
+        const cursor = doc.getCursor();
+
+        const replaceText = `| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n{:.grid}\n`;
+        doc.replaceRange(replaceText, cursor);
+      }
+    }
+  }
+
   async insertImage() {
     const image = await this.modalService.getMediaSelection(this.mediaReferences);
 
@@ -243,7 +270,15 @@ export class MarkdownComponent implements OnInit {
     doc.replaceRange(replaceText, cursor);
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
 
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting) && this.simplemde.Instance) {
+        this.simplemde.Instance.codemirror.refresh();
+        observer.unobserve(this.editor.nativeElement);
+      }
+    });
+
+    observer.observe(this.editor.nativeElement);
   }
 }
