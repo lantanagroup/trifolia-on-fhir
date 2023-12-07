@@ -624,7 +624,7 @@ export class HtmlExporter {
 
       // find this structure definition in the list of DB references from the containing IG
       const sdRef = (this.igFhirResource.references || []).find((r: IProjectResourceReference) =>
-        r.valueType == FhirResource.name && typeof r.value == typeof {}
+        r.valueType === FhirResource.name && !!r.value && typeof r.value === typeof {}
         && (<IFhirResource>r.value).resource.resourceType === 'StructureDefinition'
         && (<IFhirResource>r.value).resource.id === resource.id
       );
