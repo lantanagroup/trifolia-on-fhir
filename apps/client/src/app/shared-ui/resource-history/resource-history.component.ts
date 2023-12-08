@@ -58,8 +58,8 @@ export class ResourceHistoryComponent implements OnInit, AfterContentChecked {
       this.message = `Done loading right resource`;
     }
 
-    this.resourceChange.emit(resource1);
-    this.domainResource = resource1;
+    this.resourceChange.emit(resource1.content);
+    this.domainResource = resource1.content;
     this.change.emit();
   }
 
