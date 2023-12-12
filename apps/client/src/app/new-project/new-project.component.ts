@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import {ImplementationGuideService} from '../shared/implementation-guide.service';
 import {getErrorString, Globals, identifyRelease, IImplementationGuide, PublishingRequestModel} from '@trifolia-fhir/tof-lib';
-import {ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
+import {Extension, ImplementationGuide as R4ImplementationGuide} from '@trifolia-fhir/r4';
 import {ImplementationGuide as R5ImplementationGuide} from '@trifolia-fhir/r5';
 import {FhirService} from '../shared/fhir.service';
 import {ConfigService} from '../shared/config.service';
@@ -31,10 +31,9 @@ export class NewProjectComponent implements OnInit {
   public igName: string;
   public igTitle: string;
   public igId: string;
-  public fhirVersion: string;
+  public fhirVersionValue: string;
   public Globals = Globals;
-  public hl7WorkGroup: string;
-
+  public implementationGuide;
 
   constructor(
     private igService: ImplementationGuideService,
@@ -43,11 +42,15 @@ export class NewProjectComponent implements OnInit {
     private nonFhirResourceService: NonFhirResourceService,
     private configService: ConfigService,
     private router: Router) {
+
+    this.igChanging.subscribe((value) => {
+      console.log('changing fhirWorkGroup');
+    });
   }
 
   async done() {
 
-    let ig: IImplementationGuide;
+   // let ig: IImplementationGuide;
 
     const publishingRequest = new PublishingRequestModel();
     publishingRequest['package-id'] = this.packageId;
@@ -65,34 +68,11 @@ export class NewProjectComponent implements OnInit {
     let publicationRequest = new PublicationRequest();
     publicationRequest.content = publishingRequest;
 
-    if (this.fhirVersion == 'r4') {
-      ig = new R4ImplementationGuide();
-      this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
-    } else if (this.fhirVersion === 'r5') {
-      ig = new R5ImplementationGuide();
-      this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
-    } else if (this.fhirVersion == 'stu3') {
-      ig = new STU3ImplementationGuide();
-      this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/jurisdiction');
-    } else {
-      throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
-    }
-
-  //  this.igId = this.projectCode.replace(/\./g, '-');
-    ig.version = '0.1.0';
-    ig.name = this.igName.replace(/[^a-zA-Z0-9_]/g, '');
-    ig.name  = ig.name.charAt(0).toUpperCase() + ig.name.slice(1);
-    ig.id =  ig.name.replace(/_/gi, '-');
-    ig.url = `${this.igUrl}/${ig.id}`;
-    const wg = Globals.hl7WorkGroups.find(w => w.url === this.hl7WorkGroup);
-    const wgName = wg ? `HL7 International - ${wg.name}` : 'HL7 International Working Group';
-    ig.contact = [{
-      name: wgName,
-      telecom: [{
-        system: 'url',
-        value: wg ? wg.url : "",
-      }],
-    }];
+    this.implementationGuide.version = '0.1.0';
+    this.implementationGuide.name = this.igName.replace(/[^a-zA-Z0-9_]/g, '');
+    this.implementationGuide.name  = this.implementationGuide.name.charAt(0).toUpperCase() + this.implementationGuide.name.slice(1);
+    this.implementationGuide.id =  this.implementationGuide.name.replace(/_/gi, '-');
+    this.implementationGuide.url = `${this.igUrl}/${this.implementationGuide.id}`;
 
     const jurisdiction = this.selectedJurisdiction ? [{ coding: [this.selectedJurisdiction] }] : this.selectedJurisdiction;
     // Create the implementation guide based on the FHIR server we're connected to
@@ -100,16 +80,16 @@ export class NewProjectComponent implements OnInit {
       if (this.isHL7) {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
-        (<R5ImplementationGuide>ig).jurisdiction = jurisdiction;
-        (<R5ImplementationGuide>ig).packageId = this.packageId;
-        (<R5ImplementationGuide>ig).title = this.igTitle;
+        (<R5ImplementationGuide>this.implementationGuide).jurisdiction = jurisdiction;
+        (<R5ImplementationGuide>this.implementationGuide).packageId = this.packageId;
+        (<R5ImplementationGuide>this.implementationGuide).title = this.igTitle;
       }
     } else if (this.fhirVersion === 'r4') {
         //no option for Family, Project Code, Canonical URL in R4 IG Class
         // TODO: set id to <project-code-with-dashes-instead-of-dots>
-        (<R4ImplementationGuide>ig).jurisdiction = jurisdiction;
-        (<R4ImplementationGuide>ig).packageId = this.packageId;
-        (<R4ImplementationGuide>ig).title = this.igTitle;
+        (<R4ImplementationGuide>this.implementationGuide).jurisdiction = jurisdiction;
+        (<R4ImplementationGuide>this.implementationGuide).packageId = this.packageId;
+        (<R4ImplementationGuide>this.implementationGuide).title = this.igTitle;
 
     } else if (this.fhirVersion == 'stu3') {
       if (this.isHL7) {
@@ -118,16 +98,16 @@ export class NewProjectComponent implements OnInit {
         const packageIdExt = new STU3Extension();
         packageIdExt.url = Globals.extensionUrls['extension-ig-package-id'];
         packageIdExt.valueString = this.packageId;
-        ig.extension = ig.extension || [];
-        ig.extension.push(packageIdExt);
+        this.implementationGuide.extension = this.implementationGuide.extension || [];
+        this.implementationGuide.extension.push(packageIdExt);
       }
     } else {
       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
     }
-    let projectName = ig.name;
+    let projectName = this.implementationGuide.name;
 
 
-    let newRes: IFhirResource = <IFhirResource>{fhirVersion: this.fhirVersion, resource: ig, versionId: 1, lastUpdated: new Date(), references: [] };
+    let newRes: IFhirResource = <IFhirResource>{fhirVersion: this.fhirVersion, resource: this.implementationGuide, versionId: 1, lastUpdated: new Date(), references: [] };
 
     this.igService.saveImplementationGuide(null, newRes)
       .subscribe({
@@ -206,6 +186,27 @@ export class NewProjectComponent implements OnInit {
     this.nonHl7packageIdChanged();
   }
 
+   get fhirVersion(){
+     return this.fhirVersionValue;
+   }
+
+   set fhirVersion(value) {
+     this.fhirVersionValue = value;
+     if (this.fhirVersionValue == 'r4') {
+       this.implementationGuide = new R4ImplementationGuide();
+       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
+     } else if (this.fhirVersionValue === 'r5') {
+       this.implementationGuide = new R5ImplementationGuide();
+       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
+     } else if (this.fhirVersionValue == 'stu3') {
+       this.implementationGuide = new STU3ImplementationGuide();
+       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/jurisdiction');
+     } else {
+       throw new Error(`Unexpected FHIR version: ${this.configService.fhirVersion}`);
+     }
+
+   }
+
   igUrlChanged() {
     this.igUrl = (this.canonicalURL || '') + (this.canonicalURL && this.canonicalURL.endsWith('/') ? '' : '/') + `ImplementationGuide/${this.projectCode || 'unknown'}`;
   }
@@ -239,6 +240,12 @@ export class NewProjectComponent implements OnInit {
     return !!(/https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}/.exec(url));
   }
 
+  isDisabled(){
+    if (!this.implementationGuide.extension) this.implementationGuide.extension = [];
+    let foundExt: Extension = this.implementationGuide.extension.find(e => {return e.url == 'http://hl7.org/fhir/StructureDefinition/structuredefinition-wg';});
+    return !foundExt || !this.igName;
+  }
+
   /*addCoding(jurisdiction: ICodeableConcept, index: number) {
     jurisdiction.coding = jurisdiction.coding || [];
     jurisdiction.coding.push({});
@@ -248,6 +255,7 @@ export class NewProjectComponent implements OnInit {
   }
   */
   ngOnInit() {
+
     if (this.configService.isFhirR4 || this.configService.isFhirR5) {
       this.jurisdictionCodes = this.fhirService.getValueSetCodes('http://hl7.org/fhir/ValueSet/iso3166-1-2');
     } else if (this.configService.isFhirSTU3) {

@@ -99,6 +99,7 @@ import {R5ResourceModalComponent} from './implementation-guide-wrapper/r5/resour
 import {PagesComponent} from './pages/pages.component';
 import {PageComponent} from './page/page.component';
 import { AuditComponent } from './manage/audit/audit.component';
+import {WorkGroupComponent} from './implementation-guide-wrapper/work-group/work-group.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -359,7 +360,8 @@ const authModuleConfig: OAuthModuleConfig = {
     ProjectComponent,
     PagesComponent,
     PageComponent,
-    AuditComponent
+    AuditComponent,
+    WorkGroupComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes, {

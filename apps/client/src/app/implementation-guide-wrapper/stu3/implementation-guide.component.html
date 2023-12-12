@@ -118,12 +118,10 @@
                 </div>
               </div>
 
-              <div class="mb-3" *ngIf="packageId && packageId.startsWith('hl7.')">
-                <label>HL7 Work Group</label>
-                <select class="form-select" [(ngModel)]="hl7WorkGroup" [class.is-invalid]="!hl7WorkGroup" (change)="igChanging.emit(true);">
-                  <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
-                  <option [ngValue]="undefined">Unspecified</option>
-                </select>
+              <div class="col-md-3" *ngIf="implementationGuide.packageId && implementationGuide.packageId.startsWith('hl7.')">
+
+                <app-ig-work-group [implementationGuide]="implementationGuide"></app-ig-work-group>
+
               </div>
 
               <app-fhir-string

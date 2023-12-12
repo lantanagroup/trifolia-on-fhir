@@ -88,15 +88,11 @@
   </div>
 
   <div class="mb-3">
-    <label>HL7 Work Group</label>
-    <select class="form-select extended" [(ngModel)]="hl7WorkGroup" (change)="igChanging.emit(true)"
-            [class.is-invalid]="!hl7WorkGroup">
-      <option *ngFor="let wg of Globals.hl7WorkGroups" [value]="wg.url">{{wg.name}}</option>
-      <option [ngValue]="undefined">Unspecified</option>
-    </select>
+    <app-ig-work-group [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></app-ig-work-group>
+
   </div>
   <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
-  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="!hl7WorkGroup || !igName">Finish</button>
+  <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="isDisabled()">Finish</button>
 </div>
 <div *ngIf="showPrivateStep2">
   Step Private 2
@@ -152,7 +148,7 @@
 
   <button type="button" class="btn btn-secondary back" (click)="previousStep()">Back</button>
   <button (click)="nextStep()"
-          [disabled]="!canonicalURL || !projectCode || !igUrl || !igName || !packageId || !isValidId(projectCode) || !isValidUrl(canonicalURL) || !isValidUrl(igUrl) || !fhirVersion || !isValidPrivatePackageId(packageId)"
+          [disabled]="!this.canonicalURL || !this.projectCode || !this.igUrl || !this.igName || !this.packageId || !this.isValidId(this.projectCode) || !this.isValidUrl(this.canonicalURL) || !this.isValidUrl(this.igUrl) || !this.fhirVersion || !this.isValidPrivatePackageId(this.packageId)"
           class="btn btn-primary" type="button">Finish
   </button>
 </div>
