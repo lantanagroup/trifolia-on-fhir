@@ -136,6 +136,20 @@ export class AuthService {
         }
     
         pipeline.push({$match: filter});
+
+        if (!isProject) {
+            pipeline.push({
+                $set: {
+                    projects: {
+                        $reduce: {
+                        input: '$projects',
+                        initialValue: [],
+                        in: '$projects._id',
+                        }
+                    }
+                }
+            });
+        }
         
         // console.log('pipeline:', JSON.stringify(pipeline));
 
