@@ -584,7 +584,7 @@ export class HtmlExporter {
       return;
     }
 
-    const menuContent = IgPageHelper.getMenuContent(this.pages);
+    const menuContent = IgPageHelper.getMenuContent(this.pages, this.igFhirResource);
     fs.writeFileSync(path.join(rootPath, 'input/includes/menu.xml'), menuContent);
   }
 

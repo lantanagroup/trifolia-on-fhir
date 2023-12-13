@@ -1,10 +1,12 @@
 import {ImplementationGuide as R5ImplementationGuide, ImplementationGuideDefinitionPage} from './r5/fhir';
-import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent} from './r4/fhir';
+import {ImplementationGuide, ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent} from './r4/fhir';
 import {ContactDetail, ImplementationGuide as STU3ImplementationGuide, PageComponent} from './stu3/fhir';
 import {IExtension, IImplementationGuide} from './fhirInterfaces';
 import {createTableFromArray, escapeForXml} from './helper';
 import {Globals} from './globals';
-import {Page} from '@trifolia-fhir/models';
+import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, Page} from '@trifolia-fhir/models';
+import {FhirServerVersion} from '../../../../apps/server/src/app/server.decorators';
+import {FhirResource} from '../../../../apps/server/src/app/fhir-resources/fhir-resource.schema';
 
 export class PageInfo {
   page: PageComponent | ImplementationGuidePageComponent | ImplementationGuideDefinitionPage;
@@ -131,7 +133,39 @@ export class IgPageHelper {
     return theList;
   }
 
-  public static getMenuContent(pages: Page[]) {
+  public static getMenuContent(pages: Page[], res: IFhirResource) {
+
+    let ig;
+    if (res.fhirVersion === 'r4') {
+      ig = <R4ImplementationGuide>res.resource;
+    }
+    else if (res.fhirVersion === 'r5') {
+      ig = <R5ImplementationGuide>res.resource;
+    }
+    else if (res.fhirVersion === 'stu3') {
+      ig = <STU3ImplementationGuide>res.resource;
+    }
+
+    function findPage(page, searchPageName) {
+      let result;
+      let pageName = page.nameUrl ?? page.nameReference?.reference ?? '';
+      if (pageName && pageName.indexOf('.') > -1) {
+        pageName = pageName.substring(0, pageName.indexOf('.'));
+      }
+      if (pageName === searchPageName) {
+        return page;
+      } else {
+        if (page.page) {
+          for (let i = 0; i < page.page.length; i++) {
+            result = findPage(page.page[i], searchPageName);
+            if (result !== false) {
+              return result;
+            }
+          }
+        }
+        return false;
+      }
+    }
 
     const allPageMenuNames = pages
       .filter(pg => !!pg.navMenu)
@@ -149,13 +183,16 @@ export class IgPageHelper {
         });
 
       if (menuPages.length === 1) {
-        const title = escapeForXml(menuPages[0].name);
+
+        let result = findPage(ig.definition.page, menuPages[0].name);
+        const title = escapeForXml(result.title);
         const fileName = menuPages[0].name + '.html';
         return `  <li><a href="${fileName}">${title}</a></li>\n`;
       } else {
         const pageMenuItems = menuPages
           .map(pi => {
-            const title = escapeForXml(pi.name);
+            let result = findPage(ig.definition.page, pi.name);
+            const title = escapeForXml(result.title);
             const fileName = pi.name + '.html';
             return `      <li><a href="${fileName}">${title}</a></li>`;   // TODO: Should not show fileName
           });
