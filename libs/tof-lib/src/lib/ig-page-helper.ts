@@ -149,15 +149,16 @@ export class IgPageHelper {
         });
 
       if (menuPages.length === 1) {
-        const title = escapeForXml(menuPages[0].name);
+
+        const navMenu = escapeForXml(menuPages[0].navMenu);
         const fileName = menuPages[0].name + '.html';
-        return `  <li><a href="${fileName}">${title}</a></li>\n`;
+        return `  <li><a href="${fileName}">${navMenu}</a></li>\n`;
       } else {
         const pageMenuItems = menuPages
           .map(pi => {
-            const title = escapeForXml(pi.name);
+            const navMenu = escapeForXml(pi.navMenu);
             const fileName = pi.name + '.html';
-            return `      <li><a href="${fileName}">${title}</a></li>`;   // TODO: Should not show fileName
+            return `      <li><a href="${fileName}">${navMenu}</a></li>`;   // TODO: Should not show fileName
           });
 
         return '  <li class="dropdown">\n' +
