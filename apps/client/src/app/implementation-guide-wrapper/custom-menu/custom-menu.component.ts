@@ -55,7 +55,7 @@ export class CustomMenuComponent implements OnInit, OnChanges {
       }
     });
 
-    this.customMenuValue = IgPageHelper.getMenuContent(pages, fhirResource);
+    this.customMenuValue = IgPageHelper.getMenuContent(pages);
   }
 
   ngOnChanges(changes: SimpleChanges) {

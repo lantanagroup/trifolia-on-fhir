@@ -133,39 +133,7 @@ export class IgPageHelper {
     return theList;
   }
 
-  public static getMenuContent(pages: Page[], res: IFhirResource) {
-
-    let ig;
-    if (res.fhirVersion === 'r4') {
-      ig = <R4ImplementationGuide>res.resource;
-    }
-    else if (res.fhirVersion === 'r5') {
-      ig = <R5ImplementationGuide>res.resource;
-    }
-    else if (res.fhirVersion === 'stu3') {
-      ig = <STU3ImplementationGuide>res.resource;
-    }
-
-    function findPage(page, searchPageName) {
-      let result;
-      let pageName = page.nameUrl ?? page.nameReference?.reference ?? '';
-      if (pageName && pageName.indexOf('.') > -1) {
-        pageName = pageName.substring(0, pageName.indexOf('.'));
-      }
-      if (pageName === searchPageName) {
-        return page;
-      } else {
-        if (page.page) {
-          for (let i = 0; i < page.page.length; i++) {
-            result = findPage(page.page[i], searchPageName);
-            if (result !== false) {
-              return result;
-            }
-          }
-        }
-        return false;
-      }
-    }
+  public static getMenuContent(pages: Page[]) {
 
     const allPageMenuNames = pages
       .filter(pg => !!pg.navMenu)
@@ -184,17 +152,15 @@ export class IgPageHelper {
 
       if (menuPages.length === 1) {
 
-        let result = findPage(ig.definition.page, menuPages[0].name);
-        const title = escapeForXml(result.title);
+        const navMenu = escapeForXml(menuPages[0].navMenu);
         const fileName = menuPages[0].name + '.html';
-        return `  <li><a href="${fileName}">${title}</a></li>\n`;
+        return `  <li><a href="${fileName}">${navMenu}</a></li>\n`;
       } else {
         const pageMenuItems = menuPages
           .map(pi => {
-            let result = findPage(ig.definition.page, pi.name);
-            const title = escapeForXml(result.title);
+            const navMenu = escapeForXml(pi.navMenu);
             const fileName = pi.name + '.html';
-            return `      <li><a href="${fileName}">${title}</a></li>`;   // TODO: Should not show fileName
+            return `      <li><a href="${fileName}">${navMenu}</a></li>`;   // TODO: Should not show fileName
           });
 
         return '  <li class="dropdown">\n' +
