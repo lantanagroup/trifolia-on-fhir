@@ -7,11 +7,22 @@
       <a ngbNavLink>General</a>
       <ng-template ngbNavContent>
           <div class="page">
-            <app-fhir-string [parentObject]="page" propertyName="name" [required]="true" title="Name"
-                             [pattern]="namePattern"
-                             [patternMessage]="messagePattern"
-                             [disabled] = "page.name === 'index' || page.id" (change)='idChangedEvent.next()'></app-fhir-string>
-            <div class="help-block">{{alreadyInUseNameMessage}}</div>
+            <div class="row">
+              <div class="col-6">
+                <app-fhir-string [parentObject]="page" propertyName="name" [required]="true" title="Name"
+                              [pattern]="namePattern"
+                              [patternMessage]="messagePattern"
+                              [disabled] = "page.name === 'index' || page.id" (change)='idChangedEvent.next()'></app-fhir-string>
+                <div class="help-block">{{alreadyInUseNameMessage}}</div>
+              </div>
+              <div class="col-6">
+                <label>
+                  Show on top nav menu
+                  <app-tooltip-icon tooltipKey="ig.page.showTopNavMenu"></app-tooltip-icon>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="page.navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
+              </div>
+            </div>
 
             <div class="mb-3" *ngIf="!reuseDescription">
               <label>Content</label>
@@ -21,13 +32,6 @@
               <label>
                 <input type="checkbox" [(ngModel)]="reuseDescription" /> The content of this page should be the same as the description and contact(s) of the implementation guide (ImplementationGuide.description and ImplementationGuide.contact).
               </label>
-            </div>
-            <div>
-              <label>
-                Show on top nav menu
-                <app-tooltip-icon tooltipKey="ig.page.showTopNavMenu"></app-tooltip-icon>
-              </label>
-              <input type="text" class="form-control" [(ngModel)]="page.navMenu" [ngbTypeahead]="pageNavMenuSearch" placeholder="Top menu name" />
             </div>
           </div>
       </ng-template>
