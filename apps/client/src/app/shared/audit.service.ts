@@ -25,4 +25,9 @@ export class AuditService {
     return this.http.post<IAudit>(this.apiBase, audit);
   }
 
+  public getResourceAudits(type: 'nonFhirResource' | 'fhirResource', resourceId: string, page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp'): Observable<Paginated<IAudit>> {
+    let url = this.apiBase + `/${encodeURIComponent(type)}/${encodeURIComponent(resourceId)}?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}`;
+    return this.http.get<Paginated<IAudit>>(url);
+  }
+
 }

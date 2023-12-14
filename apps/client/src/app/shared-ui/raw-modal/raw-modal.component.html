@@ -1,0 +1,16 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{title}}</h4>
+  <button *ngIf="copyEnabled" type="button" class="btn" aria-label="Copy to clipboard" title="Copy to clipboard" (click)="copyToClipboard(data)">
+    <i class="fa fa-copy"></i>
+  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body" *ngIf="data">
+  <pre>{{ data | json }}</pre>
+</div>
+<div class="modal-body" *ngIf="!data">
+  <p>No data to display.</p>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close()">Close</button>
+</div>

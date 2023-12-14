@@ -4,6 +4,8 @@ import { Paginated } from '@trifolia-fhir/tof-lib';
 import { AuditAction, AuditEntityType, AuditEntityValue, IAudit, IAuditPropertyDiff, IUser } from '@trifolia-fhir/models';
 import { Subject, debounceTime } from 'rxjs';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AuditDiffsModalComponent } from '../../shared-ui/audit-diffs-modal/audit-diffs-modal.component';
+import { RawModalComponent } from '../../shared-ui/raw-modal/raw-modal.component';
 
 @Component({
   selector: 'trifolia-fhir-audit',
@@ -14,11 +16,6 @@ export class AuditComponent implements OnInit {
 
   public AuditAction = AuditAction;
   public AuditEntityType = AuditEntityType;
-
-  public currentAudit: IAudit;
-  public currentEntity: AuditEntityValue;
-  public currentUser: IUser;
-  public currentPropertyDiffs: IAuditPropertyDiff[]
 
   public actions = Object.values(AuditAction).sort();
   public entityTypes = Object.values(AuditEntityType).sort();
@@ -124,36 +121,15 @@ export class AuditComponent implements OnInit {
     navigator.clipboard.writeText(JSON.stringify(data, null, 2));
   }
 
-  openAuditModal(modal: any, audit: IAudit) {
-    this.currentAudit = audit;
-    this.modalService.open(modal, { size: 'xl', scrollable: true }).closed.subscribe(() => {
-      this.currentAudit = null;
-    });
+  openRawModal(data: any, title: string) {
+    const modalRef = this.modalService.open(RawModalComponent, { size: 'xl', scrollable: true });
+    modalRef.componentInstance.data = data;
+    modalRef.componentInstance.title = title;
   }
 
-
-  openEntityModal(modal: any, entity: AuditEntityValue) {
-    this.currentEntity = entity;
-    this.modalService.open(modal, { size: 'xl', scrollable: true }).closed.subscribe(() => {
-      this.currentEntity = null;
-    });
-  }
-
-
-  openUserModal(modal: any, user: IUser) {
-    this.currentUser = user;
-    this.modalService.open(modal, { size: 'xl', scrollable: true }).closed.subscribe(() => {
-      this.currentUser = null;
-    });
-  }
-
-
-  openDiffsModal(modal: any, diffs: IAuditPropertyDiff[]) {
-    this.currentPropertyDiffs = diffs;
-    this.modalService.open(modal, { size: 'xl', scrollable: true }).closed.subscribe(() => {
-      this.currentPropertyDiffs = null;
-    });
-
+  openDiffsModal(diffs: IAuditPropertyDiff[]) {
+    const modalRef = this.modalService.open(AuditDiffsModalComponent, { size: 'xl', scrollable: true });
+    modalRef.componentInstance.propertyDiffs = diffs;
   }
 
 

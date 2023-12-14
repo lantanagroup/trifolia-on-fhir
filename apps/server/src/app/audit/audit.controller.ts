@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, Req, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Req, UnauthorizedException, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {BaseDataController} from '../base/base-data.controller';
@@ -8,6 +8,7 @@ import { User } from '../server.decorators';
 import { AuditService } from './audit.service';
 import { type IAudit } from '@trifolia-fhir/models';
 import { Request } from 'express';
+import { ObjectId } from 'mongodb';
 
 @Controller('api/audits')
 @UseGuards(AuthGuard('bearer'))
@@ -118,6 +119,72 @@ export class AuditController extends BaseDataController<AuditDocument> {
 
     return this.dataService.create(audit);
       
+  }
+
+
+  @Get(':type/:id')
+  public async getResourceAudits(@User() user: ITofUser, @Req() req: Request, @Param('type') type: 'nonFhirResource' | 'fhirResource', @Param('id') id: string): Promise<Paginated<AuditDocument>> {
+
+
+    const permCheck = await this.authService.userCanByType(user, id, type, 'read');
+    if (!permCheck) {
+      throw new UnauthorizedException();
+    }
+
+
+    let entityType;
+    if (type === 'nonFhirResource') {
+      entityType = 'NonFhirResource';
+    }
+    else if (type === 'fhirResource') {
+      entityType = 'FhirResource';
+    }
+    else {
+      throw new Error(`Invalid type ${type}`);
+    }
+
+    let options = this.getPaginateOptionsFromRequest(req);
+    options.pipeline = [
+      {
+        $match: {
+          'entityType': entityType,
+          'entityValue': new ObjectId(id)
+        }
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {
+        $set: {
+          user: {
+            $first: '$user'
+          }
+        }
+      }
+    ];
+    options.hydrate = false;
+
+    let res = await this.dataService.search(options);
+
+    // remove potentially sensitive data if user is not an admin
+    if (!user.isAdmin) {
+      res.results.forEach(audit => {
+        delete audit.networkAddr;
+        audit.user = {
+          firstName: audit.user.firstName,
+          lastName: audit.user.lastName,
+          name: audit.user.name
+        };
+      });
+    }
+
+    return res;
+
   }
 
 }

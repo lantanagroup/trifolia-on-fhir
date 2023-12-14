@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <h4 class="modal-title">View Changes</h4>
+  <button type="button" class="btn" aria-label="Copy to clipboard" title="Copy to clipboard" (click)="copyToClipboard(propertyDiffs)">
+    <i class="fa fa-copy"></i>
+  </button>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body" *ngIf="propertyDiffs">
+  <app-audit-diffs [propertyDiffs]="propertyDiffs"></app-audit-diffs>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close()">Close</button>
+</div>
