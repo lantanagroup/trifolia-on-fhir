@@ -1,10 +1,7 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Subject} from 'rxjs';
-import {Globals} from '../../../../../../libs/tof-lib/src/lib/globals';
+import {Component, EventEmitter, Input, OnInit} from '@angular/core';
+import {Globals} from '@trifolia-fhir/tof-lib';
 import {IContactDetail, IExtension, IImplementationGuide} from '@trifolia-fhir/tof-lib';
 import {AuthService} from '../../shared/auth.service';
-import {Extension} from '@trifolia-fhir/r4';
-import {debounceTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-ig-work-group',
@@ -12,7 +9,7 @@ import {debounceTime} from 'rxjs/operators';
   styleUrls: ['./work-group.component.css']
 })
 export class WorkGroupComponent implements OnInit {
-  @Input() implementationGuide;
+  @Input() implementationGuide: IImplementationGuide;
   public igChanging: EventEmitter<boolean> = new EventEmitter<boolean>();
   public Globals = Globals;
 
@@ -65,13 +62,13 @@ export class WorkGroupComponent implements OnInit {
 
     // set extension
     if (!this.implementationGuide.extension) this.implementationGuide.extension = [];
-    let foundExt: Extension = this.implementationGuide.extension.find(e => {
+    let foundExt: IExtension = this.implementationGuide.extension.find(e => {
       let b = e.url == 'http://hl7.org/fhir/StructureDefinition/structuredefinition-wg';
       return b;
     });
 
     if (!foundExt && value) {
-      foundExt = <Extension>{
+      foundExt = <IExtension>{
         url: 'http://hl7.org/fhir/StructureDefinition/structuredefinition-wg',
         valueCode: wg.code
       };
@@ -96,19 +93,20 @@ export class WorkGroupComponent implements OnInit {
       let foundContact = contacts.find(c => {
         return c.telecom && c.telecom.find(t => t.system === 'url' && t.value && t.value.toLowerCase().startsWith('http://www.hl7.org/Special/committees/'.toLowerCase()));
       });
-      if(foundContact){
+      if(!!foundContact && !!foundContact.telecom){
         const telecom = foundContact.telecom.find(t => t.system === 'url' && t.value.toLowerCase().startsWith('http://www.hl7.org/Special/committees/'.toLowerCase()));
-        const value = telecom.value;
+        const value = telecom?.value;
         const wg = Globals.hl7WorkGroups.find(w => w.url === value);
+        if (!wg) return;
 
         if (!this.implementationGuide.extension) this.implementationGuide.extension = [];
 
-        let foundExt: Extension = this.implementationGuide.extension.find(e => {
-          let b = e.url == 'http://hl7.org/fhir/StructureDefinition/structuredefinition-wg' && e.valueCode == wg.code;
+        let foundExt: IExtension = this.implementationGuide.extension.find(e => {
+          let b = e.url === 'http://hl7.org/fhir/StructureDefinition/structuredefinition-wg' && e.valueCode === wg.code;
           return b;
         });
         if (!foundExt && value) {
-          foundExt = <Extension>{
+          foundExt = <IExtension>{
             url: 'http://hl7.org/fhir/StructureDefinition/structuredefinition-wg',
             valueCode: wg.code
           };
@@ -117,7 +115,7 @@ export class WorkGroupComponent implements OnInit {
       } else {
         // if extensions exists create contact
         if (!this.implementationGuide.extension) this.implementationGuide.extension = [];
-        let foundExt: Extension = this.implementationGuide.extension.find(e => {
+        let foundExt: IExtension = this.implementationGuide.extension.find(e => {
           return e.url == 'http://hl7.org/fhir/StructureDefinition/structuredefinition-wg';
           const value = foundExt.url;
 
