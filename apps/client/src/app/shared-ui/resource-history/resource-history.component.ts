@@ -147,6 +147,9 @@ export class ResourceHistoryComponent implements OnInit, AfterContentChecked {
 
   openAuditDiffsModal(diffs: IAuditPropertyDiff[]) {
     const modalRef = this.modalService.open(AuditDiffsModalComponent, { size: 'xl', scrollable: true });
+    if (!this.isAdmin) {
+      diffs = (diffs ||[]).filter(d => d.path.startsWith('$.resource') || d.path.startsWith('$.content'));
+    }
     modalRef.componentInstance.propertyDiffs = diffs;
   }
 
