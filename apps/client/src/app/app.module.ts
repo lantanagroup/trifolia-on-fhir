@@ -192,7 +192,7 @@ const appRoutes: Routes = [
   { path: 'projects/:implementationGuideId/operation-definition/new', component: OperationDefinitionComponent },
   { path: 'projects/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always' },
   { path: 'projects/:implementationGuideId/value-set', component: ValuesetsComponent },
-  { path: 'projects/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always' , canDeactivate: [ResourceGuard]},
   { path: 'projects/:implementationGuideId/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always' },
 
   { path: 'projects/:implementationGuideId/questionnaire', component: QuestionnairesComponent },
