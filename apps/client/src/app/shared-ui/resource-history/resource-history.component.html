@@ -1,50 +1,135 @@
 <div class="alert alert-warning" *ngIf="message">{{message}}</div>
 
-<div class="row" *ngIf="historyBundle && historyBundle.results">
-  <div [class.col-md-12]="!rightResource || !leftResource" [class.col-md-4]="!!rightResource && !!leftResource">
-    <table class="table table-striped" *ngIf="historyBundle && historyBundle.total > 0">
-      <thead>
-      <tr>
-        <th>Left</th>
-        <th>Right</th>
-        <th>Version ID</th>
-        <th>Timestamp</th>
-        <th>Action</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let entry of historyBundle.results; let ei = index">
-        <td><input [(ngModel)]="leftVersionId" [value]="entry.versionId" name="leftSelect" type="radio" /></td>
-        <td><input [(ngModel)]="rightVersionId" [value]="entry.versionId" name="rightSelect" type="radio" /></td>
-        <td>{{entry.versionId}}{{resource.versionId === entry.versionId ? ' (In Editor)' : ''}}</td>
-        <td>{{entry.lastUpdated}}</td>
-        <td>{{getActionDisplay(entry)}}</td>
-      </tr>
-      </tbody>
-    </table>
+<ul ngbNav #nav="ngbNav" class="nav-tabs nav-fill">
+  <li ngbNavItem>
+    <a ngbNavLink>
+      Content History
+    </a>
+    <ng-template ngbNavContent>    
+      <div class="row" *ngIf="historyResults && historyResults.results">
+        <div [class.col-md-12]="!rightResource || !leftResource" [class.col-md-4]="!!rightResource && !!leftResource">
+          <table class="table table-striped" *ngIf="historyResults && historyResults.total > 0">
+            <thead>
+            <tr>
+              <th>Left</th>
+              <th>Right</th>
+              <th>Version ID</th>
+              <th>Timestamp</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let entry of historyResults.results; let ei = index">
+              <td><input [(ngModel)]="leftVersionId" [value]="entry.versionId" name="leftSelect" type="radio" /></td>
+              <td><input [(ngModel)]="rightVersionId" [value]="entry.versionId" name="rightSelect" type="radio" /></td>
+              <td>{{entry.versionId}}{{resource.versionId === entry.versionId ? ' (In Editor)' : ''}}</td>
+              <td>{{entry.lastUpdated}}</td>
+              <td>{{getActionDisplay(entry)}}</td>
+            </tr>
+            </tbody>
+          </table>
+      
+          <ngb-pagination *ngIf="historyResults.total > 0"
+          [(page)]="historyCurrentPage"
+          [pageSize]="historyResults.itemsPerPage"
+          [collectionSize]="historyResults.total"
+          [maxSize]="5"
+          (pageChange)="getHistory()"></ngb-pagination>
 
-    <ngb-pagination
-    [(page)]="page"
-    [pageSize]="10"
-    [collectionSize]="historyBundle.total"
-    [maxSize]="5"
-    (pageChange)="getHistory()"></ngb-pagination>
-  </div>
-  <div *ngIf="rightResource && leftResource" class="col-md-8">
-    <h3>
-      Comparing version {{leftResource.versionId}}
-      <button (click)="loadHistory(leftResource,rightResource,!isLeftResource)" class="btn btn-default"
-              title="Restore this version. Must press 'Save' before this restored version is persisted."
-              type="button">
-        <i class="fas fa-upload"></i>
-      </button>
-      to version {{rightResource.versionId}}
-      <button (click)="loadHistory(rightResource,leftResource,isLeftResource)" class="btn btn-default"
-              title="Restore this version. Must press 'Save' before this restored version is persisted."
-              type="button">
-        <i class="fas fa-upload"></i>
-      </button>
-    </h3>
-    <inline-diff *ngIf="leftResource && rightResource" [oldText]="rightResource.content | json" [newText]="leftResource.content | json"></inline-diff>
-  </div>
-</div>
+          <div *ngIf="historyResults.total === 0">
+            No history found.
+          </div>
+        </div>
+        <div *ngIf="rightResource && leftResource" class="col-md-8">
+          <h3>
+            Comparing version {{leftResource.versionId}}
+            <button (click)="loadHistory(leftResource,rightResource,!isLeftResource)" class="btn btn-default"
+                    title="Restore this version. Must press 'Save' before this restored version is persisted."
+                    type="button">
+              <i class="fas fa-upload"></i>
+            </button>
+            to version {{rightResource.versionId}}
+            <button (click)="loadHistory(rightResource,leftResource,isLeftResource)" class="btn btn-default"
+                    title="Restore this version. Must press 'Save' before this restored version is persisted."
+                    type="button">
+              <i class="fas fa-upload"></i>
+            </button>
+          </h3>
+          <inline-diff *ngIf="leftResource && rightResource" [oldText]="rightResource.content | json" [newText]="leftResource.content | json"></inline-diff>
+        </div>
+      </div>
+    </ng-template>
+  </li>
+  <li ngbNavItem>
+    <a ngbNavLink>
+      Logs
+    </a>
+    <ng-template ngbNavContent>
+
+      <ng-container *ngIf="!!auditResults">
+
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th class="col-1" *ngIf="isAdmin">Raw</th>
+              <th class="col-1">Diffs</th>
+              <th>Time</th>
+              <th>Action</th>
+              <th>User</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="auditResults.total > 0">
+            <tr *ngFor="let audit of auditResults.results">
+              <td *ngIf="isAdmin">
+                <button type="button" class="btn btn-primary btn-sm" title="View raw audit" (click)="openRawModal(audit, 'View Audit')">
+                  <i class="fa fa-search"></i>
+                </button>
+              </td>
+              <td>
+                <button *ngIf="audit.action === AuditAction.Update" type="button" class="btn btn-primary btn-sm" title="View changes" (click)="openAuditDiffsModal(audit.propertyDiffs)">
+                  <i class="fa fa-exchange-alt"></i>
+                </button>
+              </td>
+              <td>{{audit.timestamp | date:'medium'}}</td>
+              <td>{{audit.action}}</td>
+              <td>{{ audit.user?.firstName }} {{ audit.user?.lastName }}</td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="!!auditResults && auditResults.total === 0">
+            <tr>
+              <td [attr.colspan]="isAdmin ? 5 : 4" class="text-center">No logs found.</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="d-flex justify-content-between" *ngIf="auditResults.total > 0" >
+          <div>
+            Total: {{ auditResults.total }}
+          </div>
+
+          <ngb-pagination class="justify-content-center"
+            [(page)]="auditCurrentPage"
+            [pageSize]="auditResults.itemsPerPage"
+            [collectionSize]="auditResults.total"
+            [maxSize]="5"
+            (pageChange)="getAudits()">
+          </ngb-pagination>
+
+          <div>
+            <select id="auditItemsPerPage" class="form-select" [(ngModel)]="auditItemsPerPage" (ngModelChange)="refreshAudits()">
+              <option [value]="10">10</option>
+              <option [value]="25">25</option>
+              <option [value]="50">50</option>
+              <option [value]="100">100</option>
+            </select>
+          </div>
+
+        </div>
+
+      </ng-container>
+
+    </ng-template>
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
+

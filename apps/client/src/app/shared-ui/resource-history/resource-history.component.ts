@@ -1,8 +1,14 @@
 import {AfterContentChecked, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {type IDomainResource, getErrorString, Paginated} from '@trifolia-fhir/tof-lib';
-import type {IFhirResource, IHistory, INonFhirResource} from '@trifolia-fhir/models';
+import {AuditAction, IAuditPropertyDiff, type IAudit, type IFhirResource, type IHistory, type INonFhirResource} from '@trifolia-fhir/models';
 import {HistoryService} from '../../shared/history.service';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, forkJoin } from 'rxjs';
+import { AuditService } from '../../shared/audit.service';
+import { AuditDiffsModalComponent } from '../audit-diffs-modal/audit-diffs-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { RawModalComponent } from '../raw-modal/raw-modal.component';
+import { ConfigService } from '../../shared/config.service';
+import { AuthService } from '../../shared/auth.service';
 
 @Component({
   selector: 'app-resource-history',
@@ -14,23 +20,31 @@ export class ResourceHistoryComponent implements OnInit, AfterContentChecked {
   @Output() public resourceChange = new EventEmitter<any>();
   @Output() public change: EventEmitter<void> = new EventEmitter<void>();
 
-  public historyBundle: Paginated<IHistory>;
+  public historyResults: Paginated<IHistory>;
   public message: string;
   public leftResource: any;
   public rightResource: any;
   public isLeftResource = false;
-  public page = 1;
   public domainResource: IDomainResource;
-
   public currentVersion: number;
+  public historyCurrentPage = 1;
+
+  public AuditAction = AuditAction;
+  public auditResults: Paginated<IAudit>;
+  public auditCurrentPage = 1;
+  public auditItemsPerPage = 10;
+  
   public initialized = false;
 
   constructor(
-    private historyService: HistoryService
+    private authService: AuthService,
+    private historyService: HistoryService,
+    private auditService: AuditService,
+    private modalService: NgbModal
     ) {
   }
 
-  public getActionDisplay(entry) {
+  public getActionDisplay(entry: IHistory) {
     if (!entry || !entry.versionId ) {
       return 'Unknown';
     }
@@ -40,6 +54,10 @@ export class ResourceHistoryComponent implements OnInit, AfterContentChecked {
     else{
       return 'Update';
     }
+  }
+
+  public get isAdmin(): boolean {
+    return this.authService.userProfile.isAdmin;
   }
 
 
@@ -79,7 +97,7 @@ export class ResourceHistoryComponent implements OnInit, AfterContentChecked {
         }
 
 
-        this.historyBundle = await firstValueFrom(this.historyService.getHistory(resourceType, this.resource.id, this.page));
+        this.historyResults = await firstValueFrom(this.historyService.getHistory(resourceType, this.resource.id, this.historyCurrentPage));
 
       } catch (ex) {
         this.message = getErrorString(ex);
@@ -106,31 +124,66 @@ export class ResourceHistoryComponent implements OnInit, AfterContentChecked {
   }
 
   public getVersion(versionId: number) {
-    return this.historyBundle.results.find(e => e.versionId === versionId);
+    return this.historyResults.results.find(e => e.versionId === versionId);
   }
 
-
-  async ngAfterContentChecked() {
-    if (this.initialized && this.resource.versionId !== this.currentVersion) {
-      await this.refreshHistory();
-    }
-  }
 
   private async refreshHistory() {
 
     this.currentVersion = this.resource.versionId;
     await this.getHistory();
 
-    if (this.historyBundle && this.historyBundle.results.length > 1) {
-      this.leftVersionId = this.historyBundle.results[0]?.versionId;
-      this.rightVersionId = this.historyBundle.results[1]?.versionId;
+    if (this.historyResults && this.historyResults.results.length > 1) {
+      this.leftVersionId = this.historyResults.results[0]?.versionId;
+      this.rightVersionId = this.historyResults.results[1]?.versionId;
+    }
+  }
+
+  openRawModal(data: any, title: string) {
+    const modalRef = this.modalService.open(RawModalComponent, { size: 'xl', scrollable: true });
+    modalRef.componentInstance.data = data;
+    modalRef.componentInstance.title = title;
+  }
+
+  openAuditDiffsModal(diffs: IAuditPropertyDiff[]) {
+    const modalRef = this.modalService.open(AuditDiffsModalComponent, { size: 'xl', scrollable: true });
+    if (!this.isAdmin) {
+      diffs = (diffs ||[]).filter(d => d.path.startsWith('$.resource') || d.path.startsWith('$.content'));
+    }
+    modalRef.componentInstance.propertyDiffs = diffs;
+  }
+
+
+  public async getAudits() {
+
+    if (this.resource && this.resource.id) {
+      const type: 'nonFhirResource' | 'fhirResource' = this.resource.hasOwnProperty("resource") ? 'fhirResource' : 'nonFhirResource';
+      this.auditResults = await firstValueFrom(this.auditService.getResourceAudits(type, this.resource.id, this.auditCurrentPage, this.auditItemsPerPage));
+    }
+
+  }
+
+  private async refreshAudits() {
+    await this.getAudits();
+  }
+
+
+  private async refresh() {
+    await forkJoin([this.refreshHistory(), this.refreshAudits()]);
+  }
+
+
+  async ngAfterContentChecked() {
+    if (this.initialized && this.resource.versionId !== this.currentVersion) {
+      await this.refresh();
     }
   }
 
   async ngOnInit() {
 
-    await this.refreshHistory();
+    this.refresh().then(() => {
+      this.initialized = true;
+    });
 
-    this.initialized = true;
   }
 }

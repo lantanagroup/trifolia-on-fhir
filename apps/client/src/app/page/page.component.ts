@@ -169,7 +169,8 @@ export class PageComponent extends BaseComponent implements OnInit {
   }
 
   public saveDisabled() {
-      return !this.isIdUnique ||
+      return !this.page || 
+      !this.isIdUnique ||
       !this.page.name ||
       (!this.page.content && this.contentRequired)||
       this.isPageNameInvalid() ||
