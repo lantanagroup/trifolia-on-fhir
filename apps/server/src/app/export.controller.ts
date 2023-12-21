@@ -26,7 +26,8 @@ import {FhirResourcesController} from './fhir-resources/fhir-resources.controlle
 import {FhirResourcesService} from './fhir-resources/fhir-resources.service';
 import {v4 as uuidv4} from 'uuid';
 import { NonFhirResourcesService } from './non-fhir-resources/non-fhir-resources.service';
-import {IFhirResource} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, IAudit, IFhirResource} from '@trifolia-fhir/models';
+import { AuditService } from './audit/audit.service';
 
 
 @Controller('api/export')
@@ -42,7 +43,8 @@ export class ExportController extends FhirResourcesController {
     protected configService: ConfigService,
     protected fhirResourceService: FhirResourcesService,
     protected nonFhirResourceService: NonFhirResourcesService,
-    private exportService: ExportService) {
+    protected exportService: ExportService,
+    protected auditService: AuditService) {
     super(fhirResourceService);
   }
 
@@ -279,15 +281,28 @@ export class ExportController extends FhirResourcesController {
         return;
       }
 
+      const audit: IAudit = {
+        action: AuditAction.PublishFailure,
+        entityType: AuditEntityType.FhirResource,
+        entityValue: implementationGuideId,
+        timestamp: new Date(),
+        user: user.user,
+        networkAddr: this.auditService.getNetworkAddress(request)
+      };
+
       try {
         await exporter.publish(options.format, options.useTerminologyServer, options.downloadOutput, options.includeIgPublisherJar, options.version);
         this.sendNotification(options.notifyMe, user, true, implementationGuideId);
+        audit.action = AuditAction.PublishSuccess;
       } catch (ex) {
         this.logger.error(`Error while executing HtmlExporter.publish: ${ex.message}`);
         this.sendNotification(options.notifyMe, user, false, implementationGuideId, exporter.logs);
+        audit.note = `Encountered errors when publishing: ${exporter.logs}`;
       } finally {
         const index = this.exportService.exports.indexOf(exporter);
         if (index >= 0) this.exportService.exports.splice(index, 1);
+        audit.timestamp = new Date();
+        await this.auditService.create(audit);
       }
     };
 

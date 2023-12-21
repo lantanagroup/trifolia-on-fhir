@@ -1,9 +1,9 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { Observable, tap } from "rxjs";
+import { tap } from "rxjs";
 import { AUDIT_ACTION, AUDIT_ENTITY_PARAM_ID, AUDIT_ENTITY_TYPE } from "./audit.decorator";
 import { AuditService } from "./audit.service";
-import { AuditEntityType, IAudit, IBaseEntity } from "@trifolia-fhir/models";
+import { AuditAction, AuditEntityType, IBaseEntity } from "@trifolia-fhir/models";
 import { IBaseDataService } from "../base/interfaces";
 import { UsersService } from "../users/users.service";
 import { GroupsService } from "../groups/groups.service";
@@ -24,26 +24,6 @@ export class AuditInterceptor implements NestInterceptor {
     private readonly projectsService: ProjectsService,
     private readonly usersService: UsersService,
     ) {
-  }
-
-
-  private getAuditFromContext(context: ExecutionContext): IAudit {
-
-    let auditAction = this.reflector.get(AUDIT_ACTION, context.getHandler());
-    let auditEntityType = this.reflector.get(AUDIT_ENTITY_TYPE, context.getHandler());
-
-    let req = context.switchToHttp().getRequest();
-
-    let auditEvent: IAudit = {
-      action: auditAction,
-      entityType: auditEntityType,
-      timestamp: new Date(),
-      user: req.user?.user,
-      networkAddr: req.headers['x-forwarded-for']?.toString() || req.socket?.remoteAddress
-    };
-
-    return auditEvent;
-
   }
 
   private getEntityServiceFromType(enityType: AuditEntityType): IBaseDataService<IBaseEntity> {
@@ -72,14 +52,14 @@ export class AuditInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    let audit = this.getAuditFromContext(context);
+    let audit = this.auditService.getAuditFromContext(context);
     let auditEntityParamId = this.reflector.get(AUDIT_ENTITY_PARAM_ID, context.getHandler());
     let service = this.getEntityServiceFromType(audit.entityType);
     let req = context.switchToHttp().getRequest();
 
     // if the audit action is an update, get the original entity to later compare with the updated entity
     let original: IBaseEntity;
-    if (audit.action === 'update' || audit.action === 'delete') {
+    if (audit.action === AuditAction.Update || audit.action === AuditAction.Delete) {
       original = await service.findById(req.params[auditEntityParamId]);
     }
 

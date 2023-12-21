@@ -97,7 +97,9 @@ export enum AuditAction {
   Update = 'update',
   Delete = 'delete',
   Create = 'create',
-  Login = 'login'
+  Login = 'login',
+  PublishSuccess = 'publish-success',
+  PublishFailure = 'publish-failure'
 }
 export enum AuditEntityType {
   User = 'User',

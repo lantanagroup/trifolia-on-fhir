@@ -1,16 +1,20 @@
-import {Injectable} from '@nestjs/common';
+import {ExecutionContext, Injectable} from '@nestjs/common';
 import {BaseDataService} from '../base/base-data.service';
 import {Model} from 'mongoose';
 import {Audit, AuditDocument} from './audit.schema';
 import {InjectModel} from '@nestjs/mongoose';
-import type { IAuditPropertyDiff, IBaseEntity } from '@trifolia-fhir/models';
+import type { IAudit, IAuditPropertyDiff, IBaseEntity } from '@trifolia-fhir/models';
 import { diff } from 'deep-diff';
+import { AUDIT_ACTION, AUDIT_ENTITY_TYPE } from './audit.decorator';
+import { Reflector } from '@nestjs/core';
+import { ITofRequest } from '../models/tof-request';
 
 @Injectable()
 export class AuditService extends BaseDataService<AuditDocument> {
 
   constructor(
-    @InjectModel(Audit.name) private auditModel: Model<AuditDocument>
+    @InjectModel(Audit.name) private auditModel: Model<AuditDocument>,
+    private readonly reflector: Reflector
   ) {
     super(auditModel);
   }
@@ -49,6 +53,29 @@ export class AuditService extends BaseDataService<AuditDocument> {
     }
 
     return differences;
+  }
+
+  public getNetworkAddress(req: ITofRequest): string {
+    return req.headers['x-forwarded-for']?.toString() || req.socket?.remoteAddress || 'unknown';
+  }
+
+  public getAuditFromContext(context: ExecutionContext): IAudit {
+
+    let auditAction = this.reflector.get(AUDIT_ACTION, context.getHandler());
+    let auditEntityType = this.reflector.get(AUDIT_ENTITY_TYPE, context.getHandler());
+
+    let req = context.switchToHttp().getRequest();
+
+    let auditEvent: IAudit = {
+      action: auditAction,
+      entityType: auditEntityType,
+      timestamp: new Date(),
+      user: req.user?.user,
+      networkAddr: this.getNetworkAddress(req)
+    };
+
+    return auditEvent;
+
   }
 
 }

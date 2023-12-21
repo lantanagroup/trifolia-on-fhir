@@ -895,7 +895,7 @@ export class ImportComponent implements OnInit {
     // If this is a valid FHIR resource, we can also validate it
     if (!!importFileModel.resource) {
       importFileModel.validation = this.fhirService.validate(importFileModel.resource);
-      console.log('validation:', importFileModel.validation);
+      // console.log('validation:', importFileModel.validation);
     }
 
 
