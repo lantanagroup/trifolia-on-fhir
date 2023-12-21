@@ -215,6 +215,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.valueSetId = conf.id;
+            this.isDirty = false;
             this.router.navigate([`${this.configService.baseSessionUrl}/value-set/${this.valueSetId}`]);
           } else {
             this.loadVS(conf.resource, false);
@@ -307,7 +308,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
   }
 
   nameChanged() {
-    this.configService.setTitle(`ValueSet - ${this.valueSet.title || this.valueSet.name || 'no-name'}`);
+    this.configService.setTitle(`ValueSet - ${this.valueSet.title || this.valueSet.name || 'no-name'}`, this.isDirty);
   }
 
   ngDoCheck() {
