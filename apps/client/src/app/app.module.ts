@@ -100,6 +100,7 @@ import {PagesComponent} from './pages/pages.component';
 import {PageComponent} from './page/page.component';
 import { AuditComponent } from './manage/audit/audit.component';
 import {WorkGroupComponent} from './implementation-guide-wrapper/work-group/work-group.component';
+import {TemplateComponent} from './implementation-guide-wrapper/template/template.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -361,7 +362,8 @@ const authModuleConfig: OAuthModuleConfig = {
     PagesComponent,
     PageComponent,
     AuditComponent,
-    WorkGroupComponent
+    WorkGroupComponent,
+    TemplateComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes, {

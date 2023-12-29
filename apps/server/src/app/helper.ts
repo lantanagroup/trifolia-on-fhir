@@ -100,7 +100,7 @@ export const zip = async (p: string) => {
   });
 };
 
-export const unzip = async (buffer: Buffer, destinationPath: string, bypassSubDir?: string) => {
+export const unzip = async (buffer: any, destinationPath: string, bypassSubDir?: string) => {
   const zipFile = await JSZip.loadAsync(buffer);
   const fileNames = Object.keys(zipFile.files);
   const promises = fileNames.map(async fileName => {

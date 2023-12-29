@@ -20,7 +20,7 @@ import { BundleExporter } from "./bundle";
 import { HttpService } from '@nestjs/axios';
 import { MethodNotAllowedException } from "@nestjs/common";
 import { Formats } from "../models/export-options";
-import {getPages, IgPageHelper, PageInfo} from '@trifolia-fhir/tof-lib';
+import {getPages, getTemplate, IgPageHelper, PageInfo} from '@trifolia-fhir/tof-lib';
 import {
   getCustomMenu,
   getDefaultImplementationGuideResourcePath,
@@ -39,7 +39,16 @@ import { ConfigService } from "../config.service";
 import JSZip from "jszip";
 import { FhirResourcesService } from "../fhir-resources/fhir-resources.service";
 import { TofLogger } from "../tof-logger";
-import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, Page, StructureDefinitionIntro, StructureDefinitionNotes} from '@trifolia-fhir/models';
+import {
+  IFhirResource,
+  INonFhirResource,
+  IProjectResourceReference,
+  NonFhirResource,
+  Page,
+  StructureDefinitionIntro,
+  StructureDefinitionNotes,
+  Template
+} from '@trifolia-fhir/models';
 import { NonFhirResourcesService } from "../non-fhir-resources/non-fhir-resources.service";
 import { FhirResource } from "../fhir-resources/fhir-resource.schema";
 
@@ -429,6 +438,32 @@ export class HtmlExporter {
         this.publishLog('error', `Error retrieving custom template from GitHub: ${getErrorString(ex)}`, true);
       }
     }
+    else if (templateType == "custom-template"){
+
+      let template  = <Template>getTemplate(this.igFhirResource);
+
+      if(!template){
+        this.publishLog('error', `Error retrieving custom template from DB `, true);
+        return;
+      }
+      let zipfileString = atob(template.content);
+
+      var buf = new ArrayBuffer(zipfileString.length);
+      var bufView = new Uint8Array(buf);
+      for (var i=0, strLen=zipfileString.length; i < strLen; i++) {
+        bufView[i] = zipfileString.charCodeAt(i);
+      }
+      const retrieveTemplateResults = bufView;
+
+      const customTemplatePath = path.join(this.rootPath, 'custom-template');
+
+      const fileNameWithoutExt = path.basename(template.name, '.zip');
+      await unzip(retrieveTemplateResults, customTemplatePath, fileNameWithoutExt);
+
+      controlTemplate = 'custom-template';
+      controlTemplateVersion = null;
+    }
+
 
     control = this.getControl(this.bundle, format, controlTemplate, controlTemplateVersion);
 

@@ -6,14 +6,15 @@ import {ExportFormats} from '../models/export-formats.enum';
 import {CookieService} from 'ngx-cookie-service';
 import {ConfigService} from '../shared/config.service';
 import {ImplementationGuide} from '@trifolia-fhir/stu3';
-import {Observable} from 'rxjs';
+import {firstValueFrom, Observable} from 'rxjs';
 import {ExportGithubPanelComponent} from '../export-github-panel/export-github-panel.component';
 import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
 import {NgbNavChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import {getErrorString, Globals, SearchImplementationGuideResponseContainer} from '@trifolia-fhir/tof-lib';
 import {HttpClient} from '@angular/common/http';
-import {IFhirResource} from '@trifolia-fhir/models';
+import {IFhirResource, Template} from '@trifolia-fhir/models';
 import {FhirService} from '../shared/fhir.service';
+import {NonFhirResourceService} from '../shared/non-fhir-resource.service';
 
 interface DocumentOptions {
   compositionId?: string;
@@ -31,6 +32,8 @@ export class ExportComponent implements OnInit {
   public activeTabId = 'html';
   public Globals = Globals;
   public templateVersions: string[] = [];
+  private template;
+  private fhirResource;
 
   @ViewChild('githubPanel') githubPanel: ExportGithubPanelComponent;
 
@@ -47,6 +50,7 @@ export class ExportComponent implements OnInit {
   constructor(
     private implementationGuideService: ImplementationGuideService,
     private fhirService: FhirService,
+    private nonFhirResourceService: NonFhirResourceService,
     private exportService: ExportService,
     private cookieService: CookieService,
     public configService: ConfigService,
@@ -69,47 +73,20 @@ export class ExportComponent implements OnInit {
     }
   }
 
-  public async templateTypeChanged() {
-    if (this.options.templateType === 'official') {
-      this.options.template = 'hl7.fhir.template';
-      this.options.templateVersion = 'current';
-    } else if (this.options.templateType === 'custom-uri') {
-      this.options.template = '';
-    }
-
-    this.cookieService.set(Globals.cookieKeys.lastTemplateType, this.options.templateType);
-    await this.templateChanged();
-  }
-
   public async templateChanged() {
-    this.cookieService.set(Globals.cookieKeys.lastTemplate, this.options.template);
-
-    if (this.options.templateType === 'official') {
-      this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
-
-      const templateVersionCookie = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion);
-      if (this.templateVersions && this.templateVersions.indexOf(templateVersionCookie) >= 0) {
-        this.options.templateVersion = templateVersionCookie;
-      } else if (this.templateVersions && this.templateVersions.length > 0) {
-        this.options.templateVersion = this.templateVersions[0];
-      } else {
-        this.options.templateVersion = 'current';
-      }
-    } else {
+    if (this.template.templateType) {
+      this.options.templateType = this.template.templateType;
+      this.cookieService.set(Globals.cookieKeys.lastTemplateType, this.options.templateType);
+    }
+    this.options.template = this.template.content;
+    if (this.template.templateType == 'official') {
+      this.options.template = this.template.content.substring(0, this.template.content.indexOf('#'));
+      this.options.templateVersion = this.template.content.substring(this.template.content.indexOf('#') + 1);
+    } else if (this.template.templateType == 'custom-uri' || this.template.templateType == 'custom-template') {
       this.options.templateVersion = null;
     }
-
-    this.templateVersionChanged();
-  }
-
-  public templateVersionChanged() {
-    if (!this.options.templateVersion) {
-      if (this.cookieService.get(Globals.cookieKeys.lastTemplateVersion)) {
-        this.cookieService.delete(Globals.cookieKeys.lastTemplateVersion);
-      }
-    } else {
-      this.cookieService.set(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
-    }
+    this.cookieService.set(Globals.cookieKeys.lastTemplate, this.options.template);
+    this.cookieService.set(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
   }
 
   public onTabChange(event: NgbNavChangeEvent) {
@@ -135,7 +112,7 @@ export class ExportComponent implements OnInit {
             this.compositions = res.results.map(c => {
               return {
                 id: c.resource.id,
-                name: (<any> c.resource).title
+                name: (<any>c.resource).title
               };
             });
           });
@@ -157,26 +134,53 @@ export class ExportComponent implements OnInit {
       this.cookieService.delete(cookieKey);
     }
 
-    const pubTemplateExt = (igConf.resource.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-pub-template']);
-
-    if (pubTemplateExt) {
-      if (pubTemplateExt.valueUri) {
-        this.options.templateType = 'custom-uri';
-        this.options.template = pubTemplateExt.valueUri;
-      } else if (pubTemplateExt.valueString) {
-        this.options.templateType = 'official';
-
-        if (pubTemplateExt.valueString.indexOf('#') >= 0) {
-          this.options.template = pubTemplateExt.valueString.substring(0, pubTemplateExt.valueString.indexOf('#'));
-          this.options.templateVersion = pubTemplateExt.valueString.substring(pubTemplateExt.valueString.indexOf('#') + 1);
+    // get the template
+    if (!this.template) {
+      let template = new Template();
+      let res = await firstValueFrom(this.nonFhirResourceService.getByType(template, this.options.implementationGuideId));
+      if (res.id) {
+        this.template = res;
+      } else {
+        this.template = template;
+        this.template.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
+        if (this.template.templateType && this.template.templateType == 'official') {
+          this.template.content = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template + '#' + <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion) || this.options.templateVersion;
         } else {
-          this.options.template = pubTemplateExt.valueString;
-          this.options.templateVersion = 'current';
+          this.template.content = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
         }
-
-        this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
       }
     }
+
+    this.options.templateType = this.template.templateType;
+    if (this.template.templateType && this.template.templateType == 'custom-uri') {
+      this.options.template = this.template.content;
+    } else if (this.template.templateType && this.template.templateType == 'custom-template') {
+      this.options.template =  this.template.content;
+    } else if (this.template.templateType && this.template.templateType == 'official') {
+      let content = this.template.content;
+      const hashTagIndex = (content || '').indexOf('#');
+      if (typeof content === 'string' && hashTagIndex >= 0) {
+        this.options.template = content.substring(0, hashTagIndex);
+        this.options.templateVersion = content.substring(hashTagIndex + 1);
+      } else {
+        this.options.template = content;
+        this.options.templateVersion = 'current';
+      }
+
+      this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
+      if (this.options.templateVersion && this.templateVersions.indexOf(this.options.templateVersion) < 0) {
+        this.options.templateVersion = this.templateVersions[0];
+      } else if (!this.options.templateVersion && this.templateVersions && this.templateVersions.length > 0) {
+        this.options.templateVersion = this.templateVersions[0];
+      }
+
+    }
+
+  }
+
+  public get igSpecifiesTemplate() {
+    if (!this.selectedImplementationGuide) return false;
+    return (this.template && this.template['id']);
   }
 
   public searchImplementationGuide = (text$: Observable<string>) => {
@@ -227,6 +231,8 @@ export class ExportComponent implements OnInit {
         return true;
       } else if (this.options.templateType === 'official' && (!this.options.template || !this.options.templateVersion)) {
         return true;
+      } else if (this.options.templateType === 'custom-template' && !this.options.template) {
+        return true;
       }
     }
 
@@ -245,7 +251,7 @@ export class ExportComponent implements OnInit {
 
   private async exportGithub() {
     if (!this.githubPanel.canExport) {
-      this.message = "The repository, branch, and commit message must be filled for a GitHub export.";
+      this.message = 'The repository, branch, and commit message must be filled for a GitHub export.';
       return;
     }
 
@@ -260,7 +266,7 @@ export class ExportComponent implements OnInit {
   }
 
   private async exportDocument() {
-    console.log("exportDocument:", !this.documentOptions.compositionId, this.documentOptions.compositionId);
+    console.log('exportDocument:', !this.documentOptions.compositionId, this.documentOptions.compositionId);
     if (!this.documentOptions.compositionId) {
       this.message = 'You must specify a composition to export as a document';
       return;
@@ -345,13 +351,14 @@ export class ExportComponent implements OnInit {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe({
           next: (res: IFhirResource) => {
+            this.fhirResource = res;
             this.implementationGuideChanged(res);
+            this.cookieService.set(Globals.cookieKeys.lastTemplate, this.options.template);
           },
           error: (err) => this.message = getErrorString(err)
         });
     }
 
-    await this.templateChanged();
 
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)

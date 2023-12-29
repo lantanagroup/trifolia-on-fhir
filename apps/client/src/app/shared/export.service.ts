@@ -13,7 +13,7 @@ export class ExportOptions {
   public version: string;
   public downloadOutput = false;       // Only applies to HTML exports
   public includeIgPublisherJar? = false;
-  public templateType: 'official' | 'custom-uri' = 'official';
+  public templateType: 'official' | 'custom-uri' | 'custom-template' = 'official';
   public template = 'hl7.fhir.template';
   public templateVersion = 'current';
   public removeExtensions = false;

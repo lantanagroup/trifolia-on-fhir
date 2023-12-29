@@ -3,26 +3,72 @@
     Publishing Template
     <app-tooltip-icon tooltipKey="ig.publishing.template"></app-tooltip-icon>
   </label>
-  <div class="input-group">
-    <select class="form-select" [ngModel]="templateType" (ngModelChange)="setTemplateType($event)">
-      <option value="not-specified">Not Specified</option>
-      <option value="official">Official</option>
-      <option value="custom-uri">Custom</option>
-    </select>
-    <select class="form-select" *ngIf="templateType === 'not-specified' || templateType === 'official'" [disabled]="templateType === 'not-specified'" [(ngModel)]="officialTemplate" (change)="officialTemplateChanged()">
-      <option value="hl7.fhir.template">FHIR</option>
-      <option value="hl7.cda.template">CDA</option>
-      <option value="hl7.base.template">Base</option>
-    </select>
-    <select class="form-select" *ngIf="templateType === 'not-specified' || templateType === 'official'" [disabled]="templateType === 'not-specified'" [(ngModel)]="officialVersion" (change)="officialTemplateChanged(false)">
-      <option *ngFor="let version of officialVersions" [value]="version">{{version}}</option>
-    </select>
-    <input type="text" class="form-control" *ngIf="templateType === 'custom-uri'" [(ngModel)]="customUri" (change)="valueUriChanged()" placeholder="{{Globals.tooltips['ig.publishing.template.custom.example']}}" [class.is-invalid]="!valueUriValid" />
-    <ng-container *ngIf="templateType === 'custom-uri'">
-      <div class="input-group-text">
-        <app-tooltip-icon tooltipKey="ig.publishing.template.custom"></app-tooltip-icon>
+  <div class="input-group mt-3">
+    <div class="col-md-4">
+      <div class="mb-3">
+        <label>Template Type</label>
+        <select class="form-select" [ngModel]="templateType" (ngModelChange)="setTemplateType($event)" [disabled]="disabled">
+          <option value="not-specified">Not Specified</option>
+          <option value="official">Official</option>
+          <option value="custom-uri">Custom-Uri</option>
+          <option value="custom-template">Custom-Template</option>
+        </select>
       </div>
-    </ng-container>
+    </div>
+    <div class="col-md-4" *ngIf="templateType === 'official'">
+      <div class="mb-3">
+        <label>Template</label>
+        <select class="form-select" [disabled]="disabled || templateType === 'not-specified'" [(ngModel)]="officialTemplate" (change)="officialTemplateChanged()">
+          <option value="hl7.fhir.template">FHIR</option>
+          <option value="hl7.cda.template">CDA</option>
+          <option value="hl7.base.template">Base</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="templateType === 'official'">
+      <div class="mb-3">
+        <label>Version</label>
+        <select class="form-select" [disabled]="disabled || templateType === 'not-specified'" [(ngModel)]="officialVersion" (change)="officialTemplateChanged(false)">
+          <option *ngFor="let version of officialVersions" [value]="version">{{version}}</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="templateType === 'custom-uri'">
+      <div class="mb-3">
+        <label>Template (Archive/ZIP URL)</label>
+        <input type="text" class="form-control" [disabled]="disabled" [(ngModel)]="customUri" placeholder="{{Globals.tooltips['ig.publishing.template.custom.example']}}" [class.is-invalid]="!customUri || !valueUriValid" (change)="valueUriChanged()">
+      </div>
+      <div class="help-block">Note: The URI must be a ZIP file.
+        <p *ngIf="!valueUriValid">The custom template specified must be a valid URL.</p>
+      </div>
+    </div>
+    <div class="col-md-0" *ngIf="templateType === 'custom-uri'">
+      <div class="mb-3">
+        <label></label>
+          <div class="input-group-text">
+            <app-tooltip-icon tooltipKey="ig.publishing.template.custom"></app-tooltip-icon>
+          </div>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="templateType === 'custom-template'">
+      <div class="mb-3">
+        <label>Template (Archive/ZIP)</label>
+        <input type="text" class="form-control" *ngIf="templateType === 'custom-template'" [disabled]="true" [(ngModel)]="customTemplate" [class.is-invalid]="!customTemplate" />
+        <div class="help-block">Note: The Uploaded file should be a ZIP file.</div>
+      </div>
+    </div>
+    <div class="col-md-0" *ngIf="templateType === 'custom-template'">
+      <div class="mb-3">
+        <label>{{title}}</label>
+        <ng-container *ngIf="!disabled && templateType === 'custom-template'">
+          <input type="file" id="jsonUploadFile" #uploadFile style="display: none" (change)="upload(uploadFile.files[0])" accept="application/json" />
+          <a ngbNavLink>
+            <button type="button" class="btn btn-default btn-sm" (click)="uploadFile.click()" title="{{title}}">
+              <i class="fas fa-upload"></i>
+            </button>
+          </a>
+        </ng-container>
+      </div>
   </div>
-  <p class="help-block" *ngIf="!valueUriValid">The custom template specified must be a valid URL.</p>
+
 </div>

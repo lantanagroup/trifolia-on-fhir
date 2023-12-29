@@ -598,7 +598,7 @@
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-6">
-            <trifolia-fhir-publishing-template [implementationGuide]="implementationGuide" (change)="igChanging.emit(true)"></trifolia-fhir-publishing-template>
+            <trifolia-fhir-publishing-template [resource]="fhirResource"  [template] = "template" (change)="igChanging.emit(true)"></trifolia-fhir-publishing-template>
           </div>
         </div>
         <div class="row">

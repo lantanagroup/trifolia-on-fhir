@@ -5,7 +5,7 @@ import {customAlphabet} from 'nanoid';
 import {Versions} from 'fhir/fhir';
 import {ICodeableConcept, IDocumentReference, IImplementationGuide, IResourceReference} from './fhirInterfaces';
 import {Globals} from './globals';
-import {CustomMenu, INonFhirResource, IProjectResourceReference, IgnoreWarnings, NonFhirResource, Page} from '@trifolia-fhir/models';
+import {CustomMenu, INonFhirResource, IProjectResourceReference, IgnoreWarnings, NonFhirResource, Page, Template} from '@trifolia-fhir/models';
 
 export function findReferences(obj: any, resourceType?: string, id?: string) {
   const references = [];
@@ -79,7 +79,7 @@ export function joinUrl(...parts: string[]) {
  * @param params The query parameters to add onto the URL
  * @param separateArrayParams Indicates whether array-based query parameters should be combined using a comma (,) or if the query param should be repeated for each element of the array
  */
-export function buildUrl(base: string, resourceType?: string, id?: string, operation?: string, params?: {[key: string]: any}, separateArrayParams = false) {
+export function buildUrl(base: string, resourceType?: string, id?: string, operation?: string, params?: { [key: string]: any }, separateArrayParams = false) {
   let path = base;
 
   if (!path) {
@@ -105,7 +105,7 @@ export function buildUrl(base: string, resourceType?: string, id?: string, opera
 
     keys.forEach((key) => {
       if (params[key] instanceof Array) {
-        const valueArray = <any[]> params[key];
+        const valueArray = <any[]>params[key];
 
         if (!separateArrayParams) {
           paramArray.push(`${key}=${encodeURIComponent(valueArray.join(','))}`);
@@ -132,7 +132,7 @@ export function buildUrl(base: string, resourceType?: string, id?: string, opera
 export function parseUrl(url: string, base?: string) {
   const parseUrlRegex = /([A-z]+)(\/([A-Za-z0-9\-\\.]+))?(\/_history\/([A-Za-z0-9\-]{1,64}))?/g;
 
-  if (base && base.lastIndexOf('/') === base.length-1) {
+  if (base && base.lastIndexOf('/') === base.length - 1) {
     base = base.substring(0, base.length - 1);
   }
 
@@ -149,7 +149,7 @@ export function parseUrl(url: string, base?: string) {
 }
 
 export function createOperationOutcome(severity: string, code: string, diagnostics: string) {
-  return <OperationOutcome> {
+  return <OperationOutcome>{
     resourceType: 'OperationOutcome',
     issue: [{
       severity: severity,
@@ -213,14 +213,14 @@ export class MediaReference {
   description: string;
 }
 
-export function getImplementationGuideMediaReferences(fhirVersion: 'stu3'|'r4'|'r5', implementationGuide: STU3ImplementationGuide | R4ImplementationGuide | R5ImplementationGuide) {
+export function getImplementationGuideMediaReferences(fhirVersion: 'stu3' | 'r4' | 'r5', implementationGuide: STU3ImplementationGuide | R4ImplementationGuide | R5ImplementationGuide) {
   if (!implementationGuide) {
     return [];
   }
 
   switch (fhirVersion) {
     case 'stu3':
-      const stu3ImplementationGuide = <STU3ImplementationGuide> implementationGuide;
+      const stu3ImplementationGuide = <STU3ImplementationGuide>implementationGuide;
       const mediaReferences: MediaReference[] = [];
 
       (stu3ImplementationGuide.package || []).forEach((pkg) => {
@@ -237,7 +237,7 @@ export function getImplementationGuideMediaReferences(fhirVersion: 'stu3'|'r4'|'
 
       return mediaReferences;
     default:
-      const r4ImplementationGuide = <R4ImplementationGuide> implementationGuide;
+      const r4ImplementationGuide = <R4ImplementationGuide>implementationGuide;
 
       if (!r4ImplementationGuide.definition) {
         return [];
@@ -369,13 +369,23 @@ export function getIgnoreWarningsValue(fhirResource: any): string {
   //     return decodeURIComponent(new Buffer(documentReference.content[0].attachment.data, 'base64').toString());
   //   }
   // }
-  let content = "";
-  const ignoreWarningsIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === IgnoreWarnings.name)
+  let content = '';
+  const ignoreWarningsIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === IgnoreWarnings.name);
   if (ignoreWarningsIndex > -1) {
     let iw = fhirResource.references[ignoreWarningsIndex].value as IgnoreWarnings;
     content = iw.content;
   }
   return content;
+}
+
+export function getTemplate(fhirResource: any): any {
+  let template;
+  const templateIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === Template.name);
+  if (templateIndex > -1) {
+    template = fhirResource.references[templateIndex].value as Template;
+    //content = template.content;
+  }
+  return template;
 }
 
 export function setCustomMenu(implementationGuide: IImplementationGuide, value: string) {
@@ -435,46 +445,46 @@ export function setCustomMenu(implementationGuide: IImplementationGuide, value: 
       };
       implementationGuide.contained.push(foundContained);
     } else {
-      const docRef = <IDocumentReference> foundContained;
+      const docRef = <IDocumentReference>foundContained;
       docRef.content[0].attachment.data = btoa(value);
     }
   }
 }
 
 export function getCustomMenu(fhirResource: any): string {
- /* const Global = Globals;
-  if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
+  /* const Global = Globals;
+   if (!implementationGuide || !implementationGuide.extension || !implementationGuide.contained) return;
 
-  // Find the extension that references the contained DocumentReference
-  const foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-custom-menu']);
-  if (!foundExtension) return;
-  const customMenuReference = foundExtension.valueReference ? foundExtension.valueReference.reference : '';
-  if (!customMenuReference.startsWith('#')) return;
+   // Find the extension that references the contained DocumentReference
+   const foundExtension = implementationGuide.extension.find(e => e.url === Global.extensionUrls['extension-ig-custom-menu']);
+   if (!foundExtension) return;
+   const customMenuReference = foundExtension.valueReference ? foundExtension.valueReference.reference : '';
+   if (!customMenuReference.startsWith('#')) return;
 
-  // Find the contained DocumentReference based on the extension reference
-  const foundContained = implementationGuide.contained.find(c => {
-    if (c.resourceType !== 'DocumentReference' || c.id !== customMenuReference.substring(1)) return false;
-    const docRef = <IDocumentReference>c;
-    return codeableConceptHasCode(docRef.type, 'custom-menu') &&
-      docRef.content &&
-      docRef.content.length === 1 &&
-      docRef.content[0].attachment &&
-      docRef.content[0].attachment.data;
-  });
+   // Find the contained DocumentReference based on the extension reference
+   const foundContained = implementationGuide.contained.find(c => {
+     if (c.resourceType !== 'DocumentReference' || c.id !== customMenuReference.substring(1)) return false;
+     const docRef = <IDocumentReference>c;
+     return codeableConceptHasCode(docRef.type, 'custom-menu') &&
+       docRef.content &&
+       docRef.content.length === 1 &&
+       docRef.content[0].attachment &&
+       docRef.content[0].attachment.data;
+   });
 
-  if (foundContained) {
-    const documentReference = <IDocumentReference>foundContained;
+   if (foundContained) {
+     const documentReference = <IDocumentReference>foundContained;
 
-    // Set the data after decoding it from base64
-    if (typeof atob === 'function') {
-      return atob(documentReference.content[0].attachment.data);
-    } else {
-      // @ts-ignore
-      return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
-    }
-  }*/
-  let content = "";
-  const customMenuIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === CustomMenu.name)
+     // Set the data after decoding it from base64
+     if (typeof atob === 'function') {
+       return atob(documentReference.content[0].attachment.data);
+     } else {
+       // @ts-ignore
+       return new Buffer(documentReference.content[0].attachment.data, 'base64').toString();
+     }
+   }*/
+  let content = '';
+  const customMenuIndex = (fhirResource.references || []).findIndex((r: IProjectResourceReference) => r.valueType == NonFhirResource.name && !!r.value && typeof r.value == typeof {} && (<INonFhirResource>r.value).type === CustomMenu.name);
   if (customMenuIndex > -1) {
     let cm = fhirResource.references[customMenuIndex].value as CustomMenu;
     content = cm.content;

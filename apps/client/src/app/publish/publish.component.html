@@ -84,14 +84,14 @@
         </div>
       </div>
       <div class="alert alert-info">If the Edit IG tab specifies any Publishing Template customizations then further changes can only be made on the Edit IG tab</div>
-      <div class="row">
+    <!-- <div class="row">
         <div class="col-md-4">
           <div class="mb-3">
             <label>Template Type</label>
             <select class="form-select" [(ngModel)]="options.templateType" [disabled]="igSpecifiesTemplate">
               <option value="not-specified">Not Specified</option>
               <option value="official">Official</option>
-              <option value="custom-uri">Custom</option>
+              <option value="custom-uri">Custom-Uri</option>
             </select>
           </div>
         </div>
@@ -123,6 +123,11 @@
               </select>
             </div>
           </div>
+        </div>
+      </div>-->
+      <div class="row">
+        <div class="col-md-6">
+          <trifolia-fhir-publishing-template [resource]="fhirResource"  [template] = "template" [save]="true" [disabled] = "false"  (change)="templateChanged()"></trifolia-fhir-publishing-template>
         </div>
       </div>
     </ng-template>

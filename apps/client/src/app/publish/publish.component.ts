@@ -1,17 +1,18 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Observable, firstValueFrom } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
-import { ExportOptions, ExportService } from '../shared/export.service';
-import { getErrorString, Globals, IImplementationGuide, SearchImplementationGuideResponseContainer } from '@trifolia-fhir/tof-lib';
-import { ConfigService } from '../shared/config.service';
-import { CookieService } from 'ngx-cookie-service';
-import { ImplementationGuideService } from '../shared/implementation-guide.service';
-import { FhirService } from '../shared/fhir.service';
-import { HtmlExportStatus, SocketService } from '../shared/socket.service';
-import { saveAs } from 'file-saver';
-import { NgbNav } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute } from '@angular/router';
-import { IFhirResource } from '@trifolia-fhir/models';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Observable, firstValueFrom} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, switchMap, tap} from 'rxjs/operators';
+import {ExportOptions, ExportService} from '../shared/export.service';
+import {getErrorString, Globals, IImplementationGuide, SearchImplementationGuideResponseContainer} from '@trifolia-fhir/tof-lib';
+import {ConfigService} from '../shared/config.service';
+import {CookieService} from 'ngx-cookie-service';
+import {ImplementationGuideService} from '../shared/implementation-guide.service';
+import {FhirService} from '../shared/fhir.service';
+import {HtmlExportStatus, SocketService} from '../shared/socket.service';
+import {saveAs} from 'file-saver';
+import {NgbNav} from '@ng-bootstrap/ng-bootstrap';
+import {ActivatedRoute} from '@angular/router';
+import {IFhirResource, Template} from '@trifolia-fhir/models';
+import {NonFhirResourceService} from '../shared/non-fhir-resource.service';
 
 @Component({
   selector: 'ngbd-typeahead-basic',
@@ -29,6 +30,8 @@ export class PublishComponent implements OnInit {
   public inProgress = false;
   public templateVersions: string[] = [];
   private packageId;
+  private template;
+  private fhirResource;
 
   @ViewChild('tabs', { static: true })
   private tabs: NgbNav;
@@ -41,6 +44,7 @@ export class PublishComponent implements OnInit {
     private socketService: SocketService,
     private fhirService: FhirService,
     private implementationGuideService: ImplementationGuideService,
+    private nonFhirResourceService: NonFhirResourceService,
     private cookieService: CookieService,
     public configService: ConfigService,
     private exportService: ExportService) {
@@ -72,27 +76,49 @@ export class PublishComponent implements OnInit {
       this.cookieService.delete(cookieKey);
     }
 
-    const pubTemplateExt = (implementationGuide.extension || []).find(e => e.url === Globals.extensionUrls['extension-ig-pub-template']);
-
-    if (pubTemplateExt) {
-      if (pubTemplateExt.valueUri) {
-        this.options.templateType = 'custom-uri';
-        this.options.template = pubTemplateExt.valueUri;
-      } else if (pubTemplateExt.valueString) {
-        this.options.templateType = 'official';
-
-        if (pubTemplateExt.valueString.indexOf('#') >= 0) {
-          this.options.template = pubTemplateExt.valueString.substring(0, pubTemplateExt.valueString.indexOf('#'));
-          this.options.templateVersion = pubTemplateExt.valueString.substring(pubTemplateExt.valueString.indexOf('#') + 1);
+    // get the template
+    if (!this.template) {
+      let template = new Template();
+      let res = await firstValueFrom(this.nonFhirResourceService.getByType(template, this.options.implementationGuideId));
+      if (res.id) {
+        this.template = res;
+      } else {
+        this.template = template;
+        this.template.templateType = <any>this.cookieService.get(Globals.cookieKeys.lastTemplateType) || this.options.templateType;
+        if (this.template.templateType && this.template.templateType == 'official') {
+          this.template.content = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template + '#' + <any>this.cookieService.get(Globals.cookieKeys.lastTemplateVersion) || this.options.templateVersion;
         } else {
-          this.options.template = pubTemplateExt.valueString;
-          this.options.templateVersion = 'current';
+          this.template.content = <any>this.cookieService.get(Globals.cookieKeys.lastTemplate) || this.options.template;
         }
-
-        this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
       }
     }
+
+    this.options.templateType = this.template.templateType;
+    if (this.template.templateType && this.template.templateType == 'custom-uri') {
+      this.options.template = this.template.content;
+    } else if (this.template.templateType && this.template.templateType == 'custom-template') {
+      this.options.template = this.template.content;
+    } else if (this.template.templateType && this.template.templateType == 'official') {
+      let content = this.template.content;
+      const hashTagIndex = (content || '').indexOf('#');
+      if (typeof content === 'string' && hashTagIndex >= 0) {
+        this.options.template = content.substring(0, hashTagIndex);
+        this.options.templateVersion = content.substring(hashTagIndex + 1);
+      } else {
+        this.options.template = content;
+        this.options.templateVersion = 'current';
+      }
+
+      this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
+      if (this.options.templateVersion  &&  this.templateVersions.indexOf(this.options.templateVersion) < 0) {
+        this.options.templateVersion = this.templateVersions[0];
+      } else if (!this.options.templateVersion && this.templateVersions && this.templateVersions.length > 0) {
+        this.options.templateVersion = this.templateVersions[0];
+      }
+
+    }
   }
+
 
   public searchImplementationGuide = (text$: Observable<string>) => {
     return text$.pipe(
@@ -125,53 +151,38 @@ export class PublishComponent implements OnInit {
   }
 
   public get publishDisabled(): boolean {
-    return !this.options.implementationGuideId || !this.options.responseFormat || this.inProgress || !this.options.version;
+    return !this.options.implementationGuideId || !this.options.responseFormat || this.inProgress || !this.options.version || this.isTemplateNotSetup();
   }
 
   public responseFormatChanged() {
     this.cookieService.set(Globals.cookieKeys.lastResponseFormat, this.options.responseFormat);
   }
 
-  public async templateTypeChanged() {
-    if (this.options.templateType === 'official') {
-      this.options.template = 'hl7.fhir.template';
-      this.options.templateVersion = 'current';
-    } else if (this.options.templateType === 'custom-uri') {
-      this.options.template = '';
-    }
 
-    this.cookieService.set(Globals.cookieKeys.lastTemplateType, this.options.templateType);
-    await this.templateChanged();
+  isTemplateNotSetup(){
+    if (this.options.templateType === 'custom-uri' && !this.options.template) {
+      return true;
+    } else if (this.options.templateType === 'official' && (!this.options.template || !this.options.templateVersion)) {
+      return true;
+    } else if (this.options.templateType === 'custom-template' && !this.options.template) {
+      return true;
+    }
   }
 
   public async templateChanged() {
-    this.cookieService.set(Globals.cookieKeys.lastTemplate, this.options.template);
-
-    if (this.options.templateType === 'official') {
-      this.templateVersions = await this.configService.getTemplateVersions(this.options.template);
-
-      if (this.templateVersions && this.options.templateVersion && this.templateVersions.indexOf(this.options.templateVersion) < 0) {
-        this.templateVersions.push(this.options.templateVersion);
-      } else if (this.templateVersions && this.templateVersions.length > 0) {
-        this.options.templateVersion = this.templateVersions[0];
-      } else {
-        this.options.templateVersion = 'current';
-      }
-    } else {
+    if (this.template.templateType) {
+      this.options.templateType = this.template.templateType;
+      this.cookieService.set(Globals.cookieKeys.lastTemplateType, this.options.templateType);
+    }
+    this.options.template = this.template.content;
+    if (this.template.templateType == 'official') {
+      this.options.template = this.template.content.substring(0, this.template.content.indexOf('#'));
+      this.options.templateVersion = this.template.content.substring(this.template.content.indexOf('#') + 1);
+    } else if (this.template.templateType == 'custom-uri' || this.template.templateType == 'custom-template') {
       this.options.templateVersion = null;
     }
-
-    this.templateVersionChanged();
-  }
-
-  public templateVersionChanged() {
-    if (!this.options.templateVersion) {
-      if (this.cookieService.get(Globals.cookieKeys.lastTemplateVersion)) {
-        this.cookieService.delete(Globals.cookieKeys.lastTemplateVersion);
-      }
-    } else {
-      this.cookieService.set(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
-    }
+    this.cookieService.set(Globals.cookieKeys.lastTemplate, this.options.template);
+    this.cookieService.set(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
   }
 
   public async publish() {
@@ -179,7 +190,6 @@ export class PublishComponent implements OnInit {
     this.inProgress = true;
     this.socketOutput = '';
     this.tabs.select('status');
-
     try {
       this.packageId = await firstValueFrom(this.exportService.publish(this.options));
     } catch (ex) {
@@ -201,8 +211,8 @@ export class PublishComponent implements OnInit {
   }
 
   public get igSpecifiesTemplate() {
-    if (!this.selectedImplementationGuide || !this.selectedImplementationGuide.extension) return false;
-    return !!(this.selectedImplementationGuide.extension || []).find(e => e.url === 'https://trifolia-fhir.lantanagroup.com/StructureDefinition/extension-ig-pub-template');
+    if (!this.selectedImplementationGuide) return false;
+    return (this.template && this.template['id']);
   }
 
   public getPackageId() {
@@ -217,12 +227,15 @@ export class PublishComponent implements OnInit {
     if (this.options.implementationGuideId) {
       this.implementationGuideService.getImplementationGuide(this.options.implementationGuideId)
         .subscribe({
-          next: (conf: IFhirResource) => { this.implementationGuideChanged(<IImplementationGuide>conf?.resource); },
+          next: (conf: IFhirResource) => {
+            this.fhirResource = conf;
+            this.implementationGuideChanged(<IImplementationGuide>conf?.resource);
+            this.cookieService.set(Globals.cookieKeys.lastTemplate, this.options.template);
+          },
           error: (err) => this.message = getErrorString(err)
         });
     }
 
-    await this.templateChanged();
 
     this.socketService.onHtmlExport.subscribe((data: HtmlExportStatus) => {
       if (data.packageId === this.packageId) {
@@ -248,7 +261,7 @@ export class PublishComponent implements OnInit {
           this.inProgress = false;
           this.message = 'An error occurred. Please review the status tab.';
         } else {
-          let msg = data.message ? data.message.trim() : "";
+          let msg = data.message ? data.message.trim() : '';
 
           if (msg && !msg.endsWith('\n')) {
             msg += '\r\n';
