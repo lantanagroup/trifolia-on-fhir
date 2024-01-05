@@ -84,6 +84,9 @@ export class ExportComponent implements OnInit {
       this.options.templateVersion = this.template.content.substring(this.template.content.indexOf('#') + 1);
     } else if (this.template.templateType == 'custom-uri' || this.template.templateType == 'custom-template') {
       this.options.templateVersion = null;
+      if( this.template.templateType == 'custom-template'){
+        this.options.template = this.template.name;
+      }
     }
     this.cookieService.set(Globals.cookieKeys.lastTemplate, this.options.template);
     this.cookieService.set(Globals.cookieKeys.lastTemplateVersion, this.options.templateVersion);
@@ -155,7 +158,7 @@ export class ExportComponent implements OnInit {
     if (this.template.templateType && this.template.templateType == 'custom-uri') {
       this.options.template = this.template.content;
     } else if (this.template.templateType && this.template.templateType == 'custom-template') {
-      this.options.template =  this.template.content;
+      this.options.template = this.template.name;
     } else if (this.template.templateType && this.template.templateType == 'official') {
       let content = this.template.content;
       const hashTagIndex = (content || '').indexOf('#');
