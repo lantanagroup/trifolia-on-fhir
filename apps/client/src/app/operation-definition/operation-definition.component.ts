@@ -17,13 +17,14 @@ import { firstValueFrom, Subject } from 'rxjs';
 import { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
+import {CanComponentDeactivate} from '../guards/resource.guard';
 
 
 @Component({
   templateUrl: './operation-definition.component.html',
   styleUrls: ['./operation-definition.component.css']
 })
-export class OperationDefinitionComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+export class OperationDefinitionComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   public fhirResource;
   public operationDefinitionId: string;
   public operationDefinition;
@@ -122,7 +123,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
             this.router.navigate([`${this.configService.baseSessionUrl}/operation-definition/${conf.id}`]);
           } else {
             this.fhirResource = conf;
-            this.loadOD(conf.resource);
+            this.loadOD(conf.resource, false);
             setTimeout(() => {
               this.message = '';
             }, 3000);
@@ -140,7 +141,8 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.loadOD(this.fileService.file.resource);
+        this.isDirty = false;
+        this.loadOD(this.fileService.file.resource, false);
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -158,7 +160,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
             return;
           }
           this.fhirResource = conf;
-          this.loadOD(conf.resource);
+          this.loadOD(conf.resource, false);
         }, (err) => {
           this.odNotFound = err.status === 404;
           this.message = getErrorString(err);
@@ -172,7 +174,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
   }
 
 
-  loadOD(newVal: IDomainResource) {
+  loadOD(newVal: IDomainResource, isDirty: boolean) {
 
     this.operationDefinition = new OperationDefinition(newVal);
 
@@ -180,6 +182,7 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
       this.fhirResource.resource = this.operationDefinition;
     }
 
+    this.isDirty = isDirty;
     this.nameChanged();
     this.recentItemService.ensureRecentItem(
       Globals.cookieKeys.recentOperationDefinitions,
@@ -206,6 +209,11 @@ export class OperationDefinitionComponent extends BaseComponent implements OnIni
     }
 
   }
+
+  public canDeactivate(): boolean {
+    return !this.isDirty;
+  }
+
 
   ngOnDestroy() {
     this.navSubscription.unsubscribe();

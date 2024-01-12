@@ -190,7 +190,7 @@ const appRoutes: Routes = [
   { path: 'projects/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always' },
   { path: 'projects/:implementationGuideId/operation-definition', component: OperationDefinitionsComponent },
   { path: 'projects/:implementationGuideId/operation-definition/new', component: OperationDefinitionComponent },
-  { path: 'projects/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always',  canDeactivate: [ResourceGuard] },
   { path: 'projects/:implementationGuideId/value-set', component: ValuesetsComponent },
   { path: 'projects/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always' , canDeactivate: [ResourceGuard]},
   { path: 'projects/:implementationGuideId/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always' },
