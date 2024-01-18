@@ -3,12 +3,12 @@ import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {BaseDataController} from '../base/base-data.controller';
 import {AuditDocument} from './audit.schema';
-import { type ITofUser, Paginated } from '@trifolia-fhir/tof-lib';
-import { User } from '../server.decorators';
-import { AuditService } from './audit.service';
-import { type IAudit } from '@trifolia-fhir/models';
-import { Request } from 'express';
-import { ObjectId } from 'mongodb';
+import {type ITofUser, Paginated} from '@trifolia-fhir/tof-lib';
+import {User} from '../server.decorators';
+import {AuditService} from './audit.service';
+import {type IAudit} from '@trifolia-fhir/models';
+import {Request} from 'express';
+import {ObjectId} from 'mongodb';
 
 @Controller('api/audits')
 @UseGuards(AuthGuard('bearer'))
@@ -17,7 +17,76 @@ import { ObjectId } from 'mongodb';
 export class AuditController extends BaseDataController<AuditDocument> {
 
   constructor(auditService: AuditService) {
-    super(auditService);  
+    super(auditService);
+  }
+
+  @Get('/igs')
+  public async searchAccessedImplementationGuides(@User() user: ITofUser, @Req() req?: any): Promise<Paginated<AuditDocument>> {
+
+    this.assertAdmin(user);
+
+    let options = this.getPaginateOptionsFromRequest(req);
+    options.pipeline = [];
+
+    options.pipeline.push(
+      {
+        $lookup: {
+          from: 'fhirResource',
+          localField: 'entityValue',
+          foreignField: '_id',
+          as: 'fhirResource'
+        }
+      }
+    );
+
+    let filter = {};
+    let filters = {};
+    try {
+      filters = JSON.parse(req.query?.filters);
+
+      if (!!filters['timestampStart'] || !!filters['timestampEnd']) {
+        if (!!filters['timestampStart'] && !!filters['timestampEnd']) {
+          filter['timestamp'] = {
+            $gte: new Date(filters['timestampStart']),
+            $lte: new Date(filters['timestampEnd'])
+          };
+        } else if (!!filters['timestampStart'] && !filters['timestampEnd']) {
+          let endDate = new Date(filters['timestampStart']);
+          endDate.setDate(endDate.getDate() + 1);
+          filter['timestamp'] = {
+            $gte: new Date(filters['timestampStart']),
+            $lte: endDate
+          };
+        }
+      }
+
+      filter['fhirResource.resource.resourceType'] = 'ImplementationGuide';
+
+    } catch (error) {
+    }
+
+    options.pipeline.push({ $match: filter });
+    options.pipeline.push(
+      {
+        $group:
+          {
+            _id: '$fhirResource._id',
+            actions: { $count: {} }
+          }
+      },
+      {
+        $lookup: {
+          from: 'fhirResource',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'fhirResource'
+        }
+      });
+    options.hydrate = false;
+
+    // console.log('options.pipeline', JSON.stringify(options.pipeline, null, 2));
+    return this.dataService.search(options);
+
   }
 
 
@@ -60,7 +129,7 @@ export class AuditController extends BaseDataController<AuditDocument> {
             $first: '$fhirResource'
           }
         }
-      },
+      }
     );
 
 
@@ -74,7 +143,7 @@ export class AuditController extends BaseDataController<AuditDocument> {
       if (!!filters['entityType']) {
         filter['entityType'] = filters['entityType'];
       }
-      if (!!filters['timestampStart'] || !!filters['timestampEnd']) {      
+      if (!!filters['timestampStart'] || !!filters['timestampEnd']) {
         if (!!filters['timestampStart'] && !!filters['timestampEnd']) {
           filter['timestamp'] = {
             $gte: new Date(filters['timestampStart']),
@@ -94,19 +163,19 @@ export class AuditController extends BaseDataController<AuditDocument> {
       }
       if (!!filters['user']) {
         filter['$or'] = [
-          {'user.firstName': { $regex: this.escapeRegExp(filters['user']), $options: 'i' }},
-          {'user.lastName': { $regex: this.escapeRegExp(filters['user']), $options: 'i' }}
+          { 'user.firstName': { $regex: this.escapeRegExp(filters['user']), $options: 'i' } },
+          { 'user.lastName': { $regex: this.escapeRegExp(filters['user']), $options: 'i' } }
         ];
       }
     } catch (error) {
     }
 
-    options.pipeline.push({$match: filter});
+    options.pipeline.push({ $match: filter });
     options.hydrate = false;
 
     // console.log('options.pipeline', JSON.stringify(options.pipeline, null, 2));
     return this.dataService.search(options);
-      
+
   }
 
 
@@ -118,7 +187,7 @@ export class AuditController extends BaseDataController<AuditDocument> {
     audit.networkAddr = req.headers['x-forwarded-for']?.toString() || req.socket?.remoteAddress;
 
     return this.dataService.create(audit);
-      
+
   }
 
 
@@ -135,11 +204,9 @@ export class AuditController extends BaseDataController<AuditDocument> {
     let entityType;
     if (type === 'nonFhirResource') {
       entityType = 'NonFhirResource';
-    }
-    else if (type === 'fhirResource') {
+    } else if (type === 'fhirResource') {
       entityType = 'FhirResource';
-    }
-    else {
+    } else {
       throw new Error(`Invalid type ${type}`);
     }
 

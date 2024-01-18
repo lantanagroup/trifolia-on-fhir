@@ -11,7 +11,7 @@ export class AuditService {
 
   constructor(protected http: HttpClient) {}
 
-  public search(page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp', filters: {[key: string]: string} = {}): Observable<Paginated<IAudit>> {    
+  public search(page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp', filters: {[key: string]: string} = {}): Observable<Paginated<IAudit>> {
     let url = this.apiBase + `?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}&filters=${encodeURIComponent(JSON.stringify(filters))}`;
     return this.http.get<Paginated<IAudit>>(url);
   }
@@ -27,6 +27,11 @@ export class AuditService {
 
   public getResourceAudits(type: 'nonFhirResource' | 'fhirResource', resourceId: string, page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp'): Observable<Paginated<IAudit>> {
     let url = this.apiBase + `/${encodeURIComponent(type)}/${encodeURIComponent(resourceId)}?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}`;
+    return this.http.get<Paginated<IAudit>>(url);
+  }
+
+  public searchIgs(page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp', filters: {[key: string]: string} = {}): Observable<Paginated<IAudit>> {
+    let url = this.apiBase + `/igs?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}&filters=${encodeURIComponent(JSON.stringify(filters))}`;
     return this.http.get<Paginated<IAudit>>(url);
   }
 

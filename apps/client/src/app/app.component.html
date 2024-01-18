@@ -161,8 +161,10 @@
   <div class="container-fluid flex-fill jumbotron">
 
     <div class="alert alert-primary" *ngIf="configService.config.bannerMessage">
+      <div class="pull-right">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
       <span [innerHTML]="configService.config.bannerMessage"></span>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
     <div class="alert alert-danger" *ngIf="showServerError">
@@ -184,5 +186,5 @@
       </div>
       <router-outlet></router-outlet>
     </ng-container>
-  
+
 </div>
