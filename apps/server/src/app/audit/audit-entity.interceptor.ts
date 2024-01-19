@@ -59,15 +59,13 @@ export class AuditInterceptor implements NestInterceptor {
 
     // if the audit action is an update, get the original entity to later compare with the updated entity
     let original: IBaseEntity;
-    if (audit.action === AuditAction.Update || audit.action === AuditAction.Delete) {
+    if (audit.action === AuditAction.Update) {
       original = await service.findById(req.params[auditEntityParamId]);
     }
 
     return next.handle().pipe(
       tap((res: IBaseEntity) => {
         if (!res) {
-          audit.entityValue = original;
-          this.auditService.create(audit);
           return;
         }
 
