@@ -31,6 +31,7 @@ export class CodeSystemController extends FhirResourcesController {
   }
 
   @Get(':id')
+  @AuditEntity(AuditAction.Read, AuditEntityType.FhirResource)
   public async getCodeSystem(@User() user, @Param('id') id: string): Promise<IFhirResource> {
     return super.getById(user, id);
   }

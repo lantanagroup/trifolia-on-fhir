@@ -33,6 +33,7 @@ export class OperationDefinitionController extends FhirResourcesController {
   }
 
   @Get(':id')
+  @AuditEntity(AuditAction.Read, AuditEntityType.FhirResource)
   public async getOperationDefinition(@User() user, @Param('id') id: string): Promise<IFhirResource> {
     return super.getById(user, id);
   }

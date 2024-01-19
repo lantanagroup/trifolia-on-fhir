@@ -20,8 +20,8 @@ export class AuditController extends BaseDataController<AuditDocument> {
     super(auditService);
   }
 
-  @Get('/igs')
-  public async searchAccessedImplementationGuides(@User() user: ITofUser, @Req() req?: any): Promise<Paginated<AuditDocument>> {
+  @Get('/fhirResources')
+  public async searchAccessedFhirResources(@User() user: ITofUser, @Req() req?: any): Promise<Paginated<AuditDocument>> {
 
     this.assertAdmin(user);
 
@@ -59,10 +59,11 @@ export class AuditController extends BaseDataController<AuditDocument> {
           };
         }
       }
-
-      filter['fhirResource.resource.resourceType'] = 'ImplementationGuide';
-
-    } catch (error) {
+      if (!!filters['fhirResourceType']) {
+        filter['fhirResource.resource.resourceType'] = { $regex: this.escapeRegExp(filters['fhirResourceType']), $options: 'i' };
+      }
+    }
+    catch (error) {
     }
 
     options.pipeline.push({ $match: filter });
@@ -73,6 +74,7 @@ export class AuditController extends BaseDataController<AuditDocument> {
           create: { $cond: [{ $eq: ['$action', 'create'] }, 1, 0] },
           updates: { $cond: [{ $eq: ['$action', 'update'] }, 1, 0] },
           reads: { $cond: [{ $eq: ['$action', 'read'] }, 1, 0] },
+          delete: { $cond: [{ $eq: ['$action', 'delete'] }, 1, 0] },
           publishSuccess: { $cond: [{ $eq: ['$action', 'publish-success'] }, 1, 0] },
           publishFailure: { $cond: [{ $eq: ['$action', 'publish-failure'] }, 1, 0] }
         }
@@ -81,9 +83,11 @@ export class AuditController extends BaseDataController<AuditDocument> {
         $group:
           {
             _id: '$fhirResource._id',
-            Ig: { $first: '$fhirResource' },
+            fhirResource: { $first: '$fhirResource' },
+            Create: {$sum: '$create'},
             Reads: { $sum: '$reads' },
             Updates: { $sum: '$updates' },
+            Delete: {$sum: '$delete'},
             PublishSuccess: { $sum: '$publishSuccess' },
             PublishFailure: { $sum: '$publishFailure' },
             Actions: { $count: {} }

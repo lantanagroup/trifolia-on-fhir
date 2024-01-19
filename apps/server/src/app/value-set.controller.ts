@@ -76,7 +76,7 @@ export class ValueSetController extends FhirResourcesController {
 
   @Get('vsac')
   public async searchVSAC(
-    @User() user, 
+    @User() user,
     @Headers('vsacauthorization') vsacAuthorization: string,
     @Request() req?: any
   ): Promise<Paginated<ValueSet>> {
@@ -105,9 +105,9 @@ export class ValueSetController extends FhirResourcesController {
     };
 
     let vsacResults;
-    
+
     try {
-      vsacResults = await firstValueFrom(this.httpService.request(options)); 
+      vsacResults = await firstValueFrom(this.httpService.request(options));
     } catch (ex) {
       if (ex.response && ex.response.status === 404) {
         throw new TofNotFoundException(`The value set ${req.query['id']} was not found in VSAC`);
@@ -143,6 +143,7 @@ export class ValueSetController extends FhirResourcesController {
   }
 
   @Get(':id')
+  @AuditEntity(AuditAction.Read, AuditEntityType.FhirResource)
   public async getValueSet(@User() user, @Param('id') id: string): Promise<IFhirResource> {
     return super.getById(user, id);
   }

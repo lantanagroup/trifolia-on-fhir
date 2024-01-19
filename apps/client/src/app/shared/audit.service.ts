@@ -30,8 +30,8 @@ export class AuditService {
     return this.http.get<Paginated<IAudit>>(url);
   }
 
-  public searchIgs(page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp', filters: {[key: string]: string} = {}): Observable<Paginated<IAudit>> {
-    let url = this.apiBase + `/igs?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}&filters=${encodeURIComponent(JSON.stringify(filters))}`;
+  public getAuditCountsByResource(page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp', filters: {[key: string]: string} = {}): Observable<Paginated<IAudit>> {
+    let url = this.apiBase + `/fhirResources?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}&filters=${encodeURIComponent(JSON.stringify(filters))}`;
     return this.http.get<Paginated<IAudit>>(url);
   }
 

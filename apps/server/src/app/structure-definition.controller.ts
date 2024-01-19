@@ -180,6 +180,7 @@ export class StructureDefinitionController extends FhirResourcesController  {
   }
 
   @Get(':id')
+  @AuditEntity(AuditAction.Read, AuditEntityType.FhirResource)
   public async getStructureDefinition(@User() user, @Param('id') id: string): Promise<IFhirResource> {
     return super.getReferences(user, id);
   }
