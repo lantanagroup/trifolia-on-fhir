@@ -437,10 +437,16 @@ export class ImplementationGuideController extends FhirResourcesController { // 
   }
 
   @Get(':id')
+  public async getImplementationGuide(@User() user, @Param('id') id: string) {
+    return super.getById(user, id);
+  }
+
+  @Get('/access/:id')
   @AuditEntity(AuditAction.Read, AuditEntityType.FhirResource)
   public async getImplementationGuide(@User() user, @Param('id') id: string) {
     return super.getById(user, id);
   }
+
 
   @Post()
   @AuditEntity(AuditAction.Create, AuditEntityType.FhirResource)

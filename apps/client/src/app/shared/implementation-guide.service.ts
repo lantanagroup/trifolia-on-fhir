@@ -100,6 +100,11 @@ export class ImplementationGuideService extends FhirResourceService {
     return this.http.get<IFhirResource>(url);
   }
 
+  public accessImplementationGuide(id: string): Observable<IFhirResource> {
+    const url = '/api/implementationGuides/access/' + encodeURIComponent(id);
+    return this.http.get<IFhirResource>(url);
+  }
+
   public getImplementationGuideWithReferences(id: string): Observable<IFhirResource> {
     const url = '/api/implementationGuides/' + encodeURIComponent(id) + "/references";
     return this.http.get<IFhirResource>(url);
