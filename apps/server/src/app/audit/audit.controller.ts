@@ -68,14 +68,32 @@ export class AuditController extends BaseDataController<AuditDocument> {
     options.pipeline.push({ $match: filter });
     options.pipeline.push(
       {
+        $project: {
+          fhirResource: 1,
+          create: { $cond: [{ $eq: ['$action', 'create'] }, 1, 0] },
+          updates: { $cond: [{ $eq: ['$action', 'update'] }, 1, 0] },
+          reads: { $cond: [{ $eq: ['$action', 'read'] }, 1, 0] },
+          publishSuccess: { $cond: [{ $eq: ['$action', 'publish-success'] }, 1, 0] },
+          publishFailure: { $cond: [{ $eq: ['$action', 'publish-failure'] }, 1, 0] }
+        }
+      },
+      {
         $group:
           {
             _id: '$fhirResource._id',
-             Ig: { $first: "$fhirResource"}
+            Ig: { $first: '$fhirResource' },
+            Reads: { $sum: '$reads' },
+            Updates: { $sum: '$updates' },
+            PublishSuccess: { $sum: '$publishSuccess' },
+            PublishFailure: { $sum: '$publishFailure' },
+            Actions: { $count: {} }
           }
       },
       {
         $unset: ['_id']
+      },
+      {
+        $sort: { Actions: -1 }
       }
     );
     options.hydrate = false;
