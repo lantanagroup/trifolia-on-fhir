@@ -71,17 +71,13 @@ export class AuditController extends BaseDataController<AuditDocument> {
         $group:
           {
             _id: '$fhirResource._id',
-            actions: { $count: {} }
+             Ig: { $first: "$fhirResource"}
           }
       },
       {
-        $lookup: {
-          from: 'fhirResource',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'fhirResource'
-        }
-      });
+        $unset: ['_id']
+      }
+    );
     options.hydrate = false;
 
     // console.log('options.pipeline', JSON.stringify(options.pipeline, null, 2));
