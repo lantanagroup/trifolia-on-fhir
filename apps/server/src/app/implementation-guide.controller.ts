@@ -443,7 +443,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
 
   @Get('/access/:id')
   @AuditEntity(AuditAction.Read, AuditEntityType.FhirResource)
-  public async getImplementationGuide(@User() user, @Param('id') id: string) {
+  public async accessImplementationGuide(@User() user, @Param('id') id: string) {
     return super.getById(user, id);
   }
 
