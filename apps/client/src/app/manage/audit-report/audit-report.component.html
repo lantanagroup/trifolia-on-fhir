@@ -50,6 +50,7 @@
       </tr>
       <tr>
         <th class="col-1">Name</th>
+        <th class="col-1">Users</th>
         <th class="col-1">Reads</th>
         <th class="col-1">Updates</th>
         <th class="col-1">Published/Success</th>
@@ -61,7 +62,16 @@
     <tbody *ngIf="audits.total > 0">
       <tr *ngFor="let audit of audits.results">
         <td>
-          {{audit.fhirResource[0].resource.name}}
+          {{audit.fhirResource.resource.name}}
+        </td>
+        <td>
+          <table class="table table-striped">
+            <tr *ngFor="let user of audit.Users">
+              <td>
+                {{user}}
+              </td>
+            </tr>
+          </table>
         </td>
         <td>
           {{audit.Reads}}

@@ -36,6 +36,13 @@ export class AuditController extends BaseDataController<AuditDocument> {
           foreignField: '_id',
           as: 'fhirResource'
         }
+      },
+      {
+        $set: {
+          fhirResource: {
+            $first: '$fhirResource'
+          }
+        }
       }
     );
 
@@ -62,15 +69,30 @@ export class AuditController extends BaseDataController<AuditDocument> {
       if (!!filters['fhirResourceType']) {
         filter['fhirResource.resource.resourceType'] = { $regex: this.escapeRegExp(filters['fhirResourceType']), $options: 'i' };
       }
-    }
-    catch (error) {
+    } catch (error) {
     }
 
     options.pipeline.push({ $match: filter });
     options.pipeline.push(
       {
+        $lookup: {
+          from: 'user',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {
+        $set: {
+          user: {
+            $first: '$user'
+          }
+        }
+      },
+      {
         $project: {
           fhirResource: 1,
+          userName: { $concat: ["$user.firstName", " ", "$user.lastName"]},
           create: { $cond: [{ $eq: ['$action', 'create'] }, 1, 0] },
           updates: { $cond: [{ $eq: ['$action', 'update'] }, 1, 0] },
           reads: { $cond: [{ $eq: ['$action', 'read'] }, 1, 0] },
@@ -84,13 +106,14 @@ export class AuditController extends BaseDataController<AuditDocument> {
           {
             _id: '$fhirResource._id',
             fhirResource: { $first: '$fhirResource' },
-            Create: {$sum: '$create'},
+            Create: { $sum: '$create' },
             Reads: { $sum: '$reads' },
             Updates: { $sum: '$updates' },
-            Delete: {$sum: '$delete'},
+            Delete: { $sum: '$delete' },
             PublishSuccess: { $sum: '$publishSuccess' },
             PublishFailure: { $sum: '$publishFailure' },
-            Actions: { $count: {} }
+            Actions: { $count: {} },
+            Users: { $addToSet : "$userName"}
           }
       },
       {
