@@ -20,6 +20,8 @@ export class AuditReportComponent implements OnInit {
   public actions = Object.values(AuditAction).sort();
   public entityTypes = Object.values(AuditEntityType).sort();
 
+  public reportType : string = "igReport";
+
   public criteriaChangedEvent = new Subject<void>();
   public audits: Paginated<IAudit> = {
     results: [],
@@ -47,10 +49,10 @@ export class AuditReportComponent implements OnInit {
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {
         this.currentPage = 1;
-        this.getIgAudits();
+        this.getAudits();
       });
 
-      this.getIgAudits();
+      this.getAudits();
 
   }
 
@@ -83,18 +85,27 @@ export class AuditReportComponent implements OnInit {
   }
 
 
-  public async getIgAudits() {
+  public async getAudits() {
     this.loadingResults = true;
     this.audits.results = [];
     this.audits.total = 0;
-    this.criteria.fhirResourceType = "ImplementationGuide";
-    this.auditService.getAuditCountsByResource(this.currentPage, this.itemsPerPage, this.sort, this.criteria).subscribe({
-      next: (results) => {
-        this.audits = results;
-      },
-      error: (err) => {console.log(err);},
-      complete: () => {this.loadingResults = false;}
-    });
+    if(this.reportType) {
+      if (this.reportType === 'igReport') {
+        this.criteria.fhirResourceType = "ImplementationGuide";
+      }
+
+      this.auditService.getAuditCountsByResource(this.currentPage, this.itemsPerPage, this.sort, this.criteria).subscribe({
+        next: (results) => {
+          this.audits = results;
+        },
+        error: (err) => {
+          console.log(err);
+        },
+        complete: () => {
+          this.loadingResults = false;
+        }
+      });
+    }
   }
 
   public changeSort(column: string) {
@@ -105,7 +116,7 @@ export class AuditReportComponent implements OnInit {
       this.sort = column;
     }
     this.currentPage = 1;
-    this.getIgAudits();
+    this.getAudits();
   }
 
   public getSortIcon(column: string) {
