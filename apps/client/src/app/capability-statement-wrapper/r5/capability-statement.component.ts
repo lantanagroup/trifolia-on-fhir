@@ -26,12 +26,13 @@ import {IFhirResource} from '@trifolia-fhir/models';
 import {ImplementationGuide} from '@trifolia-fhir/stu3';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
+import {CanComponentDeactivate} from '../../guards/resource.guard';
 
 @Component({
   templateUrl: './capability-statement.component.html',
   styleUrls: ['./capability-statement.component.css']
 })
-export class R5CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+export class R5CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   @Input() public capabilityStatement;
 
   public fhirResource;
@@ -356,6 +357,10 @@ export class R5CapabilityStatementComponent extends BaseComponent implements OnI
 
     this.getCapabilityStatement();
 
+  }
+
+  public canDeactivate(): boolean {
+    return !this.isDirty;
   }
 
   ngOnDestroy() {

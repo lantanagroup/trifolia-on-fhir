@@ -20,12 +20,13 @@ import { firstValueFrom, Subject } from 'rxjs';
 import { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
+import {CanComponentDeactivate} from '../../guards/resource.guard';
 
 @Component({
   templateUrl: './capability-statement.component.html',
   styleUrls: ['./capability-statement.component.css']
 })
-export class STU3CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+export class STU3CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   public fhirResource;
   @Input() public capabilityStatement;
   public idChangedEvent = new Subject();
@@ -291,6 +292,10 @@ export class STU3CapabilityStatementComponent extends BaseComponent implements O
       }
     });
     this.getCapabilityStatement();
+  }
+
+  public canDeactivate(): boolean {
+    return !this.isDirty;
   }
 
   ngOnDestroy() {
