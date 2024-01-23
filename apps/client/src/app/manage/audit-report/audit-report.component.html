@@ -160,7 +160,7 @@
           </div>
         </div>
       </th>
-       <th>
+       <!--<th>
          <select class="form-control" [(ngModel)]="criteria.fhirResourceType" (ngModelChange)="criteriaChangedEvent.next()">
            <option value="ImplementationGuide">Implementation Guides</option>
            <option value="ValueSet">Value Sets</option>
@@ -171,7 +171,8 @@
            <option value="StructureDefinition">Profiles</option>
            <option value="QuestionnaireResponse">Questionnaires</option>
          </select>
-       </th>
+       </th>-->
+      <input type="text" class="form-control" [(ngModel)]="criteria.fhirResourceType" (ngModelChange)="criteriaChangedEvent.next()" />
     </tr>
     <tr>
       <th class="col-1">Name</th>
