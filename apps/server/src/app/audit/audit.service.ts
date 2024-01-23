@@ -3,7 +3,7 @@ import {BaseDataService} from '../base/base-data.service';
 import {Model} from 'mongoose';
 import {Audit, AuditDocument} from './audit.schema';
 import {InjectModel} from '@nestjs/mongoose';
-import type { IAudit, IAuditPropertyDiff, IBaseEntity } from '@trifolia-fhir/models';
+import type { AuditAction, AuditEntityType, IAudit, IAuditPropertyDiff, IBaseEntity } from '@trifolia-fhir/models';
 import { diff } from 'deep-diff';
 import { AUDIT_ACTION, AUDIT_ENTITY_TYPE } from './audit.decorator';
 import { Reflector } from '@nestjs/core';
@@ -76,6 +76,19 @@ export class AuditService extends BaseDataService<AuditDocument> {
 
     return auditEvent;
 
+  }
+
+  public getAuditFromRequest(req: ITofRequest, auditAction: AuditAction, auditEntityType: AuditEntityType): IAudit {
+
+    let auditEvent: IAudit = {
+      action: auditAction,
+      entityType: auditEntityType,
+      timestamp: new Date(),
+      user: req.user?.user,
+      networkAddr: this.getNetworkAddress(req)
+    };
+
+    return auditEvent;
   }
 
 }

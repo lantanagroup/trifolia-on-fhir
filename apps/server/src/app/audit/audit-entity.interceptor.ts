@@ -59,27 +59,25 @@ export class AuditInterceptor implements NestInterceptor {
 
     // if the audit action is an update, get the original entity to later compare with the updated entity
     let original: IBaseEntity;
-    if (audit.action === AuditAction.Update) {
+    if (audit.action === AuditAction.Update || audit.action === AuditAction.Delete) {
       original = await service.findById(req.params[auditEntityParamId]);
     }
 
     return next.handle().pipe(
       tap((res: IBaseEntity) => {
-        if (!res) {
-          return;
-        }
 
         // result and any original entity is most likely actually mongoose document,
         // so convert to a plain object to avoid doing diffs on all the mongoose document properties
-        res = service.getModel().hydrate(res).toObject();
+        if (res) {
+          res = service.getModel().hydrate(res).toObject();
+        }
 
-        if (original) {
+        if (!!original && !!res && audit.action !== AuditAction.Delete) {
           original = service.getModel().hydrate(original).toObject();
           audit.propertyDiffs = this.auditService.getAuditPropertyDiffs(original, res);
         }
 
-
-        audit.entityValue = res;
+        audit.entityValue = res || original;
         this.auditService.create(audit);
 
       }));

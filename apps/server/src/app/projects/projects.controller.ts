@@ -4,7 +4,7 @@ import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {ProjectsService} from './projects.service';
 import {BaseDataController} from '../base/base-data.controller';
 import {ProjectDocument} from './project.schema';
-import {AuditAction, AuditEntityType, type IBaseEntity, type IFhirResource, type IProject} from '@trifolia-fhir/models';
+import {AuditAction, AuditEntityType, IAudit, type IBaseEntity, type IFhirResource, type IProject} from '@trifolia-fhir/models';
 import {User} from '../server.decorators';
 import {FhirResourcesService} from '../fhir-resources/fhir-resources.service';
 import {Paginated} from '@trifolia-fhir/tof-lib';
@@ -13,6 +13,7 @@ import {TofNotFoundException} from '../../not-found-exception';
 import {NonFhirResourcesService} from '../non-fhir-resources/non-fhir-resources.service';
 import {AuditEntity} from '../audit/audit.decorator';
 import {IProjectContributor} from '@trifolia-fhir/models';
+import { AuditService } from '../audit/audit.service';
 
 
 @Controller('api/projects')
@@ -21,7 +22,10 @@ import {IProjectContributor} from '@trifolia-fhir/models';
 @ApiOAuth2([])
 export class ProjectsController extends BaseDataController<ProjectDocument> {
 
-  constructor(private readonly projectService: ProjectsService, protected fhirResourceService: FhirResourcesService, protected nonFhirResourceService: NonFhirResourcesService) {
+  constructor(private readonly projectService: ProjectsService, 
+    protected fhirResourceService: FhirResourcesService, 
+    protected nonFhirResourceService: NonFhirResourcesService, 
+    protected auditService: AuditService) {
     super(projectService);
   }
 
@@ -181,8 +185,7 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
   }
 
   @Delete('/:id/implementationGuide')
-  @AuditEntity(AuditAction.Delete, AuditEntityType.FhirResource)
-  public async removeImplementationGuideFromProjects(@User() userProfile, @Param('id') id: string) {
+  public async removeImplementationGuideFromProjects(@User() userProfile, @Param('id') id: string, @Request() req?: any) {
 
     if (!userProfile) return null;
 
@@ -193,12 +196,21 @@ export class ProjectsController extends BaseDataController<ProjectDocument> {
     // remove it from every project
     for (const projectId of fhirResourceDoc.projects) {
       let project = await this.projectService.findById(projectId.toString());
+      let audit = this.auditService.getAuditFromRequest(req, AuditAction.Update, AuditEntityType.Project);
+      audit.entityValue = project;
+
       project.references.splice(project.references.indexOf(fhirResourceDoc.id), 1);
+
+      // 
       if (project.references.length != 0) {
-        await this.projectService.updateOne(project.id, project);
+        let updatedProject = await this.projectService.updateOne(project.id, project);
+        audit.propertyDiffs = this.auditService.getAuditPropertyDiffs(project, updatedProject);
       } else {
+        audit.action = AuditAction.Delete;
         await this.projectService.deleteProject(project.id);
       }
+
+      this.auditService.create(audit);
     }
   }
 
