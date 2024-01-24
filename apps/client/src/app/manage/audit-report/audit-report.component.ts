@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { AuditService } from '../../shared/audit.service';
-import { Paginated } from '@trifolia-fhir/tof-lib';
-import { AuditAction, AuditEntityType, AuditEntityValue, IAudit, IAuditPropertyDiff, IUser } from '@trifolia-fhir/models';
-import { Subject, debounceTime } from 'rxjs';
-import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AuditDiffsModalComponent } from '../../shared-ui/audit-diffs-modal/audit-diffs-modal.component';
-import { RawModalComponent } from '../../shared-ui/raw-modal/raw-modal.component';
+import {Component, OnInit} from '@angular/core';
+import {AuditService} from '../../shared/audit.service';
+import {Paginated} from '@trifolia-fhir/tof-lib';
+import {AuditAction, AuditEntityType, AuditEntityValue, IAudit, IAuditPropertyDiff, IUser} from '@trifolia-fhir/models';
+import {Subject, debounceTime} from 'rxjs';
+import {NgbCalendar, NgbDate, NgbDateParserFormatter, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {AuditDiffsModalComponent} from '../../shared-ui/audit-diffs-modal/audit-diffs-modal.component';
+import {RawModalComponent} from '../../shared-ui/raw-modal/raw-modal.component';
 
 @Component({
   selector: 'trifolia-fhir-audit',
@@ -20,7 +20,7 @@ export class AuditReportComponent implements OnInit {
   public actions = Object.values(AuditAction).sort();
   public entityTypes = Object.values(AuditEntityType).sort();
 
-  public reportType : string = "igReport";
+  public reportType: string = '';
 
   public criteriaChangedEvent = new Subject<void>();
   public audits: Paginated<IAudit> = {
@@ -29,7 +29,7 @@ export class AuditReportComponent implements OnInit {
     total: 0
   };
   public currentPage: number = 1;
-  public criteria: {[key: string]: string} = {};
+  public criteria: { [key: string]: string } = {};
   public sort: string = '-timestamp';
   public itemsPerPage: number = 25;
   public loadingResults: boolean = false;
@@ -42,7 +42,8 @@ export class AuditReportComponent implements OnInit {
     private modalService: NgbModal,
     private calendar: NgbCalendar,
     private formatter: NgbDateParserFormatter
-    ) { }
+  ) {
+  }
 
   ngOnInit(): void {
 
@@ -52,7 +53,7 @@ export class AuditReportComponent implements OnInit {
         this.getAudits();
       });
 
-      this.getAudits();
+    this.getAudits();
 
   }
 
@@ -60,10 +61,11 @@ export class AuditReportComponent implements OnInit {
   public get fromDate(): NgbDate | null {
     return this._fromDate;
   }
+
   public set fromDate(value: NgbDate | null) {
     this._fromDate = value;
     if (value) {
-      this.criteria.timestampStart = new Date(Date.UTC(value.year, value.month-1, value.day, 0, 0, 0)).toISOString();
+      this.criteria.timestampStart = new Date(Date.UTC(value.year, value.month - 1, value.day, 0, 0, 0)).toISOString();
     } else {
       delete this.criteria.timestampStart;
     }
@@ -74,10 +76,11 @@ export class AuditReportComponent implements OnInit {
   public get toDate(): NgbDate | null {
     return this._toDate;
   }
+
   public set toDate(value: NgbDate | null) {
     this._toDate = value;
     if (value) {
-      this.criteria.timestampEnd = new Date(Date.UTC(value.year, value.month-1, value.day+1, 0, 0, 0)).toISOString();
+      this.criteria.timestampEnd = new Date(Date.UTC(value.year, value.month - 1, value.day + 1, 0, 0, 0)).toISOString();
     } else {
       delete this.criteria.timestampEnd;
     }
@@ -89,42 +92,31 @@ export class AuditReportComponent implements OnInit {
     this.loadingResults = true;
     this.audits.results = [];
     this.audits.total = 0;
-    if(this.reportType) {
-      if (this.reportType === 'igReport') {
-        this.criteria.fhirResourceType = "ImplementationGuide";
+
+    if (this.reportType === 'igReport') {
+      this.criteria.fhirResourceType = 'ImplementationGuide';
+      this.sort = "fhirResource.resource.resourceType,fhirResource.resource.name";
+    }
+    else if(this.reportType === 'fhirResourceReport') {
+      this.criteria.fhirResourceType = '';
+      this.sort = "fhirResource.resource.resourceType,fhirResource.resource.name";
+    }
+    else if(this.reportType === 'usersReport'){
+      this.sort = "username";
+    }
+
+
+    this.auditService.getAudits(this.reportType, this.currentPage, this.itemsPerPage, this.sort, this.criteria).subscribe({
+      next: (results) => {
+        this.audits = results;
+      },
+      error: (err) => {
+        console.log(err);
+      },
+      complete: () => {
+        this.loadingResults = false;
       }
-
-      this.auditService.getAuditCountsByResource(this.currentPage, this.itemsPerPage, this.sort, this.criteria).subscribe({
-        next: (results) => {
-          this.audits = results;
-        },
-        error: (err) => {
-          console.log(err);
-        },
-        complete: () => {
-          this.loadingResults = false;
-        }
-      });
-    }
-  }
-
-  public changeSort(column: string) {
-    const currentColumn = this.sort.startsWith('-') ? this.sort.substring(1) : this.sort;
-    if (currentColumn === column) {
-      this.sort = this.sort.startsWith('-') ? column : `-${column}`;
-    } else {
-      this.sort = column;
-    }
-    this.currentPage = 1;
-    this.getAudits();
-  }
-
-  public getSortIcon(column: string) {
-    const currentColumn = this.sort.startsWith('-') ? this.sort.substring(1) : this.sort;
-    if (currentColumn === column) {
-      return this.sort.startsWith('-') ? 'fa fa-sort-down' : 'fa fa-sort-up';
-    }
-    return 'fa fa-sort';
+    });
   }
 
 
@@ -145,39 +137,39 @@ export class AuditReportComponent implements OnInit {
 
 
   onDateSelection(date: NgbDate) {
-		if (!this.fromDate && !this.toDate) {
-			this.fromDate = date;
-		} else if (this.fromDate && !this.toDate && date && date.after(this.fromDate)) {
-			this.toDate = date;
-		} else {
-			this.toDate = null;
+    if (!this.fromDate && !this.toDate) {
+      this.fromDate = date;
+    } else if (this.fromDate && !this.toDate && date && date.after(this.fromDate)) {
+      this.toDate = date;
+    } else {
+      this.toDate = null;
       delete this.criteria.toDate;
-			this.fromDate = date;
-		}
-	}
+      this.fromDate = date;
+    }
+  }
 
   isHovered(date: NgbDate) {
-		return (
-			this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate)
-		);
-	}
+    return (
+      this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate)
+    );
+  }
 
-	isInside(date: NgbDate) {
-		return this.toDate && date.after(this.fromDate) && date.before(this.toDate);
-	}
+  isInside(date: NgbDate) {
+    return this.toDate && date.after(this.fromDate) && date.before(this.toDate);
+  }
 
-	isRange(date: NgbDate) {
-		return (
-			date.equals(this.fromDate) ||
-			(this.toDate && date.equals(this.toDate)) ||
-			this.isInside(date) ||
-			this.isHovered(date)
-		);
-	}
+  isRange(date: NgbDate) {
+    return (
+      date.equals(this.fromDate) ||
+      (this.toDate && date.equals(this.toDate)) ||
+      this.isInside(date) ||
+      this.isHovered(date)
+    );
+  }
 
   validateDateInput(currentValue: NgbDate | null, input: string): NgbDate | null {
-		const parsed = this.formatter.parse(input);
-		return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
-	}
+    const parsed = this.formatter.parse(input);
+    return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
+  }
 
 }

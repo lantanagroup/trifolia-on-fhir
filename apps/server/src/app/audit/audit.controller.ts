@@ -20,6 +20,109 @@ export class AuditController extends BaseDataController<AuditDocument> {
     super(auditService);
   }
 
+  @Get('/users')
+  public async searchUsers(@User() user: ITofUser, @Req() req?: any): Promise<Paginated<AuditDocument>> {
+
+    this.assertAdmin(user);
+
+    let options = this.getPaginateOptionsFromRequest(req);
+    options.pipeline = [];
+
+    let filter = {};
+    let filters = {};
+    try {
+      filters = JSON.parse(req.query?.filters);
+
+      if (!!filters['timestampStart'] || !!filters['timestampEnd']) {
+        if (!!filters['timestampStart'] && !!filters['timestampEnd']) {
+          filter['timestamp'] = {
+            $gte: new Date(filters['timestampStart']),
+            $lte: new Date(filters['timestampEnd'])
+          };
+        } else if (!!filters['timestampStart'] && !filters['timestampEnd']) {
+          let endDate = new Date(filters['timestampStart']);
+          endDate.setDate(endDate.getDate() + 1);
+          filter['timestamp'] = {
+            $gte: new Date(filters['timestampStart']),
+            $lte: endDate
+          };
+        }
+      }
+    } catch (error) {
+    }
+
+    options.pipeline.push({ $match: filter });
+    options.pipeline.push(
+      {
+        $match: {
+          user: { $exists: true }
+        },
+      },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {
+        $set: {
+          user: {
+            $first: '$user'
+          }
+        }
+      },
+      {
+        $project: {
+          user: 1,
+          userName: { $concat: ['$user.firstName', ' ', '$user.lastName'] },
+          email: { $concat: ["$user.email"]},
+          create: { $cond: [{ $eq: ['$action', 'create'] }, 1, 0] },
+          updates: { $cond: [{ $eq: ['$action', 'update'] }, 1, 0] },
+          reads: { $cond: [{ $eq: ['$action', 'read'] }, 1, 0] },
+          delete: { $cond: [{ $eq: ['$action', 'delete'] }, 1, 0] },
+          publishSuccess: { $cond: [{ $eq: ['$action', 'publish-success'] }, 1, 0] },
+          publishFailure: { $cond: [{ $eq: ['$action', 'publish-failure'] }, 1, 0] },
+          logins: { $cond: [{ $eq: ["$action", "login"]}, 1, 0]}
+        }
+      },
+      {
+        $group:
+          {
+            _id: '$user._id',
+            user: { $first: "$user"},
+            username: { $addToSet: '$userName' },
+            email : {$addToSet: '$email' } ,
+            Creates: { $sum: '$create' },
+            Reads: { $sum: '$reads' },
+            Updates: { $sum: '$updates' },
+            Deletes: { $sum: '$delete' },
+            PublishSuccess: { $sum: '$publishSuccess' },
+            PublishFailure: { $sum: '$publishFailure' },
+            Logins: { $sum: "$logins"},
+            Actions: { $count: {} }
+          }
+      },
+      {
+        $unset: ['_id']
+      },
+      {
+        $set: {
+          username: { $first: '$username' },
+          email: {$first: "$email"}
+        }
+      }
+    );
+
+    options.hydrate = false;
+
+    // console.log('options.pipeline', JSON.stringify(options.pipeline, null, 2));
+    return this.dataService.search(options);
+
+  }
+
+
   @Get('/fhirResources')
   public async searchAccessedFhirResources(@User() user: ITofUser, @Req() req?: any): Promise<Paginated<AuditDocument>> {
 
@@ -30,18 +133,16 @@ export class AuditController extends BaseDataController<AuditDocument> {
 
     options.pipeline.push(
       {
+        $match: {
+          entityValue: { $exists: true }
+        },
+      },
+      {
         $lookup: {
           from: 'fhirResource',
           localField: 'entityValue',
           foreignField: '_id',
           as: 'fhirResource'
-        }
-      },
-      {
-        $set: {
-          fhirResource: {
-            $first: '$fhirResource'
-          }
         }
       }
     );
@@ -93,6 +194,7 @@ export class AuditController extends BaseDataController<AuditDocument> {
         $project: {
           fhirResource: 1,
           userName: { $concat: ["$user.firstName", " ", "$user.lastName"]},
+          user: 1,
           create: { $cond: [{ $eq: ['$action', 'create'] }, 1, 0] },
           updates: { $cond: [{ $eq: ['$action', 'update'] }, 1, 0] },
           reads: { $cond: [{ $eq: ['$action', 'read'] }, 1, 0] },
@@ -120,7 +222,20 @@ export class AuditController extends BaseDataController<AuditDocument> {
         $unset: ['_id']
       },
       {
-        $sort: { Actions: -1 }
+        $set:
+          {
+            fhirResource: {
+              $first: "$fhirResource",
+            },
+          },
+      },
+      {
+        $match:
+          {
+            fhirResource: {
+              $exists: true,
+            },
+          },
       }
     );
     options.hydrate = false;
