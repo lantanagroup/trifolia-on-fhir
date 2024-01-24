@@ -98,7 +98,6 @@ export class AuditReportComponent implements OnInit {
       this.sort = "fhirResource.resource.resourceType,fhirResource.resource.name";
     }
     else if(this.reportType === 'fhirResourceReport') {
-      this.criteria.fhirResourceType = '';
       this.sort = "fhirResource.resource.resourceType,fhirResource.resource.name";
     }
     else if(this.reportType === 'usersReport'){
