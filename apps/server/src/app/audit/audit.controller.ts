@@ -6,9 +6,11 @@ import {AuditDocument} from './audit.schema';
 import {type ITofUser, Paginated} from '@trifolia-fhir/tof-lib';
 import {User} from '../server.decorators';
 import {AuditService} from './audit.service';
-import {type IAudit} from '@trifolia-fhir/models';
+import {IReportMetadata, type IAudit} from '@trifolia-fhir/models';
 import {Request} from 'express';
 import {ObjectId} from 'mongodb';
+import { TofNotFoundException } from '../../not-found-exception';
+import { AuditReportRepository } from './audit-report-repository';
 
 @Controller('api/audits')
 @UseGuards(AuthGuard('bearer'))
@@ -16,7 +18,7 @@ import {ObjectId} from 'mongodb';
 @ApiOAuth2([])
 export class AuditController extends BaseDataController<AuditDocument> {
 
-  constructor(auditService: AuditService) {
+  constructor(private auditService: AuditService, private auditReportRepository: AuditReportRepository) {
     super(auditService);
   }
 
@@ -229,6 +231,47 @@ export class AuditController extends BaseDataController<AuditDocument> {
 
     return this.dataService.create(audit);
 
+  }
+
+  @Get('report/:reportId')
+  public async getReport(@User() user: ITofUser, @Req() req: Request, @Param('reportId') reportId: string): Promise<Paginated<any>> {
+      
+      this.assertAdmin(user);
+
+      const report = this.auditReportRepository.getReport(reportId);
+      if (!report) {
+        throw new TofNotFoundException(`No report found with id ${reportId}`);
+      }
+
+      const options = this.getPaginateOptionsFromRequest(req);
+
+      let filters: {[key: string]: any} = {};
+      try {
+        filters = JSON.parse(<string>req.query?.filters);
+      } catch (error) {
+      }
+
+      return report.getResults(options, filters);
+  }
+
+  @Get('report-list')
+  public async getReportList(@User() user: ITofUser): Promise<IReportMetadata[]> {
+    this.assertAdmin(user);
+
+    let reports = (await this.auditReportRepository.getReports())
+      .filter(r => !!r.id && !!r.name)
+      .map(r => {
+        return {
+          id: r.id,
+          name: r.name,
+          title: r.title,
+          fields: r.fields,
+          filters: r.filters,
+          defaultSort: r.defaultSort
+        };
+      });
+
+    return reports;
   }
 
 

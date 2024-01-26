@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IAudit } from '@trifolia-fhir/models';
+import { IAudit, IReport, IReportMetadata } from '@trifolia-fhir/models';
 import { Paginated } from '@trifolia-fhir/tof-lib';
 import { Observable } from 'rxjs';
 
@@ -23,6 +23,15 @@ export class AuditService {
     }
 
     return this.http.post<IAudit>(this.apiBase, audit);
+  }
+
+  public getReportList(): Observable<IReportMetadata[]> {
+    return this.http.get<IReportMetadata[]>(this.apiBase + '/report-list');
+  }
+
+  public getReport(id: string, page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp', filters: {[key:string]: string} = {}): Observable<Paginated<any>> {
+    let url = this.apiBase + `/report/${encodeURIComponent(id)}?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}&filters=${encodeURIComponent(JSON.stringify(filters))}`;
+    return this.http.get<Paginated<any>>(url);
   }
 
   public getResourceAudits(type: 'nonFhirResource' | 'fhirResource', resourceId: string, page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp'): Observable<Paginated<IAudit>> {
