@@ -5,8 +5,7 @@ import { PaginateOptions, Paginated } from "@trifolia-fhir/tof-lib";
 
 
 // Base class for all audit reports
-export class AuditReport implements IReport {  
-
+export class AuditReport implements IReport {
   id: string;
   name: string;
   title?: string;
@@ -14,15 +13,16 @@ export class AuditReport implements IReport {
   filters: IReportFilter[];
   defaultSort?: string;
 
-  constructor(private auditService: AuditService) {
-  }  
+  constructor(private auditService: AuditService) {}
 
-  public async getResults(options: PaginateOptions, filters: {[key: string]: any}): Promise<Paginated<any>> {
-
-    const page = (options && options.page) ? options.page*1 : 1;
-    const limit = (options && options.itemsPerPage) ? options.itemsPerPage*1 : 25;
-    const skip = (page-1) * limit;
-    const sortBy = (options && options.sortBy)  ? options.sortBy : {};
+  public async getResults(
+    options: PaginateOptions,
+    filters: { [key: string]: any }
+  ): Promise<Paginated<any>> {
+    const page = options && options.page ? options.page * 1 : 1;
+    const limit = options && options.itemsPerPage ? options.itemsPerPage * 1 : 25;
+    const skip = (page - 1) * limit;
+    const sortBy = options && options.sortBy ? options.sortBy : {};
 
     const pipeline = this.getPipeline(filters);
 
@@ -32,80 +32,128 @@ export class AuditReport implements IReport {
     }
     query = query.skip(skip).limit(limit);
 
-    const totalRes = await this.auditService.getModel().aggregate(pipeline).count('total');
-    const total = (totalRes && totalRes.length > 0) ? totalRes[0]['total'] : 0;
+    const totalRes = await this.auditService
+      .getModel()
+      .aggregate(pipeline)
+      .count('total');
+    const total = totalRes && totalRes.length > 0 ? totalRes[0]['total'] : 0;
 
     const result: Paginated<any> = {
       total: total,
       itemsPerPage: limit,
-      results: (await query || [])
+      results: (await query) || [],
     };
 
     return result;
   }
 
-
-  protected getPipeline(filters: {[key: string]: any}): PipelineStage[] {
+  protected getPipeline(filters: { [key: string]: any }): PipelineStage[] {
     return [];
   }
 
-  protected getMatchClause(filters: {[key: string]: any}): { [key:string]: any } {
-
+  protected getMatchClause(filters: { [key: string]: any }): {
+    [key: string]: any;
+  } {
     const toMatch = {};
 
-    (this.filters || []).forEach(filter => {
-
+    (this.filters || []).forEach((filter) => {
       const path = filter.path || filter.id;
 
       if (filter.type === ReportFilterType.Text) {
         if (!!filters[filter.id]) {
-          toMatch[path] = { $regex: this.escapeRegExp(filters[filter.id]), $options: 'i' };
+          toMatch[path] = {
+            $regex: this.escapeRegExp(filters[filter.id]),
+            $options: 'i',
+          };
         }
-      }
-
-      else if (filter.type === ReportFilterType.Number || filter.type === ReportFilterType.Select) {
+      } else if (
+        filter.type === ReportFilterType.Number ||
+        filter.type === ReportFilterType.Select
+      ) {
         if (!!filters[filter.id]) {
           toMatch[path] = filters[filter.id];
         }
-      }
-
-      else if (filter.type === ReportFilterType.Date) {
+      } else if (filter.type === ReportFilterType.Date) {
         if (!!filters[filter.id]) {
           const startDate = new Date(filters[filter.id]);
           toMatch[path]['$gte'] = startDate;
           startDate.setDate(startDate.getDate() + 1);
           toMatch[path]['$lte'] = startDate;
         }
-      }
-
-      else if (filter.type === ReportFilterType.DateRange) {
-        const dateRange = this.getDateRange(filter.id, filters);
+      } else if (filter.type === ReportFilterType.DateRange) {
+        const dateRange = this.getDateRangeFilter(filter.id, filters);
         if (dateRange) {
           toMatch[path] = dateRange;
         }
       }
-
-
     });
 
     return toMatch;
   }
 
-
-  protected getDateRange(fieldId: string, filters: { [key: string]: any; }): { [key: string]: Date } | null {
+  protected getDateRangeFilter(
+    fieldId: string,
+    filters: { [key: string]: any }
+  ): { [key: string]: Date } | null {
     let newFilter;
 
-    if (!!filters[fieldId+'Start'] || !!filters[fieldId+'End']) {
+    if (!!filters[fieldId + 'Start'] || !!filters[fieldId + 'End']) {
       newFilter = {};
-      if (!!filters[fieldId+'Start']) {
-        newFilter['$gte'] = new Date(filters[fieldId+'Start']);
+      if (!!filters[fieldId + 'Start']) {
+        newFilter['$gte'] = new Date(filters[fieldId + 'Start']);
       }
       if (!!filters['timestampEnd']) {
-        newFilter['$lte'] = new Date(filters[fieldId+'End']);
+        newFilter['$lte'] = new Date(filters[fieldId + 'End']);
       }
     }
 
     return newFilter;
+  }
+
+  /**
+   * Returns a projection clause that flattens a name property into a single string.
+   * This is useful for handling name properties that may be strings (ex: ImplementationGuide.name) or arrays (ex: Patient.name)
+   */
+  protected getResourceNameProjection(nameExpression: string = '$resource.name'): { [key: string]: any } {
+    return {
+      $cond: [
+        { $eq: [ {$type: '$fhirResource.resource.name'}, 'array']  },
+        {
+          $reduce: {
+            input: nameExpression,
+            initialValue: '',
+            in: {
+              $concat: [
+                {
+                  $ltrim: {
+                    input: {
+                      $concat: [
+                        { $ifNull: ['$$value', ''] },
+                        ', ',
+                        {
+                          $reduce: {
+                            input: '$$this.given',
+                            initialValue: '',
+                            in: {
+                              $ltrim: {
+                                input: { $concat: ['$$value', ' ', '$$this'] },
+                              },
+                            },
+                          },
+                        },
+                        { $ifNull: [{ $concat: [' ', '$$this.family'] }, ''] },
+                      ],
+                    },
+                    chars: ', ',
+                  },
+                },
+              ],
+            },
+          }
+        },
+        nameExpression
+      ]
+    };
   }
 
   protected escapeRegExp(value: string) {

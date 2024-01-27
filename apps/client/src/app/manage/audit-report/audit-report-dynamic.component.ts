@@ -52,6 +52,15 @@ export class AuditReportComponentDynamic implements OnInit {
 
   reportSelectionChanged(selectedReportId: string) {
 
+    this.criteria = {};
+    this.currentPage = 1;
+    this.ngbDates = {};
+    this.reportData = {
+      results: [],
+      itemsPerPage: 25,
+      total: 0
+    };
+
     if (!selectedReportId) {
       this.selectedReport = null;
       return;

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { AuditReport } from "./audit-report";
 import { AuditService } from "./audit.service";
-import { ImplementationGuideSummaryReport } from "./reports/implementation-guide-summary-report";
+import { FhirResourceSummaryReport, ImplementationGuideSummaryReport } from "./reports";
 
 
 @Injectable()
@@ -12,6 +12,7 @@ export class AuditReportRepository {
   constructor(private auditService: AuditService) {
 
     this.reports = [
+      new FhirResourceSummaryReport(this.auditService),
       new ImplementationGuideSummaryReport(this.auditService)
     ];
 
