@@ -100,8 +100,7 @@ import {PagesComponent} from './pages/pages.component';
 import {PageComponent} from './page/page.component';
 import { AuditComponent } from './manage/audit/audit.component';
 import {WorkGroupComponent} from './implementation-guide-wrapper/work-group/work-group.component';
-import {AuditReportComponent} from './manage/audit-report/audit-report.component';
-import { AuditReportComponentDynamic as AuditReportDynamicComponent } from './manage/audit-report/audit-report-dynamic.component';
+import { AuditReportComponent } from './manage/audit-report/audit-report.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -211,8 +210,7 @@ const appRoutes: Routes = [
   { path: 'users/me', component: UserComponent },
   { path: 'users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/audit', component: AuditComponent, runGuardsAndResolvers: 'always' },
-  { path: 'manage/auditReport', component: AuditReportComponent, runGuardsAndResolvers: 'always' },
-  { path: 'manage/audit-report', component: AuditReportDynamicComponent, runGuardsAndResolvers: 'always' },
+  { path: 'manage/audit-report', component: AuditReportComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
 ];
@@ -366,8 +364,7 @@ const authModuleConfig: OAuthModuleConfig = {
     PageComponent,
     AuditComponent,
     WorkGroupComponent,
-    AuditReportComponent,
-    AuditReportDynamicComponent
+    AuditReportComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes, {

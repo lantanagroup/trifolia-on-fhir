@@ -20,7 +20,7 @@ export class UserSummaryReport extends AuditReport {
     { path: 'deleted', label: 'Deleted', type: ReportFieldType.Number, order: 6 },
     { path: 'publishSuccess', label: 'Publish Success', type: ReportFieldType.Number, order: 7 },
     { path: 'publishFailure', label: 'Publish Failure', type: ReportFieldType.Number, order: 8 },
-    { path: 'actions', label: 'Actions', type: ReportFieldType.Number, hidden: false }
+    { path: 'actions', label: 'Actions', type: ReportFieldType.Number, hidden: true }
   ];
 
   public filters: IReportFilter[] = [

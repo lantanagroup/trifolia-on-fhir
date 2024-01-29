@@ -40,14 +40,4 @@ export class AuditService {
     return this.http.get<Paginated<IAudit>>(url);
   }
 
-  public getAudits(reportType: string, page: number = 1, itemsPerPage: number = 10, sort: string, filters: { [key: string]: string } = {}): Observable<Paginated<IAudit>> {
-    let url = '';
-    if (reportType === 'igReport' || reportType === 'fhirResourceReport') {
-      url = this.apiBase + `/fhirResources?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}&filters=${encodeURIComponent(JSON.stringify(filters))}`;
-    } else if (reportType == 'usersReport') {
-      url = this.apiBase + `/users?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}&filters=${encodeURIComponent(JSON.stringify(filters))}`;
-    }
-    return this.http.get<Paginated<IAudit>>(url);
-  }
-
 }
