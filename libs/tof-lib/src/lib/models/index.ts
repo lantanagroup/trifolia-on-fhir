@@ -1,4 +1,5 @@
 import type { IDomainResource } from '../fhirInterfaces';
+import { PaginateOptions, Paginated } from '../paginate';
 import { NonFhirResourceType } from './non-fhir-resource-type';
 
 export * from './non-fhir-resource-type';
@@ -111,8 +112,8 @@ export enum AuditEntityType {
 export type AuditEntityValue = IUser|IGroup|IProject|IFhirResource|INonFhirResource|string;
 
 export interface IAudit extends IBaseEntity {
-  action: AuditAction,
-  timestamp: Date,
+  action: AuditAction;
+  timestamp: Date;
   user?: IUser;
   entityType?: AuditEntityType;
   entityValue?: AuditEntityValue;
@@ -120,3 +121,65 @@ export interface IAudit extends IBaseEntity {
   note?: string;
   networkAddr?: string;
 }
+
+export enum ReportFieldType {
+  String,
+  Number,
+  Date,
+  Boolean,
+  Object
+}
+
+export interface IReportField {
+  path: string;
+  label: string;
+  type: ReportFieldType;
+  order?: number;
+  hidden?: boolean;
+  tooltip?: string;
+}
+
+export enum ReportFilterType {
+  Text,
+  Number,
+  Date,
+  DateRange,
+  Select
+}
+
+export interface IReportFilter {
+  type: ReportFilterType;
+  id: string;
+  path?: string;
+  label?: string;
+  tooltip?: string;
+  value?: any;
+  options?: any[];
+}
+
+export interface IReportFilterOption {
+  label: string;
+  value: any;
+}
+
+export interface IReport {
+  id: string;
+  name: string;
+  title?: string;
+  fields: IReportField[];
+  filters: IReportFilter[];
+  defaultSort?: string;
+
+  getResults(options: PaginateOptions, filters: {}): Promise<Paginated<any>>;
+
+}
+
+export interface IReportMetadata {
+  id: string;
+  name: string;
+  title: string;
+  fields: IReportField[];
+  filters: IReportFilter[];
+  defaultSort?: string;
+}
+

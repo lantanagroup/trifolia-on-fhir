@@ -1,8 +1,8 @@
-import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {IAudit} from '@trifolia-fhir/models';
-import {Paginated} from '@trifolia-fhir/tof-lib';
-import {Observable} from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { IAudit, IReportMetadata } from '@trifolia-fhir/models';
+import { Paginated } from '@trifolia-fhir/tof-lib';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuditService {
@@ -26,18 +26,17 @@ export class AuditService {
     return this.http.post<IAudit>(this.apiBase, audit);
   }
 
-  public getResourceAudits(type: 'nonFhirResource' | 'fhirResource', resourceId: string, page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp'): Observable<Paginated<IAudit>> {
-    let url = this.apiBase + `/${encodeURIComponent(type)}/${encodeURIComponent(resourceId)}?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}`;
-    return this.http.get<Paginated<IAudit>>(url);
+  public getReportList(): Observable<IReportMetadata[]> {
+    return this.http.get<IReportMetadata[]>(this.apiBase + '/report-list');
   }
 
-  public getAudits(reportType: string, page: number = 1, itemsPerPage: number = 10, sort: string, filters: { [key: string]: string } = {}): Observable<Paginated<IAudit>> {
-    let url = '';
-    if (reportType === 'igReport' || reportType === 'fhirResourceReport') {
-      url = this.apiBase + `/fhirResources?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}&filters=${encodeURIComponent(JSON.stringify(filters))}`;
-    } else if (reportType == 'usersReport') {
-      url = this.apiBase + `/users?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}&filters=${encodeURIComponent(JSON.stringify(filters))}`;
-    }
+  public getReport(id: string, page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp', filters: {[key:string]: string} = {}): Observable<Paginated<any>> {
+    let url = this.apiBase + `/report/${encodeURIComponent(id)}?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}&filters=${encodeURIComponent(JSON.stringify(filters))}`;
+    return this.http.get<Paginated<any>>(url);
+  }
+
+  public getResourceAudits(type: 'nonFhirResource' | 'fhirResource', resourceId: string, page: number = 1, itemsPerPage: number = 10, sort: string = '-timestamp'): Observable<Paginated<IAudit>> {
+    let url = this.apiBase + `/${encodeURIComponent(type)}/${encodeURIComponent(resourceId)}?page=${encodeURIComponent(page)}&itemsPerPage=${encodeURIComponent(itemsPerPage)}&_sort=${encodeURIComponent(sort)}`;
     return this.http.get<Paginated<IAudit>>(url);
   }
 

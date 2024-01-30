@@ -1,174 +1,231 @@
-import {Component, OnInit} from '@angular/core';
-import {AuditService} from '../../shared/audit.service';
-import {Paginated} from '@trifolia-fhir/tof-lib';
-import {AuditAction, AuditEntityType, AuditEntityValue, IAudit, IAuditPropertyDiff, IUser} from '@trifolia-fhir/models';
-import {Subject, debounceTime} from 'rxjs';
-import {NgbCalendar, NgbDate, NgbDateParserFormatter, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {AuditDiffsModalComponent} from '../../shared-ui/audit-diffs-modal/audit-diffs-modal.component';
-import {RawModalComponent} from '../../shared-ui/raw-modal/raw-modal.component';
+import { Component, OnInit } from "@angular/core";
+import { IReportMetadata as IReportDefinition, IReportField, ReportFieldType, ReportFilterType } from "@trifolia-fhir/models";
+import { AuditService } from "../../shared/audit.service";
+import { Paginated } from "@trifolia-fhir/tof-lib";
+import { Subject, debounceTime } from "rxjs";
+import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: 'trifolia-fhir-audit',
+  selector: 'trifolia-fhir-audit-report',
   templateUrl: './audit-report.component.html',
   styleUrls: ['./audit-report.component.css']
 })
 export class AuditReportComponent implements OnInit {
 
-  public AuditAction = AuditAction;
-  public AuditEntityType = AuditEntityType;
+  public ReportFieldType = ReportFieldType;
+  public ReportFilterType = ReportFilterType;
 
-  public actions = Object.values(AuditAction).sort();
-  public entityTypes = Object.values(AuditEntityType).sort();
-
-  public reportType: string = '';
-
+  public reportList: IReportDefinition[] = [];
+  public selectedReportId: string;
+  public selectedReport: IReportDefinition;
   public criteriaChangedEvent = new Subject<void>();
-  public audits: Paginated<IAudit> = {
+  public reportData: Paginated<any> = {
     results: [],
     itemsPerPage: 25,
     total: 0
-  };
+  }
   public currentPage: number = 1;
-  public criteria: { [key: string]: string } = {};
+  public criteria: {[key: string]: string} = {};
   public sort: string = '-timestamp';
   public itemsPerPage: number = 25;
   public loadingResults: boolean = false;
 
-  public hoveredDate: NgbDate | null = null;
-
-
   constructor(
     private auditService: AuditService,
-    private modalService: NgbModal,
     private calendar: NgbCalendar,
     private formatter: NgbDateParserFormatter
-  ) {
-  }
+    ) {}
 
   ngOnInit(): void {
+    this.auditService.getReportList().subscribe((reports) => {
+      this.reportList = reports;
+    });
 
     this.criteriaChangedEvent.pipe(debounceTime(500))
       .subscribe(() => {
         this.currentPage = 1;
-        this.getAudits();
+        this.getReportData();
       });
-
-    this.getAudits();
-
   }
 
-  private _fromDate: NgbDate | null;
-  public get fromDate(): NgbDate | null {
-    return this._fromDate;
-  }
 
-  public set fromDate(value: NgbDate | null) {
-    this._fromDate = value;
-    if (value) {
-      this.criteria.timestampStart = new Date(Date.UTC(value.year, value.month - 1, value.day, 0, 0, 0)).toISOString();
-    } else {
-      delete this.criteria.timestampStart;
+  reportSelectionChanged(selectedReportId: string) {
+
+    this.criteria = {};
+    this.currentPage = 1;
+    this.ngbDates = {};
+    this.reportData = {
+      results: [],
+      itemsPerPage: 25,
+      total: 0
+    };
+
+    if (!selectedReportId) {
+      this.selectedReport = null;
+      return;
     }
-    this.criteriaChangedEvent.next();
-  }
 
-  private _toDate: NgbDate | null;
-  public get toDate(): NgbDate | null {
-    return this._toDate;
-  }
+    this.selectedReport = this.reportList.find((report) => report.id === selectedReportId);
 
-  public set toDate(value: NgbDate | null) {
-    this._toDate = value;
-    if (value) {
-      this.criteria.timestampEnd = new Date(Date.UTC(value.year, value.month - 1, value.day + 1, 0, 0, 0)).toISOString();
-    } else {
-      delete this.criteria.timestampEnd;
+    if (!this.selectedReport) {
+      console.error(`Could not find report with id ${selectedReportId}`);
+      return;
     }
-    this.criteriaChangedEvent.next();
+
+    this.sort = this.selectedReport.defaultSort || '-timestamp';
+
+    this.getReportData();
+
   }
 
+  get tableFields() : IReportField[] {
+    let fields = this.selectedReport?.fields.filter(r => !r.hidden).sort((a, b) => !!a.order ? a.order - b.order : 9000);
+    return fields || [];
+  }
 
-  public async getAudits() {
+  get columnCount() : number {
+    return this.tableFields.length;
+  }
+  
+
+  public async getReportData() {
     this.loadingResults = true;
-    this.audits.results = [];
-    this.audits.total = 0;
+    this.reportData.results = [];
+    this.reportData.total = 0;
 
-    if (this.reportType === 'igReport') {
-      this.criteria.fhirResourceType = 'ImplementationGuide';
-      this.sort = "fhirResource.resource.resourceType,fhirResource.resource.name";
-    }
-    else if(this.reportType === 'fhirResourceReport') {
-      this.sort = "fhirResource.resource.resourceType,fhirResource.resource.name";
-    }
-    else if(this.reportType === 'usersReport'){
-      this.sort = "username";
-    }
-
-
-    this.auditService.getAudits(this.reportType, this.currentPage, this.itemsPerPage, this.sort, this.criteria).subscribe({
+    this.auditService.getReport(this.selectedReport.id, this.currentPage, this.itemsPerPage, this.sort, this.criteria).subscribe({
       next: (results) => {
-        this.audits = results;
-      },
-      error: (err) => {
-        console.log(err);
-      },
-      complete: () => {
-        this.loadingResults = false;
-      }
+        this.reportData = results;
+      }, 
+      error: (err) => { console.error(err); },
+      complete: () => { this.loadingResults = false; }
     });
   }
 
+  public getValue(data: any, path: string) {
+    if (!data) {
+      return null;
+    }
 
-  copyToClipboard(data: any) {
-    navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+    let value = data;
+    const pathParts = path.split('.');
+    for (let i = 0; i < pathParts.length; i++) {
+      const pathPart = pathParts[i];
+      value = value[pathPart];
+    }
+
+    return value;
   }
 
-  openRawModal(data: any, title: string) {
-    const modalRef = this.modalService.open(RawModalComponent, { size: 'xl', scrollable: true });
-    modalRef.componentInstance.data = data;
-    modalRef.componentInstance.title = title;
-  }
-
-  openDiffsModal(diffs: IAuditPropertyDiff[]) {
-    const modalRef = this.modalService.open(AuditDiffsModalComponent, { size: 'xl', scrollable: true });
-    modalRef.componentInstance.propertyDiffs = diffs;
-  }
-
-
-  onDateSelection(date: NgbDate) {
-    if (!this.fromDate && !this.toDate) {
-      this.fromDate = date;
-    } else if (this.fromDate && !this.toDate && date && date.after(this.fromDate)) {
-      this.toDate = date;
+  public changeSort(column: string) {
+    const currentColumn = this.sort.startsWith('-') ? this.sort.substring(1) : this.sort;
+    if (currentColumn === column) {
+      this.sort = this.sort.startsWith('-') ? column : `-${column}`;
     } else {
-      this.toDate = null;
-      delete this.criteria.toDate;
-      this.fromDate = date;
+      this.sort = column;
+    }
+    this.currentPage = 1;
+    this.getReportData();
+  }
+
+  public getSortIcon(column: string) {
+    const currentColumn = this.sort.startsWith('-') ? this.sort.substring(1) : this.sort;
+    if (currentColumn === column) {
+      return this.sort.startsWith('-') ? 'fa fa-sort-down' : 'fa fa-sort-up';
+    }
+    return 'fa fa-sort';
+  }
+
+
+
+  setFilter(filterId: string, value: any) {
+    let existing = this.criteria[filterId];
+    if (value) {
+      this.criteria[filterId] = value;
+    } else {
+      delete this.criteria[filterId];
+    }
+
+    if (existing !== this.criteria[filterId]) {
+      this.criteriaChangedEvent.next();
     }
   }
 
-  isHovered(date: NgbDate) {
-    return (
-      this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate)
-    );
+
+
+  //
+  // Date picker related
+  //
+
+  private _ngbDates: {[key:string]: NgbDate } = {};
+  public get ngbDates(): {[key:string]: NgbDate | null } {
+    return this._ngbDates;
+  }
+  public set ngbDates(value: {[key:string]: NgbDate | null }) {
+    this._ngbDates = value;
+    Object.keys(this._ngbDates).filter(key => !key.endsWith('Hovered')).forEach(key => {
+      if (this._ngbDates[key]) {
+        this.criteria[key] = new Date(Date.UTC(this._ngbDates[key].year, this._ngbDates[key].month-1, this._ngbDates[key].day, 0, 0, 0)).toISOString();
+      } else {
+        delete this.criteria[key];
+      }
+    });
+    this.criteriaChangedEvent.next();
   }
 
-  isInside(date: NgbDate) {
-    return this.toDate && date.after(this.fromDate) && date.before(this.toDate);
+  setDate(filterId: string, date: NgbDate | null) {
+    let existingDate = this.criteria[filterId];
+    this.ngbDates[filterId] = date;
+    if (date) {
+      let newDate = new Date(Date.UTC(date.year, date.month-1, date.day, 0, 0, 0));
+      if (filterId.endsWith('End')) {
+        newDate.setDate(newDate.getDate() + 1);
+      }
+      this.criteria[filterId] = newDate.toISOString();
+    } else {
+      delete this.criteria[filterId];
+    }
+
+    if (existingDate !== this.criteria[filterId]) {
+      this.criteriaChangedEvent.next();
+    }
   }
 
-  isRange(date: NgbDate) {
-    return (
-      date.equals(this.fromDate) ||
-      (this.toDate && date.equals(this.toDate)) ||
-      this.isInside(date) ||
-      this.isHovered(date)
-    );
-  }
+  onDateSelection(filterId: string, date: NgbDate) {
+		if (!this.ngbDates[filterId+'Start'] && !this.ngbDates[filterId+'End']) {
+      this.setDate(filterId+'Start', date);
+		} else if (this.ngbDates[filterId+'Start'] && !this.ngbDates[filterId+'End'] && date && date.after(this.ngbDates[filterId+'Start'])) {
+			this.setDate(filterId+'End', date);
+		} else {
+			this.setDate(filterId+'End', null);
+      delete this.criteria[filterId+'End'];
+			this.setDate(filterId+'Start', date);
+		}
+	}
+
+  public hoveredDate: NgbDate | null = null;
+  isHovered(filterId: string, date: NgbDate) {
+		return (
+			this.ngbDates[filterId+'Start'] && !this.ngbDates[filterId+'End'] && this.hoveredDate && date.after(this.ngbDates[filterId+'Start']) && date.before(this.hoveredDate)
+		);
+	}
+
+	isInside(filterId: string, date: NgbDate) {
+		return this.ngbDates[filterId+'End'] && date.after(this.ngbDates[filterId+'Start']) && date.before(this.ngbDates[filterId+'End']);
+	}
+
+	isRange(filterId: string, date: NgbDate) {
+		return (
+			date.equals(this.ngbDates[filterId+'Start']) ||
+			(this.ngbDates[filterId+'End'] && date.equals(this.ngbDates[filterId+'End'])) ||
+			this.isInside(filterId, date) ||
+			this.isHovered(filterId, date)
+		);
+	}
 
   validateDateInput(currentValue: NgbDate | null, input: string): NgbDate | null {
-    const parsed = this.formatter.parse(input);
-    return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
-  }
-
+		const parsed = this.formatter.parse(input);
+		return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
+	}
+  
 }

@@ -6,9 +6,11 @@ import {AuditDocument} from './audit.schema';
 import {type ITofUser, Paginated} from '@trifolia-fhir/tof-lib';
 import {User} from '../server.decorators';
 import {AuditService} from './audit.service';
-import {type IAudit} from '@trifolia-fhir/models';
+import {IReportMetadata, type IAudit} from '@trifolia-fhir/models';
 import {Request} from 'express';
 import {ObjectId} from 'mongodb';
+import { TofNotFoundException } from '../../not-found-exception';
+import { AuditReportRepository } from './audit-report-repository';
 
 @Controller('api/audits')
 @UseGuards(AuthGuard('bearer'))
@@ -16,235 +18,10 @@ import {ObjectId} from 'mongodb';
 @ApiOAuth2([])
 export class AuditController extends BaseDataController<AuditDocument> {
 
-  constructor(auditService: AuditService) {
+  constructor(private auditService: AuditService, private auditReportRepository: AuditReportRepository) {
     super(auditService);
   }
-
-  @Get('/users')
-  public async searchUsers(@User() user: ITofUser, @Req() req?: any): Promise<Paginated<AuditDocument>> {
-
-    this.assertAdmin(user);
-
-    let options = this.getPaginateOptionsFromRequest(req);
-    options.pipeline = [];
-
-    let filter = {};
-    let filters = {};
-    try {
-      filters = JSON.parse(req.query?.filters);
-
-      if (!!filters['timestampStart'] || !!filters['timestampEnd']) {
-        if (!!filters['timestampStart'] && !!filters['timestampEnd']) {
-          filter['timestamp'] = {
-            $gte: new Date(filters['timestampStart']),
-            $lte: new Date(filters['timestampEnd'])
-          };
-        } else if (!!filters['timestampStart'] && !filters['timestampEnd']) {
-          let endDate = new Date(filters['timestampStart']);
-          endDate.setDate(endDate.getDate() + 1);
-          filter['timestamp'] = {
-            $gte: new Date(filters['timestampStart']),
-            $lte: endDate
-          };
-        }
-      }
-    } catch (error) {
-    }
-
-    options.pipeline.push({ $match: filter });
-    options.pipeline.push(
-      {
-        $match: {
-          user: { $exists: true }
-        },
-      },
-      {
-        $lookup: {
-          from: 'user',
-          localField: 'user',
-          foreignField: '_id',
-          as: 'user'
-        }
-      },
-      {
-        $set: {
-          user: {
-            $first: '$user'
-          }
-        }
-      },
-      {
-        $project: {
-          user: 1,
-          userName: { $concat: ['$user.firstName', ' ', '$user.lastName'] },
-          email: { $concat: ["$user.email"]},
-          create: { $cond: [{ $eq: ['$action', 'create'] }, 1, 0] },
-          updates: { $cond: [{ $eq: ['$action', 'update'] }, 1, 0] },
-          reads: { $cond: [{ $eq: ['$action', 'read'] }, 1, 0] },
-          delete: { $cond: [{ $eq: ['$action', 'delete'] }, 1, 0] },
-          publishSuccess: { $cond: [{ $eq: ['$action', 'publish-success'] }, 1, 0] },
-          publishFailure: { $cond: [{ $eq: ['$action', 'publish-failure'] }, 1, 0] },
-          logins: { $cond: [{ $eq: ["$action", "login"]}, 1, 0]}
-        }
-      },
-      {
-        $group:
-          {
-            _id: '$user._id',
-            user: { $first: "$user"},
-            username: { $addToSet: '$userName' },
-            email : {$addToSet: '$email' } ,
-            Creates: { $sum: '$create' },
-            Reads: { $sum: '$reads' },
-            Updates: { $sum: '$updates' },
-            Deletes: { $sum: '$delete' },
-            PublishSuccess: { $sum: '$publishSuccess' },
-            PublishFailure: { $sum: '$publishFailure' },
-            Logins: { $sum: "$logins"},
-            Actions: { $count: {} }
-          }
-      },
-      {
-        $unset: ['_id']
-      },
-      {
-        $set: {
-          username: { $first: '$username' },
-          email: {$first: "$email"}
-        }
-      }
-    );
-
-    options.hydrate = false;
-
-    // console.log('options.pipeline', JSON.stringify(options.pipeline, null, 2));
-    return this.dataService.search(options);
-
-  }
-
-
-  @Get('/fhirResources')
-  public async searchAccessedFhirResources(@User() user: ITofUser, @Req() req?: any): Promise<Paginated<AuditDocument>> {
-
-    this.assertAdmin(user);
-
-    let options = this.getPaginateOptionsFromRequest(req);
-    options.pipeline = [];
-
-    options.pipeline.push(
-      {
-        $match: {
-          entityValue: { $exists: true }
-        },
-      },
-      {
-        $lookup: {
-          from: 'fhirResource',
-          localField: 'entityValue',
-          foreignField: '_id',
-          as: 'fhirResource'
-        }
-      }
-    );
-
-    let filter = {};
-    let filters = {};
-    try {
-      filters = JSON.parse(req.query?.filters);
-
-      if (!!filters['timestampStart'] || !!filters['timestampEnd']) {
-        if (!!filters['timestampStart'] && !!filters['timestampEnd']) {
-          filter['timestamp'] = {
-            $gte: new Date(filters['timestampStart']),
-            $lte: new Date(filters['timestampEnd'])
-          };
-        } else if (!!filters['timestampStart'] && !filters['timestampEnd']) {
-          let endDate = new Date(filters['timestampStart']);
-          endDate.setDate(endDate.getDate() + 1);
-          filter['timestamp'] = {
-            $gte: new Date(filters['timestampStart']),
-            $lte: endDate
-          };
-        }
-      }
-      if (!!filters['fhirResourceType']) {
-        filter['fhirResource.resource.resourceType'] = { $regex: this.escapeRegExp(filters['fhirResourceType']), $options: 'i' };
-      }
-    } catch (error) {
-    }
-
-    options.pipeline.push({ $match: filter });
-    options.pipeline.push(
-      {
-        $lookup: {
-          from: 'user',
-          localField: 'user',
-          foreignField: '_id',
-          as: 'user'
-        }
-      },
-      {
-        $set: {
-          user: {
-            $first: '$user'
-          }
-        }
-      },
-      {
-        $project: {
-          fhirResource: 1,
-          userName: { $concat: ["$user.firstName", " ", "$user.lastName"]},
-          user: 1,
-          create: { $cond: [{ $eq: ['$action', 'create'] }, 1, 0] },
-          updates: { $cond: [{ $eq: ['$action', 'update'] }, 1, 0] },
-          reads: { $cond: [{ $eq: ['$action', 'read'] }, 1, 0] },
-          delete: { $cond: [{ $eq: ['$action', 'delete'] }, 1, 0] },
-          publishSuccess: { $cond: [{ $eq: ['$action', 'publish-success'] }, 1, 0] },
-          publishFailure: { $cond: [{ $eq: ['$action', 'publish-failure'] }, 1, 0] }
-        }
-      },
-      {
-        $group:
-          {
-            _id: '$fhirResource._id',
-            fhirResource: { $first: '$fhirResource' },
-            Create: { $sum: '$create' },
-            Reads: { $sum: '$reads' },
-            Updates: { $sum: '$updates' },
-            Delete: { $sum: '$delete' },
-            PublishSuccess: { $sum: '$publishSuccess' },
-            PublishFailure: { $sum: '$publishFailure' },
-            Actions: { $count: {} },
-            Users: { $addToSet : "$userName"}
-          }
-      },
-      {
-        $unset: ['_id']
-      },
-      {
-        $set:
-          {
-            fhirResource: {
-              $first: "$fhirResource",
-            },
-          },
-      },
-      {
-        $match:
-          {
-            fhirResource: {
-              $exists: true,
-            },
-          },
-      }
-    );
-    options.hydrate = false;
-
-    // console.log('options.pipeline', JSON.stringify(options.pipeline, null, 2));
-    return this.dataService.search(options);
-
-  }
-
+  
 
   @Get()
   public async searchAudits(@User() user: ITofUser, @Req() req?: any): Promise<Paginated<AuditDocument>> {
@@ -344,6 +121,47 @@ export class AuditController extends BaseDataController<AuditDocument> {
 
     return this.dataService.create(audit);
 
+  }
+
+  @Get('report/:reportId')
+  public async getReport(@User() user: ITofUser, @Req() req: Request, @Param('reportId') reportId: string): Promise<Paginated<any>> {
+      
+      this.assertAdmin(user);
+
+      const report = this.auditReportRepository.getReport(reportId);
+      if (!report) {
+        throw new TofNotFoundException(`No report found with id ${reportId}`);
+      }
+
+      const options = this.getPaginateOptionsFromRequest(req);
+
+      let filters: {[key: string]: any} = {};
+      try {
+        filters = JSON.parse(<string>req.query?.filters);
+      } catch (error) {
+      }
+
+      return report.getResults(options, filters);
+  }
+
+  @Get('report-list')
+  public async getReportList(@User() user: ITofUser): Promise<IReportMetadata[]> {
+    this.assertAdmin(user);
+
+    let reports = (await this.auditReportRepository.getReports())
+      .filter(r => !!r.id && !!r.name)
+      .map(r => {
+        return {
+          id: r.id,
+          name: r.name,
+          title: r.title,
+          fields: r.fields,
+          filters: r.filters,
+          defaultSort: r.defaultSort
+        };
+      });
+
+    return reports;
   }
 
 
