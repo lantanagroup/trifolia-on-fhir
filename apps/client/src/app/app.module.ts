@@ -181,7 +181,7 @@ const appRoutes: Routes = [
   { path: 'projects/:implementationGuideId/page/new', component: PageComponent},
   { path: 'projects/:implementationGuideId/search-parameter', component: SearchParametersComponent },
   { path: 'projects/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
-  { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },
+  { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]  },
 
   { path: 'projects/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent },
   { path: 'projects/:implementationGuideId/structure-definition/new', component: NewProfileComponent },

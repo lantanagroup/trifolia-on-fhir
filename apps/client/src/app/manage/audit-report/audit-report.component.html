@@ -1,6 +1,6 @@
 <div>
   <label>Audit Reports</label>
-  <select class="form-control" [(ngModel)]="reportType" (ngModelChange)="criteriaChangedEvent.next()">
+  <select class="form-select" [(ngModel)]="reportType" (ngModelChange)="criteriaChangedEvent.next()">
     <option value=""></option>
     <option value="igReport">Accessed Igs</option>
     <option value="fhirResourceReport">Accessed Fhir Resources</option>
