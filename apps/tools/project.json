@@ -7,7 +7,7 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "options": {
         "outputPath": "dist/apps/tools",
         "main": "apps/tools/src/app/main.ts",
@@ -17,7 +17,8 @@
         ],
         "buildLibsFromSource": true,
         "target": "node",
-        "compiler": "tsc"
+        "compiler": "tsc",
+        "webpackConfig": "apps/tools/webpack.config.js"
       },
       "configurations": {
         "production": {
@@ -39,11 +40,10 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/tools/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/tools/jest.config.ts"
       },
       "outputs": [
-        "coverage/apps/tools"
+        "{workspaceRoot}/coverage/apps/tools"
       ]
     }
   },
