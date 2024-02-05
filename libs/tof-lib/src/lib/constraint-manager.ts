@@ -113,6 +113,18 @@ export class ConstraintManager {
 
       await this.associate(newTreeModels);
 
+      // check each child for constrained descendents
+      for(let k = this.elements.length-1; k >=0; k--){
+        const foundElem = this.structureDefinition.differential.element.find(e => e.id.startsWith(this.elements[k].id + '.'));
+        if(!!foundElem){
+          const idParts = foundElem.id ? foundElem.id.split('.') : [];
+          const parentIdParts = this.elements[k].id.split('.');
+          if(idParts.length > parentIdParts.length) {
+            this.elements[k].hasConstrainedChildren = true;
+          }
+        }
+      }
+
       etm.expanded = true;
     } else {
       this.expandedStructure = null;
@@ -178,7 +190,7 @@ export class ConstraintManager {
     return elements.filter((e, i) => i < thisIndex);
   }
 
-  removeConstraint(elementTreeModel: ElementTreeModel) {
+   removeConstraint(elementTreeModel: ElementTreeModel) {
     if (!elementTreeModel.constrainedElement) return;
     if (elementTreeModel.expanded) this.toggleExpand(elementTreeModel);
 
@@ -219,6 +231,12 @@ export class ConstraintManager {
     }
 
     delete elementTreeModel.constrainedElement;
+
+    // mark this with no children constraints cause all children constraints are deleted at this point
+    elementTreeModel.hasConstrainedChildren = false;
+
+    // mark ancestors for children with constraints
+    this.markAncestorsForConstrainedChildren(elementTreeModel);
 
     // Remove the element from the tree model if it is a slice
     if (shouldRemoveSlice) {
@@ -294,6 +312,9 @@ export class ConstraintManager {
       });
     }
 
+    // mark ancestors for children with constraints
+    this.markAncestorsForConstrainedChildren(elementTreeModel);
+
     // If we're constraining a base element that represents a slice from another profile, then
     // we need to make sure this constraint has a slice name with "<baseSliceName>/<newSliceName>
     // See re-slicing http://www.hl7.org/fhir/profiling.html#reslicing
@@ -367,6 +388,9 @@ export class ConstraintManager {
       if (foundElement) {
         if (!foundElement.constrainedElement) {
           foundElement.constrainedElement = u;
+
+          // mark ancestors for children with constraints
+          this.markAncestorsForConstrainedChildren(foundElement);
         } else if (u.sliceName) {
           // This is a new slice
           const index = this.elements.indexOf(foundElement);
@@ -382,6 +406,26 @@ export class ConstraintManager {
     for (const newTreeModel of elementTreeModels) {
       const newTreeModelChildren = await this.findChildren(newTreeModel.baseElement, newTreeModel.constrainedElement);
       newTreeModel.hasChildren = newTreeModelChildren.length > 0;
+    }
+  }
+
+
+  private markAncestorsForConstrainedChildren(element: ElementTreeModel) {
+    // check parents have constraints or have children with constraints
+    let parent = element.parent;
+    while (parent) {
+      parent.hasConstrainedChildren = false;
+      const childElementTreeModels = this.elements.filter(elem => elem.parent === parent);
+      for (let i = childElementTreeModels.length - 1; i >= 0; i--) {
+        if (childElementTreeModels[i].constrainedElement) {
+          parent.hasConstrainedChildren = true;
+          break;
+        } else if (childElementTreeModels[i].hasConstrainedChildren) {
+          parent.hasConstrainedChildren = true;
+          break;
+        }
+      }
+      parent = parent.parent;
     }
   }
 }
