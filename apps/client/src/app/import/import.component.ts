@@ -224,7 +224,7 @@ export class ImportComponent implements OnInit {
 
   public async filesChanged(event) {
     const files = event.target.files;
-    console.log('files:', files);
+    // console.log('files:', files);
     if (files.length === 1) {
       try {
         await this.populateFile(files[0]);
