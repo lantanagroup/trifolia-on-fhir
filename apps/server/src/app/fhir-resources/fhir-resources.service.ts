@@ -15,6 +15,7 @@ import { LinkComponent, Binary as STU3Binary, Bundle as STU3Bundle, EntryCompone
 import { Binary as R4Binary, Bundle as R4Bundle, BundleEntryComponent as R4BundleEntryComponent } from '@trifolia-fhir/r4';
 import { Binary as R5Binary, Bundle as R5Bundle, BundleEntry as R5BundleEntryComponent } from '@trifolia-fhir/r5';
 import { ProjectsService } from '../projects/projects.service';
+import { Fhir } from 'fhir/fhir';
 
 @Injectable()
 export class FhirResourcesService extends BaseDataService<FhirResourceDocument> {
@@ -43,9 +44,16 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
 
 
         // validate FHIR resource
-        // TODO: actually use FHIR validator
         if (!(newFhirResource.resource && newFhirResource.resource instanceof Object)) {
             throw new BadRequestException(`Invalid fhirResource resource provided.`);
+        }
+
+        // try to convert the FHIR resource to xml and back to handle any serialization issues such as incoming strings that should be numbers, etc.
+        try {
+            const fhir = new Fhir();
+            newFhirResource.resource = JSON.parse(fhir.xmlToJson(fhir.objToXml(newFhirResource.resource)));
+        } catch (ex) {
+            throw new BadRequestException(`Could not deserialize the provided resource: ${ex.message}`);
         }
 
        // verify that the resource does not already exist
@@ -126,10 +134,18 @@ export class FhirResourcesService extends BaseDataService<FhirResourceDocument> 
         }
 
         // validate FHIR resource
-        // TODO: actually use FHIR validator
         if (!(upFhirResource.resource && upFhirResource.resource instanceof Object)) {
             throw new BadRequestException(`Invalid fhirResource resource provided.`);
         }
+
+        // try to convert the FHIR resource to xml and back to handle any serialization issues such as incoming strings that should be numbers, etc.
+        try {
+            const fhir = new Fhir();
+            upFhirResource.resource = JSON.parse(fhir.xmlToJson(fhir.objToXml(upFhirResource.resource)));
+        } catch (ex) {
+            throw new BadRequestException(`Could not deserialize the provided resource: ${ex.message}`);
+        }
+
 
 
         // ensure we have a resource metadata object
