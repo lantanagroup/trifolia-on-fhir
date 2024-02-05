@@ -198,7 +198,7 @@ const appRoutes: Routes = [
 
   { path: 'projects/:implementationGuideId/questionnaire', component: QuestionnairesComponent },
   { path: 'projects/:implementationGuideId/questionnaire/new', component: QuestionnaireComponent },
-  { path: 'projects/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]  },
   { path: 'projects/:implementationGuideId/publish', component: PublishComponent },
   { path: 'projects/:implementationGuideId/export', component: ExportComponent },
   { path: 'projects/:implementationGuideId/import', component: ImportComponent },
