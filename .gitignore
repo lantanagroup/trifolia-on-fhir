@@ -58,3 +58,5 @@ apps/server/src/assets/ig-publisher/
 .idea/usage.statistics.xml
 .idea/shelf/
 .angular/
+
+.nx/cache

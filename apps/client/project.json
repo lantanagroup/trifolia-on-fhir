@@ -79,29 +79,28 @@
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
-        "browserTarget": "client:build",
-        "proxyConfig": "proxy.conf.json"
+        "proxyConfig": "proxy.conf.json",
+        "buildTarget": "client:build"
       },
       "configurations": {
         "production": {
-          "browserTarget": "client:build:production"
+          "buildTarget": "client:build:production"
         }
       }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "client:build"
+        "buildTarget": "client:build"
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/client/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/client/jest.config.ts"
       },
       "outputs": [
-        "coverage/apps/client/"
+        "{workspaceRoot}/coverage/apps/client/"
       ]
     }
   },
