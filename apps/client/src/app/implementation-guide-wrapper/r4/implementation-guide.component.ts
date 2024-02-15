@@ -660,9 +660,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     componentInstance.setPage(pageDef.page);
     componentInstance.setResource(pageDef.resource);
 
-    modalRef.result.then((result: { page: ImplementationGuidePageComponent, res: Page }) => {
-        Object.assign(pageDef.page, result.page);
-        Object.assign(pageDef.resource, result.res);
+    modalRef.result.then((page: ImplementationGuidePageComponent) => {
+        Object.assign(pageDef.page, page);
         this.initPagesAndGroups();
         this.igChanging.emit(true);
       }
