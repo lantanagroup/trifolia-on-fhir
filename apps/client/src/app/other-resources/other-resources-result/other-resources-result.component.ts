@@ -237,6 +237,8 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
     request.subscribe({
       next: (res: IFhirResource | INonFhirResource) => {
         Object.assign(this.resource, res);
+        this.data = this.isFhir ? (<IFhirResource>this.resource).resource : (<INonFhirResource>this.resource).content;
+        this.validation = this.fhirService.validate(this.data);
         this.changeType();
         this.message = `Successfully updated resource!`;
       },
