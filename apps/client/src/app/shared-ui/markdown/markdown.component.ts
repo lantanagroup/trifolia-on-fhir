@@ -274,8 +274,11 @@ export class MarkdownComponent implements AfterViewInit {
 
     const observer = new IntersectionObserver(entries => {
       if (entries.some(entry => entry.isIntersecting) && this.simplemde.Instance) {
-        this.simplemde.Instance.codemirror.refresh();
-        observer.unobserve(this.editor.nativeElement);
+          this.simplemde.Instance.codemirror.refresh();
+          if(this.disabled) {
+            this.simplemde.Instance.codemirror.options.readOnly = 'nocursor';
+          }
+          observer.unobserve(this.editor.nativeElement);
       }
     });
 
