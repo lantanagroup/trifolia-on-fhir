@@ -12,19 +12,19 @@
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-8">
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="url" [required]="true" title="URL" (change)="urlChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="url" [required]="true" title="URL" (change)="isDirty = true; urlChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="name"  [required]="true" title="Name" (change)="nameChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="name"  [required]="true" title="Name" (change)="isDirty = true; nameChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="title" title="Title" (change)="nameChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="title" title="Title" (change)="isDirty = true; nameChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="publisher" title="Publisher"></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="publisher" (change)="isDirty = true" title="Publisher"></app-fhir-string>
 
             <div class="card">
               <div class="card-header">
                 Formats
                 <div class="pull-right">
-                  <button type="button" class="btn btn-primary btn-sm" title="Add a format" (click)="addFormat()">
+                  <button type="button" class="btn btn-primary btn-sm" title="Add a format" (click)="isDirty = true; addFormat()">
                     <i class="fa fa-plus"></i>
                   </button>
                 </div>
@@ -33,7 +33,7 @@
                 <tbody>
                 <tr *ngFor="let f of capabilityStatement.format; let i = index; trackBy: Globals.trackByFn">
                   <td>
-                    <input type="text" class="form-control" [(ngModel)]="capabilityStatement.format[i]"/>
+                    <input type="text" class="form-control" [(ngModel)]="capabilityStatement.format[i]" (ngModelChange)="isDirty = true;" />
                   </td>
                   <td class="actions-column-1">
                     <div class="pull-right">
@@ -46,7 +46,7 @@
                 </tbody>
               </table>
               <div class="card-body" *ngIf="!capabilityStatement.format || capabilityStatement.format.length === 0">
-                <i>This capability statement does not have any formats, yet. Click <a href="javascript:void(0)" (click)="addFormat()">here</a> to add one.</i>
+                <i>This capability statement does not have any formats, yet. Click <a href="javascript:void(0)" (click)="isDirty = true; addFormat()">here</a> to add one.</i>
               </div>
             </div>
 
@@ -54,7 +54,7 @@
               <div class="card-header">
                 Patch Formats
                 <div class="pull-right">
-                  <button type="button" class="btn btn-primary btn-sm" title="Add a format" (click)="addPatchFormat()">
+                  <button type="button" class="btn btn-primary btn-sm" title="Add a format" (click)="isDirty = true; addPatchFormat()">
                     <i class="fa fa-plus"></i>
                   </button>
                 </div>
@@ -68,7 +68,7 @@
                   </td>
                   <td class="actions-column-1">
                     <div class="pull-right">
-                      <button type="button" class="btn btn-primary btn-sm" title="Remove this format" (click)="capabilityStatement.patchFormat.splice(i, 1)">
+                      <button type="button" class="btn btn-primary btn-sm" title="Remove this format" (click)="isDirty = true; capabilityStatement.patchFormat.splice(i, 1)">
                         <i class="fas fa-trash-alt"></i>
                       </button>
                     </div>
@@ -81,30 +81,25 @@
               </div>
             </div>
 
-            <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="description" title="Description"
-                              [isOptional]="true"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="description" title="Description" [isOptional]="true"  (change)="isDirty = true"></app-fhir-markdown>
 
-            <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="purpose"
-                              title="Purpose"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="purpose" title="Purpose"  (change)="isDirty = true"></app-fhir-markdown>
 
-            <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="copyright"
-                              title="Copyright"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="capabilityStatement" propertyName="copyright" title="Copyright"  (change)="isDirty = true"></app-fhir-markdown>
           </div>
 
           <div class="col-md-4">
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)='isDirty = true; idChangedEvent.next()'></app-fhir-string>
             <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
-            <app-fhir-date [parentObject]="capabilityStatement" propertyName="date" title="Date"
-                          [required]="false"></app-fhir-date>
+            <app-fhir-date [parentObject]="capabilityStatement" propertyName="date" title="Date" [required]="false"  (change)='isDirty = true'></app-fhir-date>
             <div class="alert alert-warning status-message" *ngIf="capabilityStatement.date && wrongDateFormat">
               <span>Date must be written as YYYY-MM-DD</span>
             </div>
 
             <div class="mb-3">
               <label>Status</label>
-              <select class="form-select" [(ngModel)]="capabilityStatement.status"
-                      [class.is-invalid]="!capabilityStatement.status">
+              <select class="form-select" [(ngModel)]="capabilityStatement.status" [class.is-invalid]="!capabilityStatement.status"  (change)='isDirty = true'>
                 <option value="draft">Draft</option>
                 <option value="active">Active</option>
                 <option value="retired">Retired</option>
@@ -114,22 +109,18 @@
 
             <div class="mb-3">
               <label>Kind</label>
-              <select class="form-select" [(ngModel)]="capabilityStatement.kind"
-                      [class.is-invalid]="!capabilityStatement.kind">
+              <select class="form-select" [(ngModel)]="capabilityStatement.kind" [class.is-invalid]="!capabilityStatement.kind"  (change)='isDirty = true'>
                 <option value="instance">Instance</option>
                 <option value="capability">Capability</option>
                 <option value="requirements">Requirements</option>
               </select>
             </div>
 
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="fhirVersion" title="FHIR Version"
-                            [required]="true"></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="fhirVersion" title="FHIR Version" [required]="true" (change)='isDirty = true'></app-fhir-string>
 
-            <app-fhir-string [parentObject]="capabilityStatement" propertyName="version" title="Version"
-                            [required]="true"></app-fhir-string>
+            <app-fhir-string [parentObject]="capabilityStatement" propertyName="version" title="Version" [required]="true" (change)='isDirty = true'></app-fhir-string>
 
-            <app-fhir-boolean [parentObject]="capabilityStatement" propertyName="experimental" title="Experimental"
-                              [required]="true"></app-fhir-boolean>
+            <app-fhir-boolean [parentObject]="capabilityStatement" propertyName="experimental" title="Experimental"  [required]="true" (change)='isDirty = true'></app-fhir-boolean>
           </div>
         </div>
       </ng-template>
@@ -139,16 +130,14 @@
       <ng-template ngbNavContent>
 
         <!-- Use Context -->
-        <app-fhir-multi-use-context [parentObject]="capabilityStatement"
-                                    propertyName="useContext"></app-fhir-multi-use-context>
+        <app-fhir-multi-use-context [parentObject]="capabilityStatement" propertyName="useContext" (change)='isDirty = true'></app-fhir-multi-use-context>
 
-        <app-fhir-multi-jurisdiction [parentObject]="capabilityStatement"
-                                    propertyName="jurisdiction"></app-fhir-multi-jurisdiction>
+        <app-fhir-multi-jurisdiction [parentObject]="capabilityStatement" propertyName="jurisdiction" (change)='isDirty = true'></app-fhir-multi-jurisdiction>
 
         <div class="card">
           <div class="card-header">
             <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('implementation')"
-                  (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'implementation', {})"/>
+                  (ngModelChange)="isDirty = true; Globals.toggleProperty(capabilityStatement, 'implementation', {})"/>
             Implementation
           </div>
           <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('implementation')">
@@ -162,10 +151,10 @@
             <tbody>
             <tr>
               <td>
-                <app-fhir-string [parentObject]="capabilityStatement.implementation" propertyName="description" title="Description" [required]="true" [label]="false"></app-fhir-string>
+                <app-fhir-string [parentObject]="capabilityStatement.implementation" propertyName="description" title="Description" [required]="true" [label]="false" (change)='isDirty = true'></app-fhir-string>
               </td>
               <td>
-                <app-fhir-string [parentObject]="capabilityStatement.implementation" propertyName="url" title="URL" [label]="false"></app-fhir-string>
+                <app-fhir-string [parentObject]="capabilityStatement.implementation" propertyName="url" title="URL" [label]="false" (change)='isDirty = true'></app-fhir-string>
               </td>
               <td>
                 <app-fhir-reference
@@ -173,7 +162,8 @@
                   propertyName="custodian"
                   [isFormGroup]="false"
                   [hideResourceType]="true"
-                  resourceType="Organization"></app-fhir-reference>
+                  resourceType="Organization"
+                  (change)='isDirty = true'></app-fhir-reference>
               </td>
             </tr>
             </tbody>
@@ -183,7 +173,7 @@
         <div class="card">
           <div class="card-header">
             <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('software')"
-                  (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'software', {})"/>
+                  (ngModelChange)="isDirty = true; Globals.toggleProperty(capabilityStatement, 'software', {})"/>
             Software
           </div>
           <table class="table table-striped" *ngIf="capabilityStatement.hasOwnProperty('software')">
@@ -197,13 +187,13 @@
             <tbody>
             <tr>
               <td>
-                <app-fhir-string [parentObject]="capabilityStatement.software" propertyName="name" title="Name" [required]="true" [label]="false"></app-fhir-string>
+                <app-fhir-string [parentObject]="capabilityStatement.software" propertyName="name" title="Name" [required]="true" [label]="false" (change)='isDirty = true'></app-fhir-string>
               </td>
               <td>
-                <app-fhir-string [parentObject]="capabilityStatement.software" propertyName="version" title="Version" [label]="false"></app-fhir-string>
+                <app-fhir-string [parentObject]="capabilityStatement.software" propertyName="version" title="Version" [label]="false" (change)='isDirty = true'></app-fhir-string>
               </td>
               <td>
-                <app-fhir-date [parentObject]="capabilityStatement.software" propertyName="releaseDate" title="Release Date" [label]="false"></app-fhir-date>
+                <app-fhir-date [parentObject]="capabilityStatement.software" propertyName="releaseDate" title="Release Date" [label]="false" (change)='isDirty = true'></app-fhir-date>
               </td>
             </tr>
             </tbody>
@@ -230,8 +220,7 @@
             <tbody *ngIf="capabilityStatement.imports && capabilityStatement.imports.length > 0">
               <tr *ngFor="let j of capabilityStatement.imports; let ji = index">
                 <td>
-                  <app-fhir-canonical-url [property]="j" title="Import Canonical URL"
-                                          resourceType="CapabilityStatement" (change)="capabilityStatement.imports[ji]=$event"></app-fhir-canonical-url>
+                  <app-fhir-canonical-url [property]="j" title="Import Canonical URL" resourceType="CapabilityStatement" (change)="capabilityStatement.imports[ji]=$event" (change)='isDirty = true'></app-fhir-canonical-url>
                 </td>
                 <td>
                   <div class="pull-right">
@@ -270,8 +259,7 @@
             <tbody *ngIf="capabilityStatement.instantiates && capabilityStatement.instantiates.length > 0">
             <tr *ngFor="let j of capabilityStatement.instantiates; let ji = index">
               <td>
-                <app-fhir-canonical-url [property]="j" title="Instantiate Canonical URL"
-                                        resourceType="CapabilityStatement" (change)="capabilityStatement.instantiates[ji]=$event"></app-fhir-canonical-url>
+                <app-fhir-canonical-url [property]="j" title="Instantiate Canonical URL" resourceType="CapabilityStatement" (change)="capabilityStatement.instantiates[ji]=$event" (change)='isDirty = true'></app-fhir-canonical-url>
               </td>
               <td>
                 <div class="pull-right">
@@ -300,7 +288,7 @@
               <th>Canonical URL</th>
               <th class="actions-column-1">
                 <div class="pull-right">
-                  <button type="button" class="btn btn-primary" title="Add a supported implementation guide" (click)="capabilityStatement.implementationGuide.push('')">
+                  <button type="button" class="btn btn-primary" title="Add a supported implementation guide" (click)="isDirty = true; capabilityStatement.implementationGuide.push('')">
                     <i class="fa fa-plus"></i>
                   </button>
                 </div>
@@ -310,8 +298,7 @@
             <tbody *ngIf="capabilityStatement.implementationGuide && capabilityStatement.implementationGuide.length > 0">
             <tr *ngFor="let j of capabilityStatement.implementationGuide; let ji = index">
               <td>
-                <app-fhir-canonical-url [property]="j" title="Implementation Guide Canonical URL"
-                                        resourceType="ImplementationGuide" (change)="capabilityStatement.implementationGuide[ji]=$event"></app-fhir-canonical-url>
+                <app-fhir-canonical-url [property]="j" title="Implementation Guide Canonical URL" resourceType="ImplementationGuide" (change)="capabilityStatement.implementationGuide[ji]=$event" (change)='isDirty = true'></app-fhir-canonical-url>
               </td>
               <td>
                 <div class="pull-right">
@@ -340,7 +327,7 @@
       <a ngbNavLink>REST</a>
       <ng-template ngbNavContent>
         <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('rest')"
-              (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This
+              (ngModelChange)="isDirty = true; Globals.toggleProperty(capabilityStatement, 'rest', [{ mode: 'client' }])"/> This
         capability statement includes REST entries
 
         <ng-container *ngIf="capabilityStatement.hasOwnProperty('rest')">
@@ -363,23 +350,22 @@
                 </div>
                 <app-fhir-select-single-code [parentObject]="r" propertyName="mode" title="Mode"
                                             valueSetUrl="http://hl7.org/fhir/ValueSet/restful-capability-mode"
-                                            [required]="true"></app-fhir-select-single-code>
+                                            [required]="true" (change)='isDirty = true'></app-fhir-select-single-code>
 
-                <app-fhir-markdown [parentObject]="r" propertyName="documentation"
-                                  title="Documentation"></app-fhir-markdown>
+                <app-fhir-markdown [parentObject]="r" propertyName="documentation" title="Documentation" (change)='isDirty = true'></app-fhir-markdown>
 
                 <!-- Security -->
                 <div class="card">
                   <div class="card-header">
-                    <input type="checkbox" [ngModel]="r.hasOwnProperty('security')" (ngModelChange)="Globals.toggleProperty(r, 'security', [{}])"/>
+                    <input type="checkbox" [ngModel]="r.hasOwnProperty('security')" (ngModelChange)="isDirty = true; Globals.toggleProperty(r, 'security', [{}])"/>
                     Security
                   </div>
                   <div class="card-body" *ngIf="r.hasOwnProperty('security')">
-                    <app-fhir-boolean [parentObject]="r.security" propertyName="cors" title="CORS"></app-fhir-boolean>
+                    <app-fhir-boolean [parentObject]="r.security" propertyName="cors" title="CORS" (change)='isDirty = true'></app-fhir-boolean>
 
-                    <app-fhir-string [parentObject]="r.security" propertyName="description" title="Description"></app-fhir-string>
+                    <app-fhir-string [parentObject]="r.security" propertyName="description" title="Description" (change)='isDirty = true'></app-fhir-string>
 
-                    <trifolia-fhir-security-services [security]="r.security"></trifolia-fhir-security-services>
+                    <trifolia-fhir-security-services [security]="r.security" (change)='isDirty = true'></trifolia-fhir-security-services>
                   </div>
                 </div>
 
@@ -387,7 +373,7 @@
                 <div class="card">
                   <div class="card-header">
                     <input type="checkbox" [ngModel]="r.hasOwnProperty('resource')"
-                          (ngModelChange)="Globals.toggleProperty(r, 'resource', [{ type: 'Account' }])"/>
+                          (ngModelChange)="isDirty = true; Globals.toggleProperty(r, 'resource', [{ type: 'Account' }])"/>
                     Resource(s)
                   </div>
                   <table class="table table-striped" *ngIf="r.hasOwnProperty('resource')">
@@ -397,7 +383,7 @@
                       <th>Profile</th>
                       <th class="actions-column">
                         <div class="pull-right">
-                          <button type="button" class="btn btn-primary btn-sm" title="Add a resource" (click)="defaultResource(r.resource)">
+                          <button type="button" class="btn btn-primary btn-sm" title="Add a resource" (click)="isDirty = true; defaultResource(r.resource)">
                             <i class="fa fa-plus"></i>
                           </button>
                         </div>
@@ -408,7 +394,7 @@
                     <tr *ngFor="let res of r.resource; let resourceIndex = index">
                       <td>
                         <app-fhir-select-single-code [parentObject]="res" propertyName="type" [isFormGroup]="false" [codes]="getCodes(r.resource, resourceIndex)"
-                                                    valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"></app-fhir-select-single-code>
+                                                    valueSetUrl="http://hl7.org/fhir/ValueSet/resource-types"  (change)="isDirty = true;"></app-fhir-select-single-code>
                       </td>
                       <td>
                         <app-fhir-reference
@@ -416,26 +402,28 @@
                           propertyName="profile"
                           [isFormGroup]="false"
                           [isCanonical]="true"
-                          resourceType="StructureDefinition"></app-fhir-reference>
+                          resourceType="StructureDefinition"
+                          (change)="isDirty = true;">
+                        </app-fhir-reference>
                       </td>
                       <td>
                         <div class="btn-toolbar pull-right">
                           <div class="btn-group">
-                            <button type="button" class="btn btn-primary" title="Move this resource up in the list" [disabled]="resourceIndex <= 0" (click)="moveResource(r, res, 'up')">
+                            <button type="button" class="btn btn-primary" title="Move this resource up in the list" [disabled]="resourceIndex <= 0" (click)="isDirty = true; moveResource(r, res, 'up')">
                               <i class="fas fa-arrow-up"></i>
                             </button>
-                            <button type="button" class="btn btn-primary" title="Move this resource down in the list" [disabled]="resourceIndex >= (r.resource || []).length - 1" (click)="moveResource(r, res, 'down')">
+                            <button type="button" class="btn btn-primary" title="Move this resource down in the list" [disabled]="resourceIndex >= (r.resource || []).length - 1" (click)="isDirty = true; moveResource(r, res, 'down')">
                               <i class="fas fa-arrow-down"></i>
                             </button>
                           </div>
                           <div class="btn-group">
-                            <button type="button" class="btn btn-primary" title="Edit this resource" (click)="editResource(res)">
+                            <button type="button" class="btn btn-primary" title="Edit this resource" (click)="isDirty = true; editResource(res)">
                               <i class="fa fa-edit"></i>
                             </button>
-                            <button type="button" class="btn btn-primary" title="Duplicate this resource" (click)="copyResource(r, res)">
+                            <button type="button" class="btn btn-primary" title="Duplicate this resource" (click)="isDirty = true; copyResource(r, res)">
                               <i class="fa fa-copy"></i>
                             </button>
-                            <button type="button" class="btn btn-primary" title="Remove this resource" (click)="r.resource.splice(resourceIndex, 1)">
+                            <button type="button" class="btn btn-primary" title="Remove this resource" (click)="isDirty = true; r.resource.splice(resourceIndex, 1)">
                               <i class="fas fa-trash-alt"></i>
                             </button>
                           </div>
@@ -450,7 +438,7 @@
                 <div class="card">
                   <div class="card-header">
                     <input type="checkbox" [ngModel]="r.hasOwnProperty('interaction')"
-                          (ngModelChange)="Globals.toggleProperty(r, 'interaction', [{ code: 'read' }])"/>
+                          (ngModelChange)="isDirty = true;Globals.toggleProperty(r, 'interaction', [{ code: 'read' }])"/>
                     Interaction(s)
                   </div>
                   <table class="table table-striped" *ngIf="r.hasOwnProperty('interaction')">
@@ -472,11 +460,10 @@
                       <td>
                         <app-fhir-select-single-code [parentObject]="i" propertyName="code" [isFormGroup]="false"
                                                     [required]="true"
-                                                    valueSetUrl="http://hl7.org/fhir/ValueSet/type-restful-interaction"></app-fhir-select-single-code>
+                                                    valueSetUrl="http://hl7.org/fhir/ValueSet/type-restful-interaction"  (change)="isDirty = true;"></app-fhir-select-single-code>
                       </td>
                       <td>
-                        <app-fhir-string [parentObject]="i" propertyName="documentation"
-                                        [isFormGroup]="false"></app-fhir-string>
+                        <app-fhir-string [parentObject]="i" propertyName="documentation" [isFormGroup]="false"  (change)="isDirty = true;"></app-fhir-string>
                       </td>
                       <td>
                         <div class="pull-right">
@@ -494,8 +481,7 @@
                 <!-- Search Params -->
                 <div class="card">
                   <div class="card-header">
-                    <input type="checkbox" [ngModel]="r.hasOwnProperty('searchParam')"
-                          (ngModelChange)="Globals.toggleProperty(r, 'searchParam', [{}])"/>
+                    <input type="checkbox" [ngModel]="r.hasOwnProperty('searchParam')" (ngModelChange)="isDirty = true; Globals.toggleProperty(r, 'searchParam', [{}])"/>
                     Search Params
                   </div>
                   <table class="table table-striped" *ngIf="r.hasOwnProperty('searchParam')">
@@ -517,20 +503,16 @@
                     <tbody>
                     <tr *ngFor="let si of r.searchParam; let sii = index">
                       <td>
-                        <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false"
-                                        [required]="true"></app-fhir-string>
+                        <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false" [required]="true" (change)="isDirty = true;"></app-fhir-string>
                       </td>
                       <td>
-                        <app-fhir-string [parentObject]="si" propertyName="definition"
-                                        [isFormGroup]="false"></app-fhir-string>
+                        <app-fhir-string [parentObject]="si" propertyName="definition" [isFormGroup]="false" (change)="isDirty = true;"></app-fhir-string>
                       </td>
                       <td>
-                        <app-fhir-select-single-code [parentObject]="si" propertyName="type" [isFormGroup]="false"
-                                                    valueSetUrl="http://hl7.org/fhir/ValueSet/search-param-type"></app-fhir-select-single-code>
+                        <app-fhir-select-single-code [parentObject]="si" propertyName="type" [isFormGroup]="false" valueSetUrl="http://hl7.org/fhir/ValueSet/search-param-type" (change)="isDirty = true;"></app-fhir-select-single-code>
                       </td>
                       <td>
-                        <app-fhir-string [parentObject]="si" propertyName="documentation"
-                                        [isFormGroup]="false"></app-fhir-string>
+                        <app-fhir-string [parentObject]="si" propertyName="documentation" [isFormGroup]="false" (change)="isDirty = true;"></app-fhir-string>
                       </td>
                       <td>
                         <div class="pull-right">
@@ -549,7 +531,7 @@
                 <div class="card">
                   <div class="card-header">
                     <input type="checkbox" [ngModel]="r.hasOwnProperty('operation')"
-                          (ngModelChange)="Globals.toggleProperty(r, 'operation', [{ name: '', definition: { reference: '', display: '' }}])"/>
+                          (ngModelChange)="isDirty = true; Globals.toggleProperty(r, 'operation', [{ name: '', definition: { reference: '', display: '' }}])"/>
                     Operations
                   </div>
                   <table class="table table-striped" *ngIf="r.hasOwnProperty('operation')">
@@ -570,12 +552,10 @@
                     <tbody>
                     <tr *ngFor="let si of r.operation; let sii = index">
                       <td>
-                        <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false"
-                                        [required]="true"></app-fhir-string>
+                        <app-fhir-string [parentObject]="si" propertyName="name" [isFormGroup]="false" [required]="true" (change)="isDirty = true;"></app-fhir-string>
                       </td>
                       <td>
-                        <app-fhir-reference [parentObject]="si" propertyName="definition" [isFormGroup]="false"
-                                            [required]="true" resourceType="OperationDefinition"></app-fhir-reference>
+                        <app-fhir-reference [parentObject]="si" propertyName="definition" [isFormGroup]="false" [required]="true" resourceType="OperationDefinition" (change)="isDirty = true;"></app-fhir-reference>
                       </td>
                       <td>
                         <div class="pull-right">
@@ -594,7 +574,7 @@
                 <div class="card">
                   <div class="card-header">
                     <input type="checkbox" [ngModel]="r.hasOwnProperty('compartment')"
-                          (ngModelChange)="Globals.toggleProperty(r, 'compartment', [{ name: '', definition: { reference: '', display: '' }}])"/>
+                          (ngModelChange)="isDirty = true; Globals.toggleProperty(r, 'compartment', [{ name: '', definition: { reference: '', display: '' }}])"/>
                     Compartments
                   </div>
                   <table class="table table-striped" *ngIf="r.hasOwnProperty('compartment')">
@@ -613,7 +593,7 @@
                     <tbody>
                     <tr *ngFor="let si of r.compartment; let sii = index; trackBy: Globals.trackByFn">
                       <td>
-                        <app-fhir-string [parentObject]="r.compartment" propertyName="{{sii}}" [isFormGroup]="false" [required]="true"></app-fhir-string>
+                        <app-fhir-string [parentObject]="r.compartment" propertyName="{{sii}}" [isFormGroup]="false" [required]="true" (change)="isDirty = true;"></app-fhir-string>
                       </td>
                       <td>
                         <div class="pull-right">
@@ -643,7 +623,7 @@
       <a ngbNavLink>Messaging</a>
       <ng-template ngbNavContent>
         <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('messaging')"
-              (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'messaging', [{ }])"/> This capability
+              (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'messaging', [{ }])" (change)="isDirty = true;"/> This capability
         statement includes messaging entries
 
         <ng-container *ngIf="capabilityStatement.hasOwnProperty('messaging')">
@@ -653,14 +633,14 @@
               <a ngbNavLink>
                 <span>Messaging {{mi + 1}} </span>
                 <i class="fas fa-trash-alt" title="Remove this messaging entry"
-                  (click)="ClientHelper.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
+                  (click)="isDirty = true; ClientHelper.promptForRemove(capabilityStatement.messaging, mi, 'Are you sure you want to remove this item?', $event)"></i>
               </a>
               <ng-template ngbNavContent>
                 <!-- Endpoints -->
                 <div class="card">
                   <div class="card-header">
                     <input type="checkbox" [ngModel]="messaging.hasOwnProperty('endpoint')"
-                          (ngModelChange)="Globals.toggleProperty(messaging, 'endpoint', [{ protocol: messageTransportCodes[0], address: '' }])"/>
+                          (ngModelChange)="isDirty = true;Globals.toggleProperty(messaging, 'endpoint', [{ protocol: messageTransportCodes[0], address: '' }])" />
                     Endpoints
                   </div>
                   <table class="table table-striped" *ngIf="messaging.hasOwnProperty('endpoint')">
@@ -671,7 +651,7 @@
                       <th>
                         <div class="pull-right">
                           <button type="button" class="btn btn-primary btn-sm" title="Add an endpoint"
-                                  (click)="messaging.endpoint.push({ protocol: messageTransportCodes[0], address: '' })">
+                                  (click)="isDirty = true; messaging.endpoint.push({ protocol: messageTransportCodes[0], address: '' })">
                             <i class="fa fa-plus"></i>
                           </button>
                         </div>
@@ -683,18 +663,18 @@
                       <td>
                         <select class="form-select"
                                 [ngModel]="Globals.getSelectCoding(endpoint.protocol, messageTransportCodes, true, true)"
-                                (ngModelChange)="endpoint.protocol = $event">
+                                (ngModelChange)="isDirty = true;endpoint.protocol = $event">
                           <option *ngFor="let c of messageTransportCodes" [ngValue]="c">{{c.display || c.code}}</option>
                         </select>
                       </td>
                       <td>
                         <app-fhir-string [parentObject]="endpoint" propertyName="address" [isFormGroup]="false"
-                                        [required]="true"></app-fhir-string>
+                                        [required]="true" (change)="isDirty=true"></app-fhir-string>
                       </td>
                       <td>
                         <div class="pull-right btn-group">
                           <button type="button" class="btn btn-primary btn-sm" title="Remove this endpoint"
-                                  (click)="messaging.endpoint.splice(ei, 1)">
+                                  (click)="isDirty = true; messaging.endpoint.splice(ei, 1)">
                             <i class="fas fa-trash-alt"></i>
                           </button>
                         </div>
@@ -721,7 +701,7 @@
                 <div class="card">
                   <div class="card-header">
                     <input type="checkbox" [ngModel]="messaging.hasOwnProperty('supportedMessage')"
-                          (ngModelChange)="Globals.toggleProperty(messaging, 'supportedMessage', [{ mode: 'sender', definition: { reference: '', display: '' }}])"/>
+                          (ngModelChange)="isDirty=true;Globals.toggleProperty(messaging, 'supportedMessage', [{ mode: 'sender', definition: { reference: '', display: '' }}])"/>
                     Supported Messages
                   </div>
                   <table class="table table-striped" *ngIf="messaging.hasOwnProperty('supportedMessage')">
@@ -732,7 +712,7 @@
                       <th>
                         <div class="pull-right">
                           <button type="button" class="btn btn-primary btn-sm" title="Add a supported message"
-                                  (click)="messaging.supportedMessage.push({ mode: 'sender', definition: { reference: '', display: '' }})">
+                                  (click)="isDirty=true; messaging.supportedMessage.push({ mode: 'sender', definition: { reference: '', display: '' }})">
                             <i class="fa fa-plus"></i>
                           </button>
                         </div>
@@ -744,11 +724,11 @@
                       <td>
                         <app-fhir-select-single-code [parentObject]="sm" propertyName="mode" [isFormGroup]="false"
                                                     [required]="true"
-                                                    valueSetUrl="http://hl7.org/fhir/ValueSet/event-capability-mode"></app-fhir-select-single-code>
+                                                    valueSetUrl="http://hl7.org/fhir/ValueSet/event-capability-mode"; (change)="isDirty=true"></app-fhir-select-single-code>
                       </td>
                       <td>
                         <app-fhir-reference [parentObject]="sm" propertyName="definition" [isFormGroup]="false"
-                                            [required]="true" resourceType="MessageDefinition"></app-fhir-reference>
+                                            [required]="true" resourceType="MessageDefinition" (change)="isDirty=true"></app-fhir-reference>
                       </td>
                       <td>
                         <div class="pull-right">
@@ -782,7 +762,7 @@
       <ng-template ngbNavContent>
         <p>
           <input type="checkbox" [ngModel]="capabilityStatement.hasOwnProperty('document')"
-                (ngModelChange)="Globals.toggleProperty(capabilityStatement, 'document', [{ mode: 'producer', profile: { reference: '', display: '' }}])"/>
+                (ngModelChange)="isDirty=true; Globals.toggleProperty(capabilityStatement, 'document', [{ mode: 'producer', profile: { reference: '', display: '' }}])"/>
           Capability statement has document(s)
         </p>
 
@@ -806,11 +786,11 @@
           <tr *ngFor="let d of capabilityStatement.document; let i = index">
             <td>
               <app-fhir-select-single-code [parentObject]="d" propertyName="mode" [isFormGroup]="false" [required]="true"
-                                          valueSetUrl="http://hl7.org/fhir/ValueSet/document-mode"></app-fhir-select-single-code>
+                                          valueSetUrl="http://hl7.org/fhir/ValueSet/document-mode" (change)="isDirty=true"></app-fhir-select-single-code>
             </td>
             <td>
               <app-fhir-string [parentObject]="d" propertyName="documentation" [required]="false"
-                              [isFormGroup]="false"></app-fhir-string>
+                              [isFormGroup]="false"  (change)="isDirty=true"></app-fhir-string>
             </td>
             <td>
               <app-fhir-reference
@@ -820,12 +800,13 @@
                 [isFormGroup]="false"
                 [required]="true"
                 [isCanonical]="true"
-                [hideResourceType]="true"></app-fhir-reference>
+                [hideResourceType]="true"
+                (change)="isDirty=true"></app-fhir-reference>
             </td>
             <td>
               <div class="pull-right">
                 <button type="button" class="btn btn-primary" title="Remove this document"
-                        (click)="capabilityStatement.document.splice(i, 1)">
+                        (click)="isDirty=true; capabilityStatement.document.splice(i, 1)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>

@@ -26,6 +26,7 @@
           <th>Type</th>
           <th>Action</th>
           <th>Example?</th>
+          <th>Validation</th>
           <th></th>
         </tr>
         </thead>
@@ -33,7 +34,7 @@
         <tr *ngFor="let f of files; let fi = index" [class.invalid]="fileIsInvalid(f)">
           <td>
             {{f.name}}
-            <i *ngIf="f.message" class="fas fa-exclamation warning"><span class="message">{{f.message}}</span></i>
+            <i *ngIf="f.message" class="fas fa-exclamation text-danger"><span class="message">{{f.message}}</span></i>
           </td>
           <td>{{getIdDisplay(f) || f.name}}</td>
           <td>{{getContentTypeDisplay(f)}}</td>
@@ -46,10 +47,25 @@
             <a *ngIf="f.status === 'update' && (f.resource || f.content)" href="javascript:void(0)" (click)="viewUpdateDiff(f)">
               <i class="fas fa-eye"></i>
             </a>
-            <i *ngIf="!f.singleIg" class="fas fa-exclamation warning" style="padding-left:15px;" [ngbTooltip]="f.multipleIgMessage"></i>
+            <i *ngIf="!f.singleIg" class="fas fa-exclamation text-danger" style="padding-left:15px;" [ngbTooltip]="f.multipleIgMessage"></i>
           </td>
           <td>
             <input type="checkbox" (click)="toggleExample(f)" [disabled]="f.isCDAExample || f.status === 'pending'" [checked]="f.isExample" />
+          </td>
+          <td>
+            <span *ngIf="f.validation && f.validation.valid" class="badge bg-success p-2">
+              <i class="fas fa-check" title="No validation errors or warnings"></i>
+            </span>
+            <span *ngIf="f.validation && !f.validation.valid" class="clickable" (click)="viewValidation(validationModal, f.validation)">
+              <span class="badge bg-danger me-2 p-2" title="{{ validationCount(f.validation, 'error') }} validation errors">
+                {{ validationCount(f.validation, 'error') }}
+                <i class="fas fa-times-circle ms-2"></i>
+              </span>
+              <span class="badge bg-warning p-2" title="{{ validationCount(f.validation, 'warning') }} validation warnings">
+                {{ validationCount(f.validation, 'warning') }}
+                <i class="fas fa-exclamation-triangle ms-2"></i>
+              </span>
+            </span>
           </td>
           <td class="actions-column-1">
             <div class="pull-right">
@@ -103,15 +119,15 @@
     </a>
     <ng-template ngbNavContent>
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-2">
           <label class="form-label">Content Type</label>
           <div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="textContentType" id="textContentType0" [value]="0" [(ngModel)]="textContentType"/>
+              <input class="form-check-input" type="radio" name="textContentType" id="textContentType0" [value]="0" [(ngModel)]="textContentType" (change)="textContentChanged.next(textContent)"/>
               <label class="form-check-label" for="textContentType0">JSON</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="textContentType" id="textContentType1" [value]="1" [(ngModel)]="textContentType"/>
+              <input class="form-check-input" type="radio" name="textContentType" id="textContentType1" [value]="1" [(ngModel)]="textContentType" (change)="textContentChanged.next(textContent)"/>
               <label class="form-check-label" for="textContentType1">XML</label>
             </div>
           </div>
@@ -122,12 +138,39 @@
             <input class="form-check-input" type="checkbox" id="textContentIsExampleSwitch" [(ngModel)]="textContentIsExample">
           </div>
         </div> -->
-    </div>
+        <div class="col-10">
+
+          <label class="form-label">Validation</label>
+          
+          <div *ngIf="!!textContent && !!textContentError">
+            <i class="fas fa-times-circle text-danger me-2"></i>
+            <span>{{textContentError}}</span>
+          </div>
+    
+          <div *ngIf="!!textContent && !!textContentValidation">
+            <span *ngIf="textContentValidation && textContentValidation.valid" class="badge bg-success p-2">
+              <i class="fas fa-check" title="No validation errors or warnings"></i>
+            </span>
+            <span *ngIf="textContentValidation && !textContentValidation.valid" class="clickable" (click)="viewValidation(validationModal, textContentValidation)">
+              <span class="badge bg-danger me-2 p-2" title="{{ validationCount(textContentValidation, 'error') }} validation errors">
+                {{ validationCount(textContentValidation, 'error') }}
+                <i class="fas fa-times-circle ms-2"></i>
+              </span>
+              <span class="badge bg-warning p-2" title="{{ validationCount(textContentValidation, 'warning') }} validation warnings">
+                {{ validationCount(textContentValidation, 'warning') }}
+                <i class="fas fa-exclamation-triangle ms-2"></i>
+              </span>
+            </span>
+          </div>
+
+        </div>
+      </div>
 
       <div class="mb-3" [attr.data-intro]="Globals.introText['import.text.content']">
         <label>Text</label>
-        <textarea class="form-control" rows="20" [(ngModel)]="textContent"></textarea>
+        <textarea class="form-control" rows="20" [(ngModel)]="textContent" (keyup)="textContentChanged.next(textContent)"></textarea>
       </div>
+
     </ng-template>
   </li>
 
@@ -212,3 +255,18 @@
   <button type="button" class="btn btn-primary" (click)="import(t)" [disabled]="importDisabled()" [attr.data-intro]="Globals.introText['import.import-btn']">Import</button>
   <span class="message">{{message}}</span>
 </footer>
+
+
+
+<ng-template #validationModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Validation Results</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body" *ngIf="currentValidation">
+    <app-validation-results [results]="currentValidation"></app-validation-results>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()">Close</button>
+  </div>
+</ng-template>

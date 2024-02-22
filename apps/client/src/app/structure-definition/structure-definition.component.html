@@ -307,6 +307,7 @@
           <tr class="clickable" *ngFor="let e of constraintManager.elements; let ei = index"
               [class.selected]="selectedElement === e"
               [class.constrained]="!!e.constrainedElement"
+              [class.childrenConstrained]="!!e.hasConstrainedChildren && !e.constrainedElement"
               (click)="toggleSelectedElement(e, true, $event.currentTarget)"
               [attr.data-step]="sdTabs.activeId === 'elements' && ei === 0 ? '2' : undefined"
               [attr.data-intro]="sdTabs.activeId === 'elements' && ei === 0 ? Globals.introText['sd.elements.row-constrained'] : undefined">

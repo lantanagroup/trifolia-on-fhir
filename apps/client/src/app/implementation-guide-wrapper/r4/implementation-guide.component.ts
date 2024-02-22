@@ -30,7 +30,7 @@ import {GroupModalComponent} from './group-modal.component';
 import {BaseImplementationGuideComponent} from '../base-implementation-guide-component';
 import {CanComponentDeactivate} from '../../guards/resource.guard';
 import {ProjectService} from '../../shared/projects.service';
-import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap, CustomMenu, IgnoreWarnings, PublicationRequest} from '@trifolia-fhir/models';
+import {IFhirResource, Page, IProjectResourceReference, IProjectResourceReferenceMap, CustomMenu, IgnoreWarnings, PublicationRequest, Template} from '@trifolia-fhir/models';
 import {IDomainResource, getImplementationGuideContext} from '@trifolia-fhir/tof-lib';
 
 import {firstValueFrom, forkJoin} from 'rxjs';
@@ -75,7 +75,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
   public duplicate = false;
   public resourceMap: IProjectResourceReferenceMap = {};
   public historyLoaded = false;
-
+  public template: Template;
 
   constructor(
     private modal: NgbModal,
@@ -199,6 +199,32 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         uri: '',
         version: ''
       });
+    }
+  }
+
+  public addVsac() {
+
+    let found;
+
+    if (!this.implementationGuide.dependsOn) {
+      this.implementationGuide.dependsOn = [{
+        uri: 'http://fhir.org/packages/us.nlm.vsac/ImplementationGuide/us.nlm.vsac',
+        id: 'usnlmvsac',
+        packageId: 'us.nlm.vsac',
+        version: '0.4.0'
+      }];
+    } else {
+      if (this.implementationGuide.dependsOn) {
+        found = this.implementationGuide.dependsOn.find(d => d.id == 'usnlmvsac');
+      }
+      if (!found) {
+        this.implementationGuide.dependsOn.push({
+          uri: 'http://fhir.org/packages/us.nlm.vsac/ImplementationGuide/us.nlm.vsac',
+          id: 'usnlmvsac',
+          packageId: 'us.nlm.vsac',
+          version: '0.4.0'
+        });
+      }
     }
   }
 
@@ -634,9 +660,8 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     componentInstance.setPage(pageDef.page);
     componentInstance.setResource(pageDef.resource);
 
-    modalRef.result.then((result: { page: ImplementationGuidePageComponent, res: Page }) => {
-        Object.assign(pageDef.page, result.page);
-        Object.assign(pageDef.resource, result.res);
+    modalRef.result.then((page: ImplementationGuidePageComponent) => {
+        Object.assign(pageDef.page, page);
         this.initPagesAndGroups();
         this.igChanging.emit(true);
       }
@@ -964,8 +989,23 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         this.fhirResource.references.splice(removeIndex, 1);
         this.publicationRequest.id = undefined;
       }
+
     }
 
+    // save Template
+    if (this.template.id || this.template.content) {
+      if (this.template && this.template.content) {
+        this.template = await firstValueFrom(this.nonFhirResourceService.save(this.template.id, this.template, this.implementationGuideId));
+        if (!this.fhirResource.references.some(r => r.value === this.template.id && r.valueType === 'NonFhirResource')) {
+          this.fhirResource.references.push({ value: this.template.id, valueType: 'NonFhirResource' });
+        }
+      } else if (this.template && this.template.id && this.template.templateType === 'not-specified') {
+        await firstValueFrom(this.nonFhirResourceService.delete(this.template.id));
+        const removeIndex = this.fhirResource.references.findIndex(r => r.value === this.template.id && r.valueType === 'NonFhirResource');
+        this.fhirResource.references.splice(removeIndex, 1);
+        this.template.id = undefined;
+      }
+    }
 
     this.implementationGuideService.updateImplementationGuide(this.implementationGuideId, this.fhirResource)
       .subscribe({
@@ -1229,7 +1269,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       this.fhirResource.resource = this.implementationGuide;
     }
 
-    if(!this.customMenu) {
+    if (!this.customMenu) {
       let customMenu = new CustomMenu();
       let res = await firstValueFrom(this.nonFhirResourceService.getByType(customMenu, this.fhirResource.id));
       if (res.id) {
@@ -1239,7 +1279,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       }
     }
 
-    if(!this.ignoreWarnings) {
+    if (!this.ignoreWarnings) {
       let ignoreWarnings = new IgnoreWarnings();
       let res = await firstValueFrom(this.nonFhirResourceService.getByType(ignoreWarnings, this.fhirResource.id));
       if (res.id) {
@@ -1249,7 +1289,7 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
       }
     }
 
-    if(!this.publicationRequest) {
+    if (!this.publicationRequest) {
       let publicationRequest = new PublicationRequest();
       let res = await firstValueFrom(this.nonFhirResourceService.getByType(publicationRequest, this.fhirResource.id));
       if (res.id) {
@@ -1258,6 +1298,17 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
         this.publicationRequest = publicationRequest;
       }
     }
+
+    if (!this.template) {
+      let template = new Template();
+      let res = await firstValueFrom(this.nonFhirResourceService.getByType(template, this.fhirResource.id));
+      if (res.id) {
+        this.template = res;
+      } else {
+        this.template = template;
+      }
+    }
+
 
     this.igChanging.emit(isDirty);
     this.initPagesAndGroups();

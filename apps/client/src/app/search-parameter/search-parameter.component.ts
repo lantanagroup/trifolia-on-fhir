@@ -2,7 +2,7 @@ import { Component, DoCheck, EventEmitter, Input, OnInit } from '@angular/core';
 import { ConfigService } from '../shared/config.service';
 import { Coding, ImplementationGuide, SearchParameter } from '@trifolia-fhir/r4';
 import { FhirService } from '../shared/fhir.service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import {ActivatedRoute, CanDeactivate, NavigationEnd, Router} from '@angular/router';
 import { BaseComponent } from '../base.component';
 import { AuthService } from '../shared/auth.service';
 import { getErrorString, Globals } from '@trifolia-fhir/tof-lib';
@@ -22,7 +22,7 @@ import { IDomainResource } from '@trifolia-fhir/tof-lib';
   templateUrl: './search-parameter.component.html',
   styleUrls: ['./search-parameter.component.css']
 })
-export class SearchParameterComponent extends BaseComponent implements OnInit, DoCheck {
+export class SearchParameterComponent extends BaseComponent implements OnInit, DoCheck, CanDeactivate<any> {
   @Input() public implementationGuide: ImplementationGuide;
   @Input() public searchParameter;
   public fhirResource;
@@ -117,7 +117,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.loadSP(this.fileService.file.resource);
+        this.loadSP(this.fileService.file.resource,false);
       } else {
         this.router.navigate([this.configService.baseSessionUrl]);
         return;
@@ -135,7 +135,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
             }
 
             this.fhirResource = conf;
-            this.loadSP(conf.resource);
+            this.loadSP(conf.resource, false);
           },
           error: (err) => {
             this.spNotFound = err.status === 404;
@@ -198,7 +198,7 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
             this.router.navigate([`${this.configService.baseSessionUrl}/search-parameter/${conf.id}`]);
           } else {
             this.fhirResource = conf;
-            this.loadSP(conf.resource);
+            this.loadSP(conf.resource, false);
             setTimeout(() => {
               this.message = '';
             }, 3000);
@@ -235,14 +235,14 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
   }
 
 
-  public loadSP(newVal: IDomainResource) {
+  public loadSP(newVal: IDomainResource, isDirty: boolean) {
 
     this.searchParameter = new SearchParameter(newVal);
 
     if (this.fhirResource) {
       this.fhirResource.resource = this.searchParameter;
     }
-
+    this.isDirty = isDirty;
     this.nameChanged();
     this.afterSearchParameterInit();
     this.recentItemService.ensureRecentItem(
@@ -281,6 +281,11 @@ export class SearchParameterComponent extends BaseComponent implements OnInit, D
     });
     this.getSearchParameter();
   }
+
+  public canDeactivate(): boolean {
+    return !this.isDirty;
+  }
+
 
   ngDoCheck() {
     if (this.searchParameter) {

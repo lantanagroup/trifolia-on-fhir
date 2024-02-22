@@ -8,11 +8,10 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/tof-lib/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/tof-lib/jest.config.ts"
       },
       "outputs": [
-        "coverage/libs/tof-lib"
+        "{workspaceRoot}/coverage/libs/tof-lib"
       ]
     }
   },

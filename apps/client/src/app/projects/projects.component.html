@@ -51,7 +51,8 @@
   <tr *ngFor="let pr of searchProjectResults">
     <td>{{pr.id}}</td>
     <td>{{pr.name}}</td>
-    <td>{{pr.author}}</td>
+    <td *ngIf = "pr.author?.length > 0">{{ pr.author[0].name}}</td>
+    <td *ngIf = "pr.author?.length == 0"></td>
     <td>{{pr.fhirVersion}}</td>
     <td>
       <table>
@@ -59,6 +60,14 @@
           <td>{{contr.user}}</td>
         </tr>
       </table>
+    </td>
+    <td>
+      <div class="pull-right">
+        <button type="button" class="btn btn-default btn-sm" title="Delete project"
+                (click)="deleteProject(pr)">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
     </td>
     <td class="actions-column-1">
       <div class="btn-group pull-right">
@@ -107,4 +116,10 @@
     (pageChange)="criteriaChangedEvent.next()">
   </ngb-pagination>
 </div>
+
+<footer class="footer">
+  <span class="message">{{message}}</span>
+</footer>
+
+
 

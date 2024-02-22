@@ -1,0 +1,148 @@
+
+<h1>Audit Reports</h1>
+
+
+<div class="row">
+  <div class="col-2">
+    <label for="reportType">Report Type</label>
+    <select class="form-select" id="reportType" [(ngModel)]="selectedReportId" (ngModelChange)="reportSelectionChanged($event)">
+      <option value=""></option>
+      <option *ngFor="let report of reportList" [value]="report.id">{{ report.name }}</option>
+    </select>
+  </div>
+  <div class="col-10">
+
+    <div class="row" *ngIf="!!selectedReport">
+
+      <ng-container *ngFor="let filter of selectedReport.filters">
+
+        <ng-container [ngSwitch]="filter.type">
+
+          <!-- Date range pickers -->
+          <ng-container *ngSwitchCase="ReportFilterType.DateRange">
+            <div class="col-4">
+              <div class="row">
+                <div class="col-6">
+                  <label for="filter-{{ filter.id }}-start">{{ filter.label }} Start</label>
+                  <div class="dp-hidden position-absolute">
+                    <input name="datepicker" class="form-control" ngbDatepicker #datepicker="ngbDatepicker" [autoClose]="'outside'"
+                      (dateSelect)="onDateSelection(filter.id, $event)" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden"
+                      [startDate]="ngbDates[filter.id+'Start']!" />
+                    <ng-template #t let-date let-focused="focused">
+                      <span class="custom-day" [class.focused]="focused" [class.range]="isRange(filter.id, date)"
+                        [class.faded]="isHovered(filter.id, date) || isInside(filter.id, date)" (mouseenter)="hoveredDate = date"
+                        (mouseleave)="hoveredDate = null">
+                        {{ date.day }}
+                      </span>
+                    </ng-template>
+                  </div>
+                  <div class="input-group">
+                    <input #dpFromDate class="form-control" placeholder="yyyy-mm-dd" name="dpFromDate"
+                      [value]="formatter.format(ngbDates[filter.id+'Start'])"
+                      (input)="setDate(filter.id+'Start', validateDateInput(ngbDates[filter.id+'Start'], dpFromDate.value))" />
+                    <button type="button" class="btn btn-primary fa fa-times" (click)="setDate(filter.id+'Start', null)"></button>
+                    <button class="btn btn-primary fa fa-calendar" (click)="datepicker.toggle()" type="button"></button>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label for="filter-{{ filter.id }}-end">{{ filter.label }} End</label>
+                  <div class="input-group">
+                    <input #dpToDate class="form-control" placeholder="yyyy-mm-dd" name="dpToDate"
+                      [value]="formatter.format(ngbDates[filter.id+'End'])"
+                      (input)="setDate(filter.id+'End', validateDateInput(ngbDates[filter.id+'End'], dpToDate.value))" />
+                    <button type="button" class="btn btn-primary fa fa-times" (click)="setDate(filter.id+'End', null)"></button>
+                    <button class="btn btn-primary fa fa-calendar" (click)="datepicker.toggle()" type="button"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+
+          <!-- Default free text input for all other types -->
+          <ng-container *ngSwitchDefault>
+            <div class="col-2">
+              <label for="filter-{{ filter.id }}">{{ filter.label }}</label>
+              <input #text class="form-control" id="filter-{{ filter.id }}" (input)="setFilter(filter.id, text.value)" />
+            </div>
+          </ng-container>
+
+        </ng-container>
+
+      </ng-container>
+
+    </div>
+
+  </div>
+</div>
+
+<ng-container *ngIf="!!selectedReport">
+
+  <h2>{{ selectedReport.title || selectedReport.name }}</h2>
+
+  <table class="table table-striped table-bordered" *ngIf="!!reportData">
+    <thead>
+      <tr>
+        <th *ngFor="let field of tableFields" (click)="changeSort(field.path)"
+          class="col-auto clickable">
+          {{ field.label }}
+          <i title="Sort by {{ field.label }}" [ngClass]="getSortIcon(field.path)"></i>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let result of reportData.results">
+        <td *ngFor="let field of tableFields">
+          <ng-container *ngIf="field.type === ReportFieldType.Date">
+            {{ getValue(result, field.path) | date: 'yyyy-MM-dd HH:mm:ss' }}
+          </ng-container>
+          <ng-container *ngIf="field.type === ReportFieldType.Boolean">
+            <i class="fa" [ngClass]="getValue(result, field.path) ? 'fa-check' : 'fa-times'"></i>
+          </ng-container>
+          <ng-container *ngIf="field.type === ReportFieldType.String || field.type === ReportFieldType.Number">
+            {{ getValue(result, field.path) }}
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+    <tbody *ngIf="!loadingResults && reportData.total === 0">
+      <tr>
+        <td [attr.colspan]="columnCount" class="text-center">No results found.</td>
+      </tr>
+    </tbody>
+    <tbody *ngIf="loadingResults">
+      <tr>
+        <td [attr.colspan]="columnCount" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading report</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <div class="d-flex justify-content-between" *ngIf="reportData.total > 0" >
+
+    <div>
+      Total: {{ reportData.total }}
+    </div>
+
+    <ngb-pagination class="d-flex justify-content-center" [pageSize]="reportData.itemsPerPage" [collectionSize]="reportData.total"
+      [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="getReportData()">
+    </ngb-pagination>
+
+    <div>
+      <select id="itemsPerPage" class="form-select" [(ngModel)]="itemsPerPage" (ngModelChange)="criteriaChangedEvent.next()">
+        <option [value]="10">10</option>
+        <option [value]="25">25</option>
+        <option [value]="50">50</option>
+        <option [value]="100">100</option>
+      </select>
+    </div>
+
+  </div>
+
+</ng-container>
+
+
+<ng-container *ngIf="!selectedReport">
+  <p>Select a report to view</p>
+</ng-container>
+

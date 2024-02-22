@@ -24,6 +24,7 @@ export class CapabilityStatementController extends FhirResourcesController {
     super(fhirResourcesService);
   }
   @Get(':id')
+  @AuditEntity(AuditAction.Read, AuditEntityType.FhirResource)
   public async getCapabilityStatement(@User() user, @Param('id') id: string): Promise<IFhirResource> {
     return super.getById(user, id);
   }

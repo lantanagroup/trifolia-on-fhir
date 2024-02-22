@@ -12,6 +12,7 @@ import { GroupSchema } from '../groups/group.schema';
 import { User } from '../server.decorators';
 import { UserSchema } from '../users/user.schema';
 import { Project, ProjectSchema } from '../projects/project.schema';
+import { AuditReportRepository } from './audit-report-repository';
 
 @Module({
   imports: [MongooseModule.forFeature([
@@ -23,8 +24,8 @@ import { Project, ProjectSchema } from '../projects/project.schema';
     { name: User.name, schema: UserSchema }
 
   ])],
-  exports: [AuditService],
-  providers: [AuditService],
+  exports: [AuditService, AuditReportRepository],
+  providers: [AuditService, AuditReportRepository],
   controllers: [AuditController]
 })
 export class AuditModule {

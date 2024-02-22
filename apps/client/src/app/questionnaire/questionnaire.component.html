@@ -9,33 +9,33 @@
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-8">
-            <app-fhir-string [parentObject]="questionnaire" propertyName="url" [required]="true" title="URL" (change)="urlChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="url" [required]="true" title="URL" (change)="isDirty = true;"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="questionnaire" propertyName="name" [required]="true" title="Name" (change)="nameChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="name" [required]="true" title="Name" (change)="isDirty = true;"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="questionnaire" propertyName="title" title="Title" (change)="nameChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="title" title="Title" (change)="isDirty = true;"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="questionnaire" propertyName="publisher" title="Publisher"></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="publisher" title="Publisher" (change)="isDirty = true;"></app-fhir-string>
 
-            <app-fhir-markdown [parentObject]="questionnaire" propertyName="description" title="Description"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="questionnaire" propertyName="description" title="Description" (change)="isDirty = true;"></app-fhir-markdown>
           </div>
 
           <div class="col-md-4">
-            <app-fhir-string [parentObject]="questionnaire" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)='isDirty = true; idChangedEvent.next();'></app-fhir-string>
             <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
-            <app-fhir-string [parentObject]="questionnaire" propertyName="version" title="Version"></app-fhir-string>
+            <app-fhir-string [parentObject]="questionnaire" propertyName="version" title="Version" (change)="isDirty = true;"></app-fhir-string>
 
             <app-fhir-select-single-code [parentObject]="questionnaire" propertyName="status" title="Status" [required]="true"
-                                        valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status"></app-fhir-select-single-code>
+                                        valueSetUrl="http://hl7.org/fhir/ValueSet/publication-status" (change)="isDirty = true;"></app-fhir-select-single-code>
 
-            <app-fhir-boolean [parentObject]="questionnaire" propertyName="experimental" title="Experimental"></app-fhir-boolean>
+            <app-fhir-boolean [parentObject]="questionnaire" propertyName="experimental" title="Experimental" (change)="isDirty = true;"></app-fhir-boolean>
 
-            <app-fhir-date [parentObject]="questionnaire" propertyName="date" title="Date"></app-fhir-date>
+            <app-fhir-date [parentObject]="questionnaire" propertyName="date" title="Date" (change)="isDirty = true;"></app-fhir-date>
 
-            <app-fhir-date [parentObject]="questionnaire" propertyName="approvalDate" title="Approval Date"></app-fhir-date>
+            <app-fhir-date [parentObject]="questionnaire" propertyName="approvalDate" title="Approval Date" (change)="isDirty = true;"></app-fhir-date>
 
-            <app-fhir-date [parentObject]="questionnaire" propertyName="lastReviewDate" title="Last Review Date"></app-fhir-date>
+            <app-fhir-date [parentObject]="questionnaire" propertyName="lastReviewDate" title="Last Review Date" (change)="isDirty = true;"></app-fhir-date>
 
             <!-- effectivePeriod -->
 
@@ -50,15 +50,15 @@
     <li ngbNavItem>
       <a ngbNavLink>Additional</a>
       <ng-template ngbNavContent>
-        <app-fhir-markdown [parentObject]="questionnaire" propertyName="purpose" title="Purpose"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="questionnaire" propertyName="purpose" title="Purpose" (change)="isDirty = true;"></app-fhir-markdown>
 
-        <app-fhir-markdown [parentObject]="questionnaire" propertyName="copyright" title="Copyright"></app-fhir-markdown>
+        <app-fhir-markdown [parentObject]="questionnaire" propertyName="copyright" title="Copyright" (change)="isDirty = true;"></app-fhir-markdown>
 
-        <app-fhir-multi-use-context [parentObject]="questionnaire" propertyName="useContext" title="Use Context"></app-fhir-multi-use-context>
+        <app-fhir-multi-use-context [parentObject]="questionnaire" propertyName="useContext" title="Use Context" (change)="isDirty = true;"></app-fhir-multi-use-context>
 
-        <app-fhir-multi-jurisdiction [parentObject]="questionnaire" propertyName="jurisdiction" title="Jurisdiction"></app-fhir-multi-jurisdiction>
+        <app-fhir-multi-jurisdiction [parentObject]="questionnaire" propertyName="jurisdiction" title="Jurisdiction" (change)="isDirty = true;"></app-fhir-multi-jurisdiction>
 
-        <app-fhir-multi-contact [parentObject]="questionnaire" propertyName="contact" title="Contact"></app-fhir-multi-contact>
+        <app-fhir-multi-contact [parentObject]="questionnaire" propertyName="contact" title="Contact" (change)="isDirty = true;"></app-fhir-multi-contact>
       </ng-template>
     </li>
 
@@ -66,7 +66,7 @@
       <a ngbNavLink>Items</a>
       <ng-template ngbNavContent>
         <p>
-          <input type="checkbox" [ngModel]="questionnaire.hasOwnProperty('item')" (ngModelChange)="toggleItems()"/> This questionnaire includes items
+          <input type="checkbox" [ngModel]="questionnaire.hasOwnProperty('item')" (ngModelChange)="isDirty = true; toggleItems()"/> This questionnaire includes items
         </p>
 
         <table class="table table-striped" *ngIf="questionnaire.hasOwnProperty('item')">
@@ -77,7 +77,7 @@
             <th>Type</th>
             <th class="actions-column-1">
               <div class="pull-right">
-                <button type="button" class="btn btn-default" title="Add an item to the top level" (click)="addItem()">
+                <button type="button" class="btn btn-default" title="Add an item to the top level" (click)="isDirty = true;addItem()">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
@@ -102,19 +102,19 @@
             </td>
             <td class="actions-column-2">
               <div class="btn-group pull-right">
-                <button type="button" class="btn btn-default" tile="Add a child item" (click)="addItem(fi)">
+                <button type="button" class="btn btn-default" tile="Add a child item" (click)="isDirty = true; addItem(fi)">
                   <i class="fa fa-plus"></i>
                 </button>
-                <button type="button" class="btn btn-default" tile="Edit this item" (click)="editItem(fi)">
+                <button type="button" class="btn btn-default" tile="Edit this item" (click)="isDirty = true; editItem(fi)">
                   <i class="fa fa-edit"></i>
                 </button>
-                <button type="button" class="btn btn-default" tile="Move this item up" [disabled]="!canMoveItemUp(fi)" (click)="moveItem(true, fi)">
+                <button type="button" class="btn btn-default" tile="Move this item up" [disabled]="!canMoveItemUp(fi)" (click)="isDirty = true; moveItem(true, fi)">
                   <i class="fa fa-chevron-up"></i>
                 </button>
-                <button type="button" class="btn btn-default" tile="Move this item down" [disabled]="!canMoveItemDown(fi)" (click)="moveItem(false, fi)">
+                <button type="button" class="btn btn-default" tile="Move this item down" [disabled]="!canMoveItemDown(fi)" (click)="isDirty = true; moveItem(false, fi)">
                   <i class="fa fa-chevron-down"></i>
                 </button>
-                <button type="button" class="btn btn-default" title="Remove this item" (click)="removeItem(fi)">
+                <button type="button" class="btn btn-default" title="Remove this item" (click)="isDirty = true; removeItem(fi)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>

@@ -17,6 +17,7 @@ import { debounceTime } from 'rxjs/operators';
 import { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
+import {CanComponentDeactivate} from '../guards/resource.guard';
 
 export class ItemModel {
   public item: QuestionnaireItemComponent;
@@ -49,7 +50,7 @@ export class ItemModel {
   templateUrl: './questionnaire.component.html',
   styleUrls: ['./questionnaire.component.css']
 })
-export class QuestionnaireComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+export class QuestionnaireComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
 
   @Input() public questionnaire: Questionnaire;
   public message: string;
@@ -393,6 +394,10 @@ export class QuestionnaireComponent extends BaseComponent implements OnInit, OnD
     if (!this.questionnaire.url) {
       this.questionnaire.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "Questionnaire/" : "";
     }
+  }
+
+  public canDeactivate(): boolean {
+    return !this.isDirty;
   }
 
   ngOnDestroy() {

@@ -1,10 +1,12 @@
 import {ImplementationGuide as R5ImplementationGuide, ImplementationGuideDefinitionPage} from './r5/fhir';
-import {ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent} from './r4/fhir';
+import {ImplementationGuide, ImplementationGuide as R4ImplementationGuide, ImplementationGuidePageComponent} from './r4/fhir';
 import {ContactDetail, ImplementationGuide as STU3ImplementationGuide, PageComponent} from './stu3/fhir';
 import {IExtension, IImplementationGuide} from './fhirInterfaces';
 import {createTableFromArray, escapeForXml} from './helper';
 import {Globals} from './globals';
-import {Page} from '@trifolia-fhir/models';
+import {IFhirResource, INonFhirResource, IProjectResourceReference, NonFhirResource, Page} from '@trifolia-fhir/models';
+import {FhirServerVersion} from '../../../../apps/server/src/app/server.decorators';
+import {FhirResource} from '../../../../apps/server/src/app/fhir-resources/fhir-resource.schema';
 
 export class PageInfo {
   page: PageComponent | ImplementationGuidePageComponent | ImplementationGuideDefinitionPage;

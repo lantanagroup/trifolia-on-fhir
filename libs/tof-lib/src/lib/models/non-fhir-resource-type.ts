@@ -15,7 +15,8 @@ export enum NonFhirResourceType {
 
   IgnoreWarnings = "IgnoreWarnings",
   CustomMenu = "CustomMenu",
-  PublicationRequest = "PublicationRequest"
+  PublicationRequest = "PublicationRequest",
+  Template = "Template"
 }
 
 export const ImplementationGuideExampleTypes: NonFhirResourceType[] = [
@@ -86,3 +87,9 @@ export class Page extends NonFhirResource  {
 
 }
 
+export class Template extends NonFhirResource  {
+  readonly type: NonFhirResourceType = NonFhirResourceType.Template;
+
+  templateType? : string;
+
+}

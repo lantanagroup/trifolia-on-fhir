@@ -66,41 +66,8 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
-            <div class="mb-3">
-              <label>Template Type</label>
-              <select class="form-select" [(ngModel)]="options.templateType" (change)="templateTypeChanged()">
-                <option value="official">Official</option>
-                <option value="custom-uri">Custom</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-4" *ngIf="options.templateType === 'custom-uri'">
-            <div class="mb-3">
-              <label>Template (Archive/ZIP URL)</label>
-              <input type="text" class="form-control" [(ngModel)]="options.template" (change)="templateChanged()" placeholder="{{Globals.tooltips['ig.publishing.template.custom.example']}}" [class.is-invalid]="!options.template" />
-              <div class="help-block">Note: The URI must be a ZIP file.</div>
-            </div>
-          </div>
-          <div class="col-md-4" *ngIf="options.templateType === 'official'">
-            <div class="mb-3">
-              <label>Template</label>
-              <select class="form-select" [(ngModel)]="options.template" (change)="templateChanged()">
-                <option value="hl7.fhir.template">HL7 FHIR Template</option>
-                <option value="hl7.cda.template">HL7 CDA Template</option>
-                <option value="hl7.base.template">HL7 Base Template</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-4" *ngIf="options.templateType === 'official'">
-            <div class="mb-3">
-              <label>Version</label>
-              <div>
-                <select class="form-select" [(ngModel)]="options.templateVersion" (click)="templateVersionChanged()">
-                  <option *ngFor="let templateVersion of templateVersions" [ngValue]="templateVersion">{{templateVersion}}</option>
-                </select>
-              </div>
-            </div>
+          <div class="col-md-6">
+            <trifolia-fhir-publishing-template [resource]="fhirResource"  [template] = "template" [save]="true" [disabled] = "false" (change)="templateChanged()"></trifolia-fhir-publishing-template>
           </div>
         </div>
       </ng-template>

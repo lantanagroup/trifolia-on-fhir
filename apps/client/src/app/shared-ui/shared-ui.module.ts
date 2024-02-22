@@ -20,6 +20,9 @@ import {SimplemdeModule} from 'ngx-simplemde';
 import { IgPublisherSelectionComponent } from './ig-publisher-selection/ig-publisher-selection.component';
 import { FshResourceComponent } from './fsh-resource/fsh-resource.component';
 import { UserEditComponent } from './user-edit/user-edit.component';
+import { AuditDiffsComponent } from './audit-diffs/audit-diffs.component';
+import { AuditDiffsModalComponent } from './audit-diffs-modal/audit-diffs-modal.component';
+import { RawModalComponent } from './raw-modal/raw-modal.component';
 
 const components = [
   MarkdownComponent,
@@ -36,7 +39,10 @@ const components = [
   ImplementationGuideTypeaheadComponent,
   IgPublisherSelectionComponent,
   FshResourceComponent,
-  UserEditComponent
+  UserEditComponent,
+  RawModalComponent,
+  AuditDiffsComponent,
+  AuditDiffsModalComponent
 ];
 
 @NgModule({

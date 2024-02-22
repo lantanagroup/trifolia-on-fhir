@@ -35,8 +35,8 @@
 </div>
 <div class="modal-footer">
   <div class="pull-left footer-criteria">
-    <p *ngIf="configService.igContext && searchLocation === 'server'">
-      <input type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from
+    <p *ngIf="configService.igContext && (searchLocation === 'server' || searchLocation === 'dependency')">
+      <input *ngIf = "searchLocation === 'server'" type="checkbox" [(ngModel)]="resourcesFromContext" (change)="criteriaChanged()" /> Showing resources from
       the <span class="badge bg-info">{{configService.igContext.name}}</span> implementation guide.
     </p>
     <p *ngIf="resourceType === 'StructureDefinition' && structureDefinitionType">Showing profiles of type <span
@@ -112,7 +112,7 @@
         <th>Resource Id</th>
         <th>Title/Name/Id</th>
         <th>Id</th>
-        <th>Implementation Guide</th>
+        <th *ngIf="!resourcesFromContext">Project</th>
         </tr>
       </thead>
       <tbody>
@@ -128,10 +128,10 @@
           <td>{{c.resource.id}}</td>
           <td>{{c.resource | fhirDisplay}}</td>
           <td>{{c.id}}</td>
-          <td>{{getImplementationGuideDisplay(c.referencedBy)}}</td>
+          <td *ngIf="!resourcesFromContext">{{getProjectDisplay(c.projects)}}</td>
         </tr>
         <tr *ngIf="serverResults && serverResults.length < total">
-          <td colspan="3">
+          <td [attr.colspan]="resourcesFromContext ? 5 : 6">
             <!-- <a href="javascript:void(0)" (click)="criteriaChanged(true)">Load More</a> -->
             <ngb-pagination class="d-flex justify-content-center" [maxSize]="5" [pageSize]="pageSize" [collectionSize]="total"
               [(page)]="currentPage" [boundaryLinks]="true" (pageChange)="pageChanged.next()">
@@ -141,12 +141,12 @@
       </tbody>
       <tfoot *ngIf="total > 0">
       <tr>
-        <th colspan="3">Showing {{serverResults.length}} of {{total}} result{{total > 1 ? 's' : ''}}</th>
+        <th [attr.colspan]="resourcesFromContext ? 5 : 6">Showing {{serverResults.length}} of {{total}} result{{total > 1 ? 's' : ''}}</th>
       </tr>
       </tfoot>
       <tfoot *ngIf="serverResults.length === 0">
       <tr>
-        <th colspan="3"><em>No resources were found with the specified criteria.</em></th>
+        <th [attr.colspan]="resourcesFromContext ? 5 : 6"><em>No resources were found with the specified criteria.</em></th>
       </tr>
       </tfoot>
     </table>
@@ -197,7 +197,7 @@
 
 <!-- VSAC Search Content -->
 <ng-template #vsacContent>
-    
+
   <div class="row">
     <div class="col-md-12">
       <div class="mb-3">

@@ -33,6 +33,7 @@ export class SearchParameterController extends FhirResourcesController {
   }
 
   @Get(':id')
+  @AuditEntity(AuditAction.Read, AuditEntityType.FhirResource)
   public async getSearchParameter(@User() user, @Param('id') id: string): Promise<IFhirResource> {
     return super.getById(user, id);
   }

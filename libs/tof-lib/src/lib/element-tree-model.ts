@@ -21,6 +21,7 @@ export class ElementTreeModel {
   public parent?: ElementTreeModel;
   public profile: IStructureDefinition;
   public profilePath: string;
+  public hasConstrainedChildren = false;
 
   constructor() {
   }

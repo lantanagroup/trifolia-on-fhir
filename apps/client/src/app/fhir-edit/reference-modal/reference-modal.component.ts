@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Coding, EntryComponent, StructureDefinition } from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
+import { Coding, EntryComponent, StructureDefinition } from '@trifolia-fhir/stu3';
 import { FhirDisplayPipe } from '../../shared-ui/fhir-display-pipe';
 import { HttpClient } from '@angular/common/http';
 import { FhirService } from '../../shared/fhir.service';
@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfigService } from '../../shared/config.service';
 import { FhirResourceService } from '../../shared/fhir-resource.service';
-import { IFhirResource, IProjectResourceReference } from '@trifolia-fhir/models';
+import { IFhirResource, IProject } from '@trifolia-fhir/models';
 import { IBundle, IDomainResource, IValueSet, Paginated } from '@trifolia-fhir/tof-lib';
 import {ValueSetService} from '../../shared/value-set.service';
 import { CookieService } from 'ngx-cookie-service';
@@ -175,8 +175,14 @@ export class FhirReferenceModalComponent implements OnInit {
   }
   
 
-  getImplementationGuideDisplay(referencedBy: IProjectResourceReference[]): string {
-    return (referencedBy || []).map(r => r.value).join(', ');
+  getProjectDisplay(projects: IProject[]): string {
+    return (projects || []).map(p => {
+      if (!!p && typeof p === typeof {}) {
+        return p.name;
+      } else {
+        return p;
+      }
+    }).join(', ');
   }
 
   private searchServer() {

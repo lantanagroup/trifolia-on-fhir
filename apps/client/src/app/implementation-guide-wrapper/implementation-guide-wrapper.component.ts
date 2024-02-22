@@ -47,7 +47,7 @@ export class ImplementationGuideWrapperComponent implements OnInit, CanComponent
       version = this.fileService.file.fhirVersion;
     }
 
-    this.implementationGuideService.getImplementationGuide(id)
+    this.implementationGuideService.accessImplementationGuide(id)
     .subscribe({
       next: (conf: IFhirResource) => {
         this.configService.fhirVersion = conf.fhirVersion;

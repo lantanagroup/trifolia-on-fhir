@@ -164,7 +164,7 @@ export class FhirMultiJurisdictionComponent implements OnInit {
 
   getJurisdictionCodes(input: string) {
     if (!this.jurisdictionCodes) return null;
-    return this.jurisdictionCodes.find(j => j && j.code === input).code;
+    return this.jurisdictionCodes.find(j => j && j.code === input)?.code;
   }
 
   setJurisdictionCode(jurisdiction: ICodeableConcept, index: number, coding: ICoding) {

@@ -7,7 +7,7 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Professional Edition 8.6.0.462">
+  <meta name="generator" content="HelpNDoc Professional Edition 9.0.0.156">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
@@ -17,6 +17,7 @@
 
 
 
+  
   
 
   <!-- Twitter Card data -->
@@ -65,6 +66,8 @@
 <body class="md-nav-expanded">
 
 
+
+  
 
   <div id="skip-link">
     <a href="#main-content" class="element-invisible">Skip to main content</a>
@@ -188,22 +191,22 @@
 <p class="rvps2"><span class="rvts6">Use REST API to automate interactions with Trifolia-on-FHIR (ToF). For example, a REST API can export your implementation guide (IG) on a regular schedule through another program.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Multiple FHIR servers</span></span></h2>
 <ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;">
- <li class="rvps2"><span class="rvts6">The default FHIR server for this proxy endpoint is the first FHIR server available in the drop-down of FHIR servers in the settings screen of the application.&nbsp;</span></li>
- <li class="rvps2"><span class="rvts6">If the ToF installation is configured to support multiple FHIR servers, the first FHIR server is the default in the REST API.&nbsp;</span></li>
- <li class="rvps2"><span class="rvts6">To perform REST API operations on a different FHIR server, specify a fhirserver header in each request. The value of the fhirserver header must align with the ID of one of the FHIR servers returned by /api/config.</span></li>
+ <li class="rvps2 noindent"><span class="rvts6">The default FHIR server for this proxy endpoint is the first FHIR server available in the drop-down of FHIR servers in the settings screen of the application.&nbsp;</span></li>
+ <li class="rvps2 noindent"><span class="rvts6">If the ToF installation is configured to support multiple FHIR servers, the first FHIR server is the default in the REST API.&nbsp;</span></li>
+ <li class="rvps2 noindent"><span class="rvts6">To perform REST API operations on a different FHIR server, specify a fhirserver header in each request. The value of the fhirserver header must align with the ID of one of the FHIR servers returned by /api/config.</span></li>
 </ul>
 <p class="rvps2"><span class="rvts6">For more information, see </span><span class="rvts11">FHIR Versions</span><span class="rvts6">.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">FHIR Server Proxy</span></span></h2>
-<p class="rvps2"><span class="rvts6">An </span><span class="rvts25">/api/fhir</span><span class="rvts6"> end-point in the API represents a "proxy" to the FHIR server(s) available within the ToF installation. The proxy endpoint supports GET, PUT, POST, DELETE requests for individual resources, as well as </span><a class="rvts11" href="http://www.hl7.org/fhir/http.html#transaction" target="_blank">batches</a><span class="rvts6">. Transactions are </span><span class="rvts20">not </span><span class="rvts6">supported by this proxy.</span></p>
+<p class="rvps2"><span class="rvts6">An </span><span class="rvts26">/api/fhir</span><span class="rvts6"> end-point in the API represents a "proxy" to the FHIR server(s) available within the ToF installation. The proxy endpoint supports GET, PUT, POST, DELETE requests for individual resources, as well as </span><a class="rvts11" href="http://www.hl7.org/fhir/http.html#transaction" target="_blank">batches</a><span class="rvts6">. Transactions are </span><span class="rvts20">not </span><span class="rvts6">supported by this proxy.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Authentication</span></span></h2>
 <p class="rvps2"><span class="rvts6">Authentication is required to access the REST API. To get an authorization code to use the REST API:</span></p>
 <ol style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside;">
- <li class="rvps10"><span class="rvts29">Log into the ToF web application and open the settings screen where the Authorization Code is displayed.&nbsp;</span></li>
- <li class="rvps10"><span class="rvts29">Attach the authorization code in an Authorization header prefixed with Bearer.</span></li>
+ <li class="rvps10 noindent"><span class="rvts30">Log into the ToF web application and open the settings screen where the Authorization Code is displayed.&nbsp;</span></li>
+ <li class="rvps10 noindent"><span class="rvts30">Attach the authorization code in an Authorization header prefixed with Bearer.</span></li>
 </ol>
-<p class="rvps2"><span class="rvts25">Example:</span><span class="rvts6"> "Authorization: Bearer XXXX" where XXXX is your authorization code.</span></p>
+<p class="rvps2"><span class="rvts26">Example:</span><span class="rvts6"> "Authorization: Bearer XXXX" where XXXX is your authorization code.</span></p>
 <h2 class="rvps4"><span class="rvts0"><span class="rvts12">Trifolia-on-FHIR Native API</span></span></h2>
-<p class="rvps2"><span class="rvts6">ToF's REST API is documented using Swagger. The publicly available installation exposes custom API documentation at </span><span class="rvts6"></span><a class="rvts11" href="/api-docs" target="_blank">/api-docs</a><span class="rvts6"></span><span class="rvts6">. The API described by </span><span class="rvts25">/api-docs</span><span class="rvts6"> is the same API the web application (i.e., user interface) uses.</span><span class="rvts6"></span></p>
+<p class="rvps2"><span class="rvts6">ToF's REST API is documented using Swagger. The publicly available installation exposes custom API documentation at </span><span class="rvts6"></span><a class="rvts11" href="/api-docs" target="_blank">/api-docs</a><span class="rvts6"></span><span class="rvts6">. The API described by </span><span class="rvts26">/api-docs</span><span class="rvts6"> is the same API the web application (i.e., user interface) uses.</span><span class="rvts6"></span></p>
 
             </div>
             

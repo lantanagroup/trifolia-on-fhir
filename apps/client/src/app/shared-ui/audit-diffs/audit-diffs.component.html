@@ -1,0 +1,37 @@
+<ul ngbNav #nav="ngbNav" class="nav-tabs">
+  <li ngbNavItem>
+    <a ngbNavLink>List</a>
+    <ng-template ngbNavContent>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Old Value</th>
+            <th>New Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let diff of propertyDiffs">
+            <tr>
+              <td colspan="2">{{ diff.path }}</td>
+            </tr>
+            <tr>
+              <td>
+                <pre>{{ diff.oldValue | json }}</pre>
+              </td>
+              <td>
+                <pre>{{ diff.newValue | json }}</pre>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </ng-template>
+  </li>
+  <li ngbNavItem>
+    <a ngbNavLink>Raw</a>
+    <ng-template ngbNavContent>
+      <pre>{{ propertyDiffs | json }}</pre>
+    </ng-template>
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav"></div>

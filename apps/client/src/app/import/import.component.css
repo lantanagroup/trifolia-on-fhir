@@ -6,9 +6,9 @@ tr.invalid td{
   margin-top: 10px;
 }
 
-i.warning {
+/* i.warning {
   color: #ff0000;
-}
+} */
 
 span.message {
   text-decoration: none;

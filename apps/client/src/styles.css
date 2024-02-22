@@ -10,7 +10,7 @@ footer.footer {
   padding: 5px;
   background-color: black;
   width: 100%;
-  z-index: 2;
+  z-index: 3;
   color: white;
 }
 

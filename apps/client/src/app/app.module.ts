@@ -99,6 +99,8 @@ import {R5ResourceModalComponent} from './implementation-guide-wrapper/r5/resour
 import {PagesComponent} from './pages/pages.component';
 import {PageComponent} from './page/page.component';
 import { AuditComponent } from './manage/audit/audit.component';
+import {WorkGroupComponent} from './implementation-guide-wrapper/work-group/work-group.component';
+import { AuditReportComponent } from './manage/audit-report/audit-report.component';
 
 /**
  * This class is an HTTP interceptor that is responsible for adding an
@@ -179,24 +181,24 @@ const appRoutes: Routes = [
   { path: 'projects/:implementationGuideId/page/new', component: PageComponent},
   { path: 'projects/:implementationGuideId/search-parameter', component: SearchParametersComponent },
   { path: 'projects/:implementationGuideId/search-parameter/new', component: SearchParameterComponent },
-  { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent },
+  { path: 'projects/:implementationGuideId/search-parameter/:id', component: SearchParameterComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]  },
 
   { path: 'projects/:implementationGuideId/structure-definition', component: StructureDefinitionsComponent },
   { path: 'projects/:implementationGuideId/structure-definition/new', component: NewProfileComponent },
   { path: 'projects/:implementationGuideId/structure-definition/:id', component: StructureDefinitionComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard] },
-  { path: 'projects/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent },
+  { path: 'projects/:implementationGuideId/capability-statement', component: CapabilityStatementsComponent},
   { path: 'projects/:implementationGuideId/capability-statement/new', component: CapabilityStatementWrapperComponent },
-  { path: 'projects/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/capability-statement/:id', component: CapabilityStatementWrapperComponent, runGuardsAndResolvers: 'always',  canDeactivate: [ResourceGuard] },
   { path: 'projects/:implementationGuideId/operation-definition', component: OperationDefinitionsComponent },
   { path: 'projects/:implementationGuideId/operation-definition/new', component: OperationDefinitionComponent },
-  { path: 'projects/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/operation-definition/:id', component: OperationDefinitionComponent, runGuardsAndResolvers: 'always',  canDeactivate: [ResourceGuard] },
   { path: 'projects/:implementationGuideId/value-set', component: ValuesetsComponent },
-  { path: 'projects/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/value-set/:id', component: ValuesetComponent, runGuardsAndResolvers: 'always' , canDeactivate: [ResourceGuard]},
   { path: 'projects/:implementationGuideId/value-set/:id/expand', component: ValuesetExpandComponent, runGuardsAndResolvers: 'always' },
 
   { path: 'projects/:implementationGuideId/questionnaire', component: QuestionnairesComponent },
   { path: 'projects/:implementationGuideId/questionnaire/new', component: QuestionnaireComponent },
-  { path: 'projects/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/questionnaire/:id', component: QuestionnaireComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard]  },
   { path: 'projects/:implementationGuideId/publish', component: PublishComponent },
   { path: 'projects/:implementationGuideId/export', component: ExportComponent },
   { path: 'projects/:implementationGuideId/import', component: ImportComponent },
@@ -208,6 +210,7 @@ const appRoutes: Routes = [
   { path: 'users/me', component: UserComponent },
   { path: 'users/:id', component: UserComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/audit', component: AuditComponent, runGuardsAndResolvers: 'always' },
+  { path: 'manage/audit-report', component: AuditReportComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/user', component: UsersComponent, runGuardsAndResolvers: 'always' },
   { path: 'manage/queue', component: QueueComponent, runGuardsAndResolvers: 'always' }
 ];
@@ -359,7 +362,9 @@ const authModuleConfig: OAuthModuleConfig = {
     ProjectComponent,
     PagesComponent,
     PageComponent,
-    AuditComponent
+    AuditComponent,
+    WorkGroupComponent,
+    AuditReportComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes, {

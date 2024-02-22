@@ -18,13 +18,14 @@ import { firstValueFrom, Subject } from 'rxjs';
 import type { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
 import type { IDomainResource } from '@trifolia-fhir/tof-lib';
+import {CanComponentDeactivate} from '../guards/resource.guard';
 
 
 @Component({
   templateUrl: './valueset.component.html',
   styleUrls: ['./valueset.component.css']
 })
-export class ValuesetComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+export class ValuesetComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   public fhirResource;
   public valueSet: ValueSet;
   public message: string;
@@ -194,6 +195,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
       return;
     }
 
+    this.isDirty = false;
     this.getValueSet();
   }
 
@@ -213,9 +215,10 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
           if (this.isNew) {
             // noinspection JSIgnoredPromiseFromCall
             this.valueSetId = conf.id;
+            this.isDirty = false;
             this.router.navigate([`${this.configService.baseSessionUrl}/value-set/${this.valueSetId}`]);
           } else {
-            this.loadVS(conf.resource);
+            this.loadVS(conf.resource, false);
             setTimeout(() => {
               this.message = '';
             }, 3000);
@@ -233,7 +236,8 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.loadVS(this.fileService.file.resource);
+        this.isDirty = false;
+        this.loadVS(this.fileService.file.resource, false);
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -253,7 +257,7 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
             }
 
             this.fhirResource = conf;
-            this.loadVS(conf.resource);
+            this.loadVS(conf.resource, false);
           },
           error: (err) => {
             this.vsNotFound = err.status === 404;
@@ -264,13 +268,13 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     }
   }
 
-  public loadVS(newVal: IDomainResource) {
+  public loadVS(newVal: IDomainResource, isDirty: boolean) {
     this.valueSet = new ValueSet(newVal);
 
     if (this.fhirResource) {
       this.fhirResource.resource = this.valueSet;
     }
-
+    this.isDirty = isDirty;
     this.nameChanged();
     this.recentItemService.ensureRecentItem(
       Globals.cookieKeys.recentCodeSystems,
@@ -294,13 +298,17 @@ export class ValuesetComponent extends BaseComponent implements OnInit, OnDestro
     }
   }
 
+  public canDeactivate(): boolean {
+    return !this.isDirty;
+  }
+
   ngOnDestroy() {
     this.navSubscription.unsubscribe();
     this.configService.setTitle(null);
   }
 
   nameChanged() {
-    this.configService.setTitle(`ValueSet - ${this.valueSet.title || this.valueSet.name || 'no-name'}`);
+    this.configService.setTitle(`ValueSet - ${this.valueSet.title || this.valueSet.name || 'no-name'}`, this.isDirty);
   }
 
   ngDoCheck() {

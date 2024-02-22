@@ -84,6 +84,7 @@ export interface ICodeableConcept {
 export interface IExtension {
   url: string;
   valueBoolean?: boolean;
+  valueCode?: string;
   valueString?: string;
   valueUri?: string;
   valueReference?: IResourceReference;

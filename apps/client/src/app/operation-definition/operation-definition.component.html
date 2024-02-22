@@ -10,34 +10,34 @@
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-md-8">
-            <app-fhir-string [parentObject]="operationDefinition" propertyName="url"  [required]="true" title="URL" tooltipPath="OperationDefinition.url" (change)="urlChanged()"></app-fhir-string>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="url"  [required]="true" title="URL" tooltipPath="OperationDefinition.url" (change)="isDirty = true; urlChanged()"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="operationDefinition" propertyName="name" [required]="true" title="Name" [required]="true" (change)="nameChanged()" tooltipPath="OperationDefinition.name"></app-fhir-string>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="name" [required]="true" title="Name" [required]="true" (change)="isDirty = true; nameChanged()" tooltipPath="OperationDefinition.name"></app-fhir-string>
 
-            <app-fhir-string [parentObject]="operationDefinition" propertyName="publisher" title="Publisher" tooltipPath="OperationDefinition.publisher"></app-fhir-string>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="publisher" title="Publisher" tooltipPath="OperationDefinition.publisher"  (change)="isDirty = true"></app-fhir-string>
 
-            <app-fhir-markdown [parentObject]="operationDefinition" propertyName="description" title="Description" tooltipPath="OperationDefinition.description"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="operationDefinition" propertyName="description" title="Description" tooltipPath="OperationDefinition.description"  (change)="isDirty = true"></app-fhir-markdown>
 
-            <app-fhir-markdown [parentObject]="operationDefinition" propertyName="purpose" title="Purpose" tooltipPath="OperationDefinition.purpose"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="operationDefinition" propertyName="purpose" title="Purpose" tooltipPath="OperationDefinition.purpose"  (change)="isDirty = true"></app-fhir-markdown>
 
-            <app-fhir-markdown [parentObject]="operationDefinition" propertyName="comment" title="Comment" tooltipPath="OperationDefinition.comment"></app-fhir-markdown>
+            <app-fhir-markdown [parentObject]="operationDefinition" propertyName="comment" title="Comment" tooltipPath="OperationDefinition.comment"  (change)="isDirty = true"></app-fhir-markdown>
 
-            <app-fhir-multi-contact [parentObject]="operationDefinition" property="contact" tooltipPath="OperationDefinition.contact"></app-fhir-multi-contact>
+            <app-fhir-multi-contact [parentObject]="operationDefinition" property="contact" tooltipPath="OperationDefinition.contact"  (change)="isDirty = true"></app-fhir-multi-contact>
           </div>
           <div class="col-md-4">
-            <app-fhir-string [parentObject]="operationDefinition" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)='idChangedEvent.next()'></app-fhir-string>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="id" title="ID" placeholder="Auto generate" *ngIf="isNew" (change)='isDirty = true; idChangedEvent.next()'></app-fhir-string>
             <div class="help-block">{{alreadyInUseIDMessage}}</div>
 
-            <app-fhir-string [parentObject]="operationDefinition" propertyName="code" title="Code" [required]="true" tooltipPath="OperationDefinition.code"></app-fhir-string>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="code" title="Code" [required]="true" tooltipPath="OperationDefinition.code" (change)="isDirty = true"></app-fhir-string>
 
-            <app-fhir-reference [parentObject]="operationDefinition" propertyName="base" title="Base" resourceType="OperationDefinition" [hideResourceType]="true" [isCanonical]="true"></app-fhir-reference>
+            <app-fhir-reference [parentObject]="operationDefinition" propertyName="base" title="Base" resourceType="OperationDefinition" [hideResourceType]="true" [isCanonical]="true" (change)="isDirty = true"></app-fhir-reference>
 
             <div class="mb-3">
               <label>Status
                 <app-tooltip-icon tooltipPath="OperationDefinition.status"></app-tooltip-icon>
               </label>
 
-              <select class="form-select" [(ngModel)]="operationDefinition.status" [class.is-invalid]="!operationDefinition.hasOwnProperty('status')">
+              <select class="form-select" [(ngModel)]="operationDefinition.status" [class.is-invalid]="!operationDefinition.hasOwnProperty('status')" (change)="isDirty = true;">
                 <option value="draft">Draft</option>
                 <option value="active">Active</option>
                 <option value="retired">Retired</option>
@@ -49,25 +49,25 @@
               <label>Kind
                 <app-tooltip-icon tooltipPath="OperationDefinition.kind"></app-tooltip-icon>
               </label>
-              <select class="form-select" [(ngModel)]="operationDefinition.kind" [class.is-invalid]="!operationDefinition.hasOwnProperty('kind')">
+              <select class="form-select" [(ngModel)]="operationDefinition.kind" [class.is-invalid]="!operationDefinition.hasOwnProperty('kind')" (change)="isDirty = true;">
                 <option value="operation">Operation</option>
                 <option value="query">Query</option>
               </select>
             </div>
 
-            <app-fhir-string [parentObject]="operationDefinition" propertyName="version" title="Version" tooltipPath="OperationDefinition.version"></app-fhir-string>
+            <app-fhir-string [parentObject]="operationDefinition" propertyName="version" title="Version" tooltipPath="OperationDefinition.version" (change)="isDirty = true;"></app-fhir-string>
 
-            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="experimental" title="Experimental" tooltipPath="OperationDefinition.experimental"></app-fhir-boolean>
+            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="experimental" title="Experimental" tooltipPath="OperationDefinition.experimental" (change)="isDirty = true;"></app-fhir-boolean>
 
-            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="idempotent" title="Idempotent" tooltipPath="OperationDefinition.idempotent"></app-fhir-boolean>
+            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="idempotent" title="Idempotent" tooltipPath="OperationDefinition.idempotent" (change)="isDirty = true;"></app-fhir-boolean>
 
-            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="system" title="System" [required]="true" tooltipPath="OperationDefinition.system"></app-fhir-boolean>
+            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="system" title="System" [required]="true" tooltipPath="OperationDefinition.system" (change)="isDirty = true;"></app-fhir-boolean>
 
-            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="type" title="Type" [required]="true" tooltipPath="OperationDefinition.type"></app-fhir-boolean>
+            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="type" title="Type" [required]="true" tooltipPath="OperationDefinition.type" (change)="isDirty = true;"></app-fhir-boolean>
 
-            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="instance" title="Instance" [required]="true" tooltipPath="OperationDefinition.instance"></app-fhir-boolean>
+            <app-fhir-boolean [parentObject]="operationDefinition" propertyName="instance" title="Instance" [required]="true" tooltipPath="OperationDefinition.instance" (change)="isDirty = true;"></app-fhir-boolean>
 
-            <app-fhir-date [parentObject]="operationDefinition" propertyName="date" title="Date" tooltipPath="OperationDefinition.date"></app-fhir-date>
+            <app-fhir-date [parentObject]="operationDefinition" propertyName="date" title="Date" tooltipPath="OperationDefinition.date" (change)="isDirty = true;"></app-fhir-date>
           </div>
         </div>
       </ng-template>
@@ -77,9 +77,9 @@
     <li ngbNavItem title="Additional">
       <a ngbNavLink>Additional</a>
       <ng-template ngbNavContent>
-        <app-fhir-multi-use-context [parentObject]="operationDefinition" propertyName="useContext" tooltipPath="OperationDefinition.useContext"></app-fhir-multi-use-context>
+        <app-fhir-multi-use-context [parentObject]="operationDefinition" propertyName="useContext" tooltipPath="OperationDefinition.useContext" (change)="isDirty = true;" ></app-fhir-multi-use-context>
 
-        <app-fhir-multi-jurisdiction [parentObject]="operationDefinition" property="jurisdiction" tooltipPath="OperationDefinition.jurisdiction"></app-fhir-multi-jurisdiction>
+        <app-fhir-multi-jurisdiction [parentObject]="operationDefinition" property="jurisdiction" tooltipPath="OperationDefinition.jurisdiction" (change)="isDirty = true;"></app-fhir-multi-jurisdiction>
       </ng-template>
     </li>
 
@@ -87,7 +87,7 @@
     <li ngbNavItem>
       <a ngbNavLink>Parameters</a>
       <ng-template ngbNavContent>
-        <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('parameter')" (ngModelChange)="Globals.toggleProperty(operationDefinition, 'parameter', [])"/>
+        <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('parameter')" (ngModelChange)="isDirty = true; Globals.toggleProperty(operationDefinition, 'parameter', [])"/>
         Operation definition has parameters
         <app-tooltip-icon tooltipPath="OperationDefinition.parameter"></app-tooltip-icon>
 
@@ -108,7 +108,7 @@
             </th>
             <th>
               <div class="pull-right">
-                <button type="button" class="btn btn-primary" title="Add a parameter" (click)="operationDefinition.parameter.push({ name: '', use: 'in', min: 0, max: '*', documentation: ''})">
+                <button type="button" class="btn btn-primary" title="Add a parameter" (click)="isDirty = true; operationDefinition.parameter.push({ name: '', use: 'in', min: 0, max: '*', documentation: ''})">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
@@ -121,23 +121,23 @@
               <input type="text" class="form-control" [(ngModel)]="p.name"/>
             </td>
             <td>
-              <select class="form-select" [(ngModel)]="p.use">
+              <select class="form-select" [(ngModel)]="p.use" (change)="isDirty = true;">
                 <option value="in">In</option>
                 <option value="out">Out</option>
               </select>
             </td>
             <td>
-              <input type="number" class="form-control" [(ngModel)]="p.min"/>
+              <input type="number" class="form-control" [(ngModel)]="p.min" (change)="isDirty = true;"/>
             </td>
             <td>
-              <app-fhir-max-cardinality [parentObject]="p" property="max"></app-fhir-max-cardinality>
+              <app-fhir-max-cardinality [parentObject]="p" property="max" (change)="isDirty = true;"></app-fhir-max-cardinality>
             </td>
             <td>
               <div class="btn-group pull-right">
-                <button type="button" class="btn btn-default" title="Edit this parameter" (click)="editParameter(p)">
+                <button type="button" class="btn btn-default" title="Edit this parameter" (click)="isDirty = true; editParameter(p)">
                   <i class="fa fa-edit"></i>
                 </button>
-                <button type="button" class="btn btn-default" title="Remove this parameter" (click)="operationDefinition.parameter.splice(pi, 1)">
+                <button type="button" class="btn btn-default" title="Remove this parameter" (click)="isDirty = true; operationDefinition.parameter.splice(pi, 1)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
@@ -152,7 +152,7 @@
     <li ngbNavItem>
       <a ngbNavLink>Overload</a>
       <ng-template ngbNavContent>
-        <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('overload')" (ngModelChange)="Globals.toggleProperty(operationDefinition, 'overload', [])"/>
+        <input type="checkbox" [ngModel]="operationDefinition.hasOwnProperty('overload')" (ngModelChange)="isDirty = true;Globals.toggleProperty(operationDefinition, 'overload', [])"/>
         Operation definition has overload
         <app-tooltip-icon tooltipPath="OperationDefinition.overload"></app-tooltip-icon>
 
@@ -167,7 +167,7 @@
             </th>
             <th>
               <div class="pull-right">
-                <button type="button" class="btn btn-primary" title="Add a overload" (click)="operationDefinition.overload.push({ })">
+                <button type="button" class="btn btn-primary" title="Add a overload" (click)="isDirty = true; operationDefinition.overload.push({ })">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
@@ -181,28 +181,28 @@
               <div class="input-group" *ngFor="let pn of o.parameterName; let pni = index; trackBy: Globals.trackByFn">
                 <input type="text" class="form-control" [(ngModel)]="o.parameterName[pni]"/>
                 <div class="input-group-btn">
-                  <button type="button" class="btn btn-default" title="Remove this name" (click)="o.parameterName.splice(pni, 1)">
+                  <button type="button" class="btn btn-default" title="Remove this name" (click)="isDirty = true; o.parameterName.splice(pni, 1)">
                     <i class="fas fa-trash-alt"></i>
                   </button>
                 </div>
               </div>
               <p *ngIf="o.hasOwnProperty('parameterName')">
-                <a href="javascript:void(0)" (click)="o.parameterName.push('')">Add a name</a>
+                <a href="javascript:void(0)" (click)="isDirty = true; o.parameterName.push('')">Add a name</a>
                 <br/>
-                <a href="javascript:void(0)" (click)="Globals.toggleProperty(o, 'parameterName', [])">Remove all names</a>
+                <a href="javascript:void(0)" (click)="isDirty = true; Globals.toggleProperty(o, 'parameterName', [])">Remove all names</a>
               </p>
             </td>
             <td>
               <div class="input-group">
                 <div class="input-group-addon">
-                  <input type="checkbox" [ngModel]="o.hasOwnProperty('comment')" (ngModelChange)="Globals.toggleProperty(o, 'comment', '')"/>
+                  <input type="checkbox" [ngModel]="o.hasOwnProperty('comment')" (ngModelChange)="isDirty = true; Globals.toggleProperty(o, 'comment', '')"/>
                 </div>
                 <input type="text" class="form-control" [disabled]="!o.hasOwnProperty('comment')" [(ngModel)]="o.comment"/>
               </div>
             </td>
             <td>
               <div class="btn-group pull-right">
-                <button type="button" class="btn btn-default" title="Remove this overload" (click)="operationDefinition.overload.splice(oi, 1)">
+                <button type="button" class="btn btn-default" title="Remove this overload" (click)="isDirty = true; operationDefinition.overload.splice(oi, 1)">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>
@@ -225,7 +225,7 @@
     <li ngbNavItem="raw">
       <a ngbNavLink>RAW</a>
       <ng-template ngbNavContent>
-        <app-raw-resource [resource]="operationDefinition" [shown]="odTabs.activeId === 'raw'" (resourceChange)="loadOD($event)"></app-raw-resource>
+        <app-raw-resource [resource]="operationDefinition" [shown]="odTabs.activeId === 'raw'" (resourceChange)="isDirty = true; loadOD($event)"></app-raw-resource>
       </ng-template>
     </li>
 
@@ -233,7 +233,7 @@
     <li ngbNavItem="history" *ngIf="!isNew">
       <a ngbNavLink>History</a>
       <ng-template ngbNavContent>
-        <app-resource-history  [resource]="fhirResource" (resourceChange) = "operationDefinition = $event; fhirResource.resource = $event;"></app-resource-history>
+        <app-resource-history  [resource]="fhirResource" (resourceChange) = "isDirty = true; operationDefinition = $event; fhirResource.resource = $event;"></app-resource-history>
       </ng-template>
     </li>
   </ul>

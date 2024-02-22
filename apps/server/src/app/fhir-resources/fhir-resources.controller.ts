@@ -136,6 +136,7 @@ export class FhirResourcesController extends BaseDataController<FhirResourceDocu
         let baseFilter = await this.authService.getPermissionFilterBase(user, 'read');
 
         options.pipeline = [...options.pipeline, ...baseFilter];
+        options.populate = ['projects'];
 
         return await this.fhirResourceService.search(options);
     }

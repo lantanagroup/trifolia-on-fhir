@@ -5,11 +5,13 @@ import { Project, ProjectSchema } from './project.schema';
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
 import { NonFhirResourcesModule } from '../non-fhir-resources/non-fhir-resources.module';
+import { AuditModule } from '../audit/audit.module';
 
 @Module({
   imports: [
     forwardRef(() => FhirResourcesModule),
     forwardRef(() => NonFhirResourcesModule),
+    forwardRef(() => AuditModule),
     MongooseModule.forFeature([{name: Project.name, schema: ProjectSchema}])],
   controllers: [ProjectsController],
   exports: [ProjectsService],

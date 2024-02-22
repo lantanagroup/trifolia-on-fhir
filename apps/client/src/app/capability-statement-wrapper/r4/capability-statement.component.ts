@@ -26,12 +26,13 @@ import {IFhirResource} from '@trifolia-fhir/models';
 import {ImplementationGuide} from '@trifolia-fhir/stu3';
 import {ImplementationGuideService} from '../../shared/implementation-guide.service';
 import { IDomainResource } from '@trifolia-fhir/tof-lib';
+import {CanComponentDeactivate} from '../../guards/resource.guard';
 
 @Component({
   templateUrl: './capability-statement.component.html',
   styleUrls: ['./capability-statement.component.css']
 })
-export class R4CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+export class R4CapabilityStatementComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   @Input() public capabilityStatement;
 
   public fhirResource;
@@ -208,7 +209,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
             this.router.navigate([`${this.configService.baseSessionUrl}/capability-statement/${conf.id}`]);
           } else {
             this.fhirResource = conf;
-            this.loadCS(conf.resource);
+            this.loadCS(conf.resource, false);
             setTimeout(() => {
               this.message = '';
             }, 3000);
@@ -281,7 +282,8 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     }
     if (this.isFile) {
       if (this.fileService.file) {
-        this.loadCS(this.fileService.file.resource);
+        this.isDirty = false;
+        this.loadCS(this.fileService.file.resource, false);
         this.nameChanged();
       } else {
         // noinspection JSIgnoredPromiseFromCall
@@ -300,7 +302,7 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
               return;
             }
             this.fhirResource = conf;
-            this.loadCS(conf.resource);
+            this.loadCS(conf.resource, false);
           },
           error: (err) => {
             this.csNotFound = err.status === 404;
@@ -322,13 +324,14 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
     this.configService.setTitle(`CapabilityStatement - ${this.capabilityStatement.title || this.capabilityStatement.name || 'no-name'}`);
   }
 
-  loadCS(newVal: IDomainResource) {
+  loadCS(newVal: IDomainResource, isDirty: boolean) {
     this.capabilityStatement = new CapabilityStatement(newVal);
 
     if (this.fhirResource) {
       this.fhirResource.resource = this.capabilityStatement;
     }
 
+    this.isDirty = isDirty;
     this.nameChanged();
     this.recentItemService.ensureRecentItem(
       Globals.cookieKeys.recentCapabilityStatements,
@@ -356,6 +359,10 @@ export class R4CapabilityStatementComponent extends BaseComponent implements OnI
 
     this.getCapabilityStatement();
 
+  }
+
+  public canDeactivate(): boolean {
+    return !this.isDirty;
   }
 
   ngOnDestroy() {

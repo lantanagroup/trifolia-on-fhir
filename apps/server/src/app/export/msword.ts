@@ -34,7 +34,7 @@ export class MSWordExporter {
 
   }
 
-  private static createPara(text: string, heading?: HeadingLevel, bold?: boolean) {
+  private static createPara(text: string, heading?: (typeof HeadingLevel)[keyof typeof HeadingLevel], bold?: boolean) {
     const options: IParagraphOptions = {
       children: [this.createRun(text, bold)],
       heading: heading

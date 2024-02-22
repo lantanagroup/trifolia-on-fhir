@@ -13,7 +13,7 @@ import {
   StructureDefinitionIntroSchema,
   StructureDefinitionNotesSchema,
   IgnoreWarningsSchema,
-  PublicationRequestSchema
+  PublicationRequestSchema, TemplateSchema
 } from './types';
 import { NonFhirResource, NonFhirResourceType } from '@trifolia-fhir/models';
 import { ProjectsModule } from '../projects/projects.module';
@@ -31,6 +31,7 @@ import { ProjectsModule } from '../projects/projects.module';
                     { name: NonFhirResourceType.CustomMenu, schema: CustomMenuSchema },
                     { name: NonFhirResourceType.IgnoreWarnings, schema: IgnoreWarningsSchema},
                     { name: NonFhirResourceType.PublicationRequest, schema: PublicationRequestSchema},
+                    { name: NonFhirResourceType.Template, schema: TemplateSchema},
                     { name: NonFhirResourceType.Page, schema: PageSchema },
                     { name: NonFhirResourceType.OtherNonFhirResource, schema: OtherNonFhirResourceSchema }
                 ]

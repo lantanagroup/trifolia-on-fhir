@@ -64,7 +64,8 @@ export class PageComponentModalComponent implements OnInit {
 
 
   ok() {
-      this.activeModal.close();
+    let page = this.page;
+    this.activeModal.close(page);
   }
 
   ngOnInit() {
