@@ -75,6 +75,7 @@
     "hpropagate": "^1.0.1",
     "intro.js": "^7.0.1",
     "jquery": "^3.5.1",
+    "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.1",
     "jszip": "^3.10.1",
     "jwks-rsa": "^3.0.1",

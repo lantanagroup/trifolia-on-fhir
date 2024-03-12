@@ -1,5 +1,21 @@
 import {HttpService} from '@nestjs/axios';
-import {BadRequestException, Body, Controller, Delete, Get, Inject, InternalServerErrorException, LoggerService, Param, Post, Put, Query, UseGuards, UseInterceptors} from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  InternalServerErrorException,
+  LoggerService,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+  UseInterceptors
+} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {ApiOAuth2, ApiTags} from '@nestjs/swagger';
 import {FhirInstance, FhirServerVersion, RequestHeaders, User} from './server.decorators';
@@ -34,6 +50,8 @@ import {NonFhirResourcesService} from './non-fhir-resources/non-fhir-resources.s
 import {ImplementationGuide as R5ImplementationGuide, StructureDefinition} from '@trifolia-fhir/r5';
 import {firstValueFrom} from 'rxjs';
 import { AuditEntity } from './audit/audit.decorator';
+import * as fs from 'fs';
+import {Options} from 'xml-js';
 
 class PatchRequest {
   op: string;
@@ -361,6 +379,118 @@ export class ImplementationGuideController extends FhirResourcesController { // 
       throw e;
     }
 
+  }
+
+  @Get('/dump')
+  async dumpIgs(@User() user: ITofUser): Promise<string> {
+
+    this.assertAdmin(user);
+
+    const options: PaginateOptions = {
+       page:  1,
+       itemsPerPage: 100000,
+       sortBy: {},
+       pipeline: []
+     };
+
+    options.pipeline.push(
+      {
+        $match:
+          {
+            'resource.resourceType': 'ImplementationGuide',
+            'resource.name': { $not: { $regex: /test/i } }
+          }
+      },
+      {
+        $lookup:
+          {
+            from: 'project',
+            localField: '_id',
+            foreignField: 'references.value',
+            as: 'project'
+          }
+      },
+      {
+        $match:
+          {
+            'project.0': { $exists: true }
+          }
+      },
+      {
+        $lookup:
+          {
+            from: 'audit',
+            localField: '_id',
+            foreignField: 'entityValue',
+            as: 'audits'
+          }
+      },
+      {
+        $lookup:
+          {
+            from: 'user',
+            localField: 'audits.user',
+            foreignField: '_id',
+            as: 'contact'
+          }
+      },
+      {
+        $project:
+          {
+            ig_id: '$resource.id',
+            ig_name: '$resource.name',
+            ig_title: { $ifNull: ['$resource.title', ''] },
+            ig_version: '$resource.meta.versionId',
+            ig_last_updated: { $replaceAll: { input: '$resource.meta.lastUpdated', find: 'T', replacement: ' ' } },
+            ig_contact_names: {
+              $trim: {
+                input: {
+                  $reduce: {
+                    input: '$contact',
+                    initialValue: '',
+                    in: {
+                      $concat: [
+                        '$$value', { $concat: [{ $ifNull: ['$$this.firstName', ''] }, ' ', { $ifNull: ['$$this.lastName', ''] }, '\n'] }]
+                    }
+                  }
+                }
+              }
+            },
+            ig_contact_emails: {
+              $trim: {
+                input: {
+                  $reduce: {
+                    input: '$contact.email',
+                    initialValue: '',
+                    in: { $concat: ['$$value', { $concat: [{ $ifNull: ['$$this', ''] }, '\n'] }] }
+                  }
+                }
+              }
+            }
+          }
+      }
+      /*   {
+           $unset:
+             ['_id']
+         }*/
+    );
+    options.hydrate = false;
+
+    let igs = await this.fhirResourceService.search(options);
+
+    const Json2csvParser = require('json2csv').Parser;
+    const json2csvParser = new Json2csvParser({ header: true });
+
+    const csv = json2csvParser.parse(igs.results);
+    fs.writeFile(__dirname + '/igsDump.csv', csv, function(error) {
+      if (error) {
+        console.log('Error is: ' + error);
+        throw error;
+      }
+      console.log('File created successfully.');
+    });
+
+    return csv;
   }
 
 
