@@ -450,7 +450,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
                     initialValue: '',
                     in: {
                       $concat: [
-                        '$$value', { $concat: [{ $ifNull: ['$$this.firstName', ''] }, ' ', { $ifNull: ['$$this.lastName', ''] }, '\n'] }]
+                        '$$value', { $concat: [{ $ifNull: ['$$this.firstName', ''] }, ' ', { $ifNull: ['$$this.lastName', ''] }, ', '] }]
                     }
                   }
                 }
@@ -462,7 +462,7 @@ export class ImplementationGuideController extends FhirResourcesController { // 
                   $reduce: {
                     input: '$contact.email',
                     initialValue: '',
-                    in: { $concat: ['$$value', { $concat: [{ $ifNull: ['$$this', ''] }, '\n'] }] }
+                    in: { $concat: ['$$value', { $concat: [{ $ifNull: ['$$this', ''] }, ', '] }] }
                   }
                 }
               }
