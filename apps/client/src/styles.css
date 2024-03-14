@@ -45,10 +45,6 @@ a.disabled > i.fas {
   padding-top: 5px;
 }
 
-.jumbotron {
-  padding-top: 20px;
-}
-
 .clickable {
   cursor: pointer;
 }
@@ -741,6 +737,13 @@ tr.introjs-showElement > th {
   margin-bottom: 50px;
   background-color: #e9ecef;
   border-radius: .5rem
+}
+
+.sticky-tabs {
+  position: sticky;
+  top: 3.5em;
+  z-index: 10;
+  background-color: #e9ecef;
 }
 
 simplemde .editor-statusbar {
