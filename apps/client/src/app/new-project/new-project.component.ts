@@ -170,20 +170,15 @@ export class NewProjectComponent implements OnInit {
     this.igUrl = `https://fhir.org/${this.isFHIR ? 'fhir' : 'cda'}/${this.selectedJurisdiction ? this.selectedJurisdiction.code.toLowerCase() : 'us'}/${projectCode || 'unknown'}/ImplementationGuide`;
   }
 
-  nonHl7packageIdChanged() {
-    const projectCode = this.projectCode.replace(/[^a-zA-Z0-9_-]/gi, '');
-    this.packageId = '.' + projectCode;
-  }
-
   setIgCanonicalUrl(value: string) {
     this.canonicalURL = value;
     this.igUrlChanged();
   }
 
   setIgId(value: string) {
-    this.projectCode = value.split('.').join('-');
+    this.projectCode = value;
+    this.packageId = value.replace(/[^a-zA-Z0-9_-]/gi, '');
     this.igUrlChanged();
-    this.nonHl7packageIdChanged();
   }
 
    get fhirVersion(){
