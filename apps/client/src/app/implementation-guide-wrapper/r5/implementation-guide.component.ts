@@ -1060,6 +1060,13 @@ export class R5ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
   }
 
+  public get urlAndNameMatch() : boolean {
+    if (this.implementationGuide.url && !this.implementationGuide.url.endsWith('/'+this.implementationGuide.id)) {
+      return false;
+    }
+    return true;
+  }
+
   public setExampleBoolean(resource: ImplementationGuideDefinitionResource, value: boolean) {
     if (!value) {
       delete resource.exampleBoolean;

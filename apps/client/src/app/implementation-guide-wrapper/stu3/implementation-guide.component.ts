@@ -221,6 +221,13 @@ export class STU3ImplementationGuideComponent extends BaseImplementationGuideCom
     modalRef.result.then(() => { this.igChanging.emit(true); });
   }
 
+  public get urlAndNameMatch() : boolean {
+    if (this.implementationGuide.url && !this.implementationGuide.url.endsWith('/'+this.implementationGuide.id)) {
+      return false;
+    }
+    return true;
+  }
+
   public selectPublishedIg(dependency: Extension) {
     const modalRef = this.modalService.open(PublishedIgSelectModalComponent, { size: 'lg', backdrop: 'static' });
     modalRef.result.then((guide: PublishedGuideModel) => {

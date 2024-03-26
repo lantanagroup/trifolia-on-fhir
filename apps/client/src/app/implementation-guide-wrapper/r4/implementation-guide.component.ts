@@ -1203,6 +1203,13 @@ export class R4ImplementationGuideComponent extends BaseImplementationGuideCompo
     }
   }
 
+  public get urlAndNameMatch() : boolean {
+    if (this.implementationGuide.url && !this.implementationGuide.url.endsWith('/'+this.implementationGuide.id)) {
+      return false;
+    }
+    return true;
+  }
+
   public setExampleBoolean(resource: ImplementationGuideResourceComponent, value: boolean) {
     if (!value) {
       delete resource.exampleBoolean;

@@ -21,11 +21,14 @@
                   <button type="button" class="btn btn-primary" (click)="changeId()">Change</button>
                 </div>
               </div>
+              <span class="help-block error" *ngIf="!urlAndNameMatch">The ID of this resource does not match the URL</span>
             </div>
           </div>
 
           <div class="col-md-6">
-            <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true" tooltipPath="ImplementationGuide.url" (change)="igChanging.emit(true)"></app-fhir-string>
+            <app-fhir-string [parentObject]="implementationGuide" propertyName="url" title="URL" [required]="true" tooltipPath="ImplementationGuide.url" 
+              [customError]="urlAndNameMatch ? '' : 'The URL of this resource does not match the ID'"
+              (change)="igChanging.emit(true)"></app-fhir-string>
           </div>
 
           <div class="col-md-6">

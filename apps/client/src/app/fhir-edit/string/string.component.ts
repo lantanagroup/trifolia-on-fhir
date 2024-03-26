@@ -24,6 +24,7 @@ export class FhirStringComponent implements OnInit {
   @Input() disabled: boolean;
   @Input() pattern: string | RegExp;
   @Input() patternMessage: string;
+  @Input() customError: string;
   @Input() label = true;
 
   @ViewChild('formGroupModel', { static: true })
