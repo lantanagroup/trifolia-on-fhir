@@ -3,7 +3,7 @@
 <h2 *ngIf="!searchParameter">No Search Parameter!</h2>
 
 <ng-container *ngIf="searchParameter">
-  <ul ngbNav #nav="ngbNav" class="nav-tabs">
+  <ul ngbNav #nav="ngbNav" class="nav-tabs sticky-tabs">
     <li ngbNavItem>
       <a ngbNavLink>General</a>
       <ng-template ngbNavContent>

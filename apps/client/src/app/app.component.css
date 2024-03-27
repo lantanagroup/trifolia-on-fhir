@@ -18,3 +18,7 @@
 .navbar-brand > span {
     margin-left: 64px;
 }
+
+.navbar {
+    height: 3.5em;
+}

@@ -3,7 +3,7 @@
 <div class="alert alert-danger" *ngIf="vsNotFound">Value Set with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
 <ng-container *ngIf="valueSet">
-<ul ngbNav #vsTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+<ul ngbNav #vsTabs="ngbNav" class="nav-tabs sticky-tabs" [destroyOnHide]="false">
   <li ngbNavItem>
     <a ngbNavLink>General</a>
     <ng-template ngbNavContent>

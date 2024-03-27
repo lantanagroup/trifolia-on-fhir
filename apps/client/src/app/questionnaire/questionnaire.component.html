@@ -3,7 +3,7 @@
 <div class="alert alert-danger" *ngIf="qNotFound">Questionnaire with id <strong>{{route.snapshot.paramMap.get('id')}}</strong> was not found on the selected FHIR server!</div>
 
 <ng-container *ngIf="questionnaire">
-  <ul ngbNav #qTabs="ngbNav" class="nav-tabs" [destroyOnHide]="false">
+  <ul ngbNav #qTabs="ngbNav" class="nav-tabs sticky-tabs" [destroyOnHide]="false">
     <li ngbNavItem>
       <a ngbNavLink>General</a>
       <ng-template ngbNavContent>

@@ -28670,7 +28670,13 @@ export class ValueSetComposeComponent extends BackboneElement {
 
 export class ValueSetParameterComponent extends BackboneElement {
   public name: string;
-  public value?: Element;
+  public valueString?: string;
+  public valueBoolean?: boolean;
+  public valueInteger?: number;
+  public valueDecimal?: number;
+  public valueUri?: string;
+  public valueCode?: string;
+  public valueDateTime?: string;
 
   constructor(obj?: any) {
     super(obj);
@@ -28678,9 +28684,27 @@ export class ValueSetParameterComponent extends BackboneElement {
       if (obj.hasOwnProperty('name')) {
         this.name = obj.name;
       }
-      if (obj.hasOwnProperty('value')) {
-        this.value = new Element(obj.value);
+      if (obj.hasOwnProperty('valueString')) {
+        this.valueString = obj.valueString;
       }
+      if (obj.hasOwnProperty('valueBoolean')) {
+        this.valueBoolean = obj.valueBoolean;
+      }
+      if (obj.hasOwnProperty('valueInteger')) {
+        this.valueInteger = obj.valueInteger;
+      }
+      if (obj.hasOwnProperty('valueDecimal')) {
+        this.valueDecimal = obj.valueDecimal;
+      }
+      if (obj.hasOwnProperty('valueUri')) {
+        this.valueUri = obj.valueUri;
+      }
+      if (obj.hasOwnProperty('valueCode')) {
+        this.valueCode = obj.valueCode;
+      }
+      if (obj.hasOwnProperty('valueDateTime')) {
+        this.valueDateTime = obj.valueDateTime;
+      }      
     }
   }
 

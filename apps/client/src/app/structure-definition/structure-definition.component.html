@@ -7,7 +7,7 @@
     {{structureDefinition.name || 'No name'}} <span class="badge bg-warning" *ngIf="!canEdit(sdFhirResource)">View-only</span>
   </h2>
 
-  <ul ngbNav #sdTabs="ngbNav" class="nav-tabs" (navChange)="beforeTabChange($event)" >
+  <ul ngbNav #sdTabs="ngbNav" class="nav-tabs sticky-tabs" (navChange)="beforeTabChange($event)" >
     <li ngbNavItem="general">
       <a ngbNavLink>
         <span [attr.data-intro]="sdTabs.activeId === 'general' ? Globals.introText['sd.general-tab'] : undefined">General</span>
