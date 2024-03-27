@@ -96,7 +96,7 @@ export class ElementDefinitionPanelComponent implements OnInit {
   }
 
   @Input()
-  set elementTreeModel(value: ElementTreeModel) {        
+  set elementTreeModel(value: ElementTreeModel) {
     this._elementTreeModel = value;
     this.cdr.detectChanges();
     // slicing is a conditional tab so we reset the active tab for elements with no slicing
@@ -309,6 +309,13 @@ export class ElementDefinitionPanelComponent implements OnInit {
 
   public getTypes() {
     const types = <IElementDefinitionType[]> this.elementTreeModel.baseElement.type;
+    // sort them
+    types.sort((a, b) => {
+    const compareA = a.code || '';
+    const compareB = b.code || '';
+    return compareA.localeCompare(compareB);
+   });
+
     const baseTypes = types || [];
 
     const elementTreeModelTypes = <IElementDefinitionType[]> (this.element.type || []);

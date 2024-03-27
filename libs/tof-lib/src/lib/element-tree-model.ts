@@ -345,6 +345,11 @@ export class ElementTreeModel {
         types[i] = type + '+';
       }
     }
+    types.sort((a, b) => {
+      const compareA = a || '';
+      const compareB = b || '';
+      return compareA.localeCompare(compareB);
+    });
 
     return types
       .join(', ')
