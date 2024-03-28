@@ -159,6 +159,10 @@ button.angular-editor-button[title='Insert Image'] {
 
 /*** PROFILE EDITOR ***/
 
+div.element-definition {
+  z-index: 2;
+}
+
 div.has-element-definition > .tab-content {
   width: 66%;
 }
@@ -742,7 +746,7 @@ tr.introjs-showElement > th {
 .sticky-tabs {
   position: sticky;
   top: 3.5em;
-  z-index: 10;
+  z-index: 2;
   background-color: #e9ecef;
 }
 
