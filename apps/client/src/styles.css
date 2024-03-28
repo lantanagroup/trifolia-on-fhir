@@ -159,10 +159,6 @@ button.angular-editor-button[title='Insert Image'] {
 
 /*** PROFILE EDITOR ***/
 
-div.element-definition {
-  z-index: 2;
-}
-
 div.has-element-definition > .tab-content {
   width: 66%;
 }
