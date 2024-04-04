@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Identifier as STU3Identifier} from '../../../../../../libs/tof-lib/src/lib/stu3/fhir';
 import {Identifier as R4Identifier} from '../../../../../../libs/tof-lib/src/lib/r4/fhir';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -11,6 +11,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 export class FhirEditIdentifierCardComponent implements OnInit {
   @Input() parentObject: any;
   @Input() propertyName: string;
+  @Output() change: EventEmitter<string> = new EventEmitter<string>();
 
   modalIdentifier: STU3Identifier | R4Identifier;
 

@@ -175,7 +175,7 @@ const appRoutes: Routes = [
   { path: 'projects/implementation-guide/open', component: ImplementationGuidesComponent },
   { path: 'projects/:implementationGuideId/implementation-guide/view', component: ImplementationGuideViewComponent, runGuardsAndResolvers: 'always' },
   { path: 'projects/:implementationGuideId/code-system', component: CodesystemsComponent },
-  { path: 'projects/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always' },
+  { path: 'projects/:implementationGuideId/code-system/:id', component: CodesystemComponent, runGuardsAndResolvers: 'always', canDeactivate: [ResourceGuard] },
   { path: 'projects/:implementationGuideId/page', component: PagesComponent },
   { path: 'projects/:implementationGuideId/page/:id', component: PageComponent, runGuardsAndResolvers: 'always' },
   { path: 'projects/:implementationGuideId/page/new', component: PageComponent},

@@ -2,7 +2,7 @@
   <div class="card-header">
     Identifier(s)
     <div class="pull-right">
-      <button type="button" class="btn btn-primary btn-sm" title="Add a new identifier" (click)="addIdentifier()">
+      <button type="button" class="btn btn-primary btn-sm" title="Add a new identifier" (click)="addIdentifier(); change.emit()">
         <i class="fa fa-plus"></i>
       </button>
     </div>
@@ -34,7 +34,7 @@
           <button type="button" class="btn btn-primary" title="Edit additional properties for this identifier" (click)="openModal(modalContent, identifier)">
             <i class="fa fa-edit"></i>
           </button>
-          <button type="button" class="btn btn-primary" title="Remove this identifier" (click)="identifiers.splice(ii, 1)">
+          <button type="button" class="btn btn-primary" title="Remove this identifier" (click)="change.emit();identifiers.splice(ii, 1)">
             <i class="fas fa-trash"></i>
           </button>
         </div>

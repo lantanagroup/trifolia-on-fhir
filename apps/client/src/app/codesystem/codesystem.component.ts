@@ -24,12 +24,13 @@ import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { IFhirResource } from '@trifolia-fhir/models';
 import { ImplementationGuideService } from '../shared/implementation-guide.service';
+import {CanComponentDeactivate} from '../guards/resource.guard';
 
 @Component({
   templateUrl: './codesystem.component.html',
   styleUrls: ['./codesystem.component.css']
 })
-export class CodesystemComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck {
+export class CodesystemComponent extends BaseComponent implements OnInit, OnDestroy, DoCheck, CanComponentDeactivate {
   public fhirResource: IFhirResource;
   public codeSystem: ICodeSystem;
   public filteredConcepts: ConceptDefinitionComponent[] = [];
@@ -208,7 +209,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
             this.router.navigate([`${this.configService.baseSessionUrl}/code-system/${conf.id}`]);
           } else {
             this.fhirResource = conf;
-            this.loadCS(conf.resource);
+            this.loadCS(conf.resource, false);
             setTimeout(() => {
               this.message = '';
             }, 3000);
@@ -230,7 +231,8 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
 
     if (this.isFile) {
       if (this.fileService.file) {
-        this.loadCS(this.fileService.file.resource);
+        this.isDirty = false;
+        this.loadCS(this.fileService.file.resource, false);
       } else {
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate([this.configService.baseSessionUrl]);
@@ -251,7 +253,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
             }
 
             this.fhirResource = conf;
-            this.loadCS(conf.resource);
+            this.loadCS(conf.resource, false);
           },
           error: (err) => {
             this.csNotFound = err.status === 404;
@@ -266,7 +268,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     this.configService.setTitle(`CodeSystem - ${this.codeSystem.title || this.codeSystem.name || 'no-name'}`);
   }
 
-  loadCS(newVal: IDomainResource) {
+  loadCS(newVal: IDomainResource, isDirty: boolean) {
 
     if (this.configService.isFhirR5) {
       this.codeSystem = new R5CodeSystem(newVal);
@@ -281,7 +283,7 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
     if (this.fhirResource) {
       this.fhirResource.resource = this.codeSystem;
     }
-
+    this.isDirty = isDirty;
     this.nameChanged();
     this.refreshConcepts();
     this.recentItemService.ensureRecentItem(
@@ -305,6 +307,11 @@ export class CodesystemComponent extends BaseComponent implements OnInit, OnDest
       this.codeSystem.url = url ? url.substr(0, url.indexOf("ImplementationGuide")) + "CodeSystem/" : "";
     }
   }
+
+  public canDeactivate(): boolean {
+    return !this.isDirty;
+  }
+
 
   ngOnDestroy() {
     this.navSubscription.unsubscribe();
