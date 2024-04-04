@@ -325,6 +325,15 @@ export class ElementTreeModel {
     const typeCounts = {};
 
     typeRefs.forEach((type: TypeRefComponent | ElementDefinitionTypeRefComponent, index) => {
+
+      // use valueUrl if fhir type extension present
+      (type.extension || []).forEach(e => {
+        if (e.url === 'http://hl7.org/fhir/StructureDefinition/structuredefinition-fhir-type') {
+          type.code = e.valueUrl;
+          return;
+        }
+      });
+
       if (!type.code) {
         return '';
       } else {

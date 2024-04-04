@@ -19,7 +19,8 @@ div.elements > .element span.action {
 
 @media (max-width: 1024px) {
   div.element-definition {
-    top: 0;
+    position: absolute !important;
+    top: 0 !important;
     height: 100%;
     left: 6px;
     width: auto !important;
@@ -40,13 +41,14 @@ div.elements > .element span.action {
 }
 
 div.element-definition {
-  position: absolute;
+  position: fixed;
   width: 33%;
   right: 23px;
-  top: 0;
-  height: 100%;
+  top: 3.5em;
+  bottom: 3.0em;
   resize: horizontal;
   overflow: auto;
+  z-index: 2;
 }
 
 tr.selected > td {
