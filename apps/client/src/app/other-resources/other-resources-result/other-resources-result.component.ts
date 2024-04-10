@@ -68,7 +68,7 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
               this.data = JSON.parse(this.content);
               this.message = 'The content has been updated';
             } else if (this.activeSub === 'json/xml' && this.selected === 'XML') {
-              this.data = this.fhirService.deserialize(this.content);
+              this.data = JSON.parse(this.fhirService.fhir.xmlToJson(this.content));
               this.message = 'The content has been updated';
             }
             (<IFhirResource>this.resource).resource = this.data;
@@ -197,28 +197,22 @@ export class OtherResourcesResultComponent extends BaseComponent implements OnIn
   }
 
   public uploadFile(event: any) {
-    const type: string = this.selected;
-    const reader = new FileReader();
 
+    this.message = null;
 
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
+      const extension = file.name.substring(file.name.lastIndexOf('.')+1);
+
+      if (!this.options.includes(extension.toUpperCase())) {
+        this.message = 'Unexpected type: ' + extension;
+        return;
+      }
+      this.selected = extension.toUpperCase();
+
+      const reader = new FileReader();
       reader.onload = () => {
-        const content = <string>reader.result;
-        let resource: DomainResource;
-
-        switch (type) {
-          case 'JSON':
-            resource = JSON.parse(content);
-            break;
-          case 'XML':
-            resource = this.fhirService.deserialize(content);
-            break;
-          default:
-            throw new Error('Unexpected type specified: ' + type);
-        }
-
-        this.contentHasChanged(content);
+        this.contentHasChanged(<string>reader.result);
       };
       reader.readAsText(file);
     }

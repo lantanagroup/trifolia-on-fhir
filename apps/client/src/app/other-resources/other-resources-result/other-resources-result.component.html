@@ -11,7 +11,7 @@
         <i class="fa fa-id-badge"></i>
       </button> -->
     </div>
-    <div class="btn-group" role="group" aria-label="Download/upload" *ngIf="resource && activeSub == 'json/xml'">
+    <div class="btn-group me-2" role="group" aria-label="Download/upload" *ngIf="resource && activeSub == 'json/xml'">
       <button type="button" class="btn btn-primary" title="Download this resource"
               (click)="downloadFile()"
               [attr.data-intro]="Globals.introText['other.resource.download']">

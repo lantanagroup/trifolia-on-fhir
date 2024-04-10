@@ -401,7 +401,7 @@ export class ImportComponent implements OnInit {
     let resource: any;
     try {
       resource = this.textContentType === ContentTypes.Xml ?
-      this.fhirService.fhir.xmlToObj(this.textContent) :
+      JSON.parse(this.fhirService.fhir.xmlToJson(this.textContent)) :
       JSON.parse(this.textContent);
     } catch (ex) {
       if (this.configService.isCDA && this.textContentType === ContentTypes.Xml) {
@@ -811,6 +811,9 @@ export class ImportComponent implements OnInit {
               importFileModel.resource = this.fhirService.deserialize(result);
             }
           }
+
+          // run the resource through the XML to JSON conversion process to set data types according to base profiles (ex: XML strings that should be numbers, etc.)
+          importFileModel.resource = JSON.parse(this.fhirService.fhir.xmlToJson(this.fhirService.fhir.objToXml(importFileModel.resource)));
         } catch (error) {
           // if deserializing failed and this is a CDA IG we can store the XML as example content
           if (this.configService.isCDA) {
