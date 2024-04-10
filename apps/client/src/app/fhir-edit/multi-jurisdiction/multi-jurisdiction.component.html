@@ -39,9 +39,9 @@
             <option [ngValue]="undefined">SELECT ONE</option>
             <option *ngFor="let code of jurisdictionCodes" [ngValue]="code">{{code.display}} ({{code.code}})</option>
           </select>-->
-          <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code" (change)="change.emit()" *ngIf="!editor[ji]" />
-          <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" (change)="change.emit()" *ngIf="!editor[ji]" />
-          <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" (change)="change.emit()" *ngIf="!editor[ji]" />
+          <input type="text" class="form-control" placeholder="Code" [(ngModel)]="c.code"  (change)="change.emit()" *ngIf="!editor[ji]" />
+          <input type="text" class="form-control" placeholder="Display" [(ngModel)]="c.display" [disabled] = "true"  (change)="change.emit()" *ngIf="!editor[ji]" />
+          <input type="text" class="form-control" placeholder="System" [(ngModel)]="c.system" [disabled] = "true"  (change)="change.emit()" *ngIf="!editor[ji]" />
           <button (click)="changeEditor(ji)" *ngIf="jurisdictionCodes" class="btn btn-primary" title="Edit the code/display/system for this jurisdiction"
                   type="button">
             <i class="fa fa-edit"></i>

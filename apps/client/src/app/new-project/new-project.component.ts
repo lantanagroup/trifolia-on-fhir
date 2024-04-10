@@ -50,7 +50,6 @@ export class NewProjectComponent implements OnInit {
 
   async done() {
 
-   // let ig: IImplementationGuide;
 
     const publishingRequest = new PublishingRequestModel();
     publishingRequest['package-id'] = this.packageId;
@@ -74,7 +73,7 @@ export class NewProjectComponent implements OnInit {
     this.implementationGuide.id =  this.implementationGuide.name.replace(/_/gi, '-');
     this.implementationGuide.url = `${this.igUrl}/${this.implementationGuide.id}`;
 
-    const jurisdiction = this.selectedJurisdiction ? [{ coding: [this.selectedJurisdiction] }] : this.selectedJurisdiction;
+    const jurisdiction = this.selectedJurisdiction ? [{ coding: [this.selectedJurisdiction], text: this.selectedJurisdiction.display }] : this.selectedJurisdiction;
     // Create the implementation guide based on the FHIR server we're connected to
     if (this.fhirVersion === 'r5') {
       if (this.isHL7) {
@@ -264,6 +263,7 @@ export class NewProjectComponent implements OnInit {
 
     //let jurisdictionCode: ICoding;
     this.selectedJurisdiction = this.jurisdictionCodes.find(jc => jc.code.toLowerCase() === 'us');
+
 
     /*    const u = <ICoding>{
           system: 'http://unstats.un.org/unsd/methods/m49/m49.htm',
