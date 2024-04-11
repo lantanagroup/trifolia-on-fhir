@@ -32,6 +32,7 @@
           "node_modules/bootstrap/dist/css/bootstrap.min.css",
           "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
           "node_modules/ngx-simplemde/index.less",
+          "node_modules/ngx-diff/styles/default-theme.css",
           "apps/client/src/styles.css"
         ],
         "scripts": [
