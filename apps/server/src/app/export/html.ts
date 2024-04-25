@@ -491,17 +491,11 @@ export class HtmlExporter {
 
       const destJarPath = path.join(this.rootPath, 'org.hl7.fhir.publisher.jar');
       fs.copySync(this.igPublisherLocation, destJarPath);
-
-      // Create .sh and .bat files for easy execution of the IG publisher jar
-      // noinspection SpellCheckingInspection
-      const shContent = '#!/bin/bash\n' +
-        'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8\n' +
-        'java -jar org.hl7.fhir.publisher.jar -ig ig.ini' + (useTerminologyServer !== undefined && !useTerminologyServer ? ' -tx N/A' : '');
-      fs.writeFileSync(path.join(this.rootPath, 'publisher.sh'), shContent);
-
-      const batContent = 'java -jar org.hl7.fhir.publisher.jar -ig ig.ini' + (useTerminologyServer !== undefined && !useTerminologyServer ? ' -tx N/A' : '');
-      fs.writeFileSync(path.join(this.rootPath, 'publisher.bat'), batContent);
     }
+
+    // copy the common shell/batch files to the root of the export
+    const igExportDir = path.resolve('assets/ig-export');
+    fs.copySync(igExportDir, this.rootPath);
 
     this.logger.log(`Done creating HTML export for IG ${this.implementationGuideId}`);
   }
