@@ -59,7 +59,7 @@
     "@popperjs/core": "^2.11.8",
     "angular-oauth2-oidc": "^17.0.2",
     "angular-oauth2-oidc-jwks": "^17.0.2",
-    "axios": "^1.6.8",
+    "axios": "^1.7.4",
     "body-parser": "^1.20.2",
     "bootstrap": "~5.2.0",
     "compression": "^1.7.4",
