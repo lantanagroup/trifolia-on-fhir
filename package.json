@@ -97,7 +97,7 @@
     "semver": "^7.5.4",
     "simplemde-antd": "^1.0.0",
     "socket.io": "^4.7.1",
-    "socket.io-client": "^4.7.1",
+    "socket.io-client": "^4.8.0",
     "stream": "npm:readable-stream@^4.4.2",
     "tmp": "^0.2.1",
     "tslib": "^2.6.0",
